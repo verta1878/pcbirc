@@ -1,0 +1,4254 @@
+#ifdef FIDO
+
+#include <string.h>
+#include <dir.h>
+#include <dos.h>
+#include <io.h>
+#include <mem.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <malloc.h>
+#include <assert.h>
+#include <time.h>
+
+#include <misc.h>
+#include <bug.h>
+#include <pcb.h>
+#include <pcboard.h>
+#include <pcboard.ext>
+#include <messages.h>
+#include <screen.h>
+#include <users.h>
+
+#include "defines.h"
+#include "structs.h"
+#include "prototyp.h"
+#include "times.h"
+#include "byte.h"
+
+#include "fidoque.hpp"
+#include <fidomsg.hpp>
+#include <tossmisc.h>
+#include "seenby.hpp"
+
+#include "umwf.hpp"
+#include "pcbmsgs.hpp"
+
+
+#ifdef DEBUG
+#include <memcheck.h>
+#endif
+
+/*****************************************************************************/
+/* Global Variable Declarations                                              */
+
+static _FAR_ DOSFILE                      pkt_file;
+static _FAR_ FIDO_MESSAGE_HDR             fido_msg_hdr;
+static _FAR_ AREA_STRUCT                  this_area;
+static _FAR_ NODE_T                       this_node;
+static _FAR_ FIDO_PACKET_HEADER_TYPE2     fido_header_type2;
+static _FAR_ FIDO_PACKET_HEADER           fido_header;
+static _FAR_ THIS_ADDRESS                 this_addr;
+static     int                          conf,matched_aka;
+static     int                          dest_zone,dest_net,dest_node,orig_point,dest_point,orig_net,orig_node,orig_zone;
+static     int                          pkt_type;
+static     long                         msg_count,pkt_count;
+static     char                         zeros[2]="\0\0";
+static _FAR_ char                         pktname[80];
+static _FAR_ char                         pkt_name[15];
+static _FAR_ char                         messagebuff[80];
+static _FAR_ char                         *path[100];
+static _FAR_ char                         *seenby[100];
+static _FAR_ char                         tear_line[100];
+static _FAR_ char                         origin_line[100];
+static     bool                         netmail=FALSE;
+static     bool                         add_tear=FALSE;
+static     bool                         add_origin=FALSE;
+static     bool                         dupe=FALSE;
+static     bool                         banner_disp=TRUE;
+static     bool                         sendlist=FALSE;
+static     bool                         sendhelp=FALSE;
+static     bool                         sendquery=FALSE;
+static     bool                         sendunlink=FALSE;
+static     bool                         direct=FALSE;
+static     bool                         hold=FALSE;
+static     bool                         crash=FALSE;
+static _FAR_ pcbconftype                  confrec;
+static _FAR_ FIDOUSER                     users[MAX_FIDO_USERS];
+
+           char                         sendingTo[50];
+extern     unsigned int                 num_areas;
+extern     unsigned int                 node_count;
+extern     unsigned int                 num_akas;
+extern     unsigned int                 ConfigFileVer;
+extern _FAR_ ARCHIVERS                    archiver_info;
+extern _FAR_ DIRECTORIES                  directory_info;
+extern     THIS_ADDRESS                 *address;
+extern     NODE_T                       *node_list;
+extern     struct                       ffblk DTA;
+extern     long                         lastMsgNum;
+extern     char                         ExtHdrFunctions[EXTHDR_TOTAL][EXTFUNCLEN];
+
+
+char static weekdays[7][3]={"SU","MO","TU","WE","TH","FR","SA"};
+
+
+/****************************************************************************
+  prototypes
+ ****************************************************************************/
+
+static void   _NEAR_ pascal  prepBodyForPCB(char * body);
+static bool   _NEAR_ pascal  unarchive(char *filename,int type);
+static char*  _NEAR_ pascal  make_outbound_list(int &len, int conf);
+static void   _NEAR_ pascal  save_rest(void);
+static void   _NEAR_ pascal  add_netmail(void);
+static void   _NEAR_ pascal  handle_areafix(char *buffer,char *to,char *from,msgbasetype *MsgBase);
+static void   _NEAR_ pascal  process_areafix_command(char *command, bool *changed,DOSFILE *result_file);
+static void   _NEAR_ pascal  send_areafix_reply(char *to,char *from,DOSFILE *result_file,msgbasetype *MsgBase);
+static void   _NEAR_ pascal  send_areafix_list(DOSFILE *result_file,bool send_active,bool send_unactive);
+static void   _NEAR_ pascal  areafix_activate_all(bool *changed,DOSFILE *result_file);
+static void   _NEAR_ pascal  areafix_deactivate_all(bool *changed,DOSFILE *result_file);
+static void   _NEAR_ pascal  toss_message(char *buffer,msgbasetype *MsgBase);
+static void   _NEAR_ pascal  send_netmail(void);
+static void   _NEAR_ pascal  archive_pkt(void);
+static void   _NEAR_ pascal  copy_messages(int confnum,char *list);
+static void   _NEAR_ pascal  read_str(char *buffer,int limit,DOSFILE *file);
+static void   _NEAR_ pascal  look_for_files(void);
+static void   _NEAR_ pascal  fill_in_node_struct(char *nodestr);
+static void   _NEAR_ pascal  check_netmail_str(char *to,int to_len);
+static bool   _NEAR_ pascal  get_area_record(char *areaname);
+static bool   _NEAR_ pascal  get_area_number(int);
+static bool   _NEAR_ pascal  open_pkt_file(void);
+static bool   _NEAR_ pascal  write_pkt_header(char *nodestr);
+static bool   _NEAR_ pascal  transfer_body(char *list);
+static bool   _NEAR_ pascal  get_noderec(void);
+static bool   _NEAR_ pascal  transfer_msg_header(void);
+static bool   _NEAR_ pascal  write_fido_message(void);
+static bool   _NEAR_ pascal  add_fido_control_lines(char *list);
+static bool   _NEAR_ pascal  add_seen_by(char *list);
+static bool   _NEAR_ pascal  add_path(void);
+static bool   _NEAR_ pascal  transfer_netmail(char *to_buf,char *nodestr);
+static int    _NEAR_ pascal  archiver_type(char *filename);
+static int    _NEAR_ pascal  handle_routing(char * filename);
+static char * _NEAR_ pascal get_area(char *buffer,char *areabuf);
+static char * _NEAR_ pascal read_fido_body(int *buflen, bool *end);
+static char * _NEAR_ pascal read_areafix_reply_body(int *buflen, bool *end,DOSFILE *file);
+
+
+/****************************************************************************/
+/* Send a netmail message saying that a file was sent.                      */
+/* This function is called by itself rather then with the rest of the tosser*/
+/* thus it contains a call to read_fido_config.                             */
+
+void pascal send_file_notice(char *nodestr, char *filename)
+{
+char                nodebuf[30];
+char                datebuf[10];
+char                timebuf[6];
+char                yearbuf[6];
+unsigned int        net;
+unsigned int        node;
+struct time         timerec;
+struct dosdate_t    daterec;
+
+  checkstack();
+  _dos_getdate(&daterec);
+  gettime(&timerec);
+
+  if(read_fido_config(ADDR_RECS)==FALSE)
+  {
+    writeFidolog("Could not read config file. Aborting.",BLOCK);
+    return;
+  }
+
+  if(open_pkt_file()==TRUE)
+    {
+      netmail=TRUE;
+      if(write_pkt_header(nodestr)==TRUE)
+        {
+          fido_msg_hdr.Packet_Type=0x0002;
+
+          maxstrcpy(nodebuf,nodestr,sizeof(nodebuf));
+          fido_nodestr_to_int(nodebuf,NULL,&net,&node,NULL);
+
+          fido_msg_hdr.Orig_Node=address[matched_aka].this_node;
+          fido_msg_hdr.Dest_Node=node;
+          fido_msg_hdr.Orig_Net=address[matched_aka].this_net;
+          fido_msg_hdr.Dest_Net=net;
+          fido_msg_hdr.Attribute=MSG_FILEATT|MSG_PRIVATE;
+          sprintf(yearbuf,"%d",daterec.year);
+          memcpy(yearbuf,yearbuf+2,3);
+          sprintf(datebuf,"%02d-%02d-%s",daterec.month,daterec.day,yearbuf);
+          sprintf(timebuf,"%02d:%02d",timerec.ti_hour,timerec.ti_min);
+          translate_date(fido_msg_hdr.DateTime,datebuf,timebuf,sizeof(fido_msg_hdr.DateTime));
+
+          maxstrcpy(fido_msg_hdr.To_User,"SysOp",sizeof(fido_msg_hdr.To_User));
+          maxstrcpy(fido_msg_hdr.From_User,"SysOp",sizeof(fido_msg_hdr.From_User));
+          maxstrcpy(fido_msg_hdr.Subject,findstartofname(filename),sizeof(fido_msg_hdr.Subject));
+
+          dosfwrite(&fido_msg_hdr,FIDO_FIXED_SIZE,&pkt_file);
+          dosfputs(fido_msg_hdr.To_User,&pkt_file);
+          dosfwrite(zeros,1,&pkt_file);
+          dosfputs(fido_msg_hdr.From_User,&pkt_file);
+          dosfwrite(zeros,1,&pkt_file);
+          dosfputs(fido_msg_hdr.Subject,&pkt_file);
+          dosfwrite(zeros,1,&pkt_file);
+          dosfputs("\rThis message was created automatically by PCBoard to inform you of the\rAttached File shown in the subject of this message.\r",&pkt_file);
+          dosfwrite(zeros,1,&pkt_file);
+          dosfwrite(zeros,2,&pkt_file);
+          dosfclose(&pkt_file);
+          archive_pkt();
+          netmail=FALSE;
+        }
+    }
+  free_fido_memory();
+}
+
+/****************************************************************************/
+/* Make a list of people I'm sending this to for SEEN-BY lines.             */
+/*                                                                          */
+/* Paramaters: char *list - the buffer to store it in, malloc() array.      */
+/*             int len    - the length of the array from malloc().          */
+/*             int conf   - the conference number we are looking for.       */
+/* Return value           - how big the array is now or -1 on failure.      */
+
+static char* _NEAR_ pascal make_outbound_list(int &len, int conf)
+{
+long            recno=0;
+char            buffer[26],tmp[26];
+char            *tmplist=NULL,*list=NULL;
+unsigned int    net=0,node=0;
+size_t          size=0;
+
+  checkstack();
+  memset(buffer,0,sizeof(buffer));
+  memset(tmp   ,0,sizeof(tmp));
+  assert(stackavail() > 2000);
+
+  if(tempuseralloc(FALSE)==-1)     /* Allocate temp user data structure. */
+    return(NULL);
+
+  net=node=0;
+
+  if((list=(char *)malloc(len))==NULL)
+    {
+      writeFidolog("Could not allocate memory for outbound list",BLOCK);
+      return(NULL);
+    }
+
+  init_users();  /* Initialize array for the Fido user record index records. */
+
+  memset(list,0,len);
+  find_fido_rec(NULL,TRUE,TRUE,NULL);
+
+  sprintf(list," %u/%u",address[matched_aka].this_net,address[matched_aka].this_node);
+
+  while((recno=find_fido_rec(NULL,TRUE,FALSE,NULL))!=-1)
+    {
+      gettemprecord(recno);
+      if(strchr(TempData->Name,'.')==NULL)
+        {
+          if(isset(&TempReg[REG],conf) && isset(&TempReg[USR],conf))
+            {
+              maxstrcpy(buffer,TempData->Name,sizeof(buffer));
+              size=(sizeof(buffer)-6);
+              memcpy(tmp,buffer+6,size);
+              fido_nodestr_to_int(tmp,NULL,&net,&node,NULL);
+
+              sprintf(buffer," %u/%u",net,node);
+              if((strlen(list)+strlen(buffer)) >= len)
+                {
+                  len=(strlen(list)+strlen(buffer));
+                  if((tmplist=(char *)realloc(list,(len+1)))!=NULL)
+                    list=tmplist;
+                  else
+                    {
+                      list=NULL;
+                      writeFidolog("re-allocation failed PCBT 228",BLOCK);
+                      tempuserdealloc();
+
+                      return(NULL);
+                    }
+                }
+              strcat(list,buffer);
+            }
+        }
+    }
+  tempuserdealloc();    /* deallocate temp user data structures. */
+        // Free fido users array
+  return(list);
+}
+
+/*****************************************************************************/
+/* Get the correct area record from the file.                                                                                                                    */
+
+static bool   _NEAR_ pascal  get_area_record(char *areaname)
+{
+int               i=0;
+DOSFILE           config_file;
+AREA_STRUCT   area;
+
+  checkstack();
+  assert(stackavail() > 2000);
+  memset(&config_file,0,sizeof(DOSFILE));
+  memset(&this_area,0,sizeof(AREA_STRUCT));
+  memset(&area,0,sizeof(AREA_STRUCT));
+
+  if(dosfopen(CONFIG_FILE,OPEN_READ|OPEN_DENYRDWR,&config_file)==-1)
+  {
+    writeFidolog("Could not open config file. Aborting.",BLOCK);
+    return(FALSE);
+  }
+
+  dosfread(&ConfigFileVer,sizeof(ConfigFileVer),&config_file);
+  dosfread(&num_areas,sizeof(num_areas),&config_file);
+
+  for(i=0;i<num_areas;i++)
+    {
+      dosfread(&area,sizeof(AREA_STRUCT),&config_file);
+
+      if(strcmpi(area.Area_Name,areaname)==0)
+        {
+          dosfclose(&config_file);
+          memcpy(&this_area,&area,sizeof(AREA_STRUCT));
+          return(TRUE);
+        }
+    }
+  dosfclose(&config_file);
+  memset(&this_area,0,sizeof(AREA_STRUCT));
+  return(FALSE);
+}
+
+/*****************************************************************************/
+/* Copy the message body from PCBoard to Fido format.                                                                                    */
+
+static bool   _NEAR_ pascal  transfer_body(char *list)
+{
+int         i=0;
+
+  checkstack();
+  assert(stackavail() > 2000);
+  if(netmail!=TRUE)
+    {
+      if(add_fido_control_lines(list)==FALSE)
+        {
+          for(i=0;path[i]!=NULL;i++)
+            {
+              free(path[i]);
+              path[i]=NULL;
+            }
+
+          for(i=0;seenby[i]!=NULL;i++)
+            {
+              free(seenby[i]);
+              seenby[i]=NULL;
+            }
+          return(FALSE);
+        }
+    }
+
+  if(write_fido_message()==FALSE)
+    {
+      writeFidolog("Could not write message to packet.",BLOCK);
+      if(netmail!=TRUE)
+        {
+          for(i=0;path[i]!=NULL;i++)
+            {
+              free(path[i]);
+              path[i]=NULL;
+            }
+
+          for(i=0;seenby[i]!=NULL;i++)
+            {
+              free(seenby[i]);
+              seenby[i]=NULL;
+            }
+        }
+      return(FALSE);
+    }
+
+  if(netmail!=TRUE)
+    {
+      for(i=0;path[i]!=NULL;i++)
+        {
+          free(path[i]);
+          path[i]=NULL;
+        }
+      for(i=0;seenby[i]!=NULL;i++)
+        {
+          free(seenby[i]);
+          seenby[i]=NULL;
+        }
+    }
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Add the fido control lines.                                               */
+
+static bool   _NEAR_ pascal  add_fido_control_lines(char *list)
+{
+char      nodebuf[25];
+char      tmp[20];
+
+  checkstack();
+  memset(nodebuf,0,sizeof(nodebuf));
+  assert(stackavail() > 2000);
+
+  maxstrcpy(nodebuf,this_area.default_aka,sizeof(nodebuf));
+  stripright(nodebuf,' ');
+  fido_nodestr_to_int(nodebuf,&this_addr.this_zone,&this_addr.this_net,
+                      &this_addr.this_node,&this_addr.this_point);
+
+  if(this_area.default_aka[0]!=0 && this_area.default_aka[0]!=0x20)
+    {
+      stripright(this_area.default_aka,sizeof(nodebuf));
+      maxstrcpy(nodebuf,this_area.default_aka,sizeof(nodebuf));
+    }
+  else
+    maxstrcpy(nodebuf,address[0].nodestr,sizeof(nodebuf));
+
+  sprintf(tmp,"%c---",LineSeparator);
+  if(strstr(message.msgBody,tmp)==NULL)
+    {
+      char tearBuf[36];
+      maxstrcpy(tearBuf,Status.Version,sizeof(tearBuf));
+      char * nullPtr = strstr(tearBuf,"(Beta");
+      if(nullPtr)
+      {
+         *nullPtr = '\x0';
+         strcat(tearBuf,"Beta");
+      }
+      sprintf(tear_line,"\r--- %-1.35s",tearBuf);
+      add_tear=TRUE;
+    }
+
+  sprintf(tmp,"%c * Origin:",LineSeparator);
+  if(strstr(message.msgBody,tmp)==NULL)
+    {
+      if(this_area.origin[0]==NULL||this_area.origin[0]=='\x20')
+        {
+          stripright(PcbData.Origin,' ');
+          sprintf(origin_line," * Origin: %s (%s)",PcbData.Origin,nodebuf);
+          add_origin=TRUE;
+        }
+      else
+        {
+          stripright(this_area.origin,' ');
+          sprintf(origin_line," * Origin: %s (%s)",this_area.origin,nodebuf);
+          add_origin=TRUE;
+        }
+    }
+
+  if(add_seen_by(list)==FALSE)
+    return(FALSE);
+
+  if(add_path()==FALSE)
+    return(FALSE);
+
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Append our address to the path line. Add new lines and realloc as required*/
+
+static bool   _NEAR_ pascal  add_path(void)
+{
+char    *p=NULL,*q=NULL,*ptr=NULL,addr[50];
+int     i=0,j=0;
+
+  checkstack();
+  memset(addr,0,sizeof(addr));
+  memset(path,0,sizeof(path));
+  assert(stackavail() > 2000);
+
+/* If there aren't any PATH lines then add one with our address in it. */
+
+  if((p=strstr(message.msgBody,"\x01PATH:"))==NULL)
+    {
+      if((path[0]=(char *)malloc(100))==NULL)
+        {
+          writeFidolog("Could not allocate memory for string. add_path()",BLOCK);
+          return(FALSE);
+        }
+      sprintf(path[0],"\x01PATH: %u/%u",address[matched_aka].this_net,address[matched_aka].this_node);
+      path[1]=NULL;
+      return(TRUE);
+    }
+
+/* Copy the PATH lines into the array or pointers. */
+
+  for(i=0;(p=strstr(p,"\x01PATH:"))!=NULL;i++)
+    {
+      if((path[i]=(char *)malloc(100))==NULL)
+        {
+          writeFidolog("Could not allocate memory for string. add_path()",BLOCK);
+          for(i=0;path[i]!=NULL;i++)
+            {
+              free(path[i]);
+              path[i]=NULL;
+            }
+          return(FALSE);
+        }
+      for(j=0,q=path[i];*p!=LineSeparator && j<100;p++,j++)
+        q[j]=*p;
+
+      q[j]=NULL;
+    }
+  path[i]=NULL;
+
+/* Add our address to the PATH line. If the last Net in the line matches then */
+/* don't add the net to the line.                                             */
+
+  i--;
+  sprintf(addr," %u/%u",address[matched_aka].this_net,address[matched_aka].this_node);
+  if(strlen(path[i])+strlen(addr)>74)
+    {
+      i++;
+      if((path[i]=(char *)malloc(100))==NULL)
+        {
+          writeFidolog("Could not allocate memory for string. add_path()",BLOCK);
+          for(i=0;path[i]!=NULL;i++)
+            {
+              free(path[i]);
+              path[i]=NULL;
+            }
+          return(FALSE);
+        }
+      path[i+1]=NULL;
+      sprintf(path[i],"\x01PATH:%s",addr);
+    }
+  else
+    {
+      if((p=strrchr(path[i],'/'))!=NULL)
+        {
+          *p=NULL;
+          if((q=strrchr(path[i],' '))!=NULL)
+            {
+              q++;
+              if((ptr=strchr(addr+1,'/'))!=NULL)
+                {
+                  if(memcmp(q,addr+1,int(ptr-(addr+1)))==0)
+                    sprintf(addr," %u",address[matched_aka].this_node);
+                }
+            }
+          *p='/';
+        }
+      strcat(path[i],addr);
+    }
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Strip the SEEN-BY lines from the message and create the array of pointers */
+/* to strings for the SEEN-BY processor.                                     */
+
+static bool   _NEAR_ pascal  add_seen_by(char *list)
+{
+char    *p=NULL,*q=NULL,*ptr=NULL;
+int     i=0,j=0;
+
+  checkstack();
+  assert(stackavail() > 2000);
+
+  memset(seenby,0,sizeof(seenby));
+
+/* If there are no SEEN-BY lines then make one with our address in it.       */
+
+  if((p=strstr(message.msgBody,"\x01SEEN-BY:"))==NULL)
+    {
+      if((seenby[0]=(char *)malloc(100))==NULL)
+        {
+          writeFidolog("Could not allocate memory for Seenbys. ",BLOCK);
+          for(i=0;seenby[i]!=NULL;i++)
+            {
+              free(seenby[i]);
+              seenby[i]=NULL;
+            }
+          dupe=FALSE;
+          return(FALSE);
+        }
+
+      sprintf(seenby[0],"SEEN-BY: %u/%u\x0D",address[matched_aka].this_net,address[matched_aka].this_node);
+      seenby[1]=NULL;
+
+/* Add all the other nodes in list to the SEEN-BY lines.                     */
+
+      cSEENBY seen(seenby,list,sendingTo);
+
+      //char * namePtr = strrchr(UsersData.Name,'~');
+      //stripright(namePtr,' ');
+      if(seen.isDupe()==TRUE)
+        {
+          if(dest_point==0 && orig_point == 0)
+            {
+              for(j=0;seenby[j]!=NULL;j++)
+                {
+                  free(seenby[j]);
+                  seenby[j]=NULL;
+                }
+              dupe=TRUE;
+              return(FALSE);
+            }
+           if(PcbData.FidoLogLevel >= 5) writeFidolog("Skipping duplicate message",BLOCK);
+        }
+      dupe=FALSE;
+      return(TRUE);
+    }
+
+  ptr=message.msgBody;
+
+/* If there are SEEN-BY lines then copy them into the array for processing. */
+
+  for(i=0;(p=strstr(ptr,"\x01SEEN-BY:"))!=NULL;i++)
+    {
+      if((seenby[i]=(char *)malloc(100))==NULL)
+        {
+          writeFidolog("Could not allocate memory for Seenbys. ",BLOCK);
+          for(i=0;seenby[i]!=NULL;i++)
+            {
+              free(seenby[i]);
+              seenby[i]=NULL;
+            }
+          dupe=FALSE;
+          return(FALSE);
+        }
+      q = seenby[i];
+      for(j=0;*p!=LineSeparator && j<99 ;p++,j++)
+        q[j]=*p;
+
+      q[j]=NULL;
+      ptr=p;
+    }
+
+  seenby[i+1]=NULL;
+
+/* Add all the other nodes in list to the SEEN-BY lines.                     */
+
+  cSEENBY seen(seenby,list,sendingTo);
+
+  if(seen.isDupe()==TRUE)
+    {
+      if(dest_point==0)
+        {
+          for(j=0;seenby[j]!=NULL;j++)
+            {
+              free(seenby[j]);
+              seenby[j]=NULL;
+            }
+          dupe=TRUE;
+          return(FALSE);
+        }
+       if(PcbData.FidoLogLevel >= 5) writeFidolog("Skipping duplicate message",BLOCK);
+    }
+  dupe=FALSE;
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Write the fido message out.                                               */
+
+static bool   _NEAR_ pascal  write_fido_message(void)
+{
+char    buffer1[50];
+char    buffer2[50];
+char    *line=NULL;
+int     i=0;
+
+  checkstack();
+  memset(buffer1,0,sizeof(buffer1));
+  assert(stackavail() > 2000);
+
+/* Write out the header. To, From, and Subject are NULL-Terminated variable  */
+/* length strings.                                                           */
+
+  if(dosfwrite(&fido_msg_hdr,FIDO_FIXED_SIZE,&pkt_file)==-1)
+    return(FALSE);
+
+  if(dosfputs(fido_msg_hdr.To_User,&pkt_file)==-1)
+    return(FALSE);
+
+  if(dosfwrite(zeros,1,&pkt_file)==-1)
+    return(FALSE);
+
+  if(dosfputs(fido_msg_hdr.From_User,&pkt_file)==-1)
+    return(FALSE);
+
+  if(dosfwrite(zeros,1,&pkt_file)==-1)
+    return(FALSE);
+
+  if(dosfputs(fido_msg_hdr.Subject,&pkt_file)==-1)
+    return(FALSE);
+
+  if(dosfwrite(zeros,1,&pkt_file)==-1)
+    return(FALSE);
+
+  stripright(this_area.Area_Name,' ');
+  if(strcmpi(this_area.Area_Name,"NETMAIL")!=0)
+    {
+      sprintf(buffer1,"AREA:%s\x0D",this_area.Area_Name);
+      dosfputs(buffer1,&pkt_file);
+      dosfwrite("\r",1,&pkt_file);
+    }
+  else
+    {
+
+/* We are now working with Netmail, so generate the INTL addressing line and */
+/* the Point addressing lines if required.                                   */
+
+      if((line=strrchr(address[matched_aka].nodestr,'.'))==NULL)
+        {
+          sprintf(buffer1,"\x01INTL %u:%u/%u %s",dest_zone,dest_net,dest_node,address[matched_aka].nodestr);
+          dosfputs(buffer1,&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+        }
+      else
+        {
+          *line=NULL;
+          sprintf(buffer1,"\x01INTL %u:%u/%u %s",dest_zone,dest_net,dest_node,address[matched_aka].nodestr);
+          dosfputs(buffer1,&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+          *line='.';
+          sprintf(buffer1,"\x01");
+          sprintf(buffer2,"FMPT %s",++line);
+          strcat(buffer1,buffer2);
+          dosfputs(buffer1,&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+        }
+
+      if(fido_header_type2.DestPoint!=0)
+        {
+          sprintf(buffer1,"\x01TOPT %u",fido_header_type2.DestPoint);
+          dosfputs(buffer1,&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+        }
+    }
+
+/* Write out the message body. Don't write lines with Kludge info in them. */
+
+  while((line=message.getLine())!=NULL)
+    {
+      if((strstr(line,"SEEN-BY:")==NULL) && (strstr(line,"\x01PATH:")==NULL))
+        {
+          dosfputs(xlateFidoText(line,this_area.HighAscii),&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+        }
+    }
+
+  if(add_tear==TRUE)
+    {
+      dosfputs(tear_line,&pkt_file);
+      dosfwrite("\r",1,&pkt_file);
+      add_tear=FALSE;
+    }
+
+  if(add_origin==TRUE)
+    {
+      dosfputs(origin_line,&pkt_file);
+      dosfwrite("\r",1,&pkt_file);
+      add_origin=FALSE;
+    }
+
+/* Add kludge lines. */
+
+  if(netmail!=TRUE)
+    {
+      for(i=0;seenby[i]!=NULL;i++)
+        {
+          dosfputs(seenby[i],&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+        }
+
+      for(i=0;path[i]!=NULL;i++)
+        {
+          dosfputs(path[i],&pkt_file);
+          dosfwrite("\r",1,&pkt_file);
+        }
+    }
+  dosfwrite(zeros,1,&pkt_file);
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Write the PKT file header.                                                                                                                                                                                    */
+
+static bool   _NEAR_ pascal  write_pkt_header(char *nodestr)
+{
+struct time                 timerec;
+struct dosdate_t            daterec;
+size_t                      size=0;
+unsigned int                zone=0,net=0,node=0,point=0,i=0;
+char                        buffer[26],tmp[26];
+long                        userno;
+
+  checkstack();
+  memset(buffer,0,sizeof(buffer));
+  memset(tmp   ,0,sizeof(tmp));
+  assert(stackavail() > 2000);
+
+  _dos_getdate(&daterec);
+  gettime(&timerec);
+
+  dosfseek(&pkt_file,0,SEEK_SET);  // Go to the begining of the file, PKT header
+
+  init_users();
+
+  if(nodestr==NULL)
+    {
+      get_noderec();
+      maxstrcpy(buffer,UsersData.Name,sizeof(buffer));
+      size=(sizeof(buffer)-6);
+      memcpy(tmp,buffer+6,size);
+      fido_nodestr_to_int(tmp,&zone,&net,&node,&point);
+    }
+  else
+    {
+      maxstrcpy(buffer,nodestr,sizeof(buffer));
+      fido_nodestr_to_int(buffer,&zone,&net,&node,&point);
+      fill_in_node_struct(nodestr);
+      if((userno=find_fido_rec(nodestr,FALSE,FALSE,NULL))!=-1)
+        get_fido_rec(userno);
+    }
+
+  dest_zone=zone;
+  dest_net=net;
+  dest_node=node;
+  dest_point=point;
+
+/* Match one of our AKAs as close as possible. Zone or Zone/Net for use in   */
+/* the rest of the program to identify ourself as close as we can to the     */
+/* destination site.                                                         */
+
+  for(i=0,matched_aka=0;i<num_akas;i++)
+    {
+      if(address[i].this_zone==zone)
+        matched_aka=i;
+
+      if(address[i].this_zone==zone && address[i].this_net==net)
+        {
+          matched_aka=i;
+          break;
+        }
+    }
+
+  if(this_node.pkt_type==0)
+    this_node.pkt_type=2;
+
+  if(this_node.pkt_type==2)
+    {
+      orig_node=fido_header_type2.Orig_Node=address[matched_aka].this_node;
+      fido_header_type2.Dest_Node=node;
+      fido_header_type2.Year=daterec.year;
+      fido_header_type2.Month=daterec.month;
+      fido_header_type2.Day=daterec.day;
+      fido_header_type2.Hour=timerec.ti_hour;
+      fido_header_type2.Minute=timerec.ti_min;
+      fido_header_type2.Second=timerec.ti_sec;
+      fido_header_type2.Baud=0;
+      fido_header_type2.Packet_Type=0x0002;
+      fido_header_type2.Dest_Net=net;
+      orig_net=fido_header_type2.Orig_Net=address[matched_aka].this_net;
+      orig_point=fido_header_type2.OrigPoint=address[matched_aka].this_point;
+      orig_zone=fido_header_type2.Orig_Zone=address[matched_aka].this_zone;
+      fido_header_type2.ProtCode=PROTCODE;
+      fido_header_type2.SerialNo=1;
+      memset(fido_header_type2.Password,0,8);
+
+      UsersData.SysopComment[sizeof(UsersData.SysopComment)-1]=NULL;
+      stripright(UsersData.SysopComment,' ');
+
+      if(!netmail)
+      {
+        if(strlen(UsersData.SysopComment)<=8)
+          memcpy(fido_header_type2.Password,UsersData.SysopComment,strlen(UsersData.SysopComment));
+        else
+          memcpy(fido_header_type2.Password,UsersData.SysopComment,8);
+      }
+
+      fido_header_type2.OrigZone=address[matched_aka].this_zone;
+      fido_header_type2.DestZone=zone;
+      fido_header_type2.Orig_Zone=address[matched_aka].this_zone;
+      fido_header_type2.Dest_Zone=zone;
+      fido_header_type2.OrigPoint=address[matched_aka].this_point;
+      fido_header_type2.DestPoint=point;
+      fido_header_type2.ProdData=0;
+      fido_header_type2.CW=0x0001;
+      fido_header_type2.CWValid=0x0100;
+
+      if(dosfwrite(&fido_header_type2,sizeof(FIDO_PACKET_HEADER_TYPE2),&pkt_file)==-1)
+        {
+          dosfclose(&pkt_file);
+
+          return(FALSE);
+        }
+    }
+  else if(this_node.pkt_type==1)
+    {
+      orig_node=fido_header.Orig_Node=address[matched_aka].this_node;
+      fido_header.Dest_Node=node;
+      fido_header.Year=daterec.year;
+      fido_header.Month=daterec.month;
+      fido_header.Day=daterec.day;
+      fido_header.Hour=timerec.ti_hour;
+      fido_header.Minute=timerec.ti_min;
+      fido_header.Second=timerec.ti_sec;
+      fido_header.Baud=0;
+      fido_header.Packet_Type=0x0002;
+      fido_header.Dest_Net=net;
+      orig_net=fido_header.Orig_Net=address[matched_aka].this_net;
+      orig_zone=fido_header.Orig_Zone=address[matched_aka].this_zone;
+      fido_header.ProtCode=PROTCODE;
+      fido_header.SerialNo=1;
+      memset(fido_header.Password,0,8);
+
+      UsersData.SysopComment[sizeof(UsersData.SysopComment)-1]=NULL;
+      stripright(UsersData.SysopComment,' ');
+
+      if(strlen(UsersData.SysopComment)<=8)
+        memcpy(fido_header.Password,UsersData.SysopComment,strlen(UsersData.SysopComment));
+      else
+        memcpy(fido_header.Password,UsersData.SysopComment,8);
+
+      fido_header.Orig_Zone=address[matched_aka].this_zone;
+      fido_header.Dest_Zone=zone;
+
+      if(dosfwrite(&fido_header,sizeof(FIDO_PACKET_HEADER),&pkt_file)==-1)
+        {
+          dosfclose(&pkt_file);
+
+          return(FALSE);
+        }
+    }
+
+  return(TRUE);
+}
+
+/****************************************************************************/
+/* Copy PCBoard message header info to Fido Packet format.                                                                      */
+
+static bool   _NEAR_ pascal  transfer_msg_header(void)
+{
+unsigned int  net=0,node=0,extHdrCnt=0;
+size_t        size=0;
+char          nodebuf[26],tmp[26],hdrbuf[80],temp[35];
+
+  checkstack();
+  assert(stackavail() > 2000);
+  memset(nodebuf,0,sizeof(nodebuf));
+  memset(tmp    ,0,sizeof(tmp));
+  memset(hdrbuf,0,sizeof(hdrbuf));
+
+  fido_msg_hdr.Packet_Type=0x0002;
+
+  maxstrcpy(nodebuf,UsersData.Name,sizeof(nodebuf));
+  size=(sizeof(nodebuf)-6);
+  memcpy(tmp,nodebuf+6,size);
+  fido_nodestr_to_int(tmp,NULL,&net,&node,NULL);
+
+  fido_msg_hdr.Orig_Node=address[matched_aka].this_node;
+  fido_msg_hdr.Dest_Node=node;
+  fido_msg_hdr.Orig_Net=address[matched_aka].this_net;
+  fido_msg_hdr.Dest_Net=net;
+
+  if(message.msgHdr.status!=' ' && message.msgHdr.status!='-')
+    fido_msg_hdr.Attribute=MSG_PRIVATE;
+  else
+    fido_msg_hdr.Attribute=0;
+
+  fido_msg_hdr.Msg_Cost=0;
+  translate_date(fido_msg_hdr.DateTime,message.msgHdr.dmsg,message.msgHdr.tmsg,sizeof(fido_msg_hdr.DateTime));
+
+  memcpy(temp,message.msgHdr.tname,sizeof(message.msgHdr.tname));
+  temp[sizeof(message.msgHdr.tname)]=NULL;
+  stripright(temp,' ');
+  maxstrcpy(fido_msg_hdr.To_User,temp,sizeof(fido_msg_hdr.To_User));
+
+  memcpy(temp,message.msgHdr.fname,sizeof(message.msgHdr.tname));
+  temp[sizeof(message.msgHdr.fname)]=NULL;
+  stripright(temp,' ');
+  maxstrcpy(fido_msg_hdr.From_User,temp,sizeof(fido_msg_hdr.From_User));
+
+  extHdrCnt=message.getExtHdrs();
+  if(extHdrCnt!=0)
+    {
+      memset(hdrbuf,0,sizeof(hdrbuf));
+      message.getExtHdrs(ExtHdrFunctions[EXTHDR_SUBJECT],hdrbuf);
+      if(hdrbuf[0]==0)
+        {
+          memcpy(temp,message.msgHdr.subj,sizeof(message.msgHdr.subj));
+          temp[sizeof(message.msgHdr.subj)]=NULL;
+          stripright(temp,' ');
+          maxstrcpy(fido_msg_hdr.Subject,temp,sizeof(fido_msg_hdr.Subject));
+        }
+      else
+        maxstrcpy(fido_msg_hdr.Subject,hdrbuf,sizeof(fido_msg_hdr.Subject));
+    }
+  else
+    {
+      memcpy(temp,message.msgHdr.subj,sizeof(message.msgHdr.subj));
+      temp[sizeof(message.msgHdr.subj)]=NULL;
+      stripright(temp,' ');
+      maxstrcpy(fido_msg_hdr.Subject,temp,sizeof(fido_msg_hdr.Subject));
+    }
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Get the correct area record from the file.                                                                                                                    */
+/* Search for area to match the conference number.                           */
+static bool   _NEAR_ pascal  get_area_number(int arearec)
+{
+DOSFILE       config_file;
+
+  checkstack();
+  assert(stackavail() > 2000);
+
+  if(dosfopen(CONFIG_FILE,OPEN_READ|OPEN_DENYRDWR,&config_file)==-1)
+    return(FALSE);
+  dossetbuf(&config_file,16384);
+    dosfread(&ConfigFileVer,sizeof(ConfigFileVer),&config_file);
+    dosfread(&num_areas,sizeof(num_areas),&config_file);
+
+    while(this_area.PCB_Conference!=arearec)
+    {
+      if(dosfread(&this_area,sizeof(AREA_STRUCT),&config_file)!=sizeof(AREA_STRUCT))
+      {
+        dosfclose(&config_file);
+        return(FALSE);
+      }
+    }
+  dosfclose(&config_file);
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Copy all untossed messages to .PKT file.                                  */
+
+static void _NEAR_ pascal  copy_messages(int confnum,char *list)
+{
+long  highnum=0;
+long  lownum =0;
+
+  checkstack();
+  assert(stackavail() > 2000);
+  if((lownum=message.lowMsgNum())==-1L)
+    return;
+  if((highnum=message.highMsgNum())==-1L)
+    return;
+
+  if(MsgReadPtr[confnum]<lownum)
+    MsgReadPtr[confnum]=lownum;
+
+  for(;MsgReadPtr[confnum]<=highnum;MsgReadPtr[confnum]++)
+    {
+      if(message.readIdx(MsgReadPtr[confnum]) >= 0)
+        {
+          clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+          sprintf(messagebuff,"   Scanning message: %ld.              ",MsgReadPtr[confnum]);
+          fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+          if(message.idxRec.off<=0)
+            continue;
+          if(message.readHdr(message.idxRec.off)!=0)
+            continue;
+          if(message.msgHdr.echo!='E')
+          {
+            if(PcbData.FidoLogLevel >= 5) writeFidolog("Message not flagged for echo.",BLOCK);
+            continue;
+          }
+          if(confrec.PrivMsgs==FALSE)
+          {
+            if(message.msgHdr.status!=' ' && message.msgHdr.status!='-')
+            {
+              if(PcbData.FidoLogLevel >= 5) writeFidolog("Private message not exported.",BLOCK);
+              continue;
+            }
+          }
+          if(message.readBody(0)!=0)
+          {
+            if(PcbData.FidoLogLevel == 2 || PcbData.FidoLogLevel >= 5) writeFidolog("Could not read message body.",BLOCK);
+            continue;
+          }
+
+          if(memcmp(message.msgHdr.fname,SysopName,25)==0) getSysopNam(message.msgHdr.fname);
+
+          char tChrFrm,tChrTo;
+
+          // Null out last character in to and from fields so proper does not affect
+          // The subject field.
+
+          tChrFrm = message.msgHdr.fname[24];
+          tChrTo  = message.msgHdr.tname[24];
+
+          message.msgHdr.fname[24] = '\x0';
+          message.msgHdr.tname[24] = '\x0';
+          proper(message.msgHdr.fname);
+          proper(message.msgHdr.tname);
+          message.msgHdr.fname[24] = tChrFrm;
+          message.msgHdr.tname[24] = tChrTo;
+
+          transfer_msg_header();
+          if(transfer_body(list)==FALSE)
+            {
+              if(dupe==TRUE)
+                dupe=FALSE;
+              continue;
+            }
+
+          clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+          sprintf(messagebuff,"Transfered message: %ld.          ",MsgReadPtr[confnum]);
+          fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+          msg_count++;
+          pkt_count++;
+        }
+    }
+  if(msg_count!=0)
+    {
+      clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+      sprintf(messagebuff,"   %ld Msg(s)from area: %s.            ",msg_count,this_area.Area_Name);
+      fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+      stripright(messagebuff,' ');
+      if(PcbData.FidoLogLevel >= 2) writeFidolog(messagebuff,BLOCK);
+      msg_count=0;
+    }
+  else
+    {
+      clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+      sprintf(messagebuff,"No messages found to export in area: %s            ",this_area.Area_Name);
+      fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+      //stripright(messagebuff,' ');
+      //writeFidolog(messagebuff,BLOCK);
+    }
+  return;
+}
+
+/*****************************************************************************/
+/* Get Node record from the Config File.                                                                                                                                                 */
+/* Uses information in the this_area struct to see if it got the right one.  */
+
+static bool   _NEAR_ pascal  get_noderec(void)
+{
+unsigned int  i=0,zone=0,net=0,node=0,point=0;
+char          buffer[26],tmp[26];
+size_t        size=0;
+
+  checkstack();
+  memset(buffer,0,sizeof(buffer));
+  memset(tmp   ,0,sizeof(tmp));
+  assert(stackavail() > 2000);
+  assert(node_list != NULL);
+
+  maxstrcpy(buffer,UsersData.Name,sizeof(buffer));
+  size=(sizeof(buffer)-6);
+  memcpy(tmp,buffer+6,size);
+  fido_nodestr_to_int(tmp,&zone,&net,&node,&point);
+
+  for(i=0;i<node_count;i++)
+    {
+      memcpy(&this_node,&node_list[i],sizeof(NODE_T));
+      fido_nodestr_to_int(this_node.nodestr,(unsigned *)&this_node.zone,(unsigned *)&this_node.net,(unsigned *)&this_node.node,(unsigned *)&this_node.point);
+      if(this_node.zone==zone&&this_node.net==net&&this_node.node==node&&this_node.point==point)
+        return(TRUE);
+    }
+  return(FALSE);
+}
+
+/*****************************************************************************/
+/* Archive .PKT File.. if there is one for this node, add the PKT to the ZIP */
+
+static void _NEAR_ pascal  archive_pkt(void)
+{
+bool              found_node=FALSE;
+int               errorlevel=0;
+cNEWQ             queue;
+QUEUE_RECORD      queue_record;
+char              buffer[80],workfile[80],workbuf[80],params[100],arc[100];
+int               screen;
+struct dosdate_t  daterec;
+
+  checkstack();
+  memset(buffer  ,0,sizeof(buffer));
+  memset(workfile,0,sizeof(workfile));
+  memset(workbuf ,0,sizeof(workbuf));
+  memset(params  ,0,sizeof(params));
+  memset(&queue_record,0,sizeof(QUEUE_RECORD));
+  assert(stackavail() > 2000);
+  screen=memsavescreen();
+
+  if(netmail!=TRUE)
+    {
+
+      char   day[3];
+
+      int    fileNum = 0;
+
+      _dos_getdate(&daterec);
+      strcpy(day,weekdays[daterec.dayofweek]);
+
+      found_node=get_noderec();
+      strcpy(buffer,directory_info.outgoing_packets);
+      stripright(buffer,' ');
+      char fullName[100];
+      char destAddr[50];
+      char srcAddr[50];
+
+      if(dest_point==0 && orig_point == 0)
+      {
+        sprintf(fullName,"%s%04X%04X",directory_info.outgoing_packets,orig_net-dest_net,orig_node-dest_node);
+        sprintf(destAddr,"SYSOP@%d:%d/%d",dest_zone,dest_net,dest_node);
+        sprintf(srcAddr,"SYSOP@%d:%d/%d",orig_zone,orig_net,orig_node);
+      }
+      else
+      {
+        sprintf(fullName,"%s%04X%04X",directory_info.outgoing_packets,orig_net-dest_net,orig_node-dest_node-dest_point+orig_point);
+        sprintf(destAddr,"SYSOP@%d:%d/%d.%d",dest_zone,dest_net,dest_node,dest_point);
+        sprintf(srcAddr,"SYSOP@%d:%d/%d.%d",orig_zone,orig_net,orig_node);
+        if(orig_point != 0)
+        {
+            char pntBuf[10];
+            sprintf(pntBuf,".%d",orig_point);
+            strcat(srcAddr,pntBuf);
+        }
+      }
+
+      char pnt[10];
+      if(orig_point != 0)
+      {
+        sprintf(pnt,".%d",orig_point);
+        strcat(srcAddr,pnt);
+      }
+
+      makeUniqueFZipName(fullName);
+      maxstrcpy(workfile,findstartofname(fullName),sizeof(workfile));
+
+      sprintf(workbuf,"00000000.%s%d",day,fileNum);
+
+      assert(strlen(workfile) < sizeof(workfile));
+      assert(strlen(workbuf)  < sizeof(workbuf));
+
+      if(this_node.archiver_index!=-1)
+        {
+          if(strcmp(workfile,workbuf)!=0)
+            {
+              strcat(buffer,workfile);
+              assert(strlen(buffer) < sizeof(buffer));
+              if(found_node==TRUE)
+                {
+                  stripright(archiver_info.archivers[this_node.archiver_index],' ');
+                  stripright(archiver_info.archiver_switches[this_node.archiver_index],' ');
+                  sprintf(params,"%s %s %s",archiver_info.archiver_switches[this_node.archiver_index],buffer,pktname);
+                  assert(strlen(params) < sizeof(params));
+                  maxstrcpy(arc,archiver_info.archivers[this_node.archiver_index],sizeof(arc));
+
+                  // Make sure archiver is in the path
+                  if(strrchr(arc,'.') == NULL)
+                    strcat(arc,".EXE");
+                  if(srchpath(arc) == -1)
+                  {
+                     sprintf(messagebuff,"%s not found in path! Cannot archive.",arc);
+                     writeFidolog(messagebuff,BLOCK);
+                  }
+                  else
+                  {
+                    closemodem(FALSE);
+                    errorlevel=performshell(arc,params,SHELLDIRECT);
+                    reopenport();
+                    if(errorlevel !=0 )
+                    {
+                      sprintf(messagebuff,"Archiver failed, errorlevel: %d.",errorlevel);
+                      assert(strlen(messagebuff) < sizeof(messagebuff));
+                      fastprint(START_COL,STATUS_LINE,messagebuff,0x0d);
+                      writeFidolog(messagebuff,BLOCK);
+                    }
+                    else
+                    {
+                     cFIDOMSG MSG;
+                      if(PcbData.FidoCreateMsg) MSG.createFile(srcAddr,destAddr,buffer);
+                      unlink(pktname);
+                    }
+                  }
+                }
+              else
+                {
+                  stripright(archiver_info.archivers[0],' ');
+                  stripright(archiver_info.archiver_switches[0],' ');
+                  sprintf(params,"%s %s %s",archiver_info.archiver_switches[0],buffer,pktname);
+                  assert(strlen(params) < sizeof(params));
+                  maxstrcpy(arc,archiver_info.archivers[0],sizeof(arc));
+
+                  if(strrchr(arc,'.') == NULL)
+                    strcat(arc,".EXE");
+
+                  if(srchpath(arc)== -1)
+                  {
+                     sprintf(messagebuff,"%s not found in path! Cannot archive.",arc);
+                     writeFidolog(messagebuff,BLOCK);
+                  }
+                  else
+                  {
+                    closemodem(FALSE);
+                    errorlevel=performshell(arc,params,SHELLDIRECT);
+                    reopenport();
+                    if(errorlevel != 0)
+                    {
+                      sprintf(messagebuff,"Archiver failed, errorlevel: %d",errorlevel);
+                      assert(strlen(messagebuff) < sizeof(messagebuff));
+                      fastprint(START_COL,STATUS_LINE,messagebuff,0x0d);
+                      writeFidolog(messagebuff,BLOCK);
+                    }
+                    else
+                    {
+                     cFIDOMSG MSG;
+                      if(PcbData.FidoCreateMsg) MSG.createFile(srcAddr,destAddr,buffer);
+                      unlink(pktname);
+                    }
+                  }
+                }
+              if(errorlevel==0)
+                maxstrcpy(queue_record.filename,buffer,sizeof(queue_record.filename));
+              else
+                {
+                  sprintf(workfile,"%s%s",directory_info.outgoing_packets,pkt_name);
+                  assert(strlen(workfile) < sizeof(workfile));
+                  //TK_CopyFile(pktname,workfile);
+                  //unlink(pktname);
+                  movefile(pktname,workfile);
+                  maxstrcpy(pktname,workfile,sizeof(pktname));
+                  maxstrcpy(queue_record.filename,workfile,sizeof(queue_record.filename));
+                }
+
+              if(dest_point==0)
+                sprintf(queue_record.nodestr,"%u:%u/%u",dest_zone,dest_net,dest_node);
+              else
+                sprintf(queue_record.nodestr,"%u:%u/%u.%u",dest_zone,dest_net,dest_node,dest_point);
+
+              assert(strlen(queue_record.nodestr) < sizeof(queue_record.nodestr));
+              queue_record.flag=Q_KILLSENT|Q_NORMAL;
+              queue.addEntry(queue_record);
+            }
+        }
+      else
+        {
+
+          sprintf(workfile,"%s%s",directory_info.outgoing_packets,pkt_name);
+          sprintf(workbuf,"%s%s",directory_info.work_directory,pkt_name);
+          movefile(workbuf,workfile);
+          maxstrcpy(queue_record.filename,pktname,sizeof(queue_record.filename));
+
+          if(dest_point==0)
+            sprintf(queue_record.nodestr,"%u:%u/%u",dest_zone,dest_net,dest_node);
+          else
+            sprintf(queue_record.nodestr,"%u:%u/%u.%u",dest_zone,dest_net,dest_node,dest_point);
+
+          assert(strlen(queue_record.nodestr) < sizeof(queue_record.nodestr));
+          queue_record.flag=Q_KILLSENT|Q_NORMAL;
+          queue.addEntry(queue_record);
+        }
+      memrestorescreen(screen,FREESCREEN);
+    }
+  else
+    {
+      sprintf(workfile,"%s%s",directory_info.outgoing_packets,pkt_name);
+      sprintf(workbuf,"%s%s",directory_info.work_directory,pkt_name);
+      //TK_CopyFile(workbuf,workfile);
+      //unlink(workbuf);
+      movefile(workbuf,workfile);
+      maxstrcpy(pktname,workfile,sizeof(pktname));
+      maxstrcpy(queue_record.filename,workfile,sizeof(queue_record.filename));
+
+      if(dest_point==0)
+        sprintf(queue_record.nodestr,"%u:%u/%u",dest_zone,dest_net,dest_node);
+      else
+        sprintf(queue_record.nodestr,"%u:%u/%u.%u",dest_zone,dest_net,dest_node,dest_point);
+
+      queue_record.flag=Q_KILLSENT|Q_NORMAL;
+      queue.addEntry(queue_record);
+      memfreescreen(screen);
+    }
+  memfreescreen(screen);
+}
+
+/*****************************************************************************/
+/* Open .PKT File for this node.                                                                                                                                                                                 */
+
+static bool   _NEAR_ pascal  open_pkt_file(void)
+{
+struct time         timerec;
+struct dosdate_t    daterec;
+char                temp_file[100];
+
+  checkstack();
+  assert(stackavail() > 2000);
+
+  directory_info.work_directory[sizeof(directory_info.work_directory)-1]=NULL;
+  directory_info.outgoing_packets[sizeof(directory_info.outgoing_packets)-1]=NULL;
+
+  stripright(directory_info.work_directory,' ');
+  stripright(directory_info.outgoing_packets,' ');
+
+  _dos_getdate(&daterec);
+  gettime(&timerec);
+
+  while(1)
+    {
+      timerec.ti_sec++;
+
+      sprintf(pkt_name,"%02d%02d%02d%02X.PKT",daterec.day,timerec.ti_hour,timerec.ti_min,timerec.ti_sec);
+      assert(strlen(pkt_name) < sizeof(pkt_name));
+
+      sprintf(pktname,"%s%s",directory_info.work_directory,pkt_name);
+      sprintf(temp_file,"%s%s",directory_info.outgoing_packets,pkt_name);
+
+      assert(strlen(pktname) < sizeof(pktname));
+      assert(strlen(temp_file) < sizeof(temp_file));
+
+      if(fileexist(pktname)==255 && fileexist(temp_file)==255)
+        break;
+    }
+
+  if(dosfopen(pktname,OPEN_CREATE|OPEN_RDWR|OPEN_DENYWRIT,&pkt_file)==-1)
+    {
+      message.close();
+      dosfclose(&pkt_file);
+      return(FALSE);
+    }
+  return(TRUE);
+}
+
+/*****************************************************************************/
+/* Fill in the this_node structure for use in the program with netmail.      */
+
+static void _NEAR_ pascal  fill_in_node_struct(char *nodestr)
+{
+  checkstack();
+  assert(stackavail() > 2000);
+  assert(nodestr != NULL);
+  maxstrcpy(this_node.nodestr,nodestr,sizeof(this_node.nodestr));
+  fido_nodestr_to_int(nodestr,&this_node.zone,&this_node.net,
+                      &this_node.node,&this_node.point);
+
+  this_node.pkt_type=2;
+  this_node.archiver_index=-1;
+}
+
+/*****************************************************************************/
+/* Create outbound netmail messages                                          */
+
+static void _NEAR_ pascal  send_netmail(void)
+{
+static long    highnum=0;
+static long    lownum=0;
+bool           first,same,error;
+unsigned int   confnum=0,zone,net,node,point,i;
+char           *ptr=NULL;
+char           *tptr=NULL;
+char           nodestr[26],oldnode[26],tmpnode[26];
+char           to_buf[100];
+char           temp[100];
+bool           logged = FALSE;
+
+  checkstack();
+  assert(stackavail() > 2000);
+  cls();
+  first=TRUE;
+  netmail=TRUE;
+  same=FALSE;
+  error=FALSE;
+  msg_count=0;
+  zone=0;
+  net=0;
+  node=0;
+  point=0;
+  memset(nodestr,1,sizeof(nodestr));
+  memset(oldnode,0,sizeof(oldnode));
+  memset(to_buf,0,sizeof(to_buf));
+
+  if(get_area_record("NETMAIL")==FALSE)
+    {
+      sprintf(messagebuff,"Could not find config information for Netmail conference.");
+      fastprint(START_COL,STATUS_LINE,messagebuff,0x0d);
+      delay(18);
+      writeFidolog(messagebuff,BLOCK);
+      netmail=FALSE;
+      return;
+    }
+
+  confnum=this_area.PCB_Conference;
+  getconfrecord(confnum,&confrec);
+
+
+  //
+  if(confrec.Name[0] == '\x0' ||
+     confrec.MsgFile[0]  == '\x0' ||
+     message.open(confrec.MsgFile) != 0 ) return;
+
+  if((lownum=message.lowMsgNum())==-1)
+    {
+      netmail=FALSE;
+      message.close();
+      return;
+    }
+
+  if((highnum=message.highMsgNum())==-1)
+    {
+      netmail=FALSE;
+      message.close();
+      return;
+    }
+
+  if(confrec.ExportPtr<lownum)
+    confrec.ExportPtr=lownum;
+  else if(confrec.ExportPtr>highnum)
+    confrec.ExportPtr=highnum+1;
+  else
+    print_banner();
+
+  for(;confrec.ExportPtr<=highnum;confrec.ExportPtr++)
+    {
+      memset(&fido_msg_hdr,0,sizeof(fido_msg_hdr));
+      memset(temp,0,sizeof(temp));
+
+      same=FALSE;
+
+      if(message.readIdx(confrec.ExportPtr)==confrec.ExportPtr)
+        {
+          if(message.readHdr(message.idxRec.off)!=0)
+            continue;
+          if(message.readBody(0)!=0)
+            continue;
+
+          if(!logged)
+          {
+             writeFidolog("Beginning NETMAIL export.",BLOCK_START);
+             logged = TRUE;
+          }
+
+
+          // Replace From:Sysop with From:name
+          if(memcmp(message.msgHdr.fname,SysopName,25)==0)
+            getSysopNam(message.msgHdr.fname);
+
+          // Null out last character in to and from fields so proper does not affect
+          // The subject field.
+
+          char tChrFrm,tChrTo;
+
+          tChrFrm = message.msgHdr.fname[24];
+          tChrTo  = message.msgHdr.tname[24];
+
+          message.msgHdr.fname[24] = '\x0';
+          message.msgHdr.tname[24] = '\x0';
+          proper(message.msgHdr.fname);
+          proper(message.msgHdr.tname);
+          message.msgHdr.fname[24] = tChrFrm;
+          message.msgHdr.tname[24] = tChrTo;
+
+          memset(to_buf,0,sizeof(to_buf));
+          assert(sizeof(message.msgHdr.tname) <= sizeof(temp));
+          memcpy(temp,message.msgHdr.tname,sizeof(message.msgHdr.tname));
+          temp[sizeof(message.msgHdr.tname)]=NULL;
+          stripright(temp,' ');
+          maxstrcpy(to_buf,temp,sizeof(to_buf));
+
+
+
+          assert(sizeof(message.msgHdr.subj) <= sizeof(temp));
+          memcpy(temp,message.msgHdr.subj,sizeof(message.msgHdr.subj));
+          temp[sizeof(message.msgHdr.subj)]=NULL;
+          stripright(temp,' ');
+          maxstrcpy(fido_msg_hdr.Subject,temp,sizeof(fido_msg_hdr.Subject));
+
+
+          stripright(to_buf,' ');
+          check_netmail_str(to_buf,sizeof(to_buf));
+          if((ptr=strrchr(to_buf,'@'))!=NULL)
+            {
+
+              ptr++;
+              if((tptr=strchr(ptr,' '))!=NULL)
+                *tptr=NULL;
+              maxstrcpy(nodestr,ptr,sizeof(nodestr));
+              maxstrcpy(tmpnode,nodestr,sizeof(tmpnode));
+              fido_nodestr_to_int(tmpnode,&zone,&net,&node,&point);
+              if(tptr!=NULL)
+                *tptr=' ';
+
+              for(i=0;i<num_akas;i++)
+                {
+                  if(address[i].this_zone==zone &&
+                     address[i].this_net==net &&
+                     address[i].this_node==node &&
+                     address[i].this_point==point)
+
+                    same=TRUE;
+                }
+              if(same==TRUE)
+                continue;
+            }
+          else
+            {
+              while((ptr=message.getLine())!=NULL)
+              {
+                if(*ptr!=0x01)
+                {
+                  if(*ptr=='(')
+                  {
+                     ptr++;
+                     i=0;
+                     error=FALSE;
+                     while(*ptr!=')' && *ptr != LineSeparator && *ptr != '\x0')
+                     {
+                       if(*ptr==LineSeparator)
+                       {
+                         error=TRUE;
+                         break;
+                       }
+
+                       temp[i]=*ptr;
+                       i++;
+                       ptr++;
+                     }
+                     temp[i]=NULL;
+                     if(!strchr(temp,':') || !strchr(temp,'/') || *ptr == '\x0' || *ptr == LineSeparator)
+                       error = TRUE;
+                  }
+                  else
+                    error = TRUE;
+
+                  break;
+                 }
+              }
+              if(error==TRUE)
+                {
+                  clsbox(START_COL,MESSAGES,79,MESSAGES,0x00);
+                  sprintf(messagebuff,"Netmail Message #%ld not sent: Improperly addressed.",confrec.ExportPtr);
+                  fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+                  delay(18);
+                  writeFidolog(messagebuff,BLOCK);
+                  continue;
+                }
+              else
+                {
+                  maxstrcpy(nodestr,temp,sizeof(nodestr));
+                  strcat(to_buf,"@");
+                  strcat(to_buf,temp);
+                  fido_nodestr_to_int(temp,&zone,&net,&node,&point);
+                  for(i=0;i<num_akas;i++)
+                    {
+                      if(address[i].this_zone==zone &&
+                         address[i].this_net==net &&
+                         address[i].this_node==node &&
+                         address[i].this_point==point)
+
+                        same=TRUE;
+                    }
+                  if(same==TRUE)
+                    continue;
+                }
+            //check_netmail_str(to_buf,sizeof(to_buf));
+            }
+
+          if(first==TRUE || strcmp(nodestr,oldnode)!=0)
+            {
+              if(first!=TRUE)
+                {
+                  if(msg_count>0)
+                    {
+                      dosfwrite(zeros,2,&pkt_file);
+                      dosfclose(&pkt_file);
+                      add_netmail();
+                    }
+                  else
+                    {
+                      dosfclose(&pkt_file);
+                      unlink(pktname);
+                    }
+                }
+              if(open_pkt_file()==FALSE)
+                continue;
+
+              write_pkt_header(nodestr);
+              maxstrcpy(oldnode,nodestr,sizeof(oldnode));
+              first=FALSE;
+              msg_count=0;
+              direct=FALSE;
+              crash=FALSE;
+              hold=FALSE;
+            }
+
+          clsbox(START_COL,MESSAGES,79,MESSAGES,0x00);
+          sprintf(messagebuff,"Sending netmail to: %s.",nodestr);
+          fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+          writeFidolog(messagebuff,BLOCK);
+#ifdef MG
+          if(EnableMSG && !PcbData.FidoCreateMsg)
+          {
+            cFIDOMSG MSG;
+            msgheadertype hdr;
+            memcpy(&hdr,&message.msgHdr,sizeof(hdr));
+            if(!MSG.preventFile) MSG.MsgtoFile(message.msgHdr.number);
+            message.resetLine();
+          }
+#endif
+          if(transfer_netmail(to_buf,nodestr)==FALSE)
+            continue;
+          msg_count++;
+        }
+
+    }
+
+  if(msg_count>0)
+    {
+      dosfwrite(zeros,2,&pkt_file);
+      dosfclose(&pkt_file);
+      add_netmail();
+    }
+  else
+    {
+      dosfclose(&pkt_file);
+      unlink(pktname);
+    }
+  putconfrecord(this_area.PCB_Conference,&confrec);
+  if(logged)
+  {
+     writeFidolog("Ending NETMAIL export.",BLOCK_END);
+     logged = FALSE;
+  }
+  netmail=FALSE;
+  message.close();
+  return;
+}
+
+/*****************************************************************************/
+/* Add netmail packet to the queue.                                          */
+
+static void _NEAR_ pascal  add_netmail(void)
+{
+char          pktname[100];
+char          workfile[100];
+char          workbuf[100];
+QUEUE_RECORD  queue_record;
+cNEWQ         queue;
+
+  checkstack();
+  memset(&queue_record,0,sizeof(queue_record));
+
+  sprintf(workfile,"%s%s",directory_info.outgoing_packets,pkt_name);
+  sprintf(workbuf,"%s%s",directory_info.work_directory,pkt_name);
+  movefile(workbuf,workfile);
+  maxstrcpy(pktname,workfile,sizeof(pktname));
+  maxstrcpy(queue_record.filename,workfile,sizeof(queue_record.filename));
+
+  if(dest_point==0)
+    sprintf(queue_record.nodestr,"%u:%u/%u",dest_zone,dest_net,dest_node);
+  else
+    sprintf(queue_record.nodestr,"%u:%u/%u.%u",dest_zone,dest_net,dest_node,dest_point);
+
+  queue_record.flag=Q_KILLSENT|Q_NORMAL;
+
+  if(hold==TRUE)
+    {
+      queue_record.flag|=Q_HOLD;
+      queue_record.flag&=~Q_OUTBOUND;
+      queue_record.flag&=~Q_CRASH;
+      queue_record.flag&=~Q_NORMAL;
+    }
+  if(crash==TRUE)
+    {
+      queue_record.flag|=Q_CRASH;
+      queue_record.flag|=Q_OUTBOUND;
+      queue_record.flag&=~Q_HOLD;
+      queue_record.flag&=~Q_NORMAL;
+    }
+
+  if(!direct) re_route(queue_record.nodestr);
+  queue_record.readOnly = TRUE;
+  queue.addEntry(queue_record);
+  if(PcbData.FidoCreateMsg)
+  {
+    cFIDOMSG MSG;
+    char destAddr[50];
+    char srcAddr[50];
+    char tmp[10];
+    sprintf(destAddr,"SYSOP@%s",queue_record.nodestr);
+    sprintf(srcAddr,"SYSOP@%u:%u/%u",orig_zone,orig_net,orig_node);
+    if(orig_point != 0)
+    {
+      sprintf(tmp,".%u",orig_point);
+      strcat(srcAddr,tmp);
+    }
+    MSG.createFile(srcAddr,destAddr,queue_record.filename);
+  }
+}
+
+/*****************************************************************************/
+/* Transfer the header for Netmail messages. PCB->FIDO                       */
+
+static bool   _NEAR_ pascal  transfer_netmail(char *to_buf,char *nodestr)
+{
+char          nodebuf[26];
+char          *ptr=NULL;
+char          *tptr=NULL;
+char          tmp;
+char          temp[30];
+char          commands[30];
+unsigned int  net=0,node=0;
+
+  checkstack();
+  memset(nodebuf,0,sizeof(nodebuf));
+  assert(to_buf != NULL);
+  assert(stackavail() > 2000);
+
+  memset(fido_msg_hdr.DateTime,0x01,20);  // Can't have a bunch of NULLS in
+                                          // the message header, will look
+  fido_msg_hdr.Packet_Type=0x0002;        // like the end of the PKT.
+
+  if((ptr=strrchr(to_buf,'@'))!=NULL)
+    {
+      *ptr=NULL;
+      ptr++;
+      if((tptr=strchr(ptr,' '))!=NULL)
+        {
+          tmp=*tptr;
+          *tptr=NULL;
+          maxstrcpy(commands,tptr+1,sizeof(commands));
+          strupr(commands);
+          if(strstr(commands,"+D")!=NULL)
+            {
+
+                tempuseralloc(FALSE);
+                long userNum = finduser(strupr(message.msgHdr.fname));
+
+                char tChr;
+                tChr = message.msgHdr.fname[24];
+                message.msgHdr.fname[24] = '\x0';
+                proper(message.msgHdr.fname);
+                message.msgHdr.fname[24] = tChr;
+                if(userNum >=0)
+                {
+                  gettemprecord(userNum);
+                  if(TempData->SecurityLevel >= PcbData.FidoCrashSec)
+                  {
+                      direct=TRUE;
+                      if(msg_count>0)
+                        {
+                          dosfwrite(zeros,2,&pkt_file);
+                          dosfclose(&pkt_file);
+                          add_netmail();
+                        }
+                      else
+                        {
+                          dosfclose(&pkt_file);
+                          unlink(pktname);
+                        }
+                      open_pkt_file();
+                      write_pkt_header(nodestr);
+
+                  }
+                }
+                tempuserdealloc();
+            }
+          if(strstr(commands,"+C")!=NULL)
+          {
+           long userNum = 0;
+            tempuseralloc(FALSE);
+            strupr(message.msgHdr.fname);
+            if(memcmp(SysopName,message.msgHdr.fname,25) == 0)
+              userNum = 1;
+            else
+              userNum = finduser(strupr(message.msgHdr.fname));
+            proper(message.msgHdr.fname);
+            if(userNum >=1)
+            {
+              gettemprecord(userNum);
+              if(TempData->SecurityLevel >= PcbData.FidoCrashSec)
+                crash=TRUE;
+            }
+            tempuserdealloc();
+          }
+          if(strstr(commands,"+H")!=NULL)
+            hold=TRUE;
+        }
+      maxstrcpy(nodebuf,ptr,sizeof(nodebuf));
+      sprintf(UsersData.Name,"~FIDO~%s",nodebuf);
+      maxstrcpy(fido_msg_hdr.To_User,to_buf,sizeof(fido_msg_hdr.To_User));
+      if(tptr!=NULL)
+        *tptr=tmp;
+    }
+  else
+    return(FALSE);
+
+  fido_nodestr_to_int(nodebuf,NULL,&net,&node,NULL);
+  fido_msg_hdr.Orig_Node=address[matched_aka].this_node;
+  fido_msg_hdr.Dest_Node=node;
+  fido_msg_hdr.Orig_Net=address[matched_aka].this_net;
+  fido_msg_hdr.Dest_Net=net;
+  fido_msg_hdr.Attribute|=MSG_PRIVATE;
+  fido_msg_hdr.Msg_Cost=0;
+  translate_date(fido_msg_hdr.DateTime,message.msgHdr.dmsg,message.msgHdr.tmsg,sizeof(fido_msg_hdr.DateTime));
+
+  memcpy(temp,message.msgHdr.fname,sizeof(message.msgHdr.tname));
+  temp[sizeof(message.msgHdr.fname)]=NULL;
+  stripright(temp,' ');
+  maxstrcpy(fido_msg_hdr.From_User,temp,sizeof(fido_msg_hdr.From_User));
+
+  if(write_fido_message()==FALSE)
+    return(FALSE);
+
+  return(TRUE);
+}
+/*****************************************************************************/
+/* check for extended headers                                                                                                                                                                                    */
+
+static void _NEAR_ pascal  check_netmail_str(char *to,int to_len)
+{
+unsigned int  i,inc,inc_old,zone,net,node,point;
+char          *ptr;
+char          *tptr;
+char          tmp;
+char          Attach_file[14];
+char          Act_Attach_file[14];
+cNEWQ         queue;
+QUEUE_RECORD  queue_rec;
+char          hdr_buf[100];
+char          Source[100];
+char          tmpnode[40];
+char          Destination[100];
+bool          same=FALSE;
+
+  checkstack();
+  memset(hdr_buf,0,sizeof(hdr_buf));
+  memset(&queue_rec,0,sizeof(queue_rec));
+  memset(Attach_file,0,sizeof(Attach_file));
+  memset(Act_Attach_file,0,sizeof(Act_Attach_file));
+  memset(Source,0,sizeof(Source));
+  memset(Destination,0,sizeof(Destination));
+
+  assert(stackavail() > 2000);
+
+  if(message.getExtHdrs()!=0)
+    {
+      memset(hdr_buf,0,sizeof(hdr_buf));
+      message.getExtHdrs(ExtHdrFunctions[EXTHDR_SUBJECT],hdr_buf);
+      if(hdr_buf[0]!=0)
+        maxstrcpy(fido_msg_hdr.Subject,hdr_buf,sizeof(fido_msg_hdr.Subject));
+
+      memset(hdr_buf,0,sizeof(hdr_buf));
+      message.getExtHdrs(ExtHdrFunctions[EXTHDR_TO],hdr_buf);
+      if(hdr_buf[0]!=0)
+        maxstrcpy(to,hdr_buf,to_len);
+
+      if((ptr=strrchr(to,'@'))!=NULL)
+        {
+          ptr++;
+          if((tptr=strchr(ptr,' '))!=NULL)
+            *tptr=NULL;
+          maxstrcpy(tmpnode,ptr,sizeof(tmpnode));
+          fido_nodestr_to_int(tmpnode,&zone,&net,&node,&point);
+          if(tptr!=NULL)
+            *tptr=' ';
+
+          for(i=0;i<num_akas;i++)
+            {
+              if(address[i].this_zone==zone &&
+                 address[i].this_net==net &&
+                 address[i].this_node==node &&
+                 address[i].this_point==point)
+
+                same=TRUE;
+            }
+        }
+
+      if(same!=TRUE)
+        {
+          memset(hdr_buf,0,sizeof(hdr_buf));
+          message.getExtHdrs(ExtHdrFunctions[EXTHDR_ATTACH],hdr_buf);
+          if(hdr_buf[0]!=0)
+            {
+              inc=0;
+              while(1)     // Get attach filename according to PCBoard
+                {
+                  if(hdr_buf[inc++]==32)
+                    break;
+                }
+              memcpy(Attach_file,hdr_buf,inc-1); // Place in string
+              inc_old=inc+1;
+              while(1)
+                {
+                  if(hdr_buf[inc++]==32)    // Get filesize of file: Not needed, skipped.
+                    break;
+                }
+              inc_old=inc;
+              while(1)       // Get actual name of filename
+                {
+                  if(hdr_buf[inc++]==32)
+                    break;
+                }
+              memcpy(Act_Attach_file,hdr_buf+inc_old,inc-1-inc_old);
+              sprintf(Source,"%s%s",confrec.AttachLoc,Act_Attach_file);
+              directory_info.outgoing_packets[sizeof(directory_info.outgoing_packets)-1]=NULL;
+              stripright(directory_info.outgoing_packets,' ');
+              sprintf(Destination,"%s%s",directory_info.outgoing_packets,Attach_file);
+              TK_CopyFile(Source,Destination);
+              maxstrcpy(queue_rec.filename,Destination,sizeof(queue_rec.filename));
+              queue_rec.flag=Q_KILLSENT|Q_NORMAL;
+
+              if((ptr=strrchr(to,'@'))!=NULL)
+                {
+                  ptr++;
+                  maxstrcpy(queue_rec.nodestr,ptr,sizeof(queue_rec.nodestr));
+                  if((tptr=strchr(ptr,' '))!=NULL)
+                    {
+                      tmp=*tptr;
+                      *tptr=NULL;
+                    }
+                  if(tptr!=NULL)
+                    *tptr=tmp;
+                }
+
+              stripright(to,' ');
+              queue.addEntry(queue_rec);
+              maxstrcpy(fido_msg_hdr.Subject,findstartofname(Attach_file),sizeof(fido_msg_hdr.Subject));
+              fido_msg_hdr.Attribute|=MSG_FILEATT;
+            }
+        }
+    }
+}
+
+/*****************************************************************************/
+/* Copy PCBoard messages to Fido format.                                                                                                                                                 */
+
+bool pascal  copy_pcb_messages(void)
+{
+int               i=0,len=0;
+long              recno=0,offset=0;
+bool              files_open=FALSE;
+bool              abort = FALSE;
+char              *ptr,*list;
+int               screen;
+bool              beginLog   = FALSE;
+bool              loggedName = FALSE;
+char              userName[100];
+
+cNEWQ             Q;
+#ifdef MG
+  cFIDOMSG          MSG;
+#endif
+
+  checkstack();
+  list=NULL;
+  Q.scanQueue();
+  offset=0;
+  len=128;
+  screen=memsavescreen();
+  openlog();
+  files_open=FALSE;
+  assert(stackavail() > 2000);
+
+  init_users();
+
+  if(read_fido_config(NODE_RECS|ADDR_RECS)==FALSE)
+    {
+      writeFidolog("Could not read config file. Aborting.",BLOCK);
+      memfreescreen(screen);
+      de_init_users;
+      return(FALSE);
+    }
+
+  //initcommwindow(SHOW);
+  //showmodemdata("CHECKING FOR MAIL TO PROCESS...");
+  find_fido_rec(NULL,TRUE,TRUE,NULL);
+
+  send_netmail();
+#ifdef MG
+if(EnableMSG && !PcbData.FidoCreateMsg)
+{
+  MSG.start_at_1MSG();
+  MSG.preventFile = TRUE;
+  send_netmail();
+  MSG.preventFile = FALSE;
+}
+#endif
+
+
+
+  memset(pktname,0,sizeof(pktname));
+
+  // While there is a ~FIDO~ user
+  while(abort == FALSE && (recno=find_fido_rec(NULL,TRUE,FALSE,&offset))!=-1)
+    {
+      loggedName = FALSE;
+      get_fido_rec(recno);
+      ptr = strrchr(UsersData.Name,'~');
+      if(ptr)
+         maxstrcpy(userName,++ptr,sizeof(userName));
+      else
+         maxstrcpy(userName,UsersData.Name,sizeof(userName));
+
+      if(UsersData.DeleteFlag!=TRUE)
+        {
+          cls();
+          print_banner();
+          for(i=1;i<=PcbData.NumConf;i++)
+            {
+              if(i % 10 == 0 && kbdhit(NOBUFFER) == ESC_KEY)
+              {
+                 abort = TRUE;
+                 writeFidolog("Export aborted by user.",BLOCK);
+                 fastprint(0,STATUS_LINE+3,"",0x0f);
+                 abort = TRUE;
+                 if(list!=NULL)
+                 {
+                    free(list);
+                    list=NULL;
+                 }
+                 break;
+              }
+              sprintf(messagebuff,"Node   : %-1.20s  Scanning for mail in conference %d   ",userName,i);
+              fastprint(0,STATUS_LINE-1,messagebuff,0x0f);
+              if(isset(&ConfReg[REG],i) && isset(&ConfReg[USR],i))
+                {
+                  getconfrecord(i,&confrec);
+
+                  if(confrec.ConfType != FIDO_CONFERENCE || confrec.Name[0] == '\x0' || confrec.MsgFile[0] == '\x0') continue;
+
+                  //cMSG tmpMessage;
+
+                  if(fileexist(confrec.MsgFile) == 255) continue;
+/*
+                  if(UsersData.DateLastDirRead > DTA.ff_date) continue;
+
+                  if(UsersData.DateLastDirRead == DTA.ff_date)
+                  {
+                       long fileTime=((DTA.ff_ftime&0xF800) >> 11) * 60L * 60L +
+                       ((DTA.ff_ftime&0x07E0) >>  5) * 60L       +
+                       ((DTA.ff_ftime&0x001F)          ) *  2L);
+
+                       long userTime = (atoi(Users.LastTimeOn)*60)+
+                                        atoi(Users.LastTimeOn[3];
+                       if(fileTime < userTime) continue;
+                  }
+
+
+*/
+                  if(message.open(confrec.MsgFile) != 0)
+                  {
+                    if(list != NULL) free(list);
+                    sprintf(messagebuff,"Could not open message base %s,conf %d",confrec.MsgFile,i);
+                    writeFidolog(messagebuff,BLOCK);
+                    continue;
+                  }
+                  long hiMsgNum = message.highMsgNum();
+                  if(hiMsgNum != -1L)
+                  {
+                      if(hiMsgNum >= MsgReadPtr[i])
+                        {
+
+                         list=make_outbound_list(len,i);
+                         if(files_open!=TRUE)
+                         {
+                         if(open_pkt_file()==FALSE)
+                         {
+                           free(list);
+                           list=NULL;
+                           continue;
+                         }
+
+                         write_pkt_header(userName);
+                         files_open=TRUE;
+                  }
+                  if(get_area_number(i)==FALSE)
+                  {
+                      message.close();
+                      sprintf(messagebuff,"[%s] No FIDO config information for this conference.",confrec.Name);
+                      fastprint(START_COL,STATUS_LINE,messagebuff,0x0d);
+                      delay(18);
+                      writeFidolog(messagebuff,BLOCK);
+                      free(list);
+                      list=NULL;
+                      continue;
+                  }
+                  stripright(this_area.Area_Name,' ');
+                  if( (strcmpi(this_area.Area_Name,"NETMAIL")==0) ||
+                       (confrec.Name[0] == '\x0') ||
+                       (confrec.MsgFile[0]  == '\x0' ))
+                  {
+                    if(list)
+                    {
+                        free(list);
+                        list=NULL;
+                    }
+                    continue;
+                  }
+                      if(!beginLog)
+                      {
+                        sprintf(messagebuff,"Beginning FIDO Message Export");
+                        writeFidolog(messagebuff,BLOCK_START);  // should be done only if there is mail to export
+                        beginLog = TRUE;
+                      }
+                      if(!loggedName)
+                      {
+                        maxstrcpy(sendingTo,strrchr(UsersData.Name,'~')+1,sizeof(sendingTo));
+                        sprintf(messagebuff,"Exporting to node %s",sendingTo);
+                        writeFidolog(messagebuff,BLOCK);
+                        loggedName = TRUE;
+                      }
+                      print_banner();
+                      sprintf(messagebuff,"Exporting from area: %s              ",this_area.Area_Name);
+                      fastprint(START_COL,STATUS_LINE,messagebuff,0x0d);
+                      //writeFidolog(messagebuff,BLOCK);
+
+                      copy_messages(i,list);
+                      message.close();
+                    }
+                  else
+                    {
+                      MsgReadPtr[i]=hiMsgNum+1;
+                      message.close();
+                    }
+              }
+              if(list!=NULL)
+                {
+                  free(list);
+                  list=NULL;
+                }
+           }
+       }
+    }
+      if(pkt_count!=0)
+        {
+          dosfwrite(zeros,2,&pkt_file);
+          dosfclose(&pkt_file);
+          archive_pkt();
+          convertdatatoread(&UsersData,&UsersRead);
+          putuserrecord(IGNOREDIRTY);
+          pkt_count=0;
+          files_open=FALSE;
+        }
+      else
+        {
+          dosfclose(&pkt_file);
+          unlink(pktname);
+          files_open=FALSE;
+        }
+      convertdatatoread(&UsersData,&UsersRead);
+      putuserrecord(IGNOREDIRTY);
+    }
+  if(beginLog)
+  {
+    sprintf(messagebuff,"Ending FIDO Message Export");
+    writeFidolog(messagebuff,BLOCK_END);  // should be done only if there is mail to export
+    beginLog = FALSE;
+  }
+  closecallerlog();
+  resetuser();
+  if(list)
+  {
+    free(list);
+    list = NULL;
+  }
+  memrestorescreen(screen,FREESCREEN);
+  free_fido_memory();
+  de_init_users();
+  return(TRUE);
+}
+
+/****************************************************************************/
+/* This function determines what kind of archiver was used to compress the      */
+/* file specified by filename.                                                                                                                                                                                  */
+
+static int _NEAR_ pascal archiver_type(char *filename)
+{
+int             file_handle=0;
+char            testbuffer[5];
+
+  checkstack();
+  memset(testbuffer,0,sizeof(testbuffer));
+  assert(stackavail() > 2000);
+
+  if((file_handle=dosopen(filename,OPEN_READ|OPEN_DENYNONE))!=-1)
+    {
+    /* check for PKZIP signature            */
+
+      if(dosread(file_handle,testbuffer,2)!=-1)
+        {
+          if(testbuffer[0]=='P'&&testbuffer[1]=='K')
+            {
+              dosclose(file_handle);
+              return(ZIP_ARCH);
+            }
+        }
+      else
+        {
+          dosclose(file_handle);
+          return(ERROR);
+        }
+
+    /* check for ARJ signature      */
+
+      doslseek(file_handle,0L,SEEK_SET);
+      if(dosread(file_handle,testbuffer,2)!=-1)
+        {
+          if(testbuffer[0]==0x60&&testbuffer[1]==0xEA)
+            {
+              dosclose(file_handle);
+              return(ARJ_ARCH);
+            }
+        }
+      else
+        {
+          dosclose(file_handle);
+          return(ERROR);
+        }
+
+    /* check for ARC signature      */
+
+      doslseek(file_handle,0L,SEEK_SET);
+      if(dosread(file_handle,testbuffer,1)!=-1)
+        {
+          if(testbuffer[0]==0x1A)
+            {
+              dosclose(file_handle);
+              return(ARC_ARCH);
+            }
+        }
+      else
+        {
+          dosclose(file_handle);
+          return(ERROR);
+        }
+
+    /* check for LZH signature      */
+
+      doslseek(file_handle,3L,SEEK_SET);
+      if(dosread(file_handle,testbuffer,2)!=-1)
+        {
+          if(testbuffer[0]=='l'&&testbuffer[1]=='h')
+            {
+              dosclose(file_handle);
+              return(LZH_ARCH);
+            }
+        }
+      else
+        {
+          dosclose(file_handle);
+          return(ERROR);
+        }
+      dosclose(file_handle);
+      return(ARCH_UNKNOWN);
+    }
+  else
+    return(ERROR);
+}
+
+/*****************************************************************************/
+/* Read a String from the file. Stops on a NULL or when Limit is reached.        */
+
+static void _NEAR_ pascal  read_str(char *buffer,int limit,DOSFILE *file)
+{
+int     i=0,j=0,len=0,dif=0,length=0;
+char    buf[512];
+
+  checkstack();
+  j=0;
+  memset(buf,0,sizeof(buf));
+  assert(stackavail() > 2000);
+
+  while(1)
+    {
+      length=dosfread(buf,sizeof(buf),file);
+
+      for(i=0;i<sizeof(buf);i++,j++)
+        {
+          assert(i >= 0 && i < sizeof(buf));
+          assert(j >= 0 && j < sizeof(buf));
+          if(j==limit)
+            {
+              buffer[j]=NULL;
+              return;
+            }
+
+          if(buf[i]==NULL)
+            {
+              buffer[j]=buf[i];
+              len=strlen(buf);
+              dif=length-len;
+              dif--;
+              dosfseek(file,-dif,SEEK_CUR);
+              return;
+            }
+          else
+            buffer[j]=buf[i];
+        }
+    }
+}
+
+/****************************************************************************/
+/* This function unarchives filename                                        */
+
+static bool _NEAR_ pascal unarchive(char *filename,int type)
+{
+char    params[100];
+char    unarc[100];
+
+  checkstack();
+  memset(params,0,sizeof(params));
+  assert(stackavail() > 2000);
+
+  archiver_info.unarchivers[type][sizeof(archiver_info.unarchivers[type])-1]=NULL;
+  archiver_info.unarchiver_switches[type][sizeof(archiver_info.unarchiver_switches)-1]=NULL;
+  directory_info.work_directory[sizeof(directory_info.work_directory)-1]=NULL;
+
+  stripright(archiver_info.unarchivers[type],' ');
+  stripright(archiver_info.unarchiver_switches[type],' ');
+  stripright(directory_info.work_directory,' ');
+
+  maxstrcpy(unarc,archiver_info.unarchivers[type],sizeof(unarc));
+  sprintf(params,"%s %s %s",archiver_info.unarchiver_switches[type],filename,directory_info.work_directory);
+  assert(strlen(params) < sizeof(params));
+  closemodem(FALSE);
+  if(strrchr(unarc,'.') == NULL)
+    strcat(unarc,".EXE");
+  if(srchpath(unarc)== -1)
+    {
+      sprintf(messagebuff,"%s Not found in path. Cannot unarchive.",unarc);
+      writeFidolog(messagebuff,BLOCK);
+    }
+  else
+    {
+      if(performshell(unarc,params,SHELLDIRECT)==0)
+        {
+          reopenport();
+          return(TRUE);
+        }
+      else
+        {
+          reopenport();
+          return(FALSE);
+        }
+    }
+  return(FALSE);
+}
+
+/****************************************************************************/
+/* Look for files to toss. Unarchives found mail.                                                                                                       */
+
+static void _NEAR_ pascal  look_for_files(void)
+{
+int               i=0,type;
+struct find_t     file_block;
+char              filename[80],oldname[80],newname[80];
+int               screen;
+
+  checkstack();
+  memset(filename,0,sizeof(filename));
+  assert(stackavail() > 2000);
+  stripright(directory_info.incoming_packets,' ');
+
+
+  sprintf(filename,"%s*.PKT",directory_info.incoming_packets);
+  if(_dos_findfirst(filename,FA_ARCH|FA_NORMAL,&file_block)==0)
+    {
+      sprintf(oldname,"%s%s",directory_info.incoming_packets,file_block.name);
+      sprintf(newname,"%s%s",directory_info.work_directory,file_block.name);
+      //TK_CopyFile(oldname,newname);
+      //unlink(oldname);
+      movefile(oldname,newname);
+
+      while(_dos_findnext(&file_block)==0)
+        {
+          sprintf(oldname,"%s%s",directory_info.incoming_packets,file_block.name);
+          sprintf(newname,"%s%s",directory_info.work_directory,file_block.name);
+          //TK_CopyFile(oldname,newname);
+          //unlink(oldname);
+          movefile(oldname,newname);
+
+        }
+    }
+
+  for(i=0;i<7;i++)
+   {
+      sprintf(filename,"%s*.%s?",directory_info.incoming_packets,weekdays[i]);
+      assert(strlen(filename) < sizeof(filename));
+
+      if(_dos_findfirst(filename,FA_ARCH|FA_NORMAL,&file_block)==0)
+        {
+          if(file_block.size!=0)
+            {
+              print_banner();
+              banner_disp=FALSE;
+              strcpy(filename,directory_info.incoming_packets);
+              strcat(filename,file_block.name);
+              assert(strlen(filename) < sizeof(filename));
+              type=archiver_type(filename);
+              switch(type)
+                {
+                  case ZIP_ARCH:
+                  case ARC_ARCH:
+                  case ARJ_ARCH:
+                  case LZH_ARCH:
+                                  screen=memsavescreen();
+                                  if(unarchive(filename,type)==TRUE)
+                                    unlink(filename);
+                                  else
+                                    {
+                                      sprintf(oldname,"%s%s",directory_info.incoming_packets,file_block.name);
+                                      sprintf(newname,"%s%s",directory_info.bad_packets,file_block.name);
+                                      movefile(oldname,newname);
+                                      sprintf(messagebuff,"File: %s could not be unarchived. ",file_block.name);
+                                      writeFidolog(messagebuff,BLOCK);
+                                      sprintf(messagebuff,"File: %s moved to bad packets dir.",file_block.name);
+                                      writeFidolog(messagebuff,BLOCK);
+                                    }
+                                  memrestorescreen(screen,FREESCREEN);
+                                  break;
+
+                  case ARCH_UNKNOWN:
+                                      sprintf(oldname,"%s%s",directory_info.incoming_packets,file_block.name);
+                                      sprintf(newname,"%s%s",directory_info.work_directory,file_block.name);
+                                      movefile(oldname,newname);
+                                      sprintf(messagebuff,"File: %s could not be unarchived.",file_block.name);
+                                      writeFidolog(messagebuff,BLOCK);
+                                      sprintf(messagebuff,"File: %s moved to bad packets dir.",file_block.name);
+                                      writeFidolog(messagebuff,BLOCK);
+                                      break;
+                }
+              i--;            // Found one with this extension, look for another.
+            }
+        }
+    }
+}
+
+/*****************************************************************************/
+/* Scan buffer for the AREA: keyword... get it so we know what to do.                    */
+
+static char * _NEAR_ pascal get_area(char *buffer,char *areabuf)
+{
+char    *tptr=NULL,*ptr;
+assert(stackavail() > 2000);
+
+
+  checkstack();
+  if((tptr=strstr(buffer,"AREA:"))!=NULL)
+    {
+      tptr+=5;
+      if((ptr=strchr(tptr,'\x0D'))==NULL)
+        {
+          strcpy(areabuf,"NETMAIL");
+          return(areabuf);
+        }
+
+      *ptr=NULL;
+      strcpy(areabuf,tptr);
+      *ptr='\x0D';
+
+      if(isascii(areabuf[0]) && areabuf[0]!=' ')
+        return(areabuf);
+
+      strcpy(areabuf,"NETMAIL");
+      return(areabuf);
+    }
+  if( ( strstr(buffer,"\x0DSEEN-BY:") || strstr(buffer,"\x0D * ORIGIN:"))) strcpy(areabuf,"BAD");
+  else  strcpy(areabuf,"NETMAIL");
+  return(areabuf);
+}
+
+/*****************************************************************************/
+/* Toss a message into PCBoard                                                                                                                                                                                   */
+
+static void _NEAR_ pascal  toss_message(char *buffer,msgbasetype *MsgBase)
+{
+unsigned int        dpoint=0,tpoint=0;
+char                *ptr=NULL,*tptr=NULL;
+char                Date[10],Time[10],UserName[30],FromName[30],PcbSubj[30];
+char                ExtSubj[65],ExtFrom[65],ExtTo[65],fromaddress[25],toaddress[25];
+char                filebuf[100];
+bool                nm=FALSE,addr;
+msgheadertype       Header;
+
+  assert(stackavail() > 2000);
+  checkstack();
+  memset(Date    ,0,sizeof(Date));
+  memset(Time    ,0,sizeof(Time));
+  memset(UserName,0,sizeof(UserName));
+  memset(FromName,0,sizeof(FromName));
+  memset(PcbSubj ,0,sizeof(PcbSubj));
+  memset(ExtSubj ,0,sizeof(ExtSubj));
+  memset(ExtFrom ,0,sizeof(ExtFrom));
+  memset(ExtTo   ,0,sizeof(ExtTo));
+
+  // Prepare message body for pcboard message base.
+  // replace carraige returs with line separators etc...
+  prepBodyForPCB(buffer);
+
+  // Convert FIDO DATETIME to pcboard date and time formats
+  translate_date_time(fido_msg_hdr.DateTime,Date,Time);
+
+
+  maxstrcpy(UserName,fido_msg_hdr.To_User,sizeof(UserName));
+  maxstrcpy(FromName,fido_msg_hdr.From_User,sizeof(FromName));
+  maxstrcpy(PcbSubj,fido_msg_hdr.Subject,sizeof(PcbSubj));
+
+
+  // If there is a file attach then get the info and create an extended header
+  if(fido_msg_hdr.Attribute&MSG_FILEATT && !isEmptyMessage(buffer))
+  {
+   char filename[MAXFLEN];
+    maxstrcpy(filebuf,fido_msg_hdr.Subject,sizeof(filebuf));
+    if((ptr=strchr(filebuf,' '))!=NULL) *ptr=NULL;
+    sprintf(filename,"%s%s",directory_info.incoming_packets,filebuf);
+    createAttach(this_area.PCB_Conference,filename,FALSE);
+  }
+
+  // If the subject is too long create an extended header
+  if(strlen(fido_msg_hdr.Subject)>sizeof(PcbSubj))
+  {
+    maxstrcpy(ExtSubj,fido_msg_hdr.Subject,sizeof(ExtSubj));
+    buildextheader(EXTHDR_SUBJECT,ExtSubj,HDR_SUBJ);
+  }
+
+  if(strcmpi(this_area.Area_Name,"NETMAIL")==0)
+  {
+      nm=TRUE;
+      addr=FALSE;
+
+      // Search the message body for the INTL kludge line. If it is there then
+      // Retrieve the infomation
+      if((tptr=strstr(buffer,"\x01INTL"))!=NULL)
+      {
+        addr=TRUE;
+        getINTLinfo(buffer,toaddress,sizeof(toaddress),fromaddress,sizeof(fromaddress));
+        fido_nodestr_to_int(toaddress,NULL,NULL,NULL,&tpoint);
+        fido_nodestr_to_int(fromaddress,NULL,NULL,NULL,&dpoint);
+        sprintf(ExtTo,"%s-1.34@%-1.25s",fido_msg_hdr.To_User,toaddress);
+        sprintf(ExtFrom,"%-1.34s@%-1.25s",fido_msg_hdr.From_User,fromaddress);
+        proper(ExtTo);
+        proper(ExtFrom);
+        buildextheader(EXTHDR_FROM,ExtFrom,HDR_FROM);
+        buildextheader(EXTHDR_TO,ExtTo,HDR_TO);
+      }
+
+      if(addr==FALSE)
+      {
+        if(pkt_type==2)
+        {
+          if(tpoint==0)
+            sprintf(ExtTo  ,"%s@%u:%u/%u",fido_msg_hdr.To_User,fido_header_type2.DestZone,fido_msg_hdr.Dest_Net,fido_msg_hdr.Dest_Node);
+          else
+            sprintf(ExtTo  ,"%s@%u:%u/%u.%u",fido_msg_hdr.To_User,fido_header_type2.DestZone,fido_msg_hdr.Dest_Net,fido_msg_hdr.Dest_Node,tpoint);
+
+          if(dpoint==0)
+            sprintf(ExtFrom,"%s@%u:%u/%u",fido_msg_hdr.From_User,fido_header_type2.OrigZone,fido_msg_hdr.Orig_Net,fido_msg_hdr.Orig_Node);
+          else
+            sprintf(ExtFrom,"%s@%u:%u/%u.%u",fido_msg_hdr.From_User,fido_header_type2.OrigZone,fido_msg_hdr.Orig_Net,fido_msg_hdr.Orig_Node,dpoint);
+
+              assert(strlen(ExtFrom) < sizeof(ExtFrom));
+              assert(strlen(ExtTo) < sizeof(ExtTo));
+              buildextheader(EXTHDR_FROM,ExtFrom,HDR_FROM);
+              buildextheader(EXTHDR_TO,ExtTo,HDR_TO);
+        }
+        else if(pkt_type==1)
+        {
+
+           if(tpoint==0)
+             sprintf(ExtTo  ,"%s@%u:%u/%u",fido_msg_hdr.To_User,address[0].this_zone,fido_msg_hdr.Dest_Net,fido_msg_hdr.Dest_Node);
+           else
+             sprintf(ExtTo  ,"%s@%u:%u/%u.%u",fido_msg_hdr.To_User,address[0].this_zone,fido_msg_hdr.Dest_Net,fido_msg_hdr.Dest_Node,tpoint);
+
+           if(dpoint==0)
+             sprintf(ExtFrom,"%s@%u:%u/%u",fido_msg_hdr.From_User,address[0].this_zone,fido_msg_hdr.Orig_Net,fido_msg_hdr.Orig_Node);
+           else
+             sprintf(ExtFrom,"%s@%u:%u/%u.%u",fido_msg_hdr.From_User,address[0].this_zone,fido_msg_hdr.Orig_Net,fido_msg_hdr.Orig_Node,dpoint);
+
+           assert(strlen(ExtFrom) < sizeof(ExtFrom));
+           assert(strlen(ExtTo) < sizeof(ExtTo));
+           buildextheader(EXTHDR_FROM,ExtFrom,HDR_FROM);
+           buildextheader(EXTHDR_TO,ExtTo,HDR_TO);
+        }
+      }
+      tptr=buffer;
+  }
+  else if((tptr=strstr(buffer,"AREA:"))!=NULL && strcmpi(this_area.Area_Name,"BAD")!=0)
+  {
+      tptr+=5;
+      while(*tptr!=LineSeparator && *tptr != '\x0')
+        tptr++;
+      tptr++;
+  }
+
+  proper(UserName);
+  proper(FromName);
+  checkDateFormat(Date);
+  checkTimeFormat(Time);
+  if(nm==TRUE || confrec.PrivMsgs==TRUE || fido_msg_hdr.Attribute&MSG_PRIVATE)
+    makemsgheader(&Header,MSG_RCVR,strlen(tptr),Date,Time,UserName,0,0,
+                    "",' ',FromName,PcbSubj,"", TRUE);
+  else
+      makemsgheader(&Header,MSG_PBLC,strlen(tptr),Date,Time,UserName,0,0,
+                    "",' ',FromName,PcbSubj,"",TRUE);
+
+
+  if(!isEmptyMessage(tptr))
+  {
+    savetomsgbase(this_area.PCB_Conference,&confrec,MsgBase,&Header,tptr,0,0,/*capMsgInfo*/NULL);
+    if(EnableMSG && !PcbData.FidoCreateMsg)
+    {
+       cFIDOMSG MSG;
+       if(nm && !MSG.preventFile) MSG.MsgtoFile(lastMsgNum);
+    }
+  }
+  freehdrs();
+  addUMWF(fido_msg_hdr.To_User,this_area.PCB_Conference);
+  if(strcmpi(fido_msg_hdr.To_User,"AREAFIX")==0 && nm==TRUE)
+    handle_areafix(buffer,ExtTo,ExtFrom,MsgBase);
+}
+
+/******************************************************************************/
+/* Handle an AreaFix request.                                                 */
+
+static void _NEAR_ pascal  handle_areafix(char *buffer,char *to,char *from,msgbasetype *MsgBase)
+{
+bool          changed;
+char          *ptr;
+char          *tptr;
+char          *oldptr;
+long          recno;
+AREA_STRUCT   temp_area;
+DOSFILE       result_file;
+char          password[70];
+char          commands[70];
+char          temp[200];
+
+  checkstack();
+  memcpy(&temp_area,&this_area,sizeof(AREA_STRUCT));
+  sendlist=FALSE;
+  sendhelp=FALSE;
+  sendquery=FALSE;
+  sendunlink=FALSE;
+  changed=FALSE;
+
+  init_users();
+
+  find_fido_rec(NULL,TRUE,TRUE,NULL);
+
+  maxstrcpy(temp,from,sizeof(temp));
+  ptr=strrchr(temp,'@');
+  ptr++;
+
+  if(dosfopen(RESULT_FILE,OPEN_RDWR|OPEN_CREATE|OPEN_DENYRDWR,&result_file)==-1)
+    {
+      memcpy(&this_area,&temp_area,sizeof(AREA_STRUCT));
+
+      return;
+    }
+
+  if((recno=find_fido_rec(ptr,TRUE,FALSE,NULL))!=-1)
+    {
+      get_fido_rec(recno);
+      if((tptr=strchr(fido_msg_hdr.Subject,' '))!=NULL)
+        {
+          *tptr=NULL;
+          maxstrcpy(password,fido_msg_hdr.Subject,sizeof(password));
+          *tptr=' ';
+          maxstrcpy(commands,tptr,sizeof(commands));
+        }
+      else
+        maxstrcpy(password,fido_msg_hdr.Subject,sizeof(password));
+
+      UsersData.UserComment[sizeof(UsersData.UserComment)-1]=NULL;
+      stripright(UsersData.UserComment,' ');
+
+      if(strcmpi(UsersData.UserComment,password)==0)
+        {
+          oldptr=buffer;
+          while((ptr=strchr(oldptr,LineSeparator))!=NULL)
+            {
+              *ptr=NULL;
+              maxstrcpy(temp,oldptr,sizeof(temp));
+
+              if(strstr(temp,"---")!=NULL)
+                {
+                  *ptr=LineSeparator;
+                  break;
+                }
+
+              if(temp[0]!='*' && temp[0]!='\xFE')
+                process_areafix_command(temp,&changed,&result_file);
+
+              *ptr=LineSeparator;
+              oldptr=ptr;
+              oldptr++;
+            }
+        }
+      else
+        {
+          writeFidolog("AreaFix password was incorrect, aborting request.",BLOCK);
+          sprintf(temp,"Areafix password: %s is incorrect.",password);
+          dosfputs(temp,&result_file);
+          send_areafix_reply(to,from,&result_file,MsgBase);
+        }
+    }
+  //sprintf(temp,"\r\n--- PCBoard %s.%s\r\n",VERSION_MAJOR,VERSION_MINOR);
+  //dosfputs(temp,&result_file);
+  if(changed==TRUE)
+    send_areafix_reply(to,from,&result_file,MsgBase);
+  dosfclose(&result_file);
+
+  strupr(commands);
+  if((strstr(commands,"-L")!=NULL) || sendlist==TRUE)
+    {
+      if(dosfopen(RESULT_FILE,OPEN_RDWR|OPEN_CREATE|OPEN_DENYRDWR,&result_file)==-1)
+        {
+          memcpy(&this_area,&temp_area,sizeof(AREA_STRUCT));
+
+          return;
+        }
+      send_areafix_list(&result_file,TRUE,TRUE);
+      send_areafix_reply(to,from,&result_file,MsgBase);
+    }
+  dosfclose(&result_file);
+
+  if((strstr(commands,"-H")!=NULL) || sendhelp==TRUE)
+    {
+      char fileWPath[100];
+      strcpy(fileWPath,AREAFIX_HELP_FILE);
+      srchpath(fileWPath);
+      if(fileexist(fileWPath) != 255) TK_CopyFile(fileWPath,RESULT_FILE);
+      else writeFidolog("Areafix help file cannot be found.",BLOCK);
+
+      if(fileexist(fileWPath) == 255 || dosfopen(RESULT_FILE,OPEN_RDWR|OPEN_DENYRDWR,&result_file)==-1)
+        {
+          memcpy(&this_area,&temp_area,sizeof(AREA_STRUCT));
+
+          return;
+        }
+      send_areafix_reply(to,from,&result_file,MsgBase);
+    }
+  dosfclose(&result_file);
+
+  if((strstr(commands,"-Q")!=NULL) || sendquery==TRUE)
+    {
+      if(dosfopen(RESULT_FILE,OPEN_RDWR|OPEN_CREATE|OPEN_DENYRDWR,&result_file)==-1)
+        {
+          memcpy(&this_area,&temp_area,sizeof(AREA_STRUCT));
+
+          return;
+        }
+      send_areafix_list(&result_file,TRUE,FALSE);
+      send_areafix_reply(to,from,&result_file,MsgBase);
+    }
+  dosfclose(&result_file);
+
+  if((strstr(commands,"-U")!=NULL) || sendunlink==TRUE)
+    {
+      if(dosfopen(RESULT_FILE,OPEN_RDWR|OPEN_CREATE|OPEN_DENYRDWR,&result_file)==-1)
+        {
+          memcpy(&this_area,&temp_area,sizeof(AREA_STRUCT));
+
+          return;
+        }
+      send_areafix_list(&result_file,FALSE,TRUE);
+      send_areafix_reply(to,from,&result_file,MsgBase);
+    }
+  dosfclose(&result_file);
+
+  unlink(RESULT_FILE);
+
+  if(changed==TRUE)
+    {
+      convertdatatoread(&UsersData,&UsersRead);
+      putuserrecord(IGNOREDIRTY);
+    }
+  memcpy(&this_area,&temp_area,sizeof(AREA_STRUCT));
+}
+
+/******************************************************************************/
+/* Process the command for AreaFix.                                           */
+
+static void _NEAR_ pascal  process_areafix_command(char *command, bool *changed,DOSFILE *result_file)
+{
+char    temp[100];
+char    *ptr;
+char    *theCommand;
+
+  checkstack();
+  ptr = theCommand = command;
+  strupr(theCommand);
+
+  if(*theCommand != '-' && *theCommand  != '%' && *theCommand  != '+') ++theCommand ,++ptr;
+
+  switch(theCommand[0])
+    {
+      case  '-':
+                  if(get_area_record(theCommand+1)==TRUE)
+                    {
+                      if(isset(&ConfReg[REG],this_area.PCB_Conference) && isset(&ConfReg[USR],this_area.PCB_Conference))
+                        {
+                          unsetbit(&ConfReg[USR],this_area.PCB_Conference);
+                          sprintf(temp,"Removed: %s\r\n",this_area.Area_Name);
+                          dosfputs(temp,result_file);
+                          *changed=TRUE;
+                        }
+                    }
+                  break;
+
+      case  '%':
+                  if(strcmpi(theCommand+1,"LIST")==0)
+                    sendlist=TRUE;
+                  else if(strcmpi(theCommand+1,"HELP")==0)
+                    sendhelp=TRUE;
+                  else if(strcmpi(theCommand+1,"QUERY")==0)
+                    sendquery=TRUE;
+                  else if(strcmpi(theCommand+1,"UNLINKED")==0)
+                    sendunlink=TRUE;
+                  else if(strcmpi(theCommand+1,"+ALL")==0)
+                    areafix_activate_all(changed,result_file);
+                  else if(strcmpi(theCommand+1,"-ALL")==0)
+                    areafix_deactivate_all(changed,result_file);
+                  break;
+
+      case  '+':  ptr++;
+      default:
+                  if(get_area_record(ptr)==TRUE)
+                    {
+                      if(isset(&ConfReg[REG],this_area.PCB_Conference) && !isset(&ConfReg[USR],this_area.PCB_Conference))
+                        {
+                         pcbconftype crec;
+                          setbit(&ConfReg[USR],this_area.PCB_Conference);
+                          getconfrecord(this_area.PCB_Conference,&crec);
+                          message.open(crec.MsgFile);
+                          MsgReadPtr[this_area.PCB_Conference] = message.highMsgNum();
+                          message.close();
+
+                          sprintf(temp,"Added: %s\r\n",this_area.Area_Name);
+                          dosfputs(temp,result_file);
+                          *changed=TRUE;
+                        }
+                    }
+                    //MsgReadPtr[this_area.PCBConference] =
+                  break;
+    }
+}
+
+/******************************************************************************/
+/* Turn on ALL available echos for this node.                                 */
+
+static void _NEAR_ pascal  areafix_activate_all(bool *changed,DOSFILE *result_file)
+{
+DOSFILE   config_file;
+char      temp[100];
+int       i;
+
+  checkstack();
+  if(dosfopen(CONFIG_FILE,OPEN_READ|OPEN_DENYRDWR,&config_file)==-1)
+    return;
+
+  dosfread(&ConfigFileVer,sizeof(ConfigFileVer),&config_file);
+  dosfread(&num_areas,sizeof(num_areas),&config_file);
+
+  for(i=0;i<num_areas;i++)
+    {
+      if(dosfread(&this_area,sizeof(AREA_STRUCT),&config_file)!=sizeof(AREA_STRUCT))
+        {
+          dosfclose(&config_file);
+          return;
+        }
+
+      if(isset(&ConfReg[REG],this_area.PCB_Conference) && !isset(&ConfReg[USR],this_area.PCB_Conference))
+        {
+          setbit(&ConfReg[USR],this_area.PCB_Conference);
+          sprintf(temp,"Added: %s\r\n",this_area.Area_Name);
+          dosfputs(temp,result_file);
+          *changed=TRUE;
+        }
+    }
+}
+
+/******************************************************************************/
+/* Turn off ALL available echos for this node.                                */
+
+static void _NEAR_ pascal  areafix_deactivate_all(bool *changed,DOSFILE *result_file)
+{
+DOSFILE   config_file;
+char      temp[100];
+int       i;
+
+  checkstack();
+  if(dosfopen(CONFIG_FILE,OPEN_READ|OPEN_DENYRDWR,&config_file)==-1)
+    return;
+
+  dosfread(&ConfigFileVer,sizeof(ConfigFileVer),&config_file);
+  dosfread(&num_areas,sizeof(num_areas),&config_file);
+
+  for(i=0;i<num_areas;i++)
+    {
+      if(dosfread(&this_area,sizeof(AREA_STRUCT),&config_file)!=sizeof(AREA_STRUCT))
+        {
+          dosfclose(&config_file);
+          return;
+        }
+
+      if(isset(&ConfReg[REG],this_area.PCB_Conference) && isset(&ConfReg[USR],this_area.PCB_Conference))
+        {
+          unsetbit(&ConfReg[USR],this_area.PCB_Conference);
+          sprintf(temp,"Removed: %s\r\n",this_area.Area_Name);
+          dosfputs(temp,result_file);
+          *changed=TRUE;
+        }
+    }
+}
+
+/******************************************************************************/
+/* Send a reply to the other system telling them what areas the can access    */
+/* And what areas they are scanning.                                          */
+
+static void _NEAR_ pascal  send_areafix_list(DOSFILE *result_file,bool send_active,bool send_unactive)
+{
+DOSFILE   config_file;
+int       i;
+char      temp[100];
+
+  checkstack();
+  if(send_active==TRUE)
+    dosfputs("List of active areas. '*' denotes those you are active in.\r\n\r\n",result_file);
+  else
+    dosfputs("List of areas you are NOT active in.\r\n\r\n",result_file);
+
+  if(dosfopen(CONFIG_FILE,OPEN_READ|OPEN_DENYRDWR,&config_file)==-1)
+    return;
+
+  dosfread(&ConfigFileVer,sizeof(ConfigFileVer),&config_file);
+  dosfread(&num_areas,sizeof(num_areas),&config_file);
+
+  for(i=0;i<num_areas;i++)
+    {
+      if(dosfread(&this_area,sizeof(AREA_STRUCT),&config_file)!=sizeof(AREA_STRUCT))
+        {
+          dosfclose(&config_file);
+          return;
+        }
+
+      if(isset(&ConfReg[REG],this_area.PCB_Conference) && isset(&ConfReg[USR],this_area.PCB_Conference))
+        {
+          if(send_active==TRUE)
+            {
+              sprintf(temp,"*%s\r\n",this_area.Area_Name);
+              dosfputs(temp,result_file);
+            }
+        }
+
+      if(isset(&ConfReg[REG],this_area.PCB_Conference) && !isset(&ConfReg[USR],this_area.PCB_Conference))
+        {
+          if(send_unactive==TRUE)
+            {
+              sprintf(temp," %s\r\n",this_area.Area_Name);
+              dosfputs(temp,result_file);
+            }
+        }
+    }
+  sprintf(temp,"\r\n--- PCBoard %s.%s\r\n",VERSION_MAJOR,VERSION_MINOR);
+  dosfputs(temp,result_file);
+  dosfclose(&config_file);
+  return;
+}
+
+/******************************************************************************/
+/* Send a reply to the other system telling them what happened.               */
+
+static void _NEAR_ pascal  send_areafix_reply(char *to,char *from,DOSFILE *result_file,msgbasetype *MsgBase)
+{
+bool                        end;
+int                         buflen;
+int                         len,maxLen = 30000;
+int                         i;
+char                        *buffer=NULL;
+char                        *ptr;
+char                        Time[20];
+char                        date[20];
+char                        UserName[26];
+char                        FromName[26];
+char                        PcbSubj[26];
+struct time                 timerec;
+struct dosdate_t            daterec;
+char                        temp[50];
+char                        ExtSubj[61];
+char                        ExtFrom[61];
+char                        ExtTo[61];
+msgheadertype               Header;
+
+  checkstack();
+  _dos_getdate(&daterec);
+  gettime(&timerec);
+
+  fido_msg_hdr.Packet_Type=0x0002;
+
+  if(pkt_type==2)
+    {
+      fido_msg_hdr.Orig_Node=fido_header_type2.Dest_Node;
+      fido_msg_hdr.Dest_Node=fido_header_type2.Orig_Node;
+      fido_msg_hdr.Orig_Net=fido_header_type2.Dest_Node;
+      fido_msg_hdr.Dest_Net=fido_header_type2.Orig_Node;
+    }
+  else
+    {
+      fido_msg_hdr.Orig_Node=fido_header.Dest_Node;
+      fido_msg_hdr.Dest_Node=fido_header.Orig_Node;
+      fido_msg_hdr.Orig_Net=fido_header.Dest_Node;
+      fido_msg_hdr.Dest_Net=fido_header.Orig_Node;
+    }
+
+  fido_msg_hdr.Attribute=0;
+  fido_msg_hdr.Msg_Cost=0;
+
+  sprintf(Time,"%02d:%02d:%02d",timerec.ti_hour,timerec.ti_min,timerec.ti_sec);
+  sprintf(temp,"%d",daterec.year);
+  ptr=temp+2;
+  sprintf(date,"%02d-%02d-%s",daterec.month,daterec.day,ptr);
+  translate_date(fido_msg_hdr.DateTime,date,Time,sizeof(fido_msg_hdr.DateTime));
+
+  if((ptr=strrchr(from,'@'))!=NULL)
+    *ptr=NULL;
+
+  maxstrcpy(fido_msg_hdr.To_User,from,sizeof(fido_msg_hdr.To_User));
+  maxstrcpy(fido_msg_hdr.From_User,"AreaFix",sizeof(fido_msg_hdr.From_User));
+  maxstrcpy(fido_msg_hdr.Subject,"AreaFix request results.",sizeof(fido_msg_hdr.Subject));
+  *ptr='@';
+
+  dosfseek(result_file,0,SEEK_END);
+  dosfwrite(zeros,1,result_file);
+  dosrewind(result_file);
+  buffer=read_areafix_reply_body(&buflen,&end,result_file);
+
+  len=strlen(buffer);
+
+  if(len > maxLen)
+  {
+    dosfclose(result_file);
+    createAttach(this_area.PCB_Conference,RESULT_FILE,FALSE);
+    sprintf(buffer,"Areafix information in attached file.%c",LineSeparator);
+
+  }
+  else
+  {
+
+
+    for(i=0;i<len;i++)           // Translate Fido CR to PCB
+    {                          // And Strip LF.
+      if(buffer[i]==13)
+        buffer[i]=LineSeparator;
+      else if(buffer[i]==10)
+        {
+          memcpy(buffer+i,buffer+i+1,len-i);
+          len--;
+          i--;
+        }
+    }
+  }
+  if(pkt_type==2)
+    {
+      maxstrcpy(ExtFrom,to,sizeof(ExtFrom));
+      maxstrcpy(ExtTo,from,sizeof(ExtTo));
+      buildextheader(EXTHDR_FROM,ExtFrom,HDR_FROM);
+      buildextheader(EXTHDR_TO,ExtTo,HDR_TO);
+    }
+  else if(pkt_type==1)
+    {
+      maxstrcpy(ExtFrom,to,sizeof(ExtFrom));
+      maxstrcpy(ExtTo,from,sizeof(ExtTo));
+      buildextheader(EXTHDR_FROM,ExtFrom,HDR_FROM);
+      buildextheader(EXTHDR_TO,ExtTo,HDR_TO);
+    }
+
+  translate_date_time(fido_msg_hdr.DateTime,date,Time);
+  maxstrcpy(UserName,fido_msg_hdr.To_User,sizeof(UserName));
+  maxstrcpy(FromName,fido_msg_hdr.From_User,sizeof(FromName));
+  maxstrcpy(PcbSubj,fido_msg_hdr.Subject,sizeof(PcbSubj));
+
+  checkDateFormat(date);
+  checkTimeFormat(Time);
+  if(strlen(fido_msg_hdr.Subject)>sizeof(PcbSubj))
+    {
+      maxstrcpy(ExtSubj,fido_msg_hdr.Subject,sizeof(ExtSubj));
+      buildextheader(EXTHDR_SUBJECT,ExtSubj,HDR_SUBJ);
+    }
+
+  makemsgheader(&Header,
+                MSG_RCVR,
+                strlen(buffer),
+                date,
+                Time,
+                UserName,
+                0,
+                0,
+                "",
+                ' ',
+                FromName,
+                PcbSubj,
+                "",
+                TRUE);
+
+  char message[40];
+  strcpy(message,"Areafix information in attached file.");
+
+    savetomsgbase(this_area.PCB_Conference,&confrec,MsgBase,&Header,buffer,0,0,NULL);
+  freehdrs();
+  addUMWF(fido_msg_hdr.To_User,this_area.PCB_Conference);
+  if(buffer!=NULL)
+    {
+      free(buffer);
+      buffer=NULL;
+    }
+}
+
+/*****************************************************************************/
+/* Read in the Fido message body from the .PKT. Size buffer as required.     */
+
+static char * _NEAR_ pascal read_areafix_reply_body(int *buflen, bool *end,DOSFILE *file)
+{
+int     i=0,j=0,len=0,dif=0,length=0,blocks=0;
+char    *tempbuf=NULL,*buffer1=NULL;
+char    buf[2048];
+
+  checkstack();
+  assert(stackavail() > 2000);
+  j=0;
+
+  if((buffer1=(char *)malloc((*buflen)+1))==NULL)
+  {
+    writeFidolog("Could not allocate memory for areafix. ",BLOCK);
+    return(NULL);
+  }
+
+  memset(buf,0,sizeof(buf));
+  //memset(buffer1,0x20,*buflen);
+  memset(buffer1,0x00,*buflen);
+  memset(buffer1,0,1);
+
+  while(1)
+    {
+      length=dosfread(buf,sizeof(buf),file);
+
+      if(strlen(buffer1)+length > *buflen)
+        {
+          *buflen=strlen(buffer1)+length+128;
+          if((tempbuf=(char *)realloc(buffer1,(*buflen+1)))==NULL)
+            {
+              if(buffer1!=NULL)
+                {
+                  free(buffer1);
+                  buffer1=NULL;
+                  return(NULL);
+                }
+            }
+          else
+            buffer1=tempbuf;
+        }
+
+      for(i=0;i<sizeof(buf);i++)
+        {
+          if(buf[i]==NULL)
+            {
+              if(buf[i+1]==NULL && buf[i+2]==NULL)
+                *end=TRUE;
+              buffer1[j]=buf[i];
+              blocks=((strlen(buffer1)/128)) + (((strlen(buffer1)%128) != 0) ? 1 : 0);
+              buffer1[j]=0x20;
+              buffer1[blocks*128]=0;
+              len=strlen(buf);
+              assert(strlen(buf) < sizeof(buf));
+              dif=length-len;
+              dif--;
+              dosfseek(file,-dif,SEEK_CUR);
+              return(buffer1);
+            }
+          else
+            {
+              buffer1[j]=buf[i];
+              buffer1[++j]=0;
+            }
+        }
+    }
+
+}
+
+/*****************************************************************************/
+/* Read in the Fido message body from the .PKT. Size buffer as required.     */
+
+static char * _NEAR_ pascal read_fido_body(int *buflen, bool *end)
+{
+int     i=0,j=0,len=0,dif=0,length=0,blocks=0;
+int     oldBufLen = 0;
+char    *tempbuf=NULL,*buffer1=NULL;
+char    buf[2048];
+bool    noseek = FALSE;
+
+  checkstack();
+  assert(stackavail() > 2000);
+  j=0;
+
+  if((buffer1=(char *)malloc((*buflen)+1))==NULL)
+  {
+
+    writeFidolog("Could not allocate memory for read_fido_body. ",BLOCK);
+    return(NULL);
+  }
+
+  memset(buf,0,sizeof(buf));
+  memset(buffer1,0x20,*buflen);
+  memset(buffer1,0,1);
+
+  while(1)
+    {
+      length=dosfread(buf,sizeof(buf),&pkt_file);
+
+      if(strlen(buffer1)+length > *buflen)
+        {
+          oldBufLen = *buflen;
+          *buflen=strlen(buffer1)+length+128;
+
+          if(*buflen >= 30000)
+          {
+           // Message is too big. Seek to end of message and continue
+           char ch = ' ';
+            writeFidolog("Could not import message",BLOCK);
+            while(ch != '\x0') dosfread(&ch,1,&pkt_file);
+            buf[0] = '\x0';
+            noseek = TRUE;
+          }
+
+          if((tempbuf=(char *)realloc(buffer1,(*buflen+1)))==NULL)
+            {
+              if(buffer1!=NULL)
+                {
+                  free(buffer1);
+                  buffer1=NULL;
+                }
+              return(NULL);
+            }
+          else
+          {
+            memset(tempbuf+oldBufLen,0x20,(*buflen+1) - oldBufLen);
+            buffer1=tempbuf;
+          }
+        }
+
+      for(i=0;i<sizeof(buf);i++)
+        {
+          if(buf[i]==NULL)
+            {
+              if(buf[i+1]==NULL && buf[i+2]==NULL)
+                *end=TRUE;
+              buffer1[j]=buf[i];
+              blocks=((strlen(buffer1)/128)) + (((strlen(buffer1)%128) != 0) ? 1 : 0);
+              buffer1[j]=0x20;
+              buffer1[blocks*128]=0;
+              len=strlen(buf);
+              assert(strlen(buf) < sizeof(buf));
+              dif=length-len;
+              dif--;
+              // noseek means I'm already sitting at the end of the message body.
+              if(!noseek) dosfseek(&pkt_file,-dif,SEEK_CUR);
+              return(buffer1);
+            }
+          else
+            {
+              assert(j+1 < *buflen);
+              buffer1[j]=buf[i];
+              buffer1[++j]=0;
+            }
+        }
+
+      if(length < sizeof(buf))
+        {
+          if(buffer1!=NULL)
+            {
+              free(buffer1);
+              buffer1=NULL;
+            }
+          *end=TRUE;
+          return(NULL);
+        }
+    }
+}
+
+/*****************************************************************************/
+/* Toss the .PKT file into PCBoard.                                                                                                                                                              */
+
+bool  pascal  toss_packet(char *filename)
+{
+bool          once=FALSE;
+bool          end=FALSE;
+bool          result=FALSE;
+bool          update=FALSE;
+bool          cupdate=FALSE;
+bool          nobad=FALSE;
+//unsigned int  buflen=0;
+int           buflen=0;
+int           msgCnt = 1;
+unsigned long num=0;
+long          recno;
+char          *tptr;
+char          *buffer=NULL;
+char          areabuf[60],areabak[60];
+char          fname[20];
+char          addr[100];
+char          dest[100];
+msgbasetype   MsgBase;
+
+  checkstack();
+  once=FALSE;
+  netmail=FALSE;
+  assert(stackavail() > 2000);
+  end=FALSE;
+  num=1;
+  memset(areabuf,0,sizeof(areabuf));
+  memset(areabak,1,sizeof(areabak));
+  memset(&MsgBase,0,sizeof(MsgBase));
+
+  buflen=1024;
+
+  init_users();
+
+  fastprint(START_COL,STATUS_LINE,"Importing Messages.",0x0d);
+  clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+
+  if(dosfopen(filename,OPEN_DENYNONE|OPEN_RDWR,&pkt_file)==-1)
+  {
+
+    return(FALSE);
+  }
+
+  if(dosfread(&fido_header_type2,sizeof(fido_header_type2),&pkt_file)==-1)
+    {
+      dosfclose(&pkt_file);
+
+      return(FALSE);
+    }
+
+  if(fido_header_type2.CW!=SWAPBYTE(fido_header_type2.CWValid) || (fido_header_type2.CW==0 && fido_header_type2.CWValid==0))
+    {
+      pkt_type=1;
+      dosrewind(&pkt_file);
+      if(dosfread(&fido_header,sizeof(fido_header),&pkt_file)==-1)
+        {
+          dosfclose(&pkt_file);
+
+          return(FALSE);
+        }
+    }
+  else
+    pkt_type=2;
+
+  UsersData.SysopComment[sizeof(UsersData.SysopComment)-1]=NULL;
+  stripright(UsersData.SysopComment,' ');
+
+  if(pkt_type==2)
+    {
+      if(fido_header_type2.Orig_Net==-1)
+        fido_header_type2.Orig_Net=fido_header_type2.auxnet;
+
+      if(fido_header_type2.OrigPoint != 0)
+        sprintf(addr,"%u:%u/%u.%u",fido_header_type2.OrigZone,fido_header_type2.Orig_Net,fido_header_type2.Orig_Node,fido_header_type2.OrigPoint);
+      else
+        sprintf(addr,"%u:%u/%u",fido_header_type2.OrigZone,fido_header_type2.Orig_Net,fido_header_type2.Orig_Node);
+      if((recno=find_fido_rec(addr,FALSE,FALSE,NULL))!=-1)
+        {
+          get_fido_rec(recno);
+          if(UsersData.SysopComment[0]!=NULL && UsersData.SysopComment[0]!=' ')
+            {
+              UsersData.SysopComment[sizeof(UsersData.SysopComment)-1]=NULL;
+              stripright(UsersData.SysopComment,' ');
+              if(strncmpi(UsersData.SysopComment,fido_header_type2.Password,strlen(UsersData.SysopComment))!=0)
+                {
+                  dosfclose(&pkt_file);
+                  if((tptr=strrchr(filename,'\\'))!=NULL)
+                    maxstrcpy(fname,tptr+1,sizeof(fname));
+                  sprintf(dest,"%s%s",directory_info.bad_packets,fname);
+                  //TK_CopyFile(filename,dest);
+                  //unlink(filename);
+                  movefile(filename,dest);
+                  sprintf(messagebuff,"Packet file: %s has an invalid password.",fname);
+                  writeFidolog(messagebuff,BLOCK);
+                  sprintf(messagebuff,"Packet file: %s has been moved to bad packets dir.",fname);
+                  writeFidolog(messagebuff,BLOCK);
+                  if(buffer!=NULL)
+                    {
+                      free(buffer);
+                      buffer=NULL;
+                    }
+
+                  return(TRUE);
+                }
+            }
+        }
+    }
+  else if(pkt_type==1)
+    {
+      if(fido_header.Orig_Zone!=0)
+        sprintf(addr,"%u:%u/%u",fido_header.Orig_Zone,fido_header.Orig_Net,fido_header.Orig_Node);
+      else
+        sprintf(addr,"%u:%u/%u",address[0].this_zone,fido_header.Orig_Net,fido_header.Orig_Node);
+      if((recno=find_fido_rec(addr,FALSE,FALSE,NULL))!=-1)
+        {
+          get_fido_rec(recno);
+          if(UsersData.SysopComment[0]!=NULL && UsersData.SysopComment[0]!=' ')
+            {
+              UsersData.SysopComment[sizeof(UsersData.SysopComment)-1]=NULL;
+              stripright(UsersData.SysopComment,' ');
+              if(strncmpi(UsersData.SysopComment,fido_header.Password,strlen(
+              UsersData.SysopComment))!=0)
+                {
+                  dosfclose(&pkt_file);
+                  if((tptr=strrchr(filename,'\\'))!=NULL)
+                    maxstrcpy(fname,tptr+1,sizeof(fname));
+                  sprintf(dest,"%s%s",directory_info.bad_packets,fname);
+                  //TK_CopyFile(filename,dest);
+                  //unlink(filename);
+                  movefile(filename,dest);
+                  sprintf(messagebuff,"Packet file: %s has an invalid password.",fname);
+                  writeFidolog(messagebuff,BLOCK);
+                  sprintf(messagebuff,"Packet file: %s has been moved to bad packets dir.",fname);
+                  writeFidolog(messagebuff,BLOCK);
+                  if(buffer!=NULL)
+                    {
+                      free(buffer);
+                      buffer=NULL;
+                    }
+
+                  return(TRUE);
+                }
+            }
+        }
+    }
+
+    // This is so seenby can check it later.
+
+  if(PcbData.FidoEnableRouting && !(handle_routing(filename)))
+  {
+
+    return FALSE;
+  }
+
+  while(1)
+    {
+      if(dosfread(&fido_msg_hdr,FIDO_FIXED_SIZE,&pkt_file)!=FIDO_FIXED_SIZE)
+        break;
+
+      if(fido_msg_hdr.Packet_Type!=2)
+        break;
+      if(fido_msg_hdr.DateTime[18] == '\x0')
+      {
+        fido_msg_hdr.To_User[0] = fido_msg_hdr.DateTime[19];
+        read_str(&fido_msg_hdr.To_User[1],sizeof(fido_msg_hdr.To_User)-1,&pkt_file);
+      }
+      else
+        read_str(fido_msg_hdr.To_User,sizeof(fido_msg_hdr.To_User),&pkt_file);
+
+      read_str(fido_msg_hdr.From_User,sizeof(fido_msg_hdr.From_User),&pkt_file);
+      read_str(fido_msg_hdr.Subject,sizeof(fido_msg_hdr.Subject),&pkt_file);
+      if((buffer=read_fido_body(&buflen,&end))==NULL)
+        {
+          if(buffer!=NULL)
+            {
+              free(buffer);
+              buffer=NULL;
+            }
+
+          if(end!=TRUE)
+            {
+              fastprint(START_COL,STATUS_LINE,"Could not allocate memory. Aborting.                         ",0x0d);
+              delay(18);
+              writeFidolog("Could not allocate memory. Aborting.",BLOCK);
+            }
+          else
+            {
+              fastprint(START_COL,STATUS_LINE,"Unexpected end of packet. Jumping to next packet.            ",0x0d);
+              delay(18);
+              writeFidolog("Unexpected end of packet. Jumping to next packet.",BLOCK);
+              clsbox(START_COL,STATUS_LINE,80,STATUS_LINE,0x00);
+              if(update==TRUE)
+                {
+                  convertdatatoread(&UsersData,&UsersRead);
+                  putuserrecord(IGNOREDIRTY);
+                }
+
+              return(TRUE);
+            }
+          if(update==TRUE)
+            {
+              convertdatatoread(&UsersData,&UsersRead);
+              putuserrecord(IGNOREDIRTY);
+            }
+
+          return(FALSE);
+        }
+
+      get_area(buffer,areabuf);
+
+      if(strcmp(areabuf,areabak)!=0)
+        {
+          if(PcbData.FidoLogLevel >= 2)
+          {
+            if(areabak[0] == 1) sprintf(messagebuff,"%d messages imported to area %s.",msgCnt,areabuf);
+            else  sprintf(messagebuff,"%d messages imported to area %s.",msgCnt,areabak);
+            writeFidolog(messagebuff,BLOCK);
+          }
+          msgCnt = 0;
+          if(cupdate==TRUE)
+            {
+              cupdate=FALSE;
+              MsgReadPtr[conf]=MsgBase.Stats.HighMsgNum;
+              MsgReadPtr[conf]++;
+            }
+
+          if(once==TRUE)
+            closemessagebase(&MsgBase);
+          once=TRUE;
+          maxstrcpy(areabak,areabuf,sizeof(areabak));
+
+          if((result=get_area_record(areabuf))!=FALSE)
+            {
+              if(strcmpi(this_area.Area_Name,"NETMAIL")==0)
+                netmail=TRUE;
+              else
+                netmail=FALSE;
+            }
+          else
+            netmail=FALSE;
+
+          if(netmail==FALSE && recno==-1)
+            {
+              dosfclose(&pkt_file);
+              if((tptr=strrchr(filename,'\\'))!=NULL)
+                maxstrcpy(fname,tptr+1,sizeof(fname));
+              sprintf(dest,"%s%s",directory_info.bad_packets,fname);
+              //TK_CopyFile(filename,dest);
+              //unlink(filename);
+              movefile(filename,dest);
+              sprintf(messagebuff,"User record for node: %s can't be found.",addr);
+              writeFidolog(messagebuff,BLOCK);
+              sprintf(messagebuff,"Packet file: %s has been moved to bad packets dir.",fname);
+              writeFidolog(messagebuff,BLOCK);
+              if(buffer!=NULL)
+                {
+                  free(buffer);
+                  buffer=NULL;
+                }
+              if(update==TRUE)
+                {
+                  convertdatatoread(&UsersData,&UsersRead);
+                  putuserrecord(IGNOREDIRTY);
+                }
+
+              return(TRUE);
+            }
+
+          if(result==FALSE || (netmail==FALSE && !(/*isset(&ConfReg[USR],this_area.PCB_Conference) &&*/ isset(&ConfReg[REG],this_area.PCB_Conference))))
+            {
+              if(result==TRUE)
+                {
+                  sprintf(messagebuff,"Node: %s does not have access to conference: %s.",addr,areabuf);
+                  writeFidolog(messagebuff,BLOCK);
+                }
+
+              if(get_area_record("BAD")==FALSE)
+                {
+                  nobad=TRUE;
+                }
+              else
+                {
+                  nobad=FALSE;
+                  strcpy(areabuf,"BAD");
+                  strcpy(areabak,"BAD");
+                }
+            }
+          if(nobad==FALSE)
+            {
+              conf=this_area.PCB_Conference;
+              getconfrecord(conf,&confrec);
+              if(confrec.Name == '\x0' || fileexist(confrec.MsgFile) == 255 || openmessagebase(conf,&confrec,&MsgBase,RDWRLOCK)==-1)
+                {
+                  save_rest();
+                  dosfclose(&pkt_file);
+                  unlink(filename);
+                  sprintf(messagebuff,"Could not open message base for: %s",this_area.Area_Name);
+                  writeFidolog(messagebuff,BLOCK);
+                  if(buffer!=NULL)
+                    {
+                      free(buffer);
+                      buffer=NULL;
+                    }
+                  if(update==TRUE)
+                    {
+                      convertdatatoread(&UsersData,&UsersRead);
+                      putuserrecord(IGNOREDIRTY);
+                    }
+
+                  return(FALSE);
+                }
+              if(MsgBase.Stats.HighMsgNum==MsgReadPtr[conf]-1)
+                {
+                  update=TRUE;
+                  cupdate=TRUE;
+                }
+            }
+        }
+      clsbox(START_COL,MESSAGES,79,MESSAGES,0x00);
+
+      if(nobad==FALSE)
+        sprintf(messagebuff,"Importing message %ld to area: %s",num,this_area.Area_Name);
+      else
+        sprintf(messagebuff,"Throwing away message %ld. No BAD conference found.",num);
+
+      fastprint(START_COL,MESSAGES,messagebuff,0x0b);
+      num++;
+      msgCnt++;
+
+      if(nobad==FALSE)
+        toss_message(buffer,&MsgBase);
+
+      if(buffer!=NULL)
+        {
+          free(buffer);
+          buffer=NULL;
+        }
+      if(end==TRUE)
+        {
+          if(cupdate==TRUE)
+            {
+              cupdate=FALSE;
+              MsgReadPtr[conf]=MsgBase.Stats.HighMsgNum;
+              MsgReadPtr[conf]++;
+            }
+          break;
+        }
+    }
+  if(nobad==FALSE)
+    closemessagebase(&MsgBase);
+
+  sprintf(messagebuff,"%d messages imported from this packet.",num-1);
+  writeFidolog(messagebuff,BLOCK);
+  if(buffer!=NULL)
+    {
+      free(buffer);
+      buffer=NULL;
+    }
+  if(update==TRUE)
+    {
+      convertdatatoread(&UsersData,&UsersRead);
+      putuserrecord(IGNOREDIRTY);
+    }
+
+  return(TRUE);
+
+}
+
+/*****************************************************************************/
+/* Save the rest of the messages in the packet.                              */
+
+static void _NEAR_ pascal  save_rest(void)
+{
+DOSFILE             new_pkt;
+struct time         timerec;
+struct dosdate_t    daterec;
+int                 len;
+char                name[100],buffer[2048],fname[20];
+
+  checkstack();
+  memset(buffer,0,sizeof(buffer));
+  _dos_getdate(&daterec);
+  gettime(&timerec);
+
+  sprintf(fname,"%02d%02d%02d%02X.PKT",daterec.day,timerec.ti_hour,timerec.ti_min,timerec.ti_sec);
+  stripright(directory_info.work_directory,' ');
+  strcpy(name,directory_info.work_directory);
+  strcat(name,fname);
+
+  if(dosfopen(name,OPEN_CREATE|OPEN_RDWR|OPEN_DENYWRIT,&new_pkt)==-1)
+    {
+      dosfclose(&new_pkt);
+      return;
+    }
+
+  if(pkt_type==2)
+    {
+      if(dosfwrite(&fido_header_type2,sizeof(FIDO_PACKET_HEADER_TYPE2),&new_pkt)==-1)
+        {
+          dosfclose(&new_pkt);
+          return;
+        }
+    }
+  else if(pkt_type==1)
+    {
+      if(dosfwrite(&fido_header,sizeof(FIDO_PACKET_HEADER),&new_pkt)==-1)
+        {
+          dosfclose(&new_pkt);
+          return;
+        }
+    }
+
+  while(1)
+    {
+      len=dosfread(buffer,sizeof(buffer),&new_pkt);
+      dosfwrite(buffer,sizeof(buffer),&new_pkt);
+      if(len<sizeof(buffer))
+        break;
+    }
+  dosfclose(&new_pkt);
+}
+
+/*****************************************************************************/
+/* Toss all PKT files.                                                                                                                                                                                                                   */
+
+bool   pascal  toss_messages(void)
+{
+struct find_t     file_block;
+char              filename[80];
+int               screen;
+char     *        ptr = NULL;
+cNEWQ             Q;
+
+
+  checkstack();
+  Q.scanQueue();
+  banner_disp=TRUE;
+  memset(filename,0,sizeof(filename));
+  assert(stackavail() > 2000);
+
+  screen=memsavescreen();
+  cls();
+  initUMWF();
+
+  openlog();
+  if(read_fido_config(NODE_RECS|ADDR_RECS)==FALSE)
+    {
+      writeFidolog("Could not read config file. Aborting.",BLOCK);
+      memfreescreen(screen);
+      return(FALSE);
+    }
+
+  initcommwindow(SHOW);
+  showmodemdata("CHECKING FOR MAIL TO PROCESS...");
+
+  look_for_files();
+
+  directory_info.work_directory[sizeof(directory_info.work_directory)-1]=NULL;
+  stripright(directory_info.work_directory,' ');
+  sprintf(filename,"%s*.PKT",directory_info.work_directory);
+  assert(strlen(filename) < sizeof(filename));
+
+  bool logged = FALSE;
+  int i = 0;
+
+  FILEDATETIME  importFiles[NUM];
+  int numFiles = 0;
+
+  memset(importFiles,0,sizeof(FILEDATETIME)*NUM);
+  generateImportList(filename,importFiles,numFiles);
+
+  //if(_dos_findfirst(filename,FA_ARCH|FA_NORMAL,&file_block)==0)
+  for(i = 0;i<numFiles;i++)
+    {
+      if(!logged)
+      {
+        sprintf(messagebuff,"Beginning FIDO mail import.");
+        writeFidolog(messagebuff,BLOCK_START);
+        logged = TRUE;
+      }
+      if(banner_disp==TRUE)
+        {
+          print_banner();
+          banner_disp=FALSE;
+        }
+
+          if(importFiles[i].fName != '\x0') sprintf(filename,"%s%s",directory_info.work_directory,importFiles[i].fName);
+          else continue;
+          assert(strlen(filename) < sizeof(filename));
+
+          if(fileexist(filename) == 255)
+          {
+            sprintf(messagebuff,"%s does not exist.",file_block.name);
+            writeFidolog(messagebuff,BLOCK);
+            continue;
+          }
+          if(DTA.ff_fsize == 0)
+          {
+              sprintf(messagebuff,"%s is still being received.",file_block.name);
+              writeFidolog(messagebuff,BLOCK);
+              if(file_block.name != '\x0')
+              {
+                unlink(filename);
+              }
+              continue;
+          }
+          if(toss_packet(filename)==FALSE)
+            {
+              dosfclose(&pkt_file);
+              doUMWF();
+              resetUMWF();
+
+              ptr=strrchr(filename,'\\');
+
+              if(ptr!=NULL)
+                ptr++;
+              else
+                ptr=filename;
+
+              sprintf(messagebuff,"Could not import packet %s. Moved to BAD dir.",ptr);
+              writeFidolog(messagebuff,BLOCK);
+              char badDir[MAXFLEN];
+              maxstrcpy(badDir,directory_info.bad_packets,sizeof(badDir)-13);
+              strcat(badDir,ptr);
+              movefile(filename,badDir);
+              //closecallerlog();
+              //resetuser();
+              //memrestorescreen(screen,FREESCREEN);
+              //if(logged) writeFidolog("Ending message import.",BLOCK_END);
+              //return(FALSE);
+              continue;
+
+            }
+          else
+            {
+              clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+              fastprint(START_COL,MESSAGES,"Done.",0x0e);
+
+              sprintf(messagebuff,"Packet %s imported.",findstartofname(filename));
+
+              writeFidolog(messagebuff,BLOCK);
+              dosfclose(&pkt_file);
+              unlink(filename);
+            }
+/*
+      while(_dos_findnext(&file_block)==0)
+        {
+          if(file_block.size==0L)
+            {
+              sprintf(messagebuff,"%s%s is still being received.",directory_info.work_directory,file_block.name);
+              writeFidolog(messagebuff,BLOCK);
+              //unlink(messagebuff);
+              continue;
+            }
+          else
+            {
+              sprintf(filename,"%s%s",directory_info.work_directory,file_block.name);
+              assert(strlen(filename) < sizeof(filename));
+              sprintf(messagebuff,"Tossing packet: %s",file_block.name);
+              writeFidolog(messagebuff,BLOCK);
+
+              if(kbdhit(NOBUFFER) == 0x1B || toss_packet(filename)==FALSE)
+                {
+                  dosfclose(&pkt_file);
+                  doUMWF();
+                  resetUMWF();
+
+                  sprintf(messagebuff,"Could not import packet %s.",findstartofname(filename));
+                  writeFidolog(messagebuff,BLOCK);
+                  closecallerlog();
+                  resetuser();
+                  memrestorescreen(screen,FREESCREEN);
+                  if(logged) writeFidolog("Ending message import.",BLOCK_END);
+                  de_nit_users();
+                  return(FALSE);
+                }
+              else
+                {
+                  clsbox(START_COL,MESSAGES,78,MESSAGES,0x00);
+                  fastprint(START_COL,MESSAGES,"Done.",0x0e);
+                  sprintf(messagebuff,"Packet %s imported.",findstartofname(filename));
+                  writeFidolog(messagebuff,BLOCK);
+                  dosfclose(&pkt_file);
+                  unlink(filename);
+                }
+            }
+        }
+*/
+    }
+  if(i == 0)
+  {
+    initcommwindow(SHOW);
+    showmodemdata(" NO PACKETS TO IMPORT...");
+  }
+  free_fido_memory();
+  doUMWF();
+  resetUMWF();
+  if(i>0) writeFidolog("Ending message import.",BLOCK_END);
+  closecallerlog();
+  resetuser();
+  memrestorescreen(screen,FREESCREEN);
+  de_init_users();
+  return(TRUE);
+}
+
+static int _NEAR_ pascal handle_routing(char * filename)
+{
+    char znnBuf[25];
+    char srcDir[55],destDir[55];
+    char *chPtr1;
+    cNEWQ Q;
+    QUEUE_RECORD q_rec;
+    int i;
+
+    checkstack();
+    memset(&q_rec,0,sizeof(QUEUE_RECORD));
+    memset(&znnBuf,49,sizeof(znnBuf));
+    chPtr1 = filename;
+    //strip out any path info
+    if( (chPtr1 = strrchr(filename,'\\')) != NULL) ++chPtr1;
+
+    switch(pkt_type)
+    {
+       case 1:
+          // See if this packet is for me. Check all akas.
+          // If it's for me then return TRUE and continue processing
+          sprintf(znnBuf,"*:%u/%u ",fido_header.Dest_Net, fido_header.Dest_Node);
+          for(i=0;i<num_akas;i++)
+          {
+            if(address[i].this_net == fido_header.Dest_Net && address[i].this_node ==fido_header.Dest_Node )
+            //if(match_address(address[i],znnBuf)
+              return TRUE;
+          }
+
+          break;
+       case 2:
+//          sprintf(znnBuf,"%u:%u/%u",fido_header_type2.Dest_Zone,fido_header_type2.Dest_Net, fido_header_type2.Dest_Node);
+          sprintf(znnBuf,"%u:%u/%u",fido_header_type2.DestZone,fido_header_type2.Dest_Net, fido_header_type2.Dest_Node);
+
+          for(i=0;i<num_akas;i++)
+          {
+            if(address[i].this_zone == fido_header_type2.Dest_Zone && address[i].this_net == fido_header_type2.Dest_Net && address[i].this_node ==fido_header_type2.Dest_Node )
+            //if(match_address(address[i],znnBuf)
+              return TRUE;
+          }
+
+          break;
+       default:
+          return TRUE;
+    }
+
+    // If it's not for me see if I can route it
+    char destAddress[50];
+    maxstrcpy(destAddress,znnBuf,sizeof(destAddress));
+    long flags = get_event_info(znnBuf);
+    if(flags & ALLOW_ROUTE)
+    {
+        // If I can then add it to the master queue and retrun FALSE
+        // copy file into outbound dir
+        //sprintf(srcDir,"%s%s",directory_info.incoming_packets,filename);
+        //sprintf(destDir,"%s%s",directory_info.outgoing_packets,filename);
+        sprintf(srcDir,"%s",filename);
+        sprintf(destDir,"%s%s",directory_info.outgoing_packets,findstartofname(filename));
+        dosfclose(&pkt_file);
+        //TK_CopyFile (srcDir, destDir);
+        //unlink(srcDir);
+        movefile(srcDir, destDir);
+        //dosfopen(pktname,OPEN_CREATE|OPEN_RDWR|OPEN_DENYWRIT,&pkt_file);
+        // Fill in structure.
+        maxstrcpy(q_rec.filename,destDir,sizeof(q_rec.filename));
+        maxstrcpy(q_rec.nodestr,znnBuf,sizeof(q_rec.nodestr));
+        re_route(q_rec.nodestr);
+        q_rec.flag = (Q_KILLSENT | Q_NORMAL);
+        Q.addEntry(q_rec);
+        sprintf(messagebuff,"Routing file:%s for %s to %s.",findstartofname(q_rec.filename),destAddress,q_rec.nodestr);
+        writeFidolog(messagebuff,BLOCK);
+        return FALSE;
+    }
+    // If I can't then write to log and return FALSE
+    else
+    {
+        sprintf(messagebuff,"Cannot route file %s for %s to address %s.",chPtr1,destAddress,znnBuf);
+        writeFidolog(messagebuff,BLOCK);
+        // Mark as hold.
+        sprintf(srcDir,"%s",filename);
+        sprintf(destDir,"%s%s",directory_info.outgoing_packets,findstartofname(filename));
+        dosfclose(&pkt_file);
+        //TK_CopyFile (srcDir, destDir);
+        //unlink(srcDir);
+        movefile(srcDir, destDir);
+      //  dosfopen(pktname,OPEN_CREATE|OPEN_RDWR|OPEN_DENYWRIT,&pkt_file);
+        maxstrcpy(q_rec.filename, destDir,sizeof(q_rec.filename));
+        strcpy(q_rec.nodestr,znnBuf);
+        re_route(q_rec.nodestr);
+        q_rec.flag = Q_KILLSENT | Q_HOLD;
+        Q.addEntry(q_rec);
+        return FALSE;
+    }
+}
+
+static void _NEAR_ pascal prepBodyForPCB(char * body)
+{
+
+char *p,*ptr,*end,*tptr;
+char temp[100],oldchar;
+int  i=0,len=0;
+long tmplen=0;
+
+
+  stripright(body,' ');
+  len=strlen(body);
+
+  // Convert carraige returns (hard and soft) to PCBoard line seperators
+  for(i=0;i<=len;i++)
+  {
+    if(body[i]==13 || body[i]==0x8D) body[i]=LineSeparator;
+    else if(body[i]==10)
+    {
+      memcpy(body+i,body+i+1,len-i);
+      len--;
+      i--;
+    }
+  }
+
+  p=ptr=body;
+  len=strlen(body);
+  sprintf(temp,"%cSEEN-BY:",LineSeparator);
+
+  //Insert a CTRL-A infront of all seenby lines
+  while((p=strstr(ptr,temp))!=NULL)
+  {
+      p++;
+      memmove(p+1,p,(len-(int)(p-body))+1);
+      len++;
+      *p=0x01;
+      p+=5;
+      ptr=p;
+  }
+
+  ptr=body;
+  tptr=body;
+  end=body+strlen(body);
+
+  if(strchr(body,LineSeparator)==NULL)
+  {
+    end++;
+    *(end)=LineSeparator;
+    *(end+1)=NULL;
+  }
+
+  while(1)
+  {
+    if((p=strchr(tptr,LineSeparator))==NULL)
+    {
+      if((p=strchr(tptr,NULL))==NULL) break;
+    }
+
+    tptr=p;
+    tmplen=tptr-ptr;
+    if(tmplen>80)
+    {
+      oldchar=*tptr;
+      *tptr=NULL;
+      if(strchr(ptr,0x01)!=NULL || strchr(ptr,0x1B)!=NULL || strstr(ptr,"@X")!=NULL)
+      {
+         *tptr=oldchar;
+         tptr++;
+         ptr=tptr;
+         continue;
+      }
+      else
+         *tptr=oldchar;
+
+      for(p=ptr+80;p>=ptr;p--)
+      {
+          if(*p==0x20)
+          {
+             *p=LineSeparator;
+             p++;
+             ptr=p;
+             tptr=p;
+             break;
+          }
+      }
+      if(p<ptr)
+      {
+         p=ptr+80;
+         memmove(p+1,p,strlen(p)+1);
+         *p=LineSeparator;
+         p++;
+         ptr=p;
+         tptr=p;
+      }
+    }
+    else if(tptr>=end)  break;
+    else
+    {
+      tptr++;
+      ptr=tptr;
+    }
+  }//While
+
+}
+
+
+
+/****************************************************************************/
+/* Init the user structure. Contains all the Fido user record index         */
+/* enteries for quick lookup of the Fido user records.                      */
+
+void pascal  init_users(void)
+{
+char        path[100];
+IndexType   index;
+IndexType2  index2;
+char        searchfld[26];
+DOSFILE     ndxfile;
+int         searchlen;
+int         num=0;
+static bool usersinitialized = FALSE;
+
+  checkstack();
+  if(usersinitialized) return;
+  usersinitialized = TRUE;
+
+  memset(users,0,sizeof(users));
+
+  maxstrcpy(path,PcbData.NdxLoc,sizeof(path)-9);
+  strcat(path,"PCBNDX.Z");
+
+  if(dosfopen(path,OPEN_READ|OPEN_DENYNONE,&ndxfile)==-1)
+    {
+      writeFidolog("Could not open FIDO user index.",BLOCK);
+      return;
+    }
+
+  strcpy(searchfld,"~FIDO~");
+  searchlen=strlen(searchfld);
+
+  while(1)
+    {
+      if(BigNdx)
+        {
+
+          if(dosfread(&index2,sizeof(index2),&ndxfile)!=sizeof(index2))
+            break;
+          index2.UserName[sizeof(index2.UserName)-1]=NULL;
+          stripright(index2.UserName,' ');
+
+          if(memcmp(index2.UserName,searchfld,searchlen)==0)
+            {
+              maxstrcpy(users[num].name,index2.UserName,sizeof(users[num].name));
+              users[num].num=index2.UserRec;
+              num++;
+              if(num == MAX_FIDO_USERS) break;
+            }
+        }
+      else
+        {
+          if(dosfread(&index,sizeof(index),&ndxfile)!=sizeof(index))
+            break;
+          index.UserName[sizeof(index.UserName)-1]=NULL;
+          stripright(index.UserName,' ');
+
+          if(memcmp(index.UserName,searchfld,searchlen)==0)
+            {
+              maxstrcpy(users[num].name,index.UserName,sizeof(users[num].name));
+              users[num].num=index.UserRec;
+              num++;
+              if(num == MAX_FIDO_USERS) break;
+            }
+        }
+    }
+  dosfclose(&ndxfile);
+}
+
+#endif

@@ -1,0 +1,1126 @@
+!define BLANK ""
+d:\tc\new\watcom\crc-16f.obj : d:\tc\new\fido\crc-16f.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\crc-16f.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\fconfig.obj : d:\tc\new\fido\fconfig.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\fconfig.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\fidofunc.obj : d:\tc\new\fido\fidofunc.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\fidofunc.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\fidomenu.obj : d:\tc\new\fido\fidomenu.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\fidomenu.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\hex.obj : d:\tc\new\fido\hex.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\hex.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new\so&
+urce;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;d:\&
+tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -dBI&
+GNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIPOR&
+T -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -o&
+t -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\recemsi.obj : d:\tc\new\fido\recemsi.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\recemsi.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\recwazoo.obj : d:\tc\new\fido\recwazoo.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\recwazoo.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\tossmisc.obj : d:\tc\new\fido\tossmisc.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\tossmisc.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\xmitemsi.obj : d:\tc\new\fido\xmitemsi.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\xmitemsi.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\ANSI.obj : d:\tc\new\source\ANSI.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\ANSI.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\blt.obj : d:\tc\new\source\blt.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\blt.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new\&
+source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;d&
+:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -d&
+BIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIP&
+ORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq &
+-ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\CALLWAIT.obj : d:\tc\new\source\CALLWAIT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\CALLWAIT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\capture.obj : d:\tc\new\source\capture.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\capture.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\CHAT.obj : d:\tc\new\source\CHAT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\CHAT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\CMDS.obj : d:\tc\new\source\CMDS.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\CMDS.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\COMMAND.obj : d:\tc\new\source\COMMAND.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\COMMAND.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\CONFRNCE.obj : d:\tc\new\source\CONFRNCE.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\CONFRNCE.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\COPYFILE.obj : d:\tc\new\source\COPYFILE.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\COPYFILE.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\crc32.obj : d:\tc\new\source\crc32.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\crc32.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\devioctl.obj : d:\tc\new\source\devioctl.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\devioctl.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\DIR.obj : d:\tc\new\source\DIR.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\DIR.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new\&
+source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;d&
+:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -d&
+BIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIP&
+ORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq &
+-ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\DISPLAY.obj : d:\tc\new\source\DISPLAY.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\DISPLAY.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\diz.obj : d:\tc\new\source\diz.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\diz.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new\&
+source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;d&
+:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -d&
+BIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIP&
+ORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq &
+-ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\DLPATH.obj : d:\tc\new\source\DLPATH.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\DLPATH.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\DOORS.obj : d:\tc\new\source\DOORS.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\DOORS.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\dosclose.obj : d:\tc\new\source\dosclose.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\dosclose.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\dosopen.obj : d:\tc\new\source\dosopen.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\dosopen.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\dosread.obj : d:\tc\new\source\dosread.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\dosread.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\DOSTIME.obj : d:\tc\new\source\DOSTIME.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\DOSTIME.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\doswrite.obj : d:\tc\new\source\doswrite.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\doswrite.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\EVENT.obj : d:\tc\new\source\EVENT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\EVENT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\filelist.obj : d:\tc\new\source\filelist.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\filelist.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\FILES.obj : d:\tc\new\source\FILES.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\FILES.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\help.obj : d:\tc\new\source\help.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\help.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\INDEX.obj : d:\tc\new\source\INDEX.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\INDEX.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\INIT.obj : d:\tc\new\source\INIT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\INIT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\INKEY.obj : d:\tc\new\source\INKEY.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\INKEY.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\INPUT.obj : d:\tc\new\source\INPUT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\INPUT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\LANGUAGE.obj : d:\tc\new\source\LANGUAGE.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\LANGUAGE.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\log.obj : d:\tc\new\source\log.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\log.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new\&
+source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;d&
+:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -d&
+BIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIP&
+ORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq &
+-ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\LOGIN.obj : d:\tc\new\source\LOGIN.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\LOGIN.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\LOGVIEW.obj : d:\tc\new\source\LOGVIEW.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\LOGVIEW.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\memory.obj : d:\tc\new\source\memory.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\memory.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\MESSAGES.obj : d:\tc\new\source\MESSAGES.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\MESSAGES.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\MISC.obj : d:\tc\new\source\MISC.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\MISC.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\modem.obj : d:\tc\new\source\modem.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\modem.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\modemos2.obj : d:\tc\new\source\modemos2.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\modemos2.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\msgbase.obj : d:\tc\new\source\msgbase.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\msgbase.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\MSGENTER.obj : d:\tc\new\source\MSGENTER.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\MSGENTER.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\MSGREAD.obj : d:\tc\new\source\MSGREAD.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\MSGREAD.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\msgscan.obj : d:\tc\new\source\msgscan.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\msgscan.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\NEWCHAT.obj : d:\tc\new\source\NEWCHAT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\NEWCHAT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\node.obj : d:\tc\new\source\node.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\node.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\PCBMACRO.obj : d:\tc\new\source\PCBMACRO.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\PCBMACRO.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\PCBOARD.obj : d:\tc\new\source\PCBOARD.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\PCBOARD.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\pcbtext.obj : d:\tc\new\source\pcbtext.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\pcbtext.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\RECYCLE.obj : d:\tc\new\source\RECYCLE.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\RECYCLE.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\screen.obj : d:\tc\new\source\screen.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\screen.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\SCRIPT.obj : d:\tc\new\source\SCRIPT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\SCRIPT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\SCRLBACK.obj : d:\tc\new\source\SCRLBACK.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\SCRLBACK.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\settings.obj : d:\tc\new\source\settings.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\settings.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\SHELL.obj : d:\tc\new\source\SHELL.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\SHELL.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\SHOWERR.obj : d:\tc\new\source\SHOWERR.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\SHOWERR.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\stats.obj : d:\tc\new\source\stats.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\stats.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\STATUS.obj : d:\tc\new\source\STATUS.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\STATUS.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\SYS.obj : d:\tc\new\source\SYS.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\SYS.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new\&
+source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;d&
+:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -d&
+BIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIP&
+ORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq &
+-ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\TICDELAY.obj : d:\tc\new\source\TICDELAY.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\TICDELAY.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\token.obj : d:\tc\new\source\token.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\token.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\TRANSFER.obj : d:\tc\new\source\TRANSFER.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\TRANSFER.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\USERNET.obj : d:\tc\new\source\USERNET.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\USERNET.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\USERS.obj : d:\tc\new\source\USERS.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\USERS.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\userscan.obj : d:\tc\new\source\userscan.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\userscan.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\USERSTAT.obj : d:\tc\new\source\USERSTAT.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\USERSTAT.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\usersys.obj : d:\tc\new\source\usersys.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\usersys.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\usrmaint.obj : d:\tc\new\source\usrmaint.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\usrmaint.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4&
+ -zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\version.obj : d:\tc\new\source\version.c .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\version.c -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 &
+-zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\WILD.obj : d:\tc\new\source\WILD.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\WILD.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq&
+ -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\XLATE.obj : d:\tc\new\source\XLATE.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\XLATE.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -z&
+q -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\XMODEM.obj : d:\tc\new\source\XMODEM.C .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\source\XMODEM.C -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\fido;d:\tc\new\script;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -&
+zq -ot -om -oc -or -bm -mf -5r -bt=os2
+
+d:\tc\new\watcom\data.obj : d:\tc\new\fido\data.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\data.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om -o&
+c -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\dupechec.obj : d:\tc\new\fido\dupechec.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\dupechec.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -o&
+m -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\fidomisc.obj : d:\tc\new\fido\fidomisc.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\fidomisc.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -o&
+m -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\fidomsg.obj : d:\tc\new\fido\fidomsg.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\fidomsg.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\fidoque.obj : d:\tc\new\fido\fidoque.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\fidoque.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\passthru.obj : d:\tc\new\fido\passthru.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\passthru.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -o&
+m -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\pcbtoss.obj : d:\tc\new\fido\pcbtoss.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\pcbtoss.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\seenby.obj : d:\tc\new\fido\seenby.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\seenby.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om &
+-oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\umwf.obj : d:\tc\new\fido\umwf.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\fido\umwf.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\new&
+\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\pcb;&
+d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD -&
+dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTI&
+PORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om -o&
+c -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\account.obj : d:\tc\new\script\account.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\account.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\t&
+c\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc&
+\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBO&
+ARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -d&
+MULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -&
+om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\dbase.obj : d:\tc\new\script\dbase.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\dbase.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\dosclass.obj : d:\tc\new\script\dosclass.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\dosclass.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\&
+tc\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\t&
+c\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCB&
+OARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -&
+dMULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot &
+-om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\evalp.obj : d:\tc\new\script\evalp.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\evalp.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\execdb.obj : d:\tc\new\script\execdb.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\execdb.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -o&
+m -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\filestub.obj : d:\tc\new\script\filestub.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\filestub.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\&
+tc\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\t&
+c\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCB&
+OARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -&
+dMULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot &
+-om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\label.obj : d:\tc\new\script\label.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\label.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\lrand.obj : d:\tc\new\script\lrand.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\lrand.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\menu.obj : d:\tc\new\script\menu.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\menu.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\n&
+ew\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\pc&
+b;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD&
+ -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMUL&
+TIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om &
+-oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\msgstub.obj : d:\tc\new\script\msgstub.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\msgstub.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\t&
+c\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc&
+\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBO&
+ARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -d&
+MULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -&
+om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\newscr.obj : d:\tc\new\script\newscr.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\newscr.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc&
+\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\&
+pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOA&
+RD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dM&
+ULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -o&
+m -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\pcbmisc.obj : d:\tc\new\script\pcbmisc.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\pcbmisc.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\t&
+c\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc&
+\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBO&
+ARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -d&
+MULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -&
+om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\pcbmsgs.obj : d:\tc\new\script\pcbmsgs.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\pcbmsgs.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\t&
+c\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc&
+\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBO&
+ARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -d&
+MULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -&
+om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\ratio.obj : d:\tc\new\script\ratio.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\ratio.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\&
+new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\p&
+cb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOAR&
+D -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMU&
+LTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om&
+ -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\screxec.obj : d:\tc\new\script\screxec.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\screxec.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\t&
+c\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc&
+\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBO&
+ARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -d&
+MULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -&
+om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\scrmisc.obj : d:\tc\new\script\scrmisc.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\scrmisc.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\t&
+c\new\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc&
+\pcb;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBO&
+ARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -d&
+MULTIPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -&
+om -oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\var.obj : d:\tc\new\script\var.cpp .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ *wpp386 ..\script\var.cpp -i=d:\tc\dos;D:\WATCOM\h;D:\WATCOM\h\os2;d:\tc\ne&
+w\source;d:\tc\new\script;d:\tc\new\fido;d:\tc\system;d:\tc\screen;d:\tc\pcb&
+;d:\tc\misc;d:\tc\country -w3 -e25 -s -dPCB_MAXNODES=250 -dPCB152 -dPCBOARD &
+-dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULT&
+IPORT -dOSDRIVER -dPCBCOMM -dFIDO -dMG -dTOSSCLASS -dKBD3 -zp4 -zq -ot -om -&
+oc -or -bm -mf -5r -bt=os2 -wx
+
+d:\tc\new\watcom\pcboard.exe : d:\tc\new\watcom\crc-16f.obj d:\tc\new\watcom&
+\fconfig.obj d:\tc\new\watcom\fidofunc.obj d:\tc\new\watcom\fidomenu.obj d:\&
+tc\new\watcom\hex.obj d:\tc\new\watcom\recemsi.obj d:\tc\new\watcom\recwazoo&
+.obj d:\tc\new\watcom\tossmisc.obj d:\tc\new\watcom\xmitemsi.obj d:\tc\new\w&
+atcom\ANSI.obj d:\tc\new\watcom\blt.obj d:\tc\new\watcom\CALLWAIT.obj d:\tc\&
+new\watcom\capture.obj d:\tc\new\watcom\CHAT.obj d:\tc\new\watcom\CMDS.obj d&
+:\tc\new\watcom\COMMAND.obj d:\tc\new\watcom\CONFRNCE.obj d:\tc\new\watcom\C&
+OPYFILE.obj d:\tc\new\watcom\crc32.obj d:\tc\new\watcom\devioctl.obj d:\tc\n&
+ew\watcom\DIR.obj d:\tc\new\watcom\DISPLAY.obj d:\tc\new\watcom\diz.obj d:\t&
+c\new\watcom\DLPATH.obj d:\tc\new\watcom\DOORS.obj d:\tc\new\watcom\dosclose&
+.obj d:\tc\new\watcom\dosopen.obj d:\tc\new\watcom\dosread.obj d:\tc\new\wat&
+com\DOSTIME.obj d:\tc\new\watcom\doswrite.obj d:\tc\new\watcom\EVENT.obj d:\&
+tc\new\watcom\filelist.obj d:\tc\new\watcom\FILES.obj d:\tc\new\watcom\help.&
+obj d:\tc\new\watcom\INDEX.obj d:\tc\new\watcom\INIT.obj d:\tc\new\watcom\IN&
+KEY.obj d:\tc\new\watcom\INPUT.obj d:\tc\new\watcom\LANGUAGE.obj d:\tc\new\w&
+atcom\log.obj d:\tc\new\watcom\LOGIN.obj d:\tc\new\watcom\LOGVIEW.obj d:\tc\&
+new\watcom\memory.obj d:\tc\new\watcom\MESSAGES.obj d:\tc\new\watcom\MISC.ob&
+j d:\tc\new\watcom\modem.obj d:\tc\new\watcom\modemos2.obj d:\tc\new\watcom\&
+msgbase.obj d:\tc\new\watcom\MSGENTER.obj d:\tc\new\watcom\MSGREAD.obj d:\tc&
+\new\watcom\msgscan.obj d:\tc\new\watcom\NEWCHAT.obj d:\tc\new\watcom\node.o&
+bj d:\tc\new\watcom\PCBMACRO.obj d:\tc\new\watcom\PCBOARD.obj d:\tc\new\watc&
+om\pcbtext.obj d:\tc\new\watcom\RECYCLE.obj d:\tc\new\watcom\screen.obj d:\t&
+c\new\watcom\SCRIPT.obj d:\tc\new\watcom\SCRLBACK.obj d:\tc\new\watcom\setti&
+ngs.obj d:\tc\new\watcom\SHELL.obj d:\tc\new\watcom\SHOWERR.obj d:\tc\new\wa&
+tcom\stats.obj d:\tc\new\watcom\STATUS.obj d:\tc\new\watcom\SYS.obj d:\tc\ne&
+w\watcom\TICDELAY.obj d:\tc\new\watcom\token.obj d:\tc\new\watcom\TRANSFER.o&
+bj d:\tc\new\watcom\USERNET.obj d:\tc\new\watcom\USERS.obj d:\tc\new\watcom\&
+userscan.obj d:\tc\new\watcom\USERSTAT.obj d:\tc\new\watcom\usersys.obj d:\t&
+c\new\watcom\usrmaint.obj d:\tc\new\watcom\version.obj d:\tc\new\watcom\WILD&
+.obj d:\tc\new\watcom\XLATE.obj d:\tc\new\watcom\XMODEM.obj d:\tc\new\watcom&
+\data.obj d:\tc\new\watcom\dupechec.obj d:\tc\new\watcom\fidomisc.obj d:\tc\&
+new\watcom\fidomsg.obj d:\tc\new\watcom\fidoque.obj d:\tc\new\watcom\passthr&
+u.obj d:\tc\new\watcom\pcbtoss.obj d:\tc\new\watcom\seenby.obj d:\tc\new\wat&
+com\umwf.obj d:\tc\new\watcom\account.obj d:\tc\new\watcom\dbase.obj d:\tc\n&
+ew\watcom\dosclass.obj d:\tc\new\watcom\evalp.obj d:\tc\new\watcom\execdb.ob&
+j d:\tc\new\watcom\filestub.obj d:\tc\new\watcom\label.obj d:\tc\new\watcom\&
+lrand.obj d:\tc\new\watcom\menu.obj d:\tc\new\watcom\msgstub.obj d:\tc\new\w&
+atcom\newscr.obj d:\tc\new\watcom\pcbmisc.obj d:\tc\new\watcom\pcbmsgs.obj d&
+:\tc\new\watcom\ratio.obj d:\tc\new\watcom\screxec.obj d:\tc\new\watcom\scrm&
+isc.obj d:\tc\new\watcom\var.obj d:\codebase\watcom9\c4base.lib d:\watcom\li&
+bs\country\country.lib d:\watcom\libs\dos\dos.lib d:\watcom\libs\misc\misc.l&
+ib d:\watcom\libs\pcb\pcb.lib d:\watcom\libs\screen\screen.lib d:\watcom\lib&
+s\system\system.lib d:\md5\os2\md5.obj .AUTODEPEND
+ @d:
+ cd d:\tc\new\watcom
+ @%write pcboard.lk1 NAME pcboard
+ @%append pcboard.lk1 FIL crc-16f.obj,fconfig.obj,fidofunc.obj,fidomenu.obj,&
+hex.obj,recemsi.obj,recwazoo.obj,tossmisc.obj,xmitemsi.obj,ANSI.obj,blt.obj,&
+CALLWAIT.obj,capture.obj,CHAT.obj,CMDS.obj,COMMAND.obj,CONFRNCE.obj,COPYFILE&
+.obj,crc32.obj,devioctl.obj,DIR.obj,DISPLAY.obj,diz.obj,DLPATH.obj,DOORS.obj&
+,dosclose.obj,dosopen.obj,dosread.obj,DOSTIME.obj,doswrite.obj,EVENT.obj,fil&
+elist.obj,FILES.obj,help.obj,INDEX.obj,INIT.obj,INKEY.obj,INPUT.obj,LANGUAGE&
+.obj,log.obj,LOGIN.obj,LOGVIEW.obj,memory.obj,MESSAGES.obj,MISC.obj,modem.ob&
+j,modemos2.obj,msgbase.obj,MSGENTER.obj,MSGREAD.obj,msgscan.obj,NEWCHAT.obj,&
+node.obj,PCBMACRO.obj,PCBOARD.obj,pcbtext.obj,RECYCLE.obj,screen.obj,SCRIPT.&
+obj,SCRLBACK.obj,settings.obj,SHELL.obj,SHOWERR.obj,stats.obj,STATUS.obj,SYS&
+.obj,TICDELAY.obj,token.obj,TRANSFER.obj,USERNET.obj,USERS.obj,userscan.obj,&
+USERSTAT.obj,usersys.obj,usrmaint.obj,version.obj,WILD.obj,XLATE.obj,XMODEM.&
+obj,data.obj,dupechec.obj,fidomisc.obj,fidomsg.obj,fidoque.obj,passthru.obj,&
+pcbtoss.obj,seenby.obj,umwf.obj,account.obj,dbase.obj,dosclass.obj,evalp.obj&
+,execdb.obj,filestub.obj,label.obj,lrand.obj,menu.obj,msgstub.obj,newscr.obj&
+,pcbmisc.obj,pcbmsgs.obj,ratio.obj,screxec.obj,scrmisc.obj,var.obj,\md5\os2\&
+md5.obj
+ @%append pcboard.lk1 LIBR \codebase\watcom9\c4base.lib,\watcom\libs\country&
+\country.lib,\watcom\libs\dos\dos.lib,\watcom\libs\misc\misc.lib,\watcom\lib&
+s\pcb\pcb.lib,\watcom\libs\screen\screen.lib,\watcom\libs\system\system.lib
+!ifneq BLANK ""
+ *wlib -q -n -b pcboard.imp 
+ @%append pcboard.lk1 LIBR pcboard.imp
+!endif
+ *wlink SYS os2v2 op m op st=48K op maxe=25 op q op symf @pcboard.lk1
+!ifneq BLANK ""
+ rc -i $[: -i D:\WATCOM\h -i D:\WATCOM\h\os2  pcboard.exe
+!endif
+

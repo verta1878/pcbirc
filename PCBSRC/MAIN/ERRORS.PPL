@@ -1,0 +1,19 @@
+MAKE Version 3.6  Copyright (c) 1992 Borland International
+
+Available memory 15350272 bytes
+
+	bcc +153\pplc.cfg -c -ml -DLIB;COMM;___COMP___ source\compiler\scomp.cpp source\ppl\newscr.cpp source\ppl\scrcomp.cpp 
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+source\compiler\scomp.cpp:
+source\ppl\newscr.cpp:
+source\ppl\scrcomp.cpp:
+
+	Available memory 3605444
+	bcc +153\pplc.cfg -c -ml -DLIB;COMM;___COMP___ source\ppl\scrmisc.cpp source\ppl\var.cpp 
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+source\ppl\scrmisc.cpp:
+source\ppl\var.cpp:
+
+	Available memory 3616804
+	tlink /yx+ /ye- /x /L..\..\b\c31\lib;..\lib\bcdos\bc31 @MAKE0000.$$$
+Turbo Link  Version 5.22b Copyright (c) 1992 Borland International

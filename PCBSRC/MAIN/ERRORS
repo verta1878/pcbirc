@@ -1,0 +1,472 @@
+MAKE Version 3.6  Copyright (c) 1992 Borland International
+
+Available memory 15317344 bytes
+
+	copy MAKE0000.$$$ 153\PCBOARD.CFG
+ MAKE0000.$$$
+   1 File(s) copied.
+	copy MAKE0001.$$$ 153\LIBSbc31.386
+ MAKE0001.$$$
+   1 File(s) copied.
+	echo SOURCE\MAIN\pcboard.c >> bcc.res
+	echo SOURCE\MAIN\callwait.c >> bcc.res
+	echo SOURCE\SUPPORT\capture.c >> bcc.res
+	echo SOURCE\MAIN\chat.c >> bcc.res
+	echo SOURCE\MAIN\command.c >> bcc.res
+	echo SOURCE\SUPPORT\crc32.c >> bcc.res
+	echo SOURCE\DISPLAY\display.c >> bcc.res
+	echo SOURCE\SUPPORT\diz.c >> bcc.res
+	echo SOURCE\MAIN\doors.c >> bcc.res
+	echo SOURCE\MAIN\event.c >> bcc.res
+	echo SOURCE\DISPLAY\files.c >> bcc.res
+	echo SOURCE\DISPLAY\help.c >> bcc.res
+	echo SOURCE\MAIN\filelist.c >> bcc.res
+	echo SOURCE\MAIN\index.c >> bcc.res
+	echo SOURCE\MAIN\init.c >> bcc.res
+	echo SOURCE\MAIN\inkey.c >> bcc.res
+	echo SOURCE\MAIN\input.c >> bcc.res
+	echo SOURCE\MAIN\md5impl.cpp >> bcc.res
+	echo SOURCE\NODE\log.c >> bcc.res
+	echo SOURCE\NODE\logview.c >> bcc.res
+	echo SOURCE\NODE\login.c >> bcc.res
+	echo SOURCE\MSG\msgbase.c >> bcc.res
+	echo SOURCE\MSG\messages.c >> bcc.res
+	echo SOURCE\MAIN\misc.c >> bcc.res
+	echo SOURCE\MODEM\modem.c >> bcc.res
+	echo SOURCE\MODEM\modemasy.c >> bcc.res
+	echo SOURCE\MODEM\modemfos.c >> bcc.res
+	echo SOURCE\MODEM\modemos2.c >> bcc.res
+	echo SOURCE\MODEM\modemdrv.c >> bcc.res
+	echo SOURCE\MSG\msgenter.c >> bcc.res
+	echo SOURCE\MSG\msgread.c >> bcc.res
+	echo SOURCE\MSG\msgscan.c >> bcc.res
+	echo SOURCE\NODE\newchat.c >> bcc.res
+	echo SOURCE\NODE\node.c >> bcc.res
+	echo SOURCE\SUPPORT\nonovrly.c >> bcc.res
+	echo SOURCE\MAIN\cmds.c >> bcc.res
+	echo SOURCE\MAIN\recycle.c >> bcc.res
+	echo SOURCE\MAIN\script.c >> bcc.res
+	echo SOURCE\MAIN\shell.c >> bcc.res
+	echo SOURCE\NODE\stats.c >> bcc.res
+	echo SOURCE\DISPLAY\status.c >> bcc.res
+	echo SOURCE\MAIN\sys.c >> bcc.res
+	echo SOURCE\MODEM\ticdelay.c >> bcc.res
+	echo SOURCE\MAIN\transfer.c >> bcc.res
+	echo SOURCE\NODE\usernet.c >> bcc.res
+	echo SOURCE\USERS\users.c >> bcc.res
+	echo SOURCE\USERS\userstat.c >> bcc.res
+	echo SOURCE\DISPLAY\xlate.c >> bcc.res
+	echo SOURCE\SUPPORT\account.cpp >> bcc.res
+	echo SOURCE\DISPLAY\blt.c >> bcc.res
+	echo SOURCE\MAIN\confrnce.c >> bcc.res
+	echo SOURCE\SUPPORT\copyfile.c >> bcc.res
+	echo SOURCE\DISPLAY\dir.c >> bcc.res
+	echo SOURCE\MAIN\dlpath.c >> bcc.res
+	echo SOURCE\MAIN\language.c >> bcc.res
+	echo SOURCE\SUPPORT\memory.c >> bcc.res
+	echo SOURCE\SUPPORT\overlay.c >> bcc.res
+	echo SOURCE\DISPLAY\pcbtext.c >> bcc.res
+	echo SOURCE\DISPLAY\screen.c >> bcc.res
+	echo SOURCE\DISPLAY\scrlback.c >> bcc.res
+	echo SOURCE\USERS\settings.c >> bcc.res
+	if exist bcc.res echo -c -P -Od -V -Vmp -Vmd -ff -3 /DCPU386 > copt.res
+	if exist bcc.res echo -ml -DNDEBUG -DCOMM -DPCBSTATS -DPCB_MAXNODES=25 -DMULTIPORT -DFIDO -DKEY=KEY_25 > input.res
+	if exist bcc.res echo done > step1.$$$
+	if exist bcc.res \B\C31\BIN\BCC.EXE +153\PCBOARD.CFG -D___EXEC___ @copt.res @input.res @bcc.res
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+source\main\pcboard.c:
+source\main\callwait.c:
+source\support\capture.c:
+source\main\chat.c:
+Warning source\main\chat.c 213: 'chatUserColor' is assigned a value that is never used in function pascal chat()
+Warning source\main\chat.c 213: 'ColorCmd' is assigned a value that is never used in function pascal chat()
+source\main\command.c:
+source\support\crc32.c:
+source\display\display.c:
+source\support\diz.c:
+source\main\doors.c:
+source\main\event.c:
+source\display\files.c:
+source\display\help.c:
+source\main\filelist.c:
+source\main\index.c:
+source\main\init.c:
+source\main\inkey.c:
+Warning source\main\inkey.c 372: 'p' is declared but never used in function pascal showserial(void (pascal *)(char *))
+Warning source\main\inkey.c 372: 'X' is declared but never used in function pascal showserial(void (pascal *)(char *))
+source\main\input.c:
+source\main\md5impl.cpp:
+Warning source\main\md5impl.cpp 32: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 32: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 33: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 33: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 34: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 34: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 35: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 35: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 36: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 36: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 37: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 37: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 38: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 38: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 39: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 39: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 42: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 42: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 43: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 43: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 44: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 44: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 45: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 45: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 46: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 46: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 47: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 47: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 48: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 48: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 49: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 49: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 52: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 52: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 53: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 53: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 54: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 54: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 55: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 55: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 56: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 56: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 57: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 57: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 58: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 58: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 59: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 59: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 62: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 62: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 63: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 63: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 64: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 64: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 65: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 65: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 66: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 66: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 67: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 67: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 68: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 68: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 69: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 69: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 89: Constant is long in function pascal md5String(char *,int,char *)
+Warning source\main\md5impl.cpp 90: Constant is long in function pascal md5String(char *,int,char *)
+Warning source\main\md5impl.cpp 91: Constant is long in function pascal md5String(char *,int,char *)
+Warning source\main\md5impl.cpp 92: Constant is long in function pascal md5String(char *,int,char *)
+source\node\log.c:
+source\node\logview.c:
+source\node\login.c:
+source\msg\msgbase.c:
+source\msg\messages.c:
+source\main\misc.c:
+source\modem\modem.c:
+source\modem\modemasy.c:
+source\modem\modemfos.c:
+source\modem\modemos2.c:
+source\modem\modemdrv.c:
+source\msg\msgenter.c:
+source\msg\msgread.c:
+source\msg\msgscan.c:
+source\node\newchat.c:
+source\node\node.c:
+source\support\nonovrly.c:
+source\main\cmds.c:
+source\main\recycle.c:
+source\main\script.c:
+source\main\shell.c:
+source\node\stats.c:
+source\display\status.c:
+source\main\sys.c:
+source\modem\ticdelay.c:
+source\main\transfer.c:
+source\node\usernet.c:
+source\users\users.c:
+source\users\userstat.c:
+source\display\xlate.c:
+source\support\account.cpp:
+source\display\blt.c:
+source\main\confrnce.c:
+source\support\copyfile.c:
+source\display\dir.c:
+source\main\dlpath.c:
+Turbo Assembler  Version 3.1  Copyright (c) 1988, 1992 Borland International
+
+Assembling file:   OBJ\BC31\dlpath.ASM
+Error messages:    None
+Warning messages:  None
+Passes:            1
+Remaining memory:  373k
+
+source\main\language.c:
+source\support\memory.c:
+source\support\overlay.c:
+source\display\pcbtext.c:
+source\display\screen.c:
+source\display\scrlback.c:
+source\users\settings.c:
+
+	Available memory 3534020
+	if exist OBJ\bc31\pcboardm.exe del OBJ\bc31\pcboardm.exe
+	echo SOURCE\DOS\dosopen.c >> bcc.res
+	echo SOURCE\DOS\dosclose.c >> bcc.res
+	echo SOURCE\DOS\dosread.c >> bcc.res
+	echo SOURCE\DOS\doswrite.c >> bcc.res
+	echo SOURCE\DOS\dostime.c >> bcc.res
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\ansi.asm, OBJ\bc31\ansi.obj
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\async.asm, OBJ\bc31\async.obj
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\bgkey.asm, OBJ\bc31\bgkey.obj
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\cutil.asm, OBJ\bc31\cutil.obj
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\memmove.asm, OBJ\bc31\memmove.obj
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\noscroll.asm, OBJ\bc31\noscroll.obj
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\timer.asm, OBJ\bc31\timer.obj
+	echo SOURCE\PPL\filestub.cpp >> bcc.res
+	echo SOURCE\PPL\label.cpp >> bcc.res
+	echo SOURCE\PPL\pcbmisc.cpp >> bcc.res
+	echo SOURCE\PPL\screxec.cpp >> bcc.res
+	echo SOURCE\PPL\evalp.cpp >> bcc.res
+	echo SOURCE\PPL\execdb.cpp >> bcc.res
+	echo SOURCE\PPL\newscr.cpp >> bcc.res
+	echo SOURCE\PPL\scrmisc.cpp >> bcc.res
+	echo SOURCE\PPL\var.cpp >> bcc.res
+	echo SOURCE\PPL\menu.cpp >> bcc.res
+	echo SOURCE\PPL\lrand.cpp >> bcc.res
+	echo SOURCE\PPL\dbase.cpp >> bcc.res
+	\B\C31\BIN\TASM.EXE /m3 /mx /t /D__l__ /DNDEBUG /isource\h /DCPU386 SOURCE\ASM\c0.asm, OBJ\bc31\c0l.obj
+	echo SOURCE\SUPPORT\envfix.c >> bcc.res
+	echo SOURCE\MODEM\devioctl.c >> bcc.res
+	echo SOURCE\PPL\ratio.cpp >> bcc.res
+	echo SOURCE\FIDO\recemsi.c >> bcc.res
+	echo SOURCE\FIDO\fconfig.c >> bcc.res
+	echo SOURCE\FIDO\hex.c >> bcc.res
+	echo SOURCE\FIDO\crc-16f.c >> bcc.res
+	echo SOURCE\FIDO\xmitemsi.c >> bcc.res
+	echo SOURCE\FIDO\data.cpp >> bcc.res
+	echo SOURCE\FIDO\dupechec.cpp >> bcc.res
+	echo SOURCE\FIDO\passthru.cpp >> bcc.res
+	echo SOURCE\FIDO\fidofunc.c >> bcc.res
+	echo SOURCE\FIDO\fidomenu.c >> bcc.res
+	echo SOURCE\FIDO\fidomisc.cpp >> bcc.res
+	echo SOURCE\FIDO\fidoque.cpp >> bcc.res
+	echo SOURCE\FIDO\fidomsg.cpp >> bcc.res
+	echo SOURCE\FIDO\seenby.cpp >> bcc.res
+	echo SOURCE\FIDO\pcbtoss.cpp >> bcc.res
+	echo SOURCE\FIDO\tossmisc.c >> bcc.res
+	echo SOURCE\FIDO\recwazoo.c >> bcc.res
+	echo SOURCE\FIDO\umwf.cpp >> bcc.res
+	echo SOURCE\PPL\pcbmsgs.cpp >> bcc.res
+	echo SOURCE\PPL\msgstub.cpp >> bcc.res
+	echo SOURCE\SUPPORT\showerr.c >> bcc.res
+	echo SOURCE\SUPPORT\token.c >> bcc.res
+	echo SOURCE\USERS\userscan.c >> bcc.res
+	echo SOURCE\USERS\usersys.c >> bcc.res
+	echo SOURCE\USERS\usrmaint.c >> bcc.res
+	if exist bcc.res echo -ml -DNDEBUG -DCOMM -DPCBSTATS -DPCB_MAXNODES=25 -DMULTIPORT -DFIDO -DKEY=KEY_25 > input.res
+	if exist bcc.res echo -c -P -Od -V -Vmp -Vmd -ff -3 /DCPU386 > copt.res
+	if exist bcc.res echo done > step2.$$$
+	if exist bcc.res \B\C31\BIN\BCC.EXE +153\PCBOARD.CFG -D___EXEC___ @copt.res @input.res @bcc.res
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+source\main\pcboard.c:
+source\main\callwait.c:
+source\support\capture.c:
+source\main\chat.c:
+Warning source\main\chat.c 213: 'chatUserColor' is assigned a value that is never used in function pascal chat()
+Warning source\main\chat.c 213: 'ColorCmd' is assigned a value that is never used in function pascal chat()
+source\main\command.c:
+source\support\crc32.c:
+source\display\display.c:
+source\support\diz.c:
+source\main\doors.c:
+source\main\event.c:
+source\display\files.c:
+source\display\help.c:
+source\main\filelist.c:
+source\main\index.c:
+source\main\init.c:
+source\main\inkey.c:
+Warning source\main\inkey.c 372: 'p' is declared but never used in function pascal showserial(void (pascal *)(char *))
+Warning source\main\inkey.c 372: 'X' is declared but never used in function pascal showserial(void (pascal *)(char *))
+source\main\input.c:
+source\main\md5impl.cpp:
+Warning source\main\md5impl.cpp 32: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 32: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 33: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 33: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 34: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 34: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 35: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 35: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 36: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 36: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 37: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 37: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 38: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 38: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 39: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 39: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 42: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 42: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 43: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 43: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 44: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 44: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 45: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 45: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 46: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 46: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 47: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 47: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 48: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 48: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 49: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 49: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 52: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 52: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 53: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 53: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 54: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 54: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 55: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 55: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 56: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 56: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 57: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 57: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 58: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 58: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 59: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 59: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 62: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 62: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 63: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 63: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 64: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 64: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 65: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 65: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 66: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 66: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 67: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 67: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 68: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 68: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 69: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 69: Constant is long in function md5transform(unsigned long *,char *)
+Warning source\main\md5impl.cpp 89: Constant is long in function pascal md5String(char *,int,char *)
+Warning source\main\md5impl.cpp 90: Constant is long in function pascal md5String(char *,int,char *)
+Warning source\main\md5impl.cpp 91: Constant is long in function pascal md5String(char *,int,char *)
+Warning source\main\md5impl.cpp 92: Constant is long in function pascal md5String(char *,int,char *)
+source\node\log.c:
+source\node\logview.c:
+source\node\login.c:
+source\msg\msgbase.c:
+source\msg\messages.c:
+source\main\misc.c:
+source\modem\modem.c:
+source\modem\modemasy.c:
+source\modem\modemfos.c:
+source\modem\modemos2.c:
+source\modem\modemdrv.c:
+source\msg\msgenter.c:
+source\msg\msgread.c:
+source\msg\msgscan.c:
+source\node\newchat.c:
+source\node\node.c:
+source\support\nonovrly.c:
+source\main\cmds.c:
+source\main\recycle.c:
+source\main\script.c:
+source\main\shell.c:
+source\node\stats.c:
+source\display\status.c:
+source\main\sys.c:
+source\modem\ticdelay.c:
+source\main\transfer.c:
+source\node\usernet.c:
+source\users\users.c:
+source\users\userstat.c:
+source\display\xlate.c:
+source\support\account.cpp:
+source\display\blt.c:
+source\main\confrnce.c:
+source\support\copyfile.c:
+source\display\dir.c:
+source\main\dlpath.c:
+Turbo Assembler  Version 3.1  Copyright (c) 1988, 1992 Borland International
+
+Assembling file:   OBJ\BC31\dlpath.ASM
+Error messages:    None
+Warning messages:  None
+Passes:            1
+Remaining memory:  373k
+
+source\main\language.c:
+source\support\memory.c:
+source\support\overlay.c:
+source\display\pcbtext.c:
+source\display\screen.c:
+source\display\scrlback.c:
+source\users\settings.c:
+source\dos\dosopen.c:
+source\dos\dosclose.c:
+source\dos\dosread.c:
+source\dos\doswrite.c:
+source\dos\dostime.c:
+source\ppl\filestub.cpp:
+source\ppl\label.cpp:
+source\ppl\pcbmisc.cpp:
+source\ppl\screxec.cpp:
+Warning source\ppl\screxec.cpp 1295: Conversion may lose significant digits in function pascal cSCRIPT::execute(char *)
+source\ppl\evalp.cpp:
+source\ppl\execdb.cpp:
+source\ppl\newscr.cpp:
+source\ppl\scrmisc.cpp:
+source\ppl\var.cpp:
+source\ppl\menu.cpp:
+source\ppl\lrand.cpp:
+source\ppl\dbase.cpp:
+source\support\envfix.c:
+source\modem\devioctl.c:
+source\ppl\ratio.cpp:
+source\fido\recemsi.c:
+source\fido\fconfig.c:
+source\fido\hex.c:
+source\fido\crc-16f.c:
+source\fido\xmitemsi.c:
+source\fido\data.cpp:
+source\fido\dupechec.cpp:
+source\fido\passthru.cpp:
+source\fido\fidofunc.c:
+source\fido\fidomenu.c:
+source\fido\fidomisc.cpp:
+source\fido\fidoque.cpp:
+source\fido\fidomsg.cpp:
+source\fido\seenby.cpp:
+source\fido\pcbtoss.cpp:
+source\fido\tossmisc.c:
+source\fido\recwazoo.c:
+source\fido\umwf.cpp:
+source\ppl\pcbmsgs.cpp:
+source\ppl\msgstub.cpp:
+source\support\showerr.c:
+source\support\token.c:
+source\users\userscan.c:
+source\users\usersys.c:
+source\users\usrmaint.c:
+
+	Available memory 2697236
+	if exist OBJ\bc31\pcboardm.exe del OBJ\bc31\pcboardm.exe
+	if exist step1.$$$ del step1.$$$
+	if exist step2.$$$ del step2.$$$
+	\B\C31\BIN\TLINK.EXE /c /x /P OBJ\bc31\c0l @153\PCB_bc31.386,OBJ\bc31\pcboardm,OBJ\bc31\pcboardm,@153\LIBSbc31.386
+Turbo Link  Version 5.22b Copyright (c) 1992 Borland International
