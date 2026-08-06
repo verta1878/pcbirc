@@ -14,24 +14,24 @@ This repo takes that 15.3 source, applies every feature and change from Clark's 
 
 ### DOS: 11 of 11 ✅
 
-| Binary | Size | Description |
-|---|---|---|
-| PCBOARDM.EXE | 974,144 | Main BBS engine (386+COMM) |
-| LOCAL.EXE | 698,672 | Local login mode |
-| PCBOARD.EXE | 1,011,232 | Non-386 overlay version |
-| PPLC.EXE | 195,870 | PPL 3.40 compiler |
-| PCBSM.EXE | 200,688 | System Manager |
-| PCBSETUP.EXE | 380,752 | Setup utility |
-| MKPCBTXT.EXE | 74,352 | Text file generator |
-| UUIN.EXE | 281,432 | UUCP import |
-| UUOUT.EXE | 203,994 | UUCP export |
-| UUUTIL.EXE | 175,292 | UUCP utilities |
-| UUXFER.EXE | 196,632 | UUCP transfer |
+| Binary       | Size      | Description                |
+| ------------ | --------- | -------------------------- |
+| PCBOARDM.EXE | 974,144   | Main BBS engine (386+COMM) |
+| LOCAL.EXE    | 698,672   | Local login mode           |
+| PCBOARD.EXE  | 1,011,232 | Non-386 overlay version    |
+| PPLC.EXE     | 195,870   | PPL 3.40 compiler          |
+| PCBSM.EXE    | 200,688   | System Manager             |
+| PCBSETUP.EXE | 380,752   | Setup utility              |
+| MKPCBTXT.EXE | 74,352    | Text file generator        |
+| UUIN.EXE     | 281,432   | UUCP import                |
+| UUOUT.EXE    | 203,994   | UUCP export                |
+| UUUTIL.EXE   | 175,292   | UUCP utilities             |
+| UUXFER.EXE   | 196,632   | UUCP transfer              |
 
 ### OS/2: 1 of 1 ✅
 
-| Binary | Size | Description |
-|---|---|---|
+| Binary       | Size      | Description                   |
+| ------------ | --------- | ----------------------------- |
 | PCBOARD2.EXE | 1,354,240 | OS/2 32-bit native BBS engine |
 
 Clean link, zero unresolved symbols. Only tested with OpenWatcom 2.0. Borland C++ 3.1 does not support OS/2 32-bit flat model — Clark used Watcom for the OS/2 target.
@@ -59,39 +59,81 @@ See [PCB154_BUILD_GUIDE.md](PCB154_BUILD_GUIDE.md) for full build instructions.
 ```
 pcbrevival/
 ├── README.md                      This file
-├── LICENSE.md                     GPL v3.0 + Clark's proprietary + LGPL
+├── README.TXT                     Original Clark Development readme
+├── LICENSE.md                     GPL v3.0 + Clark proprietary + LGPL
 ├── PCB154_BUILD_GUIDE.md          Complete build documentation
 ├── CHECKSUMS.md                   SHA-256 checksums for all binaries
-├── 153_to_154.patch               Full provenance diff (~1350 files)
+├── OPENWATCOM_PORT_WORKMAP.md     OpenWatcom port progress tracker
+├── FILE_ID.DIZ                    BBS file description
+├── 153_to_154.patch               Full provenance diff (15.3→15.4)
 ├── pcb153src0014.zip              Original 15.3 source (unmodified)
-├── PCBSRC/                        Complete 15.4 source tree with patches
+│
+├── BUILD_DOS.BAT                  DOS build script (BC++ 3.1 + DOSBox)
+├── BUILD_OS2.CMD                  OS/2 build script (native)
+├── BUILD_OS2_OW.SH               OS/2 cross-compile (OpenWatcom on Linux)
+├── CLEANIT.BAT                    Clean build artifacts
+├── normalize_case.sh              Filename case normalization
+├── PCBKIT_L.LIB                   PCBoard toolkit library
+│
+├── PCBSRC/                        Complete 15.4 source tree
+│   ├── LIB/                       Library source (screen, misc, dos, etc.)
+│   │   ├── H/                     Library headers
+│   │   └── SOURCE/                Library source code
+│   └── MAIN/                      Application source
+│       ├── 153/                    Makefiles and build configs
+│       └── SOURCE/                Source code
+│           ├── ASM/               Assembly modules (ASYNC, CUTIL, etc.)
+│           ├── COMPILER/          PPL 3.40 compiler (SCOMP.CPP)
+│           ├── DISPLAY/           Screen/display routines
+│           ├── FIDO/              FidoNet support
+│           ├── H/                 Application headers
+│           ├── MAIN/              Core BBS engine
+│           ├── MODEM/             Modem/serial drivers
+│           ├── MSG/               Message base
+│           ├── NODE/              Multi-node support
+│           ├── PPL/               PPL runtime engine
+│           ├── SUPPORT/           Utility functions
+│           ├── USERS/             User management
+│           ├── UUCP/              UUCP mail (UUIN/UUOUT/UUUTIL/UUXFER)
+│           └── UTIL/              Utilities (PCBSETUP, PCBSM)
+│
+├── LIB/                           Library tree (matches PCBSRC/LIB)
+├── MAIN/                          Application tree (matches PCBSRC/MAIN)
+│
 ├── LIBS/
-│   ├── CODEBASE/SOURCE/           CodeBase 4.x (LGPL v3.0)
-│   └── PREBUILT/BC31/             10 .LIB + 10 .386
+│   ├── CODEBASE/SOURCE/           CodeBase 4.x database (LGPL v3.0)
+│   └── PREBUILT/BC31/             10 .LIB + 10 .386 prebuilt libraries
+│
 ├── OUT/
-│   ├── DOS/                       11 DOS binaries
-│   └── OS2/                       PCBOARD2.EXE native OS/2
+│   ├── DOS/                       11 DOS binaries (BC++ 3.1)
+│   └── OS2/                       PCBOARD2.EXE (OpenWatcom 2.0)
+│
 ├── docs/                          Sysop guides, caller guide, modem configs
 ├── devtools/                      Developer kit, PPL toolkit, RIPscrip toolkit
 ├── historical/                    coreyblake.txt, source provenance
+├── platform/                      Platform packages (Win95, WinNT, OS/2, VCOM)
 └── ppe-examples/                  PPE tutorials and samples
 ```
 
 ## Credits
 
 ### pcbrevival Crew
+
 - **hexadecimal** — source maintainer, 15.3→15.4 port
 - **verta1878** — crew
 
 ### Preservation
+
 - **PWA (Pirates with Attitude)** — preserved the original pcb153src0014.zip source archive
 - **Corey Blake** — purchased the 15.3 source license from Clark Development Company
 
 ### Original Software
+
 - **Clark Development Company** — PCBoard BBS software, Copyright (C) 1996
 - **Sequiter Software** — CodeBase 4.x database library (LGPL v3.0)
 
 ### The BBS Crew
+
 - **hexadecimal** — pcbrevival, PCBoard 15.4 source maintainer
 - **evga/kiddo** — Mystic BBS maintainer
 - **sysop/0** — fpc264, Free Pascal cross-compiler maintainer
