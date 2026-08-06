@@ -141,4 +141,4 @@ pcbrevival/
 
 ## License
 
-Our additions are **GPL v3.0**. Clark's PCBoard source is proprietary. CodeBase is **LGPL v3.0**. See [LICENSE.md](LICENSE.md) for details.
+Our additions are **GPL v3.0**. Clark's PCBoard source is proprietary. CodeBase is **GPL v3.0**. See [LICENSE.md](LICENSE.md) for details.
