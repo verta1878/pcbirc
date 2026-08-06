@@ -1,0 +1,16 @@
+pcboard.h(288): Error! E336: col(23) declaration specifiers are required to declare 'DOSFILE'
+pcboard.h(288): Note! N393: col(23) included from project.h(26)
+pcboard.h(288): Note! N393: col(23) included from /home/claude/cdrive/PCBSRC/MAIN/SOURCE/MAIN/PCBOARD.C(15)
+pcboard.h(288): Error! E006: col(16) syntax error; probable cause: missing ';'
+pcboard.h(397): Error! E498: col(3) syntax error before 'statustype'; probable cause: incorrectly spelled type name
+pcboard.h(684): Error! E498: col(52) syntax error before 'DOSFILE'; probable cause: incorrectly spelled type name
+pcboard.h(685): Error! E498: col(46) syntax error before 'DOSFILE'; probable cause: incorrectly spelled type name
+pcboard.h(703): Error! E498: col(44) syntax error before 'PlaceInEnv'; probable cause: incorrectly spelled type name
+pcboard.ext(17): Error! E336: col(35) declaration specifiers are required to declare 'statustype'
+pcboard.ext(17): Error! E006: col(29) syntax error; probable cause: missing ';'
+pcboard.ext(169): Error! E042: col(23) symbol 'SysopName' already defined
+pcboard.h(295): Note! N392: col(16) definition: 'char SysopName[26]'
+users.h(385): Error! E336: col(32) declaration specifiers are required to declare 'DOSFILE'
+users.h(385): Error! E006: col(17) syntax error; probable cause: missing ';'
+/home/claude/cdrive/PCBSRC/MAIN/SOURCE/MAIN/PCBOARD.C(36): Error! E498: col(12) syntax error before 'Status'; probable cause: incorrectly spelled type name
+/home/claude/cdrive/PCBSRC/MAIN/SOURCE/MAIN/PCBOARD.C(74): Error! E029: col(36) symbol 'Status' has not been declared

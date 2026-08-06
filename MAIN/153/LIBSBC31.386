@@ -1,0 +1,11 @@
+/o- ..\LIB\BCDOS\bc31\countryl.386+
+/o- ..\LIB\BCDOS\bc31\dos_l.386+
+/o- ..\LIB\BCDOS\bc31\screen_l.386+
+/o- ..\LIB\BCDOS\bc31\pcb_l.386+
+/o- ..\LIB\BCDOS\bc31\misc_l.386+
+/o- ..\LIB\BCDOS\bc31\system_l.386+
+/o- ..\LIB\BCDOS\bc31\doscls_l.386+
+/o- \B\C31\LIB\emu.lib+
+/o- \B\C31\LIB\mathl.lib+
+/o- \B\C31\LIB\overlay.lib+
+/o- \B\C31\LIB\cl.lib+ /o ..\..\LIB\codebase\bor31\c4base.lib+

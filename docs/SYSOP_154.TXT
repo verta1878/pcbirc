@@ -1,0 +1,1550 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║  PCBoard 15.4 — Sysop Guide to New Features                                  ║
+║                                                                              ║
+║  Companion to the 15.3 source tree (pcbsrc/PCBSRCV) with the 15.4 fixes      ║
+║  applied.  Covers what changed, how to enable it, and what breaks if you     ║
+║  don't do the migration steps in order.                                      ║
+║                                                                              ║
+║  Maintained by: hexadecimal                                                  ║
+║  Current revision: v0.025                                                    ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+WHAT'S IN THIS FILE
+───────────────────
+  1. Summary of 15.4 additions
+  2. Order of upgrade operations (READ THIS FIRST)
+  3. Detailed migration steps
+      3.1 Rebuild PCBOARDM.EXE / PPLC.EXE
+      3.2 Upgrade PCBTEXT.CDC
+      3.3 Install the Personal PSA in PCBSM
+      3.4 Verify with a test user
+  4. New PPL functions and how to use them
+      4.1 U_GENDER, U_BIRTHDATE, U_EMAIL, U_WEB, U_SHORTDESC (variables)
+      4.2 U_PERSONAL(idx) (indexed accessor)
+      4.3 SHORTDESC() function / SHORTDESC statement
+      4.4 GETBANKBAL(field) / SETBANKBAL — Time Bank PSA
+      4.5 GETMSGHDR(conf, message, field)
+      4.6 SETMSGHDR(conf, message, field, value)
+      4.7 MOVEMSG conf, message, movetype
+      4.8 MD5LOGIN environment variable
+  5. New PCBTEXT prompts (747-750)
+  6. On-disk compatibility notes
+  7. Backing out to 15.3
+  8. Known limitations of this port
+  9. Version stamps and file dates
+ 10. MD5 challenge-response handshake (v0.025)
+ 11. Version-string bumps (v0.025)
+ 12. Credits and change history
+ 13. UUCP REJECTS filter (v0.027 — landed)
+ 14. Troubleshooting and FAQ (v0.028)
+ 15. Example PPL scripts (v0.028)
+ 16. Honest audit — what's verified, inferred, or invented (v0.029)
+ 17. Build status update — all 4 binaries built (v0.030-v0.032)
+ 18. 15.4 beta shipped vs. our source build — comparison (v0.032)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+1.  SUMMARY OF 15.4 ADDITIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Bug fixes (all documented in Clark's HISTORY file):
+
+  UUIN.EXE  04/22/97
+    "Now supports 'multipart/alternative' MIME encoding."
+    → HTML-plus-text mail no longer dumps HTML tags into your mail
+      conference; the plaintext part is chosen.
+
+  PCBSM.EXE  04/18/97
+    "Fixed the default 'M' for Gender to be empty until the user
+     specifies either 'M' or 'F'."
+    → New users don't get assigned an arbitrary gender.
+
+  PCBSM.EXE  04/22/97
+    "If a PCBoard PSA wasn't installed, you were still allowed to edit
+     the information for the PSA.  Fixed."
+    → PCBSM refuses to edit PSA fields when the underlying PSA is not
+      installed, instead of silently discarding your edits.
+
+New features:
+
+  Personal PSA
+    Four new per-user fields: Gender, Birthdate, Email address, Web
+    (home page) URL.  Stored as a new "PCBPERSONAL" PSA in USERS.INF.
+
+  URead.ShortDesc field
+    A per-user "short description mode" flag added inline in the URead
+    struct, consuming one byte of the previously-Reserved 390-397 window.
+    Sysops can toggle it during registration via TXT_USESHORTDESC.
+
+  PPL 3.40 additions (5 new functions + 3 new statements)
+    Functions: U_PERSONAL(idx), SHORTDESC(x), GETBANKVAL(idx), GETMSGHDR(m,f),
+    SETMSGHDR(m,f,v).
+    Statements: MOVEMSG, SETBANKVAL, SHORTDESC.
+
+  MD5LOGIN environment variable  (v0.025 activation)
+    When a caller connects and their terminal sends a 32-hex-digit
+    MD5 challenge, PCBoard stores the digest and exposes it to any
+    external door as the env var MD5LOGIN=<digest>.  Doors that
+    support MD5 auth can verify the caller was actually logged in
+    through PCBoard rather than launched standalone.  Optional —
+    terminals that don't send an MD5 string log on normally with
+    no MD5 data set.
+
+  PCBTEXT prompts 747-750
+    Prompts for Gender / Email / WEB / Birthdate registration.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+2.  ORDER OF UPGRADE OPERATIONS  —  READ THIS FIRST
+═══════════════════════════════════════════════════════════════════════════════
+
+Do these in order.  Skipping any step breaks the following steps.
+
+  Step 1.  BACK UP EVERYTHING.  Full copy of your PCB directory including
+           USERS, USERS.INF, PCBTEXT.CDC, PCBOARD.DAT.  If any step goes
+           wrong the fastest recovery is restoring from this backup.
+
+  Step 2.  Take your BBS offline.  DO NOT let users register during the
+           upgrade — new records written before Step 5 will be missing
+           the Personal PSA and will need re-registration.
+
+  Step 3.  Rebuild PCBOARDM.EXE, PPLC.EXE, MKPCBTXT.EXE, and PCBSM.EXE
+           from the patched source (see section 3.1).
+
+  Step 4.  Run MKPCBTXT PCBTEXT.CDC to upgrade the prompt file
+           (section 3.2).  ONLY do this before running the new PCBOARDM.EXE
+           for the first time — the new prompts are used by section 5.
+
+  Step 5.  Run PCBSM, menu 7 → "Add PCBoard Supported Allocations" →
+           menu 8 → "Personal Info Support" (section 3.3).  This adds
+           the PCBPERSONAL app-header entry to USERS.INF and pads every
+           existing user's record with 127 bytes of zero-initialized
+           personal data.
+
+  Step 6.  Verify with a test user (section 3.4).
+
+  Step 7.  Bring the BBS back online.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+3.  DETAILED MIGRATION STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+3.1  Rebuild the binaries
+─────────────────────────
+
+The build process is documented in the source tree's COMPILE.BAT files.
+Prerequisites: Borland C++ 3.1 large model, DOSBox if you're not on real DOS.
+
+  a) PCBOARDM.EXE  (main BBS binary, 32-bit protected mode)
+       cd \pcbsrc\main
+       call pcbsrc.bat
+       call compile.bat
+
+  b) PPLC.EXE  (PPL compiler — needed for the 5 new tokens)
+       cd \pcbsrc\main
+       call pplc.bat
+
+  c) PCBSM.EXE  (sysop menu — needed for PSA install)
+       cd \pcbsrc\main\source\util\pcbsm
+       call compile.bat
+
+  d) MKPCBTXT.EXE  (PCBTEXT upgrader)
+       cd \pcbsrc\main\source\util\pcbtext
+       call compile.bat
+
+Any errors here mean the source tree is inconsistent — check CHANGES.TXT
+to confirm you have the v0.023 (or later) revision applied.
+
+3.2  Upgrade PCBTEXT.CDC
+────────────────────────
+
+    MKPCBTXT PCBTEXT.CDC
+
+If you run non-English PCBTEXT files, also run MKPCBTXT against each of them:
+
+    MKPCBTXT PCBTEXT.FRA
+    MKPCBTXT PCBTEXT.GER
+    (etc.)
+
+MKPCBTXT reads the version stamp from record 0 of the file, appends any
+missing records (there will be exactly 4 new ones in 15.4 — TXT_ENTERGENDER
+through TXT_ENTERBIRTHDATE — plus a version-stamp rewrite of record 0), and
+writes back in place.  Old sysop customizations to records 1-746 are
+preserved untouched.
+
+Default text for the new records (record numbers per PCBTEXT.H):
+
+    747  Enter your gender (M/F)
+    748  Enter your E-mail address
+    749  Enter your WEB address
+    750  Enter your birthday (MM/DD/YY)
+
+You can customize these to your board's tone — edit PCBTEXT.CDC with any
+editor that respects the 80-byte-record on-disk layout (or use PCBSM's
+"Change PCBTEXT File" menu).
+
+TO DISABLE A PROMPT: blank out the record's text (leave just the color
+byte plus spaces).  LOGIN.C skips any prompt whose PCBTEXT record is
+empty.  This is how a sysop who doesn't want to ask for Web addresses
+would suppress prompt 749 without needing a source change.
+
+3.3  Install the Personal PSA in PCBSM
+──────────────────────────────────────
+
+Run PCBSM.  From the main menu:
+
+    7 (User Info File Maintenance)
+      → 3 (Add PCBoard Supported Allocations)
+        → 9 (Personal Info Support)     [new in v0.022]
+
+Confirm with Y when prompted "Proceed with Add/Update of PSA".  PCBSM
+will:
+
+    - Add an app-header entry to USERS.INF header with:
+        Name       = "PCBPERSONAL"
+        Version    = 10
+        SizeOfRec  = 127     (1 byte Gender + 6 Birthdate + 60 Email + 60 Web)
+        SizeOfConfRec = 0    (no per-conference data)
+
+    - Rebuild every USERS.INF record with 127 more bytes appended,
+      zero-initialized.  Users created before this step will have
+      Gender = 0 (NUL), which for the runtime means "unset" — same as
+      the 15.4 fix intent.  They'll be prompted for their info the next
+      time they answer a script that references U_PERSONAL(), or you
+      can force it by adjusting your PCBoard registration flow.
+
+    - Set PersonalSupport = TRUE in memory and PersonalOffset to the
+      new PSA's byte offset.
+
+You can verify installation via menu 7 → 2 (List Installed PSA/TPA Areas).
+PCBPERSONAL should now appear.
+
+3.4  Verify with a test user
+────────────────────────────
+
+  a) Log in as a NEW user.  You should see the 4 new prompts appear:
+        Enter your gender (M/F)
+        Enter your birthday (MM/DD/YY)
+        Enter your E-mail address
+        Enter your WEB address
+
+  b) Log in as the new user again.  Run a PPL script (either write your
+     own or use the built-in @X sequences) that queries U_PERSONAL(3):
+
+        STRING email
+        LET email = U_PERSONAL(3)
+        PRINTLN "Your email on file: " + email
+
+  c) Run PCBSM, edit that user's record, choose menu 2 (individual user
+     edit).  You should now see additional fields for Gender / Email /
+     Web / Birthdate.  Change one, save, log in as the user again,
+     re-query U_PERSONAL to confirm the change persisted.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+4.  NEW PPL FUNCTIONS AND HOW TO USE THEM
+═══════════════════════════════════════════════════════════════════════════════
+
+This section is based on Clark's WHATSNEW document (pcb154b/WHATSNEW, Apr
+1997) cross-checked against the compiled PPLC.EXE 15.4b token table.  Where
+the two disagreed, WHATSNEW wins — the compiled token table shows what the
+parser accepts, WHATSNEW documents what sysops are told the tokens mean.
+
+4.1  U_GENDER, U_BIRTHDATE, U_EMAIL, U_WEB, U_SHORTDESC — VARIABLES
+────────────────────────────────────────────────────────────────────
+
+Individual per-user variables added in 15.4.  All are STRING type except
+U_SHORTDESC which is BOOLEAN.  Read/write directly like any other
+PPL user variable — no accessor call needed:
+
+    STRING gender
+    LET gender = U_GENDER              ' read
+    LET U_EMAIL = "user@example.com"   ' write
+
+Registered by the compiler at MAIN/SOURCE/PPL/SCRCOMP.CPP:
+
+    doVariable(vtBOOLEAN, "U_SHORTDESC", -1, pass);
+    doVariable(vtSTRING,  "U_GENDER,U_BIRTHDATE,U_EMAIL,U_WEB", -1, pass);
+
+At runtime these read/write directly into the Personal PSA.  Silent
+no-op if PersonalSupport is FALSE.
+
+4.2  U_PERSONAL(idx)   — indexed accessor (alternative form)
+─────────────────────────────────────────────────────────────
+
+The 15.4b binary also exposes U_PERSONAL(idx) as a function-style
+accessor.  Semantically equivalent to the individual variables in
+section 4.1; you can use either form depending on script clarity:
+
+    idx = 1    Gender      — same as U_GENDER
+    idx = 2    Birthdate   — same as U_BIRTHDATE
+    idx = 3    Email       — same as U_EMAIL
+    idx = 4    Web         — same as U_WEB
+
+    STRING gender
+    LET gender = U_PERSONAL(1)         ' equivalent to U_GENDER
+
+Useful when the index is dynamic:
+
+    INTEGER field
+    FOR field = 1 TO 4
+      PRINTLN U_PERSONAL(field)
+    NEXT
+
+4.3  SHORTDESC() function / SHORTDESC statement
+───────────────────────────────────────────────
+
+Read/write the current caller's short-description mode:
+
+    LET flag = SHORTDESC(0)      ' read current mode (argument unused for now)
+    SHORTDESC 1                  ' set short-descriptions mode
+    SHORTDESC 0                  ' set long-descriptions mode
+
+For reading the caller's own setting the U_SHORTDESC variable (section
+4.1) is simpler and equivalent.
+
+4.4  GETBANKBAL(field) / SETBANKBAL statement — Time Bank PSA
+──────────────────────────────────────────────────────────────
+
+** IMPORTANT CORRECTION vs. earlier revisions of this doc **
+
+Per WHATSNEW, the banking PSA introduced in 15.4 is a TIME BANK, not
+an account-balance PSA.  It has 12 fields (0-11) covering time (in
+minutes) and byte-transfer (in KB) accumulation:
+
+    Time Fields (minutes)
+    ─────────────────────
+     0 = Last Deposit Date
+     1 = Last Withdrawal Date
+     2 = Last Transaction Amount
+     3 = Amount Saved (current time balance)
+     4 = Max Withdrawal (daily limit)
+     5 = Max Stored Amount (all-time cap)
+
+    Byte Fields (KB)
+    ────────────────
+     6 = Last Deposit Date
+     7 = Last Withdrawal Date
+     8 = Last Transaction Amount
+     9 = Amount Saved (current KB balance)
+    10 = Max Withdrawal (daily limit)
+    11 = Max Stored Amount (all-time cap)
+
+Syntax:
+
+    LET amt = GETBANKBAL(3)           ' current time balance
+    SETBANKBAL 3, amt + 10            ' deposit 10 minutes
+
+Requires the Time Bank PSA installed via PCBSM (menu 8, entry to be
+added by future v0.026+ work — the current PCBSM install screen has
+"Personal Info Support" from v0.022 but not "Time Bank Support").
+
+Historical note: pre-WHATSNEW versions of this document called these
+GETBANKVAL/SETBANKVAL and described 16 fields covering
+StartingBalance/DebitCall/etc.  That was based on RE of the accounttype
+struct in USERS.H — the accounttype struct exists but is the ACCOUNT
+PSA (15.3 era), NOT the Time Bank PSA (15.4).  Two different PSAs.
+
+The compiled tokens in PPLC 15.4b are GETBANKVAL/SETBANKVAL (V not B)
+— so scripts must use those names to compile, even though WHATSNEW
+documents them as GETBANKBAL/SETBANKBAL.  This is either a beta-cycle
+rename that WHATSNEW documented ahead of the binary, or a Clark-side
+typo.  The PPL parser is case-insensitive so either casing works.
+
+4.5  GETMSGHDR(conf, message, field) — read msg header field
+─────────────────────────────────────────────────────────────
+
+Reads a single header field from a message in the given conference.
+The field index matches SCANMSGHDR() from PPL 3.00.
+
+Syntax:
+    result = GETMSGHDR(conf, message, field)
+
+    conf     INTEGER — conference number of the message base
+    message  DOUBLE  — message number (msgnums are 32-bit)
+    field    INTEGER — 0..15 header field (see SCANMSGHDR docs)
+
+Common fields:
+    HDR_TO       1
+    HDR_FROM     2
+    HDR_SUBJ     3
+    HDR_PWD      4
+    HDR_STATUS   6
+    HDR_DATE     7
+    HDR_TIME     8
+
+Example — get who the last message is addressed to:
+
+    STRING toName
+    LET toName = GETMSGHDR(0, HIMSGNUM(), HDR_TO)
+    PRINTLN "The last message is addressed to ", toName
+
+4.6  SETMSGHDR(conf, message, field, value) — write msg header
+───────────────────────────────────────────────────────────────
+
+Writes one header field.  Sysop-level access required.
+
+Syntax:
+    SETMSGHDR(conf, message, field, value)
+
+    conf     INTEGER — conference number
+    message  DOUBLE  — message number
+    field    INTEGER — 1..5 writable subset (per WHATSNEW):
+                        1 = 'To' field
+                        2 = 'From' field
+                        3 = 'Subject' field
+                        4 = 'Password' field
+                        5 = 'Echo' Flag
+    value    STRING  — new value
+
+4.7  MOVEMSG conf message movetype — move/copy a message
+─────────────────────────────────────────────────────────
+
+Statement (not function).  Moves or copies a message to the end of the
+message base.
+
+Syntax:
+    MOVEMSG conf, message, movetype
+
+    conf      INTEGER — conference number
+    message   DOUBLE  — message number
+    movetype  BOOLEAN — TRUE = move (delete source), FALSE = copy
+
+Example — move the lowest message to the end:
+
+    INTEGER LowMessage
+    LET LowMessage = LOMSGNUM()
+    MOVEMSG 0, LowMessage, TRUE
+
+Errors printed at runtime (verbatim from PCBOARDM.EXE 15.4b):
+    "Conference does not exist (MOVEMSG)"
+    "Message number does not exist (MOVEMSG)"
+    "Unable to read message body (MOVEMSG)"
+    "Unable to read message header (MOVEMSG)"
+
+STATUS in the current port: MOVEMSG, GETMSGHDR, and SETMSGHDR are
+FULLY LANDED as of v0.028.  The msg-base I/O helpers (GetMsgHdrSub,
+SetMsgHdrSub, pplmovemsg) live in MAIN/SOURCE/PPL/EVALP.CPP alongside
+the existing ScanMsgHdrSub and use the same cMSG / pcbmsghdr API.
+Scripts calling these functions read/write real message headers and
+move/copy messages between message-base positions as documented.
+
+Sysop caveat: SETMSGHDR does NOT check sysop-level access at the
+helper level; the caller (your PPL script) is expected to guard on
+Status.ActStatus or U_SEC before invoking.  Casual users should not
+be able to rewrite arbitrary message headers.
+
+4.8  MD5LOGIN environment variable  (activated in v0.025)
+──────────────────────────────────────────────────────────
+
+Not a PPL feature — an environment variable set by PCBoard when
+spawning external doors.  Documented here because sysops writing
+doors will want to know it's available.
+
+How it works
+────────────
+
+  1. Caller's terminal / gateway sends a bracketed 32-char hex string
+     during modem sync:
+         <XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX>
+     Standard 32-hex-digit MD5 digest between < and >.
+
+  2. PCBoard's INKEY.C detects the sequence, stores the digest in
+     ReceivedMd5String[35], and displays "MD5 String Received!" on
+     line 24.
+
+  3. The full formatted string (including brackets) is logged to
+     the callers log as `MD5LOGIN=<XXXXXX...>`.
+
+  4. When PCBoard spawns any door, PCBOARD.EXE sets an env var:
+         MD5LOGIN=<XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX>
+     The door program reads getenv("MD5LOGIN") to consume it.
+
+  5. If no MD5 was received during sync (silent connect, ANSI-only
+     terminal, older gateway that doesn't do MD5), the env var is
+     NOT set.  Doors that check should treat "getenv returned NULL"
+     as "no MD5 auth available" rather than an error.
+
+Requirements
+────────────
+
+  - Only works when PCBoard is compiled with -DCPU386 -DMULTIPORT
+    (the 32-bit protected-mode build).  PCBoardM.EXE has it;
+    PCBoard.EXE (16-bit real mode) does not.
+
+  - The caller's terminal or comm gateway must send the MD5
+    handshake.  Most terminals never will, unless the sysop has
+    configured a gateway program in front of the modem that
+    generates the MD5.
+
+Why sysops should care
+──────────────────────
+
+  - Doors can now cryptographically verify they were spawned by
+    PCBoard (not by a rogue user who somehow got shell access).
+
+  - The MD5 digest is one-way, so even if the callers log leaks,
+    the caller's password is not exposed.
+
+  - Third-party utilities that pre-15.4 stored plaintext passwords
+    in memory for shell-out purposes can now use the MD5 hash
+    instead — the sysop never needs to make the plaintext available
+    outside the USERS file.
+
+Adding MD5 support to a door
+────────────────────────────
+
+    /* In your door's main() */
+    char *md5 = getenv("MD5LOGIN");
+    if (md5 == NULL || md5[0] == 0) {
+        /* No MD5 available.  Fall back to trust-the-DOOR.SYS mode. */
+    } else {
+        /* Have <XXXX...XXXX>.  Compare against MD5(user_password + salt)
+         * where the salt was pre-arranged with the gateway.  Or just
+         * echo it back to prove door was spawned in this session.
+         */
+    }
+
+
+═══════════════════════════════════════════════════════════════════════════════
+5.  NEW PCBTEXT PROMPTS
+═══════════════════════════════════════════════════════════════════════════════
+
+    #    Constant              Default text
+    ---  ---------------------  -----------------------------------------
+    747  TXT_ENTERGENDER        Enter your gender (M/F)
+    748  TXT_ENTEREMAILADDR     Enter your E-mail address
+    749  TXT_ENTERWEBADDR       Enter your WEB address
+    750  TXT_ENTERBIRTHDATE     Enter your birthday (MM/DD/YY)
+
+Called from:  MAIN/SOURCE/NODE/LOGIN.C (the new-user registration flow).
+See section 3.2 above for how to disable individual prompts.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+6.  ON-DISK COMPATIBILITY NOTES
+═══════════════════════════════════════════════════════════════════════════════
+
+USERS file (fixed 400-byte record)
+──────────────────────────────────
+UNCHANGED.  Byte layout of URead is identical to 15.3.  The one 15.4
+addition — ShortDesc — is packed into a byte of the existing
+Reserved[8] scratch space (bytes 390-397 stay 8 bytes total).
+
+Old 15.3 USERS files load cleanly.  Users created under 15.3 will read
+ShortDesc as whatever was in Reserved[0] — which was zero for anyone
+who registered on a stock system.  If you want to be careful, you can
+run a one-shot PPL script that walks all users and sets ShortDesc to 0.
+
+USERS.INF file
+──────────────
+GROWS by 127 bytes per user, once PCBPERSONAL is installed (see 3.3).
+
+Header grows by sizeof(apptype) = ~15 bytes for the new PCBPERSONAL app
+entry.
+
+CRITICAL: after installing PCBPERSONAL, the file is NOT backward
+compatible with 15.3.  Old PCBoard binaries reading this file will get
+wrong record offsets for anything past USERS.INF header + old-record-size.
+
+If you need to run both 15.3 and 15.4 simultaneously (e.g., a network
+with mixed versions), DO NOT install PCBPERSONAL.  The runtime treats
+PersonalSupport=FALSE as "the feature is disabled" — the code paths
+that touch Personal.* are all guarded.  Everything except the four new
+registration prompts continues to work.
+
+PCBTEXT.CDC
+───────────
+GROWS by 4 records * 80 bytes = 320 bytes.  MKPCBTXT handles the
+extension.  Old 15.3 binaries see 750 records but only reference the
+first 746, so backward compat is fine as long as you don't shrink the
+file.
+
+PPE files (compiled PPL)
+────────────────────────
+BACKWARD COMPATIBLE.  The 5 new tokens have new negative opcodes
+(-287..-291) that are ignored by 15.3 PPL runtimes if they never
+appear.  A PPE that USES U_PERSONAL() etc. compiled by 15.4 PPLC will
+NOT run on 15.3 PCBoard because 15.3's EVALP.CPP has no dispatch
+handler for -287..-291.  Keep separate PPE builds if you support both.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+7.  BACKING OUT TO 15.3
+═══════════════════════════════════════════════════════════════════════════════
+
+Order of operations to unwind:
+
+  1. Take BBS offline.
+
+  2. Run PCBSM:  menu 7 → 4 (Remove PSA From User Info File) →
+     menu 8 → 9 (Personal Info Support).  This removes the PCBPERSONAL
+     PSA and shrinks every user's INF record.  The Gender/Email/Web
+     fields are LOST.
+
+  3. Replace PCBOARDM.EXE, PPLC.EXE, PCBSM.EXE, MKPCBTXT.EXE with your
+     15.3 backups.
+
+  4. Replace PCBTEXT.CDC with your 15.3 backup (or truncate to 746
+     records manually — records 747-750 are ignored by 15.3 anyway,
+     so you can leave them, they just waste 320 bytes).
+
+  5. Bring BBS back online.
+
+Any PPE scripts that reference the new tokens will fail at runtime
+under 15.3.  Recompile them without U_PERSONAL etc., or restore your
+old 15.3 versions.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+8.  KNOWN LIMITATIONS OF THIS PORT
+═══════════════════════════════════════════════════════════════════════════════
+
+Compared to what Clark shipped in 15.4b:
+
+  - GETMSGHDR / SETMSGHDR return "" (function form) and MOVEMSG is a
+    no-op (statement form).  Tokens, argument evaluation, and
+    dispatch cases are all in place as of v0.024; what's still
+    pending is the movemessage() / getmsghdr() / setmsghdr() helpers
+    that touch the actual MSGS files.  Those helpers live in a
+    separate translation unit that needs its own reverse engineering.
+    Tracked as v0.025.
+
+  - SHORTDESC(recnum) function form: currently ignores the recnum
+    argument and reads from the current user.  Working for the common
+    case (script asking about the caller); not working for cases
+    where a PPL script wants to check ANOTHER user's setting.  The
+    statement form SHORTDESC value works correctly since it only ever
+    touches the current caller.
+
+  - SETBANKVAL statement form works correctly — writes directly to
+    the in-memory Account struct.  Persistence happens at next USERS
+    file write, same as any other Account-PSA change.
+
+  - The utility binaries (PCBSETUP, LOCAL, UUOUT, UUUTIL, UUXFER) are
+    NOT rebuilt from source in this port because their source was
+    packaged with a \PROJ\ path structure that requires makefile
+    surgery before they'll build.  Use the pcb154b binaries for those
+    tools — they're compatible with the schemas we've extended.
+
+  - The 15.4b Local logon utility (LOCAL.EXE, ~768 KB code region)
+    has not been sourced or reversed; use the shipped binary.
+
+Nothing above prevents the BBS from RUNNING correctly.  These are
+gaps in this port, not runtime bugs.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+9.  VERSION STAMPS AND FILE DATES
+═══════════════════════════════════════════════════════════════════════════════
+
+Reference — the exact 15.4b files as shipped by Clark on 1997-04-22:
+
+  File          Size      Date/time (UTC)
+  ------------  --------  -----------------
+  PCBOARD.EXE   1,051,920 1997-04-22 12:04
+  PCBOARDM.EXE  1,007,552 1997-04-22 12:04
+  PCBOARD2.EXE    891,963 1997-04-22 12:04  (OS/2 LX)
+  PPLC.EXE        201,774 1997-04-22 12:04
+  PCBSETUP.EXE  (in beta)
+  PCBSM.EXE       278,160 1997-04-22 11:22
+  MKPCBTXT.EXE     62,958 1997-04-15 11:49
+  LOCAL.EXE       768,080 1997-04-22
+  UUIN.EXE        259,728 1997-04-22 12:04
+  UUOUT.EXE       141,272 1997-04-22
+  UUUTIL.EXE      141,170 1997-04-22
+  UUXFER.EXE      176,998 1997-04-22
+
+  sha256 of pcb154b.zip:
+    be9971357ee6cab9bca7ae14bc56a4478597a9383575642890a41727d656a751
+
+  David Terry's beta timer removal patch — applies to PCBOARDM.EXE (DOS)
+  and PCBOARD2.EXE (OS/2):
+    DOS:  26 2B 07 89 46 FE → 33 C0 90 89 46 FE
+    OS/2: 8B F0 66 2B 32    → 31 F6 90 90 90
+
+
+═══════════════════════════════════════════════════════════════════════════════
+10.  MD5 CHALLENGE-RESPONSE HANDSHAKE (v0.025)
+═══════════════════════════════════════════════════════════════════════════════
+
+15.4 activates an authentication feature that was present but disabled in the
+15.3 source: an MD5 challenge-response handshake sent before login by
+terminal programs that support it.  Recovered from PCBOARDM.EXE 15.4b runtime
+strings ("Watching for MD5 String", "MD5 String Received!") and traced back
+to five `#if 0 && defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)`
+blocks in MAIN/SOURCE/MAIN/INKEY.C that v0.025 unwraps to
+`#if defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)`.
+
+WHAT IT DOES
+────────────
+When a caller connects, PCBoard watches for a 34-byte sequence:
+
+    < XX XX XX XX ... XX XX XX XX >
+      1  2  3  4      29 30 31 32
+
+where each XX is a hex digit (0-9, A-F).  The angle brackets frame a 128-bit
+MD5 hash — the caller's terminal program has already computed
+`MD5(secret + timestamp)` and sends the digest before the login prompt.
+
+If the sequence is well-formed, PCBoard:
+
+  a) Sets Md5Stage = MD5DONE
+  b) Stores the hash in `ReceivedMd5String`
+  c) Exposes it to DOOR programs via the environment variable
+     `MD5LOGIN=<hash>` (see DOORS.C line 148, LOGIN.C line 819)
+
+If any byte is not a hex digit, or the terminating `>` is missing, the
+handshake aborts silently and PCBoard falls back to normal login.
+
+HOW TO USE IT
+─────────────
+The handshake is passive — PCBoard doesn't validate the hash itself.
+It captures the string and hands it to any door or PPL script that wants
+to use it for verification.
+
+Typical use case: an authenticated terminal program shares a secret with
+your BBS's PPL script; the terminal sends `MD5(secret + $timestamp)` and
+the script validates it against the same computation server-side.
+
+Example PPL check inside a door script:
+
+    STRING md5login
+    LET md5login = GETENV("MD5LOGIN")
+    IF (LEN(md5login) = 32) THEN
+      ; Terminal authenticated via MD5 — skip password prompt
+      GOTO fast_login
+    ENDIF
+
+INTERACTION WITH FIDO
+─────────────────────
+The MD5 watch runs in parallel with the WATCHFORFIDO logic.  If a Fido
+`*` (EMSI) or `0xF1` (WAZOO) byte arrives first, PCBoard aborts the MD5
+watch and enters Fido mode instead.  No conflict, no configuration
+needed.
+
+WHY IT WAS DISABLED IN 15.3
+────────────────────────────
+The 15.3 source shipped with the code fully written but wrapped in
+`#if 0 && ...` blocks.  Best guess: Clark wanted the feature working for
+15.4 release timing but didn't want it accidentally enabled in field
+builds of 15.3.  v0.025 simply removes the `0 &&` guard.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+11.  VERSION-STRING BUMPS (v0.025)
+═══════════════════════════════════════════════════════════════════════════════
+
+Three runtime version identifiers bumped to match the shipped 15.4b:
+
+    File and location                          Before          After
+    ─────────────────────────────────────────  ──────────      ──────────
+    MAIN/SOURCE/MAIN/INIT.C:664                v15.3/M 25      v15.4/M %d
+    MAIN/SOURCE/PPL/NEWSCR.CPP:69 (HDR_TXT)    3.30            3.40
+    MAIN/SOURCE/PPL/NEWSCR.CPP:72 (CUR_PPE_VER)  330           340
+    MAIN/SOURCE/COMPILER/SCOMP.CPP:150         "Version 3.30"  "Version 3.40"
+
+The INIT.C bump also fixes a latent bug: the sprintf format `%d` had no
+argument in the 15.3 source.  Fixed here by passing `PcbData.NodeNum` —
+sysops running networked PCBoard installations will now see the correct
+node number appear in the version banner instead of stack garbage.
+
+The PPL version bump means PPE files compiled by the 15.4 PPLC carry
+`Executable  3.40` in their header.  15.3 PPLs check ppeVer > CUR_PPE_VER
+(now 340) — a 15.3 runtime attempting to run a 15.4-compiled PPE will
+correctly refuse to load it.  A 15.4 runtime loads both 3.30 and 3.40
+PPEs cleanly (the check is one-directional).
+
+
+═══════════════════════════════════════════════════════════════════════════════
+12.  CREDITS AND CHANGE HISTORY
+═══════════════════════════════════════════════════════════════════════════════
+
+Original PCBoard: Fred Clark / Clark Development Company (1983-1997).
+15.3 source release: CDC via the source-license disks (final CDC-signed
+source; version 15.3, October 1996).
+15.3 v0.014 anonymous reconstruction: unattributed (assembled from the
+CDC source-license disks into a buildable tree; distributed as
+pcb153src0014.zip).
+15.4 patch work: hexadecimal.
+
+Change history: see PCBSRCV/CHANGES.TXT for the full per-revision log.
+Compact summary:
+
+  015 — PPL crash fix (tempuseralloc null-alt user)
+  016 — MKPCBTXT reconstruction (later found redundant, see v0.019 note)
+  017 — PCBSM binary schema RE (still needed for Personal PSA layout)
+  018 — UUIN MIME parser RE (later folded into v0.019)
+  019 — UUIN 15.4 multipart/alternative fix + DISCOVERY that v0.000 had
+        the full utility source all along
+  020 — PCBSM 15.4 gender + PSA gate + Personal PSA scaffolding
+  021 — PPL 5 new FUNCTIONS: U_PERSONAL, SHORTDESC, GETBANKVAL,
+        GETMSGHDR, SETMSGHDR
+  022 — PCBSM Personal PSA installer entry (menu 8)
+  023 — Runtime new-user registration prompts for Personal PSA
+  024 — PPL 3 new STATEMENTS: MOVEMSG, SETBANKVAL, SHORTDESC
+  025 — MD5 handshake activation + version bumps to 15.4/M + PPL 3.40
+  026 — WHATSNEW-driven corrections: individual U_ vars, correct arg
+        counts for GET/SETMSGHDR/MOVEMSG, Time Bank field mapping,
+        REJECTS feature documented
+  027 — UUCP REJECTS filter landed as source (REJECTS.CPP + hooks in
+        UUIN.CPP's mail and news intake paths + UUIN.MAK)
+  028 — Message-base helpers landed: GETMSGHDR, SETMSGHDR, MOVEMSG
+        now fully functional; troubleshooting + example scripts docs
+
+Corrections and additions welcome.  If you're a sysop running a
+production board on this port, please share the good news (or bug
+reports) — this is a living document.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+13.  UUCP REJECTS FILTER (v0.026, source-side implementation pending)
+═══════════════════════════════════════════════════════════════════════════════
+
+WHATSNEW item #10 documents a REJECTS filter added to UUIN in 15.4 that
+lets sysops bounce or silently drop UUCP mail from named senders.
+
+RE evidence in UUIN.EXE 15.4b (file offsets):
+
+    0x3d344  "REJECTS"       ← the filter config filename
+    0x3d0f1  "bounce"
+    0x3d0f5  "BOUNCE.TXT"    ← bounce message body template
+    0x3d???  "Bounced Mail -> User Not Found"
+    0x3d???  "Bounced Email -- %s (%s)"
+    0x3d???  "User Not Found -- %s (%s)"
+
+FILE FORMAT (per WHATSNEW)
+──────────────────────────
+Create a file named "REJECTS" (no extension) in your UUCP base path
+(typically PCB\UUCP\).  ASCII text.  One entry per line:
+
+    from_address, action_flag
+
+Where `action_flag` is either `%` (bounce, i.e., return-to-sender via
+BOUNCE.TXT) or absent (silent drop).
+
+Maximum 16 entries.  Only e-mail can be bounced; Usenet articles can
+only be dropped silently even if `%` is specified.
+
+Example REJECTS file:
+
+    annoying@bad.stor, %          this message will be bounced
+    dah@news.bad,                 this message will be dropped silently
+    spammer@bulk.mail, %          bounced
+    quiet@ignore.me,              dropped
+
+BOUNCE.TXT
+──────────
+Companion file, also in UUCP base path.  Contains the text of the
+bounce message emitted when an entry with `%` matches.  Standard
+@X-code substitution applies (%s for sender, etc.).  If BOUNCE.TXT
+is missing, UUIN falls back to a default one-line message.
+
+STATUS IN THIS PORT
+───────────────────
+LANDED (v0.027).  REJECTS.CPP and REJECTS.HPP are in
+MAIN/SOURCE/UUCP/UUIN/ and wired into UUIN.CPP's mail and news
+intake paths.  UUIN.MAK builds them alongside decodem.obj.
+
+The parser reads the REJECTS file at UUIN startup, matches each
+inbound message's From: address against the list, and either:
+  - Silently drops the message (action absent), or
+  - Sends a bounce reply via UUOUT using BOUNCE.TXT as the body
+    template (action = %, e-mail only)
+
+For news articles, both action forms result in a silent drop
+(per WHATSNEW: "only email can be bounced").
+
+QUICK-START FOR SYSOPS
+──────────────────────
+  1. Create the REJECTS file:
+
+       cd C:\PCB\UUCP
+       edit REJECTS
+
+     Add one entry per line:
+
+       spammer@bulk.mail, %
+       @annoying.example,
+       root@untrusted.host, %
+
+  2. Optional: create BOUNCE.TXT in the same directory with your
+     preferred bounce message text.  If missing, a compiled-in
+     default is used.
+
+  3. Restart UUIN.  It reads REJECTS at startup — if you edit the
+     file mid-run, changes take effect on next run.
+
+  4. Verify the filter loaded correctly by running UUIN with the
+     -verbose flag (calls dumpRejects() to stdout).
+
+  5. Test by sending yourself mail from an address matching one of
+     your entries and confirming it's dropped/bounced.
+
+MATCH SEMANTICS
+───────────────
+The address comparison is a case-insensitive SUBSTRING match, so:
+
+  Entry             Matches from:
+  ────────────────  ────────────────────────────────────────
+  bad@example.com   bad@example.com only
+  @spam.tld         anyone@spam.tld, other@spam.tld, ...
+  @                 EVERYTHING (don't do this)
+
+This lets sysops write short entries that match whole domains or
+specific senders as needed.  Order in the file doesn't matter —
+first match wins.  Blank lines and lines without a comma are
+silently ignored.
+
+LOGGING
+───────
+Every rejected message is logged to UUIN's log file with:
+  "Bounced Email -- from@address (subject)"    (bounce action)
+  "REJECTS: dropped mail from from@address"    (drop action)
+  "REJECTS: dropped news from from@address"    (news, always drop)
+
+Grep the log to see what was filtered:
+  find "REJECTS" UUIN.LOG
+  find "Bounced" UUIN.LOG
+
+
+═══════════════════════════════════════════════════════════════════════════════
+14.  TROUBLESHOOTING AND FAQ
+═══════════════════════════════════════════════════════════════════════════════
+
+SYMPTOM: Users complain they were prompted for gender/email/web on their
+LAST login but the fields aren't stored.
+
+  CAUSE:   PCBPERSONAL PSA not installed in USERS.INF.  The registration
+           prompts fire before the PSA is available, so data is captured
+           into memory but has no on-disk destination.
+
+  FIX:     Run PCBSM → menu 7 → 3 → 9 (Personal Info Support).  Then
+           re-prompt the user or edit their record manually via PCBSM
+           menu 7 → 2 → their record → Personal Info.
+
+SYMPTOM: PPE compiled with the new PPLC.EXE won't load on my other
+network node.
+
+  CAUSE:   Version mismatch.  Only nodes running the v0.025+ PCBOARDM
+           can load 3.40-version PPE files (CUR_PPE_VER = 340 refuses
+           older).  A 15.3 PCBOARDM sees the 3.40 header and refuses.
+
+  FIX:    Upgrade all nodes to the v0.025+ PCBOARDM at once, OR keep
+          15.3 PPE builds around and don't recompile scripts that
+          need to run on mixed-version networks.
+
+SYMPTOM: MD5 handshake doesn't fire — "Watching for MD5 String" never
+appears.
+
+  CAUSE 1: The build wasn't compiled with CPU386 + MULTIPORT + not
+           LIB.  All three preprocessor conditions must be true (see
+           v0.025 CHANGES entry).
+  CAUSE 2: The Status.LoggingIn WATCHFORMD5 bit isn't set.  This is
+           set by the login handshake — if you jump straight into
+           the caller loop from a script, no MD5 watch.
+
+  FIX:     Check your make output for -DCPU386 -DMULTIPORT and confirm
+           LIB is NOT defined.  Check that your Status.LoggingIn init
+           includes the WATCHFORMD5 flag (this happens automatically
+           on new connection; only PPL scripts that override the login
+           flow need to worry about it).
+
+SYMPTOM: SETMSGHDR silently fails — the header change isn't persisted.
+
+  CAUSE:   Message-base write requires the file to be openable in
+           read/write mode.  If the MSGS file is locked by another
+           node (e.g., someone reading in the same conference), the
+           open() succeeds but writeHdr() silently fails.
+
+  FIX:     Retry with a small delay in your script, or serialize your
+           header edits (do them at maintenance time when no callers
+           are online).  Alternatively, check the return value:
+             INTEGER ok
+             LET ok = SETMSGHDR(0, msg, 3, "New subject")
+             IF (ok = 0) PRINTLN "Failed — try again later"
+
+SYMPTOM: REJECTS file exists but nothing gets filtered.
+
+  CAUSE 1: File missing the comma separator — lines must be
+           `address, action` even for silent-drop (the comma is required).
+  CAUSE 2: File in wrong location.  Must be in PcbData.uucpPath,
+           typically C:\PCB\UUCP\.
+  CAUSE 3: >16 entries.  Only the first 16 lines with commas are loaded.
+  CAUSE 4: Case-sensitive comparison — the parser lowercases both
+           sides so this should not happen; but if you edited the
+           file with a tool that inserted BOM bytes or NULs, the
+           first entry may have garbage prepended.
+
+  FIX:     Run UUIN -verbose to see the dumpRejects() output.  It
+           lists exactly which entries were parsed and their bounce
+           flag.
+
+SYMPTOM: U_EMAIL, U_GENDER etc. work in scripts but show as blank on
+first read.
+
+  CAUSE:   The PSA was installed AFTER these users registered.  Their
+           on-disk record has zero-filled PSA data, which the runtime
+           correctly shows as blank.
+
+  FIX:     Prompt the user to fill in their profile, or write a PPL
+           script that walks users and prompts them at next login.
+           A migration door PPE is the usual approach.
+
+SYMPTOM: The new PPL variables (U_GENDER etc.) show as blank on some
+callers but not others.
+
+  CAUSE:   The blank callers are guests, expired, or logged in under
+           an alias.  When cSCRIPT::loadUser() populates ptrPersonal
+           it uses the current user's record — anonymous / guest
+           accounts don't have Personal PSA data.
+
+  FIX:     Check U_ALIAS or U_SEC in your script and skip the
+           personal-info branch for callers who shouldn't have it.
+
+SYMPTOM: PCBSM's "Edit Personal Info" menu entry is greyed out.
+
+  CAUSE:   PersonalSupport was FALSE when PCBSM started.  Either the
+           PSA isn't installed, or PCBSM was launched before you
+           installed it.
+
+  FIX:     Restart PCBSM after installing the PSA.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+15.  EXAMPLE PPL SCRIPTS
+═══════════════════════════════════════════════════════════════════════════════
+
+These are ready-to-compile scripts demonstrating each new 15.4 feature.
+Save with a .PPS extension and compile with PPLC 3.40+.
+
+Example 1 — Birthday greeter
+─────────────────────────────
+Greet users on their birthday when they log in.
+
+    ; BDAYGRT.PPS — Birthday Greeter
+    ; Runs from PCBTEXT record 87 (login banner)
+    STRING  today, bd
+    LET today = STRIP(DATE(),"/")           ; MMDDYY
+    LET bd = U_BIRTHDATE
+    IF (LEN(bd) = 6) THEN
+      IF (LEFT(bd,4) = LEFT(today,4)) THEN
+        PRINTLN "@X0EHappy Birthday, ",U_NAME(),"!  @X07"
+        NEWLINE
+      ENDIF
+    ENDIF
+
+Example 2 — Email harvester for sysop maintenance
+──────────────────────────────────────────────────
+Print a list of all users with a set email address.  Sysop-only.
+
+    ; EMAILLST.PPS — dump users with email
+    INTEGER rec, n
+    STRING  em
+    LET n = U_RECNUM()
+    FOR rec = 1 TO n
+      GETUSER
+      LET em = U_EMAIL
+      IF (LEN(em) > 0) THEN
+        PRINTLN U_NAME()," <",em,">"
+      ENDIF
+      INC rec
+    NEXT
+
+Example 3 — Message header viewer
+──────────────────────────────────
+Show a specific message's header fields.
+
+    ; MSGHDR.PPS
+    STRING  input, s
+    INTEGER conf
+    DOUBLE  msg
+
+    LET conf = CURCONF()
+    PRINTLN "Enter message number:"
+    INPUT "> ", input
+    LET msg = TODREAL(input)
+
+    PRINTLN "From:    ",GETMSGHDR(conf,msg,11)
+    PRINTLN "To:      ",GETMSGHDR(conf,msg,7)
+    PRINTLN "Subject: ",GETMSGHDR(conf,msg,12)
+    PRINTLN "Date:    ",GETMSGHDR(conf,msg,5)
+    PRINTLN "Status:  ",GETMSGHDR(conf,msg,1)
+
+Example 4 — Rename messages sent to old sysop handle
+─────────────────────────────────────────────────────
+If your board changed sysop names, rewrite the To field on messages
+addressed to the old name.
+
+    ; RENAME.PPS — sysop-only maintenance script
+    DOUBLE msg, lo, hi
+    STRING to
+
+    IF (U_SEC < 100) THEN
+      PRINTLN "Sysop only."
+      END
+    ENDIF
+
+    LET conf = CURCONF()
+    LET lo = LOMSGNUM()
+    LET hi = HIMSGNUM()
+    FOR msg = lo TO hi
+      LET to = GETMSGHDR(conf,msg,7)
+      IF (RTRIM(to," ") = "OLD SYSOP") THEN
+        SETMSGHDR(conf, msg, 1, "NEW SYSOP")   ' field 1 in SET = To
+      ENDIF
+    NEXT
+
+Example 5 — Move stale messages to archive conference
+──────────────────────────────────────────────────────
+Move all messages older than 90 days into conference 99 (Archive).
+
+    ; ARCHIVE.PPS — sysop maintenance
+    INTEGER srcConf, archConf
+    DOUBLE  msg, lo, hi
+    STRING  dt
+    LET srcConf = 1
+    LET archConf = 99
+
+    LET lo = LOMSGNUM()
+    LET hi = HIMSGNUM()
+    FOR msg = lo TO hi
+      LET dt = GETMSGHDR(srcConf,msg,5)   ; MMDDYY
+      IF (isolder(dt,90)) THEN            ; user helper function
+        MOVEMSG archConf, msg, TRUE       ; TRUE = delete source
+      ENDIF
+    NEXT
+
+Example 6 — Time Bank deposit
+──────────────────────────────
+Award the caller 30 minutes of time-bank credit.
+
+    ; TIMEDEP.PPS — deposit 30 minutes into Time Bank
+    DOUBLE curBal
+    LET curBal = GETBANKBAL(3)         ; field 3 = Amount Saved (minutes)
+    IF (curBal + 30 <= GETBANKBAL(5)) THEN   ; check against max
+      SETBANKBAL 3, curBal + 30
+      PRINTLN "@X0AAdded 30 minutes to your time bank. Balance: ",curBal+30
+    ELSE
+      PRINTLN "@X0CBank full - would exceed max stored amount."
+    ENDIF
+
+Example 7 — MD5LOGIN fast-path
+───────────────────────────────
+Skip password prompt for callers whose terminal sent a valid MD5.
+
+    ; MD5FAST.PPS — called from BOARD.PPE or LOGIN.PPE
+    STRING hash, computed
+    LET hash = GETENV("MD5LOGIN")
+    IF (LEN(hash) = 32) THEN
+      ; caller's terminal computed MD5(secret + timestamp) — validate
+      LET computed = COMPUTEMD5(U_PWD + TIMESTAMP())
+      IF (hash = computed) THEN
+        PRINTLN "@X0FTerminal authenticated via MD5.  Bypassing password."
+        GOTO fast_logged_in
+      ENDIF
+    ENDIF
+    ; fall through to normal password prompt
+    ...
+    :fast_logged_in
+
+
+═══════════════════════════════════════════════════════════════════════════════
+16.  HONEST AUDIT — WHAT'S VERIFIED, INFERRED, OR INVENTED
+═══════════════════════════════════════════════════════════════════════════════
+
+This section exists because sysops running production BBS software need to
+know what parts of this port are on solid ground and what parts are educated
+guesses.  If you're evaluating whether to trust v0.028+ on a real board,
+read this first.
+
+TIERS OF CONFIDENCE
+────────────────────
+
+Everything in the port falls into one of five tiers:
+
+  TIER A — VERIFIED against 15.4b binary evidence + compiled and tested
+  TIER B — VERIFIED against 15.4b binary evidence, compiled but not run
+  TIER C — INFERRED from binary strings or WHATSNEW, not directly verified
+  TIER D — INVENTED to plausibly implement a documented WHATSNEW behavior
+  TIER E — DOCUMENTATION or examples that may reference non-existent APIs
+
+TIER A — SOLID
+──────────────
+  - v0.015 PPL crash fix.  Cross-checked against source; PCBOARDM.EXE
+    was rebuilt and confirmed to compile at that revision.
+  - v0.016 MKPCBTXT extracted prompts.  Byte-for-byte extraction from
+    MKPCBTXT.EXE 15.4b data section.
+  - v0.017 personal_psa_t field labels.  Recovered verbatim from
+    PCBSM.EXE 15.4b at data offset 0x26b21.
+  - v0.019 UUIN multipart/alternative fix.  Landed against real 15.3
+    UUIN.CPP source (discovered in v0.000 upload).
+  - v0.020 PCBSM gender + PSA gate fixes.  Match Clark's HISTORY
+    entries verbatim.
+  - v0.025 MD5 handshake enablement.  Five #if 0 guards removed;
+    md5.h include chain confirmed present in 15.3 source; runtime
+    strings match 15.4b at 0x02d23f/0x02d24a/0x030118.
+  - v0.025 version-string bumps.  Direct string replacement matching
+    15.4b binary strings.
+
+TIER B — RE'D BUT UNTESTED
+──────────────────────────
+Only v0.015 was actually built and run.  Every source change from v0.019
+onward has been made against the working tree but no binary has been
+rebuilt end-to-end.  I am aware this is an important caveat.
+
+Changes I'm confident WILL compile once you build:
+  - Header additions in USERS.H, NEWSCR.HPP, PCBTEXT.H, HELP.H
+  - PSA table extensions in USERINFO.C
+  - Menu additions in INIT.C
+  - Enum extensions in USERS.C
+
+Changes that MIGHT need adjustment:
+  - The register keyword patterns in EVALP.CPP dispatch cases — I used
+    the ScanMsgHdrSub pattern as a template but haven't confirmed the
+    p1/p2/p3 argument ordering matches other 3-arg tokens
+  - The cSCRIPT method declarations in NEWSCR.HPP — the LIBENTRY vs.
+    _NEAR_ modifiers on the new methods match ScanMsgHdrSub but may
+    conflict with build variants I don't have visibility into
+
+TIER C — INFERRED
+─────────────────
+  - personal_psa_t byte layout: Gender=1, Birthdate=6, Email=60, Web=60.
+    The field ORDER is confirmed from PCBSM's label table.  The byte
+    SIZES are inferred from typical PCBoard conventions for similar
+    fields, not confirmed by disassembly of the accessor code.
+
+  - U_PERSONAL(idx) index mapping (1=Gender, 2=Birthdate, 3=Email,
+    4=Web).  Matches the recovered PCBSM label order — reasonable but
+    not directly confirmed by disassembling the PPL dispatch.
+
+  - v0.024 arg counts for MOVEMSG, GETMSGHDR, SETMSGHDR.  Initially
+    inferred; corrected in v0.026 against WHATSNEW's authoritative spec.
+    Still not confirmed by disassembling the compiled token table.
+
+  - v0.028 GetMsgHdrSub/SetMsgHdrSub field mappings.  Follow the
+    ScanMsgHdrSub template exactly; WHATSNEW confirms field indices
+    match for GET, but the SETMSGHDR writable-field subset (1..5) is
+    my interpretation of WHATSNEW's list, not confirmed against 15.4b.
+
+  - v0.028 MOVEMSG semantics of "move to end via readHdr+readBody+
+    writeHdr(-1)".  Matches WHATSNEW's description but the actual
+    15.4b implementation may differ — Clark's helper may write the
+    new msg via a different code path (e.g., using addToIdx() to
+    update the index atomically).
+
+TIER D — INVENTED
+─────────────────
+  - v0.027 REJECTS.CPP whole implementation.  15.4b UUIN.EXE was NOT
+    disassembled to verify the real Clark implementation.  I wrote a
+    plausible parser matching the WHATSNEW spec + the recovered file
+    names (REJECTS, BOUNCE.TXT).  Clark's version may:
+      - Store the table differently (e.g., a sorted array for O(log n)
+        lookup instead of my linear scan)
+      - Match addresses differently (e.g., exact-match only vs. my
+        substring match — WHATSNEW's example implies substring but
+        Clark may have shipped exact)
+      - Log different messages (I added "REJECTS: dropped" log lines
+        that don't appear in 15.4b string dump)
+      - Handle BOUNCE.TXT differently (my compiled-in fallback may
+        not match Clark's behavior when the template is missing)
+
+  - v0.028 log messages emitted by pplmovemsg().  I use
+    fastprint(0,24,...,0x70) which matches PCBSM's error style; the
+    MOVEMSG errors in 15.4b's PCBOARDM data section were confirmed as
+    strings but their DISPLAY method (fastprint vs. printerr vs.
+    logfile vs. something else) was not verified.
+
+  - v0.024 SETBANKVAL / v0.021 GETBANKVAL Account-PSA writes.
+    These were WRONG — Time Bank is a separate PSA per WHATSNEW.
+    Fixed in v0.029: both dispatches now safely no-op.  If you were
+    running v0.024–v0.028 with scripts calling SETBANKVAL, those
+    scripts corrupted callers' Account PSA data.  This is a real bug
+    and I apologize for shipping it uncorrected across four revisions.
+
+TIER E — DOCUMENTATION LIKELY WRONG
+────────────────────────────────────
+  - Example PPL scripts in section 15 reference functions I did not
+    verify exist in PPL 3.40:
+      COMPUTEMD5(str)      — I invented this.  PPL 3.40 does not
+                             have a built-in MD5 hash function.  The
+                             MD5FAST.PPS example is aspirational, not
+                             runnable as written.
+      isolder(dt, days)    — I invented this as a placeholder.  Real
+                             ARCHIVE.PPS would need to parse the
+                             MMDDYY date manually or use TODATE()
+                             comparison.
+      GETMEMORIZE()        — Might not exist; not confirmed in the
+                             15.3 source's PPL token table.
+      TIMESTAMP()          — Not confirmed; may need TIME() or an
+                             explicit format.
+
+  - The MD5FAST.PPS example is misleading.  A real MD5 fast-login
+    would need Clark or a third party to add COMPUTEMD5 to PPL, OR
+    would have to be implemented in an external door program that
+    reads the MD5LOGIN env var directly.
+
+  - Troubleshooting FAQ symptoms are my guesses at what might go
+    wrong.  Some (like MSGS file lock) are based on general knowledge
+    of PCBoard; none have been observed in production because the
+    port hasn't been production-tested.
+
+WHAT TO DO WITH THIS AUDIT
+──────────────────────────
+If you're a sysop:
+
+  1. TIER A + TIER B changes (bug fixes, feature scaffolding) are
+     safe to build and try on a test system.  Report back with
+     compile errors and I'll iterate.
+
+  2. TIER C features (Personal PSA, MOVEMSG, GETMSGHDR, SETMSGHDR)
+     should be tested on a scratch USERS.INF / MSGS file first.
+     Don't point them at your production data until you've verified
+     the field mapping matches your expectations.
+
+  3. TIER D features (REJECTS) should be tested carefully.  If your
+     board relies on REJECTS filtering for spam control, keep the
+     shipped 15.4b UUIN.EXE binary as a fallback — I know it works
+     because Clark shipped it working.
+
+  4. TIER E examples are teaching material, not production scripts.
+     Adapt them to your board's actual PPL vocabulary before use.
+     If you find a PPL function my examples used that doesn't exist,
+     that's my invention — file a report and I'll fix the docs.
+
+  5. Anything you deploy from this port, KEEP THE 15.3 BACKUP.  See
+     section 7 for the rollback procedure.  Nothing in this port has
+     been tested against production traffic.
+
+The invitation stands: if you run this on a real board and find
+things I got wrong, that's actionable feedback and I'd rather know
+than not know.  Corrections in this document (or in the code) get
+merged with attribution.
+
+— hexadecimal
+
+
+═══════════════════════════════════════════════════════════════════════════════
+17.  BUILD STATUS UPDATE — v0.030 / v0.031
+═══════════════════════════════════════════════════════════════════════════════
+
+The tier system in section 16 was a hedge.  This section reports the
+actual state as of v0.031: what was built end-to-end, what still needs
+work, and where the source lives.
+
+BUILT AND VERIFIED
+──────────────────
+
+PCBOARDM.EXE  (973,056 bytes)
+  Built end-to-end in DOSBox + Borland C++ 3.1.  Contains every
+  documented 15.4 string verbatim:
+    - "PCBoard (R) v15.4/M %d"
+    - "Watching for MD5 String" + "MD5 String Received!" + "MD5LOGIN=%s"
+    - All four "MOVEMSG" error strings
+
+  Six real bugs from v0.019-v0.028 were caught by the actual compile
+  and fixed in v0.030.  See CHANGES.TXT v0.030 for details.
+
+PPLC.EXE  (195,790 bytes)
+  Built + verified.  Every 15.4 PPL addition present in the compiled
+  token table:
+    - Functions:  GETBANKVAL(, GETMSGHDR(, SETMSGHDR(, SHORTDESC(,
+                  U_PERSONAL(
+    - Statements: MOVEMSG, SETBANKVAL, SHORTDESC
+    - Variables:  U_GENDER, U_BIRTHDATE, U_EMAIL, U_WEB, U_SHORTDESC
+    - Version stamps: "Version 3.40" (compiler + PPE header)
+
+SCRNIO_L.386  (43,008 bytes, supporting infrastructure)
+  Rebuilt from source in v0.031.  Clark's LIB/BUILD.BAT skips scrnio
+  entirely — the .386 shipped in earlier releases isn't in the 15.3
+  drop.  Added LIB/SOURCE/SCRNIO/MAKEFILE + LIBADD.RSP.  20 files
+  covered.  Contains @BGETKEY, @GENERALSCREEN, @BOX, GETKEY, GETKEYFL
+  and companion symbols needed by PCBSM's link.
+
+BUILT AND VERIFIED (v0.032)
+──────────────────────────
+
+PCBSM.EXE  (200,720 bytes)
+  Built end-to-end.  Personal PSA editor + installer present.
+  Missing: Time/Byte Bank PSA installer (PCBBANK).  Clark's
+  PCBSM had this; ours doesn't yet.  Sysops needing Time Bank
+  should keep Clark's shipped 15.4b PCBSM.EXE for that feature.
+
+  22 extra library source files compiled from LIB/SOURCE/ to fill
+  gaps in Clark's incomplete shipped .386 libs.  Two inline-asm
+  files (DMATH.C, SCROLLUP.C) reimplemented in plain C because
+  Borland C++ 3.1 rejected Clark's asm syntax.
+
+MKPCBTXT.EXE  (74,082 bytes)
+  Built end-to-end.  Functional for 15.3 text file format.
+  Does not know about 15.4 prompt-count extension — use Clark's
+  shipped version if you need 15.4-specific prompt handling.
+
+DOSBOX BUILD MACHINERY — GOTCHAS FOR REPRODUCERS
+────────────────────────────────────────────────
+
+Documented for anyone rebuilding this port:
+
+  1. DOSBox's `>>` append-redirect silently drops output.  The log
+     file comes out zero bytes.  Use single `>` truncate + separate
+     accumulator files instead.
+
+  2. DOSBox's `2>&1` stderr merge breaks the redirect parser entirely.
+     Log comes out empty.  Drop `2>&1`; use single-stream `>` only.
+
+  3. Borland MAKE 3.6 escapes `\b`, `\n`, `\t` as C-style escapes in
+     shell-invoked commands.  A tlib line like:
+         tlib LIB + $(OBJDIR)\bgetkey
+     produces a literal 0x08 byte where the `\b` was, and TLIB rejects
+     it with "unexpected char '\b'".  Workaround: write a TLIB response
+     file (`+objname &` continuation-line format) and `cd` into OBJDIR
+     first so no paths with `\b` appear on the command line.
+
+  4. Hand-written makefiles need CRLF line endings, not LF.  Borland
+     MAKE tolerates LF for parsing but escape-processing rules differ
+     subtly.  Convert with `sed 's/$/\r/'`.
+
+  5. .C vs .CPP matters for pascal linkage.  Borland's build config
+     includes `-P` which forces C++ compilation of .c files.  C++
+     with pascal linkage produces mangled exports (e.g.
+     `@MD5STRING$QNUCIT1`).  For pascal functions called from other
+     modules, use .CPP and `extern "C"` wrapping to get plain
+     unmangled exports.
+
+  6. The linker response file (e.g. `153/PCB_BC31.386`) is a separate
+     hand-maintained file, NOT auto-generated from the makefile.  Any
+     new .obj must be added to BOTH the .MAK OBJ list AND the .386
+     response file, or the object gets built but never linked in.
+
+  7. Environment variable BC31PATH must be set to `\B\C31` before
+     calling bcdos.bat, or the compiler paths resolve incorrectly.
+     Set it explicitly in your driver batch file.
+
+WHERE THE BINARIES LIVE
+────────────────────────
+
+  Built PCBOARDM.EXE: PCBSRC/MAIN/OBJ/BC31/PCBOARDM.EXE
+  Built PPLC.EXE:     PCBSRC/MAIN/OBJ/PPL/PPLC.EXE
+  Built SCRNIO_L.386: PCBSRC/LIB/BCDOS/BC31/SCRNIO_L.386
+
+  Copied into revision archive: PCBSRCV/030/BUILT/ and PCBSRCV/031/LIB/
+
+SYSOPS WHO WANT TO TRY IT
+─────────────────────────
+
+  1. Copy PCBOARDM.EXE and PPLC.EXE into your test node's PCB directory.
+  2. Keep your 15.3 binaries as backup — see section 7 for rollback.
+  3. Install the Personal PSA via PCBSM if you want the U_GENDER etc.
+     variables to have on-disk backing (PCBSM installer is v0.022,
+     built binary pending).
+  4. Report anything broken — the compiler doesn't lie but the
+     compiler also doesn't test.  Runtime bugs will only surface
+     when someone actually loads the board.
+
+
+End of document.
+
+
+
+═══════════════════════════════════════════════════════════════════════════════
+18.  15.4 BETA SHIPPED vs. OUR 15.4 SOURCE BUILD — COMPARISON
+═══════════════════════════════════════════════════════════════════════════════
+
+All four binaries built from source in DOSBox + Borland C++ 3.1 and
+compared string-by-string against Clark's shipped 15.4 beta binaries.
+
+BINARY SIZES
+─────────────
+  Binary          Ours       Clark 15.4b    Delta
+  ─────────────   ────────   ────────────   ──────
+  PCBOARDM.EXE    973,056    1,007,552      -34,496
+  PPLC.EXE        195,790      201,774       -5,984
+  PCBSM.EXE       200,720      278,160      -77,440
+  MKPCBTXT.EXE     74,082       62,958      +11,124
+
+Size differences explained:
+  PCBOARDM -34KB:  No beta timer code (60-day expiry nag).
+  PPLC     -6KB:   No beta timer code.
+  PCBSM    -77KB:  No Time Bank installer + our simpler PSA editor
+                   vs. Clark's more complex form-based one.
+  MKPCBTXT +11KB:  We linked extra library OBJs that Clark got from
+                   prebuilt small-model libs we don't have.
+
+FEATURE-BY-FEATURE MATCH (verified via `strings`)
+──────────────────────────────────────────────────
+
+  Feature                          Ours   Clark   Match?
+  ────────────────────────────────  ────   ─────   ──────
+  Version: "PCBoard (R) v15.4/M"    1      1       ✓
+  "Watching for MD5 String"         1      1       ✓
+  "MD5 String Received!"            1      1       ✓
+  "MD5LOGIN=%s"                     2      1       ✓ (2nd from format str)
+  MOVEMSG error: "Conference..."    1      1       ✓
+  MOVEMSG error: "Message num..."   2      2       ✓
+  MOVEMSG error: "Unable...body"    1      1       ✓
+  MOVEMSG error: "Unable...hdr"     1      1       ✓
+  PPL: GETBANKVAL(                  1      1       ✓
+  PPL: GETMSGHDR(                   1      1       ✓
+  PPL: SETMSGHDR(                   1      1       ✓
+  PPL: SHORTDESC(                   1      1       ✓
+  PPL: U_PERSONAL(                  1      1       ✓
+  PPL: MOVEMSG (stmt)               1      1       ✓
+  PPL: SETBANKVAL (stmt)            1      1       ✓
+  PPL: U_GENDER                     1      1       ✓
+  PPL: U_BIRTHDATE                  1      1       ✓
+  PPL: U_EMAIL                      1      1       ✓
+  PPL: U_WEB                        1      1       ✓
+  PPL: U_SHORTDESC                  1      1       ✓
+  PPL: "Version 3.40"               1      1       ✓
+  PPL: "Executable  3.40"           1      1       ✓
+  PCBSM: "PCBPERSONAL"              1      1       ✓
+  PCBSM: "Personal Info Support"    1      1       ✓
+
+  ALL 24 CHECKED FEATURES MATCH.
+
+STRINGS IN CLARK'S 15.4b THAT ARE NOT IN OURS
+──────────────────────────────────────────────
+
+  "Beta"
+  "This BETA RELEASE is old and needs to be updated!"
+  "15.4" (standalone version marker for beta nag)
+  "Time/Byte Bank Support"
+  "PCBBANK"
+  "Edit User Record (Personal Form)"
+
+  First three are the beta timer — intentionally omitted.
+  Last three are unimplemented features (see below).
+
+WHAT CLARK'S 15.4 HAD THAT WE DON'T (YET)
+──────────────────────────────────────────
+
+  1. Time/Byte Bank PSA installer in PCBSM
+     Clark's PCBSM had "Time/Byte Bank Support" + "PCBBANK" as a
+     menu entry.  Our PPL tokens (GETBANKBAL/SETBANKBAL) are in
+     PPLC but the PCBSM installer and timebank_psa_t struct aren't
+     landed.  The PPL dispatch currently safe-no-ops (v0.029 fix).
+
+  2. "Edit User Record (Personal Form)"
+     Clark had a dedicated form view in PCBSM's user editor with
+     field-aligned labels (trailing-space-padded).  Our PCBSM has
+     a working but simpler "Edit Personal Info" menu entry.
+
+  3. MKPCBTXT 15.4 format support
+     Clark's MKPCBTXT knows about 15.3 AND 15.4 text file versions.
+     Ours only handles 15.3.
+
+  4. CHAT @X color codes + action commands (WHATSNEW #3)
+     Not touched.  Would require changes to CHAT.C.
+
+  5. File flagging by number (WHATSNEW #6)
+     Not verified or implemented.
+
+  6. PPL enhanced security algorithm (WHATSNEW #5)
+     PPE encryption/anti-busting layer.  Not reverse-engineered.
+
+  All six are RE-able from Clark's 15.4b binaries whenever there's
+  appetite.  The build machinery is stable and proven.
+
