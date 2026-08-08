@@ -215929,7 +215929,7 @@ diff -ruN '--exclude=*.OBJ' '--exclude=*.obj' '--exclude=*.LIB' '--exclude=*.lib
  #endif
 diff -ruN '--exclude=*.OBJ' '--exclude=*.obj' '--exclude=*.LIB' '--exclude=*.lib' '--exclude=BC31' '--exclude=OBJ' '--exclude=WOBJ' '--exclude=WATCOM' PCBSRCV/019/LIB/SOURCE/PCB/CNAMES.C PCBSRC/LIB/SOURCE/PCB/CNAMES.C
 --- PCBSRCV/019/LIB/SOURCE/PCB/CNAMES.C	2026-07-29 05:37:44.971285314 +0000
-+++ PCBSRC/LIB/SOURCE/PCB/CNAMES.C	2026-08-05 21:43:57.654373628 +0000
++++ PCBSRC/LIB/SOURCE/PCB/CNAMES.C	2026-08-08 13:39:06.748581944 +0000
 @@ -88,7 +88,7 @@
  }
  
@@ -215991,6 +215991,23 @@ diff -ruN '--exclude=*.OBJ' '--exclude=*.obj' '--exclude=*.LIB' '--exclude=*.lib
  }
  
  
+@@ -275,6 +277,7 @@
+ }
+ 
+ 
++static void cdecl_closecnames(void) { closecnames(); }
+ void LIBENTRY loadcnames(bool Setup) {
+   int         Mode;
+   int         BufSize;
+@@ -348,7 +351,7 @@
+     dosrewind(&AddConfFile);
+   }
+ 
+-  atexit(closecnames);
++  atexit(cdecl_closecnames);
+ 
+   switch(Access) {
+     case MEMORY : if ((ConfList = (pcbconftype _FAR_ *) farmalloc((long) PcbData.NumAreas*sizeof(pcbconftype))) != NULL) {
 diff -ruN '--exclude=*.OBJ' '--exclude=*.obj' '--exclude=*.LIB' '--exclude=*.lib' '--exclude=BC31' '--exclude=OBJ' '--exclude=WOBJ' '--exclude=WATCOM' PCBSRCV/019/LIB/SOURCE/PCB/CONFFUNC.C PCBSRC/LIB/SOURCE/PCB/CONFFUNC.C
 --- PCBSRCV/019/LIB/SOURCE/PCB/CONFFUNC.C	2026-07-29 05:37:44.971350483 +0000
 +++ PCBSRC/LIB/SOURCE/PCB/CONFFUNC.C	2026-08-05 00:06:10.107105051 +0000

@@ -88,7 +88,7 @@ static void _NEAR_ LIBENTRY convertfrompcbconftype(oldconftype * Old, addconftyp
 }
 
 
-void LIBENTRY putconfrecord(unsigned ConfNum, pcbconftype *Conf) {
+int LIBENTRY putconfrecord(unsigned ConfNum, pcbconftype *Conf) {
   oldconftype Old;
   addconftype Add;
 
@@ -131,10 +131,11 @@ void LIBENTRY putconfrecord(unsigned ConfNum, pcbconftype *Conf) {
     mc_unregister(&Old);
     mc_unregister(&Add);
   #endif
+  return 0;
 }
 
 
-void LIBENTRY getconfrecord(unsigned ConfNum, pcbconftype *Conf) {
+int LIBENTRY getconfrecord(unsigned ConfNum, pcbconftype *Conf) {
   oldconftype Old;
   addconftype Add;
   cachetype *p;
@@ -143,23 +144,23 @@ void LIBENTRY getconfrecord(unsigned ConfNum, pcbconftype *Conf) {
     memset(Conf,0,sizeof(pcbconftype));
     if (PcbSetup)
       putconfrecord(ConfNum,Conf);
-    return;
+    return 0;
   }
 
   switch(Access) {
     case MEMORY: farmemcpy(Conf,&ConfList[ConfNum],sizeof(pcbconftype));
-                 return;
+                 return 0;
     case DIRECT: dosfseek(&ConfFile,((long) ConfNum*sizeof(oldconftype))+sizeof(short),SEEK_SET);
                  dosfread(&Old,sizeof(oldconftype),&ConfFile);
                  dosfseek(&AddConfFile,(long) ConfNum*sizeof(addconftype),SEEK_SET);
                  if (dosfread(&Add,sizeof(addconftype),&AddConfFile) != sizeof(addconftype))
                    memset(&Add,0,sizeof(addconftype));
                  converttopcbconftype(&Old,&Add,Conf);
-                 return;
+                 return 0;
     case CACHE : for (p = Cache; p < &Cache[CACHESIZE]; p++) {
                    if (p->ConfNum == ConfNum) {
                      farmemcpy(Conf,&ConfList[p->Offset],sizeof(pcbconftype));
-                     return;
+                     return 0;
                    }
                  }
                  memmove(&Cache[1],Cache,(CACHESIZE-1)*sizeof(cachetype));
@@ -174,8 +175,9 @@ void LIBENTRY getconfrecord(unsigned ConfNum, pcbconftype *Conf) {
                  Cache[0].Offset  = LastOffset;
                  LastOffset++;
                  LastOffset &= (CACHESIZE-1);  /* wrap around to zero */
-                 return;
+                 return 0;
   }
+  return 0;
 }
 
 
@@ -275,6 +277,7 @@ static void _NEAR_ LIBENTRY createcnamesadd(void) {
 }
 
 
+static void cdecl_closecnames(void) { closecnames(); }
 void LIBENTRY loadcnames(bool Setup) {
   int         Mode;
   int         BufSize;
@@ -348,7 +351,7 @@ top:
     dosrewind(&AddConfFile);
   }
 
-  atexit(closecnames);
+  atexit(cdecl_closecnames);
 
   switch(Access) {
     case MEMORY : if ((ConfList = (pcbconftype _FAR_ *) farmalloc((long) PcbData.NumAreas*sizeof(pcbconftype))) != NULL) {
