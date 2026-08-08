@@ -1,0 +1,56 @@
+# 15.41 Revival Additions
+# Files not present in Clark's 15.4 source
+# These are added on top of the 15.4-watcom port
+
+## ASM→C Replacements (Phase 3)
+MAIN/SOURCE/ASM/ASYNC.C
+MAIN/SOURCE/ASM/TIMER.C
+MAIN/SOURCE/ASM/BGKEY.C
+MAIN/SOURCE/ASM/NOSCROLL.C
+MAIN/SOURCE/ASM/FMEMCPY.C
+MAIN/SOURCE/ASM/CUTIL.C
+MAIN/SOURCE/ASM/XMODEM_STUB.C
+LIB/SOURCE/DOS/INT24HND.C
+
+## Tools
+tools/pcbtic.c
+tools/pcbfcfg.c
+tools/nlcomp.c
+tools/upd1541.c
+tools/utrayit.c
+tools/utrayit.h
+
+## Installer
+installer/README.md
+installer/pcbis
+installer/pcbis_initv
+installer/pcbis_initv.bat
+installer/pcbis_shutdown
+installer/pcbis_shutdown.bat
+installer/pcbis_shutdown.cmd
+installer/pcbis_startup
+installer/pcbis_startup.bat
+installer/pcbis_startup.cmd
+installer/pcbis_ui
+installer/pcbis_ui.c
+
+## Documentation
+docs/PCB1541_DRAFT.md
+docs/WHATSNEW.md
+docs/FIDONET.md
+docs/PCBIS_UI.md
+docs/MISSING_FUNCTIONS.md
+
+## SyncTerm Reference
+tools/syncterm/README.md
+tools/syncterm/ftpsrvr.cpp
+tools/syncterm/ftpsrvr.h
+tools/syncterm/sexyz.c
+tools/syncterm/wren_bind_sftp.c
+tools/syncterm/xmodem.c
+tools/syncterm/xmodem.h
+tools/syncterm/zmodem.c
+tools/syncterm/zmodem.h
+
+## PCBSM Watcom Support
+MAIN/SOURCE/UTIL/PCBSM/SOURCE/pcbsm_externs.h

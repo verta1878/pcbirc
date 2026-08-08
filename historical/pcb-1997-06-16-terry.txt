@@ -1,0 +1,63 @@
+Date: Mon, 16 Jun 1997 22:46:35 -0600
+From: David Terry <TerryDW{at}chq.byu.edu>
+Subject: [1 Mw-tech] PCBoard Beta Patch
+Reply-To: Mw-tech{at}ais-bbs.org
+
+Hello Everyone... My name is David Terry, one of the original PCBoard
+programmers at Clark Development Company.
+
+I hope you'll excuse the intrusion of a PCBoard topic here in the
+MetaWorlds area but I didn't know how else to reach a lot of PCBoard
+customers all at once.
+
+I've been out of the "thick of things" for nearly a year now (I left CDC
+employment back on 7/15 of last year). However, after so many years
+of working on PCBoard, I still consider PCBoard to be my "baby" and I
+hate to see her hung out to dry with the sudden disappearance of her
+current caretaker.
+
+My main concern is that those of you who are running the BETA version
+of the software may find yourselves in a very uncomfortable situation
+once the BETA code timer kicks in (30+ days after last compilation).
+
+Back when the little "beta annoyance" was put in the code, it was
+intended merely to wake sysops up and get them to upgrade the code
+they are running. It was never intended to be found in the last
+"distributed" copy of PCBoard... <aarggh>
+
+I don't know much of the current CDC situation ... I don't know what is
+happening with Fred or with Steve Morris or with the PCBoard and/or
+MetaWorlds source code for that matter. I don't even have a copy of the
+"current" source code myself. However, I *do* want to help.
+
+Below are instructions for disabling the beta-date check. I believe
+these instructions should work for any version of the PCBoard code.
+However, as I said, I don't have the current source code so I am unable
+to test this to be sure. With that said ... the FIRST THING TO DO
+should be to back up your copy of the pcboard executable! :-)
+
+Because of the variety of hex editors that are available, I won't give
+specific details, but here are the basics of what needs to be done (I'll
+leave it up to you, and others in this area to help each other, with
+obtaining and using any specific hex editors):
+
+For DOS executables:
+1) search the executable for these bytes: 26 2b 07 89 46 fe
+2) replace these 3 bytes "26 2b 07" with "33 c0 90"
+
+For OS/2 executables:
+1) search the executable for these bytes: 8b f0 66 2b 32
+2) replace these 5 bytes "8b f0 66 2b 32" with 31 f6 90 90 90
+
+The above patch leaves PCBoard entirely intact with only the beta date
+check itself being disabled. I don't see how being able to "continue
+to run" code you have purchased and downloaded could be a violation of
+copyright, so long as you perform the above change to your own copy
+of the code without sharing executables. I therefore submit this patch
+for the sole purpose of patching your own personal copies of PCBoard.
+Any other action is taken at your own risk.
+
+For those who have run PCBoard ... I thank you for your patronage and
+support. I regret the quick departure I made last year but feel it was
+the best thing for me and my family. I sure do miss you folks! Long
+live PCBoard... :-)

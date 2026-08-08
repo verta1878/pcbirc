@@ -1,0 +1,51 @@
+#!/bin/bash
+# pcbis_startup — Start PCBoard BBS + netmodem2irc
+# Part of pcbrevival (GPL v3.0)
+
+PCBIS_ROOT="${PCBIS_ROOT:-$HOME/pcboard}"
+PCBIS_CONF="$PCBIS_ROOT/pcbis.cfg"
+PCBIS_LOG="$PCBIS_ROOT/logs/pcbis.log"
+
+log() { echo "$(date '+%Y-%m-%d %H:%M:%S') $1" | tee -a "$PCBIS_LOG"; }
+
+log "pcbis_startup: beginning"
+
+# Check prerequisites
+if [ ! -f "$PCBIS_ROOT/dosbox.conf" ]; then
+    echo "ERROR: Not initialized. Run pcbis_initv first."
+    exit 1
+fi
+
+# Start netmodem2irc
+if command -v NMServer.exe >/dev/null 2>&1; then
+    log "Starting NMServer.exe..."
+    nohup NMServer.exe >> "$PCBIS_ROOT/logs/pcbis-netmodem.log" 2>&1 &
+    echo $! > "$PCBIS_ROOT/logs/netmodem.pid"
+elif command -v wine >/dev/null 2>&1 && [ -f "$PCBIS_ROOT/netmodem/NMServer.exe" ]; then
+    log "Starting NMServer.exe via Wine..."
+    nohup xvfb-run -a wine "$PCBIS_ROOT/netmodem/NMServer.exe" >> "$PCBIS_ROOT/logs/pcbis-netmodem.log" 2>&1 &
+    echo $! > "$PCBIS_ROOT/logs/netmodem.pid"
+else
+    log "WARNING: netmodem2irc not found. Starting DOSBox with built-in modem."
+    log "         Install netmodem2irc for telnet access."
+    # Fall back to DOSBox built-in virtual modem:
+    sed -i 's/serial1=nullmodem.*/serial1=modem listenport:23/' "$PCBIS_ROOT/dosbox.conf"
+fi
+
+sleep 1
+
+# Start DOSBox with PCBoard
+log "Starting DOSBox + PCBoard..."
+if [ -n "$DISPLAY" ]; then
+    nohup dosbox -conf "$PCBIS_ROOT/dosbox.conf" >> "$PCBIS_ROOT/logs/dosbox.log" 2>&1 &
+else
+    nohup xvfb-run -a dosbox -conf "$PCBIS_ROOT/dosbox.conf" >> "$PCBIS_ROOT/logs/dosbox.log" 2>&1 &
+fi
+echo $! > "$PCBIS_ROOT/logs/dosbox.pid"
+
+log "pcbis_startup: complete"
+echo ""
+echo "PCBoard is running."
+echo "  Telnet: telnet localhost 23"
+echo "  Logs:   $PCBIS_ROOT/logs/"
+echo "  Stop:   pcbis_shutdown"

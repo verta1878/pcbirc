@@ -1,0 +1,1612 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  USERS MANUAL
+
+            SIO.SYS and VSIO.SYS, Serial Communications Device Driver
+            for OS/2 V2 (and up) and its Virtual DOS Machines (VDM).
+
+                     Copyright (c) 1995 by Raymond L. Gwinn
+                                26 Tanager Place
+                          Beckley, West Virginia 25801
+                               All Rights Reserved
+
+                                 January 1, 1997
+
+                                      Email
+                              CompuServe 72662,3547
+                             Internet ray@gwinn.com
+
+                           VOICE ORDERS 1-304-255-7900
+                               FAX 1-304-255-7902
+                        BBS 1-255-7903 or vmbbs.gwinn.com
+                            WEB http://www.gwinn.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  INTRODUCTION
+
+     SIO.SYS and VSIO.SYS are companion device drivers for Version 2 (and
+     up) of the OS/2 operating system.
+
+     Both drivers (SIO/VSIO) have been coded with performance in mind,
+     possibly sacrificing some compatibility.  For this reason, SIO and
+     VSIO are not exact replacements for the OS/2 drivers COM and VCOM. 
+     However, all serial communications programs tested by the author work
+     correctly using SIO/VSIO.
+
+     This manual is intended for the SIO user.  A separate SIO Technical
+     Reference Manual is included in the distribution zip.  The Technical
+     Reference Manual also documents some advanced options and features
+     that are not documented here.
+
+     This manual and the software distributed with it is provided with no
+     guarantees.  Use it at your own risk.
+
+
+
+
+                                                                         ii
+
+                                TABLE OF CONTENTS
+
+
+     INTRODUCTION  . . . . . . . . . . . . . . . . . . . . . . . . . .    i
+          SIO Technical Reference Manual . . . . . . . . . . . . . . .    i
+
+     WHAT IS SIO . . . . . . . . . . . . . . . . . . . . . . . . . . .    1
+
+     WHAT IS VSIO  . . . . . . . . . . . . . . . . . . . . . . . . . .    2
+
+     DISTRIBUTION AND SUPPORT  . . . . . . . . . . . . . . . . . . . .    3
+          Distribution and Ordering  . . . . . . . . . . . . . . . . .    3
+               SIO Distribution and Support BBS  . . . . . . . . . . .    3
+          Support  . . . . . . . . . . . . . . . . . . . . . . . . . .    3
+               OS/2 Vendor Forum on
+                    CompuServe . . . . . . . . . . . . . . . . . . . .    3
+          Updates  . . . . . . . . . . . . . . . . . . . . . . . . . .    4
+
+     GETTING STARTED . . . . . . . . . . . . . . . . . . . . . . . . .    5
+          Installing SIO/VSIO  . . . . . . . . . . . . . . . . . . . .    5
+          Quick Start  . . . . . . . . . . . . . . . . . . . . . . . .    5
+
+     COMMAND LINE OPTIONS  . . . . . . . . . . . . . . . . . . . . . .    6
+          COM1 thru
+               COMn  . . . . . . . . . . . . . . . . . . . . . . . . .    6
+          I/O port address . . . . . . . . . . . . . . . . . . . . . .    6
+          IRQ number . . . . . . . . . . . . . . . . . . . . . . . . .    6
+          Forced 16550A  . . . . . . . . . . . . . . . . . . . . . . .    6
+
+     Development and Debugging Tools . . . . . . . . . . . . . . . . .    8
+          The Poor Man's Line Monitor (PMLM.EXE) . . . . . . . . . . .    8
+          VIEWPMLM.EXE . . . . . . . . . . . . . . . . . . . . . . . .    9
+          SIO's Utility (SU.EXE) . . . . . . . . . . . . . . . . . . .    9
+               IRQs that are currently free  . . . . . . . . . . . . .    9
+
+     Intelligent Cards Supported . . . . . . . . . . . . . . . . . . .   10
+          Hayes ESP  . . . . . . . . . . . . . . . . . . . . . . . . .   10
+               ESP in Compatibility Mode . . . . . . . . . . . . . . .   10
+          Telcor Tport . . . . . . . . . . . . . . . . . . . . . . . .   10
+
+     . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   11
+
+     AUTOMATIC IRQ ASSIGNMENT  . . . . . . . . . . . . . . . . . . . .   11
+
+     DOS SETTINGS  . . . . . . . . . . . . . . . . . . . . . . . . . .   12
+          SIO_Allow_Access_COMn  . . . . . . . . . . . . . . . . . . .   12
+          SIO_Virtualize_COM_Ports . . . . . . . . . . . . . . . . . .   12
+          SIO_Virtualize_16550A  . . . . . . . . . . . . . . . . . . .   12
+          SIO_Share_Access_With_OS/2 . . . . . . . . . . . . . . . . .   12
+          SIO_Screen_Sync_Kludge . . . . . . . . . . . . . . . . . . .   13
+          SIO_Mode_DTR . . . . . . . . . . . . . . . . . . . . . . . .   13
+          SIO_Mode_IDSR  . . . . . . . . . . . . . . . . . . . . . . .   14
+          SIO_Mode_OCTS  . . . . . . . . . . . . . . . . . . . . . . .   15
+          SIO_Mode_ODSR  . . . . . . . . . . . . . . . . . . . . . . .   15
+          SIO_Mode_RTS . . . . . . . . . . . . . . . . . . . . . . . .   15
+
+
+
+
+                                                                        iii
+
+          SIO_Mode_XON/XOFF  . . . . . . . . . . . . . . . . . . . . .   16
+          SIO_Mode_FIFO_Load_Count . . . . . . . . . . . . . . . . . .   17
+
+     Configuration Profiles  . . . . . . . . . . . . . . . . . . . . .   18
+          Seiko Smart Label Printer  . . . . . . . . . . . . . . . . .   18
+          IBM's SLIP . . . . . . . . . . . . . . . . . . . . . . . . .   18
+
+     Differences between SIO/VSIO and COM/VCOM . . . . . . . . . . . .   19
+
+     PROBLEMS AND SOLUTIONS  . . . . . . . . . . . . . . . . . . . . .   21
+          IRQ for a port appears to be wrong . . . . . . . . . . . . .   21
+          The modem will not initialize  . . . . . . . . . . . . . . .   21
+          WinFax locks up during install . . . . . . . . . . . . . . .   21
+          Telemate does not recognize VX00 as a FOSSIL . . . . . . . .   21
+          Comm output is very slow from DOS  . . . . . . . . . . . . .   21
+           . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   21
+          Procomm stops receiving  . . . . . . . . . . . . . . . . . .   22
+          Procomm For Windows download errors  . . . . . . . . . . . .   22
+          WinFax does not work well. . . . . . . . . . . . . . . . . .   23
+               Class 1 FAX modem . . . . . . . . . . . . . . . . . . .   23
+               Class 2 FAX modem . . . . . . . . . . . . . . . . . . .   23
+          Serial Printer messes up on last page. . . . . . . . . . . .   23
+
+     IRQ SHARING ON ISA  . . . . . . . . . . . . . . . . . . . . . . .   24
+
+     Appendix A, Hardware Port and IRQ Assignments . . . . . . . . . .   25
+          Addresses and IRQs for COM1 and COM2 . . . . . . . . . . . .   25
+          Defacto standard for COM3 and COM4 . . . . . . . . . . . . .   25
+          Addresses and IRQ for COM3 through COM8 on the PS/2  . . . .   25
+
+     Appendix B, SIO Chips . . . . . . . . . . . . . . . . . . . . . .   26
+          8250 . . . . . . . . . . . . . . . . . . . . . . . . . . . .   26
+          8250A  . . . . . . . . . . . . . . . . . . . . . . . . . . .   26
+          16450  . . . . . . . . . . . . . . . . . . . . . . . . . . .   26
+          16C451 . . . . . . . . . . . . . . . . . . . . . . . . . . .   27
+          16550 (Non A)  . . . . . . . . . . . . . . . . . . . . . . .   27
+          16550A . . . . . . . . . . . . . . . . . . . . . . . . . . .   27
+          16550AF  . . . . . . . . . . . . . . . . . . . . . . . . . .   27
+          16550AFN . . . . . . . . . . . . . . . . . . . . . . . . . .   27
+          16550s Made by Western Digital . . . . . . . . . . . . . . .   28
+          16C551 . . . . . . . . . . . . . . . . . . . . . . . . . . .   28
+          16C552 . . . . . . . . . . . . . . . . . . . . . . . . . . .   28
+          16C554 . . . . . . . . . . . . . . . . . . . . . . . . . . .   28
+          82510  . . . . . . . . . . . . . . . . . . . . . . . . . . .   28
+          16650  . . . . . . . . . . . . . . . . . . . . . . . . . . .   29
+          16750 from Texas Instruments . . . . . . . . . . . . . . . .   29
+          ComBic . . . . . . . . . . . . . . . . . . . . . . . . . . .   30
+
+     Appendix C, Multi-Port Serial I/0 Cards . . . . . . . . . . . . .   31
+          STB 4COM . . . . . . . . . . . . . . . . . . . . . . . . . .   31
+          Connect Tech Dflex-8 . . . . . . . . . . . . . . . . . . . .   31
+          Gtek BBS550  . . . . . . . . . . . . . . . . . . . . . . . .   32
+          Neotech Quad Serial  . . . . . . . . . . . . . . . . . . . .   32
+
+     INDEX . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   33
+
+
+
+
+                                                                         iv
+
+
+
+
+                                                                          1
+
+                                   WHAT IS SIO
+
+     SIO is a Serial Input/Output (SIO) communications driver.  It provides
+     an interface between application programs and the serial
+     communications hardware.
+
+     SIO had been designed as a high performance replacement for the OS/2
+     device driver COM.SYS.  See the Technical Reference Manual for
+     information about the known differences between COM.SYS and SIO.SYS.
+
+     SIO works with 8250 (type) serial I/O devices.  Such devices include,
+     but are not limited to the 8250A, 16450, 16550, 16550A and the 82510. 
+     If you have a PC that is an IBM or near compatible which has a serial
+     communication port, it is likely that it contains one of these
+     devices.  In addition, SIO supports some intelligent serial I/O cards. 
+     See "Intelligent Cards Supported" for additional information.  SIO
+     will identify the type of serial devices that it finds and display
+     them at load time.
+
+     Like other Device Drivers, SIO will do very little standing alone. 
+     There must be an application(s) program that makes use of SIO's
+     functions before one will benefit from SIO.
+
+
+
+
+                                                                          2
+
+                                  WHAT IS VSIO
+
+     VSIO is a Virtual Device Driver (VDD).  Virtual device drivers provide
+     services for DOS programs executing under OS/2.  Most Virtual Device
+     Drivers emulate a specific hardware device and/or BIOS service.  The
+     primary job of a Virtual Device Driver is to convert misbehaved DOS
+     input/output into well behaved input/output that can be accepted by
+     the OS/2 driver SIO.SYS.
+
+     Using the protection mechanism of the 386 (and up) processor, a
+     Virtual Device Driver can instruct OS/2 to trap all input/output for
+     given hardware ports.  Once trapped, the Virtual Device Driver (VDD)
+     appropriately routes information to/from the Physical Device Driver
+     (PDD) and to/from the DOS program.
+
+     VSIO creates a virtual (imaginary) 16550A or 16450 (UART) in software. 
+     Additionally VSIO emulates the BIOS INT 14h services.  All of the
+     hardware registers of the virtual UART are simulated by VSIO.  VSIO
+     does not attempt to simulate the timing of the real UARTs.  DOS
+     programs that depend on the timing of real hardware UARTs may have
+     problems executing under VSIO.
+
+     All DOS programs that execute under VSIO should have RTS/CTS
+     handshaking enabled (in the application) even if SIO proper is not
+     using RTS/CTS handshake.  
+
+     The virtualization (simulation) provided by VSIO is not (and can not
+     be) exact.  However, most well written DOS programs should not have
+     problems.
+
+     VSIO will only work with SIO installed and the versions of SIO/VSIO
+     must match.  If VSIO refuses to install, you most likely have a
+     version mismatch or COM.SYS is still installed.  VSIO will not work
+     with any other device driver like COM.SYS.
+
+
+
+
+                                                                          3
+
+                            DISTRIBUTION AND SUPPORT
+
+     Distribution and Ordering
+     The entire package collectively known as SIO is ShareWare.  It is not
+     free software or freeware.  See LICENSE.TXT and ORDER.TXT for
+     additional information.  The ShareWare version of SIO is distributed
+     electronically and supports only 4 ports (registered versions can be
+     ordered supporting up to 16 ports).  One may check their favorite
+     electronic hangout for the latest version of SIO.  The latest copy of
+     the ShareWare version is always posted for downloading from the BBS at
+     1-304-255-7903 or vmbbs.gwinn.com and www.gwinn.com
+
+     Registered versions of SIO are distributed by US Mail, electronically
+     mail and from the SIO Distribution and Support BBS.  Users desiring to
+     register electronically, may call the BBS and register on line (1-304-
+     255-7903 or vmbbs.gwinn.com) or www.gwinn.com and immediately download
+     their registered version of SIO.  Use the ORDER command at the main
+     BBS prompt.
+
+     Registrations/Orders can also be placed by phone, mail, FAX, and
+     email.  See the front cover of this manual for the phone numbers and
+     addresses.  Also see ORDER.TXT for and order form that may be used.
+
+     Support
+     Extensive testing has been done to insure that this product works on
+     the widest possible range of OS/2 V2 (and up) systems.  In most cases,
+     problems can be resolved by reading this manual carefully.
+
+     Support is provided in section 4 of the OS/2 Vendor Forum on
+     CompuServe (GO OS2BVEN).  Section 4 of the OS2BVEN Forum is dedicated
+     to the support of SIO.
+
+     In addition, support is provided by BBS, Email and FAX.  Voice support
+     would overwhelm the author and is not available.  If, after reading
+     the manual carefully, you are unable to resolve a problem, you may
+     submit a problem report to one of the following: 
+                                      Email
+                              CompuServe 72662,3547
+                             Internet ray@gwinn.com
+                               FAX 1-304-255-7902
+                      BBS 1-304-255-7903 or vmbbs.gwinn.com
+
+     Users should note that Support does not always result in a correction
+     of a problem.  In addition, the support provided is support of SIO,
+     and not the applications that use SIO.  Questions and/or problems
+     about applications programs (such as terminal or FAX programs) should
+     be directed to the available support for the application.
+
+
+
+
+                                                                          4
+
+
+     Updates
+
+     In general, updates/upgrades of SIO are free of charge for all
+     releases of SIO with the same major version number.  However, there
+     may be a handling charge if the user requires the upgrade to be mailed
+     or emailed.
+
+     Registered users of SIO can update to the latest version FREE of
+     charge using the BBS and its UPDATE command.  Be sure to have your SIO
+     serial number when you first log onto the BBS.  All variations (number
+     of ports) of SIO are available for immediate download from the BBS by
+     registered users.
+
+     Users that have a registered copy of SIO can also use REREG.EXE to
+     transfer the registration information to a new version of SIO.  Simply
+     unzip the new SIO files into a temporary directory, change to that
+     directory, execute REREG and answer the questions.  After doing the
+     above, all of the files in the temporary directory will have been
+     registered.  You must then copy all the SYS and EXE files from the
+     temporary directory to their normal directory (overlaying the old
+     registered version) or execute the SIO install program (INSTALL.EXE). 
+     Then you must reboot.  You may also want to check your CONFIG.SYS for
+     the path of the SIO/VSIO being loaded and make sure both the new ones
+     are being loaded.
+
+     If REREG will not transfer your registration information from a
+     previous version of SIO to the new version, then an upgrade must be
+     ordered on disk or obtained from the support BBS.
+
+
+
+
+                                                                          5
+
+                                 GETTING STARTED
+
+     Installing SIO/VSIO
+
+     SIO is distributed as a ZIP file.  To extract the individual files
+     from the distribution file you need the program PKUNZIP or an
+     equivalent.  PKUNZIP is a product of PKWARE and can be downloaded from
+     almost any bulletin board system (BBS).  You probably already have
+     PKUNZIP and know how to use it, otherwise I doubt that you would be
+     reading this.  When PKUNZIP is used to extract the various files, -AV
+     should appear after each file name as it is extracted.  In addition,
+     the message:
+
+          Authentic files Verified!
+
+     should appear after the extraction process.  If this message does not
+     appear, or appears with a name other than Raymond L. Gwinn, the file
+     is not an original SIO distribution file.
+
+     The only file that the basic user actually needs is SIO.SYS.  Virtual
+     DOS machine (VDM) users will also want VSIO.SYS.  Copy one or both of
+     these files to a convenient directory or subdirectory on your system. 
+     An installation program (INSTALL.EXE) is provided to install the SIO
+     files and modify your CONFIG.SYS
+
+     Quick Start
+
+     Create a temporary directory, change into that directory and unzip the
+     SIO distribution zip there.  Type INSTALL followed by the enter key. 
+     For a basic setup, that is all that is needed.
+
+     If you choose to install SIO manually, the following should be done.
+
+     BE SURE THAT ANY SERIAL MOUSE DRIVER APPEARS IN THE CONFIG.SYS BEFORE
+     SIO.SYS
+
+     If you are going to use standard communications ports, either COM1 or
+     COM2 on an ISA bus (AT or clone), or COM1 through COM4 on a PS/2, then
+     add the following line to your CONFIG.SYS file:
+
+          DEVICE=SIO.SYS
+          DEVICE=VSIO.SYS
+
+     Be sure to REMark out the COM.SYS and VCOM.SYS device drivers if they
+     exist in your CONFIG.SYS.
+
+     With the above statements you will be able to use standard COM1 and/or
+     COM2 (if they exist) on any PC system known to the author.
+
+     If your setup is more complex, you must read on.
+
+
+
+
+                                                                          6
+
+                              COMMAND LINE OPTIONS
+
+     The command line options are included in the command line that loads
+     SIO in the CONFIG.SYS file.  VSIO has no command line options. 
+     Command line options are usually grouped by port within parenthesis.
+
+     If you use only COM1 and/or COM2, at the standard IRQ and port
+     addresses, you will not need any command line options.  However, up to
+     four serial communications ports, COM1 thru COM4, can be specified at
+     any base port address and any IRQ.  On PS/2 systems and some ISA
+     cards, SIO/VSIO supports multiple communications devices sharing the
+     same IRQ.
+
+     The basic command line syntax is as follows:
+
+          DEVICE=SIO.SYS (Cn, An, In, Ig, Fc) [(Cn, An, In, Ig, Fc)]
+
+     Where
+          "Cn" is the comm port number (1 thru 4) or the string COM1 thru
+          COMn.  The port number may preceeded by an asterisk "*" to
+          indicate that the port may be used as a PCMCIA comm port (eg *1
+          or *COM1).  Note that it is normal for SIO to display a warning
+          about not finding anything at PCMCIA ports.
+
+          "An" is a hexadecimal number that defines the base hardware I/O
+          port address for the communications port.  If this field is left
+          blank, the default I/O port address is used for the comm port. 
+          Note that default I/O addresses exist only for COM1 through COM4
+          on AT type systems and for COM1 through COM8 on PS/2 systems.
+
+          "In" is an IRQ number (0 thru 15) or the string IRQ0 thru IRQ15
+          or the string NONE.  It is best if one leaves this field blank
+          and allows SIO to determine the IRQ, see AUTOMATIC IRQ ASSIGNMENT
+          below.  The IRQ choice of NONE is provided for cards that can
+          work either with or without an IRQ like the Hayes ESP.
+
+          "Ig" is an ignored parameter.  If exists for compatibility with
+          COM.SYS.
+
+          "Fc" is the Forced 16550A chip parameter.  If an F is placed in
+          this position, a 16550A UART chip type is forced regardless of
+          the automatically detected chip type.
+
+
+
+
+                                                                          7
+
+
+     For a PC with COM1 and COM2 of standard configuration, the following
+     command line will load SIO correctly:
+
+          DEVICE=SIO.SYS (1, 3F8, 4) (2, 2f8, 3)
+
+     A more readable, but identical, command line is:
+
+          DEVICE=SIO.SYS (COM1,3F8,IRQ4) (COM2,2F8,IRQ3)
+
+     Forcing a 16550A on COM1 would be as follows:
+
+          DEVICE=SIO.SYS (COM1,3F8,IRQ4,,F) (COM2,2F8,IRQ3)
+
+     In a similar manner, up to sixteen serial communications ports (four
+     in the Shareware version) can be defined and supported by SIO and
+     VSIO.
+
+
+
+
+                                                                          8
+
+                         Development and Debugging Tools
+
+     The Poor Man's Line Monitor (PMLM.EXE)
+
+     PMLM is basically of interest to developers of comm applications and
+     those providing technical support for those applications.  This SIO
+     utility is released largely (in self defense) in the hope that some
+     users can diagnose their own problems.  PMLM's feature of saving trace
+     information to disk will only work with registered and beta versions
+     of SIO.
+
+     PMLM provides basic line monitoring for OS/2, DOS and Windows comm
+     programs.  All characters sent or received by application programs are
+     displayed in the upper portion of the screen.  Receive characters are
+     displayed as "white on blue" and transmitted characters are displayed
+     "yellow on violet".  Line signals, such as CTS are displayed as "dim
+     white on red" when turned off and "bright white on red" when turned
+     on.  In addition, a signal's transition to OFF is displayed in lower
+     case and a signal's transition to ON is displayed in upper case.
+
+     Status information is displayed in the lower part of the screen.  A
+     bright white display means the signal is on, a dim white indicates
+     that the signal is off.  In addition, when bright,  Rxoff and Txoff
+     indicate the SIO has sent (Txoff) or received (Rxoff) an Xoff, and an
+     Xon is pending.
+
+     When a DOS or Windows session uses a comm port, an additional line of
+     signal status appears.  This status line shows the state of the
+     virtual UART's signals.  Only the signals which MAY be different from
+     the real UART's signals are shown.
+
+     "Rx Chars" and "Tx Chars" reflects the number of characters in SIO's
+     receive and transmit buffers respectively.
+
+     The last line on the screen shows the keys (from the keyboard) that
+     PMLM will recognize.  The bright character shows the key to hit for
+     the associated function.  The font keys will not work in a windowed
+     OS/2 session.
+
+     PMLM's command line requires one parameter, the comm port number, and
+     optionally accepts an additional parameter giving a save trace file
+     name.  For example, PMLM 1 COM1INFO.TRC will monitor COM1 and save ALL
+     of the communications traffic in the file COM1INFO.TRC.  The trace
+     files created by PMLM contain exactly the same information that is
+     displayed by PMLM, video attributes and all.
+
+
+
+
+                                                                          9
+
+
+     VIEWPMLM.EXE may be used to view trace files created by PMLM. 
+     VIEWPMLM.EXE requires one parameter, the trace file name.  The user
+     can use the keys UP, DOWN, PAGEUP, PAGEDOWN, HOME, and END to navigate
+     the saved trace file.  Registered SIO users may send VIEWPMLM.EXE
+     (along with saved trace files) to anyone for technical support
+     purposes.
+
+     VIEWPMLM can be used in native DOS, in DOS sessions under OS/2, and in
+     OS/2 sessions.  This means that even those developers and support
+     people need not have OS/2 to view the captured communications data
+     created by PMLM.
+
+     SIO's Utility (SU.EXE)
+
+     This utility program has several useful commands.  You can obtain a
+     list of the available commands by typing SU at any command line prompt
+     without any parameters.  One very useful command is SU IRQS.  This
+     command will show IRQs that are currently free for use.  Commands are
+     provided allowing user control (missing from MODE) are available. 
+     Status commands provide a wealth of diagnostic information.
+
+
+
+
+                                                                         10
+
+                           Intelligent Cards Supported
+
+
+     Hayes ESP
+
+     The original ESP (ESP V1) is not supported.  The SIO command line must
+     contain the ESP's enhanced I/O port address.  For bit rates exceeding
+     180000bps the IRQ MUST be specified for the master port. For lower
+     data rates NONE may be specified for the IRQ.  SIO does not search for
+     the ESP ports as the Hayes drivers do under DOS/Windows.  This
+     searching can (will) break things under OS/2.  The SIO command line
+     for an ESP at I/O port 180h using IRQ14 would be as follows:
+
+     DEVICE=path\SIO.SYS (COM1,180,IRQ14) (COM2,188,NONE)
+
+     If you would like the above reflected to DOS sessions as a standard
+     COM1 and COM2, then use the following command line:
+
+     DEVICE=path\SIO.SYS (COM1,180:3F8,IRQ14:IRQ4) (COM2,188:2F8,NONE:IRQ3)
+
+     Note that the numbers after the colons ":" are the address and IRQ of
+     where the port appears to DOS software running under OS/2.  
+     Any IRQ specified for an ESP slave port is ignored.  For those that
+     like to have a clean looking CONFIG.SYS, SIO will accept NONE as the
+     IRQ specification of an ESP slave port.
+
+     If you wish to use the ESP in Compatibility Mode, simply specify the
+     base port address that the ESP's compatibility mode is configured for
+     (ie 3F8 when configured for COM1).
+
+     Telcor Tport
+
+     The Telcor Tport is supported in both burst mode and 16450 emulation
+     mode.  When in burst mode, the Tport's 16k FIFOs are enabled. 
+     Additionally in burst mode, no IRQ is used by the Tport.  In burst
+     mode, any IRQ specified for the Tport is ignored.  For those that like
+     to have a clean looking CONFIG.SYS, SIO will accept NONE as the IRQ
+     specification of a Tport.  An example command line defining a Tport
+     card to be used in burst mode; and that is configured for COM1
+     follows:
+
+     DEVICE=path\SIO.SYS (COM1,Tport@3F8,NONE:IRQ4)
+
+     The Tport's 16450 Emulation mode simply uses a normal SIO command
+     line. eg:
+
+     DEVICE=path\SIO.SYS (COM1,3F8,IRQ4:IRQ4)
+
+     In both examples the "IRQ4" following the colon above, means that the
+     virtual IRQs are to be sent to a VDM on IRQ4.
+
+
+
+
+                                                                         11
+
+
+                            AUTOMATIC IRQ ASSIGNMENT
+
+     SIO will automatically locate the IRQ that a comm port is attached to. 
+     The IRQ used by SIO for a given comm port is assigned in the following
+     manner:
+
+     1 - If an IRQ is specified in the SIO command line then that IRQ is
+     used.  However, SIO will display a warning message if the IRQ seems to
+     be other than specified.
+
+     2 - If no IRQ is specified in the command line, and if SIO detected
+     the IRQ then the detected IRQ is used.
+
+     3 - If no IRQ is specified in the command, and if SIO could NOT detect
+     an IRQ then the default IRQ for the comm port is used.  SIO will also
+     display a warning message in this case.
+
+     The following STYLE command line is recommended for all but the most
+     unusual systems.  That is, specify only the port number for those
+     above COM2 (to tell SIO to support those ports) and let SIO do the
+     rest.
+
+     DEVICE=SIO.SYS (COM3) (COM4)
+
+     If you do not have a COM3 or COM4, or if the mouse is using the only
+     comm port above COM2 then the following command line should be used.
+
+     DEVICE=SIO.SYS
+
+
+
+
+                                                                         12
+
+                                  DOS SETTINGS
+
+     VSIO gets its operational characteristics from DOS Settings.  Several
+     basic DOS Settings are provided.  They specify the type of access (if
+     any) that a DOS program is to have to a communication port that SIO
+     controls.
+
+     All of the DOS Settings default to what most users should use most of
+     the time (which is ON).  Also, all of the DOS Settings are prefixed
+     with SIO_.
+
+     If any of the DOS settings are changed, then the DOS session must be
+     restarted from the Work Place Shell for the changed setting to take
+     affect.
+
+     The provided DOS Settings and their meaning follow:
+
+          "SIO_Allow_Access_COMn" (where n is 1 thru 4).  This DOS setting
+          defaults to ON.  If this setting is turned OFF for any or all of
+          the ports, the DOS program will not be allowed any access to that
+          port(s).
+
+          "SIO_Virtualize_COM_Ports"  This Dos setting defaults to ON and
+          it applies to all communications ports used by the DOS session. 
+          When ON, this DOS setting means VSIO is to act as an interface
+          between the SIO and the DOS program.  When OFF, the DOS program
+          is given direct access to the hardware ports of the UART(s).
+
+          "SIO_Virtualize_16550A"  This DOS setting defaults to ON and it
+          applies to all communications ports used by the DOS session. 
+          When ON, VSIO will simulate a 16550A.  When OFF, VSIO will
+          simulate a 16450.  Some DOS programs may not work when a 16550A
+          is simulated.  Turning this setting off may allow the program to
+          work (but slower).
+
+          "SIO_Share_Access_With_OS/2"  This DOS setting defaults to ON and
+          it applies to all communications ports used by the DOS session. 
+          When ON, SIO will allow an OS/2 session to access a
+          communications port which the DOS session first opened (and has
+          not closed).  If set to OFF, then the DOS session will have
+          exclusive use of the communications port(s) that it uses.
+
+          This setting does not apply to a second DOS session attempting to
+          access a communications port,  two different DOS sessions are
+          never allowed to access the same port at the same time. 
+          Additionally, this setting has no affect upon the access to a
+          communications port which is first opened by an OS/2 session.
+
+
+
+
+                                                                         13
+
+
+          "SIO_Screen_Sync_Kludge" DOS setting.  This DOS setting defaults
+          to off and it applies to all communications ports used by the DOS
+          session.  Some DOS BBS programs (such as Wildcat) and many DOS
+          Door programs attempt to synchronize the screen output with
+          transmitted data.  This plays havoc with a multi tasking system
+          like OS/2 and results in very slow transmitted data.  When this
+          setting is on, an attempt is made to fake out these misbehaved
+          programs and allow them to run at normal transmit speed.  This
+          setting should not be turned on unless you experience VERY slow
+          transmission from a DOS program.
+
+     All of the DOS Settings that begin with "SIO_Mode"  allows one to
+     construct a MODE command for a DOS session.  These settings apply to
+     SIO proper, and not necessarily to the DOS program itself.  For
+     example, if you set XON/XOFF handshake with the appropriate SIO_Mode
+     setting, you are specifying that SIO is to implement the handshaking. 
+     The DOS application itself will be unaware of this handshaking.  This
+     can be very confusing, so think it through before you start changing
+     the defaults.
+
+     The "SIO_Mode" settings WILL NOT BE APPLIED IF THE COMM PORT IS
+     ALREADY OPEN WHEN THE DOS SESSION FIRST ACCESSES THE COMM PORT.  This
+     means that the "SIO_Mode" settings will NOT be asserted for spawned
+     DOS comm programs.  That is, for spawned DOS comm programs, the mode
+     of operation that is already in effect will continue to be in effect
+     and the "SIO_Mode" settings are ignored.
+
+          "SIO_Mode_DTR"  This setting has three options that specify how
+          SIO and VSIO are to treat the DTR signal.  The there available
+          option are:
+                    No Change at OPEN or CLOSE.
+                    Turn ON at OPEN, OFF at CLOSE.
+                    HandShake Signal, as in DTR/DSR.
+
+               If either of the first two settings is selected, then
+               basically the DOS application has direct control over the
+               DTR signal.  If the second option is selected, then DTR will
+               be turned on by SIO when the DOS program first touches the
+               comm port.
+
+               If the third option is selected, then SIO will use DTR as a
+               handshaking signal.  That is, DTR will be turned off if SIO
+               can not accept any further receive data.  In addition, if
+               the DOS application program turns off the Virtual DTR, VSIO
+               will stop supplying the DOS application with receive data.
+
+
+
+
+                                                                         14
+
+
+          "SIO_Mode_IDSR"  This setting specifies how SIO is to react to
+          received data and the DSR signal.  The two available options are:
+                    Ignore DSR During Receive.
+                    Required for Valid Receive Data.
+
+               If the first option (the default) is selected, then SIO will
+               ignore DSR and accept all received data.  If the second
+               option is selected, then SIO will ignore received data when
+               the DSR signal is off.  VSIO ignores this DOS setting.
+
+
+
+
+                                                                         15
+
+
+          "SIO_Mode_OCTS"  This setting specifies how SIO will react to the
+          CTS signal when transmitting data.  The two available options
+          are:
+                    HandShake Signal, as in RTS/CTS.
+                    Ignore CTS During Transmit.
+
+               If the first option (the default) is selected, then SIO will
+               not transmit data when the CTS signal is off.  If the second
+               option is selected, then SIO will ignore CTS during
+               transmit.  Note that this setting should be set to "Ignore"
+               for 3 wire connections like the Seiko Smart Label Printer,
+               and Laplink.  VSIO ignores this setting.
+
+          "SIO_Mode_ODSR"  This setting specifies how SIO is to react to
+          the DSR signal during transmit.  The two available options are:
+                    Ignore DSR During Transmit.
+                    HandShake Signal, as in DTR/DSR.
+
+               If the first option (the default) is selected, then SIO will
+               ignore DSR during transmit.  If the second option is
+               selected, then SIO will not transmit data when the DSR
+               signal is off.  VSIO ignores this setting.
+
+
+          "SIO_Mode_RTS" This setting has three options that specify how
+          SIO and VSIO are to treat the RTS signal.  The there available
+          option are:
+                    HandShake Signal, as in RTS/CTS.
+                    No Change at OPEN or CLOSE.
+                    Turn ON at OPEN, OFF at CLOSE.
+
+               If either of the last two settings is selected, then
+               basically the DOS application has direct control over the
+               RTS signal.  If the last option is selected, then RTS will
+               be turned on by SIO when the DOS program first touches the
+               comm port.
+
+               If the first option (the default) is selected, then SIO will
+               use RTS as a handshaking signal.  That is, RTS will be
+               turned off if SIO can not accept any further receive data. 
+               In addition, if the DOS application program turns off the
+               virtual RTS signal, VSIO will stop supplying the DOS
+               application with receive data.
+
+
+
+
+                                                                         16
+
+
+          "SIO_Mode_XON/XOFF"  This setting specifies if (and how) SIO is
+          to use XON/XOFF flow control.  The four options are:
+                    No XON/XOFF flow control by SIO.
+                    Received XON is flow control.
+                    Sent XON is flow control.
+                    Rcvd and Sent XON is flow control.
+
+               The first option (the default) specifies that SIO is not to
+               use XON/XOFF flow control at all.  The second option
+               specifies that SIO is to treat received XON/XOFF as flow
+               control, but that SIO must not send XON/XOFF as flow control
+               characters.  The third option specifies that SIO may send
+               XON/XOFF as flow control characters, but that received
+               XON/XOFF characters are to be treated as normal data.  The
+               fourth option turns on XON/XOFF flow control in both
+               directions, meaning that all sent and received XON/XOFF
+               characters are flow control.
+
+
+
+
+                                                                         17
+
+
+          "SIO_Mode_FIFO_Load_Count"  This setting specifies how many
+          characters that SIO will load into a 16550A UART at one time. 
+          The choices are 1 and 16 (16 is the default).  The only case
+          known to the author where one would select a setting of 1, is
+          when very fast reaction to flow control is needed.  One such case
+          is the Seiko Smart Label Printer which uses XON/XOFF flow control
+          and a 3 wire connection.  If one is using a 16550 with a load
+          count of 16, then 16 additional characters may be sent after an
+          XOFF is received.  This condition will overrun the Seiko Printer. 
+          If the "Load Count" is set to 1, then SIO will transmit (at most)
+          two additional characters following a received XOFF which allows
+          the Seiko Printer to work.  A setting of 1 will cause additional
+          system overhead due to additional transmit interrupts.
+
+
+
+
+                                                                         18
+
+
+                             Configuration Profiles
+
+     I will attempt to provide the DOS Settings that one should try for DOS
+     communications programs in this section.  The settings may not work on
+     all systems.  I will add to this section as I receive information from
+     users.  All DOS Settings that are not given should be at their
+     defaults.
+
+     Seiko Smart Label Printer.
+          I tested the Seiko printer successfully using the following DOS
+          settings for SIO:
+
+          SIO_Mode_DTR                No Change at OPEN or CLOSE
+          SIO_Mode_FIFO_Load_Count    1.
+          SIO_Mode_IDSR               Ignore DSR During Receive
+          SIO_Mode_OCTS               Ignore CTS During Transmit
+          SIO_Mode_ODSR               Ignore DSR During Transmit
+          SIO_Mode_RTS                No Change at OPEN or CLOSE
+          SIO_Mode_XON/XOFF"          Received XON is flow control
+
+     In addition, you should run the printer in its own separate Win-OS/2
+     session.
+
+     IBM's SLIP
+          I have been told by many users that a MODE command is required
+          for IBM's SLIP program to work correctly.  The recommended MODE
+          command is as follows:
+
+          MODE DTR=ON
+
+
+
+
+                                                                         19
+
+                    Differences between SIO/VSIO and COM/VCOM
+
+     What follows is some of the differences between SIO/VSIO and COM/VCOM
+     that are known to the author.
+
+     1 -  COM.SYS will automatically seek out and support four comm
+          ports, COM1 through COM4.  SIO.SYS will automatically seek
+          out and support only COM1 and COM2.  If SIO.SYS is to
+          support more than two comm ports, they must be defined in
+          the command line that loads SIO.SYS.  For example,
+          DEVICE=SIO.SYS (COM3) (COM4) will cause SIO.SYS to support
+          four comm ports.
+
+     2 -  In the absence of overrides in the command line, COM.SYS
+          will seek out four comm ports in the sequence of I/O ports
+          3F8h, 2F8h, 3E8h and 2E8h.  The first port found in this
+          sequence is given the logical name COM1, the second is COM2
+          etc.  This means that the comm port at 2F8h could become
+          COM1.  In the opinion of the author, this confuses some
+          users to frustration.
+
+          With no command line overrides, SIO.SYS uses a fixed I/O
+          port concept.  That is, COM1 is always at I/O port 3F8h,
+          COM2 is always at 2F8h, etc.  Another way of looking at this
+          is;  if no comm port exists at port 3F8h, then you do not
+          have a COM1.  SIO.SYS will not move another (found) comm
+          port into the logical COM1 slot.
+
+     3 -  VSIO opens a comm port for a DOS session with sharing allowed. 
+          VCOM uses an "exclusive use" open for DOS sessions.
+
+     4 -  SIO.SYS always controls the FIFOs of the 16550 UART.  SIO.SYS
+          will not allow an application program (OS2 or DOS) to disable the
+          FIFOs of a real 16550.  The application may specify the transmit
+          fifo load count.
+
+     5 -  SIO.SYS will accept any number between 50 and 115200 (921600 if a
+          Hayes ESP) as a valid baud rate.  For example, if an application
+          program attempts to set a baud rate of 9990 bps, COM.SYS will
+          reject it and SIO.SYS will accept it.
+
+     6 -  SIO/VSIO execute faster than COM/VCOM.  This means that some
+          applications, that are timing dependent, may not work under
+          SIO/VSIO that do work under COM/VCOM.
+
+
+
+
+                                                                         20
+
+
+     7 -  SIO/VSIO provides more reliable active flow control for DOS
+          sessions.  For example, if RTS/CTS handshaking is in use, VSIO
+          processes the RTS settings by the DOS program while SIO
+          completely controls the real RTS signal.  COM/VCOM simply passes
+          the RTS signal directly to the hardware.
+
+     8 -  COM.SYS will block an application until a write completes.  SIO
+          will return to the application program immediately if all of the
+          write data will fit into SIO's internal buffers.
+
+
+
+
+                                                                         21
+
+
+                             PROBLEMS AND SOLUTIONS
+
+     1 -  Port already in use is displayed.
+
+          This message is displayed when the comm port or the IRQ is in
+          use.  If the comm port is not actually in use, the IRQ is most
+          likely in use.
+
+     2 -  SIO displays a warning message that the IRQ for a port appears to
+          be wrong, but the port works.
+
+          SIO probably detected more than one IRQ attached to the comm
+          port.  This indicates a possible hardware problem with your
+          system that you may want to have checked.
+
+     3 - The modem will not initialize.
+
+          Configure your comm program(s) to insert a delay between modem
+          initialization characters as they are sent to the modem.
+
+     4 - WinFax locks up during install.
+
+          During the WinFax install, temporarily turn OFF the DOS setting
+          SIO_Virtualize_COM_Ports.  Once installation is complete, the
+          setting SIO_Virtualize_COM_Ports can be restored.
+
+     5 - Telemate does not recognize VX00 as a FOSSIL.
+
+          Set the baud rate in Telemate to less than 57600.
+
+     6 -  Comm output is very slow from DOS.
+
+          This is a problem common to many DOS BBS and Door programs.  They
+          attempt to synchronize the local screen with the transmitted
+          data.  That is, they send a character, wait until it is sent and
+          then display the character on the local screen.  This does not
+          cause a problem for the single tasking DOS environment.  However,
+          this procedure causes at least two (probably more) context
+          switches in the multi-tasking environment of OS2, which in turn
+          brings the processor to its knees.  One possible solution is for
+          the programmer to synchronize line by line instead of character
+          by character.
+
+
+
+
+                                                                         22
+
+
+
+     7 -  Procomm stops receiving
+
+          Procomm seems to have a bug in its implementation of RTS/CTS
+          handshaking.  The problem shows up most often when Procomm is
+          windowed.  Under certain conditions, Procomm will turn the
+          virtual RTS OFF and does not turn it ON again.  This prevents
+          VSIO from sending further data to Procomm if SIO_Mode_RTS is set
+          for RTS/CTS handshake.  A solution to the problem that seems to
+          work is to set SIO_Mode_RTS to other than RTS/CTS handshake. 
+          Note that SIO_Mode_RTS should be set for RTS/CTS handshake under
+          almost all other conditions.
+
+     8 -  Procomm For Windows download errors
+
+          You should find the file PW2.INI in you main WINDOWS directory. 
+          Locate the statement DropRTSAroundDiskWrites=1 and change it to:
+
+               DropRTSAroundDiskWrites=0
+
+
+
+
+                                                                         23
+
+
+     9 - WinFax does not work well.
+
+          a- Connect problems with recipient's fax station
+
+          b- Cannot send more than one page of a multiple page fax
+
+          c- Transmission fails between pages
+
+          d- Transmitted pages are corrupted, missing parts, or cut off.
+
+          Class 1 FAX modem.
+                    The modem init strings set by WinFax 3.0 will work in
+                    the single-layered comm world of DOS and Windows. 
+                    However, these modem init strings will not work in the
+                    multi-layered comm environment used by OS/2. 
+                    Specifically, WinFax 3.0 sets the modem to use only
+                    Xon/Xoff flow control.  Ideally, both Xon/Xoff and
+                    Hardware handshaking needs to be set.  If only one
+                    handshake can be set, set the modem to Hardware
+                    handshake.  For USR FAX modems, use &H3, for many other
+                    modems, the setting is &K3.  Additionally, for WinFax
+                    3.04 and up, place the following in your WINFAX.INI
+                    file:
+                         HdwFlowControl=1
+
+          Class 2 FAX modem.
+                    It seems to the author that hardware handshake screws
+                    up some (possibly all) class 2 FAX modems.  Therefore,
+                    when using a class 2 modem, WinFax should be configured
+                    to use XON/XOFF handshaking.  For WinFax 3.04 and up,
+                    place the following in your WINFAX.INI file:
+                         HdwFlowControl=0
+
+                    The author feels that the inability to use hardware
+                    handshake with class 2 FAX modems is a serious design
+                    deficiency.
+
+     10 - Serial Printer messes up on last page.
+
+          Add the following command line to your CONFIG.SYS file:
+               RUN=MODE COM1 TO=ON
+
+
+
+
+                                                                         24
+
+                               IRQ SHARING ON ISA
+
+     Sharing the same IRQ for multiple communications ports on ISA systems
+     is not for the weak of heart (or mind).  If you have problems with
+     shared IRQs, DO NOT contact the author.  Contact the board or computer
+     manufacturer for help.
+
+     Some general rules are as follows:
+
+     1 - Two different boards (plugged into different slots) can not share
+     the same IRQ.  This is a hardware limitation of ISA systems and can
+     not be corrected by software.  This means that you can not plug in two
+     internal modems, set them for the same IRQ and expect them to work. 
+     This does not apply to PS/2 systems.  The problem of multiple boards
+     sharing the same IRQ was corrected in the PS/2's bus design.
+
+     2 - SIO can not (will not) share an IRQ with other device drivers at
+     the same time.  SIO releases IRQs that it is currently not using. 
+     This is different form how COM.SYS works.  This difference may show up
+     as an unexpected "port already in use" error that does not occur with
+     COM.SYS.  I have received reports that the SDLC drivers try to
+     concurrently share IRQs with the ASYNC driver.  SIO.SYS will not allow
+     this while COM.SYS will.
+
+
+
+
+                                                                         25
+
+                  Appendix A, Hardware Port and IRQ Assignments
+
+     I have obtained the following information from various sources. 
+     Accuracy is not guaranteed.  In fact, nothing in this document is
+     guaranteed.
+
+     Addresses and IRQs for COM1 and COM2
+
+          COM1 uses 03F8h and IRQ4
+          COM2 uses 02F8h and IRQ3
+
+     Defacto standard for COM3 and COM4 for PC, XT and AT
+
+          COM3 uses 03E8h and IRQ4
+          COM4 uses 02E8h and IRQ3
+
+     Addresses and IRQ for COM3 through COM8 on the PS/2
+
+          COM3 uses 3220h and IRQ3
+          COM4 uses 3228h and IRQ3
+          COM5 uses 4220h and IRQ3
+          COM6 uses 4228h and IRQ3
+          COM7 uses 5220h and IRQ3
+          COM8 uses 5228h and IRQ3
+
+     All PCs (known to the author) prior to the PS/2 and EISA only use 10
+     bits to address hardware I/0 ports.  Systems prior to the PS/2 and
+     EISA can not address the standard PS/2 addresses for COM3 through
+     COM8.  If an AT or below attempts to address COM3 through COM8 using
+     the PS/2 addresses, only the low 10 bits of the address are used. 
+     That is, the high digit of the hexadecimal address will be ignored. 
+     This means that any reference to COM3 through COM8 will actually
+     address ports 220h through 22Fh on older PCs.
+
+     One should avoid expansion boards that use ports 220h through 22Fh
+     unless the expansion board is a serial I/O board. 
+
+     SIO will (attempt to) determine the hardware architecture (ISA/EISA
+     and PS/2) that it is being executed on and use the appropriate
+     hardware port addresses for COM1 thru COM4 as defaults.
+
+
+
+
+                                                                         26
+
+                              Appendix B, SIO Chips
+
+
+     The following is a collection of comments developed from hearsay,
+     random documents, experience, and technical specifications. So, take
+     it with a grain of salt.  Order information from the various
+     manufactures if you want accurate information.
+
+     Very good reference books are available from National Semiconductor
+     Corporation.  They cover most of the SIO devices (also called UARTs)
+     that you will find in many PCs and clones.  I am not sure that books
+     can be ordered directly from National semiconductor. They may require
+     that you get it from a distributor.  In any case, the address on the
+     back of the one manual is:
+
+          National Semiconductor Corporation
+          2900 Semiconductor Drive
+          P.O. Box 58090
+          Santa Clara, CA 95052-8090
+
+          Tel:(408)721-5000
+          TWX:(910)339-9240
+
+     8250
+
+     As best that I know, the 8250 was the first SIO chip (integrated
+     circuit) that was used by the IBM PC and many clones.  In my opinion,
+     it was a poor choice on the part of IBM.  I feel many superior
+     devices, at comparable prices, were readily available.  At that time,
+     I feel the 8251A or the 8530 would have been better choices.  But,
+     they used the 8250 and therefore we must use it.
+
+     From a hardware standpoint the 8250 is a relatively slow device.  It
+     is advisable that programmers not perform successive inputs or outputs
+     to this device.  It seems that software programs can load the various
+     registers of the 8250 faster than it can process the information.  The
+     8250 had a total of 7 registers.  The specifications state that 56kb
+     is the maximum baud rate.
+
+     8250A
+
+     I believe the 8250A is the 8250 with some bug fixes.  I have no idea
+     what the bugs may have been.  A quick glance at the specifications
+     shows the speed of the 8250 and 8250A to be much the same.  The 8250A
+     added an 8th register.  This additional register enables software to
+     detect if an 8250 is installed.  The specifications state that 56kb is
+     the maximum baud rate.
+
+     16450
+
+     The 16450 seems to be a speeded up version of the 8250A.  There is no
+     direct way (that I know of) for software to detect the difference
+     between an 8250A and a 16450.  I believe the 16450 was developed to
+     eliminate the need for software to insert delays between successive
+     accesses to the device.  The specifications indicate the 16450 is a
+
+
+
+
+                                                                         27
+
+     much faster device than its predecessors.  The additional speed is
+     only the speed at which the processor can access the device.  The
+     maximum baud rate for the 16450 is still stated at 56kb.  However, I
+     have been told by some people that they have run the 16450
+     successfully at much higher speeds. I do not believe there was ever a
+     16450A.
+
+     16C451
+
+     The 16C451 is a CMOS version of the 16450.  CMOS is a term for the
+     material and manufacturing process used to make the part.  CMOS
+     typically uses less power than other technologies.  If you are not
+     designing hardware, you should view the 16C451 as a 16450.
+
+     16550 (Non A)
+
+     It is hard to find a 16550 (Non A).  I was told by National
+     Semiconductor that they did everything they could to get all 16550s
+     back.  SIO will detect a 16550 and tell you if you have one.  I am
+     told that the 16550 was installed in early PS/2 systems.
+
+     The 16550 was the first shot at a FIFOed version of the 8250 family
+     from National semiconductor.  However, I was told by National
+     Semiconductor that the FIFOs of the 16550 are not reliable and they
+     should not be enabled.  SIO will treat a 16550 like a 16450.  In this
+     mode, they are reliable.  National Semiconductor would not provide me
+     with a specification for the 16550.  However, I suspect its maximum
+     baud rate is the same as the 16550A which is 256kb.
+
+     16550A, 16550AF and 16550AFN
+
+     In the manuals that I have, National Semiconductor does not explain
+     the differences between the 16550A and the 16550AF.  I suspect the AF
+     part may have a few bug fixes.  I believe the N in AFN describes
+     packaging, ceramic versus plastic, DIP versus surface mount etc.
+
+     In the opinion of the author, there is no substitute for the 16550A
+     (and its successors) in the 8250 type series.  The 16550A is
+     compatible with most software written for the entire family of 8250
+     type devices.  Programs that are 16550A aware can provide much
+     improved performance over previous devices.
+
+
+     The maximum baud rate for the 16550A is specified at 256kb.  However,
+     due to the hardware design of the PC et al, 115kb is the maximum baud
+     rate that can be programmed by software.
+
+     The 16550A can be plugged into the same socket that contains an 8250,
+     8250A or 16450.  If your SIO expansion board has the SIO chips in
+     sockets, you can upgrade to the 16550A by simply removing the old
+     chips and replacing them with 16550As.
+
+     The key to the performance increase of the 16550A is its FIFOs.  It
+     has 16 byte FIFOs for both transmit and receive data.
+
+
+
+
+                                                                         28
+
+     16550s Made by Western Digital
+
+     I have been told, but I have not verified for myself, that 16550s made
+     by Western Digital have a problem with their FIFOs when working at
+     2400 baud or below.
+
+     16C551
+
+     The 16C551 is a CMOS version of the 16550AF.  See the above
+     description of the 16C451 for a discussion of CMOS.  Do not feel you
+     need to upgrade from a 16550A or AF to a 16C551.  There is no gain
+     from an existing users point of view.
+
+     16C552
+
+     The 16C552 is two 16C551s on a single chip.
+
+     16C554
+
+     The 16C554 is four 16C551s on a single chip.
+
+     82510
+
+     I believe Intel is the only company that manufactures the 82510.  The
+     82510 is feature rich with several modes of operation.  Its default
+     mode is to operate as a 16450.  The 82510 has a 4 byte FIFO for both
+     transmit and receive data.  A 4 byte FIFO is sufficient to provide
+     significant performance over a basic 16450.
+
+     The 82510 is small in size.  Therefore, it is found in many lap tops.
+
+     The 82510 is somewhat of a sleeper.  I believe it would be much more
+     widely used if Intel had promoted it more.  However, given a choice
+     between the 82510 and the 16550A, I would select the 16550A.
+
+
+
+
+                                                                         29
+
+
+     16650
+
+     The 16650 by Startech seems a good logical step in the evolution of
+     the 8250 type UARTs.  One of the many flavors of the 16650 is a
+     package that is pin compatible with the 40 pin (DIP) 16550s.  This
+     means that the 16650 can be placed into the same socket as any 16550,
+     8250, etc.
+
+     The 16650 has enhanced the FIFOs to 32 bytes, added on chip flow
+     control ability, and increases the maximum bit rate to 460800.  The on
+     chip flow control is a really nice feature.  On chip flow control
+     practically eliminates the possibility of missed receive characters. 
+     On chip flow control also means that some devices that require
+     immediate attention when it sends Xoff, like the Seiko Label Printer,
+     will work much better in environments like OS/2 and Windows.
+
+     The 32 byte FIFOs of the 16650 is an improvement over the 16550, but
+     is still a disappointment.  I feel that 1k, or larger, FIFOs would
+     have been a much better choice.  When I quizzed Startech about this,
+     they replied that the 32 byte FIFOs were chosen to keep the cost down. 
+     They added that if the 16650 is successful, they plan a 16750 with
+     larger FIFOs.
+
+     The 16650 powers up in a 16550 compatible mode, meaning most software
+     written for the 16550 should work.
+
+     16750 from Texas Instruments
+
+     The 16750 from TI is an improvement over the 16550, but the omission
+     of software flow control (Xon/Xoff) makes it inferior to the 16650, in
+     the opinion of the author.  The 16750 has a 64 byte fifo and hardware
+     flow control.  It is a good choice for a uart.
+
+
+
+
+                                                                         30
+
+
+     ComBic
+
+     The ComBic is a very impressive UART used on the Hayes ESP card and
+     some others.  The ComBic is basically a 16550 UART with on chip flow
+     control and 1k FIFOs and a maximum bit rate of 921600.   Like the
+     16650, on chip flow control practically eliminates the possibility of
+     missed receive characters.  On chip flow control also means that some
+     devices that require immediate attention when it sends Xoff, like the
+     Seiko Label Printer, will work much better in environments like OS/2
+     and Windows.
+
+     The ComBic has two modes of operation, compatibility mode and enhanced
+     mode.  In compatibility mode, the UART acts as a 16550.  However, when
+     in compatibility mode, the 1k FIFOs and on chip flow control can still
+     be used.  In enhanced mode, software gains the ability to look into
+     the FIFOs and determine the exact number of bytes loaded.  This
+     feature enables software the use block input and output to the ComBic
+     which greatly reduces processor overhead.
+
+
+
+
+                                                                         31
+
+                     Appendix C, Multi-Port Serial I/0 Cards
+
+     I have received many requests for information about multi-port serial
+     I/O card.  I will describe the boards that I know about (or have heard
+     about) here.  I will add to the list as I receive precise information
+     from manufactures, users, or I develop it myself.
+
+     Please do not contact me for support on the following boards, contact
+     the manufacturer.  The following tells of my experiences with the
+     boards and does not imply support.  Your experiences with a given
+     board may be different.
+
+
+     NOTE:     The Hayes ESP and Telcor Tport are described in the
+               "Intelligent Cards Supported" section of this manual.
+
+
+     STB 4COM  (ISA bus)
+
+     I am very impressed with the STB 4COM card, they have almost got it. 
+     Yes, its the same company that makes the VGA cards.  The 4COM card
+     uses a 16554 which is the equivalent of four 16550A.  Comm ports can
+     use IRQs 2/9, 3, 4, 5, 10, 11, 12, and 15.  Any or all ports can share
+     IRQs, and they have done this right.  I tested SIO with all four ports
+     of the 4COM on IRQ12 and they worked correctly.  The user can select
+     any of the following I/O port address for a comm port: 3F8, 2F8, 3E8,
+     2E8, 1A8, 1E8, 1F8, 2A8.
+
+     The 4COM card is priced at $110 and I ordered mine from Prerapture
+     Solutions which can be reached by telephone at 1-919-286-1502 for
+     information and foreign callers.  In the US orders can be placed by
+     calling 1-800-735-5266.  Their mailing address is:
+          Prerapture Solutions
+          1806 Albany St.
+          Durham NC 27705-3135
+
+     Connect Tech Dflex-8
+
+     This is one of the most configure able communications cards that I
+     have ever seen.  It has on board simms to configure the electrical
+     characteristics (RS232, RS442 etc).  The board that I tested was
+     configured for RS232 and has 8 Startech 16550 on it.  All 8 ports can
+     be jumpered to the same IRQ and the IRQ sharing seems to work well
+     with SIO and I detected no performance problems.
+
+     I have no pricing information, the Dflex was supplied to me at no
+     charge.  Connect Tech can be reached at 519-836-1291.  Their mailing
+     address is:
+
+     Connect Tech Inc.
+     727 Speedvale Ave. West
+     Guelph, Ontario, Canada
+     N1K 1E6
+
+
+
+
+                                                                         32
+
+
+     Gtek BBS550 (ISA bus)
+
+     The Gtek BBS550 is a communications card with the equivalent of 8
+     16550s (in reality two 16554s) UARTs.  Where were these cards 5 years
+     ago!  Like the STB 4COM, I am very impressed with the BBS550.  It has
+     a wide range of selectable I/O port address, some in the 16 bit range
+     (above 3FFh) which can be very useful.  I tested the board with all 8
+     ports installed using IRQ3 (although I never had more than 3 ports
+     active at the same time).  The board performed well using shared IRQs.
+
+     The BBS550 has 8 RJ-45 connectors (10 pin), 6 of which comes directly
+     off the back of the card.  The other two RJ-45 connectors are internal
+     and special cables with grommets are supplier for these 2 ports.  The
+     cables supplied with the BBS550 expands the RJ-45 out to standard DB-
+     25 connectors.
+
+     Gtek is located in St. Louis Mississippi.  Their phone number is 800-
+     282-4835 or 601-467-8048.
+
+     Neotech Quad Serial (MCA bus)
+
+     Well, I just got my first PS/2 system (for testing of SIO) and I am
+     using the NeoTech Quad Serial card in that system.  What can I say, it
+     works beautifully and interrupt sharing has never been a problem on
+     MCA systems.  This card (as shipped) came with four individual 16450
+     chips installed, but they were in sockets so I installed 16550 UARTs
+     before I installed the card.  The card has one large connector on the
+     back of the card and the supplied cable expands that to 4 standard DB-
+     25 connectors.  Those of you needing a good 4 port card for an MCA
+     system contact:
+
+          Neotech Inc
+          30295 Solon Industrial Pkwy.
+          Solon, Ohio 44139
+
+          Voice     (216) 248-4114
+          FAX       (216) 248-5701
+
+
+
+
+                                                                         33
+
+                                      INDEX
+
+     16450 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+     16550 (Non A) . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+     16550A  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+     16550AF . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+     16550AFN  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+     16550s Made by Western Digital  . . . . . . . . . . . . . . . . . . 28
+     16650 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+     16750 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+     16C451  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+     16C551  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+     16C552  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+     16C554  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+     8250  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+     8250A . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+     82510 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+     Addresses and IRQ for COM3 through COM8 on the PS/2 . . . . . . . . 25
+     Addresses and IRQs for COM1 and COM2  . . . . . . . . . . . . . . . 25
+     Allow_Access_COMn . . . . . . . . . . . . . . . . . . . . . . . . . 12
+     Appendix A, Hardware Notes  . . . . . . . . . . . . . . . . . . . . 25
+     Appendix B, SIO Chips . . . . . . . . . . . . . . . . . . . . . . . 26
+     Appendix C, Multi-Port Serial I/0 Cards . . . . . . . . . . . . . . 31
+     AUTOMATIC IRQ ASSIGNMENT  . . . . . . . . . . . . . . . . . . . . . 11
+     BBS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     ComBic  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+     COMn already in use . . . . . . . . . . . . . . . . . . . . . . . . 21
+     CompuServe  . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     CONFIG.SYS  . . . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     Connect Tech Dflex-8  . . . . . . . . . . . . . . . . . . . . . . . 31
+     Defacto standard for COM3 and COM4  . . . . . . . . . . . . . . . . 25
+     Development and Debugging Tools . . . . . . . . . . . . . . . . . .  8
+     Differences between SIO/VSIO and COM/VCOM . . . . . . . . . . . . . 19
+     Distribution  . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     DOS SETTINGS  . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+     Email . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     ESP in Compatibility Mode . . . . . . . . . . . . . . . . . . . . . 10
+     Exclusive use . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+     FAX . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     FAX Modems
+          Class 1 FAX modem  . . . . . . . . . . . . . . . . . . . . . . 23
+          Class 2 FAX modem  . . . . . . . . . . . . . . . . . . . . . . 23
+     FaxWorks  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+     FIFO  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+     FMD.SYS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+     GETTING STARTED . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     Gtek BBS550 . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+     Hayes ESP . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+     Installing SIO/VSIO . . . . . . . . . . . . . . . . . . . . . . . .  5
+     Intellegent Cards Supported . . . . . . . . . . . . . . . . . . . . 10
+     IRQ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  6, 11
+     IRQ SHARING ON ISA  . . . . . . . . . . . . . . . . . . . . . . . . 24
+     ISA buss  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+     MCA buss  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+     National Semiconductor Corporation  . . . . . . . . . . . . . . . . 26
+
+
+
+
+                                                                         34
+
+     Neotech Quad Serial . . . . . . . . . . . . . . . . . . . . . . . . 32
+     Ordering  . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     OS2BVEN . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     PCMCIA  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+     PDD . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     Physical Device Driver  . . . . . . . . . . . . . . . . . . . . . .  2
+     PKUNZIP . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+          Authentic files  . . . . . . . . . . . . . . . . . . . . . . .  5
+     PMLM.EXE  . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  8
+     PROBLEMS AND SOLUTIONS  . . . . . . . . . . . . . . . . . . . . . . 21
+     Quick Start . . . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     RTS/CTS handshaking . . . . . . . . . . . . . . . . . . . . . . . .  2
+     Seiko Smart Label Printer . . . . . . . . . . . . . . . . . 15, 17, 18
+     Serial Printer  . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+     SIO Chips . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+     SIO Technical Reference Manual  . . . . . . . . . . . . . . . . . .  i
+     SIO's Utility (SU.EXE)  . . . . . . . . . . . . . . . . . . . . . .  9
+     SIO_Mode_DTR  . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+     SIO_Mode_FIFO_Load_Count  . . . . . . . . . . . . . . . . . . . . . 17
+     SIO_Mode_IDSR . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+     SIO_Mode_OCTS . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+     SIO_Mode_ODSR . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+     SIO_Mode_RTS  . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+     SIO_Mode_XON/XOFF . . . . . . . . . . . . . . . . . . . . . . . . . 16
+     SIO_Screen_Sync_Kludge  . . . . . . . . . . . . . . . . . . . . . . 13
+     SIO_Share_Access_With_OS/2  . . . . . . . . . . . . . . . . . . . . 12
+     SLIP  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+     STB 4COM  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+     Support . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     Telcor Tport  . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+     UART  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+     Updates . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  4
+     VDD . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     VIEWPMLM.EXE  . . . . . . . . . . . . . . . . . . . . . . . . . . .  9
+     Virtual Device Driver . . . . . . . . . . . . . . . . . . . . . . .  2
+     Virtualize_16550A_For_COM . . . . . . . . . . . . . . . . . . . . . 12
+     Virtualize_COM_Ports  . . . . . . . . . . . . . . . . . . . . . . . 12
+     WHAT IS SIO . . . . . . . . . . . . . . . . . . . . . . . . . . . .  1
+     WHAT IS VSIO  . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     WinFax  . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21, 23
+

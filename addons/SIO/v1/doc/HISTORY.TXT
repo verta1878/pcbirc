@@ -1,0 +1,707 @@
+
+
+
+
+
+                                   Revision History
+
+
+          The following changes/additions were made in internal build
+          0.113.
+
+               The initialization procedure for enabling the FIFOs of the
+               16550 was changed as per directions from StarTech.  The
+               StarTech 16550 is used in many Practical Peripherals modems. 
+               This change may correct overrun and hanging problems for
+               other users.  User reports indicate that the FIFOs
+               initialization problem may go beyond the StarTech 16550 and
+               thus, solve problems for users of other 16550s.
+
+          The following changes/additions were made in internal build
+          0.114.
+
+               Additions to force enabling of comm ports for VMBs under
+               2.1GA.
+
+               Version number was changed to à1.01
+
+          The following changes/additions were made in internal build
+          0.115.
+
+               The Interrupt Service Routine (ISR) was improved to insure
+               that all pending interrupts of all ports sharing the same
+               IRQ are serviced.
+
+          The following changes/additions were made in internal build
+          0.116.
+
+               Additional changes to decrease the processing time of the
+               Interrupt Service Routine.
+
+          The following changes/additions were made in internal build
+          0.117.
+
+               Additional information added to the boot time banner.
+
+               Changed the version number to 1.02.
+
+          The following changes/additions were made in internal build
+          0.118.
+
+               Corrected erroneous sending of XON when receive flow control
+               was enabled.
+
+               Added code to clear the UART's FIFOs during initial file
+               open.
+
+
+
+
+
+          The following changes/additions were made in internal build
+          0.119.
+
+               Corrected a problem with hardware flow control for DOS
+               processes.  This problem showed up most often in windowed
+               DOS programs.
+
+               Removed code specific to the March, 1993 beta of OS2.
+
+               Added support for installable and removable communications
+               devices, eg PCMCIA.
+
+               Some users of VX00 will see improved performance from FOSSIL
+               aware DOS programs.
+
+          The following changes/additions were made in internal build
+          0.120.
+
+               Code added to allow I/O port mapping to DOS sessions.
+
+          The following changes/additions were made in internal build
+          0.121. 7/28/93 14:00pm
+
+               Corrected a problem that would cause the system to hang if
+               an SIO command line error was detected.
+
+               Additional code added for "hot plugging" of PCMCIA comm
+               ports.  Users of PCMCIA comm devices should not remove those
+               devices while a comm program active.  Many comm application
+               programs can not cope with the modem being removed.  Your
+               system may lock up if you remove a modem while a comm
+               application program is active.
+
+               Changed the way virtual CTS is handled.  In previous
+               versions, the virtual CTS was always on.  Under appropriate
+               conditions, the virtual CTS will now be turned off.
+
+          The following changes/additions were made in internal build
+          0.122. 8/14/93 14:20
+
+               Corrected a problem in the internal (to SIO) shared
+               interrupt chain.  This problem would cause the system to
+               lock up when the third device checked in on the same IRQ.
+
+               Added command line options for PCMCIA.
+
+
+
+
+          The following changes/additions were made in internal build
+          0.123. 8/18/93 19:05
+
+               Added code to wake sleeping receive threads when a Flush
+               Input command is received.  This additional code allows HA/5
+               Version 3.1 to work with SIO.
+
+               Changed the version number to 1.10 and released it for
+               downloading.
+
+          The following changes/additions were made in internal build
+          0.124. 8/28/93 14:50
+
+               Corrected a serious error in SIO.  This problem could show
+               up in almost any way.  The most common symptom is/was trap
+               000e and inordinate processor overhead when comm is active.
+
+          0.125. 9/09/93 08:15
+
+               Changed version number to 1.11
+
+               Corrected problem associated with generating a virtual
+               transmit interrupt.  This problem was introduced with the
+               released version 1.10.  It broke PCBoard, among others.
+
+               Added DTR/DSR handshaking.  It seems that several printers
+               requires this type of handshaking.  This addition
+               necessitated the addition of the DOS Setting
+               SIO_Virtual_DTR_is_HS.  This new DOS setting is the first
+               SIO setting that should normally be off.  When a DOS or
+               Windows session is using DTR/DSR handshaking, this setting
+               should be turned on.  The HP laser printers are the only
+               devices that I know of (or ever heard of) that use DTR/DSR
+               hardware handshaking.  All modems that I know of use RTS/CTS
+               hardware handshaking.
+
+          0.126 09/22/93
+
+               Corrected problems that were introduced when the PCMCIA code
+               was added and released in V1.10.  These problems caused
+               several DOS and Windows programs to work poorly or not at
+               all.  These problems also caused some DOS and Windows comm
+               programs to use inordinate amounts of processor time.
+
+               Changed the version á1.13.
+
+               Corrected a problem in the FOSSIL implementation of VX00. 
+               Some FOSSIL aware programs that previously did not work
+               under VX00 may now work.
+
+
+
+
+
+          0.127 09/30/93 17:20
+
+               Changed version number to 1.15 and released.
+
+               Added DOS settings to allow for individual mode settings for
+               each DOS session.  The DOS Settings SIO_Virtual_RTS_is_HS
+               and SIO_Virtual_DTR_is_HS have been removed.  Their function
+               is more completely covered in the new DOS Settings.
+
+               Optimized code to eliminate unnecessary virtual transmit
+               interrupts.  This change should cut down the amount of
+               overhead placed upon the system by DOS and Windows comm
+               programs.
+
+               Changed the way the DCB is processed so that CTS may be
+               ignored (if instructed by the DCB) even when RTS is a
+               handshake signal.
+
+               Previously, SIO would force RTS/CTS handshaking if the baud
+               rate is locked in the command line.  The forcing of RTS/CTS
+               handshaking has been removed.
+
+               A flow control problem that showed up on some systems has
+               been corrected.  The flow control problem most often showed
+               up at transmission simply stopping.  This problem was
+               introduced when the DTR/DSR handshaking was added.
+
+               Added the "SIO_Share_Access_With_OS/2" DOS setting.
+
+               Changed version number to 1.20.
+
+          0.129 10/30/93 12:30
+
+               Added code to support SU's VIRT command and additional
+               information from the ABOUT command.  It should be noted that
+               SU's MODE command will show the mode of an active comm
+               program, and that SU's output can be redirected to a disk
+               file.  For example SU 1 MODE > XXXX will direct SU's output
+               to a file named XXXX.  When submitting a problem report, one
+               should use SU's mode command while the problem program is
+               active and include the information in the problem report.
+
+               A new DOS setting has been added, SIO_Idle_Sensitivity. 
+               This setting parallels the IDLE_SENSITIVITY setting of OS/2
+               to some degree, but the new SIO setting applies only to DOS
+               comm and not to the system in general.  Lowering the value
+               of this setting will increase the processor time made
+               available to other processes.  However, setting the value
+               too low will screw up the operation of some DOS comm
+               programs.  Setting the value to 100 (the default) will cause
+               SIO to use its previous methods of releasing processor time
+               (which are not very good).
+
+
+
+               Added code to support SU's new CLOSE command.  The CLOSE
+
+
+
+
+               command attempts to force a DOS session to release a comm
+               port.
+
+               The method in which the SIO_Mode setting are implemented has
+               been changed.  These settings specify only the initial mode
+               settings to use for a DOS session.  Changes made to the mode
+               (via a MODE or other command) within the DOS session are no
+               longer lost.  The SIO_Mode settings isolate the DOS VDM's
+               mode from that of OS/2 sessions in all but one case.  The
+               one case is when the port is already opened when DOS first
+               accesses it.  In this one case, the SIO_Mode settings are
+               not applied.  Except for this one case, one should view OS/2
+               as having its mode settings and DOS sessions as having an
+               independent group of mode settings. 
+
+               Corrected a problem in the SIO_Mode_Xon/Xoff implementation. 
+               If this setting enabled the sending of Xon/Xoff, then under
+               some conditions, an Xon would not be sent following the
+               sending of an Xoff.  This problem only applied to DOS
+               programs using the above DOS Setting.
+
+          0.130 11/16/93 12:00
+
+               Code added to SIO.SYS to support PMLM.EXE.  PMLM.EXE is a
+               line monitoring program similar to X00's BOB.EXE.
+
+               Corrected a problem that would cause erroneous "Port in use"
+               errors from a DOS session if sharing with OS2 sessions was
+               disabled.
+
+               Added the "SIO_Screen_Sync_Kludge" DOS setting.  Some DOS
+               BBS programs (such as Wildcat) and many DOS Door programs
+               attempt to synchronize the screen output with transmitted
+               data.  This plays havoc with a multi tasking system like
+               OS/2 and results in very slow transmitted data.  When this
+               setting is on, an attempt is made to fake out these
+               misbehaved programs and allow them to run at normal transmit
+               speed.  This setting should not be turned on unless you
+               experience VERY slow transmission from a DOS program.
+
+               Corrected a problem in SIO with sending break.  At high bit
+               rates, SIO would lock the entire system if a break was sent. 
+               That problem has been corrected.
+
+               Added a warning message at load time about possible IRQ
+               conflicts with other device drivers.
+
+               Added code to support SU's IRQ usage report.
+
+               Corrected a problem that caused an opened comm port to
+               lockup when the SU IRQS command is used.
+
+
+               Added additional FOSSIL baud rates to function 1Eh.  See
+               X00REF.DOC in X00153A.ZIP for additional information.
+
+               Corrected a problem in SU with enable/disable commands. 
+
+
+
+
+               Enable now works following a disable.
+
+               Added the Lock command to SU, allowing a locked baud rate to
+               be reset or unlocked.
+
+               VSIO.SYS will now refuse to load if COM.SYS has been loaded.
+
+          0.131 12/22/93 18:00
+
+               Changed version to 1.24 and released.
+
+               MERRY CHRISTMAS!!!!
+
+               Changed that way the EOI is issued to the interrupt
+               controller.  This may clear up clear up stack overflows on
+               some systems. 
+
+               VSIO no longer turns off virtual CTS.  CTS now always
+               appears on to DOS and Windows programs that access a comm
+               port via VSIO.
+
+          The following changes/additions were made in internal build
+          0.132. 1/25/93 19:00
+
+               Released V1.26.
+
+               Maintaining this history file is time consuming and
+               distracting.  I have not been doing a good job of this
+               lately.  Many changes made during the 1.26 to 1.30
+               development have not been recorded.
+
+               SIO now waits for all writes and data transmission to
+               complete before allowing changes to be made to flow control
+               that can affect transmitted data.  This correction should
+               clear up the problems that some have had using Fax/PM with
+               SIO and certain modem types.
+
+               Corrected problems in the Xon/Xoff flow control that could
+               cause SIO to start transmiting following an Xoff without
+               receiving an Xon.
+
+               Changed VX00's function 1 so that it returns the same status
+               that X00 function 1 returns.
+
+               Under certain conditions, SIO would allow a port to be
+               closed prior to completion of transmitted data.  This
+               problem has been corrected.  This should bring joy to the
+               hearts of those using serial printers.  Sorry it took sooo
+               long to find this problem.
+
+
+
+
+
+               Support for two intelligent boards has been added to SIO. 
+               The two boards currently supported are the Hayes ESP2 and
+               the Telcor Tport.  Strictly speaking, the Hayes ESP2 is not
+               an intelligent card as it does not have a satellite
+               processor.  However, the new UARTS used by the ESP2 pack the
+               functions offered by intelligent boards into the hardware;
+               thus offering the same functionality (and much higher top
+               speed) as those boards with satellite processors.
+
+               SIO no longer forces the low digit of the bit rate to zero. 
+               This means bit rates like 75 and 134 are now valid.  The
+               minimum bit rate accepted is 50, the maximum is determined
+               by the hardware (115200 for most hardware).
+
+               Code has been added to correct for a bug in the SCM Super
+               I/O chip.  This bug could cause system hangs.
+
+               The default of SIO_Mode_DTR has been changed to "No change
+               at open or close".
+
+               SIO now clears the appropriate FIFO (or on board buffer)
+               when a clear buffer command is received.
+
+               SIO now turns off RTS (in addition to DTR) during system
+               shutdown processing.
+
+               The virtualization routines have been improved so that the
+               DOS or Windows programs get more accurate information.  In
+               particular, the transmit status is now more accurate.
+
+               Additions were made in IOCtl functions 65h and 69h to
+               consider data in the transmit FIFO before indicating that
+               the transmit buffer is empty.
+
+               Additions made to the IDC to make SIO compatible with the
+               EZPlaying PCMCIA drivers distributed with the ThinkPad 750. 
+               Users of ISA systems should note that this set of drivers
+               does not seem to be specific to the ThinkPad 750.  That is,
+               the driver set seems to work on any ISA system.  The driver
+               set is included in the file UT750.EXE which can be freely
+               downloaded from the THINKPAD Forum on CompuServe.
+
+               Previous versions of VSIO would always place a port address
+               in BIOS ram (40:0) for COM1 and COM2 even if no UART was
+               detected by SIO.  This problem has been corrected.
+
+          0.170
+
+               Released V1.30.
+
+
+
+
+
+          0.171 to 0.174
+
+               Minor tweaking and testing.
+
+          The following changes/additions were made in internal build
+          0.175.
+
+               Flow control changes set by FOSSIL functions could be lost
+               changing from one program to another.  This problem has been
+               corrected.
+
+               A problem was corrected that could cause a trap 000D when
+               multiple communications shared the same IRQ.  Thanks to Ron
+               Knapp for his assistance tracking down this problem.
+
+          0.176 8/16/94 01:30
+
+               Released V1.31
+
+               Altered the sequence of the code executed at system
+               shutdown.  The previous execution sequence could have caused
+               a trap (usually 0002) at shutdown.
+
+               SIO could incorrectly flow on the remote transmitter and
+               then immediately flow off again.  This anomaly has been
+               corrected.
+
+               At some point a bug was introduced that could cause SIO not
+               to flow on the remote following a flow off.  I am not sure
+               when this bug was introduced and I believe it never made it
+               out in a released version, but it may have.  In any case,
+               this flow on problem has been fixed.
+
+               The Startech 16650 has a bug in its 16550 emulation that
+               would cause SIO's interrupt service routine to loop forever. 
+               The interrupt service routine has been altered so this will
+               not happen when the 16650 is used.  However, full 16650
+               support has not yet been added to SIO.
+
+               The text versions of the SIO manuals are again included in
+               the SIO distribution zip.  Several people noted that they
+               could not read about SIO without installing it.
+
+               Thanks to Marty Ng of IBM, a serious problem in the Hayes
+               ESP code was found and corrected.  SIO was incorrectly
+               outputing a value of 19h to I/O port 27h which is unused on
+               most systems.  However, some systems decoded 27h as the mask
+               port on the PIC chip.  This is probably the "dying mouse"
+               problem that some have experienced with SIO.
+
+
+
+
+
+               Code inserted into the last release of SIO enabling
+               detection of the 16650 UART would place some 16550 emulation
+               hardware into test mode, and the UART would then fail to
+               work correctly.  This problem showed up mostly in PCMCIA
+               modems.  It now seems there is no way to automatically
+               detect the 16650 UART without screwing up other UARTS in the
+               process.  When full 16650 support is included in SIO, the
+               UART will have to be specified in a manner similar to the
+               TPORT and ESP.
+
+               SIO no longer attempts to detect the Intel 82510 and this
+               UART will be recognized as an 8250/16450.  This change will
+               have no effect on SIO users that have the 82510 UART.  The
+               only difference is the identification of the UART.
+
+               This release of SIO contains major additions to support the
+               virtual modem and Internet access.
+
+          0.184 10/16/94 14:30
+
+               Released V1.35
+
+               Added Resource Manager code to SIO.  The Resource Manager is
+               a new addition to OS/2 V2.  Type RMVIEW at an OS/2 command
+               prompt for a look.
+
+          11-20-94  The SIO install program no longer adds the SIO
+                    directory to the path multiple times.
+
+                    The SIO install program will now overlay an "in use"
+                    Vmodem.
+
+          11-25-94  Characters transmitted using the Transmit Immediate
+                    function were not being shown in a PMLM trace, now
+                    corrected.
+
+                    Corrected a problem where FOSSIL's flow control
+                    settings could be lost during program swaps.
+
+                    The SIO support BBS is now up on Internet.  The address
+                    is 199.248,240.2.  You can access the BBS using either
+                    Vmodem or Telnet.  If you wish to do any downloading,
+                    you should come in via Vmodem.
+
+          11-29-94  SIO now provides direct support for Windows programs
+                    when using COMM.DRV from Windows for Workgroups 3.11. 
+                    That is, SIO proper handles the Windows communications
+                    and the virtualization is bypassed.  This should make
+                    Windows programs work as well as native OS/2 programs
+                    (with respect to communications).
+
+
+
+
+
+
+          12-14-94  Vmodem was giving multiple connect strings, this has
+                    been corrected.
+
+                    Vmodem will now do outbound Telnet.  To dial out using
+                    Telnet precede the Internet address with a #, for
+                    example ATDT #199.248.240.2 (NOW REVERSED SEE 1-07-95
+                    ENTRY).  Let me know how it works.
+
+                    The Connect sequences that vmodem sent to the remote
+                    has been eliminated.
+
+          12-15-94  Several problems were have been corrected in the
+                    outbound Telnet.  Specifically, Vmodem should now
+                    correctly negotiate as either a Client or Server.
+
+          12-15-94  Starting in build 0.195 of SIO, the Resource Manager
+                    additions to SIO have been disabled.  The Resource
+                    Manager first appeared in the Warp release of OS/2.
+                    However, users are complaining of a Trap 3, which is a
+                    debug trap.  That is, IBM seems to have left debugging
+                    code in the Resource Manager code, but users think it
+                    is an SIO problem.  My only choice it to remove the
+                    Resource Manager Support.
+
+          12-17-94  Well, that did not last too long.  The Resource Manager
+                    stuff is back in at build 196.  PCMCIA modems do not
+                    work correctly with the Resource Manager code removed.
+
+
+          01-07-95  The meaning of the pound sign "#" preceding the
+                    Internet address in the Vmodem dialing command has been
+                    changed.  Outgoing Vmodem calls will use the Telent
+                    protocol when no pound sign is given.  Conversely, when
+                    the pound sign precedes the Internet address, the
+                    Virtual Modem Protocol will be used.  This is the
+                    reverse of the previous use of the pound sign.
+
+                    Vmodem no longer complains if it can not bind to the
+                    Telnet Server port.  If a bind error occurs, it
+                    probably means another Telnet server is already
+                    installed on the system.  Vmodem continues loading as a
+                    Virtual Modem Protocol ONLY server.
+
+          01-12-95  Added the Share Secret password implementation.  See
+                    the SECURITY section in VMODEM.TXT.
+
+                    Released 1.42
+
+          01-20-95  Vmodem's ATDL (dial last) now saves the Shared Secret
+                    and repeats it in redial.
+
+
+
+
+
+          01-20-95  Vmodem now displays ERROR instead of trapping when ATDT
+                    is entered with no other string.
+
+          01-22-95  Corrected a problem in SIO that could cause PMLM to
+                    show incorrect state changes based on the MCR register.
+
+                    Corrected a problem in SIO that could cause RTS to be
+                    turned off and not turned back on.  This problem only
+                    applied the DOS programs, but could have happened for
+                    either FOSSIL or direct I/O DOS programs.
+
+          01-26-95  Windows For Workgroups 3.11 now forces RTS and DTR to
+                    an on state during session initialization.  FOSSIL
+                    initialization now forces RTS and DTR on.
+
+                    A bug in Warp's Resource Manager Code would lock up
+                    some systems during boot.  Work-around code has been
+                    added to SIO in an attempt to prevent the lock up.
+
+          01-27-95  Released SIO V1.45
+
+          01-28-95  Vmodem no longer responds with OK when given an ATA
+                    sequence.
+
+          01-31-95  Corrected a problem in the FOSSIL timer tick support.
+
+          03-01-95  It seems that some PCMCIA modems are slow to become
+                    ready.  On such modems, SIO would initialize before the
+                    port was ready and they would not function correctly. 
+                    This problem has been corrected.
+
+          03-05-95  SIO previously failed to initialize a variable that is
+                    critical to some PCMCIA modems.  This problem has been
+                    corrected.  Those that have had problems with their
+                    PCMCIA modems should try again.
+
+          04-08-95  The asterisk should no longer be required in the SIO
+                    command line when specifying a PCMCIA port.
+
+                    SIO now completely initializes and enables, then
+                    disables, all ports during boot up.  Previously, SIO
+                    did not do a complete initialization until a port was
+                    opened the first time by an application program.
+
+          04-28-95  Added &T command to allow user to specify the terminal
+                    type that Vmodem will report to the remote.  ie
+                    AT&T"ANSI"
+
+                    Added additional logging to show the comm port of
+                    outgoing connects and logging of when a disconnect
+                    occurs.
+
+
+
+
+
+          06-01-95  Tweaked the saving and restoring of DCBs during
+                    DOS/Windows startup and shutdown.  This should
+                    eliminate the one minute delay that some experienced
+                    when a DOS door returned to a BBS.
+
+                    Added the commands C0 and C1 to the Vmodem AT command
+                    set.  The C1 command implements a kludge in the Vmodem
+                    code that seems to enable programs to upload to
+                    CompuServe using the CIS-B protocol.  The default state
+                    is C0 which disables the kludge.  I altered the dial
+                    string in my CIS navigator to ATC1DT compuserve.com and
+                    I now can upload files to CIS mail using Vmodem.
+
+          06-17-95  Added semaphores to the Vmodem code to enable programs
+                    to spawn a program to service the incoming connect.
+
+          06-17-95  Released SIO V1.50
+
+          07-04-95  Removed the boot time uart hardware initialization.
+
+          08-10-95  Corrected a problem in DSR/DTR flow control.
+
+          08-10-95  Released SIO V1.52
+
+          08-15-95  The correction of the DSR/DTR flow control introduced a
+                    problem in RTS/CTS flow control.  This new problem has
+                    been corrected.
+
+                    Released 1.53
+
+          10-11-95  Added SMC processor detection and appropriately altered
+                    EOI processing.
+
+          11-02-95  PMLM now handles ports above COM9 correctly.
+
+          05-31-96  Disabled all automatic setting(s) of DTR when DOS
+                    sessions are starting and stopping.  If you are losing
+                    connections when exiting Dos/Windows sessions, then it
+                    is your program/door that is doing it.  IT IS NOT SIO
+                    et al.
+
+          06-27-96  Altered code to insure DSR defaults are set correctly. 
+                    Released 1.55
+
+          07-03-96  Added the "+" option which should prevent DOS and
+                    Windows sessions from ever dropping DTR.  See "Advanced
+                    Options" in SIOREF.TXT.
+
+                    Tightened the code that detects the Hayes ESP so that
+                    false detects should no longer occur.
+
+          08-26-96  Fixed a bug in the tightening of the Hayes ESP code.
+
+          08-27-96  Released 1.57
+
+
+
+
+
+
+          09-25-96  The new detection code for the ESP had some holes, and
+                    ESPs at some addresses were not detected.  This problem
+                    has been corrected.
+
+          10-01-96  Many newer mother boards and Super I/O IDE controller
+                    cards have 16550s that supports bit rates to 460800
+                    bps.  SIO now recognizes these 16550s and will allow
+                    bit rate settings of 230400 and 460800 bps.  If at boot
+                    time the message "Detected 16550A" displays in green,
+                    then you have one of these newer 16550s and can use the
+                    higher bit rates.
+
+                    Since many programs do have selections for these bit
+                    rates, you may have to lock the bit rate in the command
+                    line.
+
+          10-24-96  VSIO.SYS was making a call to the OS/2 kernel with an
+                    invalid parameter.  The kernel failed to detect the
+                    invalid parameter and world trap 000E.  The problem had
+                    a very small window of opportunity and occurred when a
+                    Dos session was shutting down.  This problem has been
+                    corrected.
+
+          10-26-96  Released 1.60
+
+          3-01-97   Corrected an error in FOSSIL function 1E.  The number
+                    of stop bits was being set incorrectly.
+
+          3-15-97   More SMP additions/corrections.  SIO would hang at boot
+                    time on some SMP motherboards.  This problem has been
+                    corrected.
+
+          3-17-97   Released 1.60d
+

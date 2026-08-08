@@ -1,0 +1,905 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      VMODEM
+                           Technical Reference Manual
+
+
+
+                     Copyright (c) 1995 by Raymond L. Gwinn
+                                26 Tanager Place
+                          Beckley, West Virginia 25801
+                               All Rights Reserved
+
+                                 August 15, 1996
+
+
+                             CompuServe: 72662,3547
+                             InterNet: ray@gwinn.com
+                              Voice: 1-304-255-7900
+                               FAX: 1-304-255-7902
+                     BBS: 1-304-255-7903 or vmbbs.gwinn.com
+                            WEB http://www.gwinn.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  INTRODUCTION
+
+     The Virtual Modem is a concept that the author believes will change
+     the way serial data communications is done and thought of.  It is
+     going to bring the Internet alive more then ever before.  Perhaps it
+     will not be this implementation of a Virtual Modem, but the concept
+     will remain and be used for a long time.  The concept of the Virtual
+     Modem was born from the desire to make the SIO support BBS available
+     via Internet.  In only a few minutes, I was convinced the Virtual
+     Modem was a solution of a multitude of problems that Internet access
+     poses.
+
+     The Virtual Modem removes most of the complexities and mysteries of
+     the Internet by allowing common, well understood, programs to be used
+     to access the Internet highway.  Users can use programs like PmComm
+     and TE/2 to download files from a BBS (across the Internet) using
+     common protocols like ZMODEM.  The dialing directories of terminal
+     programs can contain Internet addresses instead of phone numbers for
+     easy access to remote sites.
+
+     BBS SysOps can simply declare one or more of their BBS's
+     communications ports as a Virtual Modem and users can then "dial" in
+     over the Internet and no BBS software changes should be necessary.  Is
+     your BBS ready for 20 million new users that can access it without
+     making a long distance call?  This Virtual Modem implements protocols,
+     including a Telnet server which allows most anyone on Internet to
+     access your system.
+
+     Users transferring large volumes of data across phone lines (like
+     FidoNet echomail) can now use the Internet highway instead.  Again,
+     software changes should be minimal, if any at all.
+
+     Vmodem is unique in that it has a dual personality of both Server and
+     Client.  The Server/Client personality is determined by the direction
+     of the connection (outgoing or incoming).
+
+
+
+
+     ii
+
+                                TABLE OF CONTENTS
+
+     WHAT IS VMODEM  . . . . . . . . . . . . . . . . . . . . . . . . .    1
+
+     DISTRIBUTION, ORDERING AND SUPPORT  . . . . . . . . . . . . . . .    2
+          Distribution and Ordering  . . . . . . . . . . . . . . . . .    2
+               SIO Distribution and Support BBS  . . . . . . . . . . .    2
+          Support  . . . . . . . . . . . . . . . . . . . . . . . . . .    2
+
+     GETTING IT GOING  . . . . . . . . . . . . . . . . . . . . . . . .    5
+          TCP/IP Required  . . . . . . . . . . . . . . . . . . . . . .    5
+               TCP/IP Sockets  . . . . . . . . . . . . . . . . . . . .    5
+               The default port number . . . . . . . . . . . . . . . .    5
+
+     The SIO.SYS command line  . . . . . . . . . . . . . . . . . . . .    5
+
+     THE VIRTUAL MODEM . . . . . . . . . . . . . . . . . . . . . . . .    7
+          AT Commands Supported  . . . . . . . . . . . . . . . . . . .    7
+          S Registers Supported  . . . . . . . . . . . . . . . . . . .    8
+          Result Codes . . . . . . . . . . . . . . . . . . . . . . . .    8
+               NO CARRIER  . . . . . . . . . . . . . . . . . . . . . .    8
+               NO DIALTONE . . . . . . . . . . . . . . . . . . . . . .    8
+                 . . . . . . . . . . . . . . . . . . . . . . . . . . .    8
+               BUSY  . . . . . . . . . . . . . . . . . . . . . . . . .    8
+               CONNECT 57600/ARQ/VMP . . . . . . . . . . . . . . . . .    8
+               CONNECT 57600/ARQ/TEL . . . . . . . . . . . . . . . . .    8
+               RING  . . . . . . . . . . . . . . . . . . . . . . . . .    9
+               RINGING . . . . . . . . . . . . . . . . . . . . . . . .    9
+          Caveats  . . . . . . . . . . . . . . . . . . . . . . . . . .    9
+
+     SECURITY  . . . . . . . . . . . . . . . . . . . . . . . . . . . .   10
+          Discussion . . . . . . . . . . . . . . . . . . . . . . . . .   10
+          Vmodem's Implementation  . . . . . . . . . . . . . . . . . .   10
+          Developers Information . . . . . . . . . . . . . . . . . . .   10
+
+     DIALING EXAMPLES  . . . . . . . . . . . . . . . . . . . . . . . .   11
+
+     Telnet  . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   12
+          IBM's Telnet Client  . . . . . . . . . . . . . . . . . . . .   12
+
+     Development and Debugging Tools . . . . . . . . . . . . . . . . .   13
+          Vmodem's Semaphores  . . . . . . . . . . . . . . . . . . . .   13
+          The Poor Man's Line Monitor (PMLM.EXE) . . . . . . . . . . .   13
+          VIEWPMLM.EXE . . . . . . . . . . . . . . . . . . . . . . . .   14
+          SIO's Utility (SU.EXE) . . . . . . . . . . . . . . . . . . .   14
+               IRQs that currently free for use  . . . . . . . . . . .   14
+
+     Appendix A, Hardware Port and IRQ Assignments . . . . . . . . . .   15
+          Addresses and IRQs for COM1 and COM2 . . . . . . . . . . . .   15
+          Defacto standard for COM3 and COM4 . . . . . . . . . . . . .   15
+          Addresses and IRQ for COM3 through COM8 on the PS/2  . . . .   15
+
+     Index . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   16
+
+
+
+
+                                                                          1
+
+
+
+
+
+
+
+
+
+
+
+
+                                 WHAT IS VMODEM
+
+     Vmodem is a software implementation of a modem, referred to as a
+     Virtual Modem.  Basically, it attempts to fake out other software
+     (like terminal programs) into believing they are accessing a real
+     modem.  Vmodem will turn any Terminal into a Telnet Client, and any
+     BBS into a Telnet Server.
+
+     Normal (real) modems provide an interface that allows terminal
+     programs to pass digital information across telephone lines.  Vmodem
+     does the same thing from the application (terminal) program's point of
+     view.  However, the other side of Vmodem is not a phone line, but a
+     digital network like Internet.  Thus, Vmodem allows the hoards of
+     communications programs to pass information across Internet instead of
+     using phone lines.
+
+     In addition to acting as a Telnet server, Vmodem uses a newly designed
+     protocol for communications networks, called the Virtual Modem
+     Protocol (VMP).  At this time, no other programs have implemented VMP,
+     thus Vmodem is required on both ends of the connection to use the VMP. 
+      However, VMODEM.EXE will accept inbound Telnet connections from any
+     system, meaning a BBS under vmodem can be accessed by just about
+     anyone with an Internet connection.
+
+     Future implementations of Vmodem may access networks other than
+     Internet and use TCP/IP implementations other than IBM's.  The current
+     implementation of Vmodem works only on Internet, using the Internet
+     Access Kit (IAK) that is included with OS/2 V3 and IBM's TCP/IP (for
+     OS/2) version 2.0, with the August 1994 CSD applied.
+
+     A single invocation of Vmodem can service all of the Internet ports
+     defined in the SIO command line.
+
+
+
+
+     2
+
+                       DISTRIBUTION, ORDERING AND SUPPORT
+
+     Distribution and Ordering
+
+     Vmodem is a part of a larger package collectively known as SIO.  The
+     entire package collectively known as SIO is ShareWare.  It is not free
+     software or freeware.  See LICENSE.TXT and ORDER.TXT for additional
+     information.  The ShareWare version of SIO is distributed
+     electronically.  One may check their favorite electronic hangout for
+     the latest version of SIO.  The latest copy of the ShareWare version
+     is always posted for downloading from the BBS at 1-304-255-7903 or
+     vmbbs.gwinn.com and www.gwinn.com.  ShareWare versions of SIO can also
+     be downloaded from the CompuServe Forum OS2BVEN, library 4.
+
+     Registered versions of SIO are distributed by US Mail and
+     electronically from the SIO Distribution and Support BBS.  Users
+     desiring to register electronically, may call the BBS and register on
+     line (1-304-255-7903 or vmbbs.gwinn.com) and www.gwinn.com, and
+     immediately download their registered version of SIO.  Use the ORDER
+     command at the main BBS prompt.
+
+     Registrations/Orders can also be placed by phone, mail, FAX, and
+     email.  See the front cover of this manual for the phone numbers and
+     addresses.  Also see ORDER.TXT for and order form that may be used.
+
+     Support
+
+     Only product support is provided, user support for Vmodem is NOT
+     provided.  That is, help with application program configuration, modem
+     init strings etc, is not provided.  Product information such as bug
+     reports, suggestions, and information about incompatibilities are
+     welcome.  They should be sent to one of the following addresses.
+
+
+                                      Email
+                              CompuServe 72662,3547
+                             Internet ray@gwinn.com
+                               FAX 1-304-255-7902
+                      BBS 1-304-255-7903 or vmbbs.gwinn.com
+
+
+
+
+                                                                          3
+
+                                   QUICK START
+
+
+     If some of your applications do not work, it is probably due to the
+     timing difference between the virtual modem and real modems.  These
+     type of problems are NOT bugs in Vmodem, but in the application itself
+     and should be reported to the support department for the application
+     program.  Thus, messages saying that application XYZ does not work are
+     probably of no value and may be ignored.
+
+     The Good Stuff Starts Here:
+
+     If you do not have TCP/IP up and running on your system, forget it,
+     there is no quick start.  If TCP/IP is running on your system then
+     read on.
+
+     Users of the IBM Internet Access Kit (IAK) and IBM's SLIP be sure to
+     execute MODE COMn DTR=ON somewhere before you attempt to dial in.
+
+     First, you must define one or more Virtual Modem ports in the SIO.SYS
+     command line and reboot.  DO NOT DEFINE A PORT THAT IS CONNECTED TO A
+     REAL MODEM AS AN INTERNET PORT.  Defining a Virtual Modem port simply
+     requires that you use the word "Internet" instead of the I/O port
+     address in the SIO command line.  Do not forget to assign the DOS
+     reflection stuff if you will use the port from DOS sessions.  An SIO
+     command line example using COM4 as a Virtual Modem is:
+
+     DEVICE=SIO (COM1,3F8,4) (COM4,INTERNET:2E8,NONE:3)
+
+     The ":2E8" and the ":3" in the command line tells SIO to reflect data
+     to DOS sessions on virtual I/O port 2E8 and virtual IRQ3.  The "NONE"
+     in the command line indicates that no real IRQ is used.
+
+     After you have made the SIO command line changes, and rebooted, you
+     must first activate TCP/IP.  Users of the IBM Internet Access Kit must
+     initiate a connection in the normal manner before Vmodem will start. 
+     After TCP/IP is activated, type Vmodem at any OS/2 prompt.  The Vmodem
+     display attempts to simulate a modem display.  An activity log will
+     start at the bottom of the display and scroll up to the bottom of the
+     simulated LED display.  If you wish, you can use "START /min Vmodem"
+     to invoke Vmodem in your TCP/IP start up scripts, TCPEXIT.CMD is the
+     best place.  Hit Control C if you wish to terminate Vmodem, but you
+     must leave it running if you want Virtual Modem support.
+
+
+
+
+     4
+
+
+     Once Vmodem is started, any access to COM4 (in this example) will go
+     out over the Internet.  Bring up your favorite terminal program,
+     configured for COM4, and type "AT?" for a list of supported AT
+     commands.  To dial out, type ATDT inetaddr.com, of course you must use
+     a real Internet address.
+
+     As of this writing, there are several BBSes available for incoming
+     calls using Vmodem.  Their Internet addresses are:
+
+        vmbbs.gwinn.com           SIO Support in Virginia
+        199.100.191.2             Bob Juge in Houston Texas
+        199.67.41.2               PCBOARD, Clark Development
+        198.69.157.10             Steve Haynes, in Virginia
+        bbs.tfb.com               File Bank BBS
+        bbs.multinet.com          Paul Breedlove, Multinet
+        199.3.36.205              Steve Schmidt in Chicago Illinois
+        198.96.20.209             Steven Bonisteel in Canada
+        bbs.fidouk.org            Jon Morby in England
+        198.17.249.111            Pete Link in USA
+        199.165.149.4             Pete Person in Washington State
+        bbs.adam.anet.cz          Tomas Kucera in Prague, CZ
+        202.12.87.130             Russell Coker, in Australia
+        volvo.datacomm.com        Tony Wagner, West Coast USA
+        198.70.175.40             Bob Palmer, Belton MO
+        199.190.72.11             Patty and Roger Morris, LA
+        203.4.149.97              Dave Blears, Australia
+        204.91.224.2              Bridgewater, New Jersey
+        199.227.57.1              Steve Tower, Florida (I think)
+        tgax.com                  Sysop Adam Shiffman
+        bbs.os2bbs.com            Pete Norloff, OS/2 Shareware BBS
+        vegas.roc.servtech.com    Mike Utell
+        204.177.236.30            Stephen Albinda
+        os2nw.inetnw.com          Dennis Peterson
+        blast.neta.com            Blastronics
+        #os2nw.inetnw.com         OS/2 Northwest BBS, Bellevue, WA
+        131.252.72.105            The PSU Econometrics Lab BBS
+        199.1.42.100              Gary Butters, Irving Texas
+        bbs.abaforum.es           David Llamas, Barcelona Spain
+        142.222.15.220            Mohawk College, Hamilton Ontario Canada
+        gateway.execnet.com       Ken Prevo
+        204.157.224.247           Leroy Devries
+        155.212.31.34             Richard Ploski
+        snoval.aa.net             Larry Devers, Seattle WA
+        199.1.42.117              Chuck Hogard, Grand Prairie, Tx
+        october.com               Bob Quinlan, Sunnyvale, CA
+        198.110.68.22             Walter Martin Braunohler
+        204.191.50.2              Jim Wright
+        199.3.29.10               Gene Angel
+        bbs.gco.com               Bill Cook, Greater Chicago Online
+        onestop.donet.com         Anthony Cogan
+        hightech.iadfw.net        Brent Alberts, Dallas Texas
+
+
+
+
+                                                                          5
+
+                                GETTING IT GOING
+
+
+                                 TCP/IP Required
+
+     The current (first) implementation of Vmodem and works only with the
+     Internet Access Kit (IAK) that is included with OS/2 V3 and IBM's
+     TCP/IP V2.0 with the August 1994 CSD applied.  Contact IBM for
+     information about obtaining their TCP/IP and the CSD update.
+
+     Prior to executing Vmodem, you should have TCP/IP installed and
+     operational on your system.  The author is far from an Internet or
+     TCP/IP expert (more like a novice) so you are on your own in getting
+     TCP/IP up on your system.
+
+     Users of the IBM Internet Access Kit (IAK) and IBM's SLIP be sure to
+     execute MODE COMn DTR=ON somewhere before you attempt to dial in.
+
+     The Virtual Modem Protocol (VMP) that is implemented by Vmodem uses
+     TCP/IP Sockets.  The default port number used by Vmodem is 3141 (the
+     first 4 digits of pi, un-rounded).  However, this default port number
+     can be overridden by using the SERVICES file in the TCP/IP ETC
+     directory.  If the user defines a "Well-Known Port" called "vmodem"
+     (lower case) in the SERVICES file, then that port will be used instead
+     of 3141.  The port number 3141 has been assigned to the Virtual Modem
+     Protocol (VMP) by the Internet Assigned Numbers Authority (IANA).  The
+     name associated with port 3141 is "vmodem" (without the quotes). 
+     Likewise, the Telnet Server in Vmodem can be directed to use any port
+     number by adding a "Well-Known Port" called VMOTelnet to your SERVICES
+     file.  The Telnet Server defaults to port 23 (the standard Telnet
+     port).
+
+                            The SIO.SYS command line
+
+     If you do not already know what SIO.SYS is, you should start with the
+     SIO Users Manual which should be a part of the same package that
+     contained this manual.  The Vmodem specific part of the SIO command
+     line is only documented here.
+
+     The changes to the SIO command line to define a Virtual Modem Port(s)
+     is simple.  All one does is to replace the I/O port number with the
+     word "Internet" (without the quote marks).  I/O port number are
+     usually hexadecimal numbers like 3F8 (for COM1) and it is this number
+     that is replaced with the word "Internet".  A command line example for
+     a Virtual Modem on COM4 that will only be accessed by native OS/2
+     programs is as follows:
+
+     DEVICE=SIO.SYS (COM1) (COM4,INTERNET,NONE)
+
+     The "NONE" in the above simply states that no IRQ is being used.
+
+
+
+
+     6
+
+
+     If one wishes to access the Virtual Modem from DOS and/or Windows
+     sessions, the command line is a little more complicated.  You must
+     tell SIO where to present the information to the DOS/Windows session. 
+     That is, you must tell SIO (really VSIO) the virtual I/O port number
+     and the virtual IRQ that the DOS/Windows application uses to access
+     the port.  Continuing to use COM4 as the example should be changed to:
+
+     DEVICE=SIO.SYS (COM1) (COM4,INTERNET:2E8,NONE:3)
+
+     This command line will present a standard COM4 to the DOS and or
+     Windows session(s).
+
+
+
+
+                                                                          7
+
+                                THE VIRTUAL MODEM
+
+     Starting the Virtual Modem is about as simple as it can be.  Simply
+     type VMODEM or START /MIN VMODEM at any OS/2 prompt, there are no
+     required command line parameters.  Vmodem then just sits there and
+     displays some minimal activity reports.  Vmodem does have one optional
+     command line parameter, a log file name.  If a log file name is given,
+     all information displayed on the Vmodem screen is written to the file.
+
+     Once started, and with the above mentioned additions to the SIO
+     command line, application programs should see a relatively simple
+     modem that implements a very basic set of AT commands.  Most of the AT
+     commands of a real modem simply do not apply in the environment that
+     the Virtual Modem is being used in.  For example, flow control is
+     automatic (done by TCP/IP) so the virtual modem needs no flow control
+     commands.
+
+     Remember, the Virtual Modem has no memory, so any needed modem init
+     string needs to be presented each time an application program is
+     executed.
+
+     AT Commands Supported
+
+          ?    Display a list of supported AT commands.
+
+          Cn   CompuServe upload kludge, C0 disables, C1 enables.  Try ATC1
+          if you have problems uploading to CompuServe.
+
+          D?   Display some dialing examples.
+
+          DT   Dial the following internet address.
+
+          DP   Dial the following internet address.
+
+          DV   Dial a specific VMODEM port at the following internet
+          address.  ie "ATDV 3 vmbbs.gwinn.com" will dial the third VMODEM
+          port at the given internet address.
+
+          En   Command mode local echo. E0 disables echoing, E1 enables
+          echoing.
+
+          Fn   Local echo after connection. F0 enables (half duplex), and
+          F1 disables.  This command is currently disabled.
+
+          Hn   On/Off hook control. H0 or H alone to hang up, H1 go off
+          hook.
+
+          Mn   Incoming connect notify.  M0 or M alone inhibits speaker
+          sounds, and M1 enables speaker sound when an incoming connect is
+          detected.
+
+          Sr=n Set S register r to n.  The supported set of S registers is
+          given below.
+
+          Sr=? Display the current value (setting) of S register r.
+
+
+
+
+     8
+
+          S?   Display supported S register information.
+
+          Z    Virtual modem reset.
+
+          &Cn  Carrier detect operation, &C0 always on, &C1 normal.
+
+          &Sn  DSR operation, &S0 always on, &S1 normal.
+
+          &T   Allows specification of a quoted string that Vmodem will
+               report to a remote as the terminal type for Telnet sessions.
+               ie AT&T"ANSI".  This setting is reset to "ANSI" when ATZ is
+               executed.
+
+          &V   View virtual modem settings.
+
+
+     S Registers Supported
+
+          S0   Zero disables automatic answer, non-zero enables automatic
+          answer.
+
+          S7   Number of seconds to wait for carrier (connection) when
+          dialing.
+
+          S19  Set inactivity timer (automatic disconnect) in minutes (0
+          disables).  This S register is currently ignored by Vmodem.
+
+          S38  Duration in seconds before disconnect when DTR drops.  This
+          S register is currently ignored by Vmodem.
+
+
+     Result Codes
+
+          NO CARRIER.  This result is returned when a dialing timeout
+          occurs or when an established connection terminates.  The timeout
+          interval is specified by S register 7.
+
+          NO DIALTONE.  This result code means that Vmodem could not obtain
+          address information from the name server (or HOSTS file), or that
+          the given Internet address is invalid.  This result code is also
+          returned if TCP/IP is not responding.
+
+          BUSY.  This result means that a connection to the vmodem port was
+          established at the remote site.  However, no available
+          communications ports (COM1, COM2 etc) were available to assign
+          the connection to.
+
+          CONNECT 57600/ARQ/VMP.  This result means the dialing and session
+          establishment occurred without problems and is ready for user
+          data flow using the Virtual Modem Protocol.  The given bit rate
+          of 57600 is given only to satisfy the application program.  The
+          actual data rate is not know to Vmodem.
+
+          CONNECT 57600/ARQ/TEL.  This result is the same as above except
+          the protocol being used is Telnet. 
+
+
+
+
+                                                                          9
+
+          RING.  This result means that an incoming connection has been
+          made with a remote system and that the local Vmodem is sending a
+          ring indication to the assigned communications port (COM1 etc).
+
+          RINGING.  This result means that an outgoing connection has been
+          made with a remote system and that the remote Vmodem is sending a
+          ring indication to the communications port.
+
+
+     Caveats
+
+     The modem command mode escape sequence, usually +++, is not
+     implemented by the Virtual Modem.  Once the Virtual Modem enters data
+     mode, the only way to return to command mode is to drop DTR.  This is
+     why the DTR override AT command is not supported.  Implementation of
+     the escape (+++) feature would have a severe impact on processor
+     overhead and Virtual Modem throughput.
+
+     Numeric result codes are not currently implemented, they may be at a
+     future time.
+
+     Some application programs (like ProComm) translate letters into
+     numbers. I have not found a way to use ProComm's dialing directory to
+     pass alphabetic strings like those used in Internet addresses.
+
+     Other applications (like TE/2) will pass alphabetic strings when they
+     are enclosed in double quotes.  Thus, an Internet address can be
+     entered into TE/2's dialing directories in the form "vmbbs.xyz.com". 
+     The trailing quote is not really necessary as a trailing carriage
+     return will also terminate the address.
+
+
+
+
+     10
+
+                                    SECURITY
+
+     Discussion
+          Some believe that logging onto a BBS via Internet is not as
+          secure as logging onto the same BBS using phone lines.  There are
+          rumors of "sniffer" programs on the Internet looking for credit
+          card numbers, passwords and the like.  The phone line analogy of
+          a sniffer is a tapped phone line.  The author has heard the
+          rumors, but has never heard of a confirmed case of a sniffer that
+          really worked.
+
+          Vmodem attempts to remove the problem of passwords being sent in
+          the clear by implementing a "Shared Secret" password encryption
+          method, an Internet standard (see RFC 1321 and RFC 1725). 
+          Depending on the BBS implementation, the "Shared Secret" may (or
+          may not) be your password.  Contact your BBS Sysop, or BBS
+          supplier if you have questions about the details.
+
+          The way the Shared Secret works is that the BBS sends a unique
+          string each time a connection is made.  The contents of the
+          unique string is not important so long as it is unique
+          (different) each time a logon occurs.  Your Shared Secret
+          (probably your password) is then appended to the unique string
+          and processed by something called the MD5 algorithm that produces
+          yet a third string which is sent back to the BBS.  The BBS also
+          processes the unique string and the Shared Secret by the MD5
+          algorithm and compares the result to the one received from the
+          user.  If they match, then the BBS can proceed without directly
+          asking the user for their password.  The unique string and the
+          MD5 processing insure that a logon sequence is NEVER the same and
+          the Shared Secret is never directly send across the network.  The
+          SIO support BBS supports the Shared Secret login.
+
+     Vmodem's Implementation
+
+          Vmodem allows the user to specify the Shared Secret as a quoted
+          string in the dialing command.  For example, if Vmodem processes
+          the following:
+
+               ATDT vmbbs.gwinn.com "Hi There"
+
+          The Shared Secret is "Hi There" (the Shared Secret does not
+          include the quote marks).  If Vmodem process the above ATDT
+          command and sees the unique string from the BBS, then a proper
+          response is returned to the BBS.  The reader should note that the
+          Shared Secret is case sensitive.  That is "hi there" is NOT the
+          same as "Hi There".
+
+
+     Developers Information
+
+          A document for developers describing the Share Secret
+          procedure and source code for the MD5 algorithm is available
+          from the author.  Send requests for MD5.ZIP via email to
+          ray@gwinn.com.
+
+
+
+
+                                                                         11
+
+                                DIALING EXAMPLES
+
+     Vmodem will translate any "*" (asterisk) in the dialing string to a
+     "." (dot).  Some terminal programs refuse to pass the dot, but should
+     pass the asterisk because it is a key on telephone keypads.
+
+     The following are a few dialing examples to numeric type internet
+     addresses.
+
+
+     ATDT199.100.191.2              Bob Juge in Houston Texas
+     ATDT 199.67.41.2               PCBOARD, Clark Development
+     ATDT 199*3*36*205              Steve Schmidt in Chicago Illinois
+     atdt198.96.20.209              Steven Bonisteel in Canada
+     ATDT194*70*36*10               Jon Morby in England
+
+
+     Vmodem implements two different Internet protocols, Telnet and VMP. 
+     VMP is Vmodem to Vmodem only, but is true binary while Telnet it not. 
+     The Internet protocol that Vmodem uses when making an outgoing connect
+     is specified in the ATDT command by preceding the Internet address
+     with a pound sign "#".  If the pound sign precedes the Internet
+     address, then VMP is used. Otherwise, Telnet is used.  Again, the
+     reader should note that VMP should be used only when you know your are
+     connecting to another Vmodem on the remote.
+
+     The following are a few dialing examples to non-existent internet
+     addresses using host names.  At least I believe they do not exist.
+
+     ATDT vmbbs.gwinn.com     (use Telnet protocol)
+
+     ATDT #vmbbs.gwinn.com    (use VMP protocol)
+
+     ATDTvmbbs.internet.com
+
+     ATDP "BBS.INTERNET.COM"
+
+     ATDT VMBBS.INTERNET.COM
+
+     ATDT vmbbs.internet.com 1234
+
+     In the above example, the user is specifying a port override. 
+     Normally Vmodem will attempt a connect on port 3141 (the official port
+     for vmodem).  In this case, the dialer is telling Vmodem to use port
+     1234 instead of 3141.
+
+
+
+
+     12
+
+                                     Telnet
+
+     Vmodem implements a Telnet server meaning that inbound Telnet
+     connections are accepted.  The "well-know name" for the Telnet server
+     is VMOTelnet.  The default port is the standard Telnet port, 23.  The
+     port used by the Telnet server can be changed by adding a line to the
+     SERVICES file in your ETC directory and assigning VMOTelnet to another
+     port.  This can also be done to disable the Telnet server part of
+     Vmodem.
+
+     The best Telnet Client to use to connect to a Vmodem Telnet Server is
+     a terminal program also executing under Vmodem.  Vmodem can
+     concurrently act as a Client and Server, meaning Vmodem can connect to
+     itself on the same system.  This feature is a very good testing tool. 
+     Of course, you can connect from a remote system as well.
+
+     IBM's Telnet Client
+
+     IBM's Telnet seems to be a little finicky, but I did get it to connect
+     and work with a Vmodem host.  I executed IBM's Telnet with the
+     following command line:
+
+               telnet -t ANSI -c NONE
+
+     In addition, after Telnet loads I had to enter the following:
+
+               toggle crlf
+
+     BE SURE TO ENTER THE ABOVE COMMAND AFTER EXECUTING IBM'S TELNET. 
+     Things are really screwy if you do not.
+
+
+
+
+                                                                         13
+
+                         Development and Debugging Tools
+
+     Vmodem's Semaphores
+
+     Vmodem creates two system semaphores for each supported port.  One of
+     the semaphores is useable by 16 bit code, the other is usable by 32
+     bit code.  Both the 16 and 32 bit semaphores are set and cleared at
+     the same time.  The names are \SEM\VMODEMn and \SEM32\VMODEMn, where n
+     is the port number (1 or more decimal digits).  The semaphores are set
+     at load time and when a disconnect occurs.  The semaphores are cleared
+     when Vmodem starts "ringing" a communications port indicating an
+     incoming connect attempt.  Programs can test the semaphore(s) and
+     spawn a program to process an incoming call (connect).
+
+     The Poor Man's Line Monitor (PMLM.EXE)
+
+     PMLM is basically of interest to developers of comm applications and
+     those providing technical support for those applications.  This SIO
+     utility is released largely (in self defense) in the hope that some
+     users can diagnose their own problems.  PMLM's feature of saving trace
+     information to disk will only work with registered and beta versions
+     of SIO.
+
+     PMLM provides basic line monitoring for OS/2, DOS and Windows comm
+     programs.  All characters sent or received by application programs are
+     displayed in the upper portion of the screen.  Receive characters are
+     displayed as "white on blue" and transmitted characters are displayed
+     "yellow on violet".  Line signals, such as CTS are displayed as "dim
+     white on red" when turned off and "bright white on red" when turned
+     on.  In addition, a signal's transition to OFF is displayed in lower
+     case and a signal's transition to ON is displayed in upper case.
+
+     Status information is displayed in the lower part of the screen.  A
+     bright white display means the signal is on, a dim white indicates
+     that the signal is off.  In addition, when bright,  Rxoff and Txoff
+     indicate the SIO has sent (Txoff) or received (Rxoff) an Xoff, and an
+     Xon is pending.
+
+     When a DOS or Windows session uses a comm port, an additional line of
+     signal status appears.  This status line shows the state of the
+     virtual UART's signals.  Only the signals which MAY be different from
+     the real UART's signals are shown.
+
+     "Rx Chars" and "Tx Chars" reflects the number of characters in SIO's
+     receive and transmit buffers respectively.
+
+     The last line on the screen shows the keys (from the keyboard) that
+     PMLM will recognize.  The bright character shows the key to hit for
+     the associated function.  The font keys will not work in a windowed
+     OS/2 session.
+
+
+
+
+     14
+
+
+     PMLM's command line requires one parameter, the comm port number, and
+     optionally accepts an additional parameter giving a save trace file
+     name.  For example, PMLM 1 COM1INFO.TEC will monitor COM1 and save ALL
+     of the communications traffic in the file COM1INFO.TRC.  The trace
+     files created by PMLM contain exactly the same information that is
+     displayed by PMLM, video attributes and all.
+
+     VIEWPMLM.EXE may be used to view trace files created by PMLM. 
+     VIEWPMLM.EXE requires one parameter, the trace file name.  The user
+     can use the keys UP, DOWN, PAGEUP, PAGEDOWN, HOME, and END to navigate
+     the saved trace file.  Registered SIO users may send VIEWPMLM.EXE
+     (along with saved trace files) to anyone for technical support
+     purposes.
+
+     VIEWPMLM can be used in native DOS, in DOS sessions under OS/2, and in
+     OS/2 sessions.  This means that even those developers and support
+     people need not have OS/2 to view the captured communications data
+     created by PMLM.
+
+     SIO's Utility (SU.EXE)
+
+     This utility program has several useful commands.  You can obtain a
+     list of the available commands by typing SU at any command line prompt
+     without any parameters.  One very useful command is SU IRQS.  This
+     command will show IRQs that currently free for use.  Commands are
+     provided allowing user control (missing from MODE) are available. 
+     Status commands provide a wealth of diagnostic information.
+
+
+
+
+                                                                         15
+
+                  Appendix A, Hardware Port and IRQ Assignments
+
+     I have obtained the following information from various sources. 
+     Accuracy is not guaranteed.  In fact, nothing in this document is
+     guaranteed.
+
+     Addresses and IRQs for COM1 and COM2
+
+          COM1 uses 03F8h and IRQ4
+          COM2 uses 02F8h and IRQ3
+
+     Defacto standard for COM3 and COM4 for PC, XT and AT
+
+          COM3 uses 03E8h and IRQ4
+          COM4 uses 02E8h and IRQ3
+
+     Addresses and IRQ for COM3 through COM8 on the PS/2
+
+          COM3 uses 3220h and IRQ3
+          COM4 uses 3228h and IRQ3
+          COM5 uses 4220h and IRQ3
+          COM6 uses 4228h and IRQ3
+          COM7 uses 5220h and IRQ3
+          COM8 uses 5228h and IRQ3
+
+     All PCs (known to the author) prior to the PS/2 and EISA only use 10
+     bits to address hardware I/0 ports.  Systems prior to the PS/2 and
+     EISA can not address the standard PS/2 addresses for COM3 through
+     COM8.  If an AT or below attempts to address COM3 through COM8 using
+     the PS/2 addresses, only the low 10 bits of the address are used. 
+     That is, the high 6 bits of the address will be ignored by the
+     hardware.  This means that any reference to COM3 through COM8 will
+     actually address ports 220h through 22Fh on older PCs.
+
+     One should avoid expansion boards that use ports 220h through 22Fh
+     unless the expansion board is a serial I/O board. 
+
+     SIO will (attempt to) determine the hardware architecture (ISA/EISA
+     and PS/2) that it is being executed on and use the appropriate
+     hardware port addresses for COM1 thru COM4 as defaults.
+
+
+
+
+     16
+
+                                      Index
+
+     Addresses and IRQ for COM3 through COM8 on the PS/2 . . . . . . . . 15
+     Addresses and IRQs for COM1 and COM2  . . . . . . . . . . . . . . . 15
+     Appendix A, Hardware Notes  . . . . . . . . . . . . . . . . . . . . 15
+     AT Commands Supported . . . . . . . . . . . . . . . . . . . . . . .  7
+     BBS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     Caveats . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  9
+     Defacto standard for COM3 and COM4  . . . . . . . . . . . . . . . . 15
+     Default port number . . . . . . . . . . . . . . . . . . . . . . . .  5
+     Development and Debugging Tools . . . . . . . . . . . . . . . . . . 13
+     DIALING EXAMPLES  . . . . . . . . . . . . . . . . . . . . . . . . . 11
+     Distribution  . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     GETTING IT GOING  . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     IBM's Telnet Client . . . . . . . . . . . . . . . . . . . . . . . . 12
+     Ordering  . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     PMLM.EXE  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+     Result Codes  . . . . . . . . . . . . . . . . . . . . . . . . . . .  8
+     S Registers Supported . . . . . . . . . . . . . . . . . . . . . . .  8
+     SECURITY  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+     Semaphores  . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+     SIO's Utility (SU.EXE)  . . . . . . . . . . . . . . . . . . . . . . 14
+     Support . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  2
+     TCP/IP Required . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     TCP/IP Sockets  . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     Telnet  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+     The SIO.SYS command line  . . . . . . . . . . . . . . . . . . . . .  5
+     THE VIRTUAL MODEM . . . . . . . . . . . . . . . . . . . . . . . . .  7
+     VIEWPMLM.EXE  . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+     WHAT IS VMODEM  . . . . . . . . . . . . . . . . . . . . . . . . . .  1
+

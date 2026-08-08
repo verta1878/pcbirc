@@ -1,0 +1,18 @@
+
+
+
+
+
+
+
+                        REGISTRATION/ORDERING INFORMATION
+
+     An SIO2K registration licenses you to use the product on a regular
+     basis.  Individual users need register only one copy of SIO2K for
+     personal use on home computers. 
+
+     Currently, the only way to register (license) SIO2K is via a secure
+     web server at http://www.gwinn.com.  If you have problems connecting
+     to that addresses, you can also use the ip addresses directly, which
+     is http://199.248.240.10.
+

@@ -1,0 +1,46 @@
+
+
+
+
+                               SIO2K LICENSE 
+
+
+As used in this document, SIO2K means the SIO2K set of device drivers and
+supporting programs and documentation. SIO2K is not public domain software,
+nor is it free software.
+
+SIO2K is copyright (C) 2001 by Raymond L. Gwinn. 
+
+Non-registered users are granted a limited license to use the shareware
+version of SIO2K on a trial basis for the purpose of determining whether
+SIO2K is suitable for their needs.  Use of SIO2K, except for this limited
+purpose, requires registration.  Other than stated above, the use of
+non-registered copies of SIO2K by any person, business, corporation,
+governmental agency or other entity institution is strictly forbidden.
+
+Registration grants the registered user a license to use SIO2K only on a
+single computer; a registered user may use the program on a different
+computer, but may not use the program on more than one computer at the same
+time. 
+
+No one may modify SIO2K in any way, including but not limited to
+decompiling, disassembling or otherwise reverse engineering the program.
+ 
+All users are granted a limited license to copy the shareware version of
+SIO2K only for the trial use of others subject to the above limitations,
+and also the following: 
+
+     SIO2K must be copied in unmodified form, complete with the file
+     containing license and ordering information. 
+
+     The full SIO2K documentation must be included with the copy.
+
+     No fee, charge or other compensation may be accepted or requested.
+
+Operators of electronic bulletin board systems (Sysops) and internet
+servers may post the shareware version of SIO2K for downloading by their
+users only as long as the above conditions are met. 
+
+Distributors of public domain or user supported software may distribute
+copies of SIO2K subject to the above conditions.
+

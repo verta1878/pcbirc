@@ -1,0 +1,102 @@
+
+
+                           SIO2K revision history
+
+09-18-01 - Version 2.00a
+     First public release.
+
+09-20-01 - Version 2.00b
+     IoCtl function 72h was incorrectly setting bit 2 (xmit buffer empty). 
+     This problem has been corrected.
+
+     Corrected a problem in the install script (install.cmd).
+
+10-04-01 - Version 2.00c
+     The 16950, rev 0, is no longer rejected.  Instead a warning is placed
+     into the log file.
+
+     Send and receive buffers are now always cleared upon an open call. 
+     Previously, they were not cleared if DCD was active.
+
+     Changed default of OCTS to off.
+
+     The "NoProbe" option turns out NOT to be a good idea.  It has been
+     removed.  My apologies to those that will have to edit their
+     config.sys file to remove the option.
+
+     Corrected an error in the automatic irq detection routines.  This
+     problem would cause "already open" ports to die.  The problem only
+     occurred the first time a port was opened following a boot.
+
+     Corrected a problem that caused a slow exit on many apps.
+
+10-15-01 - Version 2.01
+     Added pmlm hooks and created a pmlm.exe for sio2k.  Pmlm.exe is now in
+     the distribution zip.  The pmlm implementation is considered beta at
+     this point.
+
+     Corrected a problem that caused some internal modems to fail to work. 
+     This problem shows up with programs that use unusual modem
+     initialization procedures, like In-Joy.
+
+11-06-01 - Version 2.01a
+     Pmlm was not saving the last buffer to disk, this bug has been
+     corrected.
+
+     The specification for PCI.INC has been enhanced.  The change to
+     PCI.INC is a change in (enhancement to) the specification.  All user
+     added lines should still work. See the text at the beginning of
+     PCI.INC for details.
+
+     Code was added to parse PCI.INC using the new definition.
+
+
+12-12-01 - Version 2.02
+
+     The fifo depth and crystal multiplier for SuperIO devices are no
+     longer probed.  The information is now obtained from the configuration
+     registers of the SuperIO device.
+
+     The combination of a SMsC SuperIO chip on an SMP system could cause a
+     lockup when the port is opened.  This problem has been corrected.
+
+     Added support for up to 460800 bps for the following SMsC SuperIO and
+     UltraIO chips: FDC37N971, FDC37N972, FDC37M70x, FDC37M81x, FDC37N958,
+     FDC37N769, FDC37N3869, LPC47N227, LPC47N252, LPC47N267, LPC47M192, 
+     LPC47M14x, LPC47M10x, LPC47S45x, FDC37C67x, FDC37M70x, FDC37B72x, and
+     FDC37B77x.
+
+     Added support for up to 921600 bps for the following Winbond SuperIO
+     chips: W83977EF and W83977TF.
+
+     YOU MUST add "SuperIO", without the quote marks, to the uart.sys
+     command line to enable the higher bit rates on your computer.
+
+     A problem was corrected in sio2k.sys that could cause a trap when
+     exiting from PMLM.
+
+06-06-02 - Version 2.03
+
+     Added support for IBM's PCI device files PCIDEV.TBL.  This file is on
+     some OS/2 systems and provides detection information on PCI serial
+     cards.  Sio2k now uses both PCI.INC and PCIDEV.TBL to identify PCI
+     serial cards.
+
+     The assigning of device names (COM1, COM2, etc) has been changed
+     slightly.
+
+          Prior versions of sio2k always claimed/defined COM1 to COM4. 
+          Above COM4, sio2k would check to determine if the device name
+          already existed to avoid reassigning a device name.  This
+          assignment procedure was adopted because of a problem in com.sys
+          which seems to have been corrected by IBM.
+
+          Sio2k will now attempt to determine if a device name is already
+          in use, including COM1 to COM4, prior to assigning a device name.
+
+          Given very unusual conditions, your serial ports could be
+          assigned a different device name.
+
+     The IDC calling sequence between sio2k and the other drivers has been
+     changed.
+

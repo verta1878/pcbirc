@@ -1,0 +1,181 @@
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/MAIN.C	1996-08-10 10:11:38.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/MAIN.C	2026-08-08 11:38:38.598028535 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -21,7 +22,7 @@
+ 
+ #ifdef VALIDATOR
+   extern "C" {
+-  #include <\toolkt21\c\os2h\valapi.h>
++  /* #include <valapi.h> -- OS/2 validation API, not needed for port */
+   }
+ #endif
+ 
+@@ -510,4 +511,3 @@
+   }
+ }
+ /***************************  End of main.c  ****************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/DLG.C	1996-08-10 10:08:32.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/DLG.C	2026-08-08 11:37:13.894056083 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/FILE.C	1996-08-10 10:09:42.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/FILE.C	2026-08-08 11:38:38.567527459 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -284,4 +285,3 @@
+ }
+ 
+ /***************************  End of file.c  ***************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/HELP.C	1996-08-10 10:09:58.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/HELP.C	2026-08-08 11:40:04.231714700 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -109,7 +110,7 @@
+    hini.pszHelpLibraryName = (PSZ)szLibName;
+ 
+    if (fileexist(szLibName) == 255) {
+-     strcpy(szTemp,_argv[0]);
++     strcpy(szTemp,__argv[0]);
+      if ((p = strrchr(szTemp,'\\')) != NULL || (p = strrchr(szTemp,':')) != NULL) {
+        strcpy(p+1,szLibName);
+        strcpy(szLibName,szTemp);
+@@ -386,4 +387,3 @@
+       WinDestroyHelpInstance(hwndHelpInstance);
+ }   /* End of DestroyHelpInstance   */
+ /***************************  End of help.c  ****************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/INIT.C	1996-08-10 10:11:18.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/INIT.C	2026-08-08 11:38:38.589574219 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -493,4 +494,3 @@
+ }   /* End of ExitProc    */
+ #pragma warn +par
+ /***************************  End of init.c  ***************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/PNT.C	1996-08-10 10:13:12.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/PNT.C	2026-08-08 11:38:38.602823814 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -81,4 +82,3 @@
+ 
+ }   /* End of MainPaint   */
+ /***************************  End of pnt.c  ****************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/THRD.C	1996-08-10 10:13:30.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/THRD.C	2026-08-08 11:38:38.609299533 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -18,7 +19,7 @@
+ #include <os2.h>
+ 
+ #include <io.h>
+-#include <alloc.h>
++#include <stdlib.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -2350,4 +2351,3 @@
+ /***************************  End of thrd.c  ****************************/
+ 
+ 
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/USER.C	1996-08-10 10:13:38.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/USER.C	2026-08-08 11:38:38.616226496 +0000
+@@ -1,3 +1,4 @@
++#include "pcbcp_compat.h"
+ /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+ /* The source code in this module is proprietary software belonging to       */
+ /* Clark Development Company and is part of the PCBoard source code library. */
+@@ -1412,4 +1413,3 @@
+   WinReleasePS(hps);
+ }
+ /***************************  End of user.c  ****************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/MAIN.H	1996-08-10 10:11:50.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/MAIN.H	2026-08-08 11:38:38.551999574 +0000
+@@ -255,4 +255,3 @@
+ 
+ #define BACKGROUND_THREAD
+ /***************************  End of main.h  ****************************/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/DLG.H	1996-08-10 10:09:16.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/DLG.H	2026-08-08 11:38:38.621177485 +0000
+@@ -21,4 +21,3 @@
+ #define IDC_ICON            4
+ #define IDC_BITMAP          5                                                   /*<-@UNI  */
+ #define IDR_BITMAP          6                                                   /*  @UNI->*/
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/HELP.H	1996-08-10 10:10:18.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/HELP.H	2026-08-08 11:38:38.625675704 +0000
+@@ -82,4 +82,3 @@
+ #define HID_NOTEBOOK_RUN_DLG_HELP_PANEL     4150
+ #define HID_NOTEBOOK_COPYFROM_HELP_PANEL    4160
+ #define HID_NOTEBOOK_COPYTO_HELP_PANEL      4170
+-
+\ No newline at end of file
+--- /home/claude/pcbrevival/historical/pcball/pcboard/pcb-util/PCBCP/SOURCE/XTRN.H	1996-08-10 10:13:56.000000000 +0000
++++ /home/claude/pcbrevival/addons/PCBCP/SOURCE/XTRN.H	2026-08-08 11:38:38.631116212 +0000
+@@ -219,4 +219,3 @@
+ void    LIBENTRY deselectnodes(void);
+ 
+ /***************************  End of xtrn.h  ****************************/
+-
+\ No newline at end of file
+--- /dev/null
++++ addons/PCBCP/SOURCE/pcbcp_compat.h
+@@ -0,0 +1,21 @@
++/* pcbcp_compat.h — OpenWatcom compatibility for PCBCP */
++#ifndef PCBCP_COMPAT_H
++#define PCBCP_COMPAT_H
++
++#ifndef __cplusplus
++typedef unsigned char bool;
++#ifndef TRUE
++#define TRUE 1
++#endif
++#ifndef FALSE
++#define FALSE 0
++#endif
++#endif
++
++/* Watcom doesn't have alloc.h */
++#ifdef __WATCOMC__
++#include <stdlib.h>
++#include <malloc.h>
++#endif
++
++#endif

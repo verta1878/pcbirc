@@ -1,0 +1,8 @@
+# SIO.SYS — OpenWatcom linker response file
+# 16-bit OS/2 Physical Device Driver
+system os2 dll
+option quiet
+option map=out/sio.map
+name out/SIO.SYS
+file out/sio.obj
+library watcom/lib286/os2/clibs.lib
