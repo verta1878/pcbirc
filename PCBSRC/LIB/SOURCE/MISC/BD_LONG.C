@@ -14,7 +14,7 @@
 
 
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
 //#pragma inline
   #define EXPBYTE   7
   #define SIGNBYTE  6
@@ -30,7 +30,7 @@
 #endif
 
 static ulong _NEAR_ LIBENTRY basdbletolongsub(basdble cArray) {
-#if defined(_MSC_VER) || defined(__OS2__)
+#if defined(_MSC_VER) || defined(__OS2__) || defined(__WATCOMC__)
   unsigned long l;
 
 /*

@@ -1,3 +1,4 @@
+#define _VIRTUAL1_C_
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -13,8 +14,11 @@
 
 
 #include <io.h>
-#include <stat.h>
+#include <sys/stat.h>
 #include <alloc.h>
+#ifdef __WATCOMC__
+#define coreleft() 640000UL
+#endif
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
@@ -81,7 +85,7 @@ int pascal putvirtualrec(VirType *p, const void *Buffer) {
   if (Vir.MainMemOffset == Vir.MainMemCheck) {
     if (coreleft() > Vir.CoreCheck) {
       Vir.MainMemOffset = 0;
-      p->Loc.Buf = Vir.MainMem = malloc(Vir.AllocSize);
+      p->Loc.Buf = Vir.MainMem = (char *)malloc(Vir.AllocSize);
       p->Rec = MEMBUFA;
       memcpy(p->Loc.Buf,Buffer,Vir.Size);
       return(VIROKAY);
@@ -152,7 +156,7 @@ int pascal insvirtualrec(void *EmptyBuffer, unsigned RecNum, unsigned TotRecs) {
     return(Code);
 
   VirRec = Virtual[TotRecs];
-  memmove(&Virtual[RecNum+1],&Virtual[RecNum],(TotRecs-RecNum) * sizeof(VirType));
+  memmove((void*)&Virtual[RecNum+1],(const void*)&Virtual[RecNum],(TotRecs-RecNum) * sizeof(VirType));
   Virtual[RecNum] = VirRec;
   return(VIROKAY);
 }
@@ -165,7 +169,7 @@ int pascal delvirtualrec(unsigned RecNum, unsigned TotRecs) {
   }
   Vir.DelRecs++;
 
-  memmove(&Virtual[RecNum],&Virtual[RecNum+1],(TotRecs-RecNum) * sizeof(VirType));
+  memmove((void*)&Virtual[RecNum],(const void*)&Virtual[RecNum+1],(TotRecs-RecNum) * sizeof(VirType));
   return(VIROKAY);
 }
 
@@ -183,7 +187,7 @@ void pascal openvirtual(unsigned MaxRecs, unsigned Size) {
   NumBytes   = MaxRecs * sizeof(VirType);
   Vir.DelRecs = 0;
 
-  if ((Virtual = malloc(NumBytes)) == NULL) {
+  if ((Virtual = (VirType *)malloc(NumBytes)) == NULL) {
     errorexit("virtual","memory error",__FILE__,__LINE__);
   }
   Vir.LastRecAdr = &Virtual[MaxRecs-1];

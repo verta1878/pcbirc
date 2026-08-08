@@ -15,7 +15,7 @@
 #include <io.h>
 #include <dir.h>
 #include <dos.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>

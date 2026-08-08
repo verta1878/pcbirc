@@ -80,6 +80,8 @@
 #define  OP_WRIT       2        /* last operation was a file write         */
 
 #pragma pack(4)
+#ifndef _DOSFILE_DEFINED
+#define _DOSFILE_DEFINED
 typedef struct {      /* struct used with dosfopen, dosfgets, & dosfclose  */
   int      handle;    /* dos file handle                                   */
   char     *buffer;   /* pointer to buffer space                           */
@@ -90,6 +92,7 @@ typedef struct {      /* struct used with dosfopen, dosfgets, & dosfclose  */
   long     curpos;    /* current read/write position in the file           */
   char     last_op;   /* last operation (OP_NONE, OP_READ, OP_WRIT)        */
 } DOSFILE;
+#endif /* _DOSFILE_DEFINED */
 #pragma pack()
 
 

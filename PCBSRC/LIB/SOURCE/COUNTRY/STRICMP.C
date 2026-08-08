@@ -25,7 +25,7 @@
 #include <country.h>
 
 extern "C" int stricmp(const char *str1, const char *str2) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   int dif;
   const unsigned char *p1 = (unsigned char *) str1;
   const unsigned char *p2 = (unsigned char *) str2;

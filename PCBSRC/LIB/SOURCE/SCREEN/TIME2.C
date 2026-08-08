@@ -1,3 +1,4 @@
+#include <stdio.h>
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -24,6 +25,9 @@
 #endif
 
 #include <system.h>
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
 #include "screen.h"
 
 
@@ -47,7 +51,15 @@ char * LIBENTRY timestr2(char * TStr) {
             SysTime.Hours,
             SysTime.Minutes);
 
-  #else /* ifdef __OS2__ */
+  #elif defined(__WATCOMC__)
+  {
+    union REGS r;
+    r.h.ah = 0x2C;
+    int386(0x21, &r, &r);
+    sprintf(TStr, "%2d:%02d:%02d", r.h.ch, r.h.cl, r.h.dh);
+    return TStr;
+  }
+#else /* ifdef __OS2__ */
 
     #ifdef LDATA
       asm Les  Di,TStr

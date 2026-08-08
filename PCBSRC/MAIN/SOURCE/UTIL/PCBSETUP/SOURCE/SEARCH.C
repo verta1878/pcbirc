@@ -342,14 +342,14 @@ static bool near pascal updatetextlst(DOSFILE *In, DOSFILE *Out) {
 *  Returns :  TRUE if changes are made.
 */
 
-static bool near pascal updatelstfiles(char *FileName, uniqueunlimited & FileNameList, bool (near pascal update(DOSFILE *In, DOSFILE *Out))) {
+static bool near pascal updatelstfiles(char *FileName, uniqueunlimited *FileNameList, bool (near pascal update(DOSFILE *In, DOSFILE *Out))) {
   bool    Changed;
   DOSFILE In;
   DOSFILE Out;
 
   // if the filename is blank, or if the name is already found in the list,
   // then return early without attempting to update the file
-  if (FileName[0] == 0 || FileNameList.foundinlist(FileName))
+  if (FileName[0] == 0 || FileNameList->foundinlist(FileName))
     return(FALSE);
 
   if (dosfopen(FileName,OPEN_READ|OPEN_DENYNONE,&In) == -1)
@@ -392,7 +392,7 @@ static bool near pascal updatelstfiles(char *FileName, uniqueunlimited & FileNam
 *  Returns :  TRUE if changes are made.
 */
 
-static bool near pascal scancnames(uniqueunlimited & FileNameList) {
+static bool near pascal scancnames(uniqueunlimited *FileNameList) {
   bool        Changed = FALSE;
   unsigned    ConfNum;
   pcbconftype Rec;

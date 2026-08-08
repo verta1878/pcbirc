@@ -26,7 +26,7 @@
 
 
 void LIBENTRY lascii(char *Str, long Num) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   ltoa(Num,Str,10);
 #else
 
@@ -124,7 +124,7 @@ asm      Pop  Ds
 
 
 void LIBENTRY ascii(char *Str, int Num) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   itoa(Num,Str,10);
 #else
 

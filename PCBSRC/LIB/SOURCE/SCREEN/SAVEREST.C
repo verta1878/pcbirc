@@ -43,6 +43,15 @@
 void LIBENTRY savescreen(savescrntype _FAR_ *TempScrnBuff) {
 #ifdef __OS2__
   memcpy(TempScrnBuff->Screen,Scrn_Buf,4000);
+#elif defined(__WATCOMC__)
+  /* Watcom: save screen to buffer */
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    unsigned short *buf = (unsigned short *)TempScrnBuff;
+    int i;
+    for (i = 0; i < Scrn_Size16; i++)
+      buf[i] = vram[i];
+  }
 #else  /*ifdef __OS2__ */
   asm  Push Ds
   asm  Cld
@@ -94,6 +103,14 @@ void LIBENTRY restorescreen(savescrntype _FAR_ *TempScrnBuff) {
   memcpy(Scrn_Buf,TempScrnBuff->Screen,Scrn_SizeBytes);
   updatelines(Scrn_BottomRow == 24 ? UPDATE_25LINES : UPDATE_25LINES,0,Scrn_BottomRow);
 
+#elif defined(__WATCOMC__)
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    unsigned short *buf = (unsigned short *)TempScrnBuff;
+    int i;
+    for (i = 0; i < Scrn_Size16; i++)
+      vram[i] = buf[i];
+  }
 #else  /*ifdef __OS2__ */
 
 #ifdef BIOS

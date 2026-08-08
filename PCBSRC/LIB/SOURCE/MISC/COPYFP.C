@@ -13,7 +13,9 @@
 
 
 #include <dos.h>
+#ifndef __WATCOMC__
 #include <dir.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include "misc.h"
@@ -22,7 +24,7 @@
 #include <memcheck.h>
 #endif
 
-#ifndef __OS2__  /* need to finish  --   CHANGE TO dosfindfirst() */
+#if !defined(__OS2__) && !defined(__WATCOMC__)  /* need to finish  --   CHANGE TO dosfindfirst() */
 
 static void _NEAR_ LIBENTRY addslashtoname(char *Str) {
   int L;

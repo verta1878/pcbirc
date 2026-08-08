@@ -15,6 +15,8 @@
 #ifdef __OS2__
 #define INCL_DOSFILEMGR
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #include "model.h"
@@ -53,6 +55,17 @@ int LIBENTRY doswrite(int handle, void *buf, unsigned len DOS2ERROR) {
     } else
       BytesWritten = (unsigned) NewBytesWritten;
 
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x40;
+      r.w.bx = handle;
+      r.w.cx = len;
+      r.w.dx = (unsigned short)(unsigned long)buf;
+      int386(0x21, &r, &r);
+      if (r.w.cflag) { getextendederror(); return((unsigned)-1); }
+      return r.w.ax;
+    }
   #else
 
     #ifdef SDATA

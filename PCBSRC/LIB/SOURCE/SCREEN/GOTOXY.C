@@ -1,45 +1,32 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* The source code in this module is proprietary software belonging to       */
-/* Clark Development Company and is part of the PCBoard source code library. */
-/* You are granted the right to use this source code for the building of any */
-/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-/* without prior written consent from Clark Development Company, Inc.        */
-/*                                                                           */
-/* Be sure to read the source code license agreement before utilizing any    */
-/* of the source code found herein.                                          */
-/*                                                                           */
+/* Clark Development Company — PCBoard source code library.                 */
 /* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-
 
 #ifdef __OS2__
   #define INCL_VIO
   #include <os2.h>
-#else
-  #ifdef BIOS
-    #include "ansi.h"
-  #endif
-  #ifdef _MSC_VER
-    #include <borland.h>
-  #else
-//  #pragma inline
-  #endif
+#elif defined(__WATCOMC__)
+  #include <i86.h>
+#elif defined(_MSC_VER)
+  #include <borland.h>
 #endif
 
-#include "screen.h"
-
-/********************************************************************
- *
- *  Function:  gotoxy()
- *
- *  position cursor at location  X,Y  (base 0)
- */
+#include <screen.h>
 
 void LIBENTRY gotoxy(int X, int Y) {
 #ifdef __OS2__
-//VioSetCurPos((short) Y, (short) X, 0);
   Scrn_X = (char) X;
   Scrn_Y = (char) Y;
+#elif defined(__WATCOMC__)
+  {
+    union REGS r;
+    r.h.ah = 2;
+    r.h.bh = 0;
+    r.h.dh = (unsigned char) Y;
+    r.h.dl = (unsigned char) X;
+    int386(0x10, &r, &r);
+  }
 #else
   asm  mov   ah, 2
   asm  xor   bh, bh

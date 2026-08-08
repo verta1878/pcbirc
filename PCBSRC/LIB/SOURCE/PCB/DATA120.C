@@ -551,5 +551,5 @@ void pascal read120file(void) {
   fastprint(3,19,"o Created a file called SCRIPT.LST which contains a list of your script"   ,Colors[HELPTEXT]);
   fastprint(5,20,  "questionnaire and script answer files."                                  ,Colors[HELPTEXT]);
   fastprintmove(28,22,"press any key to continue",Colors[HELPSUB]);
-  MiniBBS = inkey(&MiniBBS,NOCLOCK);
+  { char ext; MiniBBS = inkey(&ext,NOCLOCK); }
 }

@@ -53,7 +53,7 @@ int LIBENTRY copyfiletomessage(char           *To,
   char            NewPath[66];
   char            AttachName[66];
   char            Desc[80];
-  #if __TURBOC__ < 0x300
+  #if defined(__TURBOC__) && __TURBOC__ < 0x300
   struct ffblk    FileInfo;
   #else
   struct find_t   FileInfo;
@@ -145,7 +145,7 @@ int LIBENTRY copyfiletomessage(char           *To,
   /* one message points to the file.  Then we build the ATTACH extended     */
   /* header with the real filename, file size, and unique name information  */
   if (FileToAttach != NULL && *FileToAttach > 0) {
-    #if __TURBOC__ < 0x300
+    #if defined(__TURBOC__) && __TURBOC__ < 0x300
     if (findfirst(FileToAttach,&FileInfo,FA_ARCH) == 0) {
     #else
     if (_dos_findfirst(FileToAttach,FA_ARCH,&FileInfo) == 0) {
@@ -159,7 +159,7 @@ int LIBENTRY copyfiletomessage(char           *To,
         /* make the attach name unique, get unique name in NewPath */
         makefilenameunique(NewPath,AttachName);
         /* build the attachment extended header */
-        #if __TURBOC__ < 0x300
+        #if defined(__TURBOC__) && __TURBOC__ < 0x300
         sprintf(Desc,"%s (%ld) %s",Name,FileInfo.ff_fsize,findstartofname(NewPath));
         #else
         sprintf(Desc,"%s (%ld) %s",Name,FileInfo.size,findstartofname(NewPath));

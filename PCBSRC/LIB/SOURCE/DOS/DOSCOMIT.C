@@ -33,6 +33,14 @@ int LIBENTRY doscommit(int Handle) {
   #ifdef __OS2__
     if (DosResetBuffer(Handle) != 0)
       goto error;
+  #elif defined(__WATCOMC__)
+    if ((_version & 0x00FF) >= 4 || (_version & 0xFF00) >= 3) {
+      union REGS r;
+      r.h.ah = 0x68;
+      r.w.bx = Handle;
+      int386(0x21, &r, &r);
+      if (r.w.cflag) goto error;
+    }
   #else
     if ((_version & 0x00FF) >= 4 || (_version & 0xFF00) >= 3) {
       asm  mov ah,68h

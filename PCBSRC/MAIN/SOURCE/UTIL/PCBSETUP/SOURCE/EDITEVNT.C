@@ -331,7 +331,7 @@ void pascal editeventclass::loadrecords(DOSFILE *File) {
     newrecord(&Rec);
     strcpy(Rec.Active, ((isset(ActiveEventList, EventCount)) ? "Y" : "N"));
     strcpy(Rec.Os2,(Buffer.Os2 ? "Y" : "N"));
-    Rec.Mode = Buffer.Mode;
+    Rec.Mode = (EventMode)((int)Buffer.Mode);
     for (DayCount = 0; DayCount < 7; DayCount++)
       Rec.Days[DayCount] = (isset(&Buffer.Days, DayCount) ? 'Y' : 'N');
     Rec.Days[DayCount] = 0;

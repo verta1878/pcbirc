@@ -15,6 +15,8 @@
 #ifdef __OS2__
 #define INCL_DOSFILEMGR
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #include "model.h"
@@ -90,6 +92,16 @@ int LIBENTRY dosopen(char *FileName, int OpenFlags DOS2ERROR) {
       strcpy(OpenFileNames[Handle],FileName);
     }
 
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x3D;
+      r.h.al = (unsigned char)(OpenFlags | 0x80); /* PRIVATE */
+      r.w.dx = (unsigned short)(unsigned long)FileName;
+      int386(0x21, &r, &r);
+      if (r.w.cflag) { getextendederror(); Handle = -1; goto end; }
+      Handle = r.w.ax;
+    }
   #else
     #ifdef SDATA
       asm  mov  dx,FileName

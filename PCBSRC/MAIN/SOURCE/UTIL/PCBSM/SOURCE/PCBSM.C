@@ -87,6 +87,9 @@ void pascal (*MenuFunc[MenuItemTotal])(void);
 */
 
 extern int        _atexitcnt;          /* count of atexit functions */
+#ifdef __WATCOMC__
+typedef void (*atexit_t)(void);
+#endif
 extern atexit_t   _atexittbl[];        /* array of atexit function pointers */
 
 static void near pascal exitfunctions(void) {

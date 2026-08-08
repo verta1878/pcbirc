@@ -1,3 +1,4 @@
+#include "pcbsm_externs.h"
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -13,6 +14,7 @@
 
 
 #include <io.h>
+#include <stdio.h>
 #include <dos.h>
 #include <alloc.h>
 #include <stdlib.h>
@@ -20,6 +22,7 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+extern int ExitKeyFlag[];
 #include <newdata.h>
 #include <misc.h>
 #include <pcb.h>
@@ -32,6 +35,13 @@
 #include "pcbfiles.ext"
 #ifdef DEBUG
 #include <memcheck.h>
+#include <stdio.h>
+#ifdef __WATCOMC__
+extern hdrtype Header;
+extern apptype AppHeader;
+extern addresstypez Address;
+extern addresstype OldAddress;
+#endif
 #endif
 
 static URead    *Buffer;
@@ -641,7 +651,7 @@ void pascal sortall(void) {
   if (MenuSelection == 0)
     sub = lasttofirst;       //lint !e64    assignment is okay
   else
-    sub = memcpy;
+    sub = (void * (__cdecl *)(void *, const void *, unsigned))memcpy;
 
 
   switch (MenuSelection) {

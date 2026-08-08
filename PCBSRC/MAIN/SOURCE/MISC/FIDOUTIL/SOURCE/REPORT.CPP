@@ -36,7 +36,7 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <screen.h>
-#include <scrnio.ext>
+//#include <scrnio.ext>
 #include <help.h>
 #include <event.h>
 

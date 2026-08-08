@@ -1,0 +1,606 @@
+旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
+�                          QFront Revision History                           �
+읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
+
+Note: This history file contains changes and additions to both the PCBoard and
+      Wildcat! versions of QFront.  Please ignore any reference to Wildcat! if
+      you are using PCBoard, and PCBoard if you are using Wildcat!.
+
+Version  Date      Description
+컴컴컴�  컴컴컴컴  컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
+1.20a    11/28/00  Upgrade to fix Pentium bug and a few other minor fixes.
+                   Last official release and now FREEWARE/DONATIONWARE!
+                   
+1.18b    09/06/95  When using the "extended packet names" feature for packing
+                   mail to downlinks/uplinks, QScan was using archive
+                   extensions such as SA; and SA<.  Fixed.
+
+                   If a manual poll was in the outbound queue and the system to
+                   be polled happens to call you first, the manual poll was
+                   not removed from the queue.  Fixed.
+
+                   Fixed a problem in the QScan/WC version where tossed NetMail
+                   to the Wildcat NetMail conference would not contain the
+                   origin address, causing programs with programs like WCEDIT
+                   because it could not determine the origin address when
+                   replying to a message.
+
+                   A serious problem was found (and fixed) that was related to
+                   Windows 95, which caused QFront to send the wrong NetMail
+                   to any address in a random manner.
+
+                   In the QScan/WC version, new mail waiting pointers are now
+                   updated in Wildcat.  This means that if a message is tossed
+                   to a user on your system, Wildcat will inform them of their
+                   new mail and allow them to read it when logging on.  Note
+                   that this feature is NOT yet implemented for QScan/PCB.
+
+                   Fixed a problem in QScan that occurs with long origin lines
+                   and ends up causing QScan to send out duplicate messages.
+
+                   For the QFront/PCB version, the USERNET.XXX file is updated
+                   to show when events are running.  Because of this addition,
+                   a new "usernet message" configuration has been added to
+                   QFConfig under "UserNet Messages".
+
+                   QFront now sends out an ANSI and RIP inquiry to the caller
+                   before it displays the "Press ESC" prompt.  This is used to
+                   determine whether the caller is a human caller or a mailer.
+                   If an ANSI or RIP sequence is received, QFront knows that
+                   the caller is a human caller and exits immediately to the
+                   BBS without the caller having to press ESC or TAB twice.
+
+                   When the RECEIVE-ONLY FidoMail flag was set, QFront was
+                   still sending out mail on incoming mail runs.  Fixed.
+
+                   Fixed another problem with the QFront/WC version not being
+                   able to initialize the modem.
+
+                   Found a problem where NetMail could be sent out multiple
+                   times if you have more than one QFront node dialing out at
+                   the same time.
+
+                   In the QFront/WC version, the QUOTES.BBS index was not being
+                   saved, causing Wildcat to display the same quote (which is
+                   the first quote in the quote file) to the caller over and
+                   over.
+
+                   In the QFront/PCB version, QScan now places the origin
+                   address for NetMail messages in the FROM: portion of the
+                   PCBoard message header (this only applies if you have a
+                   PCBoard NetMail area).  The use for this is so that you can
+                   simply reply to the message without having to re-enter the
+                   destination address of the message you are replying to.
+
+                   QScan's Areafix processor now allows one or more spaces in
+                   between the % and the command for Areafix commands.  For
+                   example, the Areafix command "%HELP" and "%  HELP" work the
+                   same way.
+
+1.17b    05/03/95  !!! IMPORTANT!!!  The phone number for the QFront support
+                   BBS will be changing on or around May 17, 1995.  The new
+                   phone number is 616-844-0713.  Your QFront system will
+                   automatically dial this number instead of the old one after
+                   May 17, 1995 if you should happen to try to send mail to
+                   my system.  Please change the phone number in any other
+                   communication program you may be using!
+
+                   Fixed a minor problem with the addressing of Internet
+                   addresses on the TO: line of NetMail messages.
+
+                   Under the Wildcat! version of QFront, the last caller dates
+                   on the call-waiting menu and the last 5 caller list were
+                   off by one.  Fixed.
+
+                   There is a new FidoMail flag added to the event manager
+                   called "Compile nodelist when received".  If this flag
+                   is set, whenever a nodelist or nodediff is received,
+                   QFront will exit with errorlevel 7 to compile the new
+                   nodelist.
+
+                   QNList "should" be able to compile your nodelist database
+                   WHILE OTHER QFRONT NODES ARE ONLINE.  It does this with
+                   some semaphore file trickery.  It works great on my test
+                   system but the real test will come in your beta testing.
+                   Please TRY to compile your nodelist while one or more
+                   other QFront nodes are online to see if this works as it
+                   should.
+
+                   Modified the AREAS.BBS import function so that the area
+                   number (the first number in each line of the AREAS.BBS
+                   file) is imported as the conference number.  In addition,
+                   any nodes that are listed after the EchoMail area name
+                   are now imported into your Node Manager in QFConfig.
+
+                   Fixed a problem in QScan/WC where the date on imported
+                   messages was completely wrong.
+
+                   QNList no longer uses EMS memory for doing node and sysop
+                   sorting.  This will slow down performance, but it had to
+                   be done due to unknown problems with my EMS sorting
+                   routines.  I will be attempting to fix these soon, but for
+                   now EMS memory will not be used for sorting (disk will be
+                   used instead).
+
+1.16b    04/09/95  Fixed a problem in QFConfig when editing/adding automatic
+                   polls, where QFConfig would report an event no longer
+                   exists when it really does.
+
+                   Added an option to QFConfig under Mail Scanner where you
+                   can turn on checking of packet passwords when tossing
+                   mail packets.
+
+                   Added support for a new Areafix command, %FROM.  This
+                   command allows a node who is given access to use the %FROM
+                   command (via the Node Manager) to do remote add/drop area
+                   maintenance for another node address other than their
+                   own.  Before a node can use the %FROM command, the node
+                   must be allowed to use this command in their entry in your
+                   Node Manager in QFConfig.
+
+                   Added DigiBoard support for the Wildcat! version of QFront.
+
+                   QScan now keeps track of what archived bundles have been
+                   created in a given day, and will NOT use that bundle name
+                   again until the next day.  This means, for example, that
+                   if QScan creates a .MO0 file, and you send that to your
+                   hub, and then scan mail again, QScan will now use a bundle
+                   name of .MO1 because a bundle name of .MO0 had already
+                   been created on the current date.  This is necessary if
+                   you scan mail and send mail several times a day to your
+                   hub who may or may not process the bundles immediately.
+                   The new method QScan uses prevents possible file collisions
+                   on your hub's system.
+
+                   If any high message pointer was set to 0 in QScan/WC,
+                   QScan would report a disk read error.  Fixed.
+
+                   If the "Keep Areafix requests" option was set in QFConfig,
+                   QScan was not marking the messages as RECEIVED, as it
+                   should have.  Fixed.
+
+                   QScan was scanning out mail that was entered as a COMMENT
+                   TO SYSOP in PCBoard even when the "Scan private mail" flag
+                   was set to N.  Fixed.
+
+                   QFront now always uses Zmodem 8k block sizes for file
+                   receives.  It was found that some mailers, such as PCBoard
+                   15.21, would use Zmodem 8k block size without setting that
+                   capability in the EMSI handshake packet.  This would cause
+                   QFront to report "long packet received during protocol"
+                   errors during file receive transfers.
+
+                   The system information that is sent out in the EMSI and
+                   YooHoo handshake packets is now configurable.  This means
+                   you can configure the system name, sysop name, etc., that
+                   are sent to a remote system when connecting to them. The
+                   setup information is located in the FidoMail Setup menu
+                   option in QFConfig.
+
+                   QFront now adds the address it is communicating with when
+                   it updates the PCBoard USERNET.XXX file to display the
+                   FidoMail transfer UserNet message.
+
+                   QFront was not running with the OS/2 program called
+                   OS2SPEED.  Although OS2SPEED is not required when using
+                   QFront, I did find the conflict between the two and have
+                   fixed it.
+
+                   Fixed a routing problem where NetMail addressed to private
+                   nodes may cause the NetMail to be placed on HOLD for your
+                   OWN address instead of the proper destination address.
+
+                   Fixed some more routing problems dealing with point
+                   addresses.
+
+                   Fixed a problem with the SEND-ONLY FidoMail flag and EMSI
+                   handshakes.  The send-only flag worked with YooHoo
+                   handshakes but not EMSI handshakes.
+
+                   QFront and QScan were not reading the SET PCBDAT=
+                   environment variable.  Fixed.
+
+                   In the Wildcat! version of QFront, a node number of zero
+                   was not causing the mailer to load in local-only mode like
+                   it should have.  Fixed.
+
+                   NetMail that was marked HOLD was being routed when it
+                   should not have been.  Fixed.
+
+                   The terminal mode in QFront was not properly displaying
+                   blinking colors.  Fixed.
+
+                   When executing batch file events, QFront was only copying
+                   the first 80 characters of each line in the batch file to
+                   the QEVT-x.BAT file.  This has been expanded to the first
+                   255 characters of each line.
+
+                   If the modem initialization string was blank, QFront would
+                   continually report a "modem initialization error".  Fixed.
+
+                   Fixed a problem in QScan where seemingly corrupt log files
+                   would be created.  Also, QScan would shell to your archiver
+                   trying to archive strange packet names.  Contrary to what
+                   you might think from the log, this is not a serious problem
+                   causing lost mail or anything else.
+
+                   Received NetMail that is addressed to RAID, ALLFIX, TICK,
+                   DW_TIC or FILEMGR are now always saved to .MSG format
+                   regardless of the "Unpack NetMail into .MSG format"
+                   switch.
+
+1.15b    03/07/95  Fixed (finally) a problem involving the "enforce request
+                   limits by day" where the calculation of previous requested
+                   bytes and files in a day was incorrect.  What was actually
+                   happening is the byte and file counts were not being set to
+                   zero at midnight when they should have.
+
+                   Events are now sorted by start time in the event editor in
+                   QFConfig.
+
+                   Reduced memory requirements for QScan by more than 30k.
+
+                   QScan was not writing the "UserNet message" while it was
+                   running (PCBoard version).  Fixed.
+
+                   The SEND-ONLY FidoMail flag in the event manager was not
+                   working.  Fixed.
+
+                   Added /TO:, /FROM:, and /SUBJ: command line parameters to
+                   the QFUTIL program, allowing you to set the TO, FROM, and
+                   SUBJECT strings for the NetMail messages that may be
+                   created.
+
+                   Significantly modified the undialable manager.  Now, QFront
+                   can be told to allow "x" number of failed connections per
+                   day.  Once that limit is reached, the "level" of the node
+                   in the undialable manager is raised by one and if that
+                   level gets to 3, the node will be permanently marked as
+                   undialable (depending on the option in QFConfig that says
+                   "Mark undialable after 3 days").  Previously, if a failed
+                   connection resulted, QFront would NOT dial out to that node
+                   until the next day.  With this release, it *WILL* dial out
+                   to that node up to "x" times before giving up for that day.
+                   As I said, it will continue to try to connect to that node
+                   for up to 3 days before permanently giving up, depending on
+                   that option in QFConfig (please see the next history entry).
+
+                   A new option has been added to the modem setup in QFConfig,
+                   called "Mark undialable after 3 days".  If this is set to
+                   Y, QFront will never dial a node once if has tried to
+                   connect to it for 3 days.
+
+                   2 rather serious problems with NetMail packing in QFront
+                   have been fixed.  The first involves messages that are
+                   orphan (ie., the destination address is not found in the
+                   nodelist).  If QFront found one of these, sometimes it did
+                   not mark the message's ORPHAN flag, and also when packing
+                   the message into .PKT form, the message text was duplicated
+                   causing invalid packets to be created.  The second problem
+                   is related to the first except that if 2 or more messages
+                   that are destined for an orphan node number were found,
+                   the node was added to the dial queue when it should not
+                   have, causing QFront to dial the wrong phone number to try
+                   to deliver the mail!
+
+                   Pressing the spacebar while at the call-waiting screen will
+                   cause the mailer to immediately dial out.  Using this you
+                   can override the "delay between redials" setting that is
+                   in QFConfig if you are anxious to have the mailer dial out.
+
+                   QNList now forces the PRIVATE flag on node entries in the
+                   nodelist if the phone number is unpublished.  In practice,
+                   any unpublished phone number should have the PRIVATE flag
+                   set in the nodelist itself, but in reality, some nodelists
+                   don't adhere to this, causing QFront to try to dial
+                   unpublished phone numbers.
+
+                   Changed the way NetMail file attaches are handled in the
+                   messages' SUBJECT field.  Previously, QFront kept the
+                   entire path to the forwarded file intact when sending the
+                   .PKT.  This is has been changed so that only the filename
+                   is kept when sending the .PKT.
+
+                   Inbound FidoMail runs were still being allowed even if
+                   FidoMail was not active on that node.  Fixed.
+
+                   Fixed a problem where QFront could initialize and
+                   immediately say "Function key ALT-F12 has not been defined".
+
+                   When using the "O" async type in PCBSetup for OS/2, QFront
+                   now will use UART mode instead of FOSSIL mode for
+                   communications.  Previously, a fossil driver was required
+                   with QFront if you use the "O" async type.
+
+                   Added a simple terminal mode.  To access the terminal mode,
+                   press ALT-C from the call-waiting screen.  Note that the
+                   terminal mode does not include file transfer capability at
+                   this time, but does support ANSI color controls.
+
+                   A new field has been added to the undialable manager
+                   called "never downgrade".  If you answer Y to this field,
+                   QFront will never mark the node as undialable.  You may
+                   want to do this for all nodes that are local calls to you,
+                   for example, since it doesn't cost anything to call these
+                   nodes.
+
+                   Baud rates of 57600 and 115200 "should" be supported in
+                   FOSSIL mode now.
+
+                   The "Compile nodelist" and "Scan/toss mail" menu options
+                   off the call-waiting screen now work.  All they do is exit
+                   with errorlevels 7 and 8, respectfully.
+
+                   If the "Update mail bundles" switch was set to Y, it is
+                   possible that QScan could archive a packet while that same
+                   archive is being transmitted by another QFront node.  Now,
+                   if QScan sees this situation, it will automatically turn
+                   OFF the "Update mail bundles" switch during the archiving
+                   process.
+
+                   Added a new modem off-hook flag, "Semaphore file exit" that
+                   causes QFront to take the modem off-hook when right before
+                   exiting to DOS when it finds a semaphore file.
+
+                   If a node is in the dial queue to be polled, and that
+                   node calls you before the poll completes, the poll is now
+                   removed from the queue.
+
+                   Received NetMail that is addressed to RAID, ALLFIX, TICK
+                   or FILEMGR are now always saved to .MSG format
+                   regardless of the "Unpack NetMail into .MSG format"
+                   switch.
+
+                   I believe I've finally found the problem with orphan .PKT's
+                   being left in your outbound directory after QFront exits.
+                   Normally, QFront builds temporary .PKT files to send to
+                   systems, and if you exit the mailer before the packets are
+                   sent, the .PKT's are supposed to be deleted.  Please bring
+                   ALL of your QFront nodes down to the DOS prompt and delete
+                   all *.PKT files from your outbound directory.  Then, every
+                   once in a while keep an eye on the outbound directory and
+                   you should NEVER see any .PKT files there when all QFront
+                   nodes are down.  If you do, please let me know.
+
+                   On startup, QFront will now scan its outbound mail queue
+                   BEFORE initializing the modem.  This will help for systems
+                   with a large amount of outbound mail where the queue
+                   scanning can take a while by keeping the phone busy if a
+                   caller should try to call.
+
+                   QScan now supports the "Double byte character" option that
+                   is in PCBSetup for foreign systems.
+
+                   A problem where NetMail addressed to a node marked PRIVATE
+                   in the nodelist could cause the mailer to dial itself has
+                   been fixed.
+
+                   Fixed a problem when deleting items from the EXPANDED VIEW
+                   where deleting one item would cause several others to be
+                   deleted as well.
+
+                   A situation where an inbound mail run on one node and an
+                   outbound mail run on another node connected to the same
+                   address has been fixed.  Previously, QFront only created
+                   semaphore files to signify a mail connection on OUTBOUND
+                   mail runs - now, it also creates a semaphore file when it
+                   receives an INBOUND mail run.
+
+                   A new FidoMail event flag has been added, called "Don't send
+                   HELD NetMail attaches".  If this flag is selected, QFront
+                   will NOT send a NetMail file attach if it places an outbound
+                   call to that system.  If this flag is NOT selected, QFront
+                   WILL send the file attach if it places an outbound call to
+                   that system.  In the 1.14 version of QFront, it was assumed
+                   that HELD NetMail attaches NEVER be sent unless the remote
+                   system calls your system.  Now, this behavior is changeable.
+
+                   A field for entering the "real name" for quick lookup names
+                   has been added.  This is primarily used when using quick
+                   lookup names in PCBoard NetMail messages.  If the "real
+                   name" is not empty, QScan will replace the quick lookup
+                   name in the TO: part of the message with the associated
+                   real name.  In the 1.14 version, for example, addressing a
+                   message to a quick lookup name of ROB caused QScan to keep
+                   the TO: name set to ROB which doesn't really make much
+                   sense.  Now, you can have QScan replace ROB with Rob
+                   Kittredge, for example.
+
+                   When viewing the outbound queue, the number displayed for
+                   the count of file requests, file update requests, file
+                   forwards, and EchoMail bundles was misleading.  This number
+                   now reflects the actual number of files destined for a
+                   system.
+
+                   QFront now recognizes the CM (continuous mail) nodelist
+                   flag.  The CM flag signifies whether a system can accept
+                   mail 24 hours a day.  There are 2 new FidoMail flags in
+                   the event manager - "Send to CM systems only" and "Send to
+                   non-CM systems only".  This causes QFront to only dial
+                   systems who HAVE the CM flag set, and causes QFront to
+                   dial systems who DON'T have the CM flag set, respectively.
+                   This is used to prevent the mailer from trying to dial a
+                   system which may not be able to accept mail 24 hours a day.
+                   In addition, if you enter a forced poll to a system, QFront
+                   will warn you if the system you are trying to poll doesn't
+                   have the CM flag set in the nodelist.
+
+                   QScan and QFConfig are a little more lenient in dealing
+                   with the situation where you have conferences defined in
+                   QFront that no longer exist in your PCBoard setup.  QScan
+                   will now skip these areas altogether (placing a warning in
+                   the log file), and QFConfig will say "None Selected" in the
+                   Area Manager picklist instead of reporting an "Error 100
+                   reading CNAMES.@@@".  If you see any of these warnings, you
+                   should go into QFConfig and DELETE the offending areas from
+                   the Area Manager.
+
+                   Pressing ALT-B at the call-waiting screen will now turn on
+                   the screen blanker.
+
+1.141b   01/10/95  The new support for PCBoard 15.2 style NetMail message
+                   entry was resulting in a "invalid message format" if you had
+                   "LONG TO: NAMES" turned on in PCBSetup for your NetMail
+                   conference.  Fixed.
+
+                   QScan was importing text into PCBoard that was over 80
+                   characters - this was causing PCBoard 15.21 to truncate
+                   any text after the 80th column when displaying the message.
+
+                   QScan now sets the FROM: name to "QSCAN (AREAFIX)" when
+                   entering Areafix response messages.  This prevents QScan
+                   from incorrectly tossing what might LOOK like a regular
+                   Areafix response message when in fact it is a REPLY to an
+                   Areafix response message.
+
+                   If a message had a TO: name that was completely blank,
+                   QScan would think the message was addressed to a "trashcan
+                   user" and not import the message.  Fixed.
+
+                   When exporting NetMail from your PCBoard conference, QScan
+                   now updates the "READ DATE" on the message at the date/time
+                   the message was exported so that you know for sure the
+                   message WAS exported.
+
+1.14b    12/04/94  PLEASE read the file called SUPPORT.DOC *IMMEDIATELY*!  We
+                   are in the process of applying for FidoNet backbone status
+                   for the QFront support conference, but we can't do this
+                   without YOUR help.  Please, read the SUPPORT.DOC file right
+                   now and help in any way you can.
+
+                   Fixed the problem in QScan where NetMail messages were
+                   being identified as x:x/*.*.
+
+                   Minor logging problem in QFront caused it to say "received"
+                   when it should have said "sent" during file transfers.
+
+                   Messages that should be marked IN-TRANSIT weren't being
+                   marked so in QScan.  Fixed.
+
+                   Messages originating from one of your point addresses were
+                   being incorrectly identified as duplicates.  Fixed.
+
+                   If you had "Strip high ASCII on scan" set to Y for QScan,
+                   PCBoard NetMail file attaches would not work properly,
+                   and in addition, PCBoard 15.0 control lines would not be
+                   stripped out.  Fixed.
+
+                   Fixed a small problem with NetMail routing in that if
+                   a message was marked HOLD, no routing would take place on
+                   the message.  This is fixed so that the "route through
+                   another node" and other route types can apply to HELD mail.
+
+                   The "keep Areafix requests" function was not working in
+                   QScan.  Fixed.
+
+                   Added two options to the FidoMail Options menu item on the
+                   call waiting screen - "Request files" and "Forward files".
+                   These two options make it a little easier to enter file
+                   requests and file forwards than the method before of using
+                   the queue editor to enter the information.
+
+                   Pressing ALT-S (shell to DOS) on the call-waiting screen
+                   while the screen was blanked would cause strange results.
+                   Fixed.
+
+                   When an Areafix forward was performed by QScan, the newly
+                   created EchoMail area was properly selected for the
+                   DOWNLINK, but wasn't being selected for the uplink.  Fixed.
+
+                   QScan was having an error initializing the EchoMail
+                   conference array in memory if you didn't have any areas
+                   defined.  Fixed.
+
+                   File attaches via NetMail messages that are marked HOLD are
+                   now treated as ABSOLUTE HOLD, meaning that if your system
+                   connects to the remote the attached file will NOT be sent;
+                   the other system must connect to YOU before they will be
+                   sent the file.
+
+                   When importing EchoMail area names from AREAS.BBS or
+                   FIDONET.NA files, QFConfig will now check to make sure the
+                   area names are NOT already configured on your system before
+                   adding new areas.
+
+                   When exporting AREAS.BBS type files, QFConfig was not
+                   adding the proper downlink information.  Fixed.
+
+                   PCBoard 15.2 style NetMail messages are now supported by
+                   QScan.  With PCBoard 15.2, you can enter a NetMail message in
+                   the following way:
+                     For the TO name, enter the name of the user to send to
+                     along with an address, such as ROB KITTREDGE@1:228/12
+                   QScan will accept EITHER the old way of addressing NetMail
+                   (putting the destination address on the first line of the
+                   message within parenthesis) *OR* the new way.  Message flags
+                   can be specified on the TO portion of the message just as
+                   with PCBoard, in the following way:
+                     <+C> Crash flag, <+H> Hold flag, <+D> Direct flag.  For
+                     example, ROB KITTREDGE@1:228/12 <+C> would direct the
+                     message to 1:228/12 with the crash flag.
+                   You can also specify the message flags within the message
+                   just like QScan has always worked.  So, the following example
+                   message is completely valid:
+
+                     TO: ROB KITTREDGE@1:228/12
+                     (IMM,DIR)
+                     Hello, this is a test message.
+
+                   Added a "trashcan" to QScan.  Using this, you can define up
+                   to 30 user names, and if QScan comes across any of these
+                   names during a toss, it will not import the messages to your
+                   PCBoard conferences.
+
+                   If the last line in a message was over 80 characters,
+                   QScan would word-wrap the origin line, causing duplicates
+                   to be sent out because of stripped SEEN-BY lines.  Fixed.
+
+                   The quick lookup name function has been expanded to support
+                   QScan.  Whenever QScan scans your PCBoard NetMail
+                   conference, it looks at the TO: name and searches for a
+                   match in the quick lookup name list.  If it finds a match,
+                   the destination address of the quick lookup name is used.
+                   The primary use for this is for UUCP mail.  Now, you or
+                   your users can enter a NetMail message with a TO: name of
+                   UUCP, and QScan will find the matching quick lookup name
+                   and automatically use that destination address.  The bottom
+                   line is that neither you or the user needs to know the
+                   actual address that the message is to be sent to.
+
+                   Fixed the file receive renaming function so that files won't
+                   be overwritten once downloaded, which occurred in some
+                   circumstances.
+
+                   Implemented the undialable address manager.  Whenever QFront
+                   unsuccessfully completes an outbound mail run, the address
+                   is added to the undialable manager and QFront will UNDER NO
+                   CIRCUMSTANCES dial that system until the next day.  It will
+                   try for up to 3 days to connect successfully to the remote
+                   system and if it does not, the node will be marked
+                   permanently undialable and QFront will never try to dial
+                   that system again until you manually remove the node from
+                   the undialable list (press ALT-U on the call-waiting menu).
+                   Any node that is marked undialable will be reported so in
+                   the QFront system log so that you know WHY that system isn't
+                   being dialed.
+                   The undialable manager is primarily used to make sure your
+                   system isn't trying to dial all day long to a system that
+                   may be having mailer problems.
+
+                   The "convert high ASCII" option was removed from the mail
+                   scanner setup and moved into each EchoMail area.  This
+                   change allows you to set, on a per-area basis, whether high
+                   ASCII characters are converted to '*' characters or not.
+
+                   The PCBoard node number is now displayed on the outbound and
+                   inbound FidoMail status windows so you know which node on
+                   your network is transferring the mail.
+
+                   Timeslicing routines weren't working properly with Windows.
+                   Fixed.
+
+                   Added a new FidoMail flag to the event manager.  The flag,
+                   called "Exit after no more outbound mail", causes QFront to
+                   exit to your STARTER.BAT batch file with an errorlevel of 3
+                   if there is no more outbound FidoMail to be sent.
+

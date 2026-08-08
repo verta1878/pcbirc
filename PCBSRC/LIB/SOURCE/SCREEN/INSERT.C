@@ -50,6 +50,18 @@ int LIBENTRY insertchar(int X, int Y, char C, int Len) {
   updatelines(UPDATE_MIXED,Y,Y);
   return(Was);
 
+#elif defined(__WATCOMC__)
+  /* Watcom: shift video RAM right */
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    int end = Y * 80 + 79;
+    int pos = Y * 80 + X;
+    int i;
+    for (i = end; i > pos; i--)
+      vram[i] = vram[i - 1];
+    vram[pos] = ((unsigned char)C << 8) | 0x20;
+    return 0;
+  }
 #else  /* ifdef __OS2__ */
 
   NEEDSEGPUSHDS;

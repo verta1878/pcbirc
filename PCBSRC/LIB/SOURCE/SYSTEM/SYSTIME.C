@@ -15,6 +15,9 @@
 #ifdef __OS2__
   #define INCL_DOSDATETIME
   #include <os2.h>
+#elif defined(__WATCOMC__)
+  #include <i86.h>
+  #include <dos.h>
 #else
   #ifdef _MSC_VER
     #include <borland.h>
@@ -40,6 +43,16 @@ void LIBENTRY getsystime(systimetype *SysTime) {
     SysTime->Seconds    = (ubyte) Time.seconds;
     SysTime->Hundredths = (ubyte) Time.hundredths;
 
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x2C;
+      int386(0x21, &r, &r);
+      SysTime->Hours   = r.h.ch;
+      SysTime->Minutes = r.h.cl;
+      SysTime->Seconds = r.h.dh;
+      SysTime->Hundredths = r.h.dl;
+    }
   #else
 
     #ifdef _MSC_VER

@@ -790,7 +790,11 @@ void LIBENTRY dispString(char * s, int nt)
 
 void LIBENTRY clearBiosKbd(void)
 {
-#ifndef __OS2__  // do we want to use an OS/2 function here?  may need to finish
+#if defined(__OS2__) || defined(__WATCOMC__)
+    /* Watcom/OS2: use BIOS keyboard function via int386 */
+    while (_bios_keybrd(_KEYBRD_READY))
+        _bios_keybrd(_KEYBRD_READ);
+#else
 TOP:
 
     asm mov ah,0x01 // Report Whether Character Ready

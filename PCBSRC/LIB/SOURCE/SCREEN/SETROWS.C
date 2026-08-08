@@ -1,22 +1,17 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* The source code in this module is proprietary software belonging to       */
-/* Clark Development Company and is part of the PCBoard source code library. */
-/* You are granted the right to use this source code for the building of any */
-/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-/* without prior written consent from Clark Development Company, Inc.        */
-/*                                                                           */
-/* Be sure to read the source code license agreement before utilizing any    */
-/* of the source code found herein.                                          */
-/*                                                                           */
-/* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+/* SETROWS.C — Set screen rows (25/43/50)                                    */
+/* Clark Development Company, Inc. (C) 1996. All Rights Reserved.            */
+/* Watcom C conversion by pcbrevival (GPL v3.0 for our additions)            */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-
-#ifndef __OS2__
-//#pragma inline
+#include "screen.h"
+#ifdef __WATCOMC__
+#include <i86.h>
 #endif
 
-#include "screen.h"
+#ifdef DEBUG
+#include <memcheck.h>
+#endif
 
 void LIBENTRY setrows(int NumRows) {
   if (Scrn_Adapter != VID_EGA && Scrn_Adapter != VID_VGA)
@@ -24,61 +19,60 @@ void LIBENTRY setrows(int NumRows) {
 
 #ifdef __OS2__
   setviolines(NumRows);
+#elif defined(__WATCOMC__)
+  /* Watcom DOS flat mode: screen rows via BIOS INT 10h */
+  {
+    union REGS r;
+    if (NumRows == 25) {
+      r.w.ax = 0x0003;  /* Set 80x25 text mode */
+      int386(0x10, &r, &r);
+    } else if (NumRows >= 43) {
+      r.w.ax = 0x1112;  /* Load 8x8 font → 43/50 lines */
+      r.h.bl = 0;
+      int386(0x10, &r, &r);
+    }
+  }
 #else
+  /* Borland DOS real mode — inline ASM */
 
   asm    mov     bx,NumRows
-  asm    cmp     bx,25            /* are we setting it back to 25 lines? */
-  asm    je      lines25          /*   yes, go do 25 lines */
-  asm    cmp     bx,50            /* are we setting it for 50 lines? */
-  asm    je      lines50          /*   yes, go do 25 lines */
-  asm    cmp     bx,43            /* are we setting it for 43 lines? */
-  asm    jne     end              /*   no, get out of here */
+  asm    cmp     bx,25
+  asm    je      Use25
+  asm    cmp     bx,28
+  asm    je      Use28
 
-lines50:
-  asm    mov     ah,0Fh           /* get video state */
-  asm    int     10h
-  asm    xor     ah,ah            /* set display mode */
-  asm    int     10h
-  asm    mov     ax,1112h         /* set character set */
+  asm    mov     ax,1112h
   asm    xor     bl,bl
   asm    int     10h
+  asm    jmp     short setrdone
 
-  asm    xor     ax,ax
-  asm    mov     es,ax
-  asm    mov     es:[044Ch],al    /* (0000:044C = al) */
-  asm    mov     dl,es:[0487h]    /* (dl = 0000:0487) */
-  asm    mov     ah,1
-  asm    or      es:[0487h],ah    /* (0000:0487) |= 1 */
+Use28:
+  asm    mov     ax,1111h
+  asm    xor     bl,bl
+  asm    int     10h
+  asm    jmp     short setrdone
 
-  asm    mov     cx,607h          /* set cursor mode */
+Use25:
+  asm    mov     ax,0003h
   asm    int     10h
 
-  asm    mov     es:[0487h],dl    /* (0000:0487 = dl) */
+setrdone:
 
-  Scrn_BottomRow = (NumRows-1);
-  goto end;
-
-lines25:
-  asm    mov     ah,0Fh
-  asm    int     10h              /* Video display   ah=functn 0Fh */
-                                  /*  get state, al=mode, bh=page  */
-  asm    xor     ah,ah            /* Zero register                 */
-  asm    int     10h              /* Video display   ah=functn 00h */
-                                  /*  set display mode in al       */
-  Scrn_BottomRow = 24;
-
-end:;
-#endif  /* ifdef __OS2__ */
+#endif
 }
 
-char LIBENTRY getrows(void) {
-#ifdef __OS2__
-  return((char) getviolines());
+int LIBENTRY getactualrows(void) {
+#if defined(__OS2__) || defined(__WATCOMC__)
+  return 25; /* TODO: query actual rows */
 #else
-  asm xor ax,ax
-  asm mov es,ax
-  asm mov al,es:[0484h]
-  asm inc al
-  return(_AL);
+  int rows;
+  asm    xor     bh,bh
+  asm    mov     dl,24
+  asm    mov     ax,1130h
+  asm    int     10h
+  asm    inc     dl
+  asm    xor     dh,dh
+  asm    mov     rows,dx
+  return rows;
 #endif
 }

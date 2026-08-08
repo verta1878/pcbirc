@@ -47,10 +47,10 @@ void LIBENTRY  initmenu(int MenuNum,bool ForwBack,char *Text,char *L,char *R);
 void LIBENTRY  initscrnio(void);
 char LIBENTRY  inkey(char *Ext, clocktype Clock);
 void LIBENTRY  inputall(void);
-void LIBENTRY  inputextend(int X,int Y,int ScrnLimit,int AnsLimit,char *Buf,char *Mask,inputattrtype Attribute,int HelpNum);
-int  LIBENTRY  inputline(int X,int Y,int Limit,int Pos,char *Buf,char *Mask,inputattrtype Attribute,int HelpNum);
+void LIBENTRY  inputextend(int X,int Y,int ScrnLimit,int AnsLimit,char *Buf,char *Mask,int Attribute,int HelpNum);
+int  LIBENTRY  inputline(int X,int Y,int Limit,int Pos,char *Buf,char *Mask,int Attribute,int HelpNum);
 void LIBENTRY  inputnum(int X,int Y,int Limit,char *Q,void *Old, vartype VarType,int HelpNum);
-void LIBENTRY  inputstr(int X,int Y,int Limit,char *Q,char *Old,char *Ans,char *Mask,inputattrtype Attribute,int HelpNum);
+void LIBENTRY  inputstr(int X,int Y,int Limit,char *Q,char *Old,char *Ans,char *Mask,int Attribute,int HelpNum);
 bool LIBENTRY  keypressed(clocktype Clock);
 char LIBENTRY  keyschanged(void);
 void *LIBENTRY mallochk(unsigned size);
@@ -237,7 +237,9 @@ void LIBENTRY freeanswers(FldType *Fields, int LastField);
 #define PGDN        8
 #define CTRLPGUP    9
 #define CTRLPGDN   10
+#ifndef _DISPLAYTYPE_DEFINED
 #define WORDWRAP   11
+#endif
 #define FLAG1      12
 #define FLAG2      13
 #define FLAG3      14

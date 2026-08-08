@@ -1,3 +1,4 @@
+#ifndef __WATCOMC__
 /* STBSTUB.CPP - streambuf virtual function stubs for BC31 large model.
  * Replaces the missing stbdsgtn.obj, stbdsptn.obj, stbsgetn.obj, stbsputn.obj
  * from Clark's source distribution.
@@ -25,3 +26,4 @@ int streambuf::do_sgetn(char far* s, int n)
     }
     return n;
 }
+#endif

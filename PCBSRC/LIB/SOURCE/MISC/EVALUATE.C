@@ -1,37 +1,56 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* The source code in this module is proprietary software belonging to       */
-/* Clark Development Company and is part of the PCBoard source code library. */
-/* You are granted the right to use this source code for the building of any */
-/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-/* without prior written consent from Clark Development Company, Inc.        */
-/*                                                                           */
-/* Be sure to read the source code license agreement before utilizing any    */
-/* of the source code found herein.                                          */
-/*                                                                           */
-/* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+/* EVALUATE.C — Custom hash/checksum of memory block                         */
+/* Clark Development Company, Inc. (C) 1996. All Rights Reserved.            */
+/* Watcom C conversion by pcbrevival (GPL v3.0 for our additions)            */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-
-/*  this module has not been converted to OS/2 */
-
 #ifndef __OS2__
-
-//#pragma inline
-
-#include <stdio.h>
-#include <string.h>
+#include "model.h"
 #ifdef DEBUG
 #include <memcheck.h>
 #endif
+#endif
 
-long pascal evaluate(void far *p, unsigned Size) {
+#include <string.h>
+#include <stdio.h>
+
+long pascal evaluate(void *p, unsigned Size) {
+#if defined(__OS2__) || defined(__WATCOMC__)
+  unsigned char *src = (unsigned char *)p;
+  unsigned short bx = 0, dx = 0;
+  unsigned i = 0;
+  unsigned char val;
+  int cl;
+  if (Size == 0) return 0;
+  while (i < Size) {
+    val = src[i++];
+    bx = (unsigned short)((bx & 0xFF00) | (((bx & 0xFF) + val) & 0xFF));
+    cl = val & 0x0F;
+    if (cl) bx = (unsigned short)((bx << cl) | (bx >> (16 - cl)));
+    if (i >= Size) break;
+    val = src[i++];
+    bx = (unsigned short)((bx & 0x00FF) | ((((bx >> 8) + val) & 0xFF) << 8));
+    cl = val & 0x0F;
+    if (cl) bx = (unsigned short)((bx << cl) | (bx >> (16 - cl)));
+    if (i >= Size) break;
+    val = src[i++];
+    dx = (unsigned short)((dx & 0xFF00) | (((dx & 0xFF) + val) & 0xFF));
+    cl = val & 0x0F;
+    if (cl) dx = (unsigned short)((dx << cl) | (dx >> (16 - cl)));
+    if (i >= Size) break;
+    val = src[i++];
+    dx = (unsigned short)((dx & 0x00FF) | ((((dx >> 8) + val) & 0xFF) << 8));
+    cl = val & 0x0F;
+    if (cl) dx = (unsigned short)((dx << cl) | (dx >> (16 - cl)));
+  }
+  return ((long)dx << 16) | (long)bx;
+#else
   if (Size == 0)
     return(0);
 
   asm push  ds
   asm lds   si,p
   asm cld
-
   asm mov   di,Size
   asm xor   bx,bx
   asm xor   dx,dx
@@ -62,23 +81,8 @@ top:
   asm rol   dx,cl
   asm dec   di
   asm jnz   top
-
 end:
   asm mov   ax,bx
   asm pop   ds
+#endif
 }
-
-/*
-char Array[50000U];
-
-void main(void) {
-
-  memset(Array,255,sizeof(Array));
-  printf("%lu\n",evaluate(Array,sizeof(Array)));
-  Array[49999U] = 254;
-  printf("%lu\n",evaluate(Array,sizeof(Array)));
-}
-*/
-
-
-#endif  /* ifndef __OS2__ */

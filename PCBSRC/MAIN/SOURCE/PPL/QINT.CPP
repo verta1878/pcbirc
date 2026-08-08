@@ -355,7 +355,7 @@ int qint::operator == (qint & tr)
     i = 0;          // otherwise condition must be false
     goto exit;      // skip setting condition to true
 
-#if __BORLANDC__ < 0x500
+#if !defined(__WATCOMC__) && (__BORLANDC__ < 0x500)
     // under BC31, this needs to be a 'C' label
 true:
 #else
@@ -404,7 +404,7 @@ int qint::operator < (qint & tr)
     i = 0;          // otherwise condition must be false
     goto exit;      // skip setting condition to true
 
-#if __BORLANDC__ < 0x500
+#if !defined(__WATCOMC__) && (__BORLANDC__ < 0x500)
     // under BC31, this needs to be a 'C' label
 true:
 #else

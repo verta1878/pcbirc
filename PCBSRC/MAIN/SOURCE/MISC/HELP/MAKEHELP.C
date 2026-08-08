@@ -15,6 +15,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __WATCOMC__
+#include <io.h>
+#endif
 #include "scrnio.h"
 
 enum { NORMAL, DIVIDER, ENDOFFILE };

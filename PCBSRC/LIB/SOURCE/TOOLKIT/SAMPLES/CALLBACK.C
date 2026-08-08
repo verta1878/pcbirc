@@ -61,7 +61,7 @@ void main(void) {
   char Pwrd[13];
   int  X;
 
-  if (initdoor("CALLBACK DOOR",0,0,READUSERSYS|SHOWSTATUSLINE) == -1)
+  if (initdoor("CALLBACK DOOR",0,0,(openstatus)(READUSERSYS|SHOWSTATUSLINE)) == -1)
     return;
 
   /* Let user know that we'll be calling them back at the number */

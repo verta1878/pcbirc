@@ -14,6 +14,7 @@
 
 
 #include    <dos.h>
+#include <conio.h>
 #include    <string.h>
 #include    <time.h>
 
@@ -49,25 +50,25 @@ bool abortFlag = FALSE;
 /******************************************************************************/
 
 /*
-  char uucpPath[33];       /* location for UUCP files                        */
-  char uucpSpoolPath[33];  /* location for UUCP Spool files                  */
-  char uucpLogPath[33];    /* location for UUCP Log files                    */
-  char CompBatFile[33];    /* name/loc of compress batch file for UUCP       */
-  char DeCompBatFile[33];  /* name/loc of decompress batch file for UUCP     */
-  char uucpName[17];       /* UUCP Name                                      */
-  char uucpDomainName[33]; /* UUCP Domain Name                               */
-  char uucpEmailHost[17];  /* UUCP Email Host Name                           */
-  char uucpNewsHost[17];   /* UUCP News Host Name                            */
-  char uucpDefDist[17];    /* UUCP Default News Distribution                 */
-  char uucpTimeZone[6];    /* Time Zone - offset from GMT                    */
-  char uucpSeparator[2];   /* UUCP Name Separator                            */
-  char Organization[65];   /* Organization Name                              */
-  char uucpHighAscii;      /* S = Strip, R = Replace, C = Convert            */
-  unsigned uucpEmailConf;  /* number of UUCP Email Conference                */
-  unsigned uucpJunkConf;   /* number of UUCP Junk Conference                 */
-  bool uucpBangDomain;     /* Bang Domain                                    */
-  bool uucpSubDomain;      /* Sub Domain                                     */
-*/
+//   char uucpPath[33];       /* location for UUCP files                        */
+//   char uucpSpoolPath[33];  /* location for UUCP Spool files                  */
+//   char uucpLogPath[33];    /* location for UUCP Log files                    */
+//   char CompBatFile[33];    /* name/loc of compress batch file for UUCP       */
+//   char DeCompBatFile[33];  /* name/loc of decompress batch file for UUCP     */
+//   char uucpName[17];       /* UUCP Name                                      */
+//   char uucpDomainName[33]; /* UUCP Domain Name                               */
+//   char uucpEmailHost[17];  /* UUCP Email Host Name                           */
+//   char uucpNewsHost[17];   /* UUCP News Host Name                            */
+//   char uucpDefDist[17];    /* UUCP Default News Distribution                 */
+//   char uucpTimeZone[6];    /* Time Zone - offset from GMT                    */
+//   char uucpSeparator[2];   /* UUCP Name Separator                            */
+//   char Organization[65];   /* Organization Name                              */
+//   char uucpHighAscii;      /* S = Strip, R = Replace, C = Convert            */
+//   unsigned uucpEmailConf;  /* number of UUCP Email Conference                */
+//   unsigned uucpJunkConf;   /* number of UUCP Junk Conference                 */
+//   bool uucpBangDomain;     /* Bang Domain                                    */
+//   bool uucpSubDomain;      /* Sub Domain                                     */
+// */
 
 /******************************************************************************/
 

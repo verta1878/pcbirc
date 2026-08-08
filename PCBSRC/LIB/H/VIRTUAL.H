@@ -28,7 +28,9 @@ typedef struct {
 #define VIROKAY     0           /* indicates no errors                */
 #define VIRPASTEND  1           /* tried to go past end of Virtual[]  */
 
+#ifndef _VIRTUAL1_C_
 extern VirType huge *Virtual;
+#endif
 
 #define getvirtualptr(p,ptr,buffer)  \
           if (p->Loc.Buf >= Virtual) \

@@ -44,7 +44,8 @@ typedef enum {BLANK,SINGLE,DOUBLE,HDOUBLE,VDOUBLE} boxlinetype;
 
 /*  Global variables, initially set in getmode()  */
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
+extern long Scrn_Addr;
 // extern unsigned long __far16 *Scrn_Addr;
 extern void *Scrn_Buf;
 #else
@@ -68,7 +69,8 @@ extern int   Scrn_SizeBytes;
 extern short Scrn_Size16;
 extern int   Scrn_Size32;
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
+extern long Scrn_Addr;
 extern char Scrn_X;
 extern char Scrn_Y;
 #endif
@@ -199,7 +201,8 @@ char LIBENTRY timechanged(void);
 #endif
 */
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
+extern long Scrn_Addr;
   const int SCRN_25LINES = 25;     // all 25 lines
   const int SCRN_50LINES = 50;
   typedef enum {UPDATE_NONE= -1, UPDATE_MIXED=0, UPDATE_25LINES=25, UPDATE_50LINES=50} scrnupdttype;
@@ -212,6 +215,9 @@ char LIBENTRY timechanged(void);
   void LIBENTRY unhidescreen(void);
 #else
   #define updatelinesnow()
+  #define setscreenupdateinterval(i)
+  #define hidescreen()
+  #define unhidescreen()
 #endif
 
 #if defined(__cplusplus) && ! defined(__OS2__)

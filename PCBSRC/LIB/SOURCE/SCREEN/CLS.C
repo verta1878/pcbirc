@@ -21,6 +21,9 @@
   #include "model.h"
 #endif /* ifndef __OS2__ */
 
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
 #include "screen.h"
 #ifdef BIOS
   #include "ansi.h"
@@ -42,11 +45,31 @@ void LIBENTRY cls(void) {
       *p = 0x07200720;
 
     updatelines(Scrn_BottomRow == 24 ? UPDATE_25LINES : UPDATE_50LINES,0,Scrn_BottomRow);
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.w.ax = 0x0600;
+      r.h.bh = 0x07;
+      r.w.cx = 0x0000;
+      r.h.dh = Scrn_BottomRow + 1;
+      r.h.dl = 79;
+      int386(0x10, &r, &r);
+    }
   #else
     #ifdef BIOS
       ansi_color(0x07);
       ansi_clear();
-    #else  /* ifdef BIOS */
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.w.ax = 0x0600;
+      r.h.bh = 0x07;
+      r.w.cx = 0x0000;
+      r.h.dh = Scrn_BottomRow + 1;
+      r.h.dl = 79;
+      int386(0x10, &r, &r);
+    }
+  #else
       NEEDSEGPUSHDS;
       NEEDSEGGETDS(Scrn_Addr);
 

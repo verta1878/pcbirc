@@ -12,9 +12,12 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
 //#pragma inline
-  #include "model.h"
+  #elif defined(__WATCOMC__)
+#include <i86.h>
+#else
+#include "model.h"
 #endif
 
 #include "dosfunc.h"
@@ -32,7 +35,7 @@
 
 #pragma warn -rvl
 char * LIBENTRY strnchr(char *StrPtr, char C, int Len) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
 
     for ( ; Len != 0; Len--, StrPtr++)
       if (*StrPtr == C)

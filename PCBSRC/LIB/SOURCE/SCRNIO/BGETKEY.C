@@ -18,6 +18,10 @@
 
 #include <scrnio.h>
 
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
+
 #ifdef __OS2__
 #define INCL_KBD
 #include <os2.h>
@@ -65,18 +69,30 @@ int LIBENTRY bgetkey(char Option) {
 #else  /* ifdef __OS2__ */
 
 int LIBENTRY bgetkey(char Option) {
-asm   Cmp   byte ptr Option,1   /* are we merely TESTING the keyboard? */
-asm   Jne   GetKey              /*   no, go get the keystroke          */
-asm   Mov   Ah,1                /*   yes, ask BIOS for the scan code   */
+#ifdef __WATCOMC__
+  union REGS r;
+  if (Option == 1) {
+    r.h.ah = 1;
+    int386(0x16, &r, &r);
+    return (r.w.cflag & 0x40) ? 0 : 1;
+  }
+  r.h.ah = Option;
+  int386(0x16, &r, &r);
+  return r.w.ax;
+#else
+asm   Cmp   byte ptr Option,1
+asm   Jne   GetKey
+asm   Mov   Ah,1
 asm   Int   16h
-asm   Jnz   GotOne              /* if Z-flag is set then we don't have */
-      return(0);                /* one so return FALSE otherwise       */
-GotOne:                         /* return TRUE to indicate there's a   */
-      return(1);                /* keystroke waiting to be picked up   */
+asm   Jnz   GotOne
+      return(0);
+GotOne:
+      return(1);
 
 GetKey:
 asm  Mov    Ah,Option
 asm  Int    16h
      return(_AX);
+#endif
 }
 #endif

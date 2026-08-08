@@ -430,23 +430,36 @@ void LIBENTRY getmode(void) {
   getvideotype();
 
   if (Scrn_Adapter == VID_MDA) {
+    #ifdef __WATCOMC__
+    Scrn_Addr = 0xB0000;
+#else
     Scrn_Addr = 0xB0000000L;
+#endif
     Scrn_ColorCard = FALSE;
     Scrn_EGA = FALSE;
   } else {
+    #ifdef __WATCOMC__
+    Scrn_Addr = 0xB8000;
+#else
     Scrn_Addr = 0xB8000000L;
+#endif
     Scrn_ColorCard = TRUE;
     Scrn_EGA = (Scrn_Adapter == VID_EGA || Scrn_Adapter == VID_VGA);
   }
 
   Scrn_Rtrc = (Scrn_Adapter == VID_CGA);
 
+#ifdef __WATCOMC__
+  /* Watcom flat model: read BIOS data area directly */
+  Scrn_BottomRow = *(unsigned char *)0x484;
+#else
   asm xor ax,ax
   asm mov es,ax
   asm mov al,es:[0484h]
   asm mov ALreg,al
 
   Scrn_BottomRow = ALreg;
+#endif
   if (Scrn_BottomRow < 24)
     Scrn_BottomRow = 24;
 

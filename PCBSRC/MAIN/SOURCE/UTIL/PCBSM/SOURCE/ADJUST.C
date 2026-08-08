@@ -725,8 +725,8 @@ static int pascal initupdnsub(URead *p) {
               break;
       case 4: UpldBytes = p->NumUploads   * ByteEquivalent;
               DnldBytes = p->NumDownloads * ByteEquivalent;
-              longtobasdble((char *) p->TotUpldBytes,UpldBytes);
-              longtobasdble((char *) p->TotDnldBytes,DnldBytes);
+              longtobasdble((unsigned char *) p->TotUpldBytes,UpldBytes);
+              longtobasdble((unsigned char *) p->TotDnldBytes,DnldBytes);
               break;
     }
   }

@@ -40,7 +40,7 @@
 
 
 void LIBENTRY soundex(char *Dest, char *Srce) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   static char Table[] = {48,49,50,51,48,49,50,48,48,50,50,52,53,53,48,49,50,
                          54,50,51,48,49,48,50,48,50};
   char *LastByte;

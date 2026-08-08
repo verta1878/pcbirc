@@ -1,3 +1,4 @@
+#include <stddef.h>
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */

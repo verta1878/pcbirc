@@ -17,6 +17,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "vmdata.hpp"
+/* VMData swap types - legacy, not in current headers */
+typedef int VMDataSwapFailureAction;
+typedef int VMDataSwapFailure;
+#define VM_SWAP_OPEN_FAILED 1
+#define VM_SWAP_FULL 2
+#define VM_CREATE_NEW 3
+#define VM_ABORT 4
+#define VMDataSwapFailureHandlerSet(x)
 #include <dosfunc.h>
 #include <screen.h>
 #include <misc.h>

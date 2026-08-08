@@ -28,6 +28,9 @@
 
 #include <mem.h>
 #include <stdio.h>
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
 #include "screen.h"
 
 #ifdef DEBUG
@@ -68,6 +71,18 @@ void LIBENTRY scrolldn(char X1, char Y1, char X2, char Y2, char Color) {
 
   updatelines(ScrnUpdate,Y1,Y2);
 
+#elif defined(__WATCOMC__)
+  {
+    union REGS r;
+    r.h.ah = 0x07;
+    r.h.al = 1;       /* scroll 1 line */
+    r.h.bh = Color;
+    r.h.ch = Y1;
+    r.h.cl = X1;
+    r.h.dh = Y2;
+    r.h.dl = X2;
+    int386(0x10, &r, &r);
+  }
 #else  /* ifdef __OS2__ */
 
 #ifdef BIOS

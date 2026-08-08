@@ -15,6 +15,9 @@
 #ifdef __OS2__
   #define INCL_DOSDATETIME
   #include <os2.h>
+#elif defined(__WATCOMC__)
+  #include <i86.h>
+  #include <dos.h>
 #else
   #ifdef _MSC_VER
     #include <borland.h>
@@ -40,6 +43,16 @@ void LIBENTRY getsysdate(sysdatetype *SysDate) {
     SysDate->Year      = (uint)   Date.year;
     SysDate->DayOfWeek = (ubyte) (Date.weekday + 1);
 
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x2A;
+      int386(0x21, &r, &r);
+      SysDate->Month     = r.h.dh;
+      SysDate->Day       = r.h.dl;
+      SysDate->Year      = r.w.cx;
+      SysDate->DayOfWeek = r.h.al + 1;
+    }
   #else
     #ifdef _MSC_VER
       char  _AL,_DL,_DH;

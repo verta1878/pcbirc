@@ -39,12 +39,12 @@
 #include <memcheck.h>
 #endif
 
-extern far     pcbdattype      PcbData;
+extern pcbdattype      PcbData;
 extern      char            ALLTEXT[];
 extern      char            ALLFILE[];
 
-extern far ARCHIVERS        archiver_info;          /* archiver information     */
-extern far DIRECTORIES      directory_info;         /* directory information    */
+extern ARCHIVERS        archiver_info;          /* archiver information     */
+extern DIRECTORIES      directory_info;         /* directory information    */
 long                        final_offset;           /* offset in .CFG file      */
 
 

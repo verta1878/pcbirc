@@ -15,6 +15,8 @@
 #ifdef __OS2__
   #define INCL_DOSFILEMGR
   #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #endif
@@ -50,7 +52,20 @@ j1:
    #ifdef __OS2__
      if ((rc = DosSetFileLocks(handle,&UnLock,&Lock,250,0)) != 0)
        goto lockFailed;
-   #else
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.w.ax = 0x5C00; /* lock */
+      r.w.bx = handle;
+      r.w.cx = (unsigned short)(fileoffset >> 16);
+      r.w.dx = (unsigned short)(fileoffset & 0xFFFF);
+      r.w.si = (unsigned short)(rangelength >> 16);
+      r.w.di = (unsigned short)(rangelength & 0xFFFF);
+      int386(0x21, &r, &r);
+      if (r.w.cflag) return(-1);
+      return(0);
+    }
+  #else
      asm  mov     ax, 05C00h
      asm  mov     bx, handle
      asm  mov     cx, word ptr fileoffset+2

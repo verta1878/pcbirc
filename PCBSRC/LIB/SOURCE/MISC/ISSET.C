@@ -30,7 +30,7 @@
  ===========================================================================*/
 #pragma warn -rvl
 int LIBENTRY isset(void _FAR_ *BitStream, int BitNum) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   char *p = (char *) BitStream + (BitNum >> 3);  // add BitNum/8 to the pointer
   return(*p & (char) (1 << (BitNum & 0x07)));
 

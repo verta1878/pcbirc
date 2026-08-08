@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#if ! (defined(_MSC_VER) || defined(__OS2__))
+#if ! (defined(_MSC_VER) || defined(__OS2__) || defined(__WATCOMC__))
 //#pragma inline
   #include "model.h"
 #endif
@@ -30,7 +30,7 @@
 #pragma warn -par
 
 void LIBENTRY longtobassngl(bassngl cArray, long Num) {
-#if defined(_MSC_VER) || defined(__OS2__)
+#if defined(_MSC_VER) || defined(__OS2__) || defined(__WATCOMC__)
   bool     Neg;
   int      index;
   unsigned HighNum;

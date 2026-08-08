@@ -1,3 +1,4 @@
+#include "pcbsm_externs.h"
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -18,6 +19,7 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+extern int ExitKeyFlag[];
 #include <newdata.h>
 #include <pcb.h>
 #include <dosfunc.h>

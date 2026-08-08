@@ -564,8 +564,6 @@ int 	  DirHandle;
 			/// Note, this needs to be worked on
 			telink_block.crc = xmodem((char *)&telink_block.file_length,130 /*sizeof(telink_block)-3*/);
 
-			telink_block.crc	= _AH;
-			telink_block.crc = _AL;
 		 #endif
 	}
 	else

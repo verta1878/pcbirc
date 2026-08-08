@@ -152,20 +152,102 @@ void filesrc_close(void);
 
 ## 4. Implementation Phases
 
-### Phase A: Data structure (this document)
-- Define FILESRC.H
-- Write FILESRC.C (open/add/find/close)
-- Compile under Watcom and gcc
+### Phase 1: 15.4 Source Port ✅ COMPLETE
+- 556/556 source files compile under OpenWatcom 2.0
+- 13/13 Clark binaries linked (PCBOARD, LOCAL, PPLC, PCBSETUP,
+  PCBSM, MKPCBTXT, MAKEHELP, MAKEIDX, USERNET, UUIN-UUXFER)
+- Phase 3 ASM→C: 8,251 lines TASM → 309 lines C
+- ASYNC.C FOSSIL driver with CPU hog fix (INT 2Fh/1680h)
+- CNAMES.C atexit cdecl fix
+- pcb.lib complete (275/275 files)
+- MESSAGES.H, VAR.HPP, PCBOARD.H synced between H/ and H/H/
+- Patches: 153_to_154, 154_borland_to_154_watcom
 
-### Phase B: Integration
-- pcbtic calls filesrc_add() after DIR update
-- FTP handler calls filesrc_add() on upload
-- Version strings updated to 15.41
+### Phase 2: 15.41 Core Features (in progress)
+- FTP protocol ✅ (FILES.C, SETTINGS.C, TRANSFER.C, PCBOARD.H)
+- BinkP mailer — pcbbinkp.c standalone executable (not started)
+- FidoNet TIC — pcbtic.c ✅ compiles
+- FREQ/magic — pcbfcfg.c ✅ compiles
+- Nodelist compiler — nlcomp.c ✅ compiles
+- pcbpscan file scanner ✅ compiles
+- pcbis_ui installer TUI ✅ compiles, linked (48KB)
+- Startup/shutdown scripts ✅ 3 platforms
+- PCBTEXT strings: 751-770 (documented), 788 (in source)
 
-### Phase C: Display (future)
-- PCBSETUP file directory editor shows source column
-- PCBSM file listing filter by source type
-- Web interface shows file source in browser
+### Phase 3: OS/2 Native
+- PCBOARD2.EXE ✅ linked
+- PCBCP Control Panel ✅ ported, compiled, linked (77KB)
+- SIO v1 + v2 driver suite — placed, needs audit
+- netfosol — wrench (in progress)
+
+### Phase 4: Standalone Tools
+- pcbbinkp.c — BinkP mailer executable
+  - Protocol core (port from binkd/protocol.c)
+  - CRAM-MD5 auth (port from binkd/crypt.c)
+  - BSO outbound scanning
+  - Tagged stdout for pcbis_ui status display
+  - Called by PCBOARD.EXE on FIDOPOLL/ALT-F
+- pcbis_ui FidoNet & Transfer operations console
+  - Scrollback buffer with ↑↓ PgUp/PgDn Home/End
+  - TAB filter: [B]inkP [T]IC [E]cho [F]REQ [X]fer/FTP [A]ll
+  - Verbose debug toggle per component
+  - Config screens: address, nodes, BinkP, TIC, echomail, FREQ
+  - FTP transfer status: progress, complete, failed, debug
+  - Live status + poll trigger
+  - All tools write tagged lines: [BINKP] [TIC] [TOSS] [FREQ] [FTP]
+
+### Phase 4a: FOSSIL Socket Layer ✅ DELIVERED (wrench)
+- platform/fossil/common/m_fossil_socket.pas (189 lines)
+- platform/fossil/linux/async_linux.c (322 lines, C, OpenWatcom/GCC)
+- platform/fossil/dos/netfosdl.pas (323 lines) + serial/IRQ units
+- platform/fossil/os2/ — netfosol (wrench, in progress)
+- platform/fossil/windows/ — planned
+
+### Phase 5: PCBDRAW / PabloDraw Integration
+- Blocked on sysop/0's FPC port of cwensley/pablodraw
+- Client/server ANSI art editor
+- Teleconference mode
+- C port from FPC for OpenWatcom
+- Section 18 in this document
+
+### Phase 6: Linux Native
+- async_linux.c — wrench's FOSSIL socket design (m_fossil_socket.pas)
+- Port DOS int86/bdos/inp/outp to POSIX
+- OpenWatcom -bt=linux target (no GCC)
+- All 15.41 tools compile for Linux
+
+### Phase 7: Multi-Platform
+- FreeBSD, Mac (Darwin) targets
+- openwatcomirc cross-compiler (sysop/0, on hold)
+- Cross-compile testing matrix
+
+### Phase 8: Community & Preservation
+- PPE decompiler on 2,757 PPE collection
+- PCBoard box/manual scanning (Roy/SAC contacted)
+- Package reprint materials
+- g00r00 ANSI art for FILE_ID.ANS
+- BBS scene outreach
+
+### PCBTEXT Slot Map
+```
+001-746  PCBoard 15.3 (Clark)
+747-750  PCBoard 15.4 (Clark — gender, email, web, birthday)
+751-755  Nodelist lookup (section 10)
+756-758  FidoNet address display (section 11)
+759-760  Message info header (section 11)
+761-763  Thread tree display (section 11)
+764-765  Move message (section 11)
+766      Dupe detected (section 12)
+767      Toss stats (section 12)
+768      Scan stats (section 12)
+769      Passthrough forward (section 12)
+770      File source display (section 1)
+771-774  (reserved)
+775-778  BinkP status (section 20)
+779-780  (reserved)
+781-787  Queue Editor (section 16)
+788      FTP not supported (section 19) ✅ in source
+```
 
 ## 5. PCBOARD.DAT Version Field
 
@@ -2320,3 +2402,142 @@ PCBCP is an addon — not present in Clark's licensed 15.3 source
 or the 15.4 port. The source was publicly distributed as a
 companion utility. Our port compiles it under OpenWatcom for the
 first time — the original required IBM C Set/2 for OS/2.
+
+## 23. PCBoard 15.4 FidoNet Stack — External Tools Required
+
+### Overview
+
+PCBoard 15.4 ships **pcbbinkp.exe** as the built-in BinkP/1.1 mailer
+(standalone, command-line). This handles TCP/IP transport — connecting
+to other FidoNet nodes and transferring .PKT files and file attaches.
+
+However, pcbbinkp is a **transport layer only**. It moves files between
+nodes but does not process their contents. A working FidoNet setup on
+15.4 requires external tools for mail processing, just as the original
+PCBoard 15.3 did with external mailers like BinkleyTerm or FrontDoor.
+
+### What pcbbinkp Does
+
+- Connects to remote FTN nodes via BinkP/1.1 (FTS-1026)
+- CRAM-MD5 authentication (FSP-1024)
+- Sends files from BSO (Binkley-Style Outbound) directory
+- Receives files into inbound directory
+- Poll mode: `pcbbinkp poll 1:2320/100`
+- Answer mode: `pcbbinkp answer [port]`
+- Status: `pcbbinkp status`
+- All output tagged `[BINKP]` for log parsing
+
+### What pcbbinkp Does NOT Do
+
+- Unpack mail bundles (.mo0, .tu0, .we0 etc.)
+- Parse .PKT files (FTS-0001 Type 2+ packets)
+- Import echomail into PCBoard message conferences
+- Export outbound echomail from PCBoard into .PKT files
+- Process TIC files (file echoes)
+- Handle file requests (FREQ)
+- Generate SEEN-BY, PATH, MSGID, or other kludge lines
+- Maintain a dupe database
+
+### External Tools Needed for 15.4 FidoNet
+
+The sysop must provide their own tools for the mail processing
+pipeline. These are well-established FidoNet utilities that work
+with any BinkP mailer's BSO directory layout:
+
+| Function | What It Does | Recommended Tools |
+|----------|-------------|-------------------|
+| **Tosser** | Unpacks bundles, parses .PKT, imports echomail into message bases | FastEcho, Squish, HPT (husky), GoldED tosser |
+| **Scanner** | Exports new messages from PCBoard into outbound .PKT files | FastEcho, Squish, HPT |
+| **Packer** | Compresses .PKT files into mail bundles for outbound | FastEcho, HPT, built into most tossers |
+| **TIC processor** | Handles file echo distribution (.TIC files) | htick (husky), AllFix, TICk |
+| **Nodelist compiler** | Compiles raw nodelist into fast-lookup format | FastLst, NLComp, V7+ tools |
+| **FREQ handler** | Responds to file requests from other nodes | built into most mailers or standalone |
+
+### Typical 15.4 FidoNet Workflow
+
+```
+INBOUND (receiving mail):
+
+  remote node --BinkP--> pcbbinkp answer
+                              |
+                              v
+                     inbound/*.pkt, *.mo0, etc.
+                              |
+                              v
+                    [external tosser] --> PCBoard message bases
+                         (e.g. HPT)       (conferences)
+
+OUTBOUND (sending mail):
+
+  PCBoard user writes message in echomail conference
+                              |
+                              v
+                   [external scanner] --> outbound/*.pkt
+                        (e.g. HPT)
+                              |
+                              v
+                     pcbbinkp poll 1:2320/100
+                              |
+                              v
+                    remote node receives .PKT
+```
+
+### Recommended: Husky Suite (HPT + htick)
+
+For sysops who don't already have a FidoNet toolchain, the
+Husky FidoNet Project (https://github.com/huskyproject) provides
+a complete open-source stack:
+
+- **HPT** — tosser/scanner, handles .PKT import/export, SEEN-BY/PATH,
+  dupe detection, echomail routing. Supports PCBoard-style message
+  bases via an adapter or via JAM format with conversion.
+- **htick** — TIC file echo processor
+- **NLTools** — nodelist compiler
+- **fidoconf** — unified configuration for all husky tools
+
+All are open source (GPL), actively maintained, and work with BSO
+outbound — the same directory layout pcbbinkp uses.
+
+### Automation
+
+On 15.4, the sysop sets up batch files or cron jobs:
+
+**OS/2 / DOS (poll.cmd):**
+```
+@echo off
+REM Poll hub and toss incoming mail
+pcbbinkp poll 1:2320/100
+hpt toss
+hpt scan
+pcbbinkp poll 1:2320/100
+```
+
+**Linux (crontab):**
+```
+# Every 30 minutes: poll, toss, scan, poll again
+*/30 * * * * cd /pcboard && ./pcbbinkp poll 1:2320/100 && hpt toss && hpt scan && ./pcbbinkp poll 1:2320/100
+```
+
+### 15.41 Difference
+
+Version 15.41 will include **pcbtoss** (built-in tosser/scanner
+that writes directly to PCBoard message bases) and **pcbfido**
+(FidoNet operations console with scrollback, filtering, and
+integrated control of all FidoNet tools). This eliminates the
+need for external tossers on 15.41, but 15.4 sysops must use
+external tools as described above.
+
+### pcbbinkp Source Files (tools/pcbbinkp/)
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| binkp.h | 170 | Protocol defines, frame format, state machine, session struct |
+| binkp.c | 743 | Frame I/O, command handlers (M_NUL thru M_SKIP), select() loop |
+| binkpauth.c | 161 | HMAC-MD5 (RFC 2104), CRAM-MD5 challenge/verify (FSP-1024) |
+| bso.c | 283 | BSO outbound scanner — .flo parsing, all mail flavours |
+| pcbbinkp.c | 488 | Main EXE: poll/answer/status, pcbis.cfg parser, TCP connect/listen |
+| md5.c/h | 163 | RFC 1321 MD5 (public domain, from evga's VMODEM) |
+| build.cmd | 50 | OpenWatcom build script: OS/2, DOS4G, NT targets |
+| **Total** | **2,058** | |
+
+**Binaries:** PCBBINKP.EXE (47KB, OS/2) / PCBBINKP_W.EXE (62KB, NT)

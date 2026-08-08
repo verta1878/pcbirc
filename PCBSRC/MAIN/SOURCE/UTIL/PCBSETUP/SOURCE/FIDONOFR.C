@@ -94,7 +94,7 @@ void pascal editdenyclass::editrecord(void *Rec) {
 
   inputstr(LEFTSIDE+6,LineNum,sizeof(p->nodestr)-1,"",buffer,p->nodestr,mask_address,INPUT_CAPS,DENYCONFIG+0);
   //maxstrcpy(p->nodestr,buffer,sizeof(p->nodestr));
-  fido_nodestr_to_int(p->nodestr,&p->this_zone,&p->this_net,&p->this_node,&p->this_point);
+  { unsigned _z,_n,_d,_pt; fido_nodestr_to_int(p->nodestr,&_z,&_n,&_d,&_pt); p->this_zone=(unsigned short)_z; p->this_net=(unsigned short)_n; p->this_node=(unsigned short)_d; p->this_point=(unsigned short)_pt; }
 }
 
 

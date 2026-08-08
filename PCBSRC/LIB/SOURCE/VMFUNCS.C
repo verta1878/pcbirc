@@ -35,37 +35,37 @@ void VMInitRec(VMDataSet *set, void *ignored1, int ignored2, unsigned recSize)
     set->recSize  = recSize;
 }
 
-void far * VMRecordCreate(VMDataSet *set, unsigned recSize,
+void * VMRecordCreate(VMDataSet *set, unsigned recSize,
                           void *ignored1, void *ignored2)
 {
     (void)ignored1; (void)ignored2;
     if (set->count >= set->capacity) {
         long newCap = set->capacity ? set->capacity * 2 : 256L;
         unsigned long bytes = (unsigned long)newCap * (unsigned long)recSize;
-        void far * newData = farmalloc(bytes);
+        void * newData = malloc(bytes);
         if (newData == NULL) return NULL;
         if (set->data != NULL) {
             _fmemcpy(newData, set->data, (unsigned)(set->count * (long)recSize));
-            farfree(set->data);
+            free(set->data);
         }
         set->data     = newData;
         set->capacity = newCap;
     }
     {
-        unsigned char far *base = (unsigned char far *) set->data;
-        void far *slot = (void far *)(base + (unsigned)(set->count * (long)set->recSize));
+        unsigned char *base = (unsigned char *) set->data;
+        void *slot = (void *)(base + (unsigned)(set->count * (long)set->recSize));
         set->count++;
         return slot;
     }
 }
 
-void far * VMRecordGetByIndex(VMDataSet *set, long idx, void *ignored)
+void * VMRecordGetByIndex(VMDataSet *set, long idx, void *ignored)
 {
     (void)ignored;
     if (idx < 0 || idx >= set->count) return NULL;
     {
-        unsigned char far *base = (unsigned char far *) set->data;
-        return (void far *)(base + (unsigned)(idx * (long)set->recSize));
+        unsigned char *base = (unsigned char *) set->data;
+        return (void *)(base + (unsigned)(idx * (long)set->recSize));
     }
 }
 
@@ -87,7 +87,7 @@ void VMInitRecVarIdx(VMDataSet *set, void *recBuf, unsigned recBufLen,
 }
 
 void VMDone(VMDataSet *set) {
-    if (set->data != NULL) farfree(set->data);
+    if (set->data != NULL) free(set->data);
     set->data = NULL;
     set->count = 0;
     set->capacity = 0;
@@ -109,19 +109,19 @@ void VMSort(VMDataSet *set, unsigned recSize, long start, long cnt,
 void VMEMSStateSave(void) {}
 void VMEMSStateRestore(void) {}
 
-void far * VMRecordGetByPos(VMDataSet *set, long pos)
+void * VMRecordGetByPos(VMDataSet *set, long pos)
 {
     if (set->data == NULL) return NULL;
     {
-        unsigned char far *base = (unsigned char far *) set->data;
-        return (void far *)(base + pos);
+        unsigned char *base = (unsigned char *) set->data;
+        return (void *)(base + pos);
     }
 }
 
 void VMWrite(VMDataSet *set, void *data, long pos, unsigned size)
 {
     if (set->data != NULL) {
-        unsigned char far *base = (unsigned char far *) set->data;
-        _fmemcpy((void far *)(base + pos), (void far *)data, size);
+        unsigned char *base = (unsigned char *) set->data;
+        _fmemcpy((void *)(base + pos), (void *)data, size);
     }
 }

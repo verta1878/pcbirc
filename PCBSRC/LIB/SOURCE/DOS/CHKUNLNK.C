@@ -15,6 +15,8 @@
 #ifdef __OS2__
 #define INCL_DOSFILEMGR
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #include "model.h"
@@ -41,6 +43,15 @@ j1:
     if (rc != 0)
       goto error;
     return(0);
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x41;
+      r.w.dx = (unsigned short)(unsigned long)path;
+      int386(0x21, &r, &r);
+      if (r.w.cflag) goto error;
+      return(0);
+    }
   #else
   #ifdef LDATA
     asm push ds

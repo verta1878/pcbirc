@@ -1,44 +1,30 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* The source code in this module is proprietary software belonging to       */
-/* Clark Development Company and is part of the PCBoard source code library. */
-/* You are granted the right to use this source code for the building of any */
-/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-/* without prior written consent from Clark Development Company, Inc.        */
-/*                                                                           */
-/* Be sure to read the source code license agreement before utilizing any    */
-/* of the source code found herein.                                          */
-/*                                                                           */
+/* Clark Development Company — PCBoard source code library.                 */
 /* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
+/* fmemset: Far memory set — on flat model, just use memset */
 
-/* under OS/2 fmemset() maps directly to memset() */
+#ifdef __WATCOMC__
+#include <string.h>
 
-#ifndef __OS2__
-
-#ifdef _MSC_VER
-#include <borland.h>
-#else
-//#pragma inline
-#endif
-
-#ifdef DEBUG
-#include <memcheck.h>
-#endif
-
-void pascal fmemset(void far *dest, char c, unsigned len) {
-  asm  cld
-  asm  les  di,dest
-  asm  mov  al,c
-  asm  mov  ah,al
-  asm  mov  cx,len
-
-  asm  shr  cx,1
-  asm  rep  stosw
-  asm  adc  cx,0
-  asm  rep  stosb
+void pascal fmemset(void *dest, char val, unsigned len) {
+  memset(dest, val, len);
 }
+#else
 
+#ifdef LDATA
+  #include "model.h"
+#endif
 
-#endif  /* ifndef __OS2__ */
-
+void pascal fmemset(void far *Dest, char Val, unsigned Len) {
+  asm Les  Di,Dest
+  asm Mov  Al,Val
+  asm Mov  Ah,Al
+  asm Mov  Cx,Len
+  asm Shr  Cx,1
+  asm Rep  Stosw
+  asm Adc  Cx,Cx
+  asm Rep  Stosb
+}
+#endif

@@ -67,7 +67,7 @@
 
 extern unsigned _stklen = 16384U;
 
-void interrupt (* orig0x24) (...);
+void (__interrupt * orig0x24)();
 
 extern char warnFlag;
 extern char autoUVar;
@@ -140,7 +140,7 @@ int main(int argc)
 	getcountryspecs(1,0);
 
 	orig0x24 = getvect(0x24);
-	setvect(0x24,CEH);
+	setvect(0x24,(void (__interrupt *)()) CEH);
 
 	newline();
 	print("PPLC ");

@@ -119,7 +119,7 @@ void pascal editcakas::editrecord(void *Rec) {
     case 0:
        memcpy(buffer,addrbuf,sizeof(buffer));
        inputstr(LEFTSIDE+6,LineNum,25,"",buffer,buffer,ALLTEXT,INPUT_CAPS,ADDRESSCFG+0);
-       fido_nodestr_to_int(addrbuf,&addr->zone,&addr->net,&addr->node,&addr->point);
+       { unsigned _z,_n,_d,_p; fido_nodestr_to_int(addrbuf,&_z,&_n,&_d,&_p); addr->zone=(unsigned short)_z; addr->net=(unsigned short)_n; addr->node=(unsigned short)_d; addr->point=(unsigned short)_p; }
        break;
     case 1:
        memcpy(buffer,addr->range,sizeof(buffer));

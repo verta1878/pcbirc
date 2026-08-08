@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #define INCL_DOSPROCESS
   #include <os2.h>
 #else
@@ -25,7 +25,7 @@
 
 #include "screen.h"
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
 unsigned static delaycnt;
 #endif
 
@@ -34,7 +34,7 @@ unsigned static delaycnt;
 *****************************************************************************/
 
 void LIBENTRY setdelay(void) {
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
 asm           Push  Ds
 asm           Xor   Ax,Ax
 asm           Mov   Ds,Ax
@@ -128,7 +128,7 @@ asm           Mov   [delaycnt],Ax    /* store outer loop count in delaycnt */
 /* routine - so we MUST save all of the used registers!        */
 
 void LIBENTRY mydelay(int Hundredths) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   DosSleep((long) Hundredths * 10);
 #else
 #ifdef CPU386

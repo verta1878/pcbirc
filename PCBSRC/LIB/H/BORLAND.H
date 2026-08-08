@@ -21,10 +21,20 @@
 /* Be sure to link with BORLAND.LIB in order to pull in the functions     */
 /* found at the bottom of this file.                                      */
 
+#ifdef __WATCOMC__
+  /* Pull in full Borland→Watcom compatibility layer — hexadecimal/pcbrevival */
+  #include "watcompat.h"
+#endif
+
 #define asm       _asm
 #define disable   _disable
 #define enable    _enable
-#define coreleft  _memavl
+
+#ifndef __WATCOMC__
+  /* Watcom: coreleft mapped in watcompat.h to return large value */
+  #define coreleft  _memavl
+#endif
+
 #define getvect   _dos_getvect
 #define setvect   _dos_setvect
 
@@ -51,8 +61,11 @@
 #define FA_SUBDIR                 _A_SUBDIR
 
 #ifndef __WATCOMC__
-  #define farmalloc _fmalloc
-  #define farfree   _ffree
+  /* Watcom: farmalloc/farfree mapped in watcompat.h to malloc/free */
+  #ifndef farmalloc
+    #define farmalloc _fmalloc
+    #define farfree   _ffree
+  #endif
 #endif
 
 /* these function prototypes are for functions found in BORLAND.LIB */

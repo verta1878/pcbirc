@@ -18,6 +18,10 @@
 
 #include "system.h"
 
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
+
 #ifdef TEST
   #include <stdio.h>
 #endif
@@ -151,6 +155,17 @@ void LIBENTRY setkbdstatus(uint Status) {
 
 
 uint LIBENTRY bgetkey(ubyte Option) {
+#ifdef __WATCOMC__
+  union REGS r;
+  if (Option == 1) {
+    r.h.ah = 1;
+    int386(0x16, &r, &r);
+    return (r.w.cflag & 0x40) ? 0 : 1; /* ZF check */
+  }
+  r.h.ah = Option;
+  int386(0x16, &r, &r);
+  return r.w.ax;
+#else
 asm   Cmp   byte ptr Option,1   /* are we merely TESTING the keyboard? */
 asm   Jne   GetKey              /*   no, go get the keystroke          */
 asm   Mov   Ah,1                /*   yes, ask BIOS for the scan code   */
@@ -164,6 +179,7 @@ GetKey:
 asm  Mov    Ah,Option
 asm  Int    16h
      return(_AX);
+#endif
 }
 #endif
 

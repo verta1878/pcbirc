@@ -24,8 +24,9 @@
 // #include <conio.h>
 #include <stdio.h>
 
-#include <newdata.h>
+#include <types.hpp>
 #include <pcb.h>
+// #include <NEWDATA.H> -- included via pcb.h
 
 #include <structs.h>
 #include <data.hpp>
@@ -60,7 +61,7 @@ const unsigned int oldver = 2;
 const unsigned int newver = 3;
           unsigned int realver = 0;
 
-extern far pcbdattype PcbData;
+extern pcbdattype PcbData;
 char basepath[MAXDIR];
 
 FILE *  oldfile;

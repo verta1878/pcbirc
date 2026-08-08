@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #define INCL_VIO
   #define INCL_DOSPROCESS
   #include <os2.h>
@@ -46,7 +46,7 @@
 #define FALSE 0
 #define TRUE  1
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 static bool HideScreen;
 static unsigned long __far16 *Scrn_Addr;
 void  *Scrn_Buf;
@@ -67,7 +67,7 @@ short Scrn_Size16;                 /* number of 16-bit words in buffer     */
 int   Scrn_Size32;                 /* number of 32-bit words in buffer     */
 vidcardtype Scrn_Adapter;          /* type of video card installed         */
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 char Scrn_X;
 char Scrn_Y;
 #endif
@@ -81,7 +81,7 @@ char Scrn_Y;
 *             is installed checking for MDA, CGA, EGA, VGA and MCGA.
 */
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
 void near pascal getvideotype(void) {
   char ALreg;
   char BLreg;
@@ -176,7 +176,7 @@ void near pascal getvideotype(void) {
 #endif  /* ifndef __OS2__ */
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 static CMutexSemaphore MutexSemaphore;
 static CUpdateSemaphore UpdateSemaphore;
 static scrnupdttype volatile NeedToUpdateScrn;
@@ -366,7 +366,7 @@ void LIBENTRY unhidescreen(void) {
  *             address of memory segment
  */
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 int LIBENTRY getviolines(void) {
   VIOMODEINFO   VioModeInfo;
 
@@ -386,7 +386,7 @@ void LIBENTRY setviolines(int NumLines) {
 #endif
 
 void LIBENTRY getmode(void) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 //USHORT        BufSize;
   ULONG         BufSize;
   VIOMODEINFO   VioModeInfo;
@@ -491,7 +491,7 @@ void LIBENTRY getmode(void) {
   Scrn_Size16    = (short) (Scrn_SizeBytes >> 1);
   Scrn_Size32    = Scrn_Size16 >> 1;
 
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     /* default to 1 second intervals for updating the screen */
     UpdateSemaphore.create(NULL);
     UpdateSemaphore.enabletimer(1000);

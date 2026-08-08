@@ -1,3 +1,4 @@
+#include "pcbsm_externs.h"
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -19,6 +20,7 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+extern int ExitKeyFlag[];
 #include <newdata.h>
 #include <pcb.h>
 #include <misc.h>
@@ -28,6 +30,12 @@
 #include "pcbfiles.ext"
 #ifdef DEBUG
 #include <memcheck.h>
+#ifdef __WATCOMC__
+extern hdrtype Header;
+extern apptype AppHeader;
+extern addresstypez Address;
+extern addresstype OldAddress;
+#endif
 #endif
 
 #define NUMCONFMOVEFIELDS 11
@@ -118,9 +126,9 @@ static int pascal confmovesub(URead *p) {
         MsgReadPtr[Move.Add] = MsgReadPtr[Move.Remove];
         MsgReadPtr[Move.Remove] = 0;
       } else {
-        MsgPtrValue = bassngltolong((char *) p->LastMsgRead[Move.Remove]);
-        longtobassngl((char *) p->LastMsgRead[Move.Add],MsgPtrValue);
-        longtobassngl((char *) p->LastMsgRead[Move.Remove],0);
+        MsgPtrValue = bassngltolong(p->LastMsgRead[Move.Remove]);
+        longtobassngl(p->LastMsgRead[Move.Add],MsgPtrValue);
+        longtobassngl(p->LastMsgRead[Move.Remove],0);
       }
     }
   }

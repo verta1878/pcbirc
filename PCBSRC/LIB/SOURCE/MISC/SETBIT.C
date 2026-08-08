@@ -30,7 +30,7 @@
  ===========================================================================*/
 
 void LIBENTRY setbit(void _FAR_ *BitStream, int BitNum) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   char *p = (char *) BitStream;
 
    p += (BitNum >> 3);  /* add BitNum/8 to the pointer */

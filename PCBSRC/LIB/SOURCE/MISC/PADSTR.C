@@ -1,3 +1,4 @@
+#include <string.h>
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -39,7 +40,7 @@
 */
 
 void LIBENTRY padstr(char *StrPtr, char C, int MaxLen) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   int  Len;
   char *p;
 

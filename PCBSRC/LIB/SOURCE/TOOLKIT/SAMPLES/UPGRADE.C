@@ -1,3 +1,6 @@
+#ifndef LIB
+#define LIB
+#endif
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -14,7 +17,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "\tc\tools\pcbtools.h"
+#include <pcbtools.h>
 
 
 bool pascal verifyuser(void) {
@@ -84,7 +87,7 @@ void pascal upgradeuser(void) {
                     SHOWSTATUSLINE   /* show pcb-style status line */
 
 void main(void) {
-  if (initdoor("Upgrade Door",0,0,OPENPARAMS) == -1)
+  if (initdoor("Upgrade Door",0,0,(openstatus)(WATCHKBD|WATCHSESSION|READUSERSYS|SHOWSTATUSLINE)) == -1)
     return;
 
   if (verifyuser()) {    /* if the user passed the verification */

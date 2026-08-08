@@ -19,6 +19,9 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+#ifdef __WATCOMC__
+#define ALLCONF ALLCONF_STR
+#endif
 #include <dosfunc.h>
 #include <misc.h>
 #include <pcb.h>
@@ -310,7 +313,7 @@ void LIBENTRY confnamesearch(char *Str) {
 
 
 static unsigned _NEAR_ LIBENTRY confnamemenu(unsigned TopRec, int First) {
-  bool           Extended;
+  char           Extended;
   int            Key;
   int            X,Y;
   int            Select;

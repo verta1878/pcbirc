@@ -1,3 +1,4 @@
+#include <stdio.h>
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -24,6 +25,9 @@
 #endif
 
 #include "system.h"
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
 #include "screen.h"
 
 
@@ -51,7 +55,15 @@ char * LIBENTRY datestr(char * DStr) {
             Scrn_DateSeparator,
             SysDate.Year);
 
-  #else /* ifdef __OS2__ */
+  #elif defined(__WATCOMC__)
+  {
+    union REGS r;
+    r.h.ah = 0x2A;
+    int386(0x21, &r, &r);
+    sprintf(DStr, "%02d-%02d-%02d", r.h.dh, r.h.dl, r.w.cx % 100);
+    return DStr;
+  }
+#else /* ifdef __OS2__ */
 
     #ifdef _MSC_VER
       NEEDSEGPUSHDS;

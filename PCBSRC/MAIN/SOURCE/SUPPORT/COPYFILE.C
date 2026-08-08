@@ -127,8 +127,8 @@ static int _NEAR_ LIBENTRY copysub(char *Srce, char *Dest, bool CheckForEOF, boo
   #ifdef __BORLANDC__
     struct  ftime TimeDate;
   #else
-    uint    Time;
-    uint    Date;
+    unsigned Time;
+    unsigned Date;
   #endif
 
   NameLen = 0;

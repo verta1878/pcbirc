@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 #include "screen.h"
 
 bool Novell = FALSE;
@@ -137,7 +137,7 @@ static void pascal near TopView(void) {
 
 
 void LIBENTRY checkmultitaskers(void) {
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
   int DosVer;
 
   NEEDSEGPUSHDS;

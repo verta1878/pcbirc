@@ -16,17 +16,17 @@
 
 #pragma warn -rvl
 #pragma warn -par
-int LIBENTRY wordbackward(char *Str, int Pos) {
+int LIBENTRY wordbackward(char *Str, int Pos) { return 0;
 }
-int LIBENTRY wordforward(char *Str, int Pos, int FieldLen) {
+int LIBENTRY wordforward(char *Str, int Pos, int FieldLen) { return 0;
 }
 void LIBENTRY inputfield(char *Buffer, int PcbTextNum, int MaxLen, displaytype DisplayCtrl, int HelpNum, char *Mask) {
 }
 void LIBENTRY inputfieldstr(char *Buffer, char *Prompt, int Color, int MaxLen, displaytype DisplayCtrl, int HelpNum, char *Mask) {
 }
-long LIBENTRY inputfieldlong(long Default, char *Prompt, int Color, int MaxLen, displaytype DisplayCtrl, int HelpNum) {
+long LIBENTRY inputfieldlong(long Default, char *Prompt, int Color, int MaxLen, displaytype DisplayCtrl, int HelpNum) { return 0;
 }
-int LIBENTRY inputfieldint(int Default, char *Prompt, int Color, int MaxLen, displaytype DisplayCtrl, int HelpNum) {
+int LIBENTRY inputfieldint(int Default, char *Prompt, int Color, int MaxLen, displaytype DisplayCtrl, int HelpNum) { return 0;
 }
 #pragma warn +rvl
 #pragma warn +par

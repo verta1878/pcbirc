@@ -1,3 +1,4 @@
+#include "pcbsm_externs.h"
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -22,6 +23,7 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+extern int ExitKeyFlag[];
 #include <newdata.h>
 #include <pcb.h>
 #include <dosfunc.h>
@@ -63,6 +65,15 @@ enum {SHORTFORM=0,FIDOFORM,LONGFORM,MSGSFORM,ALIASFORM,ADDRESSFORM,PASSWORDFORM,
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
 #endif
 
+#ifdef __WATCOMC__
+extern hdrtype Header;
+extern apptype AppHeader;
+extern addresstypez Address;
+extern addresstype OldAddress;
+extern passwordtypez Password;
+extern notestypez Notes;
+extern callerstattype CallerStats;
+#endif
 bool NeedToReindex;
 char LastFind;
 
@@ -552,7 +563,7 @@ static long near pascal searchforrec(char FindType, bool JumpToStart) {
                              }
                            }
                            if (CheckInf & 2) {
-                             if (strstr(Verify,SrchName) != NULL) {
+                             if (strstr((char *)Verify,SrchName) != NULL) {
                                Found = TRUE;
                                goto done;
                              }
@@ -1343,7 +1354,7 @@ void pascal edituser(long UserNum) {
     OldUpdateBoxStatus = UpdateBox;
     UpdateBox = FALSE;
     stripright(Alias,' ');
-    stripright(Verify,' ');
+    stripright((char *)Verify,' ');
     strcpy(OriginalAlias,Alias);
 
 top:

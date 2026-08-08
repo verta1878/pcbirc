@@ -82,7 +82,14 @@ unsigned char LIBENTRY fileexist(char *StrPtr) {
     DTA.ff_attrib = FindBuffer.attrFile;
     return((unsigned char) DTA.ff_attrib);
 
-  #else
+  #elif defined(__WATCOMC__)
+    {
+      struct find_t DTA;
+      if (_dos_findfirst(StrPtr, 0xFF, &DTA) != 0)
+        return 255;
+      return 0;
+    }
+#else
 
     #ifdef LDATA
       asm  Push Ds

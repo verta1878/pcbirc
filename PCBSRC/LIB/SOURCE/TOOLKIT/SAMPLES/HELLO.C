@@ -16,7 +16,7 @@
 #include <pcbtools.h>
 
 void main(void) {
-  if (initdoor("TestDoor",0,0,WATCHKBD|WATCHSESSION|READUSERSYS|SHOWSTATUSLINE) == -1)
+  if (initdoor("TestDoor",0,0,(openstatus)(WATCHKBD|WATCHSESSION|READUSERSYS|SHOWSTATUSLINE)) == -1)
     return;
 
   println("Hello world");

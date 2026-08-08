@@ -1,7 +1,6 @@
-# pcbirc — PCBoard 15.4 Source Port / 15.41 Revival
+# pcbirc — PCBoard 15.4 Source Port
 
-**PCBoard 15.4 BBS source code recovery and OpenWatcom port,
-with 15.41 revival features by the pcbirc crew.**
+**PCBoard 15.4 BBS source code recovery and OpenWatcom 2.0 port.**
 
 pcbirc crew — August 2026
 
@@ -20,23 +19,17 @@ without them, this project would not exist.
 
 This repo takes that 15.3 source, applies every feature and change
 from Clark's unreleased 15.4b beta, and ports the entire codebase
-to OpenWatcom 2.0 for cross-compilation on modern Linux. That's the
-**15.4 source port** — getting Clark's code building again.
-
-On top of that, the **15.41 revival** adds new features: FidoNet TIC
-file echo support, FTP file transfer protocol for telnet callers,
-the pcbpscan file scanner, PCBDRAW ANSI art editor integration,
-and system tray support via utrayit.
+to OpenWatcom 2.0 for cross-compilation on modern Linux.
 
 ## Build Status
-
-### OpenWatcom 2.0 Port
 
 | Metric | Count |
 |---|---|
 | Source files compiling | 556/556 (100%) |
 | Libraries built | 9 (268/275 files) |
-| Binaries linked | 13 (all Clark originals) |
+| Binaries linked | 16 |
+
+### Clark's 15.4 Binaries (OpenWatcom 2.0)
 
 | Binary | Size | Description |
 |---|---|---|
@@ -54,56 +47,111 @@ and system tray support via utrayit.
 | MKPCBTXT_W.EXE | 27KB | Text file generator |
 | MAKEHELP_W.EXE | 25KB | Help file builder |
 
-### Standalone Tools
+### Addons
+
+| Binary | Size | Description |
+|---|---|---|
+| PCBCP_W.EXE | 77KB | OS/2 Presentation Manager control panel |
+| PCBBINKP.EXE | 47KB | BinkP/1.1 FidoNet mailer (OS/2) |
+| PCBBINKP_W.EXE | 62KB | BinkP/1.1 FidoNet mailer (Windows NT) |
+
+### Standalone Tools (GPLv3)
 
 | Tool | Description |
 |---|---|
-| pcbtic | FidoNet TIC file echo processor |
-| pcbfcfg | FidoNet FREQ/magic configuration |
-| nlcomp | Nodelist compiler |
-| upd1541 | 15.3→15.41 data file upgrade |
+| pcbbinkp | BinkP/1.1 mailer — poll, answer, status (FTS-1026, CRAM-MD5) |
 | pcbpscan | Upload file scanner (replaces THD ProScan) |
-| utrayit | System tray support (Win32/Unix) |
-| pcbis_ui | Installer TUI |
+| nlcomp | FidoNet nodelist compiler (raw nodelist to CodeBase .DBF/.NDX) |
+| pcbis_ui | Installer TUI (Linux/DOS) |
 
-### DOS: 11 of 11 ✅ (Borland C++ 3.1)
+### DOS: 11 of 11 (Borland C++ 3.1)
 
-All 11 original shipping binaries build from source under BC++ 3.1
-in DOSBox. See PCB154_BUILD_GUIDE.md.
+All 11 original shipping binaries also build from source under
+BC++ 3.1 in DOSBox. See PCB154_BUILD_GUIDE.md.
 
-### OS/2: PCBOARD2.EXE ✅ (OpenWatcom 2.0)
+## FidoNet on 15.4
 
-OS/2 32-bit native BBS engine. Clean link, zero unresolved symbols.
+pcbbinkp.exe is a standalone BinkP/1.1 mailer for FidoNet over
+TCP/IP. It handles transport only — connecting to remote nodes and
+transferring .PKT files and file attaches via Binkley-Style Outbound.
 
-### OS/2 Addon: PCBCP Control Panel ✅
+For a working FidoNet setup you also need an external tosser to
+process incoming mail into PCBoard message bases. The Husky suite
+(HPT + htick) is recommended. See section 23 of PCB1541_DRAFT.md
+for the full external tools guide.
 
-PCBCP_W.EXE (77KB) — OS/2 Presentation Manager node monitor and
-control panel. Source recovered from pcball.zip (pcboard.be),
-ported to OpenWatcom 2.0. 8/8 source files compile clean.
-PCBCP.INI must be configured by the sysop on first run.
+Usage:
+```
+pcbbinkp poll 1:2320/100        Poll a specific node
+pcbbinkp answer [port]          Listen for incoming BinkP
+pcbbinkp status                 Show outbound queue
+```
+
+## Drivers
+
+### SIO v1 / SIO2K — OS/2 Serial I/O (evga)
+
+Clean-room OS/2 serial driver with 31 bugs fixed across 3 audits.
+Full 16550A/16650/16750 UART support with proper FIFO detection.
+Source at `addons/SIO/src/`.
+
+### FOSSIL Socket Layer (wrench)
+
+Cross-platform FOSSIL driver for DOS, Linux, OS/2, and Windows.
+Provides serial port abstraction for BBS software running over
+TCP/IP (telnet/SSH). Source at `platform/fossil/`.
 
 ## Documentation
 
-| Document | Lines | Description |
-|---|---|---|
-| PCB1541_DRAFT.md | 2,322 | 15.41 upgrade specification (22 sections) |
-| WHATSNEW.md | 467 | Changelog |
-| FIDONET.md | 682 | Complete FidoNet sysop guide |
-| PCBIS_UI.md | 452 | Installer and PCBDRAW integration |
-| MISSING_FUNCTIONS.md | 350 | Function stubs needed for linking |
-| PPL Reference Manual | 7.1MB | Scanned PPL programming manual (PDF) |
-| PPL Dev Kit Manual | 6.7MB | PPL developer kit documentation (PDF) |
+| Document | Description |
+|---|---|
+| PCB1541_DRAFT.md | 2,543 lines — full specification (23 sections) |
+| WHATSNEW.md | Changelog |
+| FIDONET.md | FidoNet sysop guide |
+| PCB154_BUILD_GUIDE.md | Build instructions |
+| SETUP_GUIDE.md | Installation guide |
+
+## Directory Layout
+
+```
+PCBSRC/             Clark's 15.4 source (proprietary, licensed)
+  MAIN/SOURCE/       C/C++ source, headers, makefiles
+  LIB/               Pre-built CodeBase library objects
+OUT/                 Compiled binaries
+  DOS/               DOS target (Borland C++ 3.1)
+  OS2/               OS/2 target (OpenWatcom 2.0)
+LIBS/                CodeBase 6.5 library source (LGPL v3.0)
+addons/
+  PCBCP/             OS/2 Control Panel source
+  SIO/               SIO serial driver source (GPLv3)
+platform/
+  fossil/            FOSSIL socket layer (GPLv3)
+tools/
+  pcbbinkp/          BinkP mailer source (GPLv3)
+  binkd/             binkd reference source (GPL, not our code)
+  nlcomp.c           Nodelist compiler source
+  pcbfcfg.c          FidoNet configurator source
+pcbpscan/            File scanner source
+installer/           pcbis_ui installer
+docs/                Documentation
+  fido/              FidoNet specs (FTS/FSP/FSC)
+  reference/         PCBoard reference materials
+patches/             Port patches (15.3→15.4, Borland→Watcom)
+historical/          Preservation materials
+PPL/                 PPE collection (2,757 files)
+devtools/            PCBoard developer kits and tools
+```
 
 ## The Crew
 
 | Handle | Role |
 |---|---|
-| hexadecimal | pcbrevival lead, source port |
+| hexadecimal | Project lead, source port |
 | verta1878 | netmodem2irc, OpenOLMS |
-| wrench | netmodem2irc engine, OpenWatcom dev |
-| sysop/0 | fpc264irc compiler, CIADraw/PabloDraw FPC port, utrayit |
-| kiddo/evga | Mystic/RIPscrip/RIPView |
-| evga | Mystic/RIPView/display |
+| wrench | FOSSIL driver, netmodem2irc engine |
+| sysop/0 | fpc264irc, CIADraw/PabloDraw FPC port |
+| kiddo/evga | Mystic/RIPscrip reference |
+| evga | SIO OS/2 driver, VMODEM |
 
 ## License
 
@@ -111,11 +159,9 @@ Our additions: GPLv3
 Clark Development source: proprietary (licensed)
 CodeBase library: LGPL v3.0
 SIO OS/2 driver: GPLv3 (evga, clean-room)
-SyncTerm reference source: GPL v2+ (Rob Swindell / Stephen Hurd)
 
 ## Links
 
-- Mystic BBS (reference): https://github.com/KALRONG/mysticbbs
-- SyncTerm source: https://gitlab.synchro.net/main/sbbs
+- Husky FidoNet Project: https://github.com/huskyproject
 - PPLEngine (PPE decompiler): https://github.com/mkrueger/PPLEngine
-- sysop/0's FPC repo: fpc264irc (separate, 1.6GB)
+- SyncTerm: https://gitlab.synchro.net/main/sbbs

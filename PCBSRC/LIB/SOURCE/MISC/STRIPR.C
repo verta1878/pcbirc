@@ -36,7 +36,7 @@
  */
 
 char * LIBENTRY stripright(char *StrPtr, char SrchChar) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   char *p;
 
   for (p = &StrPtr[strlen(StrPtr)-1]; *p == SrchChar && p >= StrPtr; p--);

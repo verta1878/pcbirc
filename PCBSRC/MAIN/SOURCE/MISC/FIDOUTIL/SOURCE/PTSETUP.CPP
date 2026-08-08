@@ -378,7 +378,7 @@ int  selectuser(void)
   fastprint(XValue, YValue, Str, Colors[MENUBAR]);
 
    while (1) {
-      k = inkey(&OK, CLOCK);
+      { char ext; k = inkey(&ext, CLOCK); OK = ext; }
       if (!OK)
       {
          if (k == 13 && ZValue+1 <= ManCount)

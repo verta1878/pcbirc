@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#if ! (defined(_MSC_VER) || defined(__OS2__))
+#if ! (defined(_MSC_VER) || defined(__OS2__) || defined(__WATCOMC__))
 //#pragma inline
   #include "model.h"
 #endif
@@ -31,7 +31,7 @@
 
 
 static void _NEAR_ LIBENTRY longtobasdblesub(basdble cArray, ulong Num, bool IsNeg) {
-#if defined(_MSC_VER) || defined(__OS2__)
+#if defined(_MSC_VER) || defined(__OS2__) || defined(__WATCOMC__)
   int      index;
   unsigned HighNum;
 

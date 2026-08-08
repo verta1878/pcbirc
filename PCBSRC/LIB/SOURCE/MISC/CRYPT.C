@@ -28,7 +28,7 @@
 #include <memcheck.h>
 #endif
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 static inline short _NEAR_ LIBENTRY srotl(uint Val, uint RotVal) {
   #ifdef __BORLANDC__
     return(_rotl(Val,RotVal));
@@ -76,7 +76,7 @@ static inline ubyte _NEAR_ LIBENTRY crotr(ubyte Val, uint RotVal) {
 
 
 void LIBENTRY encrypt(char *Str, int Len) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   unsigned char   RotVal;
   unsigned short  Seed;
   unsigned short *p;
@@ -142,7 +142,7 @@ exit:;
 
 
 void LIBENTRY decrypt(char *Str, int Len) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   unsigned char   RotVal;
   unsigned short  Temp;
   unsigned short  Seed;
@@ -211,7 +211,7 @@ exit:;
 
 
 void LIBENTRY encrypt2(char *Str, int Len) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   unsigned char   RotVal;
   unsigned short  Seed;
   unsigned short  Temp;
@@ -282,7 +282,7 @@ exit:;
 
 
 void LIBENTRY decrypt2(char *Str, int Len) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   unsigned char   RotVal;
   unsigned short  Temp;
   unsigned short  Save;

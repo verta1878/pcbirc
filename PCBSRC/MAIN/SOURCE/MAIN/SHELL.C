@@ -62,7 +62,11 @@
 #ifndef __OS2__
   #include <process.h>
 
-  #ifdef _MSC_VER
+  #if defined(_MSC_VER)
+    typedef void (__cdecl __interrupt __far * __cdecl intfunctype)();
+  #elif defined(__WATCOMC__)
+    typedef void (__interrupt * intfunctype)();
+  #elif 0
     typedef void (__cdecl __interrupt __far * __cdecl intfunctype)();
   #else
     #ifdef __cplusplus

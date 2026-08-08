@@ -33,7 +33,10 @@ typedef enum {CHECKDIRTY, IGNOREDIRTY } dirtytype;
 typedef struct {
   unsigned short UserRec;
   char     UserName[25];    /* padded with spaces and no terminating NULL */
+#ifndef _INDEXTYPE_DEFINED
+#define _INDEXTYPE_DEFINED
 } IndexType;
+#endif
 #pragma pack()
 
 #pragma pack(1)

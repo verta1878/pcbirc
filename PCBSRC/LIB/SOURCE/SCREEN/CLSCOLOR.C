@@ -24,6 +24,9 @@
   #include "model.h"
 #endif
 
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
 #include "screen.h"
 
 /********************************************************************
@@ -46,6 +49,16 @@ void LIBENTRY clscolor(char Color) {
 
   updatelines(Scrn_BottomRow == 24 ? UPDATE_25LINES : UPDATE_50LINES,0,Scrn_BottomRow);
 
+#elif defined(__WATCOMC__)
+  {
+    union REGS r;
+    r.w.ax = 0x0600;
+    r.h.bh = Color;
+    r.w.cx = 0x0000;
+    r.h.dh = Scrn_BottomRow;
+    r.h.dl = 79;
+    int386(0x10, &r, &r);
+  }
 #else  /* ifdef __OS2__ */
 
 #ifdef BIOS

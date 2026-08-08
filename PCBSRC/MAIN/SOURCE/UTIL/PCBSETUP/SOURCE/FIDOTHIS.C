@@ -29,6 +29,8 @@
 #include <pcb.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+#ifdef __WATCOMC__
+#endif
 #include <string.h>
 #include <help.h>
 #include "setup.h"
@@ -42,6 +44,10 @@
 #include <data.hpp>
 #ifdef DEBUG
 #include <memcheck.h>
+#ifdef __WATCOMC__
+#undef YESNO
+extern char YESNO[];
+#endif
 #endif
 
 #define LEFTSIDE     1
@@ -253,16 +259,16 @@ void pascal editthisclass::editrecord(void *Rec) {
   {
     case 0:
        inputstr(LEFTSIDE+6,LineNum,sizeof(buffer)-1,"",buffer,buffer,mask_address,INPUT_CAPS,ADDRESSCFG+0);
-       fido_nodestr_to_int(buffer,&p->zone,&p->net,&p->node,&p->point);
+       { unsigned _z,_n,_d,_pt; fido_nodestr_to_int(buffer,&_z,&_n,&_d,&_pt); p->zone=(unsigned short)_z; p->net=(unsigned short)_n; p->node=(unsigned short)_d; p->point=(unsigned short)_pt; }
        break;
     case 1:
-       inputstr(LEFTSIDE+32,LineNum,1,"",pri,pri,YESNO,INPUT_CAPS,ADDRESSCFG+1);
+       inputstr(LEFTSIDE+32,LineNum,1,"",pri,pri,(char*)YESNO,INPUT_CAPS,ADDRESSCFG+1);
        break;
     case 2:
-       inputstr(LEFTSIDE+40,LineNum,1,"",inseen,inseen,YESNO,INPUT_CAPS,ADDRESSCFG+2);
+       inputstr(LEFTSIDE+40,LineNum,1,"",inseen,inseen,(char*)YESNO,INPUT_CAPS,ADDRESSCFG+2);
        break;
     case 3:
-       inputstr(LEFTSIDE+48,LineNum,1,"",pres,pres,YESNO,INPUT_CAPS,ADDRESSCFG+3);
+       inputstr(LEFTSIDE+48,LineNum,1,"",pres,pres,(char*)YESNO,INPUT_CAPS,ADDRESSCFG+3);
        break;
     case 4:
        //inputstr(LEFTSIDE+57,LineNum,20,"",range,range,ALLCHAR,INPUT_CAPS,ADDRESSCFG+0);

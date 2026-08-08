@@ -5,278 +5,172 @@
 
 ---
 
-## Current State
+## Current State (2026-07-31)
+
+| Scope | Compiling | Total | Percentage |
+|---|---|---|---|
+| Core PCBoard | 118 | 135 | **87%** |
+| Sub-projects | 87 | 138 | 63% |
+| Library | 179 | 288 | 62% |
+| **All source** | **384** | **561** | **68%** |
 
 - 12 of 12 binaries built (11 Borland DOS + 1 Watcom OS/2)
-- 129 of 273 MAIN source files compile under Watcom (OS/2 target)
-- 144 MAIN source files need fixes for Watcom DOS target
-- 22 library files with inline Borland ASM
-- 7 standalone TASM files (6,649 lines total)
-- 185 files reference pascal calling convention
-- OS/2 PCBOARD2.EXE already links clean
+- WATCOMPAT.H: 219 lines (Borland→Watcom compatibility layer)
+- OS/2 PCBOARD2.EXE: clean link, 0 unresolved symbols
 
 ---
 
-## Phase 1: Foundation — Compiler Compatibility Layer
+## Phase 1: Foundation — Compiler Compatibility Layer ✅ COMPLETE
 
-**What:** Make all C/C++ source compile under both Borland and Watcom.
-**Why:** Everything else depends on this. No point touching ASM if the C won't compile.
+**Delivered:** WATCOMPAT.H (219 lines) + updated BORLAND.H, TYPES.HPP, DOSFUNC.H, PCBTOOLS.H, SCRNIO.H, SCREEN.H.
 
-### 1.1 — WATCOMPAT.H expansion
-- [ ] Extend existing WATCOMPAT.H with all Borland→Watcom mappings
-- [ ] `farmalloc` → `malloc` (flat model, no far/near distinction)
-- [ ] `farfree` → `free`
-- [ ] `farcoreleft`/`coreleft` → Watcom equivalents
-- [ ] `bioskey` → Watcom keyboard functions
-- [ ] `stpcpy` → inline implementation
-- [ ] `_AX`/`_BX`/`_CX`/`_DX` pseudo-registers → Watcom `#pragma aux`
-- [ ] `geninterrupt()` → Watcom `int86()`
-- [ ] `__emit__()` → Watcom inline ASM
-- [ ] 30 library files with Borland CRT functions
+What WATCOMPAT.H maps:
+- farmalloc/farfree/farcoreleft → malloc/free/0x7FFFFFFF
+- bioskey → _bios_keybrd
+- stpcpy → inline implementation
+- getdisk/setdisk → _dos_getdrive/_dos_setdrive (+1 offset)
+- MAXDIR/MAXPATH/MAXDRIVE/MAXFILE/MAXEXT → _MAX_DIR etc.
+- interrupt → __interrupt, pascal → __pascal
+- int86/int86x → int386/int386x (32-bit flat model)
+- _argv/_argc → __argv/__argc
+- O_DENYNONE → SH_DENYNO
+- setcbrk → no-op, randomize → srand
+- _version → (_osminor << 8) | _osmajor
+- bool for C mode (wcc386)
 
-### 1.2 — Pascal calling convention
-- [ ] Audit 185 files with `pascal` keyword
-- [ ] Map Borland `pascal` to Watcom `__pascal` or `__stdcall`
-- [ ] PROTOTYP.H has 0 pascal declarations — most are in library headers
-- [ ] Verify parameter order (pascal = left-to-right, C = right-to-left)
+Key fixes applied to headers:
+- _FAR_/_NEAR_ forced empty under __WATCOMC__ in TYPES.HPP (far/near are Watcom keywords)
+- DOSFILE typedef include guard added to DOSFUNC.H and PCBTOOLS.H
+- writecheck/readcheck return type fixed (int→unsigned) in PCBTOOLS.H
+- externaledit/inputstr changed from enum to int parameters
+- intfunctype Watcom branch added (interrupt function pointer typedef)
+- qint.hpp: int/long operator overloads guarded by #if !defined(__386__)
+- Interrupt handler variadic `(...)` → `()` for Watcom
 
-### 1.3 — Borland pragmas and keywords
-- [ ] `#pragma option` → Watcom equivalents or remove
-- [ ] `#pragma warn` → Watcom `-w` flags
-- [ ] `interrupt` keyword → Watcom `__interrupt`
-- [ ] `_seg` keyword → remove (flat model)
-- [ ] 41 files with Borland-specific pragmas
-
-### 1.4 — types.hpp / dosfunc.h / pcbtools.h
-- [ ] Already partially done for OS/2 — extend `__WATCOMC__` guards for DOS target
-- [ ] bool/true/false guards (done)
-- [ ] minSType/maxSType C-cast macros (done)
-- [ ] `#pragma pack` guards (done)
-- [ ] Verify all headers compile under Watcom DOS target (`-bt=dos`)
-
-**Deliverable:** All 273 MAIN source files + all library files compile with `wpp386 -bt=dos`.
+17 core files still failing:
+- 5 inline ASM / pseudo-registers (Phase 2)
+- 3 dead code / source fragments
+- 4 C++ 32-bit porting (qint, var, oldvar, evalp)
+- 5 per-file fixes (H2NAME real-mode, ANSI OS/2 symbols, etc.)
 
 ---
 
-## Phase 2: Inline ASM — The 22 Library Files
+## Phase 2: Inline ASM — Borland → Watcom ⬅️ IN PROGRESS
 
-**What:** Convert Borland inline ASM to Watcom inline ASM or `#pragma aux`.
-**Why:** These 22 files are currently stubbed for OS/2. DOS needs them real.
+**What:** Convert Borland `asm mov ah,XX` to Watcom `int386()` + REGS struct.
+**Why:** 91 library files + 5 core files have Borland inline ASM that Watcom rejects.
 
-### Priority order (by impact):
+### Completed (Phase 2):
+- [x] WHEREX.C — INT 10h AH=03h → int386(0x10) (cursor X position)
+- [x] WHEREY.C — INT 10h AH=03h → int386(0x10) (cursor Y position)
+- [x] GOTOXY.C — INT 10h AH=02h → int386(0x10) (set cursor position)
+- [x] DOSCLOSE.C — INT 21h AH=3Eh → int386(0x21) (close file)
+- [x] DOSCOMIT.C — INT 21h AH=68h → int386(0x21) (commit/flush file)
 
-### 2.1 — Screen/Video (critical for all binaries)
-- [ ] GETMODE.C — 29 ASM lines — video mode detection, INT 10h
-- [ ] SCROLLDN.C — 56 ASM lines — screen scroll, INT 10h
-- [ ] SCROLLUP.C — 56 ASM lines — screen scroll, INT 10h
-- [ ] ANSI.C — 11 ASM lines — ANSI escape handling
-- [ ] TWODIG.C — 12 ASM lines — two-digit number formatting
-- [ ] TWODIG0.C — 9 ASM lines — zero-padded two-digit
-- [ ] TIMECHNG.C — 7 ASM lines — timer tick via BIOS
+### Priority order for remaining:
 
-### 2.2 — System/CPU (needed for startup)
-- [ ] CPUTYPE.C — 63 ASM lines — CPU detection (386/486/Pentium)
-- [ ] SHOWERR.C — 0 inline ASM but uses `bioskey()` — Borland CRT issue
-- [ ] DATA120.C — 0 inline ASM but uses `validatepath()` + wrong `doscreate()` args
+#### 2.1 — DOS File I/O (INT 21h wrappers) — 11 files
+- [ ] DOSOPEN.C (9 asm) — INT 21h AH=3Dh, open file
+- [ ] DOSREAD.C (13 asm) — INT 21h AH=3Fh, read file
+- [ ] DOSWRITE.C (12 asm) — INT 21h AH=40h, write file
+- [ ] DOSCREAT.C (13 asm) — INT 21h AH=3Ch, create file
+- [ ] DOSLSEEK.C (6 asm) — INT 21h AH=42h, seek
+- [ ] DOSDUP.C (4 asm) — INT 21h AH=45h, duplicate handle
+- [ ] CHKLOCK.C (8 asm) — INT 21h AH=5Ch, file locking
+- [ ] CHKUNLNK.C (6 asm) — INT 21h AH=41h, delete file
+- [ ] EXTENDED.C (10 asm) — INT 21h AH=59h, get extended error
+- [ ] STRNCHR.C (15 asm) — string search, no INT call
 
-### 2.3 — String/Memory (performance-critical)
-- [ ] WILDCARD.C — 25 ASM lines — wildcard pattern matching
-- [ ] ZSWAPSTR.C — 25 ASM lines — fast string swap
-- [ ] ZSWAPVIR.C — 20 ASM lines — virtual memory string swap
-- [ ] CONFFUNC.C — 69 ASM lines — conference configuration
+#### 2.2 — Screen/Video (INT 10h) — 25+ files
+- [ ] CURSOR.C (7 asm) — cursor shape
+- [ ] CLS.C (17 asm) — clear screen
+- [ ] CLSBOX.C (47 asm) — clear box region
+- [ ] SCROLLDN.C (56 asm) — scroll down
+- [ ] SCROLLUP.C (56 asm) — scroll up
+- [ ] GETMODE.C (29 asm) — video mode detection
+- [ ] PRINT.C (27 asm) — screen output
+- [ ] FASTPUTC.C (24 asm) — fast character output
+- [ ] BOX.C (119 asm) — draw box
+- [ ] And 15+ more screen files
 
-### 2.4 — DOS File I/O
-- [ ] DOSFIND.C — lvalue cast issue, not ASM — easy fix
-- [ ] VIRTUAL.C — `farmalloc`/`farfree`/wrong `dosread()` args
-- [ ] VIRTUAL1.C — `coreleft`/`stat.h` path/pointer casts
+#### 2.3 — System/Math — 20+ files
+- [ ] CPUTYPE.C (63 asm) — CPU detection
+- [ ] CRYPT.C (123 asm) — encryption
+- [ ] DMATH.C (131 asm) — decimal math
+- [ ] BD_LONG.C (93 asm) — BCD to long
+- [ ] BMSEARCH.C (186 asm) — Boyer-Moore search
+- [ ] And 15+ more
 
-### 2.5 — Toolkit Samples (low priority — not linked into any binary)
-- [ ] COPYBIN1.C, COPYBIN2.C, COPYTEXT.C, HELLO.C, UPGRADE.C
-- [ ] These are sample/demo code, not part of any shipping binary
-- [ ] Fix last if time permits, skip otherwise
+#### 2.4 — MAIN source (5 core files from Phase 1)
+- [ ] MODEMFOS.C — FOSSIL INT 14h pseudo-registers → int386()
+- [ ] TRANSFER.C — pseudo-registers → int386()
+- [ ] FIDOFUNC.C — pseudo-registers → int386()
+- [ ] DEVIOCTL.C — DOS IOCTL inline asm
+- [ ] DLPATH.C — inline asm operand size
 
-**Deliverable:** All 22 library files compile under Watcom. OS/2 stubs replaced with real code.
+### Conversion pattern:
+```c
+/* Borland: */
+asm mov ah,3Eh
+asm mov bx,handle
+int21();
+asm jnc end
+getextendederror();
+end:;
+
+/* Watcom: */
+#elif defined(__WATCOMC__)
+{
+  union REGS r;
+  r.h.ah = 0x3E;
+  r.w.bx = handle;
+  int386(0x21, &r, &r);
+  if (r.w.cflag)
+    getextendederror();
+}
+```
 
 ---
 
 ## Phase 3: Standalone ASM — TASM to WASM
 
-**What:** Port 7 TASM files (6,649 lines) to WASM syntax.
-**Why:** These are core runtime — serial I/O, screen, startup. Can't ship without them.
-
-### 3.1 — C0.ASM (895 lines) — CRT Startup
-- [ ] Borland C runtime initialization — stack setup, heap init, file handle allocation
-- [ ] Clark modified it (DWT 4/19/93) to remove Borland's `__nfile` hack
-- [ ] Has `_OVERLAY_` segment for overlay manager
-- [ ] **Decision:** Watcom has its own CRT startup. May not need this at all.
-- [ ] If Watcom startup suffices, delete. If not, port segment directives.
-
-### 3.2 — ASYNC.ASM (1,893 lines) — Serial/FOSSIL Driver
-- [ ] FOSSIL INT 14h interface — the entire comm layer
-- [ ] Uses Borland `pascal` calling convention (`.model large, pascal`)
-- [ ] Uses `rules.asi` include for memory model macros
-- [ ] **This is the hardest single file.** PCBOARDM and PCBOARD depend on it.
-- [ ] LOCAL.EXE does NOT need this (no COMM)
-- [ ] Port: change `.model` directive, fix `PROC` declarations, adjust segment names
-
-### 3.3 — ANSI.ASM (1,717 lines) — ANSI Terminal Processing
-- [ ] Full ANSI X3.64 escape sequence parser
-- [ ] Screen buffer manipulation, cursor control
-- [ ] Uses Borland segment naming conventions
-- [ ] Port: segment directives + PROC conventions
-
-### 3.4 — CUTIL.ASM (1,101 lines) — C Utility Functions
-- [ ] Fast string/memory operations in ASM
-- [ ] Mixed C and pascal calling conventions
-- [ ] Port: calling convention adjustments
-
-### 3.5 — NOSCROLL.ASM (387 lines) — Screen Buffer
-- [ ] Direct video memory access, no-scroll screen update
-- [ ] INT 10h BIOS calls
-- [ ] Moderate port — mostly standard x86
-
-### 3.6 — MEMMOVE.ASM (340 lines) — Memory Move
-- [ ] Optimized memory copy/move
-- [ ] May be replaceable with Watcom intrinsics
-- [ ] **Decision:** Profile whether Watcom's built-in `memmove` is fast enough
-
-### 3.7 — TIMER.ASM (231 lines) — Timer Tick
-- [ ] BIOS timer access, delay loops
-- [ ] Straightforward INT 1Ah/port 40h access
-- [ ] Easy port
-
-### 3.8 — BGKEY.ASM (85 lines) — Background Keyboard
-- [ ] Keyboard buffer polling
-- [ ] Smallest file, easy port
-
-### Additional ASM files:
-- [ ] INT24HND.ASM (LIB) — DOS critical error handler
-- [ ] SWAP.ASM (LIB) — memory swap routines
-- [ ] XMODEM.ASM (LIB) — XMODEM protocol fast CRC
-- [ ] CEH.ASM (COMPILER) — compiler error handler
-- [ ] Our stubs: PCBTHUNK.ASM, SETUPTHK.ASM, INT24STB.ASM — already TASM, need WASM port
-
-**TASM→WASM cheat sheet:**
-- `PROC pascal` → `PROC __pascal` or rework to `PROC __watcall`
-- `include rules.asi` → rewrite for Watcom memory model macros
-- `SEGMENT ... PUBLIC` → same syntax, different default naming
-- `ASSUME` directives → mostly same
-- `LOCAL` variables → same syntax
-- `.model large` → `.model flat` for 32-bit targets
-
-**Deliverable:** All ASM files assemble with WASM. Calling conventions match Watcom C++ OBJs.
+8 TASM files (7,548 lines total):
+- ASYNC.ASM (1,893 lines) — **THE GATE** — FOSSIL serial driver
+- ANSI.ASM (1,717 lines) — ANSI terminal
+- CUTIL.ASM (1,101 lines) — C utility functions
+- C0.ASM (895 lines) — CRT startup (may use Watcom's own)
+- NOSCROLL.ASM (387 lines) — screen buffer
+- MEMMOVE.ASM (340 lines) — memory move (may use Watcom intrinsics)
+- TIMER.ASM (231 lines) — timer tick
+- BGKEY.ASM (85 lines) — keyboard polling
 
 ---
 
 ## Phase 4: Overlay Manager
 
-**What:** Handle PCBOARD.EXE's Borland overlay system.
-**Why:** PCBOARD.EXE is the non-386 version that uses overlays to fit in 640K.
+PCBOARD.EXE overlay version — recommend dropping for 32-bit only.
 
-- [ ] PCBOARD.EXE uses `__OVERLAY__` define + Borland `overlay.lib`
-- [ ] PCBSM.EXE also links `overlay.lib`
-- [ ] PCBSETUP.EXE has `#if __OVERLAY__` conditional
-- [ ] C0.ASM has `_OVERLAY_` segment
+## Phase 5: Link and Test DOS Binaries
 
-### Options:
-1. **Watcom's overlay manager** — Watcom has its own overlay support (`option DYNAMIC` in linker). Different API. Would need adaptation.
-2. **Drop overlays, go 32-bit only** — PCBOARDM.EXE is already 386-only. Make PCBOARD.EXE 386 too. Overlays were a 640K workaround — irrelevant on modern DOS (DPMI/DOS4GW).
-3. **Keep both** — PCBOARDM (32-bit, no overlay) + PCBOARD (overlay version via Watcom overlay manager)
-
-**Recommendation:** Option 2. Ship PCBOARDM as the DOS binary. PCBOARD.EXE overlay version is a 640K-era artifact. Document the decision.
-
-**Deliverable:** Decision made and documented. If keeping overlays, Watcom overlay manager integrated.
-
----
-
-## Phase 5: Link and Test — DOS Binaries
-
-**What:** Link all 11 DOS binaries under Watcom and verify against Borland builds.
-
-### 5.1 — Easy targets first (fewer dependencies)
-- [ ] MKPCBTXT.EXE — smallest, simplest
-- [ ] PPLC.EXE — self-contained compiler
-- [ ] PCBSM.EXE — System Manager
-
-### 5.2 — UUCP stack
-- [ ] UUIN.EXE
-- [ ] UUOUT.EXE
-- [ ] UUUTIL.EXE
-- [ ] UUXFER.EXE
-- [ ] These share PCBTHUNK.ASM — needs WASM port first
-
-### 5.3 — Setup
-- [ ] PCBSETUP.EXE — has its own ASM (SETUPTHK, INT24STB, REVTHUNK)
-
-### 5.4 — Main binaries (hardest — need ASYNC.ASM, ANSI.ASM, full library)
-- [ ] LOCAL.EXE — no COMM, good test target
-- [ ] PCBOARDM.EXE — full 386+COMM build
-- [ ] PCBOARD.EXE — overlay version (Phase 4 decision affects this)
-
-### 5.5 — Verification
-- [ ] Size comparison against Borland builds
-- [ ] Feature string extraction and comparison
-- [ ] Run in DOSBox and verify startup/login flow
-- [ ] FOSSIL handshake test (ASYNC.ASM port)
-
-**Deliverable:** 11 DOS binaries linking clean under Watcom. Feature-verified.
-
----
+Start with MKPCBTXT, PPLC, PCBSM. End with PCBOARDM.
 
 ## Phase 6: Unify DOS and OS/2
 
-**What:** Single source tree, single compiler, both platforms.
-**Why:** This is the whole point — one `#ifdef` codebase.
-
-- [ ] Merge OS/2 stubs back into real implementations where DOS and OS/2 share code
-- [ ] OS/2-only code stays behind `#ifdef __OS2__`
-- [ ] DOS-only code stays behind `#ifdef __DOS__`
-- [ ] Remove Borland-only code paths (now dead)
-- [ ] Single build script: `BUILD_OW.SH` with target parameter
-- [ ] Clean up duplicate OBJ naming (LIB_ prefix no longer needed)
-
-**Deliverable:** `wpp386 -bt=dos` builds DOS. `wpp386 -bt=os2v2` builds OS/2. Same source.
-
----
+Single source tree, single compiler.
 
 ## Phase 7: openwatcomirc
 
-**What:** sysop/0 forks OpenWatcom, adds GCC backend.
-**Why:** Linux/FreeBSD/macOS targets from the same codebase.
-
-- [ ] sysop/0's work — not hexadecimal's phase
-- [ ] PCBoard source ready for it after Phase 6
-- [ ] GCCCOMPAT.H layer if needed
-- [ ] Same `#ifdef` pattern: `__WATCOMC__` / `__GNUC__`
-- [ ] pcbrevival renamed to **pcbirc**
-
-**Deliverable:** One codebase → DOS + OS/2 + Linux + FreeBSD + macOS.
+sysop/0's GCC backend. pcbrevival → **pcbirc**.
 
 ---
 
-## Estimated Effort
+## Score Progression
 
-| Phase | Work | Difficulty |
-|---|---|---|
-| 1. Compiler compat | WATCOMPAT.H + 273 source files | Medium |
-| 2. Inline ASM | 22 library files, ~380 ASM lines | Medium |
-| 3. Standalone ASM | 7 files, 6,649 lines (ASYNC.ASM is hard) | **Hard** |
-| 4. Overlay manager | Decision + possible Watcom overlay port | Medium |
-| 5. Link and test | 11 DOS binaries | Medium |
-| 6. Unify DOS/OS2 | Merge ifdef paths | Easy |
-| 7. openwatcomirc | sysop/0's GCC backend | sysop/0 |
-
-**Critical path:** Phase 1 → Phase 3.2 (ASYNC.ASM) → Phase 5.4 (PCBOARDM link)
-
-ASYNC.ASM is the single hardest item. 1,893 lines of FOSSIL/serial I/O in TASM pascal convention. Everything else is solvable incrementally. ASYNC.ASM is the gate.
-
----
-
-## Notes
-
-- Borland C++ 3.1 does not support OS/2 32-bit flat model — confirmed
-- Clark had `__WATCOMC__` guards in borland.h — he planned for Watcom
-- Watcom C++ name mangling includes type hashes — struct definitions must match across all OBJs
-- Watcom OS/2 flat model naming: variables get leading `_`, functions get trailing `_`
-- CodeBase 4.x (not 6.5) — S4VERSION 5002, S4NDX index mode
-- TOOLKIT/SAMPLES (COPYBIN1/2, COPYTEXT, HELLO, UPGRADE) are demo code — not linked, low priority
+```
+Session start:     109 / 273 MAIN (40%)
+Phase 1.1:         170 / 273 (62%) — WATCOMPAT.H, header copies, case normalization
+Phase 1.2:         186 / 273 (68%) — _FAR_/_NEAR_ fix, DOSFILE guard, prototype fixes
+Phase 1.3:         199 / 273 (73%) — intfunctype, int86→int386, _USERENTRY
+Phase 1 final:     205 / 273 (75%) — INIT.C, SCOMP.CPP, COPYFILE.C, SHELL.C
+Phase 2 start:     384 / 561 (68%) — first inline ASM conversions (WHEREX, GOTOXY, DOS files)
+```

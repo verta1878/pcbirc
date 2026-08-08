@@ -1,3 +1,6 @@
+#ifdef __WATCOMC__
+#include <direct.h>
+#endif
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -75,7 +78,11 @@ static int near pascal runprogram(char *ExecStr, char *ParamStr) {
 
   OldDrive = getdisk();
   OldPath[0] = '\\';
+  #ifdef __WATCOMC__
+  _getdcwd(0, OldPath, sizeof(OldPath));
+#else
   getcurdir(0,&OldPath[1]);
+#endif
 
   cls();
   gotoxy(0,0);

@@ -68,6 +68,7 @@ char * LIBENTRY CSemaphore::getname(void) {
   #ifdef __OS2__
     return(Name + 7);  // return a pointer to the name after "\SEM32\"
   #endif
+  return(Name);
 }
 
 bool LIBENTRY CSemaphore::create(const char *SemName) {
@@ -125,6 +126,7 @@ int LIBENTRY CSemaphore::waitforevent(int Timeout) {
     rc = DosWaitEventSem(Semaphore,Timeout);
     return(rc == ERROR_TIMEOUT ? SEM_TIMEDOUT : SEM_INTERRUPTED);
   #endif
+  return(0);
 }
 
 

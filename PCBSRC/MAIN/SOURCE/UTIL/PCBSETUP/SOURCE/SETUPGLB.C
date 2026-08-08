@@ -11,5 +11,5 @@ char CompressBat[128] = {0};
 void shelltodos(void) {}
 
 /* ComSpec - moved to far to avoid DGROUP overflow */
-char far ComSpec[128] = {0};
+char ComSpec[128] = {0};
 char QwkBat[128] = {0};

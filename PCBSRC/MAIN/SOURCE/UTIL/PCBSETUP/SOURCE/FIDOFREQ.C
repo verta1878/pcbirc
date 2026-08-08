@@ -40,7 +40,7 @@
 #define TOPLINE      5
 #define BOTTOM       24
 
-extern far FREQ_INFO   freq_info;
+extern FREQ_INFO   freq_info;
 
 char  mask_listed[]={8,'A','U','N','L','a','u','n','l'};
 

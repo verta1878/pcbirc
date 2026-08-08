@@ -55,6 +55,11 @@ void LIBENTRY fastputc(int Loc, char C) {
   Line = (Loc / 160);
   updatelines(UPDATE_MIXED,Line,Line);
 
+#elif defined(__WATCOMC__)
+  {
+    char *vram = (char *)0xB8000;
+    vram[Loc] = C;
+  }
 #else  /* ifdef __OS2__ */
 
   NEEDSEGPUSHDS;
@@ -116,6 +121,11 @@ void LIBENTRY fastputch(int Loc, char C, char Color) {
   Line = (Loc / 160);
   updatelines(UPDATE_MIXED,Line,Line);
 
+#elif defined(__WATCOMC__)
+  {
+    char *vram = (char *)0xB8000;
+    vram[Loc] = C;
+  }
 #else  /* ifdef __OS2__ */
 
   NEEDSEGPUSHDS;

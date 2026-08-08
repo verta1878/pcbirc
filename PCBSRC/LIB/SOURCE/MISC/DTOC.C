@@ -15,7 +15,7 @@
 #include <string.h>
 #include "screen.h"
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #include <stdio.h>
 #else
   #ifdef _MSC_VER
@@ -51,7 +51,7 @@ char * LIBENTRY dtoc(int Date, char *Temp) {
   if (Y >= 100)
     Y -= 100;
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 
   sprintf(Temp,"%02d%c%02d%c%02d",M,Scrn_DateSeparator,D,Scrn_DateSeparator,Y);
 

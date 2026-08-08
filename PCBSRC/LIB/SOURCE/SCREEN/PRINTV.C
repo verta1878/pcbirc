@@ -50,6 +50,17 @@ void LIBENTRY fastprintv(int X, int Y, char *Str, char Attr) {
 
   updatelines(UPDATE_MIXED,Y,Y+Count-1);
 
+#elif defined(__WATCOMC__)
+  /* Watcom: write directly to video RAM */
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    int offset = Y * 80 + X;
+    while (*Str) {
+      vram[offset] = ((unsigned char)Attr << 8) | (unsigned char)*Str;
+      offset += 80; /* next row */
+      Str++;
+    }
+  }
 #else  /* ifdef __OS2__ */
 
   int  Len;

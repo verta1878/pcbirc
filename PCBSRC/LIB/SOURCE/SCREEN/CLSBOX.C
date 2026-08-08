@@ -21,6 +21,9 @@
   #include "model.h"
 #endif
 
+#ifdef __WATCOMC__
+#include <i86.h>
+#endif
 #include "screen.h"
 #ifdef BIOS
   #include "ansi.h"
@@ -64,6 +67,17 @@ void LIBENTRY clsbox(char X1, char Y1, char X2, char Y2, char Color) {
 
   updatelines(ScrnUpdate,Y1,Y2);
 
+#elif defined(__WATCOMC__)
+  {
+    union REGS r;
+    r.w.ax = 0x0600;
+    r.h.bh = Color;
+    r.h.ch = Y1;
+    r.h.cl = X1;
+    r.h.dh = Y2;
+    r.h.dl = X2;
+    int386(0x10, &r, &r);
+  }
 #else /* ifdef __OS2 */
 
 #ifdef BIOS

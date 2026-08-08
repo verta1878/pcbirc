@@ -1,3 +1,6 @@
+#ifdef __WATCOMC__
+#define RDONLY 0
+#endif
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* MSGPPL.C                                                                  */
 /*                                                                           */
@@ -42,8 +45,8 @@
 #include <string.h>
 #include <stdio.h>
 
-extern PcbData_t PcbData;   /* from GLOBALS */
-extern Status_t  Status;    /* from GLOBALS */
+extern pcbdattype PcbData;
+extern statustype Status;    /* from GLOBALS */
 
 
 /* Field indices — kept as #defines for readability at call sites. */
@@ -76,7 +79,7 @@ int LIBENTRY pplgetmsghdr(long msgnum, int field, char *out, int outsize) {
     return -3;
   out[0] = 0;
 
-  if (openmessagebase(Status.Conference, &Status.CurConf, &MsgBase, RDONLY) == -1)
+  if (openmessagebase(Status.Conference, &Status.CurConf, &MsgBase, (openmsgtype)0) == -1)
     return -1;
 
   rc = getmessageheader(msgnum, &MsgBase, &IdxOffset, &Index);
@@ -201,7 +204,7 @@ int LIBENTRY pplsetmsghdr(long msgnum, int field, const char *value) {
       break;
 
     case MSGHDR_REFNUM:
-      longtobassngl(atol(value), MsgBase.Header.RefNumber);
+      longtobassngl(MsgBase.Header.RefNumber, atol(value));
       break;
 
     case MSGHDR_PWD:

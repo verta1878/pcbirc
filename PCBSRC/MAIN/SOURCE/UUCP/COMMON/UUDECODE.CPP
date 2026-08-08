@@ -14,6 +14,7 @@
 
 
 #include    <string.h>
+#include <misc.h>
 
 #include    <uudecode.hpp>
 

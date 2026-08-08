@@ -411,8 +411,8 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
 
     short ck = MAGIC - (0xFF & hdr.ctl);
     if ((hdr.dle != DLE) || (hdr.k < kMIN) || (hdr.k > kMAX) ||
-        ((hdr.k ^ hdr.cklo ^ hdr.ckhi ^ hdr.ctl) != hdr.xor) ||
-        ((hdr.k == kCP) && (memcmp(&hdr.cklo,&ck,sizeof(ck)) != 0)))
+        ((hdr.k ^ hdr.cklo ^ hdr.ckhi ^ hdr.ctl) != hdr.xor_val) ||
+        ((hdr.k == kCP) && (memcmp((const void*)&hdr.cklo,(const void*)&ck,sizeof(ck)) != 0)))
     {
         if (consecutiveINVHDRS++ == 0)
         {
@@ -425,7 +425,7 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
                 (unsigned int) hdr.cklo,
                 (unsigned int) hdr.ckhi,
                 (unsigned int) hdr.ctl,
-                (unsigned int) hdr.xor);
+                (unsigned int) hdr.xor_val);
             logFile.printf("   Expected:  %03o %03o %03o %03o %03o %03o\r\n",
                 (unsigned int) DLE,
                 (unsigned int) hdr.k,
@@ -482,8 +482,8 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
                 break;
         }
 
-        cpiout << endl << pktTypeText[tf >> 6] << pktCPTText[xf >> 3] <<
-            ' ' << int(yf);
+        cpiout << endl << pktTypeText[((int)tf) >> 6] << pktCPTText[xf >> 3] <<
+            ' ' << ((int)(yf));
 
         goto SUCCESS;
     }
@@ -510,8 +510,8 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
         }
        #endif
 
-        ck = MAGIC - (chksum(buf,sz) ^ (0xFF & hdr.ctl));
-        if (memcmp(&hdr.cklo,&ck,sizeof(ck)) != 0)
+        ck = MAGIC - (chksum((unsigned char*)buf,sz) ^ (0xFF & hdr.ctl));
+        if (memcmp((const void*)&hdr.cklo,(const void*)&ck,sizeof(ck)) != 0)
         {
             if ((consecutiveNAKS++ % (negWinSize*2+1)) == 0)
                 sendPacket(xfNAK,pktRSeq);
@@ -524,7 +524,7 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
                 (unsigned int) hdr.cklo,
                 (unsigned int) hdr.ckhi,
                 (unsigned int) hdr.ctl,
-                (unsigned int) hdr.xor);
+                (unsigned int) hdr.xor_val);
             logFile.printf("Packet Size:  %04X\r\n",sz);
             logFile.printf("Packet Data:\r\n");
             const dispWidth = 16;
@@ -538,9 +538,9 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
                 logFile.printf("\r\n");
             }
             logFile.printf("   Checksum: MAGIC                                       = %06o\r\n",MAGIC);
-            logFile.printf("             chksum(buf,sz)                              = %06o\r\n",chksum(buf,sz));
+            logFile.printf("             chksum((unsigned char*)buf,sz)                              = %06o\r\n",chksum((unsigned char*)buf,sz));
             logFile.printf("             hdr.ctl                                     = %06o\r\n",(unsigned char) hdr.ctl);
-            logFile.printf("             MAGIC - (chksum(buf,sz) ^ (0xFF & hdr.ctl)) = %06o\r\n",ck);
+            logFile.printf("             MAGIC - (chksum((unsigned char*)buf,sz) ^ (0xFF & hdr.ctl)) = %06o\r\n",ck);
            #endif
             ungetCommPtr(1);
             goto FAILURE;
@@ -598,7 +598,7 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
                     (unsigned int) hdr.cklo,
                     (unsigned int) hdr.ckhi,
                     (unsigned int) hdr.ctl,
-                    (unsigned int) hdr.xor);
+                    (unsigned int) hdr.xor_val);
                #endif
             }
             if ((consecutiveNAKS++ % (negWinSize*2+1)) == 0)
@@ -608,9 +608,9 @@ int pascal cGPDL::receivePacket(unsigned char & tf, unsigned char & xf,
         }
     }
 
-    cpiout << endl << pktTypeText[tf >> 6] <<
+    cpiout << endl << pktTypeText[((int)tf) >> 6] <<
         hex << setw(4) << setfill('0') << kDBSTable[hdr.k] << ' ' <<
-        dec << (int(xf) >> 3) << ' ' << int(yf);
+        dec << (((int)(xf)) >> 3) << ' ' << ((int)(yf));
 
 SUCCESS:
 
@@ -696,11 +696,11 @@ int pascal cGPDL::sendPacket(sGPKTHDR & hdr, char * ds)
     if (hdr.k == kCP)
         ck = MAGIC - (0xFF & hdr.ctl);
     else
-        ck = MAGIC - (chksum(ds,kDBSTable[hdr.k]) ^ (0xFF & hdr.ctl));
+        ck = MAGIC - (chksum((unsigned char*)ds,kDBSTable[hdr.k]) ^ (0xFF & hdr.ctl));
 
     memcpy(&hdr.cklo,&ck,sizeof(ck));
 
-    hdr.xor = hdr.k ^ hdr.cklo ^ hdr.ckhi ^ hdr.ctl;
+    hdr.xor_val = hdr.k ^ hdr.cklo ^ hdr.ckhi ^ hdr.ctl;
 
     cpoout << endl << pktTypeText[(hdr.ctl&tfMASK)>>6];
     if (hdr.k == kCP)

@@ -13,7 +13,7 @@
 
 
 #include <misc.h>
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #include <stdio.h>
 #else
 //#pragma inline
@@ -25,7 +25,7 @@
 
 
 char * LIBENTRY ttoc(int Time, char *Temp) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   sprintf(Temp,"%02d:%02d",((Time & 0xF800) >> 11),((Time >> 5) & 0x3F));
 #else
 #ifdef LDATA

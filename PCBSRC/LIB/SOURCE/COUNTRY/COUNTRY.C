@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #define INCL_DOSNLS
   #include <os2.h>
 #else
@@ -54,7 +54,7 @@
 
 countrytype Country;
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
   typedef struct {
     int  TableSize;       /* how many of the 128 chars are used */
     char Chars[128];      /* characters in conversion table     */
@@ -78,7 +78,7 @@ unsigned char Collate[256];
 
 
 void LIBENTRY getcountryspecs(int GetCountry, int GetCodePage) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     COUNTRYCODE CountryCode;
     COUNTRYINFO CountryBuffer;
     ULONG       Length;
@@ -95,7 +95,7 @@ void LIBENTRY getcountryspecs(int GetCountry, int GetCodePage) {
   for (X = 'a'; X <= 'z'; X++)
     UpperCase[X] = (char) (X - 32);
 
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     CountryCode.country  = GetCountry;
     CountryCode.codepage = GetCodePage;
 
@@ -170,7 +170,7 @@ void LIBENTRY getcountryspecs(int GetCountry, int GetCodePage) {
 
     X = CodePage = GetCodePage;
 
-    #ifndef __OS2__
+    #if !defined(__OS2__) && !defined(__WATCOMC__)
       /* does this need to be convered to OS/2 code??? */
 
       asm mov bx,X                  /* get desired code page info      */
@@ -179,7 +179,7 @@ void LIBENTRY getcountryspecs(int GetCountry, int GetCodePage) {
     #endif
   }
 
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     CountryCode.country  = CurrentCountry;
     CountryCode.codepage = CodePage;
 
@@ -221,7 +221,7 @@ void LIBENTRY getcountryspecs(int GetCountry, int GetCodePage) {
 
 
   getupcollatetable:
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
 
     for (X = 0; X <= 255; X++)
       CopyBuf[X] = (char) X;

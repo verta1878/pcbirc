@@ -40,13 +40,22 @@
 #include <bug.h>
 #include <screen.h>
 #include <scrnio.h>
-#include <scrnio.ext>
+//#include <scrnio.ext>
 //#include <pcbtools.h>
 #include <misc.h>
 #include <pcb.h>
 #include <help.h>
 #include <vmdata.h>
 #include <data.hpp>
+
+extern char *HelpVerifyStr;
+extern int GeneralHelpNum;
+extern char HelpName[];
+extern char ColorCnf[];
+extern char MainHead1[];
+extern char MainHead2[];
+extern char MainHead3[];
+extern int KeyFlags;
 
 // Project headers
 #include <convert.hpp>
@@ -163,8 +172,8 @@ void static near pascal menu(void)
   addmenu(2,"Manually add areas",setupAreasMan);
 
 
-  MainHead1 = "PCBoard Fido Utility";
-  MainHead2 = "Copyright (C) 1996 Clark Development, Inc.";
+  strcpy(MainHead1, "PCBoard Fido Utility");
+  strcpy(MainHead2, "Copyright (C) 1996 Clark Development, Inc.");
 
    do
    {

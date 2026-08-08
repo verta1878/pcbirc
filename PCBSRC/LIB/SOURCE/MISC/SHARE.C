@@ -35,7 +35,7 @@
 */
 
 bool LIBENTRY shareloaded(void) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   return(TRUE);
 #else
   asm  Push  Ds
@@ -78,7 +78,7 @@ exit:;
 
 #pragma argsused
 bool LIBENTRY testforshareloaded(char *FileName) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
     return(TRUE);
 #else
   int  Handle;

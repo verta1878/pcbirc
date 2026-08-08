@@ -29,7 +29,7 @@
 /* sorting of information that potentially includes accented characters  */
 
 int LIBENTRY memfcmp(const void *s1, const void *s2, size_t n) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   int dif;
   const unsigned char *p1 = (unsigned char *) s1;
   const unsigned char *p2 = (unsigned char *) s2;

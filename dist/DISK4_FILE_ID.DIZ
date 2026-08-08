@@ -1,0 +1,19 @@
+  ╔══════════════════════════════════╗
+  ║  PCBoard 15.4 - Disk 4 of 5     ║
+  ║  Installer & Build Tools        ║
+  ╠══════════════════════════════════╣
+  ║                                  ║
+  ║  pcbis         Config UI (TUI)   ║
+  ║  pcbis_initv   First-time setup  ║
+  ║  pcbis_startup Start BBS         ║
+  ║  pcbis_shutdown Stop BBS         ║
+  ║  pcbis.cfg     Configuration     ║
+  ║                                  ║
+  ║  WATCOMPAT.H   Watcom compat     ║
+  ║  OpenWatcom 2.0 compile flags    ║
+  ║  Borland BC++ 3.1 project files  ║
+  ║  OS/2 Toolkit 4.5 headers        ║
+  ║                                  ║
+  ║  Clark Development / pcbrevival  ║
+  ║  hexadecimal & crew - 2026       ║
+  ╚══════════════════════════════════╝

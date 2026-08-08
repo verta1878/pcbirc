@@ -2323,25 +2323,25 @@ int LIBENTRY cSCRIPT::execute(char * af)
 				i1 = int(tmpInteger.values.vINTEGER & 0x000000FF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.ax = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.ax = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.bx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.bx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.cx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.cx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.dx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.dx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.si = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.si = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.di = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.di = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.x.flags = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.w.cflag = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
 				intrSEGS.ds = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);

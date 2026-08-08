@@ -14,7 +14,7 @@
 
 /* this module has not been converted to OS/2 */
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
 
 //#pragma inline
 #include <model.h>

@@ -44,7 +44,8 @@
 #include <bug.h>
 #include <screen.h>
 #include <scrnio.h>
-#include <scrnio.ext>
+//#include <scrnio.ext>
+extern int KeyFlags;
 #include <cnameidx.h>
 //#include <pcbtools.h>
 #include <misc.h>

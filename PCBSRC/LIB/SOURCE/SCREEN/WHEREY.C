@@ -15,35 +15,30 @@
 #ifdef __OS2__
   #define INCL_VIO
   #include <os2.h>
-#else
-  #ifdef _MSC_VER
-    #include <borland.h>
-  #else
-//  #pragma inline
-  #endif
+#elif defined(__WATCOMC__)
+  #include <i86.h>
+#elif defined(_MSC_VER)
+  #include <borland.h>
 #endif
 
-#include "screen.h"
-
-#pragma warn -rvl
-/********************************************************************
- *
- *  Function:  wherey()
- *
- *  report cursor row position
- */
+#include <screen.h>
 
 char LIBENTRY wherey(void) {
 #ifdef __OS2__
   USHORT Row, Column;
   VioGetCurPos(&Row,&Column,0);
-  Scrn_Y = (char) Column;
+  Scrn_Y = (char) Row;
   return((char) Row);
+#elif defined(__WATCOMC__)
+  union REGS r;
+  r.h.ah = 3;
+  r.h.bh = 0;
+  int386(0x10, &r, &r);
+  return (char) r.h.dh;
 #else
   asm  Mov  Ah,3
   asm  Xor  Bh,Bh
   asm  Int  10h
   asm  Mov  Al,Dh
-/*  return(_AL);*/ /* return Dh in Al */
 #endif
 }

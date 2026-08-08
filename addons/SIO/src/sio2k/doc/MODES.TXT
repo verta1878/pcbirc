@@ -1,0 +1,104 @@
+
+
+
+
+                                    MODES
+              Replacement for OS/2's MODE.COM for serial ports
+
+
+
+                   Copyright (c) 2000 by Raymond L. Gwinn
+                              26 Tanager Place
+                        Beckley, West Virginia 25801
+                            All Rights Reserved
+
+                             November 10, 2000
+
+
+                         InterNet: sio2k@gwinn.com
+                            FAX: 1-304-255-7902
+                          WEB http://www.gwinn.com
+                             FTP ftp.gwinn.com
+
+
+                               Documentation
+YOU CANNOT USE THIS PROGRAM WITHOUT THE PERMISSION OF THE AUTHOR.  EVEN
+THEN, YOU USE IT AT YOUR OWN RISK.  THERE ARE NO GUARANTEES OR SUPPORT.
+
+The program MODE.COM (aka "the MODE command") that is supplied with OS/2
+has some limitations with respect to serial ports.  For example, at the
+date of this writing, the mode command supports only com1 to com9.  The
+author's SIO drivers, sio and sio2k will support more than 9 serial ports. 
+Over the years, I have received numerous requests for a MODE (like) program
+that supports more than 9 serial ports.  Not being an easy undertaking, I
+resisted writing the program for years.  MODES.EXE (the MODES command) is
+an end to resistance.
+
+The MODES command is not unique to the sio2k drivers.  The program should
+work with any drivers remotely similar to com.sys.  However, some features,
+such as locking the bit rate, are unique to the sio2k drivers and will not
+work with other drivers.
+
+I would like to make a few personal comments, or thoughts about the MODE
+command.  I suspect the program/command may be a test by an advanced alien
+civilization for intelligent life forms.  If not that, then it may be a
+mind control experiment by the CIA.  That is to say, if you can understand
+the command, then your mind may be one that should be controlled.
+
+That being said, the syntax of the MODES command is intended to be
+identical to the MODE command, as far as com ports are concerned.  Things
+like MODES LPT1 will NOT work, but as to serial ports (ie MODE COM1) the
+MODES command should be a direct replacement for the MODE command.
+
+To access IBM's OS/2 documentation for the MODE command on WARP 4, go to an
+OS/2 command prompt and type VIEW CMDREF.  If you insist on going the GUI
+way, open (double click) the "Assistance Center" on the desktop, then open
+the "Information" folder, then open the "Reference and Commands" folder,
+and finally open the "OS/2 Warp Command Reference" document.  IN THIS
+DOCUMENT, I WILL ONLY DOCUMENT THE DIFFERENCES BETWEEN MODE AND MODES.
+
+There are some features of the MODES command that are not currently being
+documented because the drivers are not yet completely ready to implement
+the commands.
+
+The intended differences between MODE and MODES are:
+
+1 - The displayed information is very similar, but not identical.  MODES
+often provides more information than MODE.
+
+2 - MODES DOES NOT VALIDATE THE BIT RATE, except with respect to minimum
+and maximum.  So, if you type 56700 instead of 57600, you will NOT get an
+error message, and you will get strange results.
+
+3 - The bit rate can be preceded by "LOCK" or "UNLOCK", without the quote
+marks.  If LOCK is specified without a following bit rate, then the bit
+rate is locked at the current bit rate.  When the bit rate is locked,
+application programs, are prevented from altering the bit rate.  The UNLOCK
+option enables application programs to again set/reset the bit rate.  Some
+examples are:
+
+     modes com1:lock 115200        ;lock at 115200
+     modes com1 unlock 57600       ;unlock and set bit rate to 57600
+     modes com1 lock               ;lock at the currently set bit rate
+     modes com1 unlock             ;obvious
+
+
+4 - The next difference is an experiment, and I really need feedback to
+sio2k@gwinn.com about success and problems this feature may cause.  THIS
+FEATURE HAS NOT BEEN ADDRESSES IN VSIO2K YET, so the effects on DOS/Windows
+sessions is unknown, and at this point is/are unpredictable.  Okay, what is
+this experimental feature.  Well, MODES will allow you to swap COM ports. 
+That is you can swap com4 with com1, or com10 with com6.  Note that
+sio2k.sys does not keep track of the swapping, so there is no automatic
+undo.  Of course, you can undo a swap by re-swapping the ports.  Multiple
+ports can be swapped on a single MODES command line.  Some examples are:
+
+     modes com1=com10              ;swap com1 with com10
+     modes com10=com1              ;the same as the first example
+     modes com1=com4 com7=com2     ;swap com1 with com4, also com2 and com7
+
+I will address and expand this feature into DOS/Windows sessions in the
+near future.
+
+Have fun.
+

@@ -42,6 +42,15 @@ void LIBENTRY readscreen2(int X, int Y, char *Str, int Len) {
   for (p += (Y*80 + X); Len != 0; Len--, p++, q++)
     *q = *p;
 
+#elif defined(__WATCOMC__)
+  /* Watcom: read directly from video RAM */
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    int pos = Y * 80 + X;
+    int i;
+    for (i = 0; i < Len; i++)
+      Str[i] = vram[pos + i];
+  }
 #else  /* ifdef __OS2__ */
 
   asm  Push Ds

@@ -146,7 +146,7 @@ void pascal editnodeclass::editrecord(void *Rec) {
 
   switch(Column) {
     case 0:  inputstr(LEFTSIDE+6,LineNum,sizeof(buffer)-1,"",buffer,buffer,mask_address,INPUT_CAPS,NODEARCCFG+0);
-             fido_nodestr_to_int(buffer,&p->zone,&p->net,&p->node,&p->point);
+             { unsigned _z,_n,_d,_p; fido_nodestr_to_int(buffer,&_z,&_n,&_d,&_p); p->zone=(unsigned short)_z; p->net=(unsigned short)_n; p->node=(unsigned short)_d; p->point=(unsigned short)_p; }
              break;
     case 1:  inputnum(LEFTSIDE+37,LineNum,1,"",&p->archiver_index,vINT,NODEARCCFG+1);
              break;

@@ -15,6 +15,8 @@
 #ifdef __OS2__
 #define INCL_DOSFILEMGR
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #include "model.h"
@@ -70,6 +72,15 @@ int LIBENTRY dosdup(int OldHandle DOS2ERROR) {
       strcpy(OpenFileNames[NewHandle],OpenFileNames[OldHandle]);
     }
 
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x45;
+      r.w.bx = OldHandle;
+      int386(0x21, &r, &r);
+      if (r.w.cflag) goto error;
+      NewHandle = r.w.ax;
+    }
   #else
 
     asm  mov  ah,45h        /* dos: open call */
@@ -95,10 +106,11 @@ int LIBENTRY dosdup(int OldHandle DOS2ERROR) {
     strcpy(OpenFileNames[NewHandle],OpenFileNames[OldHandle]);
     goto end;
 
+  #endif
+    goto end;
     error:
     getextendederror();
     NewHandle = -1;
-  #endif
 
 end:
   if (dosdupcallback != NULL)

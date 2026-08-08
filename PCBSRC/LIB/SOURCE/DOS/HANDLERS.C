@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #define INCL_DOSMISC
   #define INCL_DOSFILEMGR
   #include <os2.h>
@@ -82,7 +82,7 @@ void interrupt ctrlbreak(void) {
 */
 
 void LIBENTRY installhandlers(void) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     DosError(FERR_ENABLEHARDERR|FERR_ENABLEEXCEPTION);
     DosSetMaxFH(MAXHANDLES);
   #else
@@ -108,7 +108,7 @@ void LIBENTRY installhandlers(void) {
 */
 
 void uninstallhandlers(void) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     DosError(FERR_ENABLEHARDERR|FERR_ENABLEEXCEPTION);
   #else
     if (oldctrlbreak != NULL) {
@@ -121,7 +121,7 @@ void uninstallhandlers(void) {
 
 
 void LIBENTRY reinstallhandlers(void) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     DosError(FERR_DISABLEHARDERR|FERR_ENABLEEXCEPTION);
   #else
     setvect(0x1B,int23hnd);

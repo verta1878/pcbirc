@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #include <ctype.h>
   #include <string.h>
 #else
@@ -39,7 +39,7 @@
 */
 
 void LIBENTRY maketable(char *Table, char *Srch, char SrchLen) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     /* pre-fill the entire table with SrchLen */
     memset(Table,SrchLen,256);
     /* then each letter in the search string is set in the table as the */
@@ -120,7 +120,7 @@ done:;                            /*                               */
 */
 
 int LIBENTRY bmsearch(char *Buf, int BufLen, char *Table, char *Srch, char SrchLen) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     char  LastCharInSrch;
     char  C;
     char *p;
@@ -315,7 +315,7 @@ exit:
 */
 
 int LIBENTRY bmisearch(char *Buf, int BufLen, char *Table, char *Srch, char SrchLen) {
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     char  LastCharInSrch;
     char  C;
     char *p;

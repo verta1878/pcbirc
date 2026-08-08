@@ -14,10 +14,16 @@
 
 #if defined(_MSC_VER) || defined(__WATCOMC__)
   #include <direct.h>
+#ifdef __WATCOMC__
+#endif
+#ifdef __WATCOMC__
+#endif
+  #define dfree diskfree_t
   #define df_bsec   bytes_per_sector
   #define df_sclus  sectors_per_cluster
   #define df_total  total_clusters
   #define df_avail  avail_clusters
+  #define getdfree(d,p) _dos_getdiskfree(d,p)
 #else
   #include <dir.h>
 #endif

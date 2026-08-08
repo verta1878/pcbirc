@@ -13,6 +13,7 @@
 
 
 #include <dos.h>
+#include <borland.h>
 #include <alloc.h>
 #include <stdlib.h>
 #include <string.h>
@@ -102,7 +103,7 @@ static char * pascal near __DOSenv(char **envV, char *pathP, void **envSave)
 /*              Append program name to the environment
 */
                 if (pathP) {
-                        *((short *)bufP)++ = 1;
+                        *((short *)bufP) = 1; bufP += sizeof(short);
                         bufP = stpcpy(bufP, pathP);
                         *bufP++ = '\0';
                 }

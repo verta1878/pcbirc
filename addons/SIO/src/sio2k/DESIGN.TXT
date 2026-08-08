@@ -1,0 +1,90 @@
+
+
+
+                     SIO Version 2, Design Information
+General:
+
+SIO version 2 is a complete new set of drivers for OS/2.  It is not 
+modification and/or additions to the SIO Version 1 code.  Programs, like
+Vmodem.exe, are derivatives of the of the originals.
+
+The SIO2K set of drivers have two basic modes of operation, with a
+configuration file and without a configuration file.  The vast majority of
+users will NOT need a configuration file.  Those that wish can exercise a
+great deal of control (possibly getting into a lot of trouble) using a
+configuration file.
+
+The OS/2 serial driver functions has been divided into two main drivers. 
+They are, SIO2K.SYS and UART.SYS.  SIO2K.SYS being the driver that services
+requests from OS/2 application.  UART.SYS being a driver that services
+requests from SIO2K.SYS to directly deal with the hardware.  The two
+drivers work closely via direct calls.
+
+The division of the serial driver's functions amounts to a separation by
+logical and physical functions.  SIO2K.SYS being the logical and UART.SYS
+being the physical.  Those using standard serial ports need never use more
+than these two basic OS/2 drivers.  DOS/Windows programs will require a
+third driver, VSIO2K.SYS, which is the replacement for the virtual driver
+VSIO.SYS.
+
+UART.SYS is a driver that supports basic UARTS.  Basic UARTS are those like
+the original 8250 and its extensions.  The UARTS currently supported are
+the 8250, 16550, 16650, 16750, 16850, 16950 and their variations (eg 8250A,
+16554, 16952 etc).
+
+Having separated the functions of the serial driver, it is now much easier
+to support additional varied functions and hardware by adding additional
+drivers that uses the same interface as UART.SYS.  For example, there is an
+ESP.SYS to support the Hayes ESP card (I have been told that Hayes has
+discontinued the ESP, a shame).  Another example is VMODEM.SYS to support
+VMODEM.EXE.
+
+Another advantage of this separation is that those who do not have hardware
+like the ESP need not be burdened with the code to support those devices,
+or the potential problems of code executing to support hardware that a
+given user does not have.
+
+Some Specifics
+
+SIO Version 2 can support an unlimited number of serial devices.  Well, in
+reality there are limits, but they are imposed by the memory and hardware
+in your computer.  In addition, there is an arbitrary limit of 256 support
+ports imposed by the code.  This is done to keep memory utilization down.
+
+The UART hardware is not touched prior to the port being opened by an
+application program.  In other words, the UARTs are not touched at boot
+time.  Problems occurring at boot time are next to impossible for users to
+deal with.  Eliminating UART examination at boot time removes much of the
+potential of problems during the boot process.  A log file is created (or
+added to) during the boot process to report problems and information about
+the loading process.
+
+SIO version 2 can be loaded at the same time as another serial driver, such
+as, COM.SYS and SIO.SYS (version 1).  This means one can use COM.SYS to
+control COM1 to COM4 and SIO2K.SYS to control COM5 and up.  However, one
+must use a configuration file to load concurrently with another driver.
+
+The virtual driver, VSIO2K.SYS is NOT limited to use with SIO2K.SYS.  The
+virtual driver can be used with any OS/2 driver (such as COM.SYS) that
+correctly implements the OS/2 serial driver specification. This means that
+users with drivers like the DigiBoard drivers should now have a virtual
+driver allowing DOS/Windows programs to access those ports.  Note:
+VSIO2K.SYS has currently only been tested with SIO2K.SYS and COM.SYS.
+
+The IRQ being used by a given UART is always automatically detected.  There
+is no way for the user to specify the IRQ.  Note: if the IRQ cannot be
+automatically detected, the serial port is simply not going to work, even
+if the user specifies an IRQ.  So there is no reason for the user to
+specify the IRQ.
+
+Prior to allowing a serial port to be accessed, an integrity check is
+performed.  If the UART hardware fails the integrity check, a "NOT READY"
+error is returned to the application that accessed the serial port.
+
+All the drivers in the SIO version 2 package can/will create logfiles. 
+Operating systems, such as OS/2, make it very difficult for a driver to
+communicate useful information to users during the booting process.  Often
+the user is presented with an obscure error message that has little
+relevance to the actual problem.  Hopefully, the logfiles will make the
+real problem a little more understandable to the user.
+

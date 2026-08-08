@@ -224,7 +224,7 @@ void LIBENTRY readpcboardsys(void) {
 
       #ifndef PCB_DEMO
         if (PcbData.NumAreas > 40 && BytesRead > 128) {
-          if ((p = malloc(ExtConfLen*2)) != NULL) {
+          if ((p = (char *)malloc(ExtConfLen*2)) != NULL) {
             dosfread(p,ExtConfLen*2,&File);
             fmemcpy(&ConfFlags[JOINED+5],p,ExtConfLen);
             fmemcpy(&ConfFlags[SCANNED+5],p+ExtConfLen,ExtConfLen);
@@ -287,7 +287,7 @@ void LIBENTRY readpcboardsys(void) {
       readpcbtextfile(Status.MultiLangExt,PROGRAM);
 
     #ifndef LIB
-      Status.MemorizeNum = bassngltolong(Sys.MemorizeNum);
+      Status.MemorizeNum = bassngltolong((unsigned char *)Sys.MemorizeNum);
     #endif
     settimer(1,Control.KbdTimer);
     dosfclose(&File);

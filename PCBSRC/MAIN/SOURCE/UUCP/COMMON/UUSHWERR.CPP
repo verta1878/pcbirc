@@ -1,4 +1,5 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+#include <conio.h>
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
 /* You are granted the right to use this source code for the building of any */
@@ -50,7 +51,7 @@ char * LIBENTRY doserror ( char * Str, int ExtendedError );
 
 // extern "C" {
 
-void pascal showerror(char * path, char * str, bool timed)
+int pascal showerror(char * path, char * str, bool timed)
 {
     static bool InHere = FALSE;
 
@@ -85,6 +86,7 @@ void pascal showerror(char * path, char * str, bool timed)
                 str, path, doserror(NULL,ExtendedError));
         InHere = FALSE;
     }
+    return 0;
 }
 
 unsigned pascal retrycount(unsigned count, char * path, char * str)

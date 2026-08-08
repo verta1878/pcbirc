@@ -44,6 +44,18 @@ void LIBENTRY deletechar(int X, int Y, char C, int Len) {
 
   updatelines(UPDATE_MIXED,Y,Y);
 
+#elif defined(__WATCOMC__)
+  /* Watcom: shift video RAM left */
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    int pos = Y * 80 + X;
+    int end = Y * 80 + 79;
+    while (pos < end) {
+      vram[pos] = vram[pos + 1];
+      pos++;
+    }
+    vram[end] = ((unsigned char)C << 8) | 0x20;
+  }
 #else
   NEEDSEGPUSHDS;
   NEEDSEGGETDS(Scrn_Addr);

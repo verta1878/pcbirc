@@ -21,7 +21,7 @@
   #pragma hdrstop
 #endif
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   #define INCL_DOSDEVICES
   #include <os2.h>
 #endif
@@ -33,7 +33,7 @@
   #include <borland.h>
 #else
   #include <mem.h>
-  #ifndef __OS2__
+  #if !defined(__OS2__) && !defined(__WATCOMC__)
 //  #pragma inline
   #endif
 #endif
@@ -60,12 +60,12 @@ void LIBENTRY logger(int Handle, int Category, int Function) {
 #endif
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 int LIBENTRY DevIOCtl(int Handle, int Cat, int Func, void _FAR_ *DataPacket,unsigned long DataLen, void _FAR_ *CmdPacket, unsigned long CmdLen) {
 #else
 int LIBENTRY DevIOCtl(int Handle, int CatFunc, void _FAR_ *DataPacket, void _FAR_ *CmdPacket) {
 #endif
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     logger(Handle,Cat,Func);
     return(DosDevIOCtl(Handle,
                        Cat,
@@ -109,12 +109,12 @@ void LIBENTRY setioctrlhandle(int Handle) {
 }
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 int LIBENTRY getioctrl(int Cat, int Func, void _FAR_ *DataPacket, unsigned long DataLen) {
 #else
 int LIBENTRY getioctrl(int CatFunc, void _FAR_ *DataPacket) {
 #endif
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     unsigned long CmdLen = 0;
     logger(CommonHandle,Cat,Func);
     return(DosDevIOCtl(CommonHandle,
@@ -151,12 +151,12 @@ int LIBENTRY getioctrl(int CatFunc, void _FAR_ *DataPacket) {
 }        /*lint !e563 */
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 int LIBENTRY setioctrl(int Cat, int Func, void _FAR_ *CmdPacket, unsigned long CmdLen) {
 #else
 int LIBENTRY setioctrl(int CatFunc, void _FAR_ *CmdPacket) {
 #endif
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     unsigned long DataLen = 0;
     logger(CommonHandle,Cat,Func);
     return(DosDevIOCtl(CommonHandle,
@@ -194,12 +194,12 @@ int LIBENTRY setioctrl(int CatFunc, void _FAR_ *CmdPacket) {
 }        /*lint !e563 */
 
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
 void LIBENTRY callioctrl(int Cat, int Func) {
 #else
 void LIBENTRY callioctrl(int CatFunc) {
 #endif
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     unsigned long CmdLen  = 0;
     unsigned long DataLen = 0;
     logger(CommonHandle,Cat,Func);

@@ -1839,7 +1839,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   );
                   break;
 
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
              case TOK_OP_REGAL: case TOK_OP_REGAH:
              case TOK_OP_REGBL: case TOK_OP_REGBH:
              case TOK_OP_REGCL: case TOK_OP_REGCH:
@@ -1885,35 +1885,35 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_REGAX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.ax);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.ax);
                   break;
 
              case TOK_OP_REGBX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.bx);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.bx);
                   break;
 
              case TOK_OP_REGCX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.cx);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.cx);
                   break;
 
              case TOK_OP_REGDX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.dx);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.dx);
                   break;
 
              case TOK_OP_REGSI:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.si);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.si);
                   break;
 
              case TOK_OP_REGDI:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.di);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.di);
                   break;
 
              case TOK_OP_REGF:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.x.flags);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.w.cflag);
                   break;
 
              case TOK_OP_REGCF:
-                  rp = new cVARVAL(vtBOOLEAN,intrREGS.x.cflag);
+                  rp = new cVARVAL(vtBOOLEAN,intrREGS.w.cflag);
                   break;
 
              case TOK_OP_REGDS:
@@ -1936,13 +1936,13 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_PEEKB:
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                   unsupported("PEEK() or PEEKB() function");
 #endif
                   falseErrBreak(v1);
                   i = *p1;
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                        0
 #else
                        *(tBYTE _FAR_ *)(i.values.vINTEGER)
@@ -1952,13 +1952,13 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_PEEKW:
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                   unsupported("PEEKW() function");
 #endif
                   falseErrBreak(v1);
                   i = *p1;
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                        0
 #else
                        *(tWORD _FAR_ *)(i.values.vINTEGER)
@@ -1968,14 +1968,14 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_PEEKDW:
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                   unsupported("PEEKDW() function");
 #endif
                   {
                   falseErrBreak(v1);
                   i = *p1;
 
-#if ! (defined(PCB_DEMO) || defined(__OS2__))
+#if ! (defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__))
                   unsigned dwseg = unsigned(i.values.vINTEGER >> 16);
                   unsigned dwoff = unsigned(i.values.vINTEGER & 0x0000FFFFL);
 
@@ -1990,7 +1990,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
 #endif
 
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                        0
 #else
                        (tINTEGER(dwseg)<<16)+tINTEGER(dwoff)
@@ -2002,7 +2002,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_MKADDR:
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                   unsupported("MKADDR() function");
 #endif
                   falseErrBreak(v2);
@@ -2011,7 +2011,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   i = *p2;
                   b2 = tWORD(i.values.vINTEGER & 0x0000FFFF);
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__)
+#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
                        0
 #else
                        tINTEGER(b1)+(tINTEGER(b2)<<16)

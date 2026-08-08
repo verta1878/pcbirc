@@ -136,20 +136,24 @@ enum {NOHELP,HLP_MORE};
 typedef enum {WATCHKBD=1, WATCHSESSION=2, READUSERSYS=4, SHOWSTATUSLINE=8, LMRS=16, CONFFLAGS=32, TPA=64, NOCLS=128} openstatus;
 typedef enum {NONE, BLANKLINE, HELP, NAME, CONFREG, COMMENT, MODEMSTATS } statlinetype;
 typedef enum {OFFLINE, LOCAL, REMOTE } onlinetype;
-#ifdef H_SCRNIO // used by steve morris to handle pcbmodem which uses both scrnio and the toolkit
-typedef enum {DEFAULT=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024} displaytype;
+#if defined(H_SCRNIO) || defined(__WATCOMC__)
+#define _DISPLAYTYPE_DEFINED
+#ifdef __WATCOMC__
+#pragma push_macro("DEFAULTS")
+#pragma push_macro("WORDWRAP")
+#undef DEFAULTS
+#undef WORDWRAP
+#ifdef __WATCOMC__
+typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,_PCBYESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768,NOTBLANK=32768} displaytype;
+#define YESNO _PCBYESNO
 #else
-typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,YESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768U} displaytype;
+typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,YESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768,NOTBLANK=32768} displaytype;
 #endif
-typedef enum {MOREPROMPT,PRESSENTER } moretype;
-typedef enum {NOALTERNATE=0,GRAPHICS=1,SECURITY=2,LANGUAGE=4} displayfiletype;
-typedef enum {LEFTJUSTIFY, SPACERIGHT, SPACERIGHTAT } padtype;
-typedef enum {NOCHANGE,FORCENONSTOP,FORCECOUNTLINES} startdisplaytype;
-typedef enum {NEWTIME, CONFTIME, CREDTIME} timereasontype;
-typedef enum {SHELLDIRECT, SHELLVIACOMMAND} shelltype;
-typedef enum {WAITFOROKAY, DONTWAIT} modemverifytype;
-typedef enum {ACTSHOW, ACTBEGIN, ACTEND, ACTSUSPEND, ACTRESUME} acttype;
-
+#ifdef __WATCOMC__
+#pragma pop_macro("WORDWRAP")
+#pragma pop_macro("DEFAULTS")
+#endif
+#endif
 /* Some functions which take ENUM'd parameters and OR them together declare  */
 /* their parameter types using the typedef'd name of the enum values.  I     */
 /* like this, but Watcom does not.  These following lines of code help solve */
@@ -168,11 +172,16 @@ typedef enum {ACTSHOW, ACTBEGIN, ACTEND, ACTSUSPEND, ACTRESUME} acttype;
 
 #ifndef BASREAL
   #define BASREAL  1
+#ifndef _BASSNGL_DEFINED
+#define _BASSNGL_DEFINED
   typedef unsigned char bassngl[4];
+#endif
   typedef unsigned char basdble[8];
 #endif
 
 #pragma pack(4)
+#ifndef _DOSFILE_DEFINED
+#define _DOSFILE_DEFINED
 typedef struct {      /* struct used with dosfopen, dosfgets, & dosfclose */
   int      handle;    /* dos file handle */
   char     *buffer;   /* pointer to buffer space */
@@ -183,6 +192,7 @@ typedef struct {      /* struct used with dosfopen, dosfgets, & dosfclose */
   long     curpos;    /* current read/write position in the file */
   char     last_op;   /* last operation (OP_NONE, OP_READ, OP_WRIT) */
 } DOSFILE;
+#endif /* DOSFILE guard */
 #pragma pack()
 
 #pragma pack(4)
@@ -838,6 +848,50 @@ typedef struct {
 
 #endif
 
+/* Forward type declarations for pcboard.h enum types (Watcom needs these
+   when PCBTOOLS.H is included without pcboard.h) */
+#ifdef __WATCOMC__
+#ifndef _PCBOARD_H_TYPES_
+#define _PCBOARD_H_TYPES_
+typedef int acttype;
+typedef int moretype;
+typedef int padtype;
+typedef int startdisplaytype;
+typedef int timereasontype;
+typedef int shelltype;
+typedef int modemverifytype;
+/* Forward enum values for pcboard.h types */
+#define NOCHANGE 0
+#define FORCENONSTOP 1
+#define FORCECOUNTLINES 2
+#define ACTSHOW 0
+#define ACTBEGIN 1
+#define ACTEND 2
+#define ACTSUSPEND 3
+#define ACTRESUME 4
+#define MOREPROMPT 0
+#define PRESSENTER 1
+/* modemverifytype values */
+#define WAITFOROKAY 1
+#define NOWAIT 0
+/* displayfiletype values */
+#define NOALTERNATE 0
+#define GRAPHICS 1
+#define SECURITY 2
+#define LANGUAGE 4
+#define WELCOME 8
+#define RUNMENU 16
+#define RUNPPL 32
+#define CMDFILE 64
+#define DISABLESUBFILES 128
+/* padtype values */
+#define SPACELEFT 0
+#define SPACERIGHT 1
+#define NOSPACE 2
+#define DONTWAIT 0
+#endif
+#endif
+
 extern asytype     Asy;
 extern char        B16550;
 extern char        B16550A;
@@ -1003,8 +1057,8 @@ char * LIBENTRY strnchr(char *Str, char C, int Len);
 int  LIBENTRY dosappendcheck(char *path, int access);
 int  LIBENTRY dosopencheck(char *path, int access);
 int  LIBENTRY doscreatecheck(char *path, int access, unsigned mode);
-int  LIBENTRY writecheck(int handle, void *buffer, unsigned count);
-int  LIBENTRY readcheck(int handle, void *buffer, unsigned count);
+unsigned LIBENTRY writecheck(int handle, void *buffer, unsigned count);
+unsigned LIBENTRY readcheck(int handle, void *buffer, unsigned count);
 int  LIBENTRY dosappend(char *FileName, int OpenFlags);
 void LIBENTRY dosclose(int handle);
 int  LIBENTRY doscommit(int Handle);
@@ -1025,6 +1079,7 @@ int  LIBENTRY dossetbuf(DOSFILE *file, unsigned BufSize);
 int  LIBENTRY doswrite(int handle, void *buf, unsigned len DOS2ERROR);
 int  LIBENTRY dosdup(int OldHandle DOS2ERROR);
 int  LIBENTRY dosopen(char *FileName, int OpenFlags DOS2ERROR);
+
 
 
 void LIBENTRY showactivity(acttype Type);
@@ -1398,3 +1453,4 @@ void LIBENTRY setpcbtext(int TextNum, pcbtextcb *Func);
 */
 
 #endif  /* __PCBTOOLS_H */
+#endif

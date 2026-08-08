@@ -49,6 +49,15 @@ void LIBENTRY readscreen(int X, int Y, char Str[80], char Attr, int Len) {
 
   updatelines(UPDATE_MIXED,Y,Y);
 
+#elif defined(__WATCOMC__)
+  /* Watcom: read chars from video RAM */
+  {
+    unsigned short *vram = (unsigned short *)0xB8000;
+    int pos = Y * 80 + X;
+    int i;
+    for (i = 0; i < Len; i++)
+      Str[i] = (char)(vram[pos + i] & 0xFF);
+  }
 #else  /* ifdef __OS2__ */
   asm  Push Ds
 

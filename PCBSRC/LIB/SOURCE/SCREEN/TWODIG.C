@@ -1,38 +1,35 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* The source code in this module is proprietary software belonging to       */
-/* Clark Development Company and is part of the PCBoard source code library. */
-/* You are granted the right to use this source code for the building of any */
-/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-/* without prior written consent from Clark Development Company, Inc.        */
-/*                                                                           */
-/* Be sure to read the source code license agreement before utilizing any    */
-/* of the source code found herein.                                          */
-/*                                                                           */
+/* Clark Development Company — PCBoard source code library.                 */
 /* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
+/* twodig: Convert a byte value (0-99) to two ASCII digits at *Num.
+   Leading zero is replaced with space. */
 
-//#pragma inline
+#ifdef __WATCOMC__
 
-#include <model.h>
+void pascal twodig(char *Num) {
+  unsigned char val = (unsigned char)*Num;
+  char hi = (val / 10) + '0';
+  char lo = (val % 10) + '0';
+  if (hi == '0') hi = ' ';
+  Num[0] = hi;
+  Num[1] = lo;
+}
 
-/********************************************************************
- *
- *  Function:  twodigit()
- *
- *  Takes an integer when received but returns a "two-digit" string equivalent
- *  with a leading space (' ') if necessary
- */
+#else
 
-void pascal twodigit(int *Num) {   /*  Num is an INT when received     */
-                                        /*  but is returned as 2 characters */
+#ifdef LDATA
+  #include "model.h"
+#endif
+
+void pascal twodig(char *Num) {
 #ifdef SDATA
   asm  Mov  Si,Num
 #else
   asm  Push Ds
   asm  Lds  Si,Num
 #endif
-
   asm  Mov  Ax,[Si]
   asm  Aam
   asm  Or   Ax,'00'
@@ -42,8 +39,9 @@ void pascal twodigit(int *Num) {   /*  Num is an INT when received     */
   asm  Mov  Al,' '
 End:
   asm  Mov  [Si],Ax
-
-#ifdef LDATA
+#ifndef SDATA
   asm  Pop  Ds
 #endif
 }
+
+#endif /* __WATCOMC__ */

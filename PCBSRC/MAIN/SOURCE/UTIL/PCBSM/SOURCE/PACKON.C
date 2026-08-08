@@ -1,3 +1,4 @@
+#include "pcbsm_externs.h"
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -20,6 +21,7 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
+extern int ExitKeyFlag[];
 #include <pcb.h>
 #include <dosfunc.h>
 #include "pcbfiles.h"
@@ -43,6 +45,12 @@ typedef struct {
 } stattype;
 
 
+#ifdef __WATCOMC__
+extern hdrtype Header;
+extern apptype AppHeader;
+extern addresstypez Address;
+extern addresstype OldAddress;
+#endif
 static DOSFILE  PackFile;
 static char     Reason[51];
 

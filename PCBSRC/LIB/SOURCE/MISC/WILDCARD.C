@@ -1,18 +1,8 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* The source code in this module is proprietary software belonging to       */
-/* Clark Development Company and is part of the PCBoard source code library. */
-/* You are granted the right to use this source code for the building of any */
-/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-/* without prior written consent from Clark Development Company, Inc.        */
-/*                                                                           */
-/* Be sure to read the source code license agreement before utilizing any    */
-/* of the source code found herein.                                          */
-/*                                                                           */
-/* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+/* WILDCARD.C — Wildcard filename expansion                                  */
+/* Clark Development Company, Inc. (C) 1996. All Rights Reserved.            */
+/* Watcom C conversion by pcbrevival (GPL v3.0 for our additions)            */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-
-
-//#pragma inline
 
 #include <string.h>
 #include <stdio.h>
@@ -20,32 +10,41 @@
 #include <memcheck.h>
 #endif
 
-
-static void near pascal wildcard(char far *Field, int Len) {
+static void near pascal wildcard(char *Field, int Len) {
+#if defined(__OS2__) || defined(__WATCOMC__)
+  int slen = (int)strlen(Field);
+  int i;
+  if (slen == 0) return;
+  if (Field[slen-1] == '*') {
+    for (i = slen-1; i < Len; i++)
+      Field[i] = '?';
+  } else {
+    for (i = slen; i < Len; i++)
+      Field[i] = ' ';
+  }
+  Field[Len] = 0;
+#else
   asm  Push Es
-  asm  Xor  Si,Si                 /* Determine length of Field[] and */
-  asm  Les  Bx,Field              /* store in Si                     */
+  asm  Xor  Si,Si
+  asm  Les  Bx,Field
 X1:
   asm  Cmp  byte ptr Es:[Bx+Si],0
   asm  Je   X2
   asm  Inc  Si
   asm  Jmp  Short X1
 X2:
-
   asm  And  Si,Si
   asm  Jz   J4
-
   asm  Dec  Si
   asm  Mov  Di,Si
-  asm  Cmp  byte ptr Es:[Bx+Di],'*'  /* if it's a "*" then convert it and */
-  asm  Jne  J1                       /* the rest of the string to "?"     */
+  asm  Cmp  byte ptr Es:[Bx+Di],'*'
+  asm  Jne  J1
   asm  Mov  Al,'?'
   asm  Jmp  J2
 J1:
-  asm  Inc  Di                       /* otherwise move forward one and fill */
-  asm  Mov  Al,' '                   /* the rest with spaces                */
+  asm  Inc  Di
+  asm  Mov  Al,' '
 J2:
-
 L1:
   asm  Cmp  Di,Len
   asm  Jg   J3
@@ -54,11 +53,11 @@ L1:
   asm  Jmp  L1
 J3:
   asm  Add  Bx,Len
-  asm  Mov  byte ptr Es:[Bx],0       /* make sure the last element is NULL */
+  asm  Mov  byte ptr Es:[Bx],0
 J4:
   asm  Pop  Es
+#endif
 }
-
 
 void pascal formatwild(char Name[]) {
   char F[13],E[4];
@@ -93,7 +92,6 @@ void pascal formatwild(char Name[]) {
   Name[8] = '.';
   strcpy(&Name[9],E);
 }
-
 
 int pascal equalwilds(char S1[], char S2[]) {
   int X,MisMatch;

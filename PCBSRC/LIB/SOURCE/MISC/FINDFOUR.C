@@ -26,7 +26,7 @@
 #endif
 
 int LIBENTRY findfour(char *Base, char *Srch) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   int *p;      /* under OS/2, these are 4-byte integers! */
   int *q;
   int  NumItems;

@@ -15,6 +15,8 @@
 #ifdef __OS2__
 #define INCL_DOSMISC
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #include "model.h"
@@ -48,6 +50,17 @@ void LIBENTRY getextendederror(os2errtype *Os2Error) {
 	      &Os2Error->ExtendedLocus);
 }
 
+#ifdef __WATCOMC__
+  {
+    union REGS r;
+    r.h.ah = 0x59;
+    r.w.bx = 0;
+    int386(0x21, &r, &r);
+    ExtendedError = r.w.ax;
+    ExtendedClass = r.h.bh;
+    ExtendedAction = r.h.bl;
+    ExtendedLocus = r.h.ch;
+  }
 #else
 
 void LIBENTRY getextendederror(void) {
@@ -61,6 +74,7 @@ void LIBENTRY getextendederror(void) {
   asm  mov  ExtendedAction,bl    /* store extended action code */
   asm  mov  ExtendedLocus,ch     /* store extended locus code */
   asm  pop  di
+#endif
   asm  pop  si
 }
 #endif

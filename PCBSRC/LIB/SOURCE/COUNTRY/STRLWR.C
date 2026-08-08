@@ -28,7 +28,7 @@ extern "C" int tolower(int C) {
 
 
 extern "C" char * strlwr(char *s) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   char *p;
 
   for (p = s; *p != 0; p++)

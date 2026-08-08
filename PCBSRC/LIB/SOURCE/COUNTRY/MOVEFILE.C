@@ -14,6 +14,9 @@
 
 #if defined(_MSC_VER) || defined(__WATCOMC__)
   #include <direct.h>
+#ifdef __WATCOMC__
+struct ffblk { char ff_reserved[21]; char ff_attrib; unsigned short ff_ftime; unsigned short ff_fdate; long ff_fsize; char ff_name[256]; };
+#endif
 #else
   #include <dir.h>
 #endif

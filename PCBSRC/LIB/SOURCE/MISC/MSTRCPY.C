@@ -43,7 +43,7 @@
 */
 
 void LIBENTRY maxstrcpy(char *Dest, char *Srce, int Max) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   for (Max--; Max > 0 && *Srce > 0; Srce++, Dest++, Max--)
     *Dest = *Srce;
   *Dest = 0;

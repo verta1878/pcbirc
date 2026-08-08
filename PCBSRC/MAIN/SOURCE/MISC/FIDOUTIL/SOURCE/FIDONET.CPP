@@ -36,7 +36,8 @@
 #include <pcb.h>
 #include <data.hpp>
 #include <scrnio.h>
-#include <scrnio.ext>
+//#include <scrnio.ext>
+extern int KeyFlags;
 #include <cnameidx.h>
 #include <fidonet.hpp>
 #include <ptsetup.hpp>

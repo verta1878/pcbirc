@@ -75,7 +75,7 @@ int pascal copybinaryfile(char *SourceName, char *TargetName) {
   int  OutFile;
   char *Buffer;
 
-  if ((Buffer = malloc(BUFSIZE)) == NULL) {
+  if ((Buffer = (char *)malloc(BUFSIZE)) == NULL) {
     say("Can't allocate memory for the buffer.");
     return(-1);
   }

@@ -1610,7 +1610,7 @@ static int _NEAR_ LIBENTRY localtransfer(spectype *File, char *SrcePath, char *D
       getftime(InFile.handle,&TimeDate);
       setftime(OutFile.handle,&TimeDate);
     #elif !defined(__OS2__)
-      _dos_getftime(InFile.handle,&Date,&Time);
+      _dos_getftime(InFile.handle,(unsigned *)&Date,(unsigned *)&Time);
       _dos_setftime(OutFile.handle,Date,Time);
     #endif
   }

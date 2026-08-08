@@ -19,7 +19,7 @@
 #include "misc.h"
 
 unsigned LIBENTRY doRLE(char *Dest, char *Srce, unsigned Len) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   unsigned Count;
   int      CountZeroes;
   char     Byte;
@@ -103,7 +103,7 @@ done:
 
 
 unsigned LIBENTRY unRLE(char *Dest, char *Srce, unsigned Len) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   char     Byte;
   unsigned Count;
   unsigned Zeroes;

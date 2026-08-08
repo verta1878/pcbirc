@@ -1,3 +1,7 @@
+#define LIB
+#ifdef __WATCOMC__
+#define textattr(a)
+#endif
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -60,6 +64,7 @@ static VM_SHINT cmpidxentries(const void * l, const void * r)
 #if defined(LIB) && !defined(QUIET_BUILD)
 
 #include    <conio.h>
+#include <screen.h>
 
 void pascal fastprint(int x, int y, char * s, int a)
 {

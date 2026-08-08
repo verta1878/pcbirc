@@ -24,7 +24,10 @@
 typedef struct {
   unsigned UserRec;
   char     UserName[25];    /* padded with spaces and no terminating NULL */
+#ifndef _INDEXTYPE_DEFINED
 } IndexType;
+#define _INDEXTYPE_DEFINED
+#endif
 
 typedef struct {
   long     UserRec;
@@ -256,9 +259,9 @@ extern rectype  UsersRec;
 extern apptype  AppHeader;
 extern unsigned ConfByteLen;
 extern unsigned ExtConfLen;
-extern long far *MsgReadPtr;
-extern char far *ConfReg;
-extern char far *QwkConfFlags;
+extern long *MsgReadPtr;
+extern char *ConfReg;
+extern char *QwkConfFlags;
 extern long     InfHeaderSize;
 extern char     BackFileName[40];
 extern char     TempFileName[40];

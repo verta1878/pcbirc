@@ -68,8 +68,8 @@ unsigned long LIBENTRY diskfreespace(char *Path) {
   unsigned long BytesPerCluster;
   char   PathToCheck[60];
   char   SavePath[60];
-  #ifdef __OS2__
-    diskfree Rec;
+  #if defined(__OS2__) || defined(__WATCOMC__)
+    struct diskfree_t Rec;
   #else
     struct dfree Rec;
   #endif
@@ -104,20 +104,20 @@ unsigned long LIBENTRY diskfreespace(char *Path) {
   dosgetcurpath(DriveToCheck,SavePath,sizeof(SavePath));
   chdir(PathToCheck);
 
-  #ifdef __OS2__
-    dosgetdiskfree(DriveToCheck,&Rec);
+  #if defined(__OS2__) || defined(__WATCOMC__)
+    _dos_getdiskfree(DriveToCheck,&Rec);
   #elif defined(__BORLANDC__) || defined(__TURBOC__)
     getdfree(DriveToCheck,&Rec);
   #endif
 
   chdir(SavePath);
 
-  #ifndef __OS2__
+  #if !defined(__OS2__) && !defined(__WATCOMC__)
     if (Rec.df_sclus == 0xffff)
       return(0);
   #endif
 
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     BytesPerCluster = (unsigned long) Rec.bytes_per_sector * (unsigned long) Rec.sectors_per_cluster;
   #else
     BytesPerCluster = (unsigned long) Rec.df_bsec * (unsigned long) Rec.df_sclus;
@@ -137,7 +137,7 @@ unsigned long LIBENTRY diskfreespace(char *Path) {
   printf("Avail Disk Space   : %13s\n",comma(Str,(long) (Rec.df_avail * BytesPerCluster)));
 #endif
 
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
     return((unsigned long) (Rec.avail_clusters * BytesPerCluster));
   #else
     return((unsigned long) (Rec.df_avail * BytesPerCluster));

@@ -55,6 +55,7 @@
 #define vtDATE       2  /* 2-byte unsigned integer -- julian date */
 #define vtEDATE      3  /* 2-byte unsigned integer -- julian date */
 #define vtINTEGER    4  /* 4-byte signed   integer */
+#define vtINT vtINTEGER
 #define vtMONEY      5  /* 4-byte signed   integer -- cents */
 #define vtREAL       6  /* 4-byte floating point number -- IEEE floating point */
 #define vtSTRING     7  /* 256-byte maximum length pointer based string -- no 0 bytes allowed in the middle of the string */

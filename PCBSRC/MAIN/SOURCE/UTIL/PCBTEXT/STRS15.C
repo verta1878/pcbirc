@@ -15,7 +15,27 @@
 /*  NOTE:  This module MUST be compiled with "merge duplicate strings"   */
 /*         turned off otherwise it will not generate a good PCBTEXT file */
 
+#define H_PCBTEXT
 #include "pcbtext.h"
+#ifdef __WATCOMC__
+typedef struct { char cNewflag; char cJust; char cLen; char cColor; char *sptStr; } pcbtexttype;
+extern pcbtexttype Array[751];
+#endif
+#ifndef TEXT_ARRAY
+#define TEXT_ARRAY 751
+#endif
+#ifndef PCB_NOCHANGE
+#define PCB_NOCHANGE 0
+#endif
+#ifndef PCB_ANSIRED
+#define PCB_ANSIRED 1
+#define PCB_ANSIBLUE 4
+#define PCB_ANSIGREEN 2
+#define PCB_ANSICYAN 6
+#define PCB_ANSIMAGENTA 5
+#define PCB_ANSIYELLOW 3
+#define PCB_ANSIWHITE 7
+#endif
 
 /* NOTE: Some records are written to the caller log ..  a maximum length of */
 /* 56 will allow the entire record to be written to the log (counting the   */
@@ -378,8 +398,8 @@ pcbtexttype Array[TEXT_ARRAY] = {
 /* 351 */  {145, 'L', 56, PCB_ANSIWHITE  , "Expert mode is now off, @FIRST@ ..."},
 /* 352 */  {145, 'L', 70, PCB_ANSIYELLOW , "Files: (1-@NUMDIR@), (A), (U), (Enter)=none"},
 /* 353 */  {145, 'L', 70, PCB_ANSIYELLOW , "Files: (1-@NUMDIR@), (A)ll, (U)ploads, (Enter)=none"},
-/* 354 */  {145, 'L', 75, PCB_NOCHANGE   , "Alt-> F=Out I=In N=Next X=DOS P=Printer T=FmFeed F1/F2=Time F9/F10=Security"},
-/* 355 */  {145, 'L', 78, PCB_NOCHANGE   , "1=SyPrv 2=LkOut 3=Print 4=Bell 5=SHELL 6=Reg 7=Alarm 8=HngUp 9=Screen 10=Chat"},
+/* 354 */  {145, 'L', 75, PCB_NOCHANGE   , "Alt-> F=Out I=In N=Next X=DOS P=Print T=Feed F1/F2=Time F9/10=Sec"},
+/* 355 */  {145, 'L', 78, PCB_NOCHANGE   , "1=SyPrv 2=LkOut 3=Print 4=Bell 5=SHELL 6=Reg 7=Alarm 8=HngUp 9=Scrn 10=Chat"},
 /* 356 */  {145, 'L', 50, PCB_ANSIRED    , "Network Delay - Please Wait, @FIRST@ ..."},
 /* 357 */  {145, 'R', 15, PCB_ANSIYELLOW , "Download Time:~"},
 /* 358 */  {145, 'R', 15, PCB_ANSIYELLOW , "Download Size:~"},
@@ -604,7 +624,7 @@ pcbtexttype Array[TEXT_ARRAY] = {
 /* 577 */  {145, 'L', 40, PCB_ANSIRED    , " FAILED!"},
 /* 578 */  {145, 'L', 40, PCB_NOCHANGE   , "Verification FAILED on @OPTEXT@!"},
 /* 579 */  {145, 'L', 23, PCB_ANSIYELLOW , "Paging the Sysop"},
-/* 580 */  {152, 'L', 78, PCB_ANSIGREEN  , "Conference                                                          To   Total"},
+/* 580 */  {152, 'L', 78, PCB_ANSIGREEN  , "Conference                                                        To   Total"},
 /* 581 */  {152, 'L', 78, PCB_ANSIGREEN  , "  #   Name                                                          You  Found"},
 /* 582 */  {152, 'L', 78, PCB_ANSIGREEN  , "----- ------------------------------------------------------------ ----- -----"},
 /* 583 */  {145, 'L', 60, PCB_ANSIYELLOW , "Full Screen Editor Default: (Y)es, (N)o, (A)sk"},

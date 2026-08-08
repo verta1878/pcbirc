@@ -15,6 +15,8 @@
 #ifdef __OS2__
 #define INCL_DOSFILEMGR
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
 //#pragma inline
 #include "model.h"
@@ -88,6 +90,16 @@ int LIBENTRY doscreate(char *FileName, int OpenFlags, int Attributes DOS2ERROR) 
       strcpy(OpenFileNames[Handle],FileName);
     }
 
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x3C;
+      r.w.cx = Attributes;
+      r.w.dx = (unsigned short)(unsigned long)FileName;
+      int386(0x21, &r, &r);
+      if (r.w.cflag) { getextendederror(); Handle = -1; goto end; }
+      Handle = r.w.ax;
+    }
   #else
 
     #ifdef SDATA
@@ -119,12 +131,23 @@ end:
     doscreatecallback(FileName,OpenFlags,Attributes,Handle,ExtendedError);
 
   #ifndef __OS2__
+    #ifdef __WATCOMC__
+    {
+      union REGS r;
+      r.h.ah = 0x3E;
+      r.w.bx = Handle;
+      int386(0x21, &r, &r);
+      dosopen(FileName,OpenFlags);
+      /* Handle set by dosopen */
+    }
+    #else
     asm  mov  bx,Handle
     asm  mov  ah,3Eh        /* dos: close file */
     int21();
 
     dosopen(FileName,OpenFlags);  /* reopen it using the regular call */
     asm  mov  Handle,ax
+    #endif
   #endif
 
   return(Handle);

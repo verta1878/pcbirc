@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
   #pragma inline
 //#include <model.h>
 #endif
@@ -331,7 +331,7 @@ found:
 *  Returns :  TRUE if *Wild matches *String.
 */
 
-#ifndef __OS2__   // this function was rewritten in WILD.C
+#if !defined(__OS2__) && !defined(__WATCOMC__)   // this function was rewritten in WILD.C
 bool LIBENTRY comparewildcards(char *Wild, char *String) {
 #ifdef LDATA
 asm      Push Ds
@@ -590,7 +590,10 @@ static int _NEAR_ LIBENTRY searchidxforfiles(char *IdxName, char *Token, SCANDLT
 
 static int _NEAR_ LIBENTRY findfile(char *Name, bool FindFirst) {
   int  Count;
-  #ifdef __OS2__
+  #if defined(__OS2__) || defined(__WATCOMC__)
+#ifndef SYSTEMDIRHANDLE
+#define SYSTEMDIRHANDLE 1
+#endif
   int  DirHandle = SYSTEMDIRHANDLE;
   #endif
 

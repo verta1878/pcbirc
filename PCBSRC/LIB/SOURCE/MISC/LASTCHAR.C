@@ -1,3 +1,4 @@
+#include <string.h>
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* The source code in this module is proprietary software belonging to       */
 /* Clark Development Company and is part of the PCBoard source code library. */
@@ -44,7 +45,7 @@
 */
 
 int LIBENTRY lastcharinstr(char *Line, char NotChar) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   int Len;
 
   Len = strlen(Line);

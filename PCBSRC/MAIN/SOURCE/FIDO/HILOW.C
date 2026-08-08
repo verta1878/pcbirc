@@ -19,6 +19,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "pcboard.h"
 
 void scanHiAscii(char * str,int strip);
 
@@ -52,7 +53,7 @@ char   tmpBuf[10];
     buf =  new char[strlen(str)*3];
     if(!buf)
     {
-      writelog("Could not allocate high ascii buffer."SPACERIGHT);
+      writelog("Could not allocate high ascii buffer.", SPACERIGHT);
       return;
     }
     buf[0] = '\x0';

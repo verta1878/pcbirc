@@ -12,7 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#ifndef __OS2__
+#if !defined(__OS2__) && !defined(__WATCOMC__)
   #ifdef _MSC_VER
     #include <borland.h>
   #else
@@ -25,7 +25,7 @@
   #include "ansi.h"
 #endif
 
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   enum {LN_VERT = 0,LN_HOR,LN_TOPLEFT,LN_TOPRIGHT,LN_BOTLEFT,LN_BOTRIGHT};
 
   static char Boxes[VDOUBLE+1][LN_BOTRIGHT+1] = {
@@ -51,7 +51,7 @@
  */
 
 void LIBENTRY box(int X1,int Y1,int X2,int Y2,char Color,boxlinetype LineType) {
-#ifdef __OS2__
+#if defined(__OS2__) || defined(__WATCOMC__)
   int      T;
   int      Y1x80;
   int      Y2x80;

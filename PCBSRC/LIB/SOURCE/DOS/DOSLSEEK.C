@@ -13,10 +13,10 @@
 
 
 #ifdef __OS2__
-#define INCL_DOSFILEMGR
 #include <os2.h>
+#elif defined(__WATCOMC__)
+#include <i86.h>
 #else
-//#pragma inline
 #include <asmrules.h>
 #include "model.h"
 #endif
@@ -37,6 +37,18 @@ long LIBENTRY doslseek(int handle, long distance, char method) {
       goto error;
 
     return(NewOffset);
+  #elif defined(__WATCOMC__)
+    {
+      union REGS r;
+      r.h.ah = 0x42;
+      r.h.al = method;
+      r.w.bx = handle;
+      r.w.dx = (unsigned short)(distance & 0xFFFF);
+      r.w.cx = (unsigned short)(distance >> 16);
+      int386(0x21, &r, &r);
+      if (r.w.cflag) goto error;
+      return (long)((r.w.dx << 16) | r.w.ax);
+    }
   #else
     asm mov ah,42h
     asm mov al,method

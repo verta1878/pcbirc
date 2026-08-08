@@ -47,6 +47,19 @@ void LIBENTRY setatt(int X1,int Y1,int X2,int Y2,char Color) {
 
   updatelines(UPDATE_MIXED,Y1,Y2);
 
+#elif defined(__WATCOMC__)
+  /* Watcom: set attributes in video RAM */
+  {
+    unsigned char *vram = (unsigned char *)0xB8000;
+    int row, col;
+    for (row = Y1; row <= Y2; row++) {
+      int pos = (row * 80 + X1) * 2 + 1;
+      for (col = X1; col <= X2; col++) {
+        vram[pos] = Color;
+        pos += 2;
+      }
+    }
+  }
 #else  /* ifdef __OS2__ */
 
   NEEDSEGPUSHDS;

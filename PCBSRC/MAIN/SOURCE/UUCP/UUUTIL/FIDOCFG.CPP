@@ -17,7 +17,9 @@
 #include    <stdio.h>
 #include    <string.h>
 
+#include <pcbtools.h>
 #include    <fidocfg.hpp>
+extern pcbdattype PcbData;
 
 cFIDOCFG::cFIDOCFG(void) :
     version(0),
