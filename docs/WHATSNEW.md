@@ -341,6 +341,14 @@ SOURCE PORT
     ASYNC.ASM → FOSSIL driver (181 lines), CUTIL, TIMER,
     BGKEY, NOSCROLL, MEMMOVE, INT24HND, XMODEM stubbed
 
+  - CNAMES.C atexit() fix: closecnames is __pascal but atexit
+    expects __cdecl. Added cdecl wrapper. Original Clark source
+    bug that only manifests under OpenWatcom. pcb.lib complete.
+
+  - ASYNC.C CPU hog fix: added INT 2Fh/1680h DPMI timeslice
+    release in COMMINKEY and CHECKCOMM polling loops. Fixes the
+    known FOSSIL busy-wait bug (alt.bbs.pcboard, Dec 2014).
+
   - Inline ASM → C conversion: 8 files hand-converted
     (CONFFUNC, WILDCARD, ZSWAPVIR, ZSWAPSTR, EVALUATE,
     SETROWS, PCBMISC, DLPATH)
