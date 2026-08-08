@@ -71,15 +71,28 @@ and system tray support via utrayit.
 All 11 original shipping binaries build from source under BC++ 3.1
 in DOSBox. See PCB154_BUILD_GUIDE.md.
 
+### OS/2: PCBOARD2.EXE ✅ (OpenWatcom 2.0)
+
+OS/2 32-bit native BBS engine. Clean link, zero unresolved symbols.
+
+### OS/2 Addon: PCBCP Control Panel ✅
+
+PCBCP_W.EXE (77KB) — OS/2 Presentation Manager node monitor and
+control panel. Source recovered from pcball.zip (pcboard.be),
+ported to OpenWatcom 2.0. 8/8 source files compile clean.
+PCBCP.INI must be configured by the sysop on first run.
+
 ## Documentation
 
 | Document | Lines | Description |
 |---|---|---|
-| PCB1541_DRAFT.md | 1,922 | 15.41 upgrade specification (19 sections) |
-| WHATSNEW.md | 380 | Changelog |
+| PCB1541_DRAFT.md | 2,322 | 15.41 upgrade specification (22 sections) |
+| WHATSNEW.md | 467 | Changelog |
 | FIDONET.md | 682 | Complete FidoNet sysop guide |
 | PCBIS_UI.md | 452 | Installer and PCBDRAW integration |
 | MISSING_FUNCTIONS.md | 350 | Function stubs needed for linking |
+| PPL Reference Manual | 7.1MB | Scanned PPL programming manual (PDF) |
+| PPL Dev Kit Manual | 6.7MB | PPL developer kit documentation (PDF) |
 
 ## The Crew
 
