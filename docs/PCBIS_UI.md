@@ -202,7 +202,7 @@ wlink sys dos4g name pcbis_ui file pcbis_ui lib screen.lib lib scrnio.lib
 | `pcbis_startup` | Starts DOSBox + netmodem2irc + PCBoard |
 | `pcbis_shutdown` | Graceful PID-based shutdown of all services |
 | `pcbtic` | TIC file processor for FidoNet file echoes |
-| `nlcomp` | Nodelist compiler — NODELIST.### to .DBF/.NDX |
+| `PCBNLC` | Nodelist compiler — NODELIST.### to .DBF/.NDX |
 
 ## Source
 

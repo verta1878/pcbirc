@@ -125,3 +125,14 @@ void VMWrite(VMDataSet *set, void *data, long pos, unsigned size)
         _fmemcpy((void *)(base + pos), (void *)data, size);
     }
 }
+
+void VMAccessAttrSet(VMDataSet *set, int mode)
+{
+    (void)set; (void)mode;
+    /* Access pattern hint — no-op in in-memory implementation */
+}
+
+void VMDebugOn(void)
+{
+    /* Debug mode — no-op */
+}

@@ -1,0 +1,36 @@
+# Build artifacts
+*.obj
+*.OBJ
+*.o
+*.lib
+*.LIB
+*.EXE
+*.exe
+*.MAP
+*.map
+*.ERR
+*.err
+*.i
+*.lst
+
+# Temp/backup
+*~
+*.bak
+*.BAK
+*.tmp
+*.TMP
+*.swp
+*.orig
+
+# Third-party (clone separately)
+OS2TK/
+codebase-dbf/
+
+# Large archives (available separately)
+pcb153src0014.zip
+pcb15everything.zip
+
+# IDE/editor
+.vscode/
+.idea/
+*.sublime-*

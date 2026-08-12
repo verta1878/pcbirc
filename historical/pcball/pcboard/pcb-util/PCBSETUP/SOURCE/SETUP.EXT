@@ -1,0 +1,46 @@
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* The source code in this module is proprietary software belonging to       */
+/* Clark Development Company and is part of the PCBoard source code library. */
+/* You are granted the right to use this source code for the building of any */
+/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
+/* without prior written consent from Clark Development Company, Inc.        */
+/*                                                                           */
+/* Be sure to read the source code license agreement before utilizing any    */
+/* of the source code found herein.                                          */
+/*                                                                           */
+/* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+
+extern smConfigType smConfig;
+extern char ComSpec[66];
+
+extern char PCBVer[];
+extern char ConfigName[66];
+extern char ALLTEXT[];
+extern char ALLCONF[];
+extern char ALLFILE[];
+extern char ALLTIME[];
+extern char ALLPORT[];
+extern char ALLLPT[];
+extern char ALLBAUD[];
+extern char ALLMARK[];
+extern char BINARY[];
+extern char HEXNUM[];
+extern char ALLPROTO[];
+extern char YNA[];
+extern char YNSF[];
+extern char ALLDRIVE[];
+extern char RXS[];
+extern char HighAsciiMask[];
+
+extern char _FAR_ * _FAR_ ScreenName[];
+extern char _FAR_ * _FAR_ Questions[];
+
+
+extern unsigned    ConfSel;
+extern pcbconftype Conf;
+extern bool        ConfNameChanged;
+
+extern char *DefaultLoc;
+

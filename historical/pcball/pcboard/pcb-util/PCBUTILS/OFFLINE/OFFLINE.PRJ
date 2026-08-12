@@ -1,0 +1,6 @@
+offline.c
+\tc\dos\small\showerr2.obj
+\tc\screen\screen_s.lib
+\tc\misc\misc_s.lib
+\tc\dos\dos_s.lib
+

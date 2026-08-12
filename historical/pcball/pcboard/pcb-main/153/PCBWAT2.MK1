@@ -1,0 +1,1176 @@
+!define BLANK ""
+d:\proj\pcb\153\ANSI.obj : d:\proj\pcb\source\display\ANSI.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\ANSI.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\proj\pcb\obj\watos2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\BLT.obj : d:\proj\pcb\source\display\BLT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\BLT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DIR.obj : d:\proj\pcb\source\display\DIR.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\DIR.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DISPLAY.obj : d:\proj\pcb\source\display\DISPLAY.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\DISPLAY.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FILES.obj : d:\proj\pcb\source\display\FILES.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\FILES.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\HELP.obj : d:\proj\pcb\source\display\HELP.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\HELP.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PCBMACRO.obj : d:\proj\pcb\source\display\PCBMACRO.C .AUTODE&
+PEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\PCBMACRO.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\P&
+CB\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES&
+=250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC_&
+__ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -d&
+TOSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PCBTEXT.obj : d:\proj\pcb\source\display\PCBTEXT.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\PCBTEXT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SCREEN.obj : d:\proj\pcb\source\display\SCREEN.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\SCREEN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SCRLBACK.obj : d:\proj\pcb\source\display\SCRLBACK.C .AUTODE&
+PEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\SCRLBACK.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\P&
+CB\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES&
+=250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC_&
+__ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -d&
+TOSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\STATUS.obj : d:\proj\pcb\source\display\STATUS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\STATUS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\XLATE.obj : d:\proj\pcb\source\display\XLATE.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\display\XLATE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOSCLOSE.obj : d:\proj\pcb\source\dos\DOSCLOSE.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\dos\DOSCLOSE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOSOPEN.obj : d:\proj\pcb\source\dos\DOSOPEN.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\dos\DOSOPEN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOSREAD.obj : d:\proj\pcb\source\dos\DOSREAD.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\dos\DOSREAD.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOSTIME.obj : d:\proj\pcb\source\dos\DOSTIME.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\dos\DOSTIME.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOSWRITE.obj : d:\proj\pcb\source\dos\DOSWRITE.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\dos\DOSWRITE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CRC-16F.obj : d:\proj\pcb\source\fido\CRC-16F.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\CRC-16F.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FCONFIG.obj : d:\proj\pcb\source\fido\FCONFIG.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FCONFIG.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FIDOFUNC.obj : d:\proj\pcb\source\fido\FIDOFUNC.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FIDOFUNC.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FIDOMENU.obj : d:\proj\pcb\source\fido\FIDOMENU.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FIDOMENU.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\GETINTLI.obj : d:\proj\pcb\source\fido\GETINTLI.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\GETINTLI.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\HEX.obj : d:\proj\pcb\source\fido\HEX.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\HEX.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOURC&
+E\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -dP&
+CB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBA&
+SE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLAS&
+S -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\HILOW.obj : d:\proj\pcb\source\fido\HILOW.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\HILOW.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\OLDSEEN.obj : d:\proj\pcb\source\fido\OLDSEEN.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\OLDSEEN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\READCONF.obj : d:\proj\pcb\source\fido\READCONF.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\READCONF.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\RECEMSI.obj : d:\proj\pcb\source\fido\RECEMSI.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\RECEMSI.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\RECWAZOO.obj : d:\proj\pcb\source\fido\RECWAZOO.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\RECWAZOO.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\TOSSMISC.obj : d:\proj\pcb\source\fido\TOSSMISC.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\TOSSMISC.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\XLAT.obj : d:\proj\pcb\source\fido\XLAT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\XLAT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\XMITEMSI.obj : d:\proj\pcb\source\fido\XMITEMSI.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\XMITEMSI.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CALLWAIT.obj : d:\proj\pcb\source\main\CALLWAIT.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\CALLWAIT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CHAT.obj : d:\proj\pcb\source\main\CHAT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\CHAT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CMDS.obj : d:\proj\pcb\source\main\CMDS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\CMDS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\COMMAND.obj : d:\proj\pcb\source\main\COMMAND.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\COMMAND.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CONFRNCE.obj : d:\proj\pcb\source\main\CONFRNCE.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\CONFRNCE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DLPATH.obj : d:\proj\pcb\source\main\DLPATH.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\DLPATH.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOORS.obj : d:\proj\pcb\source\main\DOORS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\DOORS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\EVENT.obj : d:\proj\pcb\source\main\EVENT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\EVENT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FILELIST.obj : d:\proj\pcb\source\main\FILELIST.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\FILELIST.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\INDEX.obj : d:\proj\pcb\source\main\INDEX.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\INDEX.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\INIT.obj : d:\proj\pcb\source\main\INIT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\INIT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\INKEY.obj : d:\proj\pcb\source\main\INKEY.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\INKEY.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\INPUT.obj : d:\proj\pcb\source\main\INPUT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\INPUT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\LANGUAGE.obj : d:\proj\pcb\source\main\LANGUAGE.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\LANGUAGE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MISC.obj : d:\proj\pcb\source\main\MISC.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\MISC.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PCBOARD.obj : d:\proj\pcb\source\main\PCBOARD.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\PCBOARD.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\RECYCLE.obj : d:\proj\pcb\source\main\RECYCLE.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\RECYCLE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SCRIPT.obj : d:\proj\pcb\source\main\SCRIPT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\SCRIPT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SHELL.obj : d:\proj\pcb\source\main\SHELL.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\SHELL.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SYS.obj : d:\proj\pcb\source\main\SYS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\SYS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOURC&
+E\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -dP&
+CB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBA&
+SE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLAS&
+S -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\TRANSFER.obj : d:\proj\pcb\source\main\TRANSFER.C .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\main\TRANSFER.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DEVIOCTL.obj : d:\proj\pcb\source\modem\DEVIOCTL.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\modem\DEVIOCTL.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MODEM.obj : d:\proj\pcb\source\modem\MODEM.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\modem\MODEM.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MODEMOS2.obj : d:\proj\pcb\source\modem\MODEMOS2.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\modem\MODEMOS2.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\TICDELAY.obj : d:\proj\pcb\source\modem\TICDELAY.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\modem\TICDELAY.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MESSAGES.obj : d:\proj\pcb\source\msg\MESSAGES.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\msg\MESSAGES.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MSGBASE.obj : d:\proj\pcb\source\msg\MSGBASE.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\msg\MSGBASE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MSGENTER.obj : d:\proj\pcb\source\msg\MSGENTER.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\msg\MSGENTER.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MSGREAD.obj : d:\proj\pcb\source\msg\MSGREAD.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\msg\MSGREAD.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MSGSCAN.obj : d:\proj\pcb\source\msg\MSGSCAN.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\msg\MSGSCAN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\LOG.obj : d:\proj\pcb\source\node\LOG.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\LOG.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOURC&
+E\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -dP&
+CB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDBA&
+SE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLAS&
+S -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\LOGIN.obj : d:\proj\pcb\source\node\LOGIN.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\LOGIN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\LOGVIEW.obj : d:\proj\pcb\source\node\LOGVIEW.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\LOGVIEW.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\NEWCHAT.obj : d:\proj\pcb\source\node\NEWCHAT.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\NEWCHAT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\NODE.obj : d:\proj\pcb\source\node\NODE.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\NODE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\STATS.obj : d:\proj\pcb\source\node\STATS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\STATS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\USERNET.obj : d:\proj\pcb\source\node\USERNET.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\node\USERNET.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CAPTURE.obj : d:\proj\pcb\source\support\CAPTURE.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\CAPTURE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\COPYFILE.obj : d:\proj\pcb\source\support\COPYFILE.C .AUTODE&
+PEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\COPYFILE.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\P&
+CB\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES&
+=250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC_&
+__ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -d&
+TOSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\CRC32.obj : d:\proj\pcb\source\support\CRC32.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\CRC32.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DIZ.obj : d:\proj\pcb\source\support\DIZ.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\DIZ.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\ENVFIX.obj : d:\proj\pcb\source\support\ENVFIX.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\ENVFIX.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MEMORY.obj : d:\proj\pcb\source\support\MEMORY.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\MEMORY.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\OVERLAY.obj : d:\proj\pcb\source\support\OVERLAY.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\OVERLAY.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SHOWERR.obj : d:\proj\pcb\source\support\SHOWERR.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\SHOWERR.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\TOKEN.obj : d:\proj\pcb\source\support\TOKEN.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\TOKEN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\VERSION.obj : d:\proj\pcb\source\support\VERSION.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\VERSION.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\WILD.obj : d:\proj\pcb\source\support\WILD.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\WILD.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\XMODEM.obj : d:\proj\pcb\source\support\XMODEM.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\XMODEM.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SETTINGS.obj : d:\proj\pcb\source\users\SETTINGS.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\users\SETTINGS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\USERS.obj : d:\proj\pcb\source\users\USERS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\users\USERS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\USERSCAN.obj : d:\proj\pcb\source\users\USERSCAN.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\users\USERSCAN.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\USERSTAT.obj : d:\proj\pcb\source\users\USERSTAT.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\users\USERSTAT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\USERSYS.obj : d:\proj\pcb\source\users\USERSYS.C .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\users\USERSYS.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\USRMAINT.obj : d:\proj\pcb\source\users\USRMAINT.C .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\users\USRMAINT.C -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DATA.obj : d:\proj\pcb\source\fido\DATA.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\DATA.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DUPECHEC.obj : d:\proj\pcb\source\fido\DUPECHEC.CPP .AUTODEP&
+END
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\DUPECHEC.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FIDOMISC.obj : d:\proj\pcb\source\fido\FIDOMISC.CPP .AUTODEP&
+END
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FIDOMISC.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FIDOMSG.obj : d:\proj\pcb\source\fido\FIDOMSG.CPP .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FIDOMSG.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FIDOQUE.obj : d:\proj\pcb\source\fido\FIDOQUE.CPP .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FIDOQUE.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FIDOUSER.obj : d:\proj\pcb\source\fido\FIDOUSER.CPP .AUTODEP&
+END
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\FIDOUSER.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PACKMSG.obj : d:\proj\pcb\source\fido\PACKMSG.CPP .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\PACKMSG.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PASSTHRU.obj : d:\proj\pcb\source\fido\PASSTHRU.CPP .AUTODEP&
+END
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\PASSTHRU.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PC&
+B\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=&
+250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC__&
+_ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dT&
+OSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PCBTOSS.obj : d:\proj\pcb\source\fido\PCBTOSS.CPP .AUTODEPEN&
+D
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\PCBTOSS.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SDR.obj : d:\proj\pcb\source\fido\SDR.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\SDR.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SEENBY.obj : d:\proj\pcb\source\fido\SEENBY.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\SEENBY.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\UMWF.obj : d:\proj\pcb\source\fido\UMWF.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\fido\UMWF.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DBASE.obj : d:\proj\pcb\source\ppl\DBASE.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\DBASE.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\DOSCLASS.obj : d:\proj\pcb\source\ppl\DOSCLASS.CPP .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\DOSCLASS.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\EVALP.obj : d:\proj\pcb\source\ppl\EVALP.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\EVALP.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\EXECDB.obj : d:\proj\pcb\source\ppl\EXECDB.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\EXECDB.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\FILESTUB.obj : d:\proj\pcb\source\ppl\FILESTUB.CPP .AUTODEPE&
+ND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\FILESTUB.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB&
+\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=2&
+50 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___&
+ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTO&
+SSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\LABEL.obj : d:\proj\pcb\source\ppl\LABEL.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\LABEL.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\LRAND.obj : d:\proj\pcb\source\ppl\LRAND.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\LRAND.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MENU.obj : d:\proj\pcb\source\ppl\MENU.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\MENU.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\MSGSTUB.obj : d:\proj\pcb\source\ppl\MSGSTUB.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\MSGSTUB.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\NEWSCR.obj : d:\proj\pcb\source\ppl\NEWSCR.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\NEWSCR.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\OLDVAR.obj : d:\proj\pcb\source\ppl\OLDVAR.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\OLDVAR.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\S&
+OURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250&
+ -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -&
+dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSS&
+CLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PCBMISC.obj : d:\proj\pcb\source\ppl\PCBMISC.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\PCBMISC.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\PCBMSGS.obj : d:\proj\pcb\source\ppl\PCBMSGS.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\PCBMSGS.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\QINT.obj : d:\proj\pcb\source\ppl\QINT.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\QINT.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOU&
+RCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -&
+dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dD&
+BASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCL&
+ASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\RATIO.obj : d:\proj\pcb\source\ppl\RATIO.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\RATIO.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SO&
+URCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 &
+-dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -d&
+DBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSC&
+LASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SCRCOMP.obj : d:\proj\pcb\source\ppl\SCRCOMP.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\SCRCOMP.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SCREXEC.obj : d:\proj\pcb\source\ppl\SCREXEC.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\SCREXEC.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\SCRMISC.obj : d:\proj\pcb\source\ppl\SCRMISC.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\SCRMISC.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\&
+SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=25&
+0 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ &
+-dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOS&
+SCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\VAR.obj : d:\proj\pcb\source\ppl\VAR.CPP .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\ppl\VAR.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\PCB\SOUR&
+CE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODES=250 -d&
+PCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC___ -dDB&
+ASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -dTOSSCLA&
+SS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\ACCOUNT.obj : d:\proj\pcb\source\support\ACCOUNT.CPP .AUTODE&
+PEND
+ @d:
+ cd d:\proj\pcb\153
+ *wpp386 ..\source\support\ACCOUNT.CPP -i=d:\watcom\h;d:\watcom\h\os2;\PROJ\&
+PCB\SOURCE\H;\proj\lib\h -fo=\PROJ\PCB\OBJ\WATOS2\ -w4 -e25 -s -dPCB_MAXNODE&
+S=250 -dPCB152 -dPCBOARD -dBIGNDX -dNDEBUG -dCRYPT -d___USE_VAR___ -d___EXEC&
+___ -dDBASE -dCOMM -dMULTIPORT -dOSDRIVER -dPCBCOMM -dPCBSTATS -dFIDO -dMG -&
+dTOSSCLASS -dKBD3 -zp4 -zq -ot -om -oc -or -d2 -bm -mf -5r -bt=os2
+
+d:\proj\pcb\153\pcbwat2.exe : d:\proj\pcb\153\ANSI.obj d:\proj\pcb\153\BLT.o&
+bj d:\proj\pcb\153\DIR.obj d:\proj\pcb\153\DISPLAY.obj d:\proj\pcb\153\FILES&
+.obj d:\proj\pcb\153\HELP.obj d:\proj\pcb\153\PCBMACRO.obj d:\proj\pcb\153\P&
+CBTEXT.obj d:\proj\pcb\153\SCREEN.obj d:\proj\pcb\153\SCRLBACK.obj d:\proj\p&
+cb\153\STATUS.obj d:\proj\pcb\153\XLATE.obj d:\proj\pcb\153\DOSCLOSE.obj d:\&
+proj\pcb\153\DOSOPEN.obj d:\proj\pcb\153\DOSREAD.obj d:\proj\pcb\153\DOSTIME&
+.obj d:\proj\pcb\153\DOSWRITE.obj d:\proj\pcb\153\CRC-16F.obj d:\proj\pcb\15&
+3\FCONFIG.obj d:\proj\pcb\153\FIDOFUNC.obj d:\proj\pcb\153\FIDOMENU.obj d:\p&
+roj\pcb\153\GETINTLI.obj d:\proj\pcb\153\HEX.obj d:\proj\pcb\153\HILOW.obj d&
+:\proj\pcb\153\OLDSEEN.obj d:\proj\pcb\153\READCONF.obj d:\proj\pcb\153\RECE&
+MSI.obj d:\proj\pcb\153\RECWAZOO.obj d:\proj\pcb\153\TOSSMISC.obj d:\proj\pc&
+b\153\XLAT.obj d:\proj\pcb\153\XMITEMSI.obj d:\proj\pcb\153\CALLWAIT.obj d:\&
+proj\pcb\153\CHAT.obj d:\proj\pcb\153\CMDS.obj d:\proj\pcb\153\COMMAND.obj d&
+:\proj\pcb\153\CONFRNCE.obj d:\proj\pcb\153\DLPATH.obj d:\proj\pcb\153\DOORS&
+.obj d:\proj\pcb\153\EVENT.obj d:\proj\pcb\153\FILELIST.obj d:\proj\pcb\153\&
+INDEX.obj d:\proj\pcb\153\INIT.obj d:\proj\pcb\153\INKEY.obj d:\proj\pcb\153&
+\INPUT.obj d:\proj\pcb\153\LANGUAGE.obj d:\proj\pcb\153\MISC.obj d:\proj\pcb&
+\153\PCBOARD.obj d:\proj\pcb\153\RECYCLE.obj d:\proj\pcb\153\SCRIPT.obj d:\p&
+roj\pcb\153\SHELL.obj d:\proj\pcb\153\SYS.obj d:\proj\pcb\153\TRANSFER.obj d&
+:\proj\pcb\153\DEVIOCTL.obj d:\proj\pcb\153\MODEM.obj d:\proj\pcb\153\MODEMO&
+S2.obj d:\proj\pcb\153\TICDELAY.obj d:\proj\pcb\153\MESSAGES.obj d:\proj\pcb&
+\153\MSGBASE.obj d:\proj\pcb\153\MSGENTER.obj d:\proj\pcb\153\MSGREAD.obj d:&
+\proj\pcb\153\MSGSCAN.obj d:\proj\pcb\153\LOG.obj d:\proj\pcb\153\LOGIN.obj &
+d:\proj\pcb\153\LOGVIEW.obj d:\proj\pcb\153\NEWCHAT.obj d:\proj\pcb\153\NODE&
+.obj d:\proj\pcb\153\STATS.obj d:\proj\pcb\153\USERNET.obj d:\proj\pcb\153\C&
+APTURE.obj d:\proj\pcb\153\COPYFILE.obj d:\proj\pcb\153\CRC32.obj d:\proj\pc&
+b\153\DIZ.obj d:\proj\pcb\153\ENVFIX.obj d:\proj\pcb\153\MEMORY.obj d:\proj\&
+pcb\153\OVERLAY.obj d:\proj\pcb\153\SHOWERR.obj d:\proj\pcb\153\TOKEN.obj d:&
+\proj\pcb\153\VERSION.obj d:\proj\pcb\153\WILD.obj d:\proj\pcb\153\XMODEM.ob&
+j d:\proj\pcb\153\SETTINGS.obj d:\proj\pcb\153\USERS.obj d:\proj\pcb\153\USE&
+RSCAN.obj d:\proj\pcb\153\USERSTAT.obj d:\proj\pcb\153\USERSYS.obj d:\proj\p&
+cb\153\USRMAINT.obj d:\proj\pcb\153\DATA.obj d:\proj\pcb\153\DUPECHEC.obj d:&
+\proj\pcb\153\FIDOMISC.obj d:\proj\pcb\153\FIDOMSG.obj d:\proj\pcb\153\FIDOQ&
+UE.obj d:\proj\pcb\153\FIDOUSER.obj d:\proj\pcb\153\PACKMSG.obj d:\proj\pcb\&
+153\PASSTHRU.obj d:\proj\pcb\153\PCBTOSS.obj d:\proj\pcb\153\SDR.obj d:\proj&
+\pcb\153\SEENBY.obj d:\proj\pcb\153\UMWF.obj d:\proj\pcb\153\DBASE.obj d:\pr&
+oj\pcb\153\DOSCLASS.obj d:\proj\pcb\153\EVALP.obj d:\proj\pcb\153\EXECDB.obj&
+ d:\proj\pcb\153\FILESTUB.obj d:\proj\pcb\153\LABEL.obj d:\proj\pcb\153\LRAN&
+D.obj d:\proj\pcb\153\MENU.obj d:\proj\pcb\153\MSGSTUB.obj d:\proj\pcb\153\N&
+EWSCR.obj d:\proj\pcb\153\OLDVAR.obj d:\proj\pcb\153\PCBMISC.obj d:\proj\pcb&
+\153\PCBMSGS.obj d:\proj\pcb\153\QINT.obj d:\proj\pcb\153\RATIO.obj d:\proj\&
+pcb\153\SCRCOMP.obj d:\proj\pcb\153\SCREXEC.obj d:\proj\pcb\153\SCRMISC.obj &
+d:\proj\pcb\153\VAR.obj d:\proj\pcb\153\ACCOUNT.obj .AUTODEPEND
+ @d:
+ cd d:\proj\pcb\153
+ @%write pcbwat2.lk1 NAME pcbwat2
+ @%append pcbwat2.lk1 FIL ANSI.obj,BLT.obj,DIR.obj,DISPLAY.obj,FILES.obj,HEL&
+P.obj,PCBMACRO.obj,PCBTEXT.obj,SCREEN.obj,SCRLBACK.obj,STATUS.obj,XLATE.obj,&
+DOSCLOSE.obj,DOSOPEN.obj,DOSREAD.obj,DOSTIME.obj,DOSWRITE.obj,CRC-16F.obj,FC&
+ONFIG.obj,FIDOFUNC.obj,FIDOMENU.obj,GETINTLI.obj,HEX.obj,HILOW.obj,OLDSEEN.o&
+bj,READCONF.obj,RECEMSI.obj,RECWAZOO.obj,TOSSMISC.obj,XLAT.obj,XMITEMSI.obj,&
+CALLWAIT.obj,CHAT.obj,CMDS.obj,COMMAND.obj,CONFRNCE.obj,DLPATH.obj,DOORS.obj&
+,EVENT.obj,FILELIST.obj,INDEX.obj,INIT.obj,INKEY.obj,INPUT.obj,LANGUAGE.obj,&
+MISC.obj,PCBOARD.obj,RECYCLE.obj,SCRIPT.obj,SHELL.obj,SYS.obj,TRANSFER.obj,D&
+EVIOCTL.obj,MODEM.obj,MODEMOS2.obj,TICDELAY.obj,MESSAGES.obj,MSGBASE.obj,MSG&
+ENTER.obj,MSGREAD.obj,MSGSCAN.obj,LOG.obj,LOGIN.obj,LOGVIEW.obj,NEWCHAT.obj,&
+NODE.obj,STATS.obj,USERNET.obj,CAPTURE.obj,COPYFILE.obj,CRC32.obj,DIZ.obj,EN&
+VFIX.obj,MEMORY.obj,OVERLAY.obj,SHOWERR.obj,TOKEN.obj,VERSION.obj,WILD.obj,X&
+MODEM.obj,SETTINGS.obj,USERS.obj,USERSCAN.obj,USERSTAT.obj,USERSYS.obj,USRMA&
+INT.obj,DATA.obj,DUPECHEC.obj,FIDOMISC.obj,FIDOMSG.obj,FIDOQUE.obj,FIDOUSER.&
+obj,PACKMSG.obj,PASSTHRU.obj,PCBTOSS.obj,SDR.obj,SEENBY.obj,UMWF.obj,DBASE.o&
+bj,DOSCLASS.obj,EVALP.obj,EXECDB.obj,FILESTUB.obj,LABEL.obj,LRAND.obj,MENU.o&
+bj,MSGSTUB.obj,NEWSCR.obj,OLDVAR.obj,PCBMISC.obj,PCBMSGS.obj,QINT.obj,RATIO.&
+obj,SCRCOMP.obj,SCREXEC.obj,SCRMISC.obj,VAR.obj,ACCOUNT.obj
+ @%append pcbwat2.lk1 
+!ifneq BLANK ""
+ *wlib -q -n -b pcbwat2.imp 
+ @%append pcbwat2.lk1 LIBR pcbwat2.imp
+!endif
+ *wlink SYS os2v2 op m d all op st=8192 op maxe=25 op q op symf @pcbwat2.lk1
+!ifneq BLANK ""
+ rc -i $[: -i d:\watcom\h -i d:\watcom\h\os2  pcbwat2.exe
+!endif
+

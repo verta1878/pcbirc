@@ -1,0 +1,13 @@
+/o- \PROJ\LIB\BCDOS\bc50\countryl.386+
+/o- \PROJ\LIB\BCDOS\bc50\dos_l.386+
+/o- \PROJ\LIB\BCDOS\bc50\screen_l.386+
+/o- \PROJ\LIB\BCDOS\bc50\pcb_l.386+
+/o- \PROJ\LIB\BCDOS\bc50\misc_l.386+
+/o- \PROJ\LIB\BCDOS\bc50\system_l.386+
+/o- \PROJ\LIB\BCDOS\bc50\doscls_l.386+
+/o+ \LIBS\commdrv\lib\commdrbl.lib+
+/o+ \LIBS\commdrv\lib\libsbl.lib+
+/o- \BC5\LIB\emu.lib+
+/o- \BC5\LIB\mathl.lib+
+/o- \BC5\LIB\overlay.lib+
+/o- \BC5\LIB\cl.lib+ /o+ \LIBS\codebase\bor31\c4base.lib+

@@ -1,114 +1,112 @@
-# pcbpscan — PCBoard File Scanner
+# thdproscan — PCBoard File Scanner
 
-**Clean-room replacement for THD ProScan.**
+Clean room file integrity scanner for PCBoard 15.x uploads.
+Design by pcbirc crew (evga/kiddo/sysop0).
 
-Part of pcbrevival (GPL v3.0). Tests uploaded files for integrity,
-extracts FILE_ID.DIZ, runs virus scans, and updates PCBoard DIR listings.
+## What It Does
 
-## Why Not THD ProScan?
+Tests uploaded files for integrity and safety:
 
-THD ProScan (thdproscan) has 4 bugs that make it unusable for
-production PCBoard systems:
+1. **File exists** and has non-zero size
+2. **ZIP integrity** — verifies central directory, detects truncation
+3. **Zip bomb detection** — limits file count per archive (10,000 max)
+4. **Path traversal** — rejects `../`, drive letters, absolute paths
+5. **Archive type detection** — magic byte identification for ZIP/ARJ/ARC/LZH/RAR/7Z/GZ
+6. **External virus scanner** — optional hook via PCBPROSCAN_AV environment variable
 
-1. **Config never loads** — `TODO: read binary TCfg record from THDINSTL`.
-   THDINSTL writes a binary config, but the reader was never implemented.
-   Only the text KEY=VALUE fallback works.
+## How PCBoard Calls It
 
-2. **ClamAV exit code 2 ignored** — ClamAV returns 2 for scanner errors
-   (corrupt file, engine failure). ProScan only checks for 1 (virus found)
-   and ignores 2, silently passing files the scanner couldn't read.
-   Same issue with McAfee RC=2.
+PCBoard has built-in upload testing via `PcbData.TestUploads` flag
+(configured in PCBSETUP). When enabled, PCBoard runs `PCBTEST.BAT`
+after each upload via `verifyfile()` in SHELL.C:
 
-3. **Archive listing incomplete** — `m_archive.pas:363`: "Currently returns
-   empty list for external tools (parse TODO)". Only ZIP gets internal
-   listing. RAR/ARJ/LHA can test/extract but return no file list, so
-   path traversal and zip bomb checks can't run on those formats.
+```
+PCBoard upload
+  → verifyfile(fullpath, filename, descfile)
+    → shell to PCBTEST.BAT %1 %2 %3 %4
+      → pcbpscan tests the file
+        → exit code 0: PASS (PCBPASS.TXT created)
+        → exit code 1: FAIL (PCBFAIL.TXT created by .BAT)
+    → PCBoard reads PCBFAIL.TXT / PCBPASS.TXT
+    → displays result to caller
+    → rejects file if failed
+```
 
-4. **BBS file writer not implemented** — `thdplus.pas:108`: "TODO: Write
-   to FILES.BBS / RA / Renegade / PCBoard / Mystic". The database updater
-   reads TESTINFO.DAT but can't write results back to any BBS format.
-   FILE_ID.DIZ extraction is dead code.
+## Installation
 
-pcbpscan fixes all 4.
+1. Copy `pcbpscan.exe` and `PCBTEST.BAT` to your PCBoard directory
+2. In PCBSETUP, enable "Test Uploads" (set to YES)
+3. Optional: set `PCBPROSCAN_AV=clamdscan` (or your AV command)
+4. Optional: set `PCBPROSCAN_VERBOSE=1` for detailed output
 
-## Features
+## PCBTEST.BAT
 
-- ZIP integrity check (central directory verification)
-- ARJ/RAR/LHA/7Z integrity via external tools (arj/unrar/lha/7z)
-- FILE_ID.DIZ/ANS extraction from ZIP (internal) and other formats (external)
-- Writes extracted DIZ to PCBoard upload description file
-- Appends to PCBoard DIR listing file
-- External virus scanner hook with proper exit code handling:
-  RC=0 clean, RC=1 virus (FAIL), RC=2 scanner error (ERROR)
-- Banned file extension checking
-- Path traversal detection in archived filenames
-- Zip bomb detection (max file count limit)
-- Max file size limit
-- Config file (pcbpscan.cfg) with KEY=VALUE format
-- Environment variable overrides
-
-## Usage
-
-Called by PCBTEST.BAT (PCBoard's upload verification hook):
-
-```bat
+```batch
 @echo off
 pcbpscan %1 %2 %3 %4
-if errorlevel 2 echo ERROR > PCBERROR.TXT
-if errorlevel 1 echo FAILED > PCBFAIL.TXT
+if errorlevel 1 echo File failed testing > PCBFAIL.TXT
 ```
 
-Arguments (from PCBoard `verifyfile()`):
-- `%1` = full path to uploaded file
-- `%2` = "UPLOAD", "ATTACH", or "TEST"
-- `%3` = upload description file path
-- `%4` = original filename
+## Arguments
 
-Exit codes:
-- 0 = PASS (file is OK)
-- 1 = FAIL (corrupt, dangerous, or virus found)
-- 2 = ERROR (scanner malfunction, needs manual review)
+| Arg | Description | Example |
+|-----|-------------|---------|
+| %1 | Full path to file | C:\PCB\UL\MYFILE.ZIP |
+| %2 | Upload type | UPLOAD, ATTACH, or TEST |
+| %3 | Description file | C:\PCB\UPDESC.TMP |
+| %4 | Original filename | MYFILE.ZIP |
 
-## Configuration
+## Exit Codes
 
-Create `pcbpscan.cfg` alongside the executable:
+| Code | Meaning | PCBoard Action |
+|------|---------|----------------|
+| 0 | PASS | File accepted, PCBPASS.TXT shown |
+| 1 | FAIL | File rejected, PCBFAIL.TXT shown |
+| 2 | ERROR | Scanner couldn't run |
 
-```
-# Virus scanner command (file path appended automatically)
-AV_CMD=clamscan --no-summary
+## Virus Scanner Hook
 
-# Verbosity (0=quiet, 1=verbose)
-VERBOSE=0
+Set the `PCBPROSCAN_AV` environment variable to chain an
+external virus scanner:
 
-# Maximum file size in bytes (default 100MB)
-MAX_FILE_SIZE=104857600
-
-# Maximum files in one archive (zip bomb protection)
-MAX_FILES_IN_ARC=10000
-
-# Banned file extensions (space-separated)
-BANNED_EXTS=.exe .com .bat .cmd .scr .pif .vbs .js
-
-# Write FILE_ID.DIZ to upload description file (1=yes)
-DIZ_TO_DESC=1
-
-# PCBoard DIR listing file to append entries to (blank=disabled)
-DIR_FILE=C:\PCB\GEN\DIR0
+```batch
+SET PCBPROSCAN_AV=clamdscan --no-summary
 ```
 
-Environment variables override config:
-- `PCBPROSCAN_AV` = virus scanner command
-- `PCBPROSCAN_VERBOSE` = enable verbose output
+pcbpscan runs the AV command with the file path as argument.
+Non-zero exit from the AV = file fails.
 
-## Build
+## Compiling
 
-OpenWatcom (NT):
-```
-wcc386 -5r -oxs -bt=nt pcbpscan.c
-wlink system nt name PCBPSCAN_W.EXE file pcbpscan.obj
+```bash
+gcc -o pcbpscan pcbpscan.c -Wall -O2
+wcc386 pcbpscan.c -bt=dos -mf -5 -ox
 ```
 
-## Source
+## Files
 
-770 lines of C, single file, no dependencies. Compiles under
-OpenWatcom 2.0 (DOS/OS2/NT).
+```
+thdproscan/
+├── pcbpscan.c     Source code (C, portable)
+├── pcbpscan       Compiled binary
+├── PCBTEST.BAT      PCBoard integration script
+└── README.md        This file
+```
+
+## Design Philosophy
+
+thdproscan is a standalone tool. It knows nothing about PCBoard
+internals — no headers, no libraries, no dependencies. PCBoard
+calls it via PCBTEST.BAT and reads the result files. This loose
+coupling means:
+
+- Works with any PCBoard version (15.0+)
+- Can be replaced with any other scanner
+- Can be tested independently
+- No risk of breaking PCBoard if scanner has bugs
+- Same scanner works for FTP uploads, TIC imports, etc.
+
+## Credits
+
+Clean room design: evga, kiddo, sysop/0 (pcbirc crew)
+Part of pcbrevival (GPL v3.0)

@@ -5,18 +5,18 @@
 [0;36m|  __/[1;36m| |__[0;36m| |_) [1;37m| | |  __/>  <| |\ V / (_| | |
 [0;36m|_|   [1;36m \____[0;36m|____/[1;37m|_|  \___/_/\_\_| \_/ \__,_|_|
 [1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[1;33m  PCBoard 15.41[0;33m Bulletin Board System
+[1;33m  PCBoard 15.4[0;33m Revival
 [1;37m  Source Recovery & Modernization Project
 [1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[1;32m  532[0;32m/557 Watcom port [1;32m(95.5%)[0m
-[1;32m  BinkleyTerm XE [0;32mmailer [1;32m(100%)[0m
-[1;33m  2,757 [0;33mPPE collection w/ index[0m
-[1;36m  pcbtic [0;36mTIC processor[0m
-[1;36m  pcbis  [0;36mTUI installer[0m
-[1;36m  nlcomp [0;36mnodelist compiler[0m
+[1;32m  33 [0;32mprograms [1;32m(28 Clark + 5 new)[0m
+[1;32m  12/12 [0;32mPhase 0 utilities linked[0m
+[1;33m  pcbis [0;33m5,710-line internet daemon[0m
+[1;36m  pcbbinkp [0;36mBinkP/1.1 FidoNet mailer[0m
+[1;36m  pcbdraw  [0;36mANSI art viewer/editor[0m
+[1;33m  5,703 [0;33mPPE archives (incl. Roy/SAC)[0m
+[1;36m  SIO [0;36mdriver (31 bugs fixed)[0m
 [1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [0;36m  hexadecimal [0;37m· [0;36mverta1878 [0;37m· [0;36mwrench
-[0;36m  sysop/0 [0;37m· [0;36mkiddo/evga [0;37m· [0;36mevga
+[0;36m  sysop/0 [0;37m· [0;36mkiddo [0;37m· [0;36mevga
 [1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[0;37m  pcbirc crew · 2026
-[1;33m  github.com/pcbirc/pcbrevival[0m
+[0;36m  github.com/verta1878/pcbrevival[0m

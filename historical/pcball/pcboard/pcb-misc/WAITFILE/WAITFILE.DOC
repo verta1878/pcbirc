@@ -1,0 +1,36 @@
+WAITFILE is a multitasker-aware utility which waits until a file is either
+created, or optionally waits for one to be removed, giving up time slices
+while it waits.
+
+WAITFIL2 is an OS/2-specific version of WAITFILE which does not use up any
+cpu cycles during the 5 second wait in between each test for the existence of
+the file.
+
+usage:  WAITFILE filename seconds (remove)
+
+  WAITFILE checks for the existence of 'filename' once every five seconds
+  and continues to retry the operation for as many 'seconds' as specified.
+
+  The 'remove' keyword is optional and, if used, indicates that WAITFILE is
+  waiting for 'filename' to be removed instead of created
+
+  When the confirming action occurs (when the filename is created, or if
+  "removed" is specified, when the file is removed), then WAITFILE exits
+  with an errorlevel of 1.
+
+  After "seconds" expires, WAITFILE exits when an errorlevel of 0.
+
+
+Example usage inside of a batch file:
+
+  :wait
+    waitfile c:\update.now 30
+    if errorlevel 1 goto process
+    rem we could do something else here which would happen once every
+    rem 30 seconds due to the "30" on the waitfile command line
+    goto wait
+
+  :process
+    rem finish processing
+
+

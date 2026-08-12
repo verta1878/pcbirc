@@ -71,7 +71,7 @@ int LIBENTRY dosfindfirst(char *FileSpec, struct ffblk *f, int Attrib, int *Find
       f->ff_fdate  = *(USHORT *)&p->fdateLastWrite;
       f->ff_fsize  = p->cbFile;
       f->ff_attrib = p->attrFile;
-      ((char *) p) += p->oNextEntryOffset;
+      p = (FILEFINDBUF3 *)((char *)p + p->oNextEntryOffset);
     }
 //  free(FindBuffer);
     return(0);
@@ -131,7 +131,7 @@ int LIBENTRY dosfindnext(struct ffblk *f, int *FindCount DDIRHANDLE2) {
       f->ff_fdate  = *(USHORT *)&p->fdateLastWrite;
       f->ff_fsize  = p->cbFile;
       f->ff_attrib = p->attrFile;
-      ((char *) p) += p->oNextEntryOffset;
+      p = (FILEFINDBUF3 *)((char *)p + p->oNextEntryOffset);
     }
 //  free(FindBuffer);
     return(0);

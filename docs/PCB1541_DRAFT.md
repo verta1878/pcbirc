@@ -134,7 +134,7 @@ void filesrc_close(void);
 - Message base format — UNCHANGED
 - Conference configuration — UNCHANGED
 - PCBOARD.DAT layout — UNCHANGED (except version field)
-- All 2,757 PPEs continue to work
+- All 5,703 PPEs (combined collection) continue to work
 - All existing doors and utilities work
 
 ### What's new:
@@ -154,7 +154,7 @@ void filesrc_close(void);
 
 ### Phase 1: 15.4 Source Port ✅ COMPLETE
 - 556/556 source files compile under OpenWatcom 2.0
-- 13/13 Clark binaries linked (PCBOARD, LOCAL, PPLC, PCBSETUP,
+- 28/28 Clark binaries linked (16 main + 12 Phase 0 utilities) (PCBOARD, LOCAL, PPLC, PCBSETUP,
   PCBSM, MKPCBTXT, MAKEHELP, MAKEIDX, USERNET, UUIN-UUXFER)
 - Phase 3 ASM→C: 8,251 lines TASM → 309 lines C
 - ASYNC.C FOSSIL driver with CPU hog fix (INT 2Fh/1680h)
@@ -168,7 +168,7 @@ void filesrc_close(void);
 - BinkP mailer — pcbbinkp.c standalone executable (not started)
 - FidoNet TIC — pcbtic.c ✅ compiles
 - FREQ/magic — pcbfcfg.c ✅ compiles
-- Nodelist compiler — nlcomp.c ✅ compiles
+- Nodelist compiler — PCBNLC (Clark) ✅ linked
 - pcbpscan file scanner ✅ compiles
 - pcbis_ui installer TUI ✅ compiles, linked (48KB)
 - Startup/shutdown scripts ✅ 3 platforms
@@ -222,7 +222,7 @@ void filesrc_close(void);
 - Cross-compile testing matrix
 
 ### Phase 8: Community & Preservation
-- PPE decompiler on 2,757 PPE collection
+- PPE decompiler on 5,703 PPE collection
 - PCBoard box/manual scanning (Roy/SAC contacted)
 - Package reprint materials
 - g00r00 ANSI art for FILE_ID.ANS
@@ -704,10 +704,10 @@ Zone  Net   Node  BBS Name                 Sysop               Location
 (1 node found)
 ```
 
-### nlcomp Integration
+### PCBNLC (Nodelist Compiler)
 
-The nlcomp tool (/pcbrevival/tools/nlcomp.c) compiles raw FTS-5000
-nodelists into NODELIST.NDX. PCBoard 15.41 calls nlcomp during
+PCBNLC (Clark's nodelist compiler) compiles raw FTS-5000
+nodelists into NODELIST.DBF/NDX. PCBoard calls PCBNLC during
 event processing to rebuild the index when diffs arrive.
 
 ### Implementation

@@ -193,7 +193,7 @@ NEW FEATURES
   Default index.htm included with full PCBoard feature listing.
 
 
-  Nodelist Compiler (nlcomp)
+  Nodelist Compiler (PCBNLC — Clark)
   ──────────────────────────
   Standalone nodelist compiler reads NODELIST.### and produces
   NODELIST.DBF + NODELIST.NDX for PCBoard's FidoNet subsystem.
@@ -287,7 +287,7 @@ NEW FEATURES
 
   PPE Collection
   ──────────────
-  2,757 PPE (PCBoard Programming Language Executable) files
+  5,703 PPE (PCBoard Programming Language Executable) files
   included with full FILE_ID.DIZ index. Covers doors, login
   screens, utilities, games, sysop tools, and more.
 
@@ -298,7 +298,7 @@ TOOLS ADDED
   pcbtic      TIC file processor (toss/hatch/list)
   pcbis       Installation system TUI (7 config screens inc. FREQ)
   pcbfcfg     Standalone FidoNet configurator (mirrors PCBSETUP A-L)
-  nlcomp      Nodelist compiler (NODELIST.### → .DBF/.NDX)
+  PCBNLC      Nodelist compiler (Clark) (NODELIST.### → .DBF/.NDX)
   upd1541     Backup + version upgrade (15.4 → 15.41)
   pcbdraw     ANSI art editor with PCBoard @X codes & animation
   pcbis_ui    Full-screen ANSI configuration interface
@@ -307,7 +307,7 @@ TOOLS ADDED
 SOURCE PORT
 -----------
 
-  OpenWatcom 2.0 Port: 556/556 files (100%), 13 binaries linked
+  OpenWatcom 2.0 Port: 556/556 files, 28 Clark binaries linked
 
   All PCBoard 15.4 source files compile under OpenWatcom 2.0
   and all 13 original Clark binaries link successfully:
@@ -390,7 +390,7 @@ COMPATIBILITY
   - All existing DIR listing files work unchanged  
   - All existing user records work unchanged
   - All existing message bases work unchanged
-  - All 2,757 PPEs continue to function
+  - All 5,703 PPEs continue to function
   - All existing doors and external programs work
   - New .SRC files created on demand, not required
 

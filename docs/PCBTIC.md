@@ -173,7 +173,7 @@ Setting `passthrough=yes` in an area config means:
 | PCBFU.EXE | FidoNet utility — area configuration, maintenance |
 | PCBTIC | File echo processor — handles .TIC distribution |
 | BinkleyTerm XE | Mailer — transfers files and packets between nodes |
-| nlcomp | Nodelist compiler — builds NODELIST.DBF/NDX |
+| PCBNLC | Nodelist compiler (Clark) — builds NODELIST.DBF/NDX |
 
 ## Source
 

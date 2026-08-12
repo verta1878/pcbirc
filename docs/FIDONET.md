@@ -125,7 +125,7 @@ Copy your NODELIST.### file to the nodelist directory, then
 compile it:
 
 ```
-nlcomp C:\FIDO\NODELIST\NODELIST.218 -o C:\FIDO\NODELIST\
+PCBNLC\NODELIST\NODELIST.218 -o C:\FIDO\NODELIST\
 ```
 
 This creates NODELIST.DBF and NODELIST.NDX.
@@ -633,7 +633,7 @@ immediately after each session.
 
 ### Nodelist issues
 
-1. Recompile: `nlcomp NODELIST.### -o C:\FIDO\NODELIST\`
+1. Recompile: `PCBNLC.### -o C:\FIDO\NODELIST\`
 2. Verify nodelist path in PCBSETUP matches
 3. For user-facing lookup: `NL` command at main prompt
 

@@ -1,0 +1,4 @@
+There is apparently an error in the creation of stacks when using threads in
+the current borland library.  The information in this directory gives further
+information and work-around code.
+

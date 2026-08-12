@@ -1,0 +1,59 @@
+IDXDUPES is a simple program that is used to scan your PCBoard .IDX files for
+duplicate files based on filenames which may appear to have the same "root"
+name with changes made either to the filename extension or to the end of the
+filename as in revision-level naming.
+
+Here is an example of the output IDXDUPES may produce:
+
+   AWARD100.ZIP   H:\DOORUPLD\         note that the root is the same and
+   AWARD105.ZIP   H:\DOORUPLD\         only the version number is different
+
+   NEWS320 .ZIP   H:\DOOR14\           here the version number is followed by
+   NEWS320A.ZIP   H:\UTIL145\          a letter but it is still found
+
+   NR201CVT.ZIP   H:\UTIL14\           these all appear related and IDXDUPES
+   NR205   .ZIP   H:\UTIL145\          groups them all together, NR205 was the
+   NR206   .ZIP   H:\UTIL145\          one that needed to be removed
+
+   RM-150A .ZIP   H:\DOOR145\          as it turns out these are NOT duplicates
+   RM-150B .ZIP   H:\DOOR145\          they are 4 "parts" of the same posting,
+   RM-150C .ZIP   H:\DOOR145\          however, they were still reported by
+   RM-150D .ZIP   H:\DOOR145\          IDXDUPES for sysop review
+
+   FILE10.ZIP     H:\UTIL14\           Here the ZIP and ARJ extensions are
+   FILE10.ARJ     H:\UTIL14\           shown to have no effect on IDXDUPES'
+   FILE10A.ZIP    H:\UTILUPLD\         ability to locate duplicates
+
+It is very possible for files to have similar filenames yet have no relation
+one to another.  It is also possible, as shown above, for filenames to have
+extensions which indicate that a group of files "belong together" rather than
+that one is an updated version of the other.  Therefore, it is recommended that
+you not ASSUME that all files found are duplicates.  This program is supplied
+merely to reduce the mass of filenames down to a more manageable list of
+"possible duplicates" that a sysop could then consider removing.
+
+It is recommended that you use PCBFiler to review the description of each file
+found and possibly even view the contents to verify that one file duplicates
+or updates another before removing one or the other.
+
+One very obvious limitation to this program is that the .IDX files that PCBoard
+uses are limited to 65,535 files each.  While PCBoard is capable of making use
+of *several* IDX files at once, this program is not - it will work with only a
+single .IDX file at a time.
+
+Furthermore, PCBoard generally requires that upload files be excluded from the
+.IDX file.  In order to catch the most number of duplicates it is recommended
+that you create a special .IDX file that includes not just your download paths
+but your upload paths as well then let IDXDUPES search this all encompassing
+.IDX file instead of the standard one that PCBoard uses.
+
+Usage is as follows:
+
+    MAKEIDX ALLFILES.PTH ALLFILES.IDX       <-  create a new .IDX file
+    IDXDUPES ALLFILES.IDX > DUPES.LST       <-  create dupes.lst
+
+The program sends its output to standard out and DOS redirection can be used,
+as shown above, to capture the output to a file.
+
+This program is provided free of charge as is.
+

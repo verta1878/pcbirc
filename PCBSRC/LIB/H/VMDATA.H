@@ -30,6 +30,8 @@ typedef int VMSortFunc(void *base, size_t nel, size_t width,
 #define VM_FALSE   0
 #define VM_TRUE    1
 #define VM_INVALID_POS  (-1L)
+#define VM_SEQUENTIAL  0
+#define VM_RANDOM      1
 typedef void (*VMSwapDisplayFunc)(char *msg);
 
 /* --- Function declarations (implemented in VMFUNCS.C) --- */
@@ -66,6 +68,9 @@ void VMSort(VMDataSet *set, unsigned recSize, long start, long cnt,
 
 void VMEMSStateSave(void);
 void VMEMSStateRestore(void);
+
+void VMAccessAttrSet(VMDataSet *set, int mode);
+void VMDebugOn(void);
 
 void far * VMRecordGetByPos(VMDataSet *set, long pos);
 void VMWrite(VMDataSet *set, void *data, long pos, unsigned size);

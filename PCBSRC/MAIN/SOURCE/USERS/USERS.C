@@ -594,21 +594,21 @@ static void _NEAR_ LIBENTRY getfirstname(char *FirstName, char *FullName) {
 #ifndef LIB
 void LIBENTRY yymmddtostr(char Dest[], char Srce[]) {
   #if defined(_MSC_VER) || defined(__WATCOMC__)
-    char _AH,_AL,_CH,_CL,_DH,_DL;
+    char yAH,yAL,yCH,yCL,yDH,yDL;
   #endif
   checkstack();
-  _AH = Srce[2];
-  _AL = Srce[3];
-  _CH = Srce[4];
-  _CL = Srce[5];
-  _DH = Srce[0];
-  _DL = Srce[1];
-  Dest[0] = _AH;
-  Dest[1] = _AL;
-  Dest[3] = _CH;
-  Dest[4] = _CL;
-  Dest[6] = _DH;
-  Dest[7] = _DL;
+  yAH = Srce[2];
+  yAL = Srce[3];
+  yCH = Srce[4];
+  yCL = Srce[5];
+  yDH = Srce[0];
+  yDL = Srce[1];
+  Dest[0] = yAH;
+  Dest[1] = yAL;
+  Dest[3] = yCH;
+  Dest[4] = yCL;
+  Dest[6] = yDH;
+  Dest[7] = yDL;
   Dest[5] = '-';
   Dest[2] = '-';
   Dest[8] = 0;
@@ -625,19 +625,19 @@ void LIBENTRY yymmddtostr(char Dest[], char Srce[]) {
 
 void LIBENTRY strtoyymmdd(char Dest[], char Srce[]) {
   #if defined(_MSC_VER) || defined(__WATCOMC__)
-    char _AH,_AL,_CH,_CL,_DH,_DL;
+    char yAH,yAL,yCH,yCL,yDH,yDL;
   #endif
   checkstack();
-  _AH = Srce[6];
-  _AL = Srce[7];
-  _CH = Srce[0];
-  _CL = Srce[1];
-  _DH = Srce[3];
-  _DL = Srce[4];
-  Dest[0] = _AH;
-  Dest[1] = _AL;
-  Dest[2] = _CH;
-  Dest[3] = _CL;
+  yAH = Srce[6];
+  yAL = Srce[7];
+  yCH = Srce[0];
+  yCL = Srce[1];
+  yDH = Srce[3];
+  yDL = Srce[4];
+  Dest[0] = yAH;
+  Dest[1] = yAL;
+  Dest[2] = yCH;
+  Dest[3] = yCL;
   Dest[4] = _DH;
   Dest[5] = _DL;
 }
@@ -653,7 +653,7 @@ void LIBENTRY strtoyymmdd(char Dest[], char Srce[]) {
 #ifndef LIB
 void LIBENTRY yymmddtommddyy(char *Dest, char *Srce) {
   #if defined(_MSC_VER) || defined(__WATCOMC__)
-    char _AH,_AL,_CH,_CL,_DH,_DL;
+    char yAH,yAL,yCH,yCL,yDH,yDL;
   #endif
   checkstack();
   _AH = Srce[0];
@@ -682,7 +682,7 @@ void LIBENTRY yymmddtommddyy(char *Dest, char *Srce) {
 #ifndef LIB
 void LIBENTRY mmddyytoyymmdd(char *Dest, char *Srce) {
   #if defined(_MSC_VER) || defined(__WATCOMC__)
-    char _AH,_AL,_CH,_CL,_DH,_DL;
+    char yAH,yAL,yCH,yCL,yDH,yDL;
   #endif
   checkstack();
   _AH = Srce[0];

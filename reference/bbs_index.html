@@ -1,0 +1,3728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="generator" content="Metropoli-PCB-Indexer">
+    <title>Metropoli BBS - C:\SOFTWARE\DOS\BBS</title>
+    <style>
+        /* FONT DEFINITION: Forces browser to use local file aliased as MetropoliRetro */
+        @font-face {
+            font-family: 'MetropoliRetro';
+            src: url('/retrofonts/Perfect%20DOS%20VGA%20437%20Win.woff') format('woff'),
+                 url('/retrofonts/Perfect%20DOS%20VGA%20437%20Win.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-color: #000000;
+            --crt-bg: #080808;          
+            --dos-white: #DDDDDD;       
+            --dos-grey: #999999;        
+            --dos-yellow: #DDDD44;      
+            --dos-cyan: #44DDDD;        
+            --dos-green: #44DD44;       
+            --dos-red-bg: #AA0000;      
+            --action-color: #00AAAA;    
+            --hover-white: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--dos-white);
+            font-family: 'MetropoliRetro', monospace;
+            font-size: 19px;
+            line-height: 21px; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-width: fit-content; 
+        }
+        
+        /* Explicitly force PRE tags to inherit the Retro Font */
+        pre, code, kbd, samp {
+            font-family: 'MetropoliRetro', monospace;
+            font-size: inherit;
+        }
+
+        /* The main CRT Container. Width is injected dynamically (110ch or 132ch) */
+        .crt-frame {
+            background-color: var(--crt-bg);
+            display: block;
+            width: 110ch; 
+            padding: 20px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+
+        .bbs-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--dos-grey);
+            padding-bottom: 10px;
+            color: var(--dos-white);
+        }
+        
+        .header-logo { height: 160px; width: auto; }
+
+        .breadcrumb a:hover { color: var(--dos-yellow); background-color: #0000AA; }
+
+        .ctx-link {
+            display: block;
+            margin-top: 5px;
+            color: var(--dos-grey);
+            font-family: 'MetropoliRetro', monospace;
+            font-size: 19px;
+        }
+        .ctx-link a { color: var(--action-color); text-decoration: none; }
+        .ctx-link a:hover { color: var(--hover-white); background-color: var(--action-color); }
+
+        .file-table { width: 100%; border-collapse: collapse; table-layout: auto; }
+
+        th {
+            text-align: left;
+            color: var(--dos-yellow);
+            border-bottom: 1px solid var(--dos-grey);
+            padding: 5px 10px; 
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            /* Force the Retro font and remove implicit bolding */
+            font-family: 'MetropoliRetro', monospace;
+            font-weight: normal; 
+        }
+        
+        td { padding: 0 10px; vertical-align: top; }
+        
+        /* COLUMNS */
+        .col-name { width: 1px; white-space: nowrap; color: var(--dos-white); }
+        
+        /* Action column uses 'pre' to preserve spaces */
+        .col-action { 
+            width: 13ch; 
+            white-space: pre; 
+            text-align: left; 
+            color: var(--action-color); 
+        }
+        
+        .col-size { width: 1px; white-space: nowrap; text-align: right; color: var(--dos-green); }
+        .col-date { width: 1px; white-space: nowrap; text-align: left; color: var(--dos-cyan); }
+        .col-desc { width: auto; white-space: pre-wrap; color: var(--dos-grey); }
+
+        /* HOVER EFFECTS */
+        tbody tr:hover { background: linear-gradient(to bottom, var(--dos-red-bg) 21px, transparent 21px); }
+        tbody tr:first-child td { padding-top: 12px; }
+        tbody tr:first-child:hover {
+            background: linear-gradient(to bottom, transparent 12px, var(--dos-red-bg) 12px, var(--dos-red-bg) 33px, transparent 33px);
+        }
+        tbody tr:hover .col-name a, tbody tr:hover .col-size, tbody tr:hover .col-date, tbody tr:hover .col-action a { color: var(--hover-white) !important; }
+        tbody tr:hover .col-desc::first-line { color: var(--hover-white) !important; }
+
+        .unpack-btn { color: var(--action-color); }
+        .dir-label { color: var(--action-color); }
+        
+        /* Sort Indicators */
+        .sort-asc::after { content: " ▲"; }
+        .sort-desc::after { content: " ▼"; }
+    </style>
+</head>
+<body>
+
+<div class="crt-frame">
+    <div class="bbs-header">
+        <img src="/mpolilogo2-transparent-500x500.png" class="header-logo" alt="Metropoli BBS">
+        <div>
+            <pre>Metropoli BBS</pre>
+            <pre><span class="breadcrumb"><a href="../../../index.html">C:</a>\<a href="../../index.html">SOFTWARE</a>\<a href="../index.html">DOS</a>\<a href="index.html">BBS</a></span></pre>
+            
+        </div>
+    </div>
+
+    <table class="file-table" id="fileTable">
+        <thead>
+            <tr>
+                <th class="col-name" onclick="sortTable(0, 'text')">FILENAME</th>
+                <th class="col-action"></th>
+                <th class="col-size" onclick="sortTable(2, 'size')">SIZE</th>
+                <th class="col-date" onclick="sortTable(3, 'date')">DATE</th>
+                <th class="col-desc">DESCRIPTION</th>
+            </tr>
+        </thead>
+        <tbody id="fileTableBody">
+
+        <tr data-bytes="363108" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_10.ZIP">1523_10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">363108</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">10 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 10 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="417917" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_100.ZIP">1523_100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">417917</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">100 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 100 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="362472" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_2.ZIP">1523_2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">362472</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">2 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 2 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="362662" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_25.ZIP">1523_25.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_25.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">362662</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">25 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 25 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="417584" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_250.ZIP">1523_250.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_250.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">417584</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">250 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 250 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="361828" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_5.ZIP">1523_5.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_5.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">361828</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">5 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 5 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="362531" data-timestamp="843782400">
+            <td class="col-name"><a href="1523_50.ZIP">1523_50.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/1523_50.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">362531</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">50 Node 15.22 =&gt; 15.23 PCBoard Patch
+This is the PCBoard 15.23 FREE Upgrade
+Patch! This archive contains patch files
+for PCBOARD.EXE PCBOARDM.EXE and
+PCBOARD2.EXE 50 NODE BBS Software.
+----------------------------------------
+  PCBOARD (R) BBS SOFTWARE: (C) 1996
+    CLARK DEVELOPMENT COMPANY, INC.
+----------------------------------------</td>
+        </tr>
+        <tr data-bytes="81139" data-timestamp="801100800">
+            <td class="col-name"><a href="ACNFN26.ZIP">ACNFN26.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/acnfn26.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">81139</td>
+            <td class="col-date">1995-05-22</td>
+            <td class="col-desc">Automated Network/Conference Listing v2.6.
+From Sunrise Door/Utility Software Create a
+conference listing automatically based on the
+CNAMES file, by Network. Make a conference
+change or add a whole network and this
+utility will generate the listing. Colors and
+verbage are configurable; 99,999 conferences.
+For pcboard 14.5/15.x only. WILL NOW DISPLAY
+LONG CONFERENCE NAME!!!!!</td>
+        </tr>
+        <tr data-bytes="47407" data-timestamp="812419200">
+            <td class="col-name"><a href="ADD163.ZIP">ADD163.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/add163.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">47407</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc"> AddItAll 1.63
+
+ ! The Best AllFiles Maker in History !
+
+  All/New/Missing/Area/MostDown Lists
+  Make 5 Lists At the Same time, all
+   with their own settings !!!
+  Draw Your Own Headers
+  EXE-Converter
+  FILES.BBS/FileBase RA 2.0x
+  FLSEARCH.CTL/RA 1.1x/RA 2.0x
+  CD-ROM support
+  Easy To Use In BatchFiles
+
+           Many Bugs Fixed</td>
+        </tr>
+        <tr data-bytes="138841" data-timestamp="847238400">
+            <td class="col-name"><a href="ADL32B1.ZIP">ADL32B1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/adl32b1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">138841</td>
+            <td class="col-date">1996-11-06</td>
+            <td class="col-desc">AdLogo v3.2beta1 (11/05/96) For pcboard v15.x
+Move files from CD-ROM and/or NetWork Server
+to local node before user downloads. Add Zip
+Comments and/or BBSINFO.TXT type files to
+ZIP, .ARJ, and .GIF files. Supports DOS-Type
+Multi-Taskers, LAN Networks, and now enhanced
+for Windows95. Many new enhancements since
+version v2.25! Faster, better screen displays
+and more configurable. By jemsoft &amp; Dev.</td>
+        </tr>
+        <tr data-bytes="3243" data-timestamp="830908800">
+            <td class="col-name"><a href="ADRS101.ZIP">ADRS101.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/adrs101.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3243</td>
+            <td class="col-date">1996-05-01</td>
+            <td class="col-desc">┌──────────────────────────────────────────┐
+│       eMail Address PPE v. 1.01          │
+│   Internet E-Mail Name Replacement PPE   │
+│    MoonScape Software Release v. 1.01    │
+│      MoonScape Software 516-431-3271     │
+│ Allows you to show users their INTERNET  │
+│   EMAIL address with DOTS and centers    │
+│   it on a nice display.  Configurable    │
+└──────────────────────────────────────────┘</td>
+        </tr>
+        <tr data-bytes="14589" data-timestamp="858643200">
+            <td class="col-name"><a href="AGSCALL.ZIP">AGSCALL.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/agscall.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">14589</td>
+            <td class="col-date">1997-03-18</td>
+            <td class="col-desc">- [ PPE Section ] CALLNUM is a PPE to put in
+your login process, so users will see their
+calling number... Font is customizable Lr.</td>
+        </tr>
+        <tr data-bytes="3544" data-timestamp="789436800">
+            <td class="col-name"><a href="AGSJN10.ZIP">AGSJN10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/agsjn10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3544</td>
+            <td class="col-date">1995-01-07</td>
+            <td class="col-desc">&quot;J&quot; Replacement for PCBoard
+Provide a fullscreen conference
+selection - totally customizable</td>
+        </tr>
+        <tr data-bytes="35257" data-timestamp="858643200">
+            <td class="col-name"><a href="AGSLOG23.ZIP">AGSLOG23.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/agslog23.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">35257</td>
+            <td class="col-date">1997-03-18</td>
+            <td class="col-desc">Aegis Corp. PPE: Aegis Login v2.30. IEMSI
+support included! Kewl graphics!</td>
+        </tr>
+        <tr data-bytes="424435" data-timestamp="843264000">
+            <td class="col-name"><a href="AGSPP221.ZIP">AGSPP221.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/agspp221.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">424435</td>
+            <td class="col-date">1996-09-21</td>
+            <td class="col-desc">  ▄████▄  ▄████▄   ▄████▄  ▀█▄     ▄████▄
+ ██▀  ▀█▌██▀  ▀█▌ ██▀  ▀█▌  ▄▄▄   ██▀  ▀█▌
+▐█▌    ███▌   ▐█▀▐█▌   ▐█▀   ▀██ ██▌   ▐█▀
+██     ███  ▄▄   ██  ▄▄▄▄     ███▐█▄▄  kL!
+██ ▀▀▄ ███ ▀     ██ ▀  ▀██▄  ▐███ ▀▀████▄
+██▄    ███▌      ██▌     ███ ████      ▀█▌
+▐██▌  ▐████▄  ▄█▄▐██▄▄  ▄███▐███ ▄█▄   ▄██
+ ██▀ ▄██▌▀▀██████▄▀▀█████▀▀  ▀▀  ▀███████▀
+ &#x27;96  ▀▀
+        Lone Runner&#x27;s PowerPPL 2.22
+              · ·-──────--· ·
+      PCBoard Programming Language IDE
+          ·    · ·-────--· ·    ·
+ COMPILE &amp; RUN a PPE WITHOUT LEAVING editor,
+ full HLP for ANY PPL3 word by CTRL-F1,color
+  in syntax! Special Offer for PPE Groups!</td>
+        </tr>
+        <tr data-bytes="81326" data-timestamp="867110400">
+            <td class="col-name"><a href="AGSPPX20.ZIP">AGSPPX20.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/agsppx20.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">81326</td>
+            <td class="col-date">1997-06-24</td>
+            <td class="col-desc">Lone Runner&#x27;s PPLX 2.OO ! PPE DECOMPILER For
+PPE 1.O to 3.3o Rebuilds For/Next,
+While/Endwhile, If/Then! This version KICKS
+CDC&#x27;S ASS</td>
+        </tr>
+        <tr data-bytes="20151" data-timestamp="812678400">
+            <td class="col-name"><a href="AGSRD11.ZIP">AGSRD11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/agsrd11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">20151</td>
+            <td class="col-date">1995-10-03</td>
+            <td class="col-desc">- [ PPE Section ] [AGSREAD.PPE] Version 1.1 A
+Great PPE to Replace the Read PCB Command.
+Lightbar Menu Driven and Much much more...
+Try it Now! For pcboard 15.1 by Number 6 /
+aegis</td>
+        </tr>
+        <tr data-bytes="4256" data-timestamp="862012800">
+            <td class="col-name"><a href="AMBO-ENT.ZIP">AMBO-ENT.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ambo-ent.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4256</td>
+            <td class="col-date">1997-04-26</td>
+            <td class="col-desc">Press (enter) to continue? - PPE replacement
+This prompt has it all. Kewl looking
+animations, self installing and FREEWARE!</td>
+        </tr>
+        <tr data-bytes="80932" data-timestamp="841017600">
+            <td class="col-name"><a href="ANTI143.ZIP">ANTI143.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/anti143.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">80932</td>
+            <td class="col-date">1996-08-26</td>
+            <td class="col-desc">AntiAd v1.43 - The ultimate BBS ad detection
+and removal utility. Uses 3 methods to detect
+BBS ads: a conventional database algorithm
+for static BBS ads, a keyword algorithm for
+ads that are changed frequently and filename
+detection for tiny BBS ads that are not
+mathematically unique. AntiAd&#x27;s keyword
+algorithm can detect extensively modified BBS
+ad files that fools other detection schemes!
+Includes a native 32-bit OS/2 version!</td>
+        </tr>
+        <tr data-bytes="2303" data-timestamp="746755200">
+            <td class="col-name"><a href="ARCH11.ZIP">ARCH11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/arch11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">2303</td>
+            <td class="col-date">1993-08-31</td>
+            <td class="col-desc">Automatic Read Command Help v 1.1 pcboard
+15.0 PPE to automatically help novice users
+read messages. Author: Gerry Schechter This
+version fixes a typo in v 1.0.</td>
+        </tr>
+        <tr data-bytes="41800" data-timestamp="837475200">
+            <td class="col-name"><a href="ARCID122.ZIP">ARCID122.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/arcid122.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">41800</td>
+            <td class="col-date">1996-07-16</td>
+            <td class="col-desc">Archive Identifier 1.22 - A utility for
+identifying ARC ARJ HYP LZH PAK RAR SQZ ZIP
+ZOO GIF JPG and BMP files by SIGNATURE, not
+extension, including self-extracting
+archives!  Tiny and very fast.  Other files
+can be filtered based on file extensions. For
+use in customized BBS upload batch files and
+similar archive testing applications.
+Excellent for PCBTEST.BAT or SLOWDRV.BAT use.
+Includes both DOS and 32-bit OS/2 versions!</td>
+        </tr>
+        <tr data-bytes="12489" data-timestamp="770083200">
+            <td class="col-name"><a href="ASMHPWA.ZIP">ASMHPWA.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/asmhpwa.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12489</td>
+            <td class="col-date">1994-05-28</td>
+            <td class="col-desc">EDITOR.PPE v1.0 [ By Nemesis ] PCBOARD 15.1
+PPE That provides the users a different color
+than the default for FULL SCREEN MESSAGE
+Editor header. PIRATES WITH ATTITUDE - PWA
+[T.h. V. .l.v. .t U.n.d. .r.g.r. . .n.d]
+POINTBREAK+32 11 436925</td>
+        </tr>
+        <tr data-bytes="6142" data-timestamp="819331200">
+            <td class="col-name"><a href="AUTSGPWA.ZIP">AUTSGPWA.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/autsgpwa.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">6142</td>
+            <td class="col-date">1995-12-19</td>
+            <td class="col-desc">┌─ AutoSig V1.1 [ By Dark Creation ]───────┐
+│ PCBOARD 15.1 PPE That provides the users │
+│ to maintain a SIGNATURE and have it put  │
+│ at end of message automatically.         │
+└──────────────────────────────────────────┘</td>
+        </tr>
+        <tr data-bytes="24420" data-timestamp="805680000">
+            <td class="col-name"><a href="AW_DM_18.ZIP">AW_DM_18.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/aw_dm_18.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">24420</td>
+            <td class="col-date">1995-07-14</td>
+            <td class="col-desc">DoorMenu 1.8 PCB v15.2 PPE (v3.0) to replace
+the DOOR command menu. Add ppes &quot;seamlessly&quot;
+to your door menu! Now with *instant* Online
+Credit Card Registrations!!</td>
+        </tr>
+        <tr data-bytes="9642" data-timestamp="795484800">
+            <td class="col-name"><a href="AW_FM_18.ZIP">AW_FM_18.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/aw_fm_18.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">9642</td>
+            <td class="col-date">1995-03-18</td>
+            <td class="col-desc">FileMenu v1.8 The best F Cmd Replacement PPE
+for PCB v15.2! Automatic! Never draw another
+file menu again! Also lets users search file
+directory descriptions! For those with mult-
+iple CD-Rom&#x27;s this lets you have &quot;sub-menus&quot;
+for each CD or file group!! Now with instant
+Online &quot;credit card&quot; registrations!</td>
+        </tr>
+        <tr data-bytes="24207" data-timestamp="781142400">
+            <td class="col-name"><a href="AW_MM_38.ZIP">AW_MM_38.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/aw_mm_38.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">24207</td>
+            <td class="col-date">1994-10-03</td>
+            <td class="col-desc">MainMenu v3.8 A pcboard 15.2 PPE v3.0. Great
+PPE replacement for pcboard BRDM main menus.
+Shows available/unavailable commands as well
+as &quot;all on the fly&quot;, never draw another BRDM
+again!! Nice little PPE! Visa/MC for instant
+registrations!! Support is available via the
+Intelec Network in PPL or CW_Support forums!</td>
+        </tr>
+        <tr data-bytes="53922" data-timestamp="805680000">
+            <td class="col-name"><a href="AW_PV_41.ZIP">AW_PV_41.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/aw_pv_41.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">53922</td>
+            <td class="col-date">1995-07-14</td>
+            <td class="col-desc">Pro-Vote v4.1! The best pcboard Vote Utility
+now supports As Many As 999 Different Polls!
+A results bulletin, a new maintenance module
+w/ Login Poll Availability, Displays Percent
+of votes as BarGraph. Let&#x27;s users Add Polls,
+and much More!! NON-Crippled Shareware!! Now
+compiled under PPLC 3.0 for PCB 15.2! Credit
+card orders for instant online reg numbers!!</td>
+        </tr>
+        <tr data-bytes="67865" data-timestamp="839030400">
+            <td class="col-name"><a href="AXREAD12.ZIP">AXREAD12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/axread12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">67865</td>
+            <td class="col-date">1996-08-03</td>
+            <td class="col-desc">/---&lt; READ.PPE version 1.20, 08/03/96 &gt;--─\
+` PCBoard message  base replacement!  THE │
+: only way to configure the message base! │
+| BLOWS away the origanal looks! Includes │
+│ address book,  FIDONET support,  MULTI- │
+│ LANG config,  external  message  editor │
+│ support and  best  of  all,  COMPLETELY │
+│ configurable  message header! Now using │
+│ PPLC 3.20  for use with  PCBoard 15.22+ |
+│ THE BEST MESSAGE PPE!,  By Mav/[ANTi-X] :
+│  φ  FREE!, The way PPE&#x27;s should be!  φ  ,
+\─--─[The No-Name BBS (703) 323-6838]─----/</td>
+        </tr>
+        <tr data-bytes="3566" data-timestamp="863222400">
+            <td class="col-name"><a href="BAQWK10.ZIP">BAQWK10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/baqwk10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3566</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">A Mooncrow&#x27; Aeyrie Presentation MA-QWK 1.0
+[PPE] for PCBOARD 15.0 Add a little pizzaz to
+your QWK command!</td>
+        </tr>
+        <tr data-bytes="4609" data-timestamp="874886400">
+            <td class="col-name"><a href="BAREQ.ZIP">BAREQ.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bareq.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4609</td>
+            <td class="col-date">1997-09-22</td>
+            <td class="col-desc">bareq.PPe V0.06 BeTa. CoDe:No mercy!
+FREEWARE!!! ThiS OnE really SucKs But So what
+ThiS is OnlY BeTa!! Passed Thru: Dead End</td>
+        </tr>
+        <tr data-bytes="175811" data-timestamp="820454400">
+            <td class="col-name"><a href="BBS224.ZIP">BBS224.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bbs224.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">175811</td>
+            <td class="col-date">1996-01-01</td>
+            <td class="col-desc">BBS Access from MicroFox Company is a very
+easy-to-use data communications program for
+calling bbss and uploading &amp; downloading
+files. The protocols included are ASCII,
+Kermit, Xmodem, Ymodem, Zmodem, Xmodem/1k,
+Xmodem/G, Ymodem/G. It can capture screens to
+file and will record the time and length of
+each call. BBS can change and save modem
+initialization strings and all screen colors
+can be changed &amp; saved. &lt;ASP&gt; {STAR} [ASAD]</td>
+        </tr>
+        <tr data-bytes="5875" data-timestamp="790041600">
+            <td class="col-name"><a href="BBS2DIR.ZIP">BBS2DIR.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bbs2dir.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5875</td>
+            <td class="col-date">1995-01-14</td>
+            <td class="col-desc">Convert FILES.BBS to PCB Dir format.
+------------------------------------
+Version 1.00a.  Very simple to use.</td>
+        </tr>
+        <tr data-bytes="47044" data-timestamp="809481600">
+            <td class="col-name"><a href="BBS2HTML.ZIP">BBS2HTML.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bbs2html.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">47044</td>
+            <td class="col-date">1995-08-27</td>
+            <td class="col-desc">bbs2html v1.0p Conversion Utility Converts
+FILES.BBS listings to HTML Put you file
+collection on the WEB! Easy, automated,
+UNCRIPPLED FREEWARE Works with pcboard,
+Wildcat, TBBS or any system that supports
+FILES.BBS file formats. Don&#x27;t get left
+behind!</td>
+        </tr>
+        <tr data-bytes="667073" data-timestamp="815616000">
+            <td class="col-name"><a href="BBSCOMPK.ZIP">BBSCOMPK.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bbscompk.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">667073</td>
+            <td class="col-date">1995-11-06</td>
+            <td class="col-desc">_____    ____    ______
+\    \   |  |   /    /
+  \    \ |  | /    /
+    \    \  /    /
+      \        /
+        \____/
+
+BBS Compression pack.
+just about every file
+compression in use on
+bbs&#x27;s today.</td>
+        </tr>
+        <tr data-bytes="3282" data-timestamp="748742400">
+            <td class="col-name"><a href="BBSLIST1.ZIP">BBSLIST1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bbslist1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3282</td>
+            <td class="col-date">1993-09-23</td>
+            <td class="col-desc">φ═─ [PPE] BBS LIST v1.0 (Pza)</td>
+        </tr>
+        <tr data-bytes="13590" data-timestamp="795744000">
+            <td class="col-name"><a href="BB_MSG_3.ZIP">BB_MSG_3.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bb_msg_3.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13590</td>
+            <td class="col-date">1995-03-21</td>
+            <td class="col-desc">[PPE] Version 3.01 of Message Read PPE. It
+has sped up over 150% This is an excellent
+light-bar PPE to to replace that lame prompt
+that comes up when you press R. It is 100%
+configurable with no registration hassle and
+no crappy delay&#x27;s. This is the best PPE of
+it&#x27;s kind. Try it today. Including hot ANSI
+by Plasma Another fine PPE by DANTE</td>
+        </tr>
+        <tr data-bytes="59080" data-timestamp="802396800">
+            <td class="col-name"><a href="BCFAL12.ZIP">BCFAL12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bcfal12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">59080</td>
+            <td class="col-date">1995-06-06</td>
+            <td class="col-desc">PCB 15.1+ File Area Lister PPE v1.2 Lightbar
+driven File area lister that supports
+multiple pages,lightbar area selection etc..</td>
+        </tr>
+        <tr data-bytes="22214" data-timestamp="777945600">
+            <td class="col-name"><a href="BCFV10.ZIP">BCFV10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bcfv10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">22214</td>
+            <td class="col-date">1994-08-27</td>
+            <td class="col-desc">       ▄▄▄─▄▄─▄ ▄▄─▄ ▄▄─▄    ▄▄─▄
+       ███ ██ █ ██ █ ██ ▀ ▄▄ ██ █
+       ███ ██ █ ██─█ ██─ ▄▄▄ ██─█
+       ███ ██ █ ██ █ ██  ███ ██ █
+       ███ ██                ▀▀ █
+       ███   FoRCe oF QuALiTiY  █
+
+    PCB 15.1+ File Viewer PPE v1.0
+───────────────────────────────────────────
+Fully lightbar driven fileviewer. Allows
+most of the features of pcbfv and more.
+───────────────φ BlackCat φ────────────────</td>
+        </tr>
+        <tr data-bytes="66475" data-timestamp="769046400">
+            <td class="col-name"><a href="BCLB110.ZIP">BCLB110.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bclb110.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">66475</td>
+            <td class="col-date">1994-05-16</td>
+            <td class="col-desc">[FREEWARE] PCB 15.1+ Lightbar Kit PPE v1.10
+Features: multiple windows, help options,
+pulldown menus and much more. The best yet.
+ADDED: Hotkey support, makes using the
+lightbar much faster. BLACKCAT</td>
+        </tr>
+        <tr data-bytes="17814" data-timestamp="770428800">
+            <td class="col-name"><a href="BCLC110.ZIP">BCLC110.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bclc110.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">17814</td>
+            <td class="col-date">1994-06-01</td>
+            <td class="col-desc">PCB 15.1+ LastCallers PPE v1.10 Configurable,
+multiple color setups. Added: Daily, Y&#x27;days
+and Top calls/upload/ download/pages/time
+registration BLACKCAT</td>
+        </tr>
+        <tr data-bytes="8782" data-timestamp="787104000">
+            <td class="col-name"><a href="BCNSA11.ZIP">BCNSA11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bcnsa11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8782</td>
+            <td class="col-date">1994-12-11</td>
+            <td class="col-desc">       PCB 15.1+ NewScan PPE v1.1
+───────────────────────────────────────────
+Multiple conference new files scan. Ideal
+for use by your traders.
+This version adds a yes/no lighbar among
+other things..
+───────────────φ BlackCat φ────────────────</td>
+        </tr>
+        <tr data-bytes="146614" data-timestamp="787795200">
+            <td class="col-name"><a href="BCNUK076.ZIP">BCNUK076.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bcnuk076.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">146614</td>
+            <td class="col-date">1994-12-19</td>
+            <td class="col-desc">        PCB 15.2+ Nuker PPE v0.76ß
+───────────────────────────────────────────
+Yes, it&#x27;s me again with another lightbar
+driven full featured fast nuker/awarder/
+commenter etc.
+If you&#x27;re tired of waiting minutes when
+nuking/awarding files grab this!
+Added a FAST turbo nuking option.
+───────────────φ BlackCat φ────────────────
+┌───────────────────────────────────┐
+│  LεεCHεD FRoM The Wild Thing BBs  │
+└───────────────────────────────────┘</td>
+        </tr>
+        <tr data-bytes="37787" data-timestamp="812678400">
+            <td class="col-name"><a href="BCPR100.ZIP">BCPR100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bcpr100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">37787</td>
+            <td class="col-date">1995-10-03</td>
+            <td class="col-desc">PCB 15.1+ Message/Comment/reply PPE v1.00
+Replacement for your &#x27;e&#x27; and &#x27;c&#x27; commands
+which replaces a number of message entry
+prompts to turn your message entry command
+into a configurable ansi menu. BlackCat</td>
+        </tr>
+        <tr data-bytes="4170" data-timestamp="790041600">
+            <td class="col-name"><a href="BC_AT100.ZIP">BC_AT100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bc_at100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4170</td>
+            <td class="col-date">1995-01-14</td>
+            <td class="col-desc">AllTime Top Uploaders &amp; Downloaders v1.0b
+Author : Mc Freddy Z / Rel : Dec.28.1994
+Simple &amp; Small PPE. Easy Install. It Will
+ALWAYS Be Up To Date. Read Docs For Info</td>
+        </tr>
+        <tr data-bytes="137243" data-timestamp="793670400">
+            <td class="col-name"><a href="BGPCBV26.ZIP">BGPCBV26.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bgpcbv26.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">137243</td>
+            <td class="col-date">1995-02-25</td>
+            <td class="col-desc">Lazy PCBOARDS Sysops - Good News! Here&#x27;s
+version 2.6 of a BLT, DOOR and DIR menu
+generation program! Easy to use, creates
+single/double /column or line mode menu
+files. Free and speech friendly for blind
+sysops. - Enjoy!!!</td>
+        </tr>
+        <tr data-bytes="155334" data-timestamp="844473600">
+            <td class="col-name"><a href="BKFRE11A.ZIP">BKFRE11A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bkfre11a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">155334</td>
+            <td class="col-date">1996-10-05</td>
+            <td class="col-desc">bnkfre11 - BANK.PPE version 1.10a-(PPLC 3.1)
+Why Pay for a BANK PPE when this is FREE!!.
+Bank Time, Bytes, Exchange, &amp; Gambling.
+Totally configurable by the SysOp. Gambling
+Modules included to add at your discretion or
+write your own with the Generic Gambling
+Module. Includes a BankEditor, BankPacker (to
+remove old users), Out of BBS Time, &amp; LogOff
+support Modules to make this Bank a total
+package for your BBS. Full Source Included!</td>
+        </tr>
+        <tr data-bytes="18873" data-timestamp="783216000">
+            <td class="col-name"><a href="BNB.ZIP">BNB.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bnb.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">18873</td>
+            <td class="col-date">1994-10-27</td>
+            <td class="col-desc">  █ &lt;&lt;&lt;Beavis~N~Butthead&gt;&gt;&gt;█
+  █  This is a Pcbtext of  █
+  █  Beavis and Butthead.  █
+ ██ Brought to you by Brad ██
+██  Rosenberg. The SysOp of ██
+█  Mastermind&#x27;s BBS 354-2018.█
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀</td>
+        </tr>
+        <tr data-bytes="25439" data-timestamp="797731200">
+            <td class="col-name"><a href="BPC-ENT3.ZIP">BPC-ENT3.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bpc-ent3.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">25439</td>
+            <td class="col-date">1995-04-13</td>
+            <td class="col-desc">Random &#x27;Press ENTER&#x27; [ PPE ] So this&#x27;s &#x27;Press
+ENTER&#x27; replacement which got &#x27;bout 20
+animated ~presses~ which will be shown
+randomly. [04/13/95] B R U T A L P P E C O D
+E R S =WHEN U THINK ABOUT PPE - THINK ABOUT
+US!=</td>
+        </tr>
+        <tr data-bytes="7944" data-timestamp="797299200">
+            <td class="col-name"><a href="BPC-LAF2.ZIP">BPC-LAF2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bpc-laf2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7944</td>
+            <td class="col-date">1995-04-08</td>
+            <td class="col-desc">╔  ■ Locate A Filename v.2.0   [ PPE ] ■ ╗
+║  It will locate a file in conference   ║
+║     using light-bars. Very nice!       ║
+╚   ■ Coded by .\\ad ├|atter.  1995 ■
+ ▒▌                                      ▒
+ ░█  ░▄██▄▄▄░      ░▄▄▄███▄░ ▄▄██▀█▓▄▄ ░▐░
+   ░ ███▀ ▀▀▀▓█▄ ▄███▀▀▀▀ ██▓▐▀   ▐▒▓█▀
+   ▐███   ▄▄█▀▀ ▒▓▀ ▄▄    ▀█▒▌  ·■▀░
+   ▓█▀▄■▀▀▀▀▄▓▄ ░ ▐█▓▌▄■  ▄▀░
+   ▒██       ██▓   █▒▀░ ▀▀ █▄        ▄
+   ░██      ▄▀█▒▌  ▐░▌    ▐▒█▌       ▐▄
+ ░▄█▌█▄ ▄▄████▀░ Mz ▀█     ░▒▀▄▓▄▄ ▄▄▀▓░
+░▀▀▀▀▀▀▀▀▀▀▀▀ ░ ▀▀▀▀░ ▀■·   ░▀▀▀▀▀▀▀▀▀ ▀▀░
+▓ B R U T A L    P P E       C O D E R S ▓
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+=THE ONLY &amp; THE GREATEST ON RUSSIAN SCENE=</td>
+        </tr>
+        <tr data-bytes="12117" data-timestamp="797731200">
+            <td class="col-name"><a href="BPC-LOT2.ZIP">BPC-LOT2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bpc-lot2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12117</td>
+            <td class="col-date">1995-04-13</td>
+            <td class="col-desc">╔═─∙■ On-line Time Lottery ■ [ PPE ]·∙──═╗
+║ Yah, try new _animated_ on-line time   ║
+║ lottery, which&#x27;ll blow ur head up!     ║
+╚═══──∙∙··               [04/13/95]    ∙─╝
+ ▒▌                                      ▒
+ ░█  ░▄██▄▄▄░      ░▄▄▄███▄░ ▄▄██▀█▓▄▄ ░▐░
+   ░ ███▀ ▀▀▀▓█▄ ▄███▀▀▀▀ ██▓▐▀   ▐▒▓█▀
+   ▐███   ▄▄█▀▀ ▒▓▀ ▄▄    ▀█▒▌  ·■▀░
+   ▓█▀▄■▀▀▀▀▄▓▄ ░ ▐█▓▌▄■  ▄▀░
+   ▒██       ██▓   █▒▀░ ▀▀ █▄        ▄
+   ░██      ▄▀█▒▌  ▐░▌    ▐▒█▌       ▐▄
+ ░▄█▌█▄ ▄▄████▀░ Mz ▀█     ░▒▀▄▓▄▄ ▄▄▀▓░
+░▀▀▀▀▀▀▀▀▀▀▀▀ ░ ▀▀▀▀░ ▀■·   ░▀▀▀▀▀▀▀▀▀ ▀▀░
+▓ B R U T A L    P P E       C O D E R S ▓
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+=WHEN U THINK ABOUT PPE - THINK ABOUT US!=</td>
+        </tr>
+        <tr data-bytes="9200" data-timestamp="797385600">
+            <td class="col-name"><a href="BPC-NFS2.ZIP">BPC-NFS2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bpc-nfs2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">9200</td>
+            <td class="col-date">1995-04-09</td>
+            <td class="col-desc">╔   ■ New Files Scan v.2.0  [ PPE ] ■    ╗
+║ It will search new files in conference ║
+║     using light-bars. Very nice!       ║
+╚   ■ Coded by .\\ad ├|atter.  1995 ■
+ ▒▌                                      ▒
+ ░█  ░▄██▄▄▄░      ░▄▄▄███▄░ ▄▄██▀█▓▄▄ ░▐░
+   ░ ███▀ ▀▀▀▓█▄ ▄███▀▀▀▀ ██▓▐▀   ▐▒▓█▀
+   ▐███   ▄▄█▀▀ ▒▓▀ ▄▄    ▀█▒▌  ·■▀░
+   ▓█▀▄■▀▀▀▀▄▓▄ ░ ▐█▓▌▄■  ▄▀░
+   ▒██       ██▓   █▒▀░ ▀▀ █▄        ▄
+   ░██      ▄▀█▒▌  ▐░▌    ▐▒█▌       ▐▄
+ ░▄█▌█▄ ▄▄████▀░ Mz ▀█     ░▒▀▄▓▄▄ ▄▄▀▓░
+░▀▀▀▀▀▀▀▀▀▀▀▀ ░ ▀▀▀▀░ ▀■·   ░▀▀▀▀▀▀▀▀▀ ▀▀░
+▓ B R U T A L    P P E       C O D E R S ▓
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+=THE ONLY &amp; THE GREATEST ON RUSSIAN SCENE=</td>
+        </tr>
+        <tr data-bytes="15626" data-timestamp="797904000">
+            <td class="col-name"><a href="BPC-UI2.ZIP">BPC-UI2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bpc-ui2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15626</td>
+            <td class="col-date">1995-04-15</td>
+            <td class="col-desc">╔═─∙■ USER iNFORMATiON  ■ [ PPE ]··∙∙──══╗
+║ So, guys, this PPE will show user&#x27;s    ║
+║ information. it&#x27;s nicely light-bared,  ║
+║ so try it.                             ║
+╚═══──∙∙··               [04/15/95]    ∙─╝
+ ▒▌                                      ▒
+ ░█  ░▄██▄▄▄░      ░▄▄▄███▄░ ▄▄██▀█▓▄▄ ░▐░
+   ░ ███▀ ▀▀▀▓█▄ ▄███▀▀▀▀ ██▓▐▀   ▐▒▓█▀
+   ▐███   ▄▄█▀▀ ▒▓▀ ▄▄    ▀█▒▌  ·■▀░
+   ▓█▀▄■▀▀▀▀▄▓▄ ░ ▐█▓▌▄■  ▄▀░
+   ▒██       ██▓   █▒▀░ ▀▀ █▄        ▄
+   ░██      ▄▀█▒▌  ▐░▌    ▐▒█▌       ▐▄
+ ░▄█▌█▄ ▄▄████▀░ Mz ▀█     ░▒▀▄▓▄▄ ▄▄▀▓░
+░▀▀▀▀▀▀▀▀▀▀▀▀ ░ ▀▀▀▀░ ▀■·   ░▀▀▀▀▀▀▀▀▀ ▀▀░
+▓ B R U T A L    P P E       C O D E R S ▓
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+=WHEN U THINK ABOUT PPE - THINK ABOUT US!=</td>
+        </tr>
+        <tr data-bytes="8464" data-timestamp="797385600">
+            <td class="col-name"><a href="BPC-ZTS2.ZIP">BPC-ZTS2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bpc-zts2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8464</td>
+            <td class="col-date">1995-04-09</td>
+            <td class="col-desc">╔   ■ Zippy Text Scan v.2.0  [ PPE ] ■   ╗
+║ This is another &quot;Z&quot; command replacement║
+║     using light-bars. Very nice!       ║
+╚   ■ Coded by .\\ad ├|atter.  1995 ■
+ ▒▌                                      ▒
+ ░█  ░▄██▄▄▄░      ░▄▄▄███▄░ ▄▄██▀█▓▄▄ ░▐░
+   ░ ███▀ ▀▀▀▓█▄ ▄███▀▀▀▀ ██▓▐▀   ▐▒▓█▀
+   ▐███   ▄▄█▀▀ ▒▓▀ ▄▄    ▀█▒▌  ·■▀░
+   ▓█▀▄■▀▀▀▀▄▓▄ ░ ▐█▓▌▄■  ▄▀░
+   ▒██       ██▓   █▒▀░ ▀▀ █▄        ▄
+   ░██      ▄▀█▒▌  ▐░▌    ▐▒█▌       ▐▄
+ ░▄█▌█▄ ▄▄████▀░ Mz ▀█     ░▒▀▄▓▄▄ ▄▄▀▓░
+░▀▀▀▀▀▀▀▀▀▀▀▀ ░ ▀▀▀▀░ ▀■·   ░▀▀▀▀▀▀▀▀▀ ▀▀░
+▓ B R U T A L    P P E       C O D E R S ▓
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+=THE ONLY &amp; THE GREATEST ON RUSSIAN SCENE=</td>
+        </tr>
+        <tr data-bytes="3645" data-timestamp="740016000">
+            <td class="col-name"><a href="BR11.ZIP">BR11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/br11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3645</td>
+            <td class="col-date">1993-06-14</td>
+            <td class="col-desc">   - BROADCAST v1.1 -
+A Broadcaster PPE for PCB
+that actually works right.
+     w/ PPS Source</td>
+        </tr>
+        <tr data-bytes="20505" data-timestamp="812332800">
+            <td class="col-name"><a href="BSA-ST2D.ZIP">BSA-ST2D.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bsa-st2d.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">20505</td>
+            <td class="col-date">1995-09-29</td>
+            <td class="col-desc">Business Software Alliance B.S.A Presents
+Sauce/Txt2desc for pcboard 15.1+ Coded by:
+Acen/B.S.A</td>
+        </tr>
+        <tr data-bytes="28932" data-timestamp="804384000">
+            <td class="col-name"><a href="CALLER14.ZIP">CALLER14.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/caller14.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">28932</td>
+            <td class="col-date">1995-06-29</td>
+            <td class="col-desc">PCBoard caller log analyser</td>
+        </tr>
+        <tr data-bytes="84468" data-timestamp="799286400">
+            <td class="col-name"><a href="CAP2DIZ.ZIP">CAP2DIZ.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cap2diz.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">84468</td>
+            <td class="col-date">1995-05-01</td>
+            <td class="col-desc">cap2diz Convertor v1.46 Extracts
+&#x27;FILE_ID.DIZ&#x27; files from connection logs or
+ALLFILES.LST files (pcboard format).
+Automatically adds each DIZ file to the
+correspondent archive. Supports ZIP, ARJ,
+RAR, LZH and ARC archive formats. LPS
+Computing, Inc. April/95 L00k for the correct
+numba! Century $ +55-11-573-6805</td>
+        </tr>
+        <tr data-bytes="160490" data-timestamp="863222400">
+            <td class="col-name"><a href="CBOX32.ZIP">CBOX32.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cbox32.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">160490</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">ChatBox 3.2, The original PCB &quot;SPLIT SCREEN&quot;
+chat. Sysop may start chat - caller may page.
+Use with the &quot;O&quot; command to page the Sysop.
+Sysop may initiate a ChatBox chat using F10.
+Horizontal / vertical split screen. SEAMLESS.
+Config page times, sounds and screen colors.
+Asks reason for page. Logs chat to disk file.
+Supports multiple Sysop names. Imports text.
+Highly configurable with many Sysop options.
+A YCS pcboard Accessory</td>
+        </tr>
+        <tr data-bytes="12235" data-timestamp="838857600">
+            <td class="col-name"><a href="CCID132.ZIP">CCID132.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ccid132.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12235</td>
+            <td class="col-date">1996-08-01</td>
+            <td class="col-desc">Courier Caller ID PPE V1.32 for
+PCBoard/CID/USR Courier V.Everything.
+Bug fix update - 8/1/96</td>
+        </tr>
+        <tr data-bytes="251574" data-timestamp="765590400">
+            <td class="col-name"><a href="CFLIST20.ZIP">CFLIST20.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cflist20.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">251574</td>
+            <td class="col-date">1994-04-06</td>
+            <td class="col-desc">Custom File List Builder PPE v2.0 (CL) for
+PCBoard v15.1 is an add on command to allow
+your callers to construct custom Allfiles
+listings and download them. Options include:
+   - Selected file directories
+   - New files (since last scan date)
+   - Keyword search (like Zippy scan)
+   - Cross conference scanning
+   - Any combination of these
+This is a MAJOR upgrade release.</td>
+        </tr>
+        <tr data-bytes="87488" data-timestamp="762912000">
+            <td class="col-name"><a href="CFOS097H.ZIP">CFOS097H.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cfos097h.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">87488</td>
+            <td class="col-date">1994-03-06</td>
+            <td class="col-desc">CAPI FOSSIL Driver and INT 14 emulator for
+highest cps-rates. Allows applica- tions to
+communicate via ISDN using any CAPI, supports
+multiple COM ports simul- taneously,
+controlled by a powerful AT command set.
+Supports BTX and has a fast channel bundling.
+Many options!</td>
+        </tr>
+        <tr data-bytes="25281" data-timestamp="786585600">
+            <td class="col-name"><a href="CHK4D1B7.ZIP">CHK4D1B7.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/chk4d1b7.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">25281</td>
+            <td class="col-date">1994-12-05</td>
+            <td class="col-desc">chk4des v1.00 7 - insures file descriptions!
+Checks your pcboard or other BBS file lists
+for descriptions. Removes all &quot;Description
+not found&quot; or blank description file names
+from file lists created by DIZ extractors.
+Optionally executes a batch file with each
+file name that has a description, such as
+moving the parent file to another directory.
+A file list management utility designed for
+busy sysops! From HAL SoftWare (12-05-94).</td>
+        </tr>
+        <tr data-bytes="38582" data-timestamp="819331200">
+            <td class="col-name"><a href="CIMRG100.ZIP">CIMRG100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cimrg100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">38582</td>
+            <td class="col-date">1995-12-19</td>
+            <td class="col-desc">CIMERGE v1.00 -- PCBoard utility to merge a
+list of alias names for selected conference
+numbers, allowing a single conference to be
+known by multiple names. Copyright (C) 1994
+Clark Development Company, Inc.</td>
+        </tr>
+        <tr data-bytes="23850" data-timestamp="861494400">
+            <td class="col-name"><a href="CL-YELL4.ZIP">CL-YELL4.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cl-yell4.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">23850</td>
+            <td class="col-date">1997-04-20</td>
+            <td class="col-desc">============================================
+        Codeline-YELL version 4.0
+ ============================================
+  - Emergency Password
+  - Fakechat support
+  - 110% Configurable (true)
+  - Coolfade texteditor
+  - Coolfade: now you can specify
+    conference for message
+  - Comment PPE support (like coolfade)</td>
+        </tr>
+        <tr data-bytes="104626" data-timestamp="771379200">
+            <td class="col-name"><a href="CL15S1G.ZIP">CL15S1G.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cl15s1g.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">104626</td>
+            <td class="col-date">1994-06-12</td>
+            <td class="col-desc">CALLS Ver 15s1g Statistic Bulletin generator
+Supports pcboard 15.1 changes and features..
+Changed to allow for spaces in conference
+names. Recognition of some of the common PPE
+entries in the CALLERS file. New report for
+PPE&#x27;s. Reduced memory overhead on filename
+collection. Added 28800 to Baud Rate report.
+Added EDSBACK PPE report, changed batch file
+reporting. No source files included. (Changes
+made by Gary Meeker) (06-12-94)</td>
+        </tr>
+        <tr data-bytes="24360" data-timestamp="784425600">
+            <td class="col-name"><a href="CLCB_151.ZIP">CLCB_151.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/clcb_151.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">24360</td>
+            <td class="col-date">1994-11-10</td>
+            <td class="col-desc">[MS] CLCB v1.51: Custom Last Caller Bulletin
+────────────────────────────────────────────
+▐│ [CLCB.PPE] Custom Last Caller Bulletin │▌
+▐│ Generator PPE for PCBoard v15.2+ BBSs! │▌
+▐│ -------------------------------------- │▌
+▐│ Colour and *DISPLAY* configurable last │▌
+▐│ caller bulletin .PPE (Uses replacement │▌
+▐│ codes).  Supports configurable running │▌
+▐│ totals of board activity &amp; MORE!  [MS] │▌
+────────────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="25115" data-timestamp="823132800">
+            <td class="col-name"><a href="CLPCBTX2.ZIP">CLPCBTX2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/clpcbtx2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">25115</td>
+            <td class="col-date">1996-02-01</td>
+            <td class="col-desc">CLPCBTXT v2.00 - Companion to MKPCBTXT.EXE
+Allows changing color value in PCBTEXT files
+New version allows editing Text with support
+for multiple languages and automatic access
+to editors for PPE, MNU and External text
+files. Needs to find MKPCBTXT.EXE but does
+offer all the features of the original and so
+much more. FREEWARE from Gary Meeker</td>
+        </tr>
+        <tr data-bytes="22923" data-timestamp="787881600">
+            <td class="col-name"><a href="CMFL_200.ZIP">CMFL_200.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cmfl_200.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">22923</td>
+            <td class="col-date">1994-12-20</td>
+            <td class="col-desc">[MS] CMFL v2.00: Custom Master File List PPE
+────────────────────────────────────────────
+▐│ [CMFL.PPE]: A Master File List Creator │▌
+▐│ written in PPL for PCBoard v15.2+ BBSs │▌
+▐│ -------------------------------------- │▌
+▐│ An advanced program that will create &amp; │▌
+▐│ archive an  *up-to-the-minute*  master │▌
+▐│ file list on  demand.  Select and Save │▌
+▐│ DIRs, conf configs and MORE! ---- [MS] │▌
+────────────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="22368" data-timestamp="863222400">
+            <td class="col-name"><a href="CNAV_300.ZIP">CNAV_300.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cnav_300.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">22368</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">[MS] CNAV v3.00: Custom Node Activity Viewer
+─┬────────────────────────────────────────┬─
+▐│ [CNAV.PPE]: A Node Activity Viewer PPE │▌
+▐│ written in PPL for PCBoard v15.1+ BBSs │▌
+▐├────────────────────────────────────────┤▌
+▐│ FREEWARE Color/Option Configurable WHO │▌
+▐│ replacement.  Tiny, Brief, Verbose and │▌
+▐│ RealTime Active Modes. Shows activity, │▌
+▐│ XFerring Files, User Stats &amp; MORE [MS] │▌
+─┴────────────────────────────────────────┴─</td>
+        </tr>
+        <tr data-bytes="7536" data-timestamp="863222400">
+            <td class="col-name"><a href="CNFS_110.ZIP">CNFS_110.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cnfs_110.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7536</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">[MS] CNFS v1.10: Custom New File Scanner PPE
+─┬────────────────────────────────────────┬─
+▐│ [CNFS.PPE]: --- A New File Scanner PPE │▌
+▐│ written in PPL for PCBoard v15.1+ BBSs │▌
+▐├────────────────────────────────────────┤▌
+▐│ FREEWARE!  Color &amp; Option Configurable │▌
+▐│ &#x27;N&#x27;ew Scan replacement.   Allows input │▌
+▐│ of a # of days to scan, flag files, or │▌
+▐│ screen capturing scans and MORE!  [MS] │▌
+─┴────────────────────────────────────────┴─</td>
+        </tr>
+        <tr data-bytes="32934" data-timestamp="789696000">
+            <td class="col-name"><a href="COBS_110.ZIP">COBS_110.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cobs_110.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">32934</td>
+            <td class="col-date">1995-01-10</td>
+            <td class="col-desc">[MS] COBS v1.10:Custom Online Banking System
+────────────────────────────────────────────
+▐│ [COBS.PPE]:  A Time and/or K-Byte Bank │▌
+▐│ written in PPL for PCBoard v15.2+ BBSs │▌
+▐│ -------------------------------------- │▌
+▐│ A powerful &amp; easy to use Time and / or │▌
+▐│ KByte bank.  VERY *configurable* setup │▌
+▐│ &amp; display interface. Deposit, Withdraw │▌
+▐│ and Gamble options &amp; MUCH MORE! - [MS] │▌
+────────────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="459677" data-timestamp="867888000">
+            <td class="col-name"><a href="CON-005C.ZIP">CON-005C.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/con-005c.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">459677</td>
+            <td class="col-date">1997-07-03</td>
+            <td class="col-desc">CONCORD BBS SOFTWARE vo.O1 Gamma-5 General &amp;
+Install</td>
+        </tr>
+        <tr data-bytes="191803" data-timestamp="867888000">
+            <td class="col-name"><a href="CONCORD.ZIP">CONCORD.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/concord.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">191803</td>
+            <td class="col-date">1997-07-03</td>
+            <td class="col-desc">Concord v.0.01 Gamma 5 BBS operating system
+ by Pasi Talliniemi [1/5]</td>
+        </tr>
+        <tr data-bytes="1163054" data-timestamp="867888000">
+            <td class="col-name"><a href="CONO005C.ZIP">CONO005C.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cono005c.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">1163054</td>
+            <td class="col-date">1997-07-03</td>
+            <td class="col-desc">CONCORD BBS SOFTWARE vo.O1 Gamma-5</td>
+        </tr>
+        <tr data-bytes="811102" data-timestamp="867888000">
+            <td class="col-name"><a href="CONP005C.ZIP">CONP005C.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/conp005c.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">811102</td>
+            <td class="col-date">1997-07-03</td>
+            <td class="col-desc">CONCORD BBS SOFTWARE vo.O1 Gamma-5 Protected
+mode</td>
+        </tr>
+        <tr data-bytes="708171" data-timestamp="867888000">
+            <td class="col-name"><a href="CONR005C.ZIP">CONR005C.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/conr005c.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">708171</td>
+            <td class="col-date">1997-07-03</td>
+            <td class="col-desc">CONCORD BBS SOFTWARE vo.O1 Gamma-5 Real mode</td>
+        </tr>
+        <tr data-bytes="19646" data-timestamp="721785600">
+            <td class="col-name"><a href="COPYDSC2.ZIP">COPYDSC2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/copydsc2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">19646</td>
+            <td class="col-date">1992-11-15</td>
+            <td class="col-desc">COPYDESC v1.02: copy pcboard description
+files, converting short lines to long lines.
+Intended for offline processing. Adjustable
+positioning. Free, w/TC src, by Jim Robeson.
+Longer descriptions allowed, &amp; minor tweaks.</td>
+        </tr>
+        <tr data-bytes="37096" data-timestamp="821491200">
+            <td class="col-name"><a href="CPYPCB10.ZIP">CPYPCB10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cpypcb10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">37096</td>
+            <td class="col-date">1996-01-13</td>
+            <td class="col-desc">copypcb v1.00 - use in nightly event to
+automatically back up your user file,
+user.inf, user.ibk, Cnames, cnames.idx
+cnames.add, cnames.@@@, dlpath.lst, main.pth
+and dir.lst. FREE from DMSOFT</td>
+        </tr>
+        <tr data-bytes="34386" data-timestamp="789868800">
+            <td class="col-name"><a href="CPYUSR11.ZIP">CPYUSR11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cpyusr11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">34386</td>
+            <td class="col-date">1995-01-12</td>
+            <td class="col-desc">Copy User v1.1 - Copy your user files in
+a nightly event with the name of the file
+todays date. Or choose to archive the user
+files (using ZIP, ARJ or PAK) with the name
+of the archive file being todays date.
+Allows you to choose method of archive and
+back up drive and directory. By DMSOFT</td>
+        </tr>
+        <tr data-bytes="22576" data-timestamp="784425600">
+            <td class="col-name"><a href="CSSC_301.ZIP">CSSC_301.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cssc_301.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">22576</td>
+            <td class="col-date">1994-11-10</td>
+            <td class="col-desc">[MS] CSSC v3.01 Custom Split Screen Chat PPE
+────────────────────────────────────────────
+▐│ [CSSC.PPE]: -- A Split Screen Chat PPE │▌
+▐│ written in PPL for PCBoard v15.2+ BBSs │▌
+▐│ -------------------------------------- │▌
+▐│ A feature  packed, colour configurable │▌
+▐│ SysOp/User split-screen chat interface │▌
+▐│ to replace the F10 PCB Chat.  Supports │▌
+▐│ a User Editor PPE (CUFE) &amp; MORE!  [MS] │▌
+────────────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="21923" data-timestamp="784857600">
+            <td class="col-name"><a href="CTUB_150.ZIP">CTUB_150.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ctub_150.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">21923</td>
+            <td class="col-date">1994-11-15</td>
+            <td class="col-desc">[MS] CTUB v1.50 : Custom Top Users Bulletin!
+────────────────────────────────────────────
+▐│ [CTUB.PPE]: A Top Users BLTN Generator │▌
+▐│ written in PPL for PCBoard v15.2+ BBSs │▌
+▐│ -------------------------------------- │▌
+▐│ A Top [1-25] Users Bulletin Generator. │▌
+▐│ Top Callers, ULers  (KB and/or Files), │▌
+▐│ and DLers (KB and/or Files). Up to *9* │▌
+▐│ *Display Configurable* Bulletins! [MS] │▌
+────────────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="15987" data-timestamp="863222400">
+            <td class="col-name"><a href="CUFE_120.ZIP">CUFE_120.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cufe_120.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15987</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">[MS] CUFE v1.20: - A Custom User File Editor
+─┬────────────────────────────────────────┬─
+▐│ [CUFE.PPE]:  A Full Screen User Editor │▌
+▐│ written in PPL for PCBoard v15.1+ BBSs │▌
+▐├────────────────────────────────────────┤▌
+▐│ FREEWARE  Color Config! An easy to use │▌
+▐│ online  Full Screen  User File Editor. │▌
+▐│ PSA Support.  Conference Flag Updates. │▌
+▐│ Powerful, versatile and MORE! --- [MS] │▌
+─┴────────────────────────────────────────┴─</td>
+        </tr>
+        <tr data-bytes="29272" data-timestamp="784857600">
+            <td class="col-name"><a href="CWTU_100.ZIP">CWTU_100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cwtu_100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">29272</td>
+            <td class="col-date">1994-11-15</td>
+            <td class="col-desc">[MS] CWTU v1.00: Custom Weekly Top Users PPE
+────────────────────────────────────────────
+▐│ [CWTU.PPE]: Weekly Top Users BLT Maker │▌
+▐│ written in PPL for PCBoard v15.2+ BBSs │▌
+▐│ -------------------------------------- │▌
+▐│ Color Configurable Top 1-25 Users BLTN │▌
+▐│ Generator. Weekly Top Uploaders and/or │▌
+▐│ Downloaders(calculated in bytes).Fast, │▌
+▐│ running totals, Day7 Post &amp; MORE! [MS] │▌
+────────────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="49590" data-timestamp="790646400">
+            <td class="col-name"><a href="CW_PV_41.ZIP">CW_PV_41.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/cw_pv_41.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">49590</td>
+            <td class="col-date">1995-01-21</td>
+            <td class="col-desc">Pro-Vote v4.1! The best PCBoard Vote Utility
+now supports As Many As 999 Different Polls!
+A results bulletin, a new maintenance module
+w/ Login Poll Availability, Displays Percent
+of votes as BarGraph. Let&#x27;s users Add Polls,
+and much More!! NON-Crippled Shareware!! Now
+compiled under PPLC 3.0 for PCB 15.2! Credit
+card orders for instant online reg numbers!!</td>
+        </tr>
+        <tr data-bytes="14383" data-timestamp="764899200">
+            <td class="col-name"><a href="C_A2PC12.ZIP">C_A2PC12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/c_a2pc12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">14383</td>
+            <td class="col-date">1994-03-29</td>
+            <td class="col-desc">- = ≡            ANS2PCB           ≡ = -
+────────────────────────────────────────
+ ▄▀▀▀▀▄ █ ▀▀▄ ▄▀▀▀▄▐▄ █ ▄▀▀▀▄ ▄▀▀▄   ⌠
+▐▌  █▄▄▄█   █ █ ▌ █▐▀▄█ █ ▌ █ ▀▄▄  ──·──
+▐▌  ▀ ▄ █ ▀▀▄ █ ▀ █▐ ▀█ █ ▀ █ ▄  █   ⌡
+ ▀▀▀▀▀  ▀   ▀  ▀▀▀    ▀  ▀▀▀   ▀▀
+░░░▒▒▒▒▓▓▓▓████▀▀▀▀▀▀▀▀▀████▓▓▓▓▒▒▒▒░░░
+░░░▒▒▒▒▓▓▓▓████ T E A M ████▓▓▓▓▒▒▒▒░░░
+░░░▒▒▒▒▓▓▓▓████▄▄▄▄▄▄▄▄▄████▓▓▓▓▒▒▒▒░░░
+
+    Present : ANS2PCB V1.0 on 25/3/94
+   A simple utility that convert ANSI
+    file format to PCBoard format !!
+
+          Coded By «SLASH»
+░▒▓█ This File Was Downloaded From: █▓▒░
+░▒▓█  Purple Rain  ++39-2-90849435  █▓▒░
+  ╒═─Purple Rain  ++39-2-90849435─═╕
+  ╘────────────────────────────────╛
+-&gt;Spot V1.2 By ALPHABiT / CHRONOS TEAM</td>
+        </tr>
+        <tr data-bytes="39596" data-timestamp="794275200">
+            <td class="col-name"><a href="D2A140.ZIP">D2A140.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/d2a140.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">39596</td>
+            <td class="col-date">1995-03-04</td>
+            <td class="col-desc">Dir.Lst Ascii v1.40 This program will allow a
+sysop to take a DIR.LST and convert it to
+straight Ascii. The program will then convert
+it back to the DIR.LST format. Freeware!</td>
+        </tr>
+        <tr data-bytes="4064" data-timestamp="883785600">
+            <td class="col-name"><a href="DEC-10S.ZIP">DEC-10S.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dec-10s.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4064</td>
+            <td class="col-date">1998-01-03</td>
+            <td class="col-desc">[ Dutch/DeC ] Present&#x27;s Goodbye in 10 secs.
+PPE Easy to install, and nice looking...
+Download NOW!</td>
+        </tr>
+        <tr data-bytes="5875" data-timestamp="883785600">
+            <td class="col-name"><a href="DEC-ST.ZIP">DEC-ST.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dec-st.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5875</td>
+            <td class="col-date">1998-01-03</td>
+            <td class="col-desc">View Stat&#x27;s v0.9 Lightbared replacement to
+PCB&#x27;s &quot;V&quot; command By Dutch/DeC</td>
+        </tr>
+        <tr data-bytes="4897" data-timestamp="845078400">
+            <td class="col-name"><a href="DETECT13.ZIP">DETECT13.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/detect13.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4897</td>
+            <td class="col-date">1996-10-12</td>
+            <td class="col-desc">Ansi Detect PPE v1.3 Coded By Marcus Holmes A
+MPP Production 1996 This PPE will
+automatically Answer the graphics question
+when someone logs on. Totally recoded for
+pcboard v15.3 but will work with all 15.x
+versions!</td>
+        </tr>
+        <tr data-bytes="69279" data-timestamp="836524800">
+            <td class="col-name"><a href="DEVELOP9.ZIP">DEVELOP9.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/develop9.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">69279</td>
+            <td class="col-date">1996-07-05</td>
+            <td class="col-desc">PCBoard Developer Information:  Contains file
+structures and usage guidelines for files
+used in the PCBoard environment.</td>
+        </tr>
+        <tr data-bytes="41073" data-timestamp="787795200">
+            <td class="col-name"><a href="DIZ2P124.ZIP">DIZ2P124.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/diz2p124.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">41073</td>
+            <td class="col-date">1994-12-19</td>
+            <td class="col-desc">DIZ/2-PCB v1.24 of 07.18.94 - pcboard utility
+to extract FILE_ID.DIZ in ZIP/ARJ/LZH/PAK
+files, adds the # of files, newest/oldest
+file dates and the uncompressed size. Local
+Uploading. Removes unwanted bbsads, archive
+comment generator. Search and Destroy
+unwanted text from entering your upload dir.
+Adds the widthxheightxcolor of GIF files. The
+fastest and most powerful processor out!
+Shareware by Shawn Reimerdes.</td>
+        </tr>
+        <tr data-bytes="89871" data-timestamp="889315200">
+            <td class="col-name"><a href="DIZED49L.ZIP">DIZED49L.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dized49l.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">89871</td>
+            <td class="col-date">1998-03-08</td>
+            <td class="col-desc">DIZEDIT  v4.9l  FAST and EASY  DIZ  File
+editor for archives. Allows  editing  of
+description  files  found  in  archives.
+Supports  ZIP,  ARJ  and   LZH  formats.
+Ability    to  CONVERT   archive   to  a
+particular  default  format,  COPY  file
+and ADD  ARCHIVE  COMMENT  for  ZIP  and
+ARJ files. DIZEDIT easily allows you  to
+create/edit  the  FILE_ID.DIZ  (or  SDI,
+DES),  and   automatically  repacks  the
+archive on  exit. NEW Virus SCAN, repack
+with   NEWEST  date,    and  ARJ,  PKZIP
+switches. Recognizes MOST  SFX files for
+ARJ,ZIP  and  LZH. If you run a BBS, you
+NEED this !! (c) 1994 GDSOFT
+─═■POINTBREAK+32·11·436925■═─</td>
+        </tr>
+        <tr data-bytes="93965" data-timestamp="762393600">
+            <td class="col-name"><a href="DIZIT33.ZIP">DIZIT33.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dizit33.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">93965</td>
+            <td class="col-date">1994-02-28</td>
+            <td class="col-desc">░▒▓ DizIt v3.3 -FILE_ID.DIZ Importer ▓▒░
+Sysops - Stop spending time uploading files
+into PCBoard with the local upload option, do
+it via batch processing! Use DizIt to
+automate the process. DizIt aids the PCBoard
+sysop by allowing files which contain
+FILE_ID.DIZ or DESC.SDI files to be imported
+into PCBoard into any directory file you
+specify. No need to check if FILE_ID.DIZ or
+DESC.SDI exists, DizIt will snoop it out for
+you. DizIt is fast and easy! Now supports
+up to 2,500 files import.      02/28/94
+-------  Great for nightly event   --------
+Author: Robert Neal          NOT CRIPPLED!</td>
+        </tr>
+        <tr data-bytes="109906" data-timestamp="800755200">
+            <td class="col-name"><a href="DIZPRO16.ZIP">DIZPRO16.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dizpro16.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">109906</td>
+            <td class="col-date">1995-05-18</td>
+            <td class="col-desc">DizIt PRO v1.6 - Description Importer
+Sysops-Stop spending time uploading files
+with local uploads, use DizIt Pro to automate
+the process! Snoops through files quickly for
+FILE_ID.DIZ or DESC.SDI and imports them.
+This is the most full featured program of
+it&#x27;s type. Includes file age limits, random
+file import selection, duplicate file in
+directory or PCB index files, virus scan, use
+as upload verification and much more.</td>
+        </tr>
+        <tr data-bytes="41605" data-timestamp="885340800">
+            <td class="col-name"><a href="DIZZY002.ZIP">DIZZY002.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dizzy002.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">41605</td>
+            <td class="col-date">1998-01-21</td>
+            <td class="col-desc">FILE_ID.DIZ management: creates DIZZY.TXT for
+all .ZIP files in a directory. Shows file
+name, date, size, and contents of
+FILE_ID.DIZ. /S will search subdirectories,
+rather than /TL creates a .TL file for mass
+editing /HTML will produce the listing in
+HTML format /NOWARN removes warnings See docs
+for Maximus BBS bonus! FreeWare from Danen
+Information Services.</td>
+        </tr>
+        <tr data-bytes="37213" data-timestamp="772675200">
+            <td class="col-name"><a href="DLPATH12.ZIP">DLPATH12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dlpath12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">37213</td>
+            <td class="col-date">1994-06-27</td>
+            <td class="col-desc">DLPATH 1.2 - When you get a new CD-ROM or get
+a new hard drive to put more files on-line,
+do you get tired of having to type 30 or more
+directory paths so PcBoard knows where all
+your files are?  Well DLPATH will take care
+of all that for you.  Create a new download
+path listing for all of your new CD&#x27;s or new
+directories automatically!
+─═■POINTBREAK+32·11·436925■═─</td>
+        </tr>
+        <tr data-bytes="62306" data-timestamp="706838400">
+            <td class="col-name"><a href="DMS35A.ZIP">DMS35A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dms35a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">62306</td>
+            <td class="col-date">1992-05-26</td>
+            <td class="col-desc">WGM-DMS v.3.5a - pcboard 14.x Utility This
+utility does the following: - Create
+directory headers. - Create conference
+directory files. - Create up to 99 bulletin
+files. - Create up to 99 master file
+listings. Written by Wayne G. Maas This is a
+bug fix release</td>
+        </tr>
+        <tr data-bytes="103203" data-timestamp="712713600">
+            <td class="col-name"><a href="DM_58.ZIP">DM_58.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dm_58.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">103203</td>
+            <td class="col-date">1992-08-02</td>
+            <td class="col-desc">Door Master 5.8</td>
+        </tr>
+        <tr data-bytes="45205" data-timestamp="710294400">
+            <td class="col-name"><a href="DORMAN26.ZIP">DORMAN26.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dorman26.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">45205</td>
+            <td class="col-date">1992-07-05</td>
+            <td class="col-desc">The Doorman Doormanager Ver 2.0 Ultimate door
+management utility. Limit the # of times per
+day a caller can access any door(s), limit
+time entering any door, sub. locked DTE rate
+for callers rate, Deny alternate nodes from
+accessing doors by Lock/Unlocking the door.
+Registration provides Twit file to deny any
+caller from any door(s), set the operating
+hours of door(s), mark any door as DOWN, and
+more. Users with PcBoard.sys/Door.sys can
+convert to/from any of the listed formats
+below. Supports PcBoard.sys (14.x), Door.sys,
+Callinfo.bbs, Dorinfo1.def, Dorinfo2.def, and
+Chain.txt. ShareWare:$10</td>
+        </tr>
+        <tr data-bytes="34861" data-timestamp="710985600">
+            <td class="col-name"><a href="DOS2PCB.ZIP">DOS2PCB.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dos2pcb.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">34861</td>
+            <td class="col-date">1992-07-13</td>
+            <td class="col-desc">DOS to PCBoard PCBFiler Converter. DIR-&gt;PCB</td>
+        </tr>
+        <tr data-bytes="4300" data-timestamp="847324800">
+            <td class="col-name"><a href="DOWNLOA1.ZIP">DOWNLOA1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/downloa1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4300</td>
+            <td class="col-date">1996-11-07</td>
+            <td class="col-desc">DOWNLOAD.PPE This PPE for pcboard v. 15.21+
+is used to make a user download a specific
+file. The file must be named MEMBER.TXT and
+you place the PPE wherever you want a user to
+d/l a file. This can be used to make
+NON-MEMBERS d/l your MEMBER forms. Copyright
+(c)1996, Paul Szymczuk</td>
+        </tr>
+        <tr data-bytes="15862" data-timestamp="847929600">
+            <td class="col-name"><a href="DP-NWS13.ZIP">DP-NWS13.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dp-nws13.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15862</td>
+            <td class="col-date">1996-11-14</td>
+            <td class="col-desc">[PPE] DeltaProductions News version 1.3a This
+is the best News file viewer for pcboard
+15.2+. Fully lightbar driven, very
+easy-to-use user interface with ma- ny
+special features including adding and
+deleting news bulletins. Configurable screens
+and security levels. Version 1.3 contains
+almost fully configurable text prompts. 100%
+Freeware, no registration! Now fixed &#x27;news
+deletion&#x27; -bug!!</td>
+        </tr>
+        <tr data-bytes="18707" data-timestamp="842918400">
+            <td class="col-name"><a href="DP-PGRF1.ZIP">DP-PGRF1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dp-pgrf1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">18707</td>
+            <td class="col-date">1996-09-17</td>
+            <td class="col-desc">[PPE] DeltaProductions SysOp pager 1.0f1 This
+is a best SysOp pager PPE ever made for
+pcboard. Everything is fully confi- gurable!
+Uses F4 key status and configu- rable page
+times settings. Leave a com- ments to SysOps
+via other ppes, use your own chatter ppes,
+emergency page using a secret password, and
+many other features Final 1.0 release. 100%
+FREEWARE</td>
+        </tr>
+        <tr data-bytes="23868" data-timestamp="844560000">
+            <td class="col-name"><a href="DP-TOP2B.ZIP">DP-TOP2B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dp-top2b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">23868</td>
+            <td class="col-date">1996-10-06</td>
+            <td class="col-desc">[PPE] DeltaProductions Top 10 users 2.0b This
+is the best Top 10-users viewer for pcboard.
+VERY fast, displays top 10 up- and
+downloaders (sorted by bytes and fi- les),
+top message writers and callers, and even
+counts special ActivityPoints to users. 100%
+Freeware, no registration</td>
+        </tr>
+        <tr data-bytes="235921" data-timestamp="823305600">
+            <td class="col-name"><a href="DRWY231.ZIP">DRWY231.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/drwy231.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">235921</td>
+            <td class="col-date">1996-02-03</td>
+            <td class="col-desc">DOORWAY revision 2.31 REMOTE ACCESS PROGRAM.
+This program allows both BBS&#x27;s to add normal
+programs to BBS&#x27;s as DOORS, and provides an
+inexpensive alternative to expensive
+commercial programs like pcanywhere and
+Carbon Copy for remote accessing of a home or
+office computer. This version contains both a
+HOST and COM program for full functionality
+without any 3rd party software, yet is still
+compatible with most other com programs. Has
+printer redirection capability plus many more
+features including a new configuration file
+editor and 16650 support. Limited to 10
+minutes until registered. Windows 95 bug fix
+for this version. Registration $30.</td>
+        </tr>
+        <tr data-bytes="81602" data-timestamp="802742400">
+            <td class="col-name"><a href="DSPLT101.ZIP">DSPLT101.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/dsplt101.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">81602</td>
+            <td class="col-date">1995-06-10</td>
+            <td class="col-desc">DSplit 1.01 DSplit is a unique pcboard
+utility which allows users to split and
+download files. Users with limited access
+time or download bytes may have troubles
+downloading the newest games and large
+programs. DSplit allows users to split ANY
+file and download parts at their leisure.
+Uses exes for maximum efficiency, with a PPE
+interface</td>
+        </tr>
+        <tr data-bytes="8137" data-timestamp="817344000">
+            <td class="col-name"><a href="E-BLT12.ZIP">E-BLT12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/e-blt12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8137</td>
+            <td class="col-date">1995-11-26</td>
+            <td class="col-desc">E-BLT.PPE Ver 1.2 E-BLT.PPE Will Show your
+users their FidoNet &quot;NetMail&quot; Address in 2
+forms 1. Their Fido Node Address 2. Their
+Internet Address Thru Fido Shows a Bulletin
+with their address and a example on how to
+use it 11-26-95 Micro-Comp Software FREEWARE
+/ SOURCE INCLUDED</td>
+        </tr>
+        <tr data-bytes="23398" data-timestamp="784080000">
+            <td class="col-name"><a href="ECRPPLD3.ZIP">ECRPPLD3.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ecrppld3.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">23398</td>
+            <td class="col-date">1994-11-06</td>
+            <td class="col-desc">PPLDecompiler 3.0ß - DONE BY CHiCKEN
+     NOW OUTSTRIPS PPLC 3.0!
+──▄▄▄▄▄▄▄▄▄────▄▄▄▄▄▄────▄▄▄▄▄▄▄▄───
+──▄▄▄▄▄▄▄▄▄──▄▄▄▄▄▄▄▄▄▄──▄▄▄▄▄▄▄▄▄──
+──▄▄▄▄▄▄▄▄▄─▄▄▄▄▄▄▄▄▄▄▄▄─▄▄▄▄▄▄▄▄───
+──▄▄▄▄▄▄▄▄▄─▄▄▄▄▄▄▄▄▄▄▄▄─▄▄▄▄▄▄▄────
+──▄▄▄▄▄▄▄▄▄──▄▄▄▄▄▄▄▄▄▄──▄▄▄▄▄▄▄▄───
+──▄▄▄▄▄▄▄▄▄────▄▄▄▄▄▄────▄▄▄▄▄▄▄▄▄──
+────────────────────────────────────
+       SWISS CODING Division
+       -= ELECTRONIC RATS =-</td>
+        </tr>
+        <tr data-bytes="6050" data-timestamp="789782400">
+            <td class="col-name"><a href="ENAME101.ZIP">ENAME101.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ename101.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">6050</td>
+            <td class="col-date">1995-01-11</td>
+            <td class="col-desc">eName v1.01 is a PCBoard PPE (includes the
+PPS source) which converts a user&#x27;s name to
+a legitimate email address.  Great for
+welcoming a user to an Internet email
+conference. Conforms to RFC1137 spec for
+converting names into email names. ENAME.INI
+allows for customizing colors, domain, and
+more! FREEWARE, by Duke Engineering.  Call
+Online Resource 619.793.8360 for latest.</td>
+        </tr>
+        <tr data-bytes="11896" data-timestamp="847238400">
+            <td class="col-name"><a href="EQ_XMAS2.ZIP">EQ_XMAS2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/eq_xmas2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">11896</td>
+            <td class="col-date">1996-11-06</td>
+            <td class="col-desc">Christmas Countdown v2.00 This program will
+let your callers know how many days are left
+until Christmas. FREEWARE PPE Program For
+pcboard v15.21+ Happy Holidays from Equinox
+Software</td>
+        </tr>
+        <tr data-bytes="3442" data-timestamp="798249600">
+            <td class="col-name"><a href="EZQWK1.ZIP">EZQWK1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ezqwk1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3442</td>
+            <td class="col-date">1995-04-19</td>
+            <td class="col-desc">PCBoards QWK Command replacement</td>
+        </tr>
+        <tr data-bytes="15516" data-timestamp="789004800">
+            <td class="col-name"><a href="FBBSPC11.ZIP">FBBSPC11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/fbbspc11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15516</td>
+            <td class="col-date">1995-01-02</td>
+            <td class="col-desc">FILES.BBS to PCBoard DIR v1.1
+Converts CD-ROM files.bbs to a text file that
+can be read by PCBoard 14.x/15.x.</td>
+        </tr>
+        <tr data-bytes="633283" data-timestamp="762739200">
+            <td class="col-name"><a href="FD212.ZIP">FD212.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/fd212.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">633283</td>
+            <td class="col-date">1994-03-04</td>
+            <td class="col-desc">FrontDoor 2.12/Shareware release
+archive. FidoNet compatible E-Mail
+software. Includes Mailer, Editor,
+Terminal, Nodelist Compiler, and
+Full-Screen configuration utility.</td>
+        </tr>
+        <tr data-bytes="87030" data-timestamp="803001600">
+            <td class="col-name"><a href="FDC-500.ZIP">FDC-500.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/fdc-500.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">87030</td>
+            <td class="col-date">1995-06-13</td>
+            <td class="col-desc">File Download Counter 5.00- FDC will count
+the number of times a file has been
+downloaded from your system and update your
+directory listings with that number. This
+makes it easy for users and sysops to see
+which files and file areas are the most
+popular on their system. Easy to install,
+works great in a nightly event. Now updates
+are available on the WWW at:
+http://www.cc.utah.edu:80/~bmb4764 or contact
+brandon.bachman@m.cc.utah.edu</td>
+        </tr>
+        <tr data-bytes="13177" data-timestamp="865468800">
+            <td class="col-name"><a href="FINLANG.ZIP">FINLANG.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/finlang.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13177</td>
+            <td class="col-date">1997-06-05</td>
+            <td class="col-desc">Suomen kieli pcboardiin</td>
+        </tr>
+        <tr data-bytes="22480" data-timestamp="758764800">
+            <td class="col-name"><a href="FLAG32.ZIP">FLAG32.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/flag32.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">22480</td>
+            <td class="col-date">1994-01-17</td>
+            <td class="col-desc">FLAG.PPE, v3.2, a replacement for PCBoard&#x27;s
+internal &quot;more?&quot; prompt, gives PCBoard v15.1
+the easiest-to-use system for flagging and
+viewing files of any BBS around.  It gives
+callers the ability to point and shoot when
+flagging or viewing files.  Includes source
+code and may be customized to suit your BBS&#x27;s
+needs.  Version 3.0 adds RIPscrip support and
+changes flagging to go from top to bottom.
+Version 3.2 contains a fixed PREFILER file.</td>
+        </tr>
+        <tr data-bytes="17417" data-timestamp="820195200">
+            <td class="col-name"><a href="FLAGP200.ZIP">FLAGP200.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/flagp200.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">17417</td>
+            <td class="col-date">1995-12-29</td>
+            <td class="col-desc">FLAG+ v2.00 for pcboard from R.E.C. PPE
+Replacement for pcboard&#x27;s internal file
+directory listing prompt. Quickly browse file
+listings, while un/flagging files to
+download, test, or view by using arrow keys
+or a mouse. MAJOR improvements from v1.2 . NO
+COMPETITION, THE BEST FLAGGER YET!</td>
+        </tr>
+        <tr data-bytes="221545" data-timestamp="745200000">
+            <td class="col-name"><a href="FP14S.ZIP">FP14S.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/fp14s.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">221545</td>
+            <td class="col-date">1993-08-13</td>
+            <td class="col-desc">FidoPCB   ** Version 1.4 **   Date: 08-18-93
+Fido interface for PCBoard.  Allows multiple
+Nodes, AKA&#x27;s, AreaFix, Net Mail.  Can be run
+as a Door.  Fast, easy setup. Direct tossing
+into PCBoard message format.  Supports IM,
+FrontDoor, BinkleyTerm , D&#x27;Bridge.  Supports
+PCB 15.0 MSGS.IDX. Shareware by Matjaz Koce.</td>
+        </tr>
+        <tr data-bytes="50016" data-timestamp="771120000">
+            <td class="col-name"><a href="FT-REMP2.ZIP">FT-REMP2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ft-remp2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">50016</td>
+            <td class="col-date">1994-06-09</td>
+            <td class="col-desc">    .                 ·
+          ·     ·           ·    ·
+.   :_____._____:_____:_____·
+  · |    _|     |     |    _|  .
+    |  ___|  ·  :_   _:    _:
+ .  :__|  |__:__| |_| |_____| ·  ·
+&lt;=se!===========================&gt;
+ Remover++! a great remover that
+ kicks out randomized files!
+ (like AD&#x27;S!) and also removes
+ Lines from File_id.diz!!!!
+ a Must for all of ya sysops!
+     For PCB 15.X+ ONLY!!!
+&lt;===============================&gt;
+─═■POINTBREAK+32·11·436925■═─</td>
+        </tr>
+        <tr data-bytes="11344" data-timestamp="810086400">
+            <td class="col-name"><a href="FTA-ANSI.ZIP">FTA-ANSI.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/fta-ansi.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">11344</td>
+            <td class="col-date">1995-09-03</td>
+            <td class="col-desc">ANSI.SYS Replacement that will read ANSI
+codes and the PCB AT codes and interpret them
+correctly. oooo F .oooo. T .oooo. A OOoo.. -
+S P E E D -</td>
+        </tr>
+        <tr data-bytes="3287" data-timestamp="844646400">
+            <td class="col-name"><a href="GBYE_V2.ZIP">GBYE_V2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/gbye_v2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">3287</td>
+            <td class="col-date">1996-10-07</td>
+            <td class="col-desc">Goodbye [PPE] v. 1 GoodBye [PPE] is a
+replacement for your (G)oodbye command in
+pcboard. Functions included a logoff comment
+to the SysOp. Rewrote and recompiled for
+PcBoard 15.3 Release Date 10/07/96</td>
+        </tr>
+        <tr data-bytes="12194" data-timestamp="855187200">
+            <td class="col-name"><a href="GN200.ZIP">GN200.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/gn200.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12194</td>
+            <td class="col-date">1997-02-06</td>
+            <td class="col-desc">GNews v2.0.0 final Complete news handling
+program to BBBS How-C! Uncrippled fully
+functional program! This version is totally
+*re-written*. 110% Sysop configurable
+Authors: Lvirus jangler</td>
+        </tr>
+        <tr data-bytes="119675" data-timestamp="823824000">
+            <td class="col-name"><a href="HOSTV12A.ZIP">HOSTV12A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/hostv12a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">119675</td>
+            <td class="col-date">1996-02-09</td>
+            <td class="col-desc">KSP-HOST (vers 1.2) An inbound Telnet server
+for MS/DOS Bulletin Board Systems. Every node
+can answer both telnet and modem calls!
+Requires a fossil driver on each node, a 24
+hour TCP/IP connection to the Internet, and a
+local area network that supports NetBios such
+as Novell or Lantastic. Shareware.</td>
+        </tr>
+        <tr data-bytes="117291" data-timestamp="768182400">
+            <td class="col-name"><a href="IDTEL17.ZIP">IDTEL17.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/idtel17.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">117291</td>
+            <td class="col-date">1994-05-06</td>
+            <td class="col-desc">Indoors/TELNET &amp; FINGER v1.7</td>
+        </tr>
+        <tr data-bytes="126108" data-timestamp="817776000">
+            <td class="col-name"><a href="IDXUTIL8.ZIP">IDXUTIL8.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/idxutil8.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">126108</td>
+            <td class="col-date">1995-12-01</td>
+            <td class="col-desc">IDX-Util v8.0 (12-01-95) PCB 15.22 Utilities
+List files in IDX File using wildcards. List
+Duplicate files in an .IDX File. Also can
+cross-reference two .IDX files and list Dups
+or create a 3rd Index containing Dups or you
+can Kill the Dups. Change Drive Letters in
+IDX files quickly, Edit Paths &amp; FileNames,
+delete files from IDX. Merge two IDX Files.
+Detect which CD-Rom is in drive and change
+DLPATH.LST files to appropriate .IDX files.</td>
+        </tr>
+        <tr data-bytes="36042" data-timestamp="847584000">
+            <td class="col-name"><a href="IEMSI120.ZIP">IEMSI120.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/iemsi120.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">36042</td>
+            <td class="col-date">1996-11-10</td>
+            <td class="col-desc">PPE: IEMSI Auto-Logon v1.20 by Paul Miller
+Allows callers to auto logon via the IEMSI
+protocol. Transparent to all other callers,
+not even a detection delay! &gt;&gt;&gt;FREEWARE&lt;&lt;&lt;</td>
+        </tr>
+        <tr data-bytes="66660" data-timestamp="792460800">
+            <td class="col-name"><a href="INTELLIV.ZIP">INTELLIV.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/intelliv.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">66660</td>
+            <td class="col-date">1995-02-11</td>
+            <td class="col-desc">Convert pcboard DIR files to FILES.BBS</td>
+        </tr>
+        <tr data-bytes="31914" data-timestamp="816739200">
+            <td class="col-name"><a href="ISLPCB17.ZIP">ISLPCB17.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/islpcb17.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">31914</td>
+            <td class="col-date">1995-11-19</td>
+            <td class="col-desc">Internet Site List 1.7 for pcboard PPE App
+that stores seperate lists of FTP, WWW, IRC,
+TelNet, UseNet and E-Mail sites. Your users
+can add new sites online, list the available
+sites, search for a site, or download the
+site lists for later use. Great way to add
+additional Internet features to your board.
+Full light-bar and hot-key support included.
+Easy to install! Not Crippled! Shareware.</td>
+        </tr>
+        <tr data-bytes="8008" data-timestamp="733968000">
+            <td class="col-name"><a href="ISNODEUP.ZIP">ISNODEUP.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/isnodeup.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8008</td>
+            <td class="col-date">1993-04-05</td>
+            <td class="col-desc">This program is freeware.  IsNodeUp
+tests for active/inactive PCBoard 15.0
+nodes from a batch file.  It will return
+with an error level equal to the first
+active node encountered or zero if all
+requested nodes are down.  IsNodeUp
+should function correctly on systems
+with up to 2,000 nodes.</td>
+        </tr>
+        <tr data-bytes="30713" data-timestamp="818208000">
+            <td class="col-name"><a href="IZ_QSFIN.ZIP">IZ_QSFIN.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/iz_qsfin.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">30713</td>
+            <td class="col-date">1995-12-06</td>
+            <td class="col-desc">qwkscan v1.30 Swedish/Finnish Language Files
+Complete Swedish and Finnish Language Files
+for qwkscan v1.30. Courtesy of the HAM-BOX
+BBS in Finland. Download IZ_QS_13.ZIP for the
+complete version of qwkscan v1.3 The complete
+QWK mail system for pcboard bbss.#1 From The
+Infinite Zone Software Collection</td>
+        </tr>
+        <tr data-bytes="51365" data-timestamp="817862400">
+            <td class="col-name"><a href="IZ_QS_13.ZIP">IZ_QS_13.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/iz_qs_13.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">51365</td>
+            <td class="col-date">1995-12-02</td>
+            <td class="col-desc">qwkscan v1.30: Complete QWK Mail System!
+qwkscan is a *complete* QWK Mail System that
+compiles .QWK Packets that include New Files
+Listings, New/Updated Bulletins, New/Updated
+BBS News Files, and Welcome/Logoff Screens!
+Totally SysOp and User configurable! A must
+have for every pcboard v15.21+ BBS. (PPE) #1
+* * Free Registration * * From The Infinite
+Zone Software Collection</td>
+        </tr>
+        <tr data-bytes="26647" data-timestamp="799891200">
+            <td class="col-name"><a href="JM_QT_10.ZIP">JM_QT_10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/jm_qt_10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">26647</td>
+            <td class="col-date">1995-05-08</td>
+            <td class="col-desc">QWK Transfer v1.0 A full featured QWK Mail
+transfer PPE for pcboard. This program allows
+you to have the same features in others
+programs. Download, Upload, Select/DeSelect
+Conferences, Configure, complete help system,
+commandline stacking and much more.</td>
+        </tr>
+        <tr data-bytes="104447" data-timestamp="842054400">
+            <td class="col-name"><a href="KSPFTP30.ZIP">KSPFTP30.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/kspftp30.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">104447</td>
+            <td class="col-date">1996-09-07</td>
+            <td class="col-desc">KSP FTP v3.0 - A BBS Door Program.
+Lets callers download files from
+remote ftp sites!  Internal support
+for X/Y/Zmodem eliminates need for
+temporary disk space on BBS; external
+protocols may be added with limits
+on their use of BBS disk space for
+intermediate file storage.  BBS must
+be connected to the Internet. Works
+with any BBS that supports DOOR.SYS.</td>
+        </tr>
+        <tr data-bytes="20549" data-timestamp="808876800">
+            <td class="col-name"><a href="KSPMUX14.ZIP">KSPMUX14.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/kspmux14.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">20549</td>
+            <td class="col-date">1995-08-20</td>
+            <td class="col-desc">KSP DVMX v1.4 - A packet multiplexor that
+allows the KSP network doors to run properly
+under desqview. Provides greater performance
+than PKTMUX/PKTDRV. Designed to work with KSP
+products; may not work as a general-purpose
+packet multiplexer. FREEWARE.</td>
+        </tr>
+        <tr data-bytes="145133" data-timestamp="844300800">
+            <td class="col-name"><a href="KSPSLP37.ZIP">KSPSLP37.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/kspslp37.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">145133</td>
+            <td class="col-date">1996-10-03</td>
+            <td class="col-desc">KSP SLIP v3.7 - A BBS Door Program.
+Offer callers direct TCP/IP access to
+the Internet via a serial SLIP link!
+Allows them to run FTP, Telnet, Mosaic,
+etc! BBS must be connected to Internet;
+Callers need SLIP software; Replaces
+KA9QDOOR and is simpler to install.</td>
+        </tr>
+        <tr data-bytes="98583" data-timestamp="825379200">
+            <td class="col-name"><a href="KSPTEL50.ZIP">KSPTEL50.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ksptel50.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">98583</td>
+            <td class="col-date">1996-02-27</td>
+            <td class="col-desc">KSP Telnet v5.0 - A BBS Door Pgm.
+Lets callers login through your
+BBS to remote computers anywhere
+in the world using the Internet!
+Compatible with any BBS software
+that can create a DOOR.SYS file.</td>
+        </tr>
+        <tr data-bytes="7253" data-timestamp="792201600">
+            <td class="col-name"><a href="LNZ202.ZIP">LNZ202.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/lnz202.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7253</td>
+            <td class="col-date">1995-02-08</td>
+            <td class="col-desc">Ever wanted to use the L, N or Z to search
+across all conferences?  Well, here&#x27;s the
+perfect PPE to do such a task.  Treat your
+users to something special.  Download this
+new and improved LNZ.PPE for your enjoyment.
+There are many changes to they way it
+operates but very little visual display
+changes.  Fixed the problems with multinode
+and drop carrier problems.  Requires v15.21
+dated 01/19/95.</td>
+        </tr>
+        <tr data-bytes="4385" data-timestamp="844473600">
+            <td class="col-name"><a href="MAILL501.ZIP">MAILL501.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/maill501.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4385</td>
+            <td class="col-date">1996-10-05</td>
+            <td class="col-desc">The Mailing List Builder v5.01 [PPE] Builds a
+complete comma delimited file of all your
+users mailing info from your USERS file.
+Fast, simple and completely free! (c)1996
+Practical Computer Services</td>
+        </tr>
+        <tr data-bytes="13640" data-timestamp="884908800">
+            <td class="col-name"><a href="MBDAY2OI.ZIP">MBDAY2OI.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/mbday2oi.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13640</td>
+            <td class="col-date">1998-01-16</td>
+            <td class="col-desc">MegaKrupp presents: , MEGABIRTHDAY version
+2.Oi____ , ) MegaBirthday goes deep into Your
+( ( userfiles and seek out Users who ) ) have
+been born on the very Month ( ( we are
+currently living in, and ) ) then makes a
+little nice-looking ( ( list out of them. ) (
+Supports Concord and superbbs. )</td>
+        </tr>
+        <tr data-bytes="14218" data-timestamp="800928000">
+            <td class="col-name"><a href="MKALIAS2.ZIP">MKALIAS2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/mkalias2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">14218</td>
+            <td class="col-date">1995-05-20</td>
+            <td class="col-desc">MKALIAS.PPE V1.1 Add a little glitz and ease
+to the Alias management of pcboard! Add
+graphics + security + language display files
+to explain your own Alias rules. All display
+screens fully customizable. support for
+GRAPHIC+SEC+LANG formats. Multi-Node
+compatibile. Sends MSG to notify alias
+changes to names you list in the CFG file!
+Miracle! Software (If it works, its a
+Miracle!) CALLWARE! FREEWARE! CALLWARE!
+Support BBS: Hazels Hideaway SysOp: Ralph
+Myers (513) 752-3139 2400-14400bd&#x27;s V.32 V.42
+etc. etc.</td>
+        </tr>
+        <tr data-bytes="10291" data-timestamp="784771200">
+            <td class="col-name"><a href="MKPCBD11.ZIP">MKPCBD11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/mkpcbd11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">10291</td>
+            <td class="col-date">1994-11-14</td>
+            <td class="col-desc">MKPCBDIR.EXE V1.1 will convert a regular DOS
+directory listing stored in a file by using
+&quot;dir/o &gt; dirname.raw&quot; to a pcboard directory
+list. This was designed to create directory
+lists for CD-roms which are not BBS ready.
+Make your directory list and let MKPCBDIR.EXE
+do the rest. V1.1 fixes bug in V1.0 related
+to 3 and 10 character file sizes. Brought to
+you by PROJECT DAMOCLES.</td>
+        </tr>
+        <tr data-bytes="45925" data-timestamp="871948800">
+            <td class="col-name"><a href="MODST120.ZIP">MODST120.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/modst120.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">45925</td>
+            <td class="col-date">1997-08-19</td>
+            <td class="col-desc">MODEM STATS v1.20 - 08/09/97 A BBS Diagnostic
+tool for use with all modems. Produces a
+report from the modem&#x27;s &quot;AT&quot; commands and
+shows the report online to the user. Program
+tested with RemoteAccess
+http://www.compura.com/coole FREEWARE!</td>
+        </tr>
+        <tr data-bytes="6434" data-timestamp="847670400">
+            <td class="col-name"><a href="MONI1.ZIP">MONI1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/moni1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">6434</td>
+            <td class="col-date">1996-11-11</td>
+            <td class="col-desc">MONITOR v1.0 - Requires pcboard v15.3+
+Monitor is a pcboard .PPE for SysOps to
+monitor their nodes while they are on-line.
+It will display their name, city, and current
+status of on-line users. Options include:
+display last caller &amp; beep while user logs
+in. Can be used as a replacement for
+pcboard&#x27;s PCBMONI.EXE program. This is a
+FULLY functional copy. SHAREWARE!!! njlink
+Software. Released 11/11/96.</td>
+        </tr>
+        <tr data-bytes="26562" data-timestamp="842054400">
+            <td class="col-name"><a href="MONI14.ZIP">MONI14.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/moni14.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">26562</td>
+            <td class="col-date">1996-09-07</td>
+            <td class="col-desc">UltraMoni - v1.4  - PCBMONI .PPE  replacement
+for the busy  PCBoard Sysop.  User  definable
+update and scroll interval.  View online user
+record.  Update node info.  Full and  compact
+display mode.   Fully functional.   Shareware
+only $10.  Free BBS support.  NEW for v1.1  -
+Support for  Caller Management  System (CMS).
+New in v1.4 - Support for PCB 15.3.
+This is a must try!!  Released 09/07/96.</td>
+        </tr>
+        <tr data-bytes="13839" data-timestamp="827884800">
+            <td class="col-name"><a href="MP_2B.ZIP">MP_2B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/mp_2b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13839</td>
+            <td class="col-date">1996-03-27</td>
+            <td class="col-desc">█▓▒░          Msg-Pack  v2.ß           ░▒▓█
+Msg-Pack v2.ß QWK Interface for PCBoard!
+This PPE allows you to give your users an
+easy to read, easy to understand, and
+easy to move around in QWK interface.
+Features include: Select/Deselect confs,
+Upload a REP packet, download a QWK
+packet, &amp; change limits settings.  Future
+releases will include a help system as well.
+v2.ß is a minor upgrade release with a few
+changes.  Requires PCBoard v15.21+.</td>
+        </tr>
+        <tr data-bytes="8828" data-timestamp="791942400">
+            <td class="col-name"><a href="MSCAN03B.ZIP">MSCAN03B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/mscan03b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8828</td>
+            <td class="col-date">1995-02-05</td>
+            <td class="col-desc">╒══════════════════════════════════════════╕
+│ ZIPPY Scan Across Multiple Conferences   │
+│ ▄██████▄ ▄█████▄ ▄█████▄ ▄█████▄ ▄█████▄ │
+│ ██ ██ ██ ██▄▄▄▄  ██      ██▄▄▄██ ██   ██ │
+│ ██ ██ ██  ▀▀▀▀██ ██      ██▀▀▀██ ██   ██ │
+│ ██ ██ ██ ▀█████▀ ▀█████▀ ██   ██ ██   ██ │
+│ ──────────────────────────────────────── │
+│            Version 0.03 Beta             │
+│   If You Run CDROMS You Need This PPE!   │
+│──────────────────────────────────────────│
+│            For PCBoard v15.21+           │
+│       An UltiWares(c)1995 Release        │
+╧╧════════════════════════════════════════╧╧</td>
+        </tr>
+        <tr data-bytes="59265" data-timestamp="838944000">
+            <td class="col-name"><a href="MSGTAG12.ZIP">MSGTAG12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/msgtag12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">59265</td>
+            <td class="col-date">1996-08-02</td>
+            <td class="col-desc">Message Tagging Suite PPE&#x27;s - Version 1.02
+** Update from version 1.01 by Dan Shore **
+A suite of PPE&#x27;s that allows TAGGING of
+message numbers while using PCB&#x27;s &quot;Q&quot;uick Msg
+Scan function.  You can READ, KILL, or
+RECOVER *TAGGED* messages.  Released as
+&quot;ContinueWare&quot; with the hopes of other
+SysOp&#x27;s continuing development of this fine
+suite of products. FREEWARE with source code
+included.  By Dan Shore - &lt;The Shoreline BBS&gt;</td>
+        </tr>
+        <tr data-bytes="107069" data-timestamp="791769600">
+            <td class="col-name"><a href="MSX099B1.ARJ">MSX099B1.ARJ</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/msx099b1.arj/" class="unpack-btn">[ ARJ x   ]</a></td>
+            <td class="col-size">107069</td>
+            <td class="col-date">1995-02-03</td>
+            <td class="col-desc">MSX emulator 0.99b1 for DOS</td>
+        </tr>
+        <tr data-bytes="4381" data-timestamp="845769600">
+            <td class="col-name"><a href="NEWUSERS.ZIP">NEWUSERS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/newusers.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4381</td>
+            <td class="col-date">1996-10-20</td>
+            <td class="col-desc">NEWUSER.PPE 1996 This PPE is for pcboard v.
+15.21+. It is used to have your callers
+become members. It is used in conjunction
+with a security specific file. (c)1996, Paul
+Szymczuk</td>
+        </tr>
+        <tr data-bytes="8228" data-timestamp="829094400">
+            <td class="col-name"><a href="NO104MES.ZIP">NO104MES.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/no104mes.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8228</td>
+            <td class="col-date">1996-04-10</td>
+            <td class="col-desc">==========================
+The incredible BOFH ];=&gt;
+production House presents
+The ultimate NO 1.04 NODE
+messenger for PCB 15.22
+and later. No bullshit!
+==========================</td>
+        </tr>
+        <tr data-bytes="432496" data-timestamp="814147200">
+            <td class="col-name"><a href="NS11.ZIP">NS11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ns11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">432496</td>
+            <td class="col-date">1995-10-20</td>
+            <td class="col-desc">NetXpress Server v1.1 [DEMO] Internet Server
+for DOS, includes WWW, CGI, Gopher, Finger,
+Telnet, SMTP servers and SMTP &amp; NNTP
+clients.</td>
+        </tr>
+        <tr data-bytes="1084562" data-timestamp="808444800">
+            <td class="col-name"><a href="NX-PCB.ZIP">NX-PCB.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/nx-pcb.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">1084562</td>
+            <td class="col-date">1995-08-15</td>
+            <td class="col-desc">NetExpress SMTP/NNTP gateway for PCBoard.
+ Supports UUCP and TCP/IP.</td>
+        </tr>
+        <tr data-bytes="97606" data-timestamp="855532800">
+            <td class="col-name"><a href="OFILE22.ZIP">OFILE22.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ofile22.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">97606</td>
+            <td class="col-date">1997-02-10</td>
+            <td class="col-desc">Online Filemanager PPE for PCB 15.22 THIS IS
+THE FIRST TRUE ONLINE FILEMANAGER (c)
+Slob-Trot Software 1997 Now you don&#x27;t have to
+let your Cosys out to your dos anymore. All
+filehandling can be done on-line with this
+amazing PPE. - NEW: Securitylevel for Nuking
+access - NEW: Securitylevel for access to
+pridirs - NEW: RELEASES TIMESLICES WHEN IDLE!
+- Edit file descriptions - Move/Copy/Delete
+files &amp; descriptions - Zippy scan for easy
+file &amp; text finding - Loggs into file
+everytime it&#x27;s used - File Nuking (lots of
+options)</td>
+        </tr>
+        <tr data-bytes="40810" data-timestamp="821404800">
+            <td class="col-name"><a href="ONEFOS08.ZIP">ONEFOS08.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/onefos08.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">40810</td>
+            <td class="col-date">1996-01-12</td>
+            <td class="col-desc">onefossil, Revision 8, versatile single port
+high speed FOSSIL 5 compatible communications
+driver for MS-DOS based software under
+desqview or Windows multitasking systems.
+onefossil can support multiple ports and
+shared irqs. Shareware: $10. Written by Carl
+Morris, published by Morris Softronics.</td>
+        </tr>
+        <tr data-bytes="5152" data-timestamp="794188800">
+            <td class="col-name"><a href="ORGINT91.ZIP">ORGINT91.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/orgint91.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5152</td>
+            <td class="col-date">1995-03-03</td>
+            <td class="col-desc">ORGINT (c) 1995 by Stormbringer,
+Phalcon/SKISM Tunnels interrupts and rehooks
+them at their roots. Useful for bypassing
+viruses in memory.</td>
+        </tr>
+        <tr data-bytes="5163" data-timestamp="828144000">
+            <td class="col-name"><a href="P.ZIP">P.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/p.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5163</td>
+            <td class="col-date">1996-03-30</td>
+            <td class="col-desc">╒════════════════════════════════╕
+│ Replacement PPE for PCBoard&#x27;s  │
+│ Page Length (P) command        │
+│ This will print out numbers    │
+│ in descending order, what is   │
+│ at the top is the page length, │
+│ this ensures the user enters   │
+│ the right page length ...      │
+│        *** FREEWARE ***        │
+│   INCLUDES PPS SOURCE CODE!!   │
+└────────────────────────────────┘</td>
+        </tr>
+        <tr data-bytes="19440" data-timestamp="815184000">
+            <td class="col-name"><a href="P2HTM100.ZIP">P2HTM100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/p2htm100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">19440</td>
+            <td class="col-date">1995-11-01</td>
+            <td class="col-desc">pcb2html v1.00 - pcboard dirx to HTML &lt;ASP&gt;
+This utility converts pcboard dirx file
+descriptions to HTML file descriptions. Also
+creates Conference and Dir Menu. Turn your
+pcboard Directories available on the
+Internet. DOWNLOAD NOW MSmac Software
+351-61-314336 [28.8]
+http://www.arede.pt/shopping/msmac</td>
+        </tr>
+        <tr data-bytes="29402" data-timestamp="819590400">
+            <td class="col-name"><a href="PCB-ATC5.ZIP">PCB-ATC5.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb-atc5.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">29402</td>
+            <td class="col-date">1995-12-22</td>
+            <td class="col-desc">PCB-Attach v1.50 - IMPORT attached files from
+QMAIL or Cam-Mail .QWK packets and EXPORT
+attached files to QMAIL .REP packets. Runs
+from batch file during message IMPORT and
+EXPORT under Cam-Mail and maybe others. It
+now cleans up after it imports files so as
+not to leave extra files in the mail WORK
+directory and incorprates features from
+previous utilities CLEARTAG &amp; MAKE-NET.
+W/Source code. FREEWARE by Gary Meeker.</td>
+        </tr>
+        <tr data-bytes="1395060" data-timestamp="746064000">
+            <td class="col-name"><a href="PCB15DMO.ZIP">PCB15DMO.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb15dmo.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">1395060</td>
+            <td class="col-date">1993-08-23</td>
+            <td class="col-desc">PCBoard v15.0 DEMO -- Fully functional
+demonstration copy of PCBoard Bulletin Board
+software.  While there are some built in
+limits, such as in the number of users,
+messages, conferences and directories, the
+DEMO is largely functional giving you a
+pretty good feel for PCBoard v15.0 and how it
+operates.  Full documentation included.</td>
+        </tr>
+        <tr data-bytes="40463" data-timestamp="736473600">
+            <td class="col-name"><a href="PCB15TXT.ZIP">PCB15TXT.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb15txt.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">40463</td>
+            <td class="col-date">1993-05-04</td>
+            <td class="col-desc">What&#x27;s new in PCBoard v15.0</td>
+        </tr>
+        <tr data-bytes="161007" data-timestamp="738374400">
+            <td class="col-name"><a href="PCB25UTG.ZIP">PCB25UTG.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb25utg.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">161007</td>
+            <td class="col-date">1993-05-26</td>
+            <td class="col-desc">╒══════════════════════════════════════════╕
+│ PcbStat v2.5  Statistics for PCB/ProDoor │
+├──────────────────────────────────────────┤
+│ One of the most powerful statistic tools │
+│ available! Creates all kinds of top up-/ │
+│ downloader, lastcaller, last uploads     │
+│ statistics. Also creates weekly and      │
+│ monthly top stats and history statistics │
+│ (day/week/month). Allows to hide any user│
+│ from the stats. Additionaly you may post │
+│ all stats into your msgbase too. It&#x27;s    │
+│ multiline aware and supports multiple    │
+│ conferences and multiple languages.      │
+╘══════════════════════════════════════════╛</td>
+        </tr>
+        <tr data-bytes="61514" data-timestamp="829180800">
+            <td class="col-name"><a href="PCB2HTMS.ZIP">PCB2HTMS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb2htms.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">61514</td>
+            <td class="col-date">1996-04-11</td>
+            <td class="col-desc">PCB2HTMS is a Pcboard Directory file
+too Html converter. The output file
+contains the following features
+Support for background GIF /JPG
+Support for tables (and width)
+Back to pages plus lots more
+Key words : PCBoard / Convert
+HTML / WWW / Internet</td>
+        </tr>
+        <tr data-bytes="23003" data-timestamp="844041600">
+            <td class="col-name"><a href="PCBBE200.ZIP">PCBBE200.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbbe200.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">23003</td>
+            <td class="col-date">1996-09-30</td>
+            <td class="col-desc">The PCB Bulletin Executive v2.00 [PPE]
+*UNIVERSAL KEY SUPPORT!* Automatically
+Creates/Updates Bulletin menu each time it is
+run. Displays last date bulletin was changed.
+If you don&#x27;t like drawing screens each time
+you change a BLT, this is the program for
+you. User is prompted after each screen
+rather than at the end of display. (c)1996
+Practical Computer Services</td>
+        </tr>
+        <tr data-bytes="120978" data-timestamp="762912000">
+            <td class="col-name"><a href="PCBCA10.ZIP">PCBCA10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbca10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">120978</td>
+            <td class="col-date">1994-03-06</td>
+            <td class="col-desc">PCBCallerAnalyzer Utility v1.0      03/06/94
+PCBCallerAnalyzer is a PCBoard 15.x Utility
+that will scan the CALLER(x) log and make a
+BLT of stats.  Scan the whole log or select
+number of days to scan. Easy to set up and
+use.  Requires PCBUtility v1.0 to be set up.
+A part of the PCBUtility v1.0 Package from
+Casto Software.</td>
+        </tr>
+        <tr data-bytes="127936" data-timestamp="851212800">
+            <td class="col-name"><a href="PCBCK325.ZIP">PCBCK325.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbck325.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">127936</td>
+            <td class="col-date">1996-12-22</td>
+            <td class="col-desc">pcbcheck 3.25 Upload processor for pcboard -
+easiest to use and set up. Fastest upload
+processing available! This version greatly
+enhances description file processing, scanner
+customization abilities, smarter FILE_ID.DIZ
+processing (removal of ANSI, @-codes) and
+still includes convert archives, add/remove
+files, modify comments, etc.. Now completely
+FREE!</td>
+        </tr>
+        <tr data-bytes="104532" data-timestamp="844300800">
+            <td class="col-name"><a href="PCBDE403.ZIP">PCBDE403.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbde403.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">104532</td>
+            <td class="col-date">1996-10-03</td>
+            <td class="col-desc">The PCB Door Executive v4.03 [PPE] *UNIVERSAL
+KEY SUPPORT!* Creates *1* Menu for all your
+Doors &amp; PPE programs. Run PPE &amp; Doors from 1
+menu! Totally Sysop Configurable. Optionally
+categorizes your doors for easier access.
+Display by category or all at once! Quick
+Setup, Zero Maintenance! (c)1996 Practical
+Computer Services</td>
+        </tr>
+        <tr data-bytes="15459" data-timestamp="815702400">
+            <td class="col-name"><a href="PCBDIR13.ZIP">PCBDIR13.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbdir13.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15459</td>
+            <td class="col-date">1995-11-07</td>
+            <td class="col-desc">pcbdir v1.3 This is a DOS-based utility that
+will take all the files in a directory and
+generate a pcboard compatible list for use on
+you BBS. This will extract FILE_ID.DIZ files
+from ARJ, LZH and ZIP archives for use as a
+description. This update allows for putting
+GIF and PCX size and color depth info in the
+description field.</td>
+        </tr>
+        <tr data-bytes="499065" data-timestamp="843696000">
+            <td class="col-name"><a href="PCBDOD2B.ZIP">PCBDOD2B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbdod2b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">499065</td>
+            <td class="col-date">1996-09-26</td>
+            <td class="col-desc">*******************************************
+     PCB Dial On Demand v2.0b For OS/2
+*******************************************
+  Are you a Sysop with the desire to be
+  an ISP? Want to offer your callers Full
+  Internet, but can&#x27;t afford a leased line?
+  PCB Dial On Demand dials your provider
+  when needed, letting you offer your callers
+  Internet access VERY cheaply! LOTS of new
+  features and improvements! Avoid the
+  cost of a 56K line, or a dedicated dialup.
+  Requires OS/2 &amp; PCBoard 15.22. Supports the
+  Internet Collection and In-Joy! Both a PPE
+  and an EXE are included. Includes Shareware
+  copies of TELDOR and In-Joy for your
+  convenience.</td>
+        </tr>
+        <tr data-bytes="67510" data-timestamp="832550400">
+            <td class="col-name"><a href="PCBED11.ZIP">PCBED11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbed11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">67510</td>
+            <td class="col-date">1996-05-20</td>
+            <td class="col-desc">╔══════════════════════════════════════╗
+║ -=≡=-     PCBText-Ed V1.1      -=≡=- ║
+╠══════════════════════════════════════╣
+║ Replacement for the MKPCBTXT file in ║
+║ PCBoard. Great menus and easy to use ║
+║ Works like an ordinary text-editor   ║
+║ You can see all the PCBTEXT lines at ║
+║ once. Supports 25/28/50 line modes &amp; ║
+║ much much more ...         SHAREWARE ║
+║ Some of the Features:                ║
+║ - Save/Save As/Open/New              ║
+║ - Enhanced Line Editing (PCB Colors) ║
+║ - PCB Color Codes (Insert Directly)  ║
+║ - Find/Search Again/Goto Line #      ║
+║ - Supports MKPCBTXT:s Line Lengths   ║
+║ - Shell to PCBEdit on &quot;%..&quot; Lines !  ║
+║ - Convert a Line to a &quot;%..&quot; Line !   ║
+║ - Supports command line switch /I:x !║
+╚══════════════════════════════════════╝</td>
+        </tr>
+        <tr data-bytes="180025" data-timestamp="863222400">
+            <td class="col-name"><a href="PCBFV40.ZIP">PCBFV40.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbfv40.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">180025</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">PCBFV 4.0 - pcboard Compressed File Viewer.
+Lists contents of ZIP, ARJ, RAR etc. files.
+Read &amp; search files inside compressed files.
+Extract file for separate download. Seamless.
+Use in PCBVIEW.BAT. Very Sysop configurable.
+Includes FVMM, for use in pcbfiler&#x27;s ALT-V.
+NEW: Major new release: (See FEATURES.NEW).
+1994 &amp; 1995 WINNER: &quot;PCBOARD FAVORITE ADD-ON&quot;
+A YCS pcboard Accessory</td>
+        </tr>
+        <tr data-bytes="125111" data-timestamp="863222400">
+            <td class="col-name"><a href="PCBFX24.ZIP">PCBFX24.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbfx24.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">125111</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">PCBFX 2.4 pcboard File History/Profile Door.
+Reports times downloaded, who uploaded, date
+of upload, last date downloaded, are time or
+bytes charged, enough time or bytes and more.
+Number of files in ZIP &amp; oldest/newest dates.
+Conference block on &#x27;who uploaded&#x27;. SEAMLESS.
+Creates DOWNLOAD.TXT database, INSTANT scans.
+Compiles a &quot;top 50 downloads&quot; profile report.
+Provides special Uploader and Sysop reports.
+A YCS pcboard Accessory</td>
+        </tr>
+        <tr data-bytes="8424" data-timestamp="833846400">
+            <td class="col-name"><a href="PCBL100.ZIP">PCBL100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbl100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8424</td>
+            <td class="col-date">1996-06-04</td>
+            <td class="col-desc">/---&lt; PCBLANG Version 1.00, 06/04/96 &gt;--──\
+` Converts  PCBTEXT[.EXT]  to a  editable │
+: text file and back.  Makes adding color │
+| to  your  prompts  SO easy!  No  longer |
+| limited by  the line length impossed by |
+│ MKPCBTXT!  Have up to 79 charactors per :
+│ line!  Take full advantage  of PCBTEXT! ,
+\─--─[The No-Name BBS (703) 323-6838]─----/</td>
+        </tr>
+        <tr data-bytes="44365" data-timestamp="829958400">
+            <td class="col-name"><a href="PCBLST10.ZIP">PCBLST10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcblst10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">44365</td>
+            <td class="col-date">1996-04-20</td>
+            <td class="col-desc">PCBLST created output DAT files
+for PCB2HTM (Pcboard 2 html converter)
+thus automating the manual task of
+creating script files ! (You will
+however need to edit line 6 of
+the output *.DAT file. This is
+a companion product to PCB2HTM
+It will only work with the
+registered version of PCB2HTM</td>
+        </tr>
+        <tr data-bytes="82175" data-timestamp="830822400">
+            <td class="col-name"><a href="PCBMODEM.ZIP">PCBMODEM.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbmodem.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">82175</td>
+            <td class="col-date">1996-04-30</td>
+            <td class="col-desc">Pcboard modem date 30.4.96</td>
+        </tr>
+        <tr data-bytes="24682" data-timestamp="818467200">
+            <td class="col-name"><a href="PCBMON.ZIP">PCBMON.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbmon.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">24682</td>
+            <td class="col-date">1995-12-09</td>
+            <td class="col-desc">PCBMON v1.0 THE PUB IS A VERY NICE WAY FOR
+YOU AND YOUR USERS TO VIEW IN REAL-TIME, THE
+ACTIVITY OF OTHER USERS ON-LINE. ALSO HAS
+PAGE, E-MAIL,CHAT, LOGOFF, AND DROP TO DOS
+BUILT IN. SYSOP CONFIGURABLE. EASY TO
+INSTALL, AND EVEN EASIER TO RUN. PRESENTED
+BY: DISTRIBUTOR ALTERED EGO BBS (702)
+888-9683</td>
+        </tr>
+        <tr data-bytes="123750" data-timestamp="783734400">
+            <td class="col-name"><a href="PCBNET71.ZIP">PCBNET71.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbnet71.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">123750</td>
+            <td class="col-date">1994-11-02</td>
+            <td class="col-desc">PCB-Net v7.1 Supports pcboard 15.0-15.2. Very
+Fast. This will will update your Users Mail
+Waiting Flags. You need this if you carry
+EchoMail or if you&#x27;re using Old Third Party
+Software that doesn&#x27;t support the new file
+formats! Will update the MSGS.IDX too.</td>
+        </tr>
+        <tr data-bytes="113344" data-timestamp="669168000">
+            <td class="col-name"><a href="PCBPC31.ZIP">PCBPC31.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbpc31.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">113344</td>
+            <td class="col-date">1991-03-17</td>
+            <td class="col-desc">PCBoard PowerConverter 3.1. Converts data
+ files to another format for non-compatible
+ doors.</td>
+        </tr>
+        <tr data-bytes="5712" data-timestamp="799632000">
+            <td class="col-name"><a href="PCBWIN95.ZIP">PCBWIN95.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcbwin95.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5712</td>
+            <td class="col-date">1995-05-05</td>
+            <td class="col-desc">pcbwin95.EXE is used to patch the pcboard
+v15.21 (or prior) executables, including
+utilities, to make them operate better under
+Windows 95.</td>
+        </tr>
+        <tr data-bytes="7777" data-timestamp="817862400">
+            <td class="col-name"><a href="PCB_MENU.ZIP">PCB_MENU.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb_menu.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7777</td>
+            <td class="col-date">1995-12-02</td>
+            <td class="col-desc">A multi-menu system for pcboard. This is much
+easier for those of you who have users that
+don&#x27;t like the standard pcboard single menu
+approach.</td>
+        </tr>
+        <tr data-bytes="41323" data-timestamp="787968000">
+            <td class="col-name"><a href="PCB_WARP.ZIP">PCB_WARP.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcb_warp.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">41323</td>
+            <td class="col-date">1994-12-21</td>
+            <td class="col-desc">Run a multi-node PCBoard (V 15.x)
+under OS/2 WARP.  I have Included
+my config.sys file, as well as a
+text file I wrote along with some
+other helpfull tips.</td>
+        </tr>
+        <tr data-bytes="36065" data-timestamp="729648000">
+            <td class="col-name"><a href="PCODEMO.ZIP">PCODEMO.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pcodemo.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">36065</td>
+            <td class="col-date">1993-02-14</td>
+            <td class="col-desc">PCB-OMEN demoversio, OMEN-door PCBoardille</td>
+        </tr>
+        <tr data-bytes="246142" data-timestamp="796608000">
+            <td class="col-name"><a href="POWPP210.ZIP">POWPP210.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/powpp210.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">246142</td>
+            <td class="col-date">1995-03-31</td>
+            <td class="col-desc">PowerPPL 2.10</td>
+        </tr>
+        <tr data-bytes="144437" data-timestamp="875491200">
+            <td class="col-name"><a href="PP222UPD.ZIP">PP222UPD.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pp222upd.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">144437</td>
+            <td class="col-date">1997-09-29</td>
+            <td class="col-desc">PowerPPL update to version 2.22</td>
+        </tr>
+        <tr data-bytes="202353" data-timestamp="875491200">
+            <td class="col-name"><a href="PPC1B3AA.ZIP">PPC1B3AA.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ppc1b3aa.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">202353</td>
+            <td class="col-date">1997-09-29</td>
+            <td class="col-desc">Lone Runner&#x27;s PPL *COMPILER* 1.OO Beta 3!</td>
+        </tr>
+        <tr data-bytes="26456" data-timestamp="800064000">
+            <td class="col-name"><a href="PPLD302.ZIP">PPLD302.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ppld302.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">26456</td>
+            <td class="col-date">1995-05-10</td>
+            <td class="col-desc">PPLD DECOMPILER v3.2
+The lattest Decompiler from CHICKEN</td>
+        </tr>
+        <tr data-bytes="100204" data-timestamp="739152000">
+            <td class="col-name"><a href="PPL_DOCS.ZIP">PPL_DOCS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ppl_docs.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">100204</td>
+            <td class="col-date">1993-06-04</td>
+            <td class="col-desc">PPLC v1.0 docs</td>
+        </tr>
+        <tr data-bytes="526374" data-timestamp="842054400">
+            <td class="col-name"><a href="PSSA411.ARJ">PSSA411.ARJ</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pssa411.arj/" class="unpack-btn">[ ARJ x   ]</a></td>
+            <td class="col-size">526374</td>
+            <td class="col-date">1996-09-07</td>
+            <td class="col-desc">Sapphire BBS.  Easy to install.  Easy to run.
+For small business and institutions. Advanced
+self-maintaining design. Used by consultants,
+support lines, type-setters, and translators.
+Good choice for people who have not run a BBS
+before but need one running immediately. From
+Pinnacle Software, creators of Parse-O-Matic.</td>
+        </tr>
+        <tr data-bytes="62811" data-timestamp="744508800">
+            <td class="col-name"><a href="PURGE21.ZIP">PURGE21.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/purge21.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">62811</td>
+            <td class="col-date">1993-08-05</td>
+            <td class="col-desc">┌────[ PCBoard Outdated File Handler ]─────┐
+│Purge  allows a  PCBoard sysop to find old│
+│and outdated files on the system.  Purge  │
+│allows sysop&#x27;s to clean up their DIR&#x27;s and│
+│H/D&#x27;s easier &amp; faster than ever before.   │
+│Only PCB 15.0 utility which removes not   │
+│only the PCBDIRx entry but the file also. │
+│125+ registered users claim it&#x27;s faster   │
+│&amp; eaiser than PCBFiler. Tested under DV,  │
+│Lantastic, Novell &amp; Windows.  A MUST for  │
+│any &lt;ASP&gt; BBS.        Ver 2.1             │
+└───────────────────────────[Version 2.1]</td>
+        </tr>
+        <tr data-bytes="12978" data-timestamp="839116800">
+            <td class="col-name"><a href="PWA-R1B3.ZIP">PWA-R1B3.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwa-r1b3.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12978</td>
+            <td class="col-date">1996-08-04</td>
+            <td class="col-desc">PWA PPE: PWA Rumors v1.b3 by Soul Rebel/PWA.</td>
+        </tr>
+        <tr data-bytes="13129" data-timestamp="791251200">
+            <td class="col-name"><a href="PWAA1L10.ZIP">PWAA1L10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwaa1l10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13129</td>
+            <td class="col-date">1995-01-28</td>
+            <td class="col-desc">[ AMI-X ONELINERS v1.00 by Timecop ] A great
+looking, AMI-X styled One-liners PPE.
+Features a filter to remove those trouble
+causing PCB @-macros, as well as on-the-fly
+@-color code interpretation.</td>
+        </tr>
+        <tr data-bytes="12682" data-timestamp="839116800">
+            <td class="col-name"><a href="PWAAC200.ZIP">PWAAC200.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwaac200.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12682</td>
+            <td class="col-date">1996-08-04</td>
+            <td class="col-desc">PWA PPE: AMI-X Digiclock v2.00 by Timecop.</td>
+        </tr>
+        <tr data-bytes="13288" data-timestamp="819936000">
+            <td class="col-name"><a href="PWAACH30.ZIP">PWAACH30.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwaach30.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13288</td>
+            <td class="col-date">1995-12-26</td>
+            <td class="col-desc">AMI-X Chat PPE v3.00 by Timecop PWA A small,
+quick, and simple AMI/X styled SysOp Chat
+replacement PPE. Very clean with no nonsense.
+Updated version now includes source code!
+risc couriering &#x27;95 - &gt; Leeched from Sweat
+BBS &lt; -</td>
+        </tr>
+        <tr data-bytes="21274" data-timestamp="819936000">
+            <td class="col-name"><a href="PWAAXCHW.ZIP">PWAAXCHW.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwaaxchw.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">21274</td>
+            <td class="col-date">1995-12-26</td>
+            <td class="col-desc">AMI-X Chat PPE bugfix ver. 2 by Timecop A
+small, quick, and simple AMI/X styled SysOp
+Chat replacement PPE. Very clean with no
+nonsense. Minor bugfix version. Wordwrap
+added in this version.</td>
+        </tr>
+        <tr data-bytes="43190" data-timestamp="807408000">
+            <td class="col-name"><a href="PWABSC10.ZIP">PWABSC10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwabsc10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">43190</td>
+            <td class="col-date">1995-08-03</td>
+            <td class="col-desc">┌──── YASSC PPE v1.0 by BlackCat [PWA] ────┐
+│ Yet  another (Sysop/User)  split  screen │
+│ chatter.   Definable  chat areas of  any │
+│ shape  (not boxes only) &amp; screen/colors, │
+│ word wrap, user &amp; sysop macros, logging, │
+│ viewier,  quiet mode,  fast execution, 3 │
+│ different setups  included,  and more... │
+│ For PCBoard 15.2+ only.                  │
+└ ▄▄ ──────────────── ▀▄▄ ▀▄▄ ─────────────┘
+┌▐▄▀██▄▀███▄▄▀▄ ─────── ▀█▄ ▀██▄ ──────────┐
+│▀▒▓▄▀     ▀██▄▀▄        ▐██  ▀███▄        │
+│  ▀  ▄▀█▄▀██▀▀▄▀█▄▄  ▀▄  ▀▄▌  ▄▀███▄▄     │
+│    ▀▒▓▄▀█▄▄  ▀▓▄▀██▄ ██▄██▌▐█▀▀▄▀████▄▄  │
+│      ▀▒▓▄▀███▀ ▒▓▄▀▀█▄█ ▀█ ▀▄▒▒▓▓▄▀██▀▄▌ │
+│        ▀▒▓▄▀▌   ▀▒▓▓▄▀▀▄▒▄▌▐▓▀▀ ▀▒▓▄▀▄▓▀ │
+└───────── ▀▒▓ ──── ▀▀▒▓▓▀▀▓ ────── ▀▒▓▀ ──┘
+·∙∙──═══ RiSC COURiERiNG &#x27;95 ═══──∙∙·</td>
+        </tr>
+        <tr data-bytes="29174" data-timestamp="839116800">
+            <td class="col-name"><a href="PWABWM10.ZIP">PWABWM10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwabwm10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">29174</td>
+            <td class="col-date">1996-08-04</td>
+            <td class="col-desc">PWA PPE: wmtop PPE v1.00 by BlackCat/PWA.
+Weekly and Monthly Tops.</td>
+        </tr>
+        <tr data-bytes="23295" data-timestamp="839116800">
+            <td class="col-name"><a href="PWACS11.ZIP">PWACS11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwacs11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">23295</td>
+            <td class="col-date">1996-08-04</td>
+            <td class="col-desc">PWA PPE: DEF Comment to Sysop v1.1 by Drew.</td>
+        </tr>
+        <tr data-bytes="10812" data-timestamp="819936000">
+            <td class="col-name"><a href="PWACSCAN.ZIP">PWACSCAN.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwacscan.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">10812</td>
+            <td class="col-date">1995-12-26</td>
+            <td class="col-desc">PWA CatScan v1.0 [ By Catasaan ] This is a
+replacement the normal dull scanning message
+prompt with a graphical colored box. Simple
+and Useful PIRATES WITH ATTITUDE - PWA ] SP
+ZM couriers [ - &gt; Leeched from Sweat BBS &lt; -</td>
+        </tr>
+        <tr data-bytes="24147" data-timestamp="839116800">
+            <td class="col-name"><a href="PWAEEM13.ZIP">PWAEEM13.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwaeem13.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">24147</td>
+            <td class="col-date">1996-08-04</td>
+            <td class="col-desc">PWA PPE: Enhanced End of Message v1.3 by
+Drew/PWA. Clean looking, highly
+configurable.</td>
+        </tr>
+        <tr data-bytes="188701" data-timestamp="819936000">
+            <td class="col-name"><a href="PWANK082.ZIP">PWANK082.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwank082.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">188701</td>
+            <td class="col-date">1995-12-26</td>
+            <td class="col-desc">Nuker PPE v0.82 by BlackCat PWA A full
+featured, lightbar driven, *FAST* file nuker
+for PCB 15.2+. Allows you to
+Nuke/Award/Comment/Free files. If you&#x27;re
+tired of waiting minutes when nuking, grab
+this! Refer to PWA.NFO and UPGRADE for
+important upgrading information. risc
+couriering &#x27;95</td>
+        </tr>
+        <tr data-bytes="14223" data-timestamp="772675200">
+            <td class="col-name"><a href="PWANWS1R.ZIP">PWANWS1R.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwanws1r.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">14223</td>
+            <td class="col-date">1994-06-27</td>
+            <td class="col-desc">┌─ PWA News v1.0 ───────── [ By Defcon 4] ─┐
+│ PWA News is a graphical replacement for  │
+│ the news file.  It has sysop maintance   │
+│   and and a graphical message header.    │
+│       PIRATES WITH ATTITUDE - PWA        │
+└ ▄▄ ──────────────── ▀▄▄ ▀▄▄ ─────────────┘
+┌▐▄▀██▄▀███▄▄▀▄ ─────── ▀█▄ ▀██▄ ──────────┐
+│▀▒▓▄▀     ▀██▄▀▄        ▐██  ▀███▄        │
+│  ▀  ▄▀█▄▀██▀▀▄▀█▄▄  ▀▄  ▀▄▌  ▄▀███▄▄     │
+│    ▀▒▓▄▀█▄▄  ▀▓▄▀██▄ ██▄██▌▐█▀▀▄▀████▄▄  │
+│      ▀▒▓▄▀███▀ ▒▓▄▀▀█▄█ ▀█ ▀▄▒▒▓▓▄▀██▀▄▌ │
+│        ▀▒▓▄▀▌   ▀▒▓▓▄▀▀▄▒▄▌▐▓▀▀ ▀▒▓▄▀▄▓▀ │
+└───────── ▀▒▓ ──── ▀▀▒▓▓▀▀▓ ────── ▀▒▓▀ ──┘
+ If you gonna do it, do it with an ATTiTUDE
+ -&gt; Central Europe BBS &lt;- 10 Nodes + 2 ISDN
+   +49-911-7593701 (USR/Zyxel) Ringdown
+        20+ MB Shareware Every Day !
+─═■POINTBREAK+32·11·436925■═─</td>
+        </tr>
+        <tr data-bytes="41748" data-timestamp="839116800">
+            <td class="col-name"><a href="PWAPG21.ZIP">PWAPG21.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwapg21.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">41748</td>
+            <td class="col-date">1996-08-04</td>
+            <td class="col-desc">PWA PPE: Prompts Galore! v2.1 by Drew/PWA.</td>
+        </tr>
+        <tr data-bytes="22701" data-timestamp="817084800">
+            <td class="col-name"><a href="PWATL20.ZIP">PWATL20.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwatl20.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">22701</td>
+            <td class="col-date">1995-11-23</td>
+            <td class="col-desc">Turbo Logon v2.0 by Drew [PWA] A completely
+flexible Turbo Logon PPE. Specify anything
+you want to skip in the logon sequence. Very
+easy to use, even easier to configure. Source
+included. Rewritten in PPL 3.0 for pcboard
+15.2+. ] LTS couriering in 1995 [</td>
+        </tr>
+        <tr data-bytes="345318" data-timestamp="819936000">
+            <td class="col-name"><a href="PWAVE100.ZIP">PWAVE100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwave100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">345318</td>
+            <td class="col-date">1995-12-26</td>
+            <td class="col-desc">PCBWAVE v1.00 - BLUE WAVE and QWK compatible
+offline mail door for pcboard 15.2+. Features
+include: FULL support for the Blue Wave mail
+system, keywords, filters, bundling macros,
+file requests, server/robot feature, offline
+config, multiple languages, pre-scan feature,
+powerful dynamic, on-the-fly bundling command
+system, file attaches. Full pcboard netmail &amp;
+Internet/Usenet support, seamless Fido&lt;-&gt;UUCP
+e-mail gateway integration. Support for Blue
+Wave v2.12 and v2.20. Sysop-configurable
+menus screens, help files, language strings
+and template files. The world&#x27;s finest and
+most configurable Blue Wave/QWK compatible
+offline mail door! Shareware, only $25 US!</td>
+        </tr>
+        <tr data-bytes="376401" data-timestamp="824601600">
+            <td class="col-name"><a href="PWAVE110.ZIP">PWAVE110.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwave110.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">376401</td>
+            <td class="col-date">1996-02-18</td>
+            <td class="col-desc">PCBWAVE v1.10 [DOS] - BLUE WAVE/QWK offline
+mail door for pcboard 15.2+. Features include
+full support for the Blue Wave (both v2.20+ &amp;
+v2.12) mail system, incl: keywords, filters,
+bundling macros, offline configuration, file
+requests, powerful on-the-fly dynamic bundl-
+ing command system, multiple languages, file
+attach downloading, pre-scan/vacation mail,
+remote server/robot feature. Fido netmail and
+Internet/Usenet support, seamless Fido&lt;-&gt;UUCP
+e-mail gateway integration. Extremely config-
+urable cosmetically, and more! &quot;Users love
+this door&quot;! Shareware, only $25 US/$30 CDN!</td>
+        </tr>
+        <tr data-bytes="26814" data-timestamp="848016000">
+            <td class="col-name"><a href="PWR_RSM.ZIP">PWR_RSM.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/pwr_rsm.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">26814</td>
+            <td class="col-date">1996-11-15</td>
+            <td class="col-desc">Resume Download PPE for pcboard 15.3 Did you
+ever had or see your users flagging files or
+downloading them and suddently CARRIER
+LOST...Well now you will have this program.
+If this happens, then file names are stored
+and on the next call, the user can resume
+download without problems.</td>
+        </tr>
+        <tr data-bytes="68379" data-timestamp="768787200">
+            <td class="col-name"><a href="Q-ZZ130.ZIP">Q-ZZ130.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/q-zz130.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">68379</td>
+            <td class="col-date">1994-05-13</td>
+            <td class="col-desc">■ ZIPZAP v1.30 of (05.07.94) (Q-TIP 1994) ■
+--------.────-.--.──────._.─────-.---------
+        │   ~:│  |     ~|_)_    ~ \
+        │     |──|  |___| |_|  &gt;   )
+     ___| .-. │──│  |  |  |─.   _./_
+   _(___| |/| :  |  |  │  : |  │____)_
+  (_____| `   :  |  :  :  . |  |______)
+--------`───._)--:_ &#x27;--`─- -` _:(05/07/94).
+ZIPZAP v1.30 -/- PCBoard Upload Processor
+Supports ZIP/ARJ/LZH/LHA/TXT/GIF,Adds # of
+Files, Date of .nfo and .diz, Compression
+Ratio and Uncompressed Size to Desc, Adds
+Files to Archive, Removes unwanted BBS-Ads,
+ULBYE Support, Repacks ARJ &amp; LZH to ZIP,
+Searches Diz for unwanted Lines, TextFile
+translation, AgeCheck, Char Translation,
+Free Configurable PCBPASS.TXT  File and
+more...  .....THE BEST AVAILABLE.....</td>
+        </tr>
+        <tr data-bytes="144945" data-timestamp="863222400">
+            <td class="col-name"><a href="QM4.ZIP">QM4.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/qm4.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">144945</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">Update Qmailiin, tänään tuorein</td>
+        </tr>
+        <tr data-bytes="193613" data-timestamp="739152000">
+            <td class="col-name"><a href="QM4_0604.ZIP">QM4_0604.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/qm4_0604.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">193613</td>
+            <td class="col-date">1993-06-04</td>
+            <td class="col-desc">QMail 4.00 for PCBoard 15.0 [06/04/93] [1/1]</td>
+        </tr>
+        <tr data-bytes="39827" data-timestamp="863222400">
+            <td class="col-name"><a href="QMSM.ZIP">QMSM.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/qmsm.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">39827</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">QMSm update</td>
+        </tr>
+        <tr data-bytes="5506" data-timestamp="738374400">
+            <td class="col-name"><a href="QWKBLT12.ZIP">QWKBLT12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/qwkblt12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5506</td>
+            <td class="col-date">1993-05-26</td>
+            <td class="col-desc">QWK-BLT.PPE 1.20  adds the ability to include
+new main board bulletins in the internally
+generated .QWK files.  Adds capability to
+specify which bulletins to scan.</td>
+        </tr>
+        <tr data-bytes="15228" data-timestamp="796003200">
+            <td class="col-name"><a href="QWKP095A.ZIP">QWKP095A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/qwkp095a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15228</td>
+            <td class="col-date">1995-03-24</td>
+            <td class="col-desc">QWK Packer PPE 0.95aß by Rob Borek
+A complete lightbar replacement for
+the QWK command! Users can modify
+their personal QWK limits, get
+personal mail only, select conferences,
+and MORE! Users can also get QWK the
+old-fashioned way by typing QWK U or
+QWK D. Try it today!
+       FREE REGISTRATION!</td>
+        </tr>
+        <tr data-bytes="27989" data-timestamp="863222400">
+            <td class="col-name"><a href="READ100.ZIP">READ100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/read100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">27989</td>
+            <td class="col-date">1997-05-10</td>
+            <td class="col-desc">───────────────────────────────────────────
+│ 5 PPE&#x27;s to fix that ugly message base!  │
+│ COMPLETE re-write of PCBoard message    │
+│ reading looks! Uses existing message    │
+│ base, &amp; adds features like, COMPLETELY  │
+│ configurable message header, name entry │
+│ screen, quote char, EVERYTHING. Just    │
+│ cool! Requires PCBoard 15.3+            │
+│ The coolest looking message base EVER!  │
+│      Support BBS:  ThΣ NΘ-NÆMΣ ßßS      │
+│     (703)323-6838      [ANTi-X WHQ]     │
+│  φ  FREE!, The way PPE&#x27;s should be!  φ  │
+─────────φ ]\/[ÆvΣτiÇk of ANTi-X φ─────────</td>
+        </tr>
+        <tr data-bytes="2977" data-timestamp="839376000">
+            <td class="col-name"><a href="SLFDSTRC.ZIP">SLFDSTRC.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/slfdstrc.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">2977</td>
+            <td class="col-date">1996-08-07</td>
+            <td class="col-desc">--&gt; Self-Destruct PPE &lt;--
+Makes users think that
+they have activated a
+hard drive formatter.
+This is Freeware! This
+is an alpha, so leave
+me a message and tell
+me of any bugs.
+Made by:
+Nathan Christensen</td>
+        </tr>
+        <tr data-bytes="110954" data-timestamp="769651200">
+            <td class="col-name"><a href="SMAILBIN.ZIP">SMAILBIN.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/smailbin.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">110954</td>
+            <td class="col-date">1994-05-23</td>
+            <td class="col-desc">the smail/PC Binary Distribution v2.5,
+PC Release 1.0 beta 3 by Stephen C. Trier.
+Smart uucp mailer for MS-DOS, part 1 of 2.</td>
+        </tr>
+        <tr data-bytes="118657" data-timestamp="769651200">
+            <td class="col-name"><a href="SMAILSRC.ZIP">SMAILSRC.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/smailsrc.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">118657</td>
+            <td class="col-date">1994-05-23</td>
+            <td class="col-desc">the smail/PC Binary Distribution v2.5,
+PC Release 1.0 beta 3 by Stephen C. Trier.
+Smart uucp mailer for MS-DOS, part 2 of 2.</td>
+        </tr>
+        <tr data-bytes="25734" data-timestamp="861667200">
+            <td class="col-name"><a href="SNT-FI11.ZIP">SNT-FI11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/snt-fi11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">25734</td>
+            <td class="col-date">1997-04-22</td>
+            <td class="col-desc">Five In A Row PPE v1.1 You know the noughts
+and crosses game? There you go, this is it.
+User against Sysop on a 40x19 sized table.
+Includes built-in chat, strings data file for
+maximum configurability and a pager.
+Completely customizable. Version 1.1 fixes
+some bugs and adds a clock, chat capture,
+yell, etc. Saint Productions 1997 PPL 3.30
+for pcboard 15.3 only!</td>
+        </tr>
+        <tr data-bytes="62435" data-timestamp="771120000">
+            <td class="col-name"><a href="ST234B.ZIP">ST234B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/st234b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">62435</td>
+            <td class="col-date">1994-06-09</td>
+            <td class="col-desc">USRSTATS V2.34 BETA 5/22/94         [PPE]
+    * Not just for Sysops any more *
+PCBoard/USR sysops can now allow callers
+to view modem diagnostics while on-line!
+Requires PCB 15.1 and small-footprint
+USR Courier modem. Multi-node compatible,
+super-easy setup.  A truly unique
+troubleshooting tool.  Now supports
+operation from DOS command prompt so
+everyone can generate these reports.
+  &lt;]─────≡]  SPÆZM COURiERS  [≡─────[&gt;
+─═■POINTBREAK+32·11·436925■═─</td>
+        </tr>
+        <tr data-bytes="15362" data-timestamp="803865600">
+            <td class="col-name"><a href="STATSV2.ZIP">STATSV2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/statsv2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">15362</td>
+            <td class="col-date">1995-06-23</td>
+            <td class="col-desc">pcboard STATISTICS GENERATOR v2.0 This is a
+little ppe program that will make on the fly
+system and caller statistics but, unlike any
+other one out there. I got the idea from a
+WildCat program and thought it would be nice
+and unique for pcboard SysOps. There are 2
+versions in this release! FREEWARE! - pcboard
+15.21 PPE program Copyright (C)1995 Equinox
+Software</td>
+        </tr>
+        <tr data-bytes="69951" data-timestamp="805334400">
+            <td class="col-name"><a href="STPCB305.ZIP">STPCB305.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/stpcb305.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">69951</td>
+            <td class="col-date">1995-07-10</td>
+            <td class="col-desc">STPCB (USRSTATS) PPE V3.05 BETA 7/10/95
+pcboard/USR sysops can now allow callers to
+view modem diagnostics while on-line!
+Requires PCB 15.1 or later and USR Courier or
+Sportster modem. Multi-node compatible,
+super-easy setup. A truly unique
+troubleshooting tool. Includes Beta release
+of usrstat2.EXE V4.x.</td>
+        </tr>
+        <tr data-bytes="35942" data-timestamp="736560000">
+            <td class="col-name"><a href="STRIPPR.ZIP">STRIPPR.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/strippr.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">35942</td>
+            <td class="col-date">1993-05-05</td>
+            <td class="col-desc">PCBOARD DIR STRIPPER Convert pcboard dir
+files to Files.BBS format. Most CD ROM doors
+understand Files.BBS format, not all
+understand pcboard format. JOES BAR &amp; GRILL
+BBS (317) 578-9294 - 10 GIGS.</td>
+        </tr>
+        <tr data-bytes="25411" data-timestamp="843782400">
+            <td class="col-name"><a href="SUGST302.ZIP">SUGST302.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/sugst302.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">25411</td>
+            <td class="col-date">1996-09-27</td>
+            <td class="col-desc">The Suggestion Box! v3.02 [PPE] *UNIVERSAL
+KEY SUPPORT* This isn&#x27;t your run of the mill
+program here! Full user voting, in addition
+users can add their own Suggestions for the
+rest of your users to vote on. SysOp
+maintenance is nil, and it takes about 20
+seconds to install. Download this today and
+give your users a voice in your BBS! (c)1996
+Practical Computer Services</td>
+        </tr>
+        <tr data-bytes="4494" data-timestamp="828316800">
+            <td class="col-name"><a href="SUICIDE1.ZIP">SUICIDE1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/suicide1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4494</td>
+            <td class="col-date">1996-04-01</td>
+            <td class="col-desc">Suicide v1.0 PCBoard ppe to permit user to
+delete his own registration (user record).
+Atlantis Software 706-776-9276 28.8 BBS</td>
+        </tr>
+        <tr data-bytes="5533" data-timestamp="859507200">
+            <td class="col-name"><a href="SUP0328.ZIP">SUP0328.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/sup0328.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5533</td>
+            <td class="col-date">1997-03-28</td>
+            <td class="col-desc">List of tribbs Support Boards as of March 28,
+1997. To add/update your entry, write Linda
+Moore in the FidoNet tribbs echo or through
+the InterNet at lmoore@midtn.campus.mci.net</td>
+        </tr>
+        <tr data-bytes="35496" data-timestamp="762825600">
+            <td class="col-name"><a href="TAPEFLAG.ZIP">TAPEFLAG.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tapeflag.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">35496</td>
+            <td class="col-date">1994-03-05</td>
+            <td class="col-desc">TAPEFLAG.PPE, v1.0, a drop-in replacement
+for FLAG.PPE.  This is a modified version
+of David Terry&#x27;s FLAG.PPE that also allows
+tagging a file and restoring it from Tape!
+This version only supports Colorado Jumbo
+250 Tape Drive.  Works under DesqView!
+Needs FLAG.PPE v3.0 already installed!</td>
+        </tr>
+        <tr data-bytes="1132448" data-timestamp="857692800">
+            <td class="col-name"><a href="TBBS110.ZIP">TBBS110.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tbbs110.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">1132448</td>
+            <td class="col-date">1997-03-07</td>
+            <td class="col-desc">tribbs v11.0 - tribbs is the most feature
+packed, shareware BBS program on the market.
+Features multinode support, ripscrip
+graphics, Zmodem, full-screen, editor,
+extensive netmail support, extensive door
+support, alias support, extensive CD-ROM
+support, indexed file areas, caller id
+support, and more. Try tribbs Today! By
+Freejack&#x27;s Software</td>
+        </tr>
+        <tr data-bytes="289017" data-timestamp="752198400">
+            <td class="col-name"><a href="TDRAW463.ZIP">TDRAW463.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tdraw463.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">289017</td>
+            <td class="col-date">1993-11-02</td>
+            <td class="col-desc">THEDRAW SCREEN EDITOR VERSION 4.63 - (10/93)
+A text-oriented screen design tool.  Similar
+is some regards to a graphics paint program.
+Offers multiple page SPRITE editing, powerful
+Ansi ANIMATION support, Ansi/Ascii FONTS,
+pulldown menus, full mouse support &amp; online
+help.  Saves files for ANSI, ASCII, AVATAR,
+PCBOARD, WILDCAT, COM, BINARY, BSAVE, OBJECT
+(C/Pascal/QuickBasic), and source code in Asm
+Pascal and C formats.  Registr: $22-$25</td>
+        </tr>
+        <tr data-bytes="29597" data-timestamp="801187200">
+            <td class="col-name"><a href="TIEAB38.ZIP">TIEAB38.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tieab38.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">29597</td>
+            <td class="col-date">1995-05-23</td>
+            <td class="col-desc">The Internet E-Mail Address Book PPE! v3.8
+Red Dragon Software(tm) 1995. This is a must
+have utility for any pcboard BBS that offers
+private internet e-mail! Allows users to
+store address as well as automatic starting
+of Internet E-mail! Also shows user there
+internet address per your system! Now you can
+alphabatize your addresses! See HISTORY.DOC
+for details! Already REGISTERED SysOps see:
+READNOW!.!!! SHAREWARE: Cheap only $10.00!</td>
+        </tr>
+        <tr data-bytes="4185" data-timestamp="843264000">
+            <td class="col-name"><a href="TO_FL_10.ZIP">TO_FL_10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/to_fl_10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4185</td>
+            <td class="col-date">1996-09-21</td>
+            <td class="col-desc">It&#x27;s a simple PPE that will show a menu
+with commands  that can be used  at the
+File List Command Prompt (Pcbtext #223)
+including PCBoard 15.3 new LONG / SHORT
+command. Expert mode detect. *FREEWARE*
+───────────────────────────────────────
+Author: Tariq Obaid-Home Alone BBS, KSA
+───────────────────────────────────────</td>
+        </tr>
+        <tr data-bytes="75190" data-timestamp="820368000">
+            <td class="col-name"><a href="TPASM142.ZIP">TPASM142.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tpasm142.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">75190</td>
+            <td class="col-date">1995-12-31</td>
+            <td class="col-desc">TPASM - TPA System Manager v1.42 (12-31-95)
+Move/Copy/Swap Conferences for pcboard 14.5 &amp;
+15.x with complete TPA area handling. It can
+also handle external files for Doors with the
+addition of a definition file, Sort a range
+of conferences. Will also Edit TPA areas with
+the addition of a definiton file. (Files for
+pcboard 15.x PSA&#x27;s are included) .......Added
+support for PCBFIDO to registered version.
+ShareWare by Gary Meeker. ($25 registration)</td>
+        </tr>
+        <tr data-bytes="43396" data-timestamp="859507200">
+            <td class="col-name"><a href="TRIS0328.ZIP">TRIS0328.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tris0328.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">43396</td>
+            <td class="col-date">1997-03-28</td>
+            <td class="col-desc">List of registered tribbs boards as of
+03/28/97. Attention tribbs Sysops! If you do
+not see your information listed in this file
+and want to be listed, please forward all
+request to my email addrees:
+gwprice@worldnet.att.net or Fidonet address:
+1:3607/26 - Thanks! Information required to
+be listed is: CITY, STATE, COUNTRY, BBS NAME,
+REGISTRATION NUMBER, PHONE NUMBER, BAUD RATE
+OF MODEM.</td>
+        </tr>
+        <tr data-bytes="20169" data-timestamp="676598400">
+            <td class="col-name"><a href="TX2PCBUS.ZIP">TX2PCBUS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/tx2pcbus.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">20169</td>
+            <td class="col-date">1991-06-11</td>
+            <td class="col-desc">Text to PCBoard Userfile conversion program.</td>
+        </tr>
+        <tr data-bytes="9143" data-timestamp="789955200">
+            <td class="col-name"><a href="TXT2DIR.ZIP">TXT2DIR.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/txt2dir.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">9143</td>
+            <td class="col-date">1995-01-13</td>
+            <td class="col-desc">txt2dir converts text listings of files which
+have filenames and descriptions on each line,
+but no file dates or sizes. An example of
+this format can be seen on the Phoenix 5 CD
+in the various *.LST files. By supplying this
+program with the name of the *.LST file to be
+converted, the DIR file to create, the path
+to locate the actual files in the listing,
+and the column for the description, it will
+convert the *.LST file to a DIR file.</td>
+        </tr>
+        <tr data-bytes="8606" data-timestamp="821577600">
+            <td class="col-name"><a href="UALPCB11.ZIP">UALPCB11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ualpcb11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">8606</td>
+            <td class="col-date">1996-01-14</td>
+            <td class="col-desc">User Alias Lister 1.1 for pcboard PPE App
+that allows the SysOp and/or Users to list
+the Alias Name, Calling From, and Last Call
+Date &amp; Time of everyone on the system. Great
+replacement for the USER function if your
+system uses alias names, or just add it as
+another means of listing all your users via
+their alias name. Very easy to install. Not
+crippled! Shareware * FREE REGISTRATION *</td>
+        </tr>
+        <tr data-bytes="895018" data-timestamp="773971200">
+            <td class="col-name"><a href="UBBS301B.ZIP">UBBS301B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ubbs301b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">895018</td>
+            <td class="col-date">1994-07-12</td>
+            <td class="col-desc">ultrabbs 3.01 - The BEST BBS package on the
+market is shareware! Includes: mult-node
+chat, the FASTEST Filebase search (10x
+anything else), built-in inter/fidonet
+netmail, native cdrom support (import a cd
+with 1 command), unlimited conferences,
+multi-door support, UNBREAKABLE message
+encryption. Geared towards EASY REMOTE
+maintenance! Only $75. Call Pinecliffe
+303-642-7463.</td>
+        </tr>
+        <tr data-bytes="318262" data-timestamp="814579200">
+            <td class="col-name"><a href="ULP_205.ZIP">ULP_205.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ulp_205.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">318262</td>
+            <td class="col-date">1995-10-25</td>
+            <td class="col-desc">uploadprocessor v2.05 Overall Winner of the
+1995 pcboard Favorite Add-on Contest!
+Detects, processes and converts archives,
+nested archives and imbedded pathed archives.
+Also processes selected uncompressed files.
+Three online modes and three event modes of
+operation available. Integrated duplication
+system, ZDCS supported as well. Extremely
+configurable using a menu-driven system
+manager. Now fully supports RAR!</td>
+        </tr>
+        <tr data-bytes="4638" data-timestamp="731635200">
+            <td class="col-name"><a href="USERNET.ZIP">USERNET.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/usernet.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4638</td>
+            <td class="col-date">1993-03-09</td>
+            <td class="col-desc">PCB 15.0 Usernet</td>
+        </tr>
+        <tr data-bytes="64160" data-timestamp="804643200">
+            <td class="col-name"><a href="USRST401.ZIP">USRST401.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/usrst401.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">64160</td>
+            <td class="col-date">1995-07-02</td>
+            <td class="col-desc">USRSTATS Version 4.01 BETA 7/2/95 A unique
+troubleshooting and diagnostic tool for use
+with usrobotics Courier and Sportster modems.
+New features include 6 different video modes
+and a color-coded analysis of the report
+data!</td>
+        </tr>
+        <tr data-bytes="845502" data-timestamp="837907200">
+            <td class="col-name"><a href="USURP016.ZIP">USURP016.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/usurp016.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">845502</td>
+            <td class="col-date">1996-07-21</td>
+            <td class="col-desc">Usurper v0.16  [1996-07-20]
+BBS Doorgame.  *kicking fantasy*
+Gangwars and partying. Sex, drugs and steriods.
+Fight monsters and other players in this fascinating game.
+Be prepared for violent and bizarre nonstop action.
+Become king!</td>
+        </tr>
+        <tr data-bytes="53358" data-timestamp="819244800">
+            <td class="col-name"><a href="V1_15.ZIP">V1_15.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/v1_15.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">53358</td>
+            <td class="col-date">1995-12-18</td>
+            <td class="col-desc">PCBMON v1.14 THE PUB User Monitoring PPE .
+This is the ultimate in real-time node to .
+node viewing. Chat, Page Sysop, Page User .
+messages, 20 additional configurable JUMP .
+commands, drop-to-DOS, log off, and more. .
+Highly configurable with many Sysop options .
+A must for all PCBOARD BBS&#x27;s. . From: Net
+Equinox Gateway Associates .</td>
+        </tr>
+        <tr data-bytes="453009" data-timestamp="844214400">
+            <td class="col-name"><a href="VBD_301A.ZIP">VBD_301A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/vbd_301a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">453009</td>
+            <td class="col-date">1996-10-02</td>
+            <td class="col-desc">VBoard is a new advanced Bulletin Board
+System for OS/2 and DOS. This version is for
+DOS 16bit v3.01/Rev A + Built in msg editor
+with ANSI/VT100 support. + Internal QWK, OMEN
+and BlueWave offlines. + VBasic! QBasic like
+programming language. + Lots of user
+configurable settings &amp; colors. + Built in
+easy-to-use user editor. + 32 highly
+configurable user groups. + Long file
+descriptions, file_id.diz support. + Message
+threads &amp; intelligent message reading +
+Supports many doors and protocols, SModem...
++ ...and much more! Test VBoard now!</td>
+        </tr>
+        <tr data-bytes="63148" data-timestamp="844732800">
+            <td class="col-name"><a href="VOTER403.ZIP">VOTER403.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/voter403.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">63148</td>
+            <td class="col-date">1996-10-08</td>
+            <td class="col-desc">Voter++ v4.03 - User Voting [PPE] *UNIVERSAL
+KEY SUPPORT* A full featured Voting door for
+your PCB 15.2 (or better) system. Complete
+SysOp control on all questions and answers.
+Unlimited Voting Booths! Great Graphics! Two
+minute setup, no maintenance! View results in
+Graph or Text format! (c)1996 Practical
+Computer Services</td>
+        </tr>
+        <tr data-bytes="5568" data-timestamp="848966400">
+            <td class="col-name"><a href="WAIT.ZIP">WAIT.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/wait.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">5568</td>
+            <td class="col-date">1996-11-26</td>
+            <td class="col-desc">[PCB] Press Enter prompt for PCB 15.21+ by T.
+Pietiläinen. Source included. Notice!! No
+.HLP available. If you really own your PCB
+you know what to do with this crappy PPE.</td>
+        </tr>
+        <tr data-bytes="76340" data-timestamp="826848000">
+            <td class="col-name"><a href="WCSD_100.ZIP">WCSD_100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/wcsd_100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">76340</td>
+            <td class="col-date">1996-03-15</td>
+            <td class="col-desc">┌───────────────────────────── ─-··
+│ COOLSITE  - INTERNET SITE DATABASE
+│                                     │
+│ Users can enter internet addresses  │
+│ of interest, and anyone can browse  │
+│ this database, or download lists    │
+│ in .TXT or HTML format!             │
+│                                     │
+│ Version 1.00  $15.00 [SHAREWARE-PPE]│
+  ·· -─ ──────────────────────────────┘
+      ▄██     ███   ▄ ▄█ ▄███▄
+     ▐███▌    ███  ▀█▀▄█  ██ ▀█▄
+───── ███▌─── ███ ▄█▄ ██  ██ ─▐█▌──────
+■▀█▀▄■ ███ ▄█▄▐█▌ ██▌ ██  ▀▄  ▐██ PPE&#x27;s
+████▄▀▄ ████▀███ ▐█▌  ██▄███▀▄██▀ ─────
+──────── █▀ ─ ▀ ▀█▀  ▄█▀▀▀▄▄█▀▀ ───────</td>
+        </tr>
+        <tr data-bytes="12113" data-timestamp="791942400">
+            <td class="col-name"><a href="WEEKLOG.ZIP">WEEKLOG.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/weeklog.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12113</td>
+            <td class="col-date">1995-02-05</td>
+            <td class="col-desc">WEEKLOG v1.5 - for pcbv15.x multinode Sysops.
+Logical strategy controls and organizes your
+CALLER logs into weekly/monthly/node# order.
+Can be run in your event. Creates WKx-nnn.MON
+files, then zips these files to an archive
+directory you specify. DOES NOT delete files.
+Requires 3 command line arguments, PKZIP in
+the path. Saves -LOTS- of disk space.</td>
+        </tr>
+        <tr data-bytes="13952" data-timestamp="690681600">
+            <td class="col-name"><a href="WGMCAS10.ZIP">WGMCAS10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/wgmcas10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13952</td>
+            <td class="col-date">1991-11-21</td>
+            <td class="col-desc">WGM-Case v.1.0 for pcboard(tm) v.14.x This
+utility will scan a pcboard File Directory
+listing and convert the case of the listing
+to the sysop specified case. This utility
+will also convert the case of sysop
+designated keywords such as ibm-&gt;IBM,
+vga-&gt;VGA, cga-&gt;CGA, etc.,etc.</td>
+        </tr>
+        <tr data-bytes="25395" data-timestamp="812332800">
+            <td class="col-name"><a href="WIEP_100.ZIP">WIEP_100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/wiep_100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">25395</td>
+            <td class="col-date">1995-09-29</td>
+            <td class="col-desc">INTERNET E-MAIL PHONEBOOK PPE Each user on
+your BBS can store up to 10 personal E-Mail
+Addresses, and select from a picklist when
+entering their internet e-mail! 100% BUG FREE
+Shareware Only $ 5.00 CDN to Register Version
+1.00 [UNREGISTERED]</td>
+        </tr>
+        <tr data-bytes="30301" data-timestamp="844473600">
+            <td class="col-name"><a href="WILD14.ZIP">WILD14.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/wild14.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">30301</td>
+            <td class="col-date">1996-10-05</td>
+            <td class="col-desc">WILD.PPE - By Dan Shore - Version 1.4 Now
+Supports New 15.3 IDX File Formats. This is a
+WildCard Download replacement PPE. Allows the
+user to SELECT which files to download first,
+instead of having ALL files flagged by PCB,
+then editing the list before downloading.
+Users can select files by NUMBERS, or by
+RANGES of NUMBERS. A wonderful interface to
+improve Wildcard Downloading on your BBS.
+Another FREE PPE from - The Shoreline BBS</td>
+        </tr>
+        <tr data-bytes="10058" data-timestamp="751680000">
+            <td class="col-name"><a href="X00V200.ARJ">X00V200.ARJ</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/x00v200.arj/" class="unpack-btn">[ ARJ x   ]</a></td>
+            <td class="col-size">10058</td>
+            <td class="col-date">1993-10-27</td>
+            <td class="col-desc">X00 Fossil driver V2.0</td>
+        </tr>
+        <tr data-bytes="9565" data-timestamp="771206400">
+            <td class="col-name"><a href="XPCBPTH2.ZIP">XPCBPTH2.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/xpcbpth2.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">9565</td>
+            <td class="col-date">1994-06-10</td>
+            <td class="col-desc">XPCBPATH Version 1.2 (FREEWARE) Works around
+pcboard&#x27;s 30 character limit on paths and
+filespecs in pcbsetup. Now you can use
+CD-ROM&#x27;s that have a very deeply nested
+directory structure requiring long path specs
+up to 80 characters.</td>
+        </tr>
+        <tr data-bytes="13349" data-timestamp="773884800">
+            <td class="col-name"><a href="ZFILE11.ZIP">ZFILE11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/zfile11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13349</td>
+            <td class="col-date">1994-07-11</td>
+            <td class="col-desc">╒════════════════════════════════╕
+│ ZFILE muodostaa PCBoard ja     │
+│ Intro -yhteensopivan tiedosto- │
+│ luettelon ja päivittää pakat-  │
+│ tujen tiedostojen FILE_ID.DIZ- │
+│ kuvaukset luetteloon.          │
+╘════════════════════════════════╛</td>
+        </tr>
+        <tr data-bytes="13776" data-timestamp="804200400">
+            <td class="col-name"><a href="BC%21TP10B.ZIP">BC!TP10B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bc%21tp10b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13776</td>
+            <td class="col-date">1995-06-26</td>
+            <td class="col-desc">BC! PPE Division Proudly Presents Transfer
+Performance 1.0 TP shows the transfer
+performance percent after file transfer..</td>
+        </tr>
+        <tr data-bytes="43694" data-timestamp="842907600">
+            <td class="col-name"><a href="BS%21EWH10.ZIP">BS!EWH10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21ewh10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">43694</td>
+            <td class="col-date">1996-09-16</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [EWHO] v1.0 (c) 1996 Doc Ansi for PCBoard
+ Enhanced Who PPE is coded in PPL 3.01 for
+ PCBoard v15.2+ Supports: hs-link, Zmodem,
+ Smodem, Smodem group chat + any external
+ protocol that uses pcbdsz.log. Also
+ supports all internal protocols. + FULL
+ BATCH STATUS with a skip option. Supports
+ nuke duke, file viewers, almost all of
+ the lines are  configurable + all colors
+ configurable. +100% WORKING SMODEM GROUP
+ CHAT SUPPORT, no more &#x27;Broadcasting
+ messages&#x27; while transfering files.
+ Also included total statistics of a batch.
+ ------------------------------------------
+     BEST WHO STATUS VIEWER THERE IS!
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="31993" data-timestamp="801176400">
+            <td class="col-name"><a href="BS%21EWH61.ZIP">BS!EWH61.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21ewh61.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">31993</td>
+            <td class="col-date">1995-05-22</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [EWHO] v0.61 (c) 1995 Doc Ansi for PCBoard
+ Enhanced Who PPE is coded in PPL 3.0 for
+ PCBoard v15.2+ &#x27;Broadcasting message&#x27; error
+ fixed, Supports: hs-link, Zmodem, Smodem,
+ Smodem group chat + any external protocol
+ that uses pcbdsz.log. Also supports all
+ internal protocols. + FULL BATCH STATUS
+ with a skip option. Supports nuke duke,
+ file viewers, almost all of the lines are
+ configurable + all colors configurable.
+ +100% WORKING SMODEM GROUP CHAT SUPPORT
+ Also included total statistics of a batch.
+ and this is not a BETA release! Enjoy!
+ Also includes sEWHO for sysops viewing.
+ ------------------------------------------
+  v0.6 HAD A MAJOR SMODEM GROUP CHAT BUG!
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="4894" data-timestamp="844894800">
+            <td class="col-name"><a href="BS%21FFL10.ZIP">BS!FFL10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21ffl10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4894</td>
+            <td class="col-date">1996-10-09</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [FFLAG] Fast Flag v1.0 By Doc Ansi (c) 1996
+ for Pcboard 15.3?. Compiled with PPLC 3.30.
+ This is a Utility that allows users to flag
+ automatically 0-x day warez! Easy to use
+ and install. Should be a lot of fun! And
+ remember, there is more to come! Just FLAG!
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="12943" data-timestamp="842389200">
+            <td class="col-name"><a href="BS%21FREE1.ZIP">BS!FREE1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21free1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12943</td>
+            <td class="col-date">1996-09-10</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [FREE] v1.0 (c) 1995 Doc Ansi for PCBoard
+  FreeSpace PPE is coded in PPL 3.0 and
+  Turbo Pascal 7.0  SUPPORTS BIG HD&#x27;S.
+
+  C:[██████//////////////] 2146 mb free
+  D:[███████████████/////]  408 mb free
+  E:[███████████████████/] 1079 mb free
+  F:[████████████████████]  622 mb free
+
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="7803" data-timestamp="842907600">
+            <td class="col-name"><a href="BS%21INFO1.ZIP">BS!INFO1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21info1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7803</td>
+            <td class="col-date">1996-09-16</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [INFOS FOR DOS] v1.0 (c) 1996 Doc Ansi for
+ DOS. INFOS is a program that generates
+ random adds from your info file. Enjoy.
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="4982" data-timestamp="842907600">
+            <td class="col-name"><a href="BS%21LIST1.ZIP">BS!LIST1.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21list1.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4982</td>
+            <td class="col-date">1996-09-16</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [CD-VIEWER] v1.0 (c) 1996 Doc Ansi for
+ PcBoard. Coded in PPLC 3.0. This is a
+ utility to see which cd:s are in the drives
+ (eg. online) and which cd:s are offline.
+ This program supports up to 50 cd drives
+ and endless amount of cd:s. Try to figure
+ out how it works. Should be fast?
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="7607" data-timestamp="842907600">
+            <td class="col-name"><a href="BS%21WFDOS.ZIP">BS!WFDOS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/bs%21wfdos.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7607</td>
+            <td class="col-date">1996-09-16</td>
+            <td class="col-desc">      _________  _ _____
+    __\___    ¼\_    __/___    bOMB sQUAD
+  _/      )    _/_____    ¼\_   iS bACK
+  \_______)      _____      / iN bUSINESS!
+&lt;=sTZ!/6c=;______/====\____/===============&gt;
+ [EWHO FOR DOS] v0.5ß (c) 1996 Doc Ansi for
+ DOS. Enhanced Who EXE is coded in Pascal
+ 7.0. This WHO shows you from dos, who on
+ your board. Supports only PcBoard systems.
+ It&#x27;s useful, if you don&#x27;t want to jump
+ from one window to another. Grab This.
+&lt;================================[1/1]=====&gt;</td>
+        </tr>
+        <tr data-bytes="2190" data-timestamp="804200400">
+            <td class="col-name"><a href="GNX%21QWKL.ZIP">GNX!QWKL.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/gnx%21qwkl.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">2190</td>
+            <td class="col-date">1995-06-26</td>
+            <td class="col-desc">.-[ QWK Command Lightbar Replacement PPE ]--.
+|  A Replacement for the QWK command. Neeto |
+| extra features. Lightbars and MORE!!!!!!  |
+|  ._____.______ .__.     /\.__  - LiMPY    |
+|-/ ___/  ___/ ¼\|  | ___/ ¼|  \------------|
+|/ /_.¼\  ._&gt;_   \  |/__/\_ | _/GENERATiON-X|
+|\   |  \ |  ¼\ \   |    /  _ ¼\    1995    |
+|-\___  /___  /_|\__|----\__|  /------------|
+`-----\/evl-\/---[o6.27.95]--\/-----[o1/o1]-&#x27;</td>
+        </tr>
+        <tr data-bytes="68837" data-timestamp="872456400">
+            <td class="col-name"><a href="NS%21-B103.ZIP">NS!-B103.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/bbs/ns%21-b103.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">68837</td>
+            <td class="col-date">1997-08-24</td>
+            <td class="col-desc">S T O R M - is pr0ud t0 present B 0 A R D L i
+S T E R HEY, D0 U NEED A CEWL bbslister with
+curs0r-m0vement? YES? THEN install thiz 0ne!
+THE BEST BBS-lister U HAVE EVER SEEN! &gt; FULL
+c0nfigurable &lt; FREEWARE! [ released :
+28-09-95 ]</td>
+        </tr>        </tbody>
+    </table>
+    <pre style="margin-top: 15px; border-top: 1px solid #444; padding-top: 10px; color: #777;"> TOTAL: 260</pre>
+</div>
+
+<script>
+var sortOrder = { 0: "asc", 2: "asc", 3: "asc" };
+
+function sortTable(n, type) {
+  var table = document.getElementById("fileTable");
+  var tbody = document.getElementById("fileTableBody");
+  var rows = Array.from(tbody.rows);
+  
+  var dir = sortOrder[n] === "asc" ? "desc" : "asc";
+  sortOrder[n] = dir;
+
+  var headers = table.getElementsByTagName("th");
+  for (var i = 0; i < headers.length; i++) {
+    headers[i].className = headers[i].className.replace(" sort-asc", "").replace(" sort-desc", "");
+  }
+  headers[n].className += (dir === "asc" ? " sort-asc" : " sort-desc");
+
+  rows.sort(function(a, b) {
+    var xContent, yContent;
+    
+    if (type === 'size') {
+      xContent = parseInt(a.getAttribute('data-bytes')) || 0;
+      yContent = parseInt(b.getAttribute('data-bytes')) || 0;
+    } else if (type === 'date') {
+      xContent = parseInt(a.getAttribute('data-timestamp')) || 0;
+      yContent = parseInt(b.getAttribute('data-timestamp')) || 0;
+    } else {
+      xContent = a.getElementsByTagName("TD")[n].innerText.trim().toLowerCase();
+      yContent = b.getElementsByTagName("TD")[n].innerText.trim().toLowerCase();
+    }
+
+    if (xContent > yContent) return dir === "asc" ? 1 : -1;
+    if (xContent < yContent) return dir === "asc" ? -1 : 1;
+    return 0;
+  });
+
+  var fragment = document.createDocumentFragment();
+  rows.forEach(function(row) {
+    fragment.appendChild(row);
+  });
+  tbody.appendChild(fragment);
+}
+</script>
+</body>
+</html>

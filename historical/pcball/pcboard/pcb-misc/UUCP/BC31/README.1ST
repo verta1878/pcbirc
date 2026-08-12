@@ -1,0 +1,11 @@
+DO NOT DELETE THESE FILES
+
+While Turbo C++ 3.0 and Borland C++ 5.0 have no trouble compiling and linking
+the UUCP projects, we ran into linker errors with Borland C++ 3.1.   The
+solution to which is to compile some of Borland's "C Runtime Library Source
+Code" directly and link those objects into the executable.
+
+To avoid recompiling those same modules yourself, we have compiled them and
+placed just the .OBJ files in this directory.  If you remove these files then
+you will be unable to compile using BC 3.1.
+

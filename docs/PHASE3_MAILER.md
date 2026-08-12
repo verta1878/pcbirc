@@ -98,7 +98,7 @@ pcbmailer/
 ├── zmodem.c            — ZModem file transfer
 ├── protocol.c          — Protocol dispatcher
 ├── nodelist.c          — Nodelist access (NODELIST.DBF/NDX via CodeBase)
-├── nlcomp.c            — Nodelist compiler (NODELIST.### → .DBF/.NDX)
+├── PCBNLC              — Nodelist compiler (Clark) (NODELIST.### → .DBF/.NDX)
 ├── outbound.c          — Outbound queue manager (BSO/ASO)
 ├── routing.c           — Mail routing logic
 ├── areafix.c           — Remote area management (AreaFix processor)
@@ -208,7 +208,7 @@ The mailer UI during idle (waiting for calls / between events):
 
 ## Phase 3 Build Order
 
-### Step 1: Nodelist Compiler (nlcomp.c) — ✅ COMPLETE
+### Step 1: Nodelist Compiler (PCBNLC) — ✅ LINKED
 Write a standalone tool that reads raw FidoNet nodelist text (NODELIST.###) and compiles it into NODELIST.DBF/NDX using CodeBase 4.x (which we have full LGPL source for). PCBoard needs this to look up node addresses. This is the gap QFront's QNLIST.EXE fills.
 
 Input format (FTS-5000):

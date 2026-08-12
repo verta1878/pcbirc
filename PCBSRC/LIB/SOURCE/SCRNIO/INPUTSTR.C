@@ -30,7 +30,7 @@
 *  - Sets AllCaps to desired setting then calls inputall()
 */
 
-void LIBENTRY inputstr(int X,int Y,int Limit,char *Q,char *Old,char *Ans,char *Mask,inputattrtype Attribute,int HelpNum) {
+void LIBENTRY inputstr(int X,int Y,int Limit,char *Q,char *Old,char *Ans,char *Mask,int Attribute,int HelpNum) {
   if (strlen(Q) > 0) {
     fastprint(X,Y,Q,Colors[QUESTION]);
     Input.OrgX = (char) (X + strlen(Q) + 1);

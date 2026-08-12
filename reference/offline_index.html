@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="generator" content="Metropoli-PCB-Indexer">
+    <title>Metropoli BBS - C:\SOFTWARE\DOS\OFFLINE</title>
+    <style>
+        /* FONT DEFINITION: Forces browser to use local file aliased as MetropoliRetro */
+        @font-face {
+            font-family: 'MetropoliRetro';
+            src: url('/retrofonts/Perfect%20DOS%20VGA%20437%20Win.woff') format('woff'),
+                 url('/retrofonts/Perfect%20DOS%20VGA%20437%20Win.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-color: #000000;
+            --crt-bg: #080808;          
+            --dos-white: #DDDDDD;       
+            --dos-grey: #999999;        
+            --dos-yellow: #DDDD44;      
+            --dos-cyan: #44DDDD;        
+            --dos-green: #44DD44;       
+            --dos-red-bg: #AA0000;      
+            --action-color: #00AAAA;    
+            --hover-white: #FFFFFF;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--dos-white);
+            font-family: 'MetropoliRetro', monospace;
+            font-size: 19px;
+            line-height: 21px; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-width: fit-content; 
+        }
+        
+        /* Explicitly force PRE tags to inherit the Retro Font */
+        pre, code, kbd, samp {
+            font-family: 'MetropoliRetro', monospace;
+            font-size: inherit;
+        }
+
+        /* The main CRT Container. Width is injected dynamically (110ch or 132ch) */
+        .crt-frame {
+            background-color: var(--crt-bg);
+            display: block;
+            width: 110ch; 
+            padding: 20px;
+            border: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+
+        .bbs-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--dos-grey);
+            padding-bottom: 10px;
+            color: var(--dos-white);
+        }
+        
+        .header-logo { height: 160px; width: auto; }
+
+        .breadcrumb a:hover { color: var(--dos-yellow); background-color: #0000AA; }
+
+        .ctx-link {
+            display: block;
+            margin-top: 5px;
+            color: var(--dos-grey);
+            font-family: 'MetropoliRetro', monospace;
+            font-size: 19px;
+        }
+        .ctx-link a { color: var(--action-color); text-decoration: none; }
+        .ctx-link a:hover { color: var(--hover-white); background-color: var(--action-color); }
+
+        .file-table { width: 100%; border-collapse: collapse; table-layout: auto; }
+
+        th {
+            text-align: left;
+            color: var(--dos-yellow);
+            border-bottom: 1px solid var(--dos-grey);
+            padding: 5px 10px; 
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            /* Force the Retro font and remove implicit bolding */
+            font-family: 'MetropoliRetro', monospace;
+            font-weight: normal; 
+        }
+        
+        td { padding: 0 10px; vertical-align: top; }
+        
+        /* COLUMNS */
+        .col-name { width: 1px; white-space: nowrap; color: var(--dos-white); }
+        
+        /* Action column uses 'pre' to preserve spaces */
+        .col-action { 
+            width: 13ch; 
+            white-space: pre; 
+            text-align: left; 
+            color: var(--action-color); 
+        }
+        
+        .col-size { width: 1px; white-space: nowrap; text-align: right; color: var(--dos-green); }
+        .col-date { width: 1px; white-space: nowrap; text-align: left; color: var(--dos-cyan); }
+        .col-desc { width: auto; white-space: pre-wrap; color: var(--dos-grey); }
+
+        /* HOVER EFFECTS */
+        tbody tr:hover { background: linear-gradient(to bottom, var(--dos-red-bg) 21px, transparent 21px); }
+        tbody tr:first-child td { padding-top: 12px; }
+        tbody tr:first-child:hover {
+            background: linear-gradient(to bottom, transparent 12px, var(--dos-red-bg) 12px, var(--dos-red-bg) 33px, transparent 33px);
+        }
+        tbody tr:hover .col-name a, tbody tr:hover .col-size, tbody tr:hover .col-date, tbody tr:hover .col-action a { color: var(--hover-white) !important; }
+        tbody tr:hover .col-desc::first-line { color: var(--hover-white) !important; }
+
+        .unpack-btn { color: var(--action-color); }
+        .dir-label { color: var(--action-color); }
+        
+        /* Sort Indicators */
+        .sort-asc::after { content: " ▲"; }
+        .sort-desc::after { content: " ▼"; }
+    </style>
+</head>
+<body>
+
+<div class="crt-frame">
+    <div class="bbs-header">
+        <img src="/mpolilogo2-transparent-500x500.png" class="header-logo" alt="Metropoli BBS">
+        <div>
+            <pre>Metropoli BBS</pre>
+            <pre><span class="breadcrumb"><a href="../../../index.html">C:</a>\<a href="../../index.html">SOFTWARE</a>\<a href="../index.html">DOS</a>\<a href="index.html">OFFLINE</a></span></pre>
+            
+        </div>
+    </div>
+
+    <table class="file-table" id="fileTable">
+        <thead>
+            <tr>
+                <th class="col-name" onclick="sortTable(0, 'text')">FILENAME</th>
+                <th class="col-action"></th>
+                <th class="col-size" onclick="sortTable(2, 'size')">SIZE</th>
+                <th class="col-date" onclick="sortTable(3, 'date')">DATE</th>
+                <th class="col-desc">DESCRIPTION</th>
+            </tr>
+        </thead>
+        <tbody id="fileTableBody">
+
+        <tr data-bytes="864223" data-timestamp="812419200">
+            <td class="col-name"><a href="1ST-200A.ZIP">1ST-200A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/1st-200a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">864223</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc">1streader 2.00 QWK offline mail reader from
+Sparkware, the ones who created the QWK
+format. An ALL-IN-ONE system that is great
+for novice users but also the most powerful
+QWK offline reader in the world. Installs in
+a snap. Needs 1st-200b.ZIP too. See
+README.NOW for instructions. (File 1 of 6 in
+2.00 release)</td>
+        </tr>
+        <tr data-bytes="802389" data-timestamp="812419200">
+            <td class="col-name"><a href="1ST-200B.ZIP">1ST-200B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/1st-200b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">802389</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc">1streader 2.00 QWK offline mail reader from
+Sparkware. This archive contains the rest of
+the basic 2.00 release. It includes manuals,
+address book, RIP and database support. You
+also need 1st-200a.ZIP for the basic system
+release. (File 2 of 6 in 2.00 release)</td>
+        </tr>
+        <tr data-bytes="499233" data-timestamp="812419200">
+            <td class="col-name"><a href="1ST-200C.ZIP">1ST-200C.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/1st-200c.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">499233</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc">1streader 2.00 QWK offline mail reader from
+Sparkware. This archive contains the spelling
+checker, 1stedit text editor and FLI support
+modules. (File 3 of 6 in 2.00 release)</td>
+        </tr>
+        <tr data-bytes="959737" data-timestamp="812419200">
+            <td class="col-name"><a href="1ST-200D.ZIP">1ST-200D.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/1st-200d.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">959737</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc">1streader 2.00 QWK offline mail reader from
+Sparkware. This archive contains the
+multimedia sound files used by the full
+1streader 2.00 release. You do not need them
+if you do not have a sound card. (File 4 of 6
+in 2.00 release)</td>
+        </tr>
+        <tr data-bytes="247409" data-timestamp="812419200">
+            <td class="col-name"><a href="1ST-200E.ZIP">1ST-200E.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/1st-200e.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">247409</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc">1streader 2.00 QWK offline mail reader from
+Sparkware. This archive contains support for
+third party programmers who are interested in
+writing utilities for the 2.00 release.
+Includes full documentation on the 1streader
+API interface. (File 5 of 6 in 2.00 release)</td>
+        </tr>
+        <tr data-bytes="380395" data-timestamp="812419200">
+            <td class="col-name"><a href="1ST-200F.ZIP">1ST-200F.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/1st-200f.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">380395</td>
+            <td class="col-date">1995-09-30</td>
+            <td class="col-desc">1streader 2.00 QWK offline mail reader from
+Sparkware. This archive contains the 80386
+(and higher) compiled version of the 1st.EXE
+program. Do NOT use if you own a 80286 or
+8088 system. (File 6 of 6 in 2.00 release)</td>
+        </tr>
+        <tr data-bytes="20944" data-timestamp="741484800">
+            <td class="col-name"><a href="ADDQWK15.ZIP">ADDQWK15.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/addqwk15.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">20944</td>
+            <td class="col-date">1993-07-01</td>
+            <td class="col-desc">Yhdistää QWK-paketteja</td>
+        </tr>
+        <tr data-bytes="212425" data-timestamp="828662400">
+            <td class="col-name"><a href="AMR10.ZIP">AMR10.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/amr10.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">212425</td>
+            <td class="col-date">1996-04-05</td>
+            <td class="col-desc">Aura Mail Reader Shareware version 1.0
+Keeps a database of your QWK messages.
+DDE, Multithreading, Templates,
+user definable Buttons, its all
+in here!</td>
+        </tr>
+        <tr data-bytes="180147" data-timestamp="814665600">
+            <td class="col-name"><a href="APGP22B3.ZIP">APGP22B3.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/apgp22b3.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">180147</td>
+            <td class="col-date">1995-10-26</td>
+            <td class="col-desc">OFFLINE AUTOPGP v2.2ß3 - Offline e-mail
+encryption with PGP. Supports QWK, SOUP,
+ASCII, XBoard and Offliner. Encrypts,
+decrypts and signs messages or part(s)
+of a message; inserts/extracts public
+keys and ascii armoured files + much
+more! Requires PGP version 2.3a or
+later. Shareware: $15 only.</td>
+        </tr>
+        <tr data-bytes="174436" data-timestamp="832377600">
+            <td class="col-name"><a href="ASO232.ZIP">ASO232.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/aso232.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">174436</td>
+            <td class="col-date">1996-05-18</td>
+            <td class="col-desc">ASO - suomenkielinen OMEN- ja QWK-lukija,
+versio 2.32 (ent. Avis) PC:lle. SW.</td>
+        </tr>
+        <tr data-bytes="161998" data-timestamp="747792000">
+            <td class="col-name"><a href="ATP07DOS.ZIP">ATP07DOS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/atp07dos.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">161998</td>
+            <td class="col-date">1993-09-12</td>
+            <td class="col-desc">ATP QWK Reader 1.42 for DOS, a full featured
+database style reader, easily handles 3000+
+line messages, free licensed under GNU GPL.</td>
+        </tr>
+        <tr data-bytes="341560" data-timestamp="792547200">
+            <td class="col-name"><a href="BLUEQ155.ZIP">BLUEQ155.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/blueq155.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">341560</td>
+            <td class="col-date">1995-02-12</td>
+            <td class="col-desc">   YES 0.17B - The Yarn Editor Shell.
+■──────────────────────────────────────■
+│     Released: February 12, 1995      │
+│                                      │
+│  Freeware! - Freeware! - Freeware!   │
+│                                      │
+│  A utility for Yarn that makes Yarn  │
+│ much more flexible in handling sig-  │
+│ natures, automatically or manually.  │
+│ Adds possibility of adding randomly  │
+│  selected quote to to the signature  │
+│            and much more!            │
+│                                      │
+│   Now includes YPost, a utility to   │
+│  post or mail files directly to the  │
+│  Yarn reply folder, with UUencoding  │
+│  (or XX-) and splitting on the fly!  │
+│ Also includes YFolder, a Yarn folder │
+│  manipulation utility! - And more!   │
+│                                      │
+│     Works with Yarn 0.65 and up!     │
+│            (not included)            │
+│                                      │
+│       Fast and very flexible.        │
+│                                      │
+│        Again a product from:         │
+│   ┌─────────────────────────────┐    │
+│   │   TechnoVision Software   │    │
+│   └─────────────────────────────┘    │
+│   pg@login.dknet.dk  2:235/208.10   │
+■──────────────────────────────────────■</td>
+        </tr>
+        <tr data-bytes="7536" data-timestamp="744595200">
+            <td class="col-name"><a href="BNAME.ZIP">BNAME.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/bname.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">7536</td>
+            <td class="col-date">1993-08-06</td>
+            <td class="col-desc">Konvaa kokous.txt tiedostosta bnamesmi.bbs -
+ tiedoston ja POSTin käyttöön pitkät alueiden-
+ nimet...</td>
+        </tr>
+        <tr data-bytes="705450" data-timestamp="824083200">
+            <td class="col-name"><a href="BW23_386.ZIP">BW23_386.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/bw23_386.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">705450</td>
+            <td class="col-date">1996-02-12</td>
+            <td class="col-desc">Blue Wave Offline Mail Reader/386 v2.30. A
+Blue Wave and QWK-compatible offline mail
+reader which offers the utmost ease of use
+and configurability. This is a 32-bit DOS
+text mode program which works on systems with
+an 80386 or higher processor only. Can use
+virtual memory to read the largest of mail
+packets. Release Date: 12 February 96</td>
+        </tr>
+        <tr data-bytes="483805" data-timestamp="824083200">
+            <td class="col-name"><a href="BW23_DOS.ZIP">BW23_DOS.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/bw23_dos.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">483805</td>
+            <td class="col-date">1996-02-12</td>
+            <td class="col-desc">Blue Wave Offline Mail Reader/DOS v2.30. A
+Blue Wave and QWK-compatible offline mail
+reader which offers the utmost ease of use
+and configurability. This is a 16-bit DOS
+text mode program which works on systems
+ranging from XTs to the Intel Pentium and
+compatibles. Release Date: 12 February 96</td>
+        </tr>
+        <tr data-bytes="16072" data-timestamp="697593600">
+            <td class="col-name"><a href="CATQWK22.ZIP">CATQWK22.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/catqwk22.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">16072</td>
+            <td class="col-date">1992-02-09</td>
+            <td class="col-desc">CatQWK 2.2 [9 Feb 92] - Program to combine
+two or more QWK packets from the same BBS
+into one. This allows you to follow threads
+easily across multiple QWK downloads. Very
+easy to set up and use; totally command line
+driven; user changeable archive programs.
+Version 2.2 now creates PERSONAL.NDX file.
+Freeware!</td>
+        </tr>
+        <tr data-bytes="258957" data-timestamp="706233600">
+            <td class="col-name"><a href="D2-125.ZIP">D2-125.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/d2-125.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">258957</td>
+            <td class="col-date">1992-05-19</td>
+            <td class="col-desc">New release of Qmail DeLuxe² 1.25 offline
+mail reading system from Sparkware.
+Includes everything you need to &quot;try before
+you buy&quot;.  You can now read up to 20 messages
+in each conference in demo mode.
+
+This file also is an update for registered
+Qmail DeLuxe owners -  see README for how to
+update your copy online.</td>
+        </tr>
+        <tr data-bytes="262466" data-timestamp="792288000">
+            <td class="col-name"><a href="DTQWK14.ZIP">DTQWK14.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/dtqwk14.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">262466</td>
+            <td class="col-date">1995-02-09</td>
+            <td class="col-desc">DT-QWK, Version 1.4 QWK compatible offline
+reader for the PC. DT-QWK features message
+base handling, support of pcboard, SLBBS and
+DMS color codes, SLBBS include statements,
+SAA user interface (bilingual - German /
+English), message threading, message
+forwarding across bbss and lots more Try it.
+You&#x27;ll like it!</td>
+        </tr>
+        <tr data-bytes="99646" data-timestamp="758851200">
+            <td class="col-name"><a href="EGM_062B.ZIP">EGM_062B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/egm_062b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">99646</td>
+            <td class="col-date">1994-01-18</td>
+            <td class="col-desc">QWK/OMEN/GRAB offline reader (beta version)</td>
+        </tr>
+        <tr data-bytes="114771" data-timestamp="696297600">
+            <td class="col-name"><a href="JABR11.ZIP">JABR11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/jabr11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">114771</td>
+            <td class="col-date">1992-01-25</td>
+            <td class="col-desc">JABBER QWK Offline Mail Reader v1.1 BETA
+Jabber is a new memory efficient, easy to
+use QWK packet reader.  Features include
+large packet usage (&gt; 2megs), internal or
+external editor, tagline management,
+conference sorting, text searching, and
+VERY easy installation/configuration.  Will
+even work on a 2-floppy 8088 PC!
+Keywords: JABBER QWK READER
+Auths: Marcos Della/Shad Muegge v1.1 01-22-92</td>
+        </tr>
+        <tr data-bytes="217541" data-timestamp="702432000">
+            <td class="col-name"><a href="KQWK105.ZIP">KQWK105.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/kqwk105.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">217541</td>
+            <td class="col-date">1992-04-05</td>
+            <td class="col-desc">KingQWK 1.05 - The latest release of
+this new FAST, small QWK reader. It has
+MANY features not found in other readers
+including a unique interface to QWKMerge
+allowing it to control precisely which
+messages are merged into the ensuing QWK
+packet.  Many new features in this
+release!       Shareware by Mike King</td>
+        </tr>
+        <tr data-bytes="231877" data-timestamp="889920000">
+            <td class="col-name"><a href="LUCIF114.ZIP">LUCIF114.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/lucif114.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">231877</td>
+            <td class="col-date">1998-03-15</td>
+            <td class="col-desc">Lucifer, QWK/OMEN-etälukija v1.14 - Selkeä ja
+monipuolinen etälukija. Suomenkielinen.
+Lyömätön! SW. (c) 1997 Ari A. Heljakka / TLL</td>
+        </tr>
+        <tr data-bytes="336153" data-timestamp="786412800">
+            <td class="col-name"><a href="MSNGR12.ZIP">MSNGR12.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/msngr12.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">336153</td>
+            <td class="col-date">1994-12-03</td>
+            <td class="col-desc">MESSENGER v1.2 - Messenger is a DOS tagline
+manager which supports multiple tagline files
+or categories.  It has many powerful features
+for organizining your tagline collection
+including dupe checking, alphabetizing files,
+savable multiple keyword search lists, move
+tags between categories.  You may also export
+taglines using optional format functions and
+keyword searches and import taglines.  Works
+with many pouplar mail readers.  Fun to use!</td>
+        </tr>
+        <tr data-bytes="65076" data-timestamp="789696000">
+            <td class="col-name"><a href="NM_112.LZH">NM_112.LZH</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/nm_112.lzh/" class="unpack-btn">[ LHARC e ]</a></td>
+            <td class="col-size">65076</td>
+            <td class="col-date">1995-01-10</td>
+            <td class="col-desc">NMail 1.12 for DOS. Offline reader
+supporting: Hippo 2, OMEN and QWK!
+Mainly QWK bugs fixed.</td>
+        </tr>
+        <tr data-bytes="10224" data-timestamp="690595200">
+            <td class="col-name"><a href="NOTAG-21.ZIP">NOTAG-21.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/notag-21.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">10224</td>
+            <td class="col-date">1991-11-20</td>
+            <td class="col-desc">Remove Qmail Deluxe2 message taglines. V.2.1
+ Pitäisi toimia muillakin offline readereilla
+ pienellä notag.exe:n muutoksilla.</td>
+        </tr>
+        <tr data-bytes="362476" data-timestamp="783734400">
+            <td class="col-name"><a href="NWRTH100.ZIP">NWRTH100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/nwrth100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">362476</td>
+            <td class="col-date">1994-11-02</td>
+            <td class="col-desc">NewsWerthy v1.0. SOUP packet news/mail reader</td>
+        </tr>
+        <tr data-bytes="222825" data-timestamp="844387200">
+            <td class="col-name"><a href="OLX-TD21.ZIP">OLX-TD21.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/olx-td21.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">222825</td>
+            <td class="col-date">1996-10-04</td>
+            <td class="col-desc">OLX 2.1 TEST DRIVE, a QWK compatible mail
+reader for MS-DOS based computers, fully
+functional program, full documentation.</td>
+        </tr>
+        <tr data-bytes="235754" data-timestamp="815011200">
+            <td class="col-name"><a href="OO080.LHA">OO080.LHA</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/oo080.lha/" class="unpack-btn">[ LHARC e ]</a></td>
+            <td class="col-size">235754</td>
+            <td class="col-date">1995-10-30</td>
+            <td class="col-desc">Offline Orbit 0.80 (C)1993-95 by Janne Siren.
+Shareware offline message reader for Amigas
+with operating system version 2.04 or higher.
+Offline Orbit features a user friendly, font
+sensitive GUI and support for the Blue Wave,
+OMEN, QWK, SOUP and WWF message formats.</td>
+        </tr>
+        <tr data-bytes="37557" data-timestamp="779241600">
+            <td class="col-name"><a href="PGPBLU30.ZIP">PGPBLU30.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/pgpblu30.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">37557</td>
+            <td class="col-date">1994-09-11</td>
+            <td class="col-desc">PGPBLUE is an interface program, which interfaces PGP with The Bluewave
+Offline Mail Reader.  Features En/Decrypting Posting/Adding Public Keys.
+Automatic detection of Encrypted messages and Public keys.</td>
+        </tr>
+        <tr data-bytes="830408" data-timestamp="794188800">
+            <td class="col-name"><a href="PMAIL322.ZIP">PMAIL322.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/pmail322.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">830408</td>
+            <td class="col-date">1995-03-03</td>
+            <td class="col-desc">Pegasus Mail for DOS v3.22</td>
+        </tr>
+        <tr data-bytes="125666" data-timestamp="841104000">
+            <td class="col-name"><a href="POST351.ZIP">POST351.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/post351.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">125666</td>
+            <td class="col-date">1996-08-27</td>
+            <td class="col-desc">POST / OMEN/QWK -offline reader for PC (DOS).
+Read messages board by board or pick messages
+by their subjects. Enables skipping writers,
+subjects or strings. Supports SHARE, DESQview,
+Windows etc. Mouse or keyboard control. Built
+in alarm, screen saver, help, swapping. Now
+also MIME-conversion and namelist for frequent
+receivers. Registration only 50 FIM!!</td>
+        </tr>
+        <tr data-bytes="268725" data-timestamp="701827200">
+            <td class="col-name"><a href="PQ215C.ZIP">PQ215C.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/pq215c.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">268725</td>
+            <td class="col-date">1992-03-29</td>
+            <td class="col-desc">PowerQWK v2.15c - QWK message reader.</td>
+        </tr>
+        <tr data-bytes="32930" data-timestamp="757468800">
+            <td class="col-name"><a href="QBASE12A.ZIP">QBASE12A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qbase12a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">32930</td>
+            <td class="col-date">1994-01-02</td>
+            <td class="col-desc">qwkbase v1.2a:Is an-add on program that turns
+your &quot;one packet at time&quot; offline mail reader
+into a database reader. Quick and easy set
+up. Configure each conference to accept mail
+only from you, to you, or all. Just replace
+PKUNZIP with SWAP:QWKBASE in the packers menu
+of SLMR and OLX. Requires SLMR/OLX. Archive
+also contains the latest catalog of Blueview
+programs. Join Blueview Software&#x27;s uploading
+team! Read UPLOAD.TXT BLUEVIEW SOFTWARE</td>
+        </tr>
+        <tr data-bytes="143300" data-timestamp="794707200">
+            <td class="col-name"><a href="QPRN112.ZIP">QPRN112.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qprn112.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">143300</td>
+            <td class="col-date">1995-03-09</td>
+            <td class="col-desc">QWKPRUNE 1.12.  Removes unwanted messages
+from QWK-format mail packets. Strips leading
+spaces as well as (R) and Re: prefixes from
+subject lines. Also strips up to 10 user-
+defined prefixes. Repairs non-standard
+message headers. Supports ZIP, LHA, ARJ, and
+ZOO, as well as a user-specified archiver.</td>
+        </tr>
+        <tr data-bytes="12651" data-timestamp="656899200">
+            <td class="col-name"><a href="QWK2TXT.ZIP">QWK2TXT.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qwk2txt.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">12651</td>
+            <td class="col-date">1990-10-26</td>
+            <td class="col-desc">Converts .QWK mail files to ASCII text file.</td>
+        </tr>
+        <tr data-bytes="9954" data-timestamp="762393600">
+            <td class="col-name"><a href="QWKIDX11.ZIP">QWKIDX11.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qwkidx11.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">9954</td>
+            <td class="col-date">1994-02-28</td>
+            <td class="col-desc">QWK_IDX v1.11: Quickly generates indexes for
+ QWK and REP mail packets. Uses SOUNDEX scheme
+ to search for personal messages w/misspelled
+ names.</td>
+        </tr>
+        <tr data-bytes="55513" data-timestamp="786326400">
+            <td class="col-name"><a href="QWKP9412.ZIP">QWKP9412.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qwkp9412.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">55513</td>
+            <td class="col-date">1994-12-02</td>
+            <td class="col-desc">QWKProducts listing - info on all types
+of QWK products from mail doors to readers
+and utilities such as tagline managers.
+Includes offline configuration data for
+many mail doors.  Updated monthly!</td>
+        </tr>
+        <tr data-bytes="4030" data-timestamp="811814400">
+            <td class="col-name"><a href="QWKR10FI.ZIP">QWKR10FI.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qwkr10fi.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">4030</td>
+            <td class="col-date">1995-09-23</td>
+            <td class="col-desc">QWK-Reader Finnish Version 1.0</td>
+        </tr>
+        <tr data-bytes="26423" data-timestamp="782697600">
+            <td class="col-name"><a href="QWKUT21.ZIP">QWKUT21.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/qwkut21.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">26423</td>
+            <td class="col-date">1994-10-21</td>
+            <td class="col-desc">QWKUTIL 2.1. Skandimuuntaja ja tag-poistaja
+kaikille QWK-lukijoille DOSssiin ja
+WINDOWSiin. Monipuoliset muunnosvalinnat.</td>
+        </tr>
+        <tr data-bytes="182386" data-timestamp="868665600">
+            <td class="col-name"><a href="RNT010B.ZIP">RNT010B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/rnt010b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">182386</td>
+            <td class="col-date">1997-07-12</td>
+            <td class="col-desc">R O N T T I 0.10beta erilaisen QWK-etälukijan
+esiversio by UNIGENITO 1997 Suomenkielinen,
+viestejä käsitellään BBS kohtaisesti eikä
+pakettisidonnaisesti. Sisältää kaikki
+etälukijan perustoiminnot. FREEWARE!</td>
+        </tr>
+        <tr data-bytes="848616" data-timestamp="814406400">
+            <td class="col-name"><a href="ROBOM131.ZIP">ROBOM131.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/robom131.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">848616</td>
+            <td class="col-date">1995-10-23</td>
+            <td class="col-desc">ROBOMAIL QWK Reader ver. 1.31 (1 of 1)
+Database oriented offline QWK mail reader
+from Parsons Consulting. Breaks new ground
+with sophisticated database access to your
+messages, internal editor, spell checker,
+folders &amp; modern interface. Extensive support
+Internet E-Mail and Newsgroups. OS/2 and
+Windows aware. New version supports long
+conference names!</td>
+        </tr>
+        <tr data-bytes="13818" data-timestamp="762912000">
+            <td class="col-name"><a href="SIGGY01A.ZIP">SIGGY01A.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/siggy01a.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">13818</td>
+            <td class="col-date">1994-03-06</td>
+            <td class="col-desc">Siggy Signature v0.01/alpha-1. Ever tired
+adding your own signature - manually..? Or
+doesn&#x27;t your editor support macros? Well...
+If the things really are *that* bad, you
+=have= got to download this! Siggy adds
+autoMAGICally your own favourite signature
+at the end of the reply. Works flawlessly
+with all QWK readers that allow spawning
+(haven&#x27;t seen one yet) to a batch (.BAT)
+file! Absolutely FREE - NoteWare!</td>
+        </tr>
+        <tr data-bytes="331152" data-timestamp="868492800">
+            <td class="col-name"><a href="SKY3_100.ZIP">SKY3_100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/sky3_100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">331152</td>
+            <td class="col-date">1997-07-10</td>
+            <td class="col-desc">SkyReader/386 v1.00 - Blue Wave, QWK, OMEN,
+SOUP and Hippo v2 compatible offline mail
+reader. Finnish and english language files,
+PGP support, message text reformatting, etc.
+nice features. This is the 32-bit DOS text
+mode version. Requires 386 or above.</td>
+        </tr>
+        <tr data-bytes="265242" data-timestamp="848707200">
+            <td class="col-name"><a href="SKYD060B.ZIP">SKYD060B.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/skyd060b.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">265242</td>
+            <td class="col-date">1996-11-23</td>
+            <td class="col-desc">SkyReader/DOS v0.60b - Blue Wave, QWK, OMEN
+and Hippo v2 compatible offline mail reader.
+Finnish and english language files, PGP
+support, message text reformatting, etc. nice
+features. This is the 16-bit DOS text mode
+version. Requires 8088 or above.</td>
+        </tr>
+        <tr data-bytes="250908" data-timestamp="762393600">
+            <td class="col-name"><a href="SPEED140.ZIP">SPEED140.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/speed140.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">250908</td>
+            <td class="col-date">1994-02-28</td>
+            <td class="col-desc">SPEED READ 1.40 QWK reader/message database.
+Features include:  25/28/43/50 line support,
+cross-posting,  run multiple sessions, quote
+from any message, mouse support, more memory
+efficient, folders,  bulk marking, long/wide
+messages, address book,  mailing lists, auto
+signature,  BBS/area specific settings, file
+attaches, macros, cc:, forward msgs, + more!</td>
+        </tr>
+        <tr data-bytes="406914" data-timestamp="766281600">
+            <td class="col-name"><a href="SXR401.ZIP">SXR401.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/sxr401.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">406914</td>
+            <td class="col-date">1994-04-14</td>
+            <td class="col-desc">Silver Xpress Off-Line Mail Reader 4.01, The
+most powerful off-line mail system in the
+world from Santronics Software. Now in 7th
+year! Direct support for QWK, OPX, FidoNet,
+Internet, Fax, Forms Processing, Speech
+Friendly Interface, Intelligent Mail
+Searching and Management, elegant Look and
+Feel, much more! Toll Free Technical Support.
+Fully featured Shareware Version.</td>
+        </tr>
+        <tr data-bytes="457017" data-timestamp="770774400">
+            <td class="col-name"><a href="SXR401P.ZIP">SXR401P.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/sxr401p.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">457017</td>
+            <td class="col-date">1994-06-05</td>
+            <td class="col-desc">386/Protected Mode Version of the Silver
+Xpress Off-Line Mail Reader 4.01 for DOS,
+Windows or OS/2. The most powerful off-line
+mail system in the world from Santronics
+Software. Now in 7th year! Direct support for
+QWK, OPX, FidoNet, Internet, Fax, Forms
+Processing, Speech Friendly Interface,
+Intelligent Mail Searching and Management,
+elegant Look and Feel, much more! Toll Free
+Technical Support. Fully featured Shareware
+Version. For running under DOS, requires
+DPMI110.ZIP.</td>
+        </tr>
+        <tr data-bytes="256705" data-timestamp="782697600">
+            <td class="col-name"><a href="TAGLX410.ZIP">TAGLX410.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/taglx410.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">256705</td>
+            <td class="col-date">1994-10-21</td>
+            <td class="col-desc">TAG LINE XPRESS v4.10 &lt;ASP&gt; Enhanced Tagline
+Manager for offline mail readers. Offers
+UNLIMITED taglines, installs automatically
+into several readers, has a built in quoter
+and signature manager, steal every tagline
+from QWK and Blue Wave mail packets, even
+suggests taglines based on the subject and
+message content.</td>
+        </tr>
+        <tr data-bytes="254627" data-timestamp="787968000">
+            <td class="col-name"><a href="TAGX090.ZIP">TAGX090.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/tagx090.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">254627</td>
+            <td class="col-date">1994-12-21</td>
+            <td class="col-desc">TAG-X PROFESSIONAL v0.90 wide-beta eval NEW
+enhanced tagline manager for offline mail
+readers. UNLIMITED taglines, installs
+automatically into most readers, built in
+quote enhancer and signature manager, QWK,
+FIDO, Internet compliant, steals every
+tagline from QWK, Blue Wave and OPX mail
+packets, even suggests taglines based on the
+subject and message contents. Expires March
+1st 1995!</td>
+        </tr>
+        <tr data-bytes="702274" data-timestamp="779673600">
+            <td class="col-name"><a href="VIPER200.ZIP">VIPER200.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/viper200.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">702274</td>
+            <td class="col-date">1994-09-16</td>
+            <td class="col-desc">VIPER v2.0 - The most powerful and easy
+to use offline mail system available!
+Includes complete internal communications
+with X/Y/Zmodem, internal ZIP and LHarc
+de/compression.  Full protected mode
+program loads even the biggest packets,
+and quickly, too! Much too much to list
+in this little space! Runs under DOS,
+Windows, OS/2 and DESQview. $19.95.
+Shareware by Chris Lautenbach. &lt;ASAD&gt;</td>
+        </tr>
+        <tr data-bytes="71539" data-timestamp="797558400">
+            <td class="col-name"><a href="WRD86.ZIP">WRD86.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/wrd86.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">71539</td>
+            <td class="col-date">1995-04-11</td>
+            <td class="col-desc">Wread 0.86 Suomalainen Offlineri, sopivan
+helppo käyttää ja tarpeeksi monipuolinen
+vaativimmillekkin [11.04.95]</td>
+        </tr>
+        <tr data-bytes="221626" data-timestamp="795225600">
+            <td class="col-name"><a href="WSOMR100.ZIP">WSOMR100.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/wsomr100.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">221626</td>
+            <td class="col-date">1995-03-15</td>
+            <td class="col-desc">Wang&#x27;s Offline Mail Reader v1.00 an OMR for
+INTERNET,USENET and FIDONET, reads RFC,
+SOUP,BLUEWAVE and QWK mails. With wsomr you
+can read and reply to your
+BBS/Internet/USENET mail at your own leisure
+and manage larger volumes of mail with
+relative ease, send/receive files over the
+Internet. It saves you from the pressures of
+online-time charge, long distance calls,
+etc.</td>
+        </tr>
+        <tr data-bytes="444851" data-timestamp="789091200">
+            <td class="col-name"><a href="YARN_076.ZIP">YARN_076.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/yarn_076.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">444851</td>
+            <td class="col-date">1995-01-03</td>
+            <td class="col-desc">PC Yarn v0.76 beta release.  Suite of
+programs used to store and read USENET news
+and mail offline.  Imports articles from SOUP
+files into a news database.</td>
+        </tr>
+        <tr data-bytes="417110" data-timestamp="796348800">
+            <td class="col-name"><a href="YRN2_083.ZIP">YRN2_083.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/yrn2_083.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">417110</td>
+            <td class="col-date">1995-03-28</td>
+            <td class="col-desc">PC Yarn v0.83 beta release.  Suite of
+programs used to store and read USENET news
+and mail offline.  Imports articles from SOUP
+files into a news database.</td>
+        </tr>
+        <tr data-bytes="191500" data-timestamp="828306000">
+            <td class="col-name"><a href="%21NFX280.ZIP">!NFX280.ZIP</a></td>
+            <td class="col-action"><a href="/unpacked/software/dos/offline/%21nfx280.zip/" class="unpack-btn">[ PKUNZIP ]</a></td>
+            <td class="col-size">191500</td>
+            <td class="col-date">1996-03-31</td>
+            <td class="col-desc">NFX v2.8: Easy to use offline mail reader
+for QWK &amp; SOUP packets. Handles HUGE
+packets, thousands of messages per
+conf/Area. Messages can be upto 10,000
+lines long. NOW includes FOLDERS!!!
+SYSOPS can also receive a version
+that can be customized and distributed.
+From the makers of JDRAW/JMEDIA
+RipScrip development tools.
+http://www.westonia.com/blueview/
+&lt;&lt; BLUEVIEW SOFTWARE &gt;&gt;</td>
+        </tr>        </tbody>
+    </table>
+    <pre style="margin-top: 15px; border-top: 1px solid #444; padding-top: 10px; color: #777;"> TOTAL: 55</pre>
+</div>
+
+<script>
+var sortOrder = { 0: "asc", 2: "asc", 3: "asc" };
+
+function sortTable(n, type) {
+  var table = document.getElementById("fileTable");
+  var tbody = document.getElementById("fileTableBody");
+  var rows = Array.from(tbody.rows);
+  
+  var dir = sortOrder[n] === "asc" ? "desc" : "asc";
+  sortOrder[n] = dir;
+
+  var headers = table.getElementsByTagName("th");
+  for (var i = 0; i < headers.length; i++) {
+    headers[i].className = headers[i].className.replace(" sort-asc", "").replace(" sort-desc", "");
+  }
+  headers[n].className += (dir === "asc" ? " sort-asc" : " sort-desc");
+
+  rows.sort(function(a, b) {
+    var xContent, yContent;
+    
+    if (type === 'size') {
+      xContent = parseInt(a.getAttribute('data-bytes')) || 0;
+      yContent = parseInt(b.getAttribute('data-bytes')) || 0;
+    } else if (type === 'date') {
+      xContent = parseInt(a.getAttribute('data-timestamp')) || 0;
+      yContent = parseInt(b.getAttribute('data-timestamp')) || 0;
+    } else {
+      xContent = a.getElementsByTagName("TD")[n].innerText.trim().toLowerCase();
+      yContent = b.getElementsByTagName("TD")[n].innerText.trim().toLowerCase();
+    }
+
+    if (xContent > yContent) return dir === "asc" ? 1 : -1;
+    if (xContent < yContent) return dir === "asc" ? -1 : 1;
+    return 0;
+  });
+
+  var fragment = document.createDocumentFragment();
+  rows.forEach(function(row) {
+    fragment.appendChild(row);
+  });
+  tbody.appendChild(fragment);
+}
+</script>
+</body>
+</html>

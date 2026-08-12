@@ -3,14 +3,17 @@
 | |_) | |  |  _ \| '__/ _ \ \/ / \ \ / / _` | |
 |  __/| |__| |_) | | |  __/>  <| |\ V / (_| | |
 |_|    \____|____/|_|  \___/_/\_\_| \_/ \__,_|_|
-PCBoard 15.4 BBS Source Recovery
+PCBoard 15.4 BBS Revival
 ----------------------------------------------
-532/557 Watcom port (95.5%)
-BinkleyTerm XE mailer (100%)
-2,757 PPE collection w/ index
-pcbtic TIC processor / pcbis TUI
-nlcomp nodelist compiler
+33 binaries (28 Clark + 5 new tools)
+Phase 0: 12/12 Clark utilities linked
+pcbis 5,710-line internet services daemon
+pcbbinkp BinkP/1.1 FidoNet mailer
+pcbdraw ANSI art viewer/editor
+5,703 PPE collection (incl. Roy/SAC)
+SIO driver (31 bugs fixed)
+VMAVL + CodeBase shim libraries
 ----------------------------------------------
 pcbirc crew 2026 - hexadecimal
-verta1878/wrench/sysop0/evga
-github.com/pcbirc/pcbrevival
+verta1878/wrench/sysop0/kiddo/evga
+github.com/verta1878/pcbrevival
