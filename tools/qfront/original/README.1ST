@@ -1,0 +1,14 @@
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³                         Version 1.20a release notes                         ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+  Welcome to QFront v1.20a!  This version contains many additions and fixes.
+If you are already running QFront 1.15b, you can download the patch upgrade,
+QFx-116P (where 'x' is P for PCBoard or W for Wildcat), instead of using this
+full release package (you CAN use this full release package to upgrade 1.15b
+to 1.20a, however).  If you are running anything but QFront 1.15b, you MUST
+use this full release package and run the INSTALL program so that the new
+version will be installed properly.
+  Also be sure to read the HISTORY.DOC file for descriptions of bug fixes and
+new features in this release.
+

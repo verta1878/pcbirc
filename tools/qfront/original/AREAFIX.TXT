@@ -1,0 +1,25 @@
+Help for QScan's Areafix processor
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+Address all Areafix requests to "QSCAN", "AREAMGR" or "AREAFIX" (without
+quotes).  Your Areafix password (if any) should be on subject line.
+
+In the body of the message to Areafix:
+
+[+]<areaname>         Select an area.
+-<areaname>           De-select an area.
+%HELP                 Request this message.
+%LIST                 Request a list of areas available to you.
+%QUERY                Request a list of areas to which you have selected.
+%UNLINKED             Request a list of areas to which you don't have selected.
+%PWD <password>       Change your Areafix password.
+%PKTPWD <password>    Change your packet-level password.
+%COMPRESS <type>      Change the compression type (ARC,ZIP,LZH, etc.).
+%ACTIVE               Re-select all temporarily de-selected areas.
+%PASSIVE              Temporarily de-select all selected areas.
+%+ALL                 Select all available areas.
+%-ALL                 De-select all areas.
+[---]                 Everything below the tear line is ignored.
+
+You can also use the -H (same as %HELP), -L (same as %LIST),
+-Q (same as %QUERY), and -U (same as %UNLINKED) switches on the subject line.
+
