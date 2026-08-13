@@ -63,7 +63,7 @@ begin
     '<tr><td>HTTP</td><td>Online</td><td>8080</td></tr>' +
     '<tr><td>SMTP</td><td>Queue Active</td><td>outbound</td></tr>' +
     '</table>' +
-    '<p>Uptime: ' + FormatDateTime('hh:nn:ss', Now) + '</p>' +
+    '<p>Uptime: ' + FormatDateTime('hh:nn:ss', Now - ServerStartTime) + '</p>' +
     '<hr><em>' + SERVER_NAME + '</em></body></html>';
 end;
 

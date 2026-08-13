@@ -169,6 +169,7 @@ begin
     BlockWrite(F, Rec, PCBSYS_SIZE);
     CloseFile(F);
   except
+    try CloseFile(F); except end; { BUG-5 fix }
   end;
 end;
 
@@ -190,6 +191,7 @@ begin
     BlockWrite(F, Rec, PCBSYS_SIZE);
     CloseFile(F);
   except
+    try CloseFile(F); except end; { BUG-5 fix }
   end;
 end;
 
@@ -234,6 +236,7 @@ begin
     BlockWrite(F, Rec, CALLER_RECSIZE);
     CloseFile(F);
   except
+    try CloseFile(F); except end; { BUG-5 fix }
   end;
 end;
 
@@ -265,6 +268,7 @@ begin
       end;
       CloseFile(F);
     except
+      try CloseFile(F); except end; { BUG-5 fix }
     end;
   end;
 
@@ -302,6 +306,7 @@ begin
 
     CloseFile(F);
   except
+    try CloseFile(F); except end; { BUG-5 fix }
   end;
 end;
 

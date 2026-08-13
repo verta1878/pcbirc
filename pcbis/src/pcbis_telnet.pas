@@ -22,6 +22,21 @@ function  GetNodeFossil(NodeNum : integer) : TPcbFossil;
 
 implementation
 
+{ BUG-6 fix: escape IAC ($FF) bytes in outgoing telnet data }
+function EscapeIAC(const Data: string): string;
+var
+  I: integer;
+begin
+  Result := '';
+  for I := 1 to Length(Data) do
+  begin
+    Result := Result + Data[I];
+    if Ord(Data[I]) = $FF then
+      Result := Result + Chr($FF);  { double the IAC byte }
+  end;
+end;
+
+
 uses
   SysUtils, pcbis_log, pcbis_nodedata;
 
@@ -175,6 +190,7 @@ var
   Foss : TPcbFossil;
   Buf  : array[0..4095] of byte;
   N    : Word;
+  EscData : string;
 begin
   { Drain FOSSIL TX ring → send to telnet client }
   Foss := GetNodeFossil(Conn.NodeNumber);
@@ -183,8 +199,9 @@ begin
   N := Foss.SocketRead(Buf, SizeOf(Buf));
   if N > 0 then
   begin
-    SetLength(Conn.OutBuf, Length(Conn.OutBuf) + N);
-    Move(Buf, Conn.OutBuf[Length(Conn.OutBuf) - N + 1], N);
+    { BUG-6 fix: escape IAC ($FF) bytes before sending to telnet client }
+    EscData := EscapeIAC(Copy(PChar(@Buf), 1, N));
+    Conn.OutBuf := Conn.OutBuf + EscData;
   end;
 
   { Check if FOSSIL dropped DTR (PCBoard hung up) }

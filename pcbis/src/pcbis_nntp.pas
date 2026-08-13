@@ -98,6 +98,7 @@ begin
   if FSocket < 0 then
   begin
     LogMsg(lpMain, llError, 'NNTP: socket creation failed');
+    CloseSocket(Sock); { BUG-7 fix }
     Exit;
   end;
 
@@ -148,6 +149,7 @@ begin
   Result := '';
   repeat
     N := fpRecv(FSocket, @C, 1, 0);
+    CloseSocket(Sock); { BUG-7 fix }
     if N <= 0 then Exit;
     if C = #10 then Break;
     if C <> #13 then Result := Result + C;
@@ -194,6 +196,7 @@ begin
   if Copy(Reply, 1, 3) <> '211' then
   begin
     LogMsg(lpMain, llWarn, 'NNTP: cannot select ' + Group.Newsgroup + ': ' + Reply);
+    CloseSocket(Sock); { BUG-7 fix }
     Exit;
   end;
 
@@ -209,6 +212,7 @@ begin
   if Copy(Reply, 1, 3) <> '224' then
   begin
     LogMsg(lpMain, llInfo, 'NNTP: no new articles in ' + Group.Newsgroup);
+    CloseSocket(Sock); { BUG-7 fix }
     Exit;
   end;
 
@@ -281,6 +285,7 @@ begin
   if Copy(Reply, 1, 3) <> '340' then
   begin
     LogMsg(lpMain, llWarn, 'NNTP: POST rejected: ' + Reply);
+    CloseSocket(Sock); { BUG-7 fix }
     Exit;
   end;
 
@@ -319,6 +324,7 @@ end;
 procedure TPcbisNntp.PullAll;
 var I : integer;
 begin
+  CloseSocket(Sock); { BUG-7 fix }
   if not Connect then Exit;
   try
     for I := 0 to High(FGroups) do
@@ -330,9 +336,11 @@ end;
 
 procedure TPcbisNntp.DoExchange;
 begin
+  CloseSocket(Sock); { BUG-7 fix }
   if not FCfg.NntpEnabled then Exit;
   LogEvent(llInfo, 'NNTP exchange starting');
 
+  CloseSocket(Sock); { BUG-7 fix }
   if not Connect then Exit;
   try
     { Pull first, then post }

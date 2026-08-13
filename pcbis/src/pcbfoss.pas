@@ -199,10 +199,13 @@ begin
 
     FN_RX_WAIT: { $02 — receive char into AL, wait until available }
       begin
+        { BUG-1 fix: block until data available per FOSSIL spec }
+        while (FRings.RXAvail = 0) and FConnected do
+          Sleep(1);
         if FRings.RXAvail > 0 then
           Regs.AL := FRings.RXGet
         else
-          Regs.AL := 0; { caller should check status first }
+          Regs.AL := 0;
         Regs.AH := FSTAT_TX_ROOM;
       end;
 
@@ -210,6 +213,7 @@ begin
       begin
         Regs.AH := 0;
         if FRings.RXAvail > 0 then Regs.AH := Regs.AH or FSTAT_RX_READY;
+        if FRings.RXOverflow then Regs.AH := Regs.AH or FSTAT_OVERRUN; { IMP-1 }
         if FRings.TXFree > 0 then Regs.AH := Regs.AH or FSTAT_TX_ROOM;
         if FRings.TXAvail = 0 then Regs.AH := Regs.AH or FSTAT_TX_EMPTY;
         Regs.AL := MSTAT_DSR or MSTAT_CTS;
@@ -217,13 +221,14 @@ begin
           Regs.AL := Regs.AL or MSTAT_DCD;
       end;
 
-    FN_INIT: { $04 — initialize FOSSIL. Return signature. }
+    FN_INIT:
       begin
+        { BUG-3 fix: only clear rings on first init }
+        if not FActive then FRings.Clear;
         FActive := True;
         FDTRState := True;
-        FRings.Clear;
-        Regs.AX := FOSSIL_SIGNATURE;  { $1954 — "I am a FOSSIL" }
-        Regs.BX := FOSSIL_INFO_BX;    { $0521 — rev 5, max fn $21 }
+        Regs.AX := FOSSIL_SIGNATURE;
+        Regs.BX := FOSSIL_INFO_BX;
       end;
 
     FN_DEINIT: { $05 — deinitialize }
@@ -297,8 +302,11 @@ begin
 
     FN_ANSI_WRITE: { $13 — write string with ANSI processing }
       begin
-        { For pcbis: just put the char in TX ring, let telnet client handle ANSI }
-        FRings.TXPut(Regs.AL);
+        { BUG-2 fix: write string at BlockPtr/CX, not single char }
+        if (Regs.BlockPtr <> nil) and (Regs.CX > 0) then
+          FRings.TXBlockWrite(Regs.BlockPtr^, Regs.CX)
+        else
+          FRings.TXPut(Regs.AL);
       end;
 
     FN_WATCHDOG: { $14 — no-op }
@@ -340,7 +348,7 @@ begin
           Info.TXBufFree := FRings.TXFree;
           Info.ScreenW := 80;
           Info.ScreenH := 25;
-          Info.BaudRate := 115; { 115200 / 100 — FOSSIL convention }
+          Info.BaudRate := 1152; { IMP-2 fix: 115200/100 per FSC-0015 } { 115200 / 100 — FOSSIL convention }
           Move(Info, Regs.BlockPtr^, SizeOf(Info));
           Regs.AX := SizeOf(Info);
         end;

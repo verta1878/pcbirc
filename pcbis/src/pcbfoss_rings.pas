@@ -128,18 +128,24 @@ begin
 end;
 
 function TFossilRings.TXBlockRead(var Buf; Count : Word) : Word;
-var
-  P : PByte;
-  I : Word;
+var Chunk, Avail : Word;
 begin
-  P := @Buf;
-  Result := 0;
-  for I := 1 to Count do
-  begin
-    if FTXCount = 0 then Break;
-    P^ := TXGet;
-    Inc(P);
-    Inc(Result);
+  { BUG-4 fix: two-phase memcpy instead of per-byte loop }
+  Avail := FTXCount;
+  if Count > Avail then Count := Avail;
+  Result := Count;
+  { Phase 1: tail to end of buffer }
+  Chunk := FTXCap - FTXTail;
+  if Chunk > Count then Chunk := Count;
+  Move(FTXBuf[FTXTail], Buf, Chunk);
+  FTXTail := (FTXTail + Chunk) mod FTXCap;
+  Dec(FTXCount, Chunk);
+  Dec(Count, Chunk);
+  { Phase 2: wraparound }
+  if Count > 0 then begin
+    Move(FTXBuf[0], PByte(@Buf)[Chunk], Count);
+    FTXTail := Count;
+    Dec(FTXCount, Count);
   end;
 end;
 
@@ -162,8 +168,9 @@ end;
 { === RX Ring === }
 
 procedure TFossilRings.RXPut(B : Byte);
+
 begin
-  if FRXCount >= FRXCap then Exit;
+  if FRXCount >= FRXCap then begin FRXOverflow := True; Exit; end;
   FRXBuf[FRXHead] := B;
   FRXHead := (FRXHead + 1) mod FRXCap;
   Inc(FRXCount);
@@ -203,21 +210,26 @@ begin
   FRXHead := 0;
   FRXTail := 0;
   FRXCount := 0;
+  FRXOverflow := False;
 end;
 
 function TFossilRings.RXBlockRead(var Buf; Count : Word) : Word;
-var
-  P : PByte;
-  I : Word;
+var Chunk, Avail : Word;
 begin
-  P := @Buf;
-  Result := 0;
-  for I := 1 to Count do
-  begin
-    if FRXCount = 0 then Break;
-    P^ := RXGet;
-    Inc(P);
-    Inc(Result);
+  { BUG-4 fix: two-phase memcpy instead of per-byte loop }
+  Avail := FRXCount;
+  if Count > Avail then Count := Avail;
+  Result := Count;
+  Chunk := FRXCap - FRXTail;
+  if Chunk > Count then Chunk := Count;
+  Move(FRXBuf[FRXTail], Buf, Chunk);
+  FRXTail := (FRXTail + Chunk) mod FRXCap;
+  Dec(FRXCount, Chunk);
+  Dec(Count, Chunk);
+  if Count > 0 then begin
+    Move(FRXBuf[0], PByte(@Buf)[Chunk], Count);
+    FRXTail := Count;
+    Dec(FRXCount, Count);
   end;
 end;
 

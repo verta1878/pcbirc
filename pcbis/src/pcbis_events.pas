@@ -230,7 +230,10 @@ begin
   {$IFDEF UNIX}
   ExitCode := fpSystem(PChar(FSlots[SlotNum].BatchFile));
   {$ELSE}
-  ExitCode := -1; { TODO: DOS Exec() }
+  { BUG-8 fix: execute event batch file via shell }
+    ExitCode := fpSystem(PChar(Cmd));
+    if ExitCode <> 0 then
+      LogError('Event exec failed (' + IntToStr(ExitCode) + '): ' + Cmd)
   {$ENDIF}
 
   LogEvent(llInfo, 'Event ' + IntToStr(SlotNum) + ': ' +

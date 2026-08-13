@@ -221,6 +221,12 @@ begin
     FrameLen := (ord(Conn.InBuf[1]) shl 8) or ord(Conn.InBuf[2]);
     IsCmd := (FrameLen and BINKP_CMD_FRAME) <> 0;
     FrameLen := FrameLen and $7FFF;
+    { BUG-3 fix: enforce max frame size (8KB) }
+    if FrameLen > 8192 then begin
+      LogError('BinkP: frame too large: ' + IntToStr(FrameLen));
+      DisconnectSession(Conn);
+      Exit;
+    end;
 
     if Length(Conn.InBuf) < 2 + FrameLen then
       Break; { incomplete frame — wait for more data }

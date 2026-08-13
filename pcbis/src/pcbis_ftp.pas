@@ -25,6 +25,24 @@ procedure FtpOnData(Conn : TPcbisConnection);
 
 implementation
 
+{ BUG-1 fix: path traversal protection }
+function SafePath(const Base, UserPath: string): string;
+var
+  Full: string;
+begin
+  Full := ExpandFileName(Base + DirectorySeparator + UserPath);
+  if Pos(Base, Full) = 1 then
+    Result := Full
+  else
+    Result := '';  { path escaped the jail }
+end;
+
+function ContainsDotDot(const S: string): boolean;
+begin
+  Result := (Pos('..', S) > 0) or (Pos(#0, S) > 0);
+end;
+
+
 uses
   SysUtils, Classes, BaseUnix, Sockets,
   pcbis_log, pcbis_config, pcbis_security;
@@ -415,7 +433,10 @@ begin
     FtpSessions[Idx].Passive := True;
     FtpSessions[Idx].DataPort := FtpPassvMin + Random(FtpPassvMax - FtpPassvMin);
 
-    FtpSessions[Idx].DataSock := fpSocket(AF_INET, SOCK_STREAM, 0);
+    { BUG-2 fix: close existing DataSock before opening new one }
+      if FtpSessions[Idx].DataSock >= 0 then
+        CloseSocket(FtpSessions[Idx].DataSock);
+      FtpSessions[Idx].DataSock := fpSocket(AF_INET, SOCK_STREAM, 0);
     if FtpSessions[Idx].DataSock >= 0 then
     begin
       OptVal := 1;

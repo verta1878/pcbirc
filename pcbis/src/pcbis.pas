@@ -112,7 +112,7 @@ begin
   fpSignal(SIGINT, @SignalHandler);
   fpSignal(SIGTERM, @SignalHandler);
   fpSignal(SIGHUP, @SignalHandler);
-  fpSignal(SIGPIPE, SIG_IGN); { ignore broken pipe }
+  fpSignal(SIGPIPE, SIG_IGN); { ignore broken pipe } { ignore broken pipe }
 end;
 
 procedure WritePidFile(const Filename : string);
@@ -134,7 +134,7 @@ procedure DoDaemonize;
 var
   Pid : TPid;
 begin
-  { First fork — parent exits }
+  { First fork - parent exits }
   Pid := fpFork;
   if Pid < 0 then
   begin
@@ -147,7 +147,7 @@ begin
   { Child becomes session leader }
   fpSetSid;
 
-  { Second fork — prevent acquiring controlling terminal }
+  { Second fork - prevent acquiring controlling terminal }
   Pid := fpFork;
   if Pid < 0 then
     Halt(1);
