@@ -170,10 +170,10 @@ int ser_open(SerPort *sp, int port_num, int use_fossil)
         /* Check for FOSSIL driver via INT 14h/AH=04 (init) */
         union REGS regs;
         regs.h.ah = 0x04;        /* FOSSIL init                 */
-        regs.x.dx = port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = port_num - 1;
+        int386(0x14, &regs, &regs);
 
-        if (regs.x.ax == 0x1954) {
+        if (regs.w.ax == 0x1954) {
             sp->type = SER_FOSSIL;
             sp->fossil_active = 1;
             qf_log(LOG_INFO, "Using fossil for communications (COM%d)",
@@ -265,8 +265,8 @@ void ser_close(SerPort *sp)
     if (sp->type == SER_FOSSIL) {
         union REGS regs;
         regs.h.ah = 0x05;        /* FOSSIL deinit               */
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
     }
     if (sp->has_fifo)
         outp(sp->base_addr + UART_FCR, 0x00);
@@ -303,8 +303,8 @@ int ser_read_byte(SerPort *sp, int timeout_ms)
     if (sp->type == SER_FOSSIL) {
         union REGS regs;
         regs.h.ah = 0x02;        /* FOSSIL read with wait       */
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
         if (regs.h.ah == 0)
             return (int)regs.h.al;
         return -1;
@@ -354,8 +354,8 @@ int ser_write(SerPort *sp, const void *buf, int len)
             union REGS regs;
             regs.h.ah = 0x01;    /* FOSSIL write                */
             regs.h.al = p[i];
-            regs.x.dx = sp->port_num - 1;
-            int86(0x14, &regs, &regs);
+            regs.w.dx = sp->port_num - 1;
+            int386(0x14, &regs, &regs);
         }
         return len;
     } else {
@@ -412,8 +412,8 @@ int ser_set_baud(SerPort *sp, uint32_t baud)
         else                     code = 0xE3; /* Default 9600 */
         regs.h.ah = 0x00;
         regs.h.al = code;
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
     } else {
         /* Direct UART: set divisor latch */
         uint16_t divisor = (uint16_t)(115200UL / baud);
@@ -466,8 +466,8 @@ int ser_get_dcd(SerPort *sp)
     if (sp->type == SER_FOSSIL) {
         union REGS regs;
         regs.h.ah = 0x03;        /* FOSSIL status               */
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
         return (regs.h.al & 0x80) ? 1 : 0;
     }
     return (inp(sp->base_addr + UART_MSR) & MSR_DCD) ? 1 : 0;
@@ -492,8 +492,8 @@ void ser_set_dtr(SerPort *sp, int on)
         union REGS regs;
         regs.h.ah = 0x06;        /* FOSSIL DTR control          */
         regs.h.al = on ? 1 : 0;
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
     } else {
         unsigned char mcr = inp(sp->base_addr + UART_MCR);
         if (on) mcr |= MCR_DTR; else mcr &= ~MCR_DTR;
@@ -521,8 +521,8 @@ void ser_flush(SerPort *sp)
     if (sp->type == SER_FOSSIL) {
         union REGS regs;
         regs.h.ah = 0x08;        /* FOSSIL flush                */
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
     }
     /* UART: drain by reading */
     if (sp->type == SER_UART) {
@@ -550,8 +550,8 @@ int ser_data_ready(SerPort *sp)
     if (sp->type == SER_FOSSIL) {
         union REGS regs;
         regs.h.ah = 0x03;
-        regs.x.dx = sp->port_num - 1;
-        int86(0x14, &regs, &regs);
+        regs.w.dx = sp->port_num - 1;
+        int386(0x14, &regs, &regs);
         return (regs.h.ah & 0x01) ? 1 : 0;
     }
     return (inp(sp->base_addr + UART_LSR) & LSR_DR) ? 1 : 0;

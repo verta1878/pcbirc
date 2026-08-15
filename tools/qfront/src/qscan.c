@@ -83,8 +83,10 @@ static uint32_t dupe_crc32(const char *from, const char *to,
                             const char *msgid)
 {
     uint32_t crc = 0xFFFFFFFF;
-    const char *strings[] = { from, to, subj, area, msgid };
+    const char *strings[5];
     int s, i;
+
+    strings[0]=from; strings[1]=to; strings[2]=subj; strings[3]=area; strings[4]=msgid;
 
     for (s = 0; s < 5; s++) {
         if (!strings[s]) continue;
@@ -691,9 +693,11 @@ static int archive_bundles(const QfConfig *cfg)
                         snprintf(bnd_path, sizeof(bnd_path),
                                  "%s%c%s.%s%d",
                                  cfg->outbound, PATH_SEP, base, day, seq);
-                        FILE *test = fopen(bnd_path, "rb");
-                        if (!test) break;  /* This seq is free */
-                        fclose(test);
+                        {
+                            FILE *test = fopen(bnd_path, "rb");
+                            if (!test) break;  /* This seq is free */
+                            fclose(test);
+                        }
                     }
                     if (seq > 9) continue;  /* All slots full */
 

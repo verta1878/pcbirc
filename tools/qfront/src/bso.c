@@ -135,7 +135,11 @@ int bso_lock(const QfConfig *cfg, const FTN_ADDR *addr)
         if (fd < 0) return -1;
 
         /* Write PID for diagnostics (FTS-5005 recommends this) */
-        dprintf(fd, "qfront %d\n", (int)getpid());
+        {
+            char _dbuf[32];
+            int _dlen = snprintf(_dbuf, sizeof(_dbuf), "qfront %d\n", (int)getpid());
+            write(fd, _dbuf, _dlen);
+        }
         close(fd);
         return 0;
     }
