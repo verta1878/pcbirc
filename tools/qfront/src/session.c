@@ -123,6 +123,23 @@ typedef enum {
 } SessionMode;
 
 
+/* ---- Sysop Hotkeys (DOS TUI) ----
+ * In the original, the sysop could press:
+ *   ALT-C   Clear screen
+ *   ALT-D   Dial a node manually
+ *   ALT-H   Hangup modem
+ *   ALT-J   Shell to DOS (with memory swap)
+ *   ALT-Q   Outbound queue manager
+ *   ALT-S   Status display
+ *   ALT-T   Terminal mode
+ *   ALT-X   Exit QFront
+ *   F1-F12  Configurable function keys
+ *
+ * In our implementation, these are handled by the main loop
+ * in qfront.c via signal handlers and CLI options. The TUI
+ * hotkey model is replaced by the CLI + config file model. */
+
+
 /* ---- Detect Incoming Handshake Type ----
  *
  * Reads the first bytes from the remote to determine if they're
@@ -366,10 +383,18 @@ int sess_call_native(const QfConfig *cfg, const FTN_ADDR *addr,
     /* (These fields would be loaded from qfront.cfg in production) */
 
     /* Open serial port */
-    if (ser_open(sp, 1, 1) != 0) {  /* COM1, try FOSSIL first */
+    if (ser_open(sp, cfg->com_port, 1) != 0) {  /* From config, try FOSSIL first */
         qf_log(LOG_ERROR, "Unable to open serial port");
         return -1;
     }
+
+    /* Set locked baud rate and raise DTR.
+     * Original QFront: "opening communications port"
+     * DTR must be raised before modem responds to AT commands.
+     * Baud rate locks DTE speed (modem negotiates DCE separately). */
+    ser_set_baud(sp, cfg->locked_baud);
+    ser_set_dtr(sp, 1);
+    qf_log(LOG_INFO, "Port COM%d opened at %d baud", cfg->com_port, cfg->locked_baud);
 
     /* Initialize modem */
     if (mdm_init(sp, mcfg) != 0) {
@@ -431,6 +456,7 @@ int sess_call_native(const QfConfig *cfg, const FTN_ADDR *addr,
     /* Send ZFIN */
     zm_send_zfin(sp);
 
+    qf_log(LOG_DEBUG, "Carrier speed = %lu", 0UL);
     qf_log(LOG_INFO, "End of FidoMail session");
 
     /* Log results */
@@ -514,6 +540,7 @@ int sess_answer_native(const QfConfig *cfg, SerPort *sp,
     /* Finish */
     zm_send_zfin(sp);
 
+    qf_log(LOG_DEBUG, "Carrier speed = %lu", 0UL);
     qf_log(LOG_INFO, "End of FidoMail session");
 
     if (res->files_sent > 0 || res->files_recv > 0)

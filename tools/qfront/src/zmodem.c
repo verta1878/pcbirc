@@ -663,6 +663,13 @@ int zm_recv_file(SerPort *sp, const char *inbound_dir)
         }
     }
 
+    if (file_size <= 0) {
+        qf_log(LOG_WARN, "Zmodem: rejecting %s (invalid size %ld)", filename, file_size);
+        hdr.type = ZSKIP;
+        zm_send_hex_header(sp, &hdr);
+        return -1;
+    }
+
     qf_log(LOG_INFO, "Receiving %s (%ld bytes)", filename, file_size);
 
     /* Build output path */

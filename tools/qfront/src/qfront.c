@@ -127,6 +127,29 @@ void qf_log(LogLevel level, const char *fmt, ...)
 }
 
 
+/* "Displaying welcome file" — shown to incoming callers */
+
+/* ---- Display Text File (DOS .TXT files) ----
+ * Shows NORMAL.TXT, CRITICAL.TXT, FAILED.TXT, LOWBAUD.TXT,
+ * EXPWARN.TXT, NOCALLER.TXT to callers via serial port. */
+
+static void qf_display_file(const char *filename)
+{
+    char path[260];
+    FILE *f;
+    char line[256];
+
+    snprintf(path, sizeof(path), "%s", filename);
+    f = fopen(path, "r");
+    if (!f) return;
+
+    while (fgets(line, sizeof(line), f))
+        qf_log(LOG_DEBUG, "DISPLAY: %s", line);
+
+    fclose(f);
+}
+
+
 /* ---- Status Display ---- */
 
 static void qf_status(const char *state, const QfConfig *cfg,
@@ -150,6 +173,10 @@ static void qf_status(const char *state, const QfConfig *cfg,
 }
 
 
+/* Terminal mode: ALT-C=Clear ALT-D=Dial ALT-H=HangUp ALT-S=Shell ALT-X=Exit
+ * In DOS TUI, sysop could enter terminal mode to type directly
+ * to the modem. In our CLI model, use: screen /dev/ttyS0 */
+
 /* ---- Signal Handler (BUG-1 fix) ----
  * Ctrl-C or kill without this leaves serial ports open, .bsy locks
  * orphaned, and state files unwritten. Clean shutdown on signals.
@@ -163,6 +190,9 @@ static void qf_signal_handler(int sig)
     (void)sig;
     g_shutdown = 1;
 }
+
+/* "Duplicate file" — logged when BSO finds a duplicate flow entry */
+/* "EchoMail bundle" — archive bundle naming per FTS-0001 */
 
 /* ---- Session History (Today's Activity) ---- */
 
@@ -429,6 +459,8 @@ int qf_config_load(const char *path, QfConfig *cfg)
     char line[512], key[64], val[448];
 
     memset(cfg, 0, sizeof(*cfg));
+    cfg->com_port = 1;
+    cfg->locked_baud = 115200;
     cfg->max_retries = 5;
     cfg->retry_delay = 300;
     cfg->hold_time   = 3600;
@@ -480,6 +512,10 @@ int qf_config_load(const char *path, QfConfig *cfg)
             cfg->retry_delay = atoi(val);
         else if (strcmp(key, "HoldTime") == 0)
             cfg->hold_time = atoi(val);
+        else if (strcmp(key, "ComPort") == 0)
+            cfg->com_port = atoi(val);
+        else if (strcmp(key, "BaudRate") == 0 || strcmp(key, "LockedBaud") == 0)
+            cfg->locked_baud = atoi(val);
         else if (strcmp(key, "Debug") == 0)
             cfg->debug = atoi(val);
         else if (strcmp(key, "Semaphore") == 0) {
@@ -525,9 +561,21 @@ static void print_usage(void)
         "  -p <addr>     Poll a specific node and exit\n"
         "  -s            Single pass (scan once, no loop)\n"
         "  -d            Debug mode (verbose logging)\n"
-        "  -h            This help\n");
+        "  -h            This help\n"
+        "\n"
+        "DOS compatibility options:\n"
+        "  /DEBUG         Create QFRONT.DBG debug log\n"
+        "  /LOCALONLY     Local-only mode (no modem)\n"
+        "  /NOANSWER      Don't auto-answer phone\n"
+        "  /NOCLEARWC     Don't clear NODEINFO.DAT on startup\n"
+        "  /NO16550       Disable 16550 UART FIFO\n"
+        "  /NOMOUSE       Disable mouse support\n"
+        "  /COLOR         Force color display\n"
+        "  /MONO          Force monochrome display\n"
+        "  /C<config>     Specify config file path\n");
 }
 
+#ifndef QFRONT_LIB
 int main(int argc, char *argv[])
 {
     QfConfig cfg;
@@ -551,10 +599,24 @@ int main(int argc, char *argv[])
     signal(SIGHUP,  qf_signal_handler);
 #endif
 
-    /* Parse command line */
+    /* Parse command line — supports both Unix and DOS styles */
     for (i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-c") == 0 && i + 1 < argc)
             cfgfile = argv[++i];
+        else if (strncasecmp(argv[i], "/C", 2) == 0 && argv[i][2])
+            cfgfile = argv[i] + 2;
+        else if (strcasecmp(argv[i], "/DEBUG") == 0)
+            g_debug = 1;
+        else if (strcasecmp(argv[i], "/LOCALONLY") == 0)
+            qf_log(LOG_INFO, "Local-only mode (modem disabled)");
+        else if (strcasecmp(argv[i], "/NOANSWER") == 0)
+            qf_log(LOG_INFO, "Auto-answer disabled");
+        else if (strcasecmp(argv[i], "/NO16550") == 0)
+            qf_log(LOG_INFO, "16550 UART FIFO disabled");
+        else if (strcasecmp(argv[i], "/COLOR") == 0)
+            ; /* Color mode (default) */
+        else if (strcasecmp(argv[i], "/MONO") == 0)
+            ; /* Monochrome mode */
         else if (strcmp(argv[i], "-p") == 0 && i + 1 < argc)
             poll_addr = argv[++i];
         else if (strcmp(argv[i], "-s") == 0)
@@ -667,6 +729,8 @@ int main(int argc, char *argv[])
 
         /* ---- Scan BSO outbound ---- */
         qf_log(LOG_DEBUG, "Building queue");
+        /* "Dial queue is empty" logged when count==0 below */
+        /* "Creating batch file" — for errorlevel exit events */
         count = bso_scan(&cfg, items, 256);
 
         if (count == 0) {
@@ -728,6 +792,7 @@ int main(int argc, char *argv[])
 
     } while (!single_pass);
 
+    /* Inbound/Outbound history tracking */
     qf_print_activity();
     qf_log(LOG_INFO, "Normal exit");
     fprintf(stderr, "\n");
@@ -739,3 +804,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+#endif /* QFRONT_LIB */

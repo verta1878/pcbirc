@@ -115,14 +115,43 @@ int ser_open(SerPort *sp, int port_num, int use_fossil)
             return -1;
         }
 
-        /* Set default 9600 8N1 */
+        /* Configure COM port — match original QFront behavior.
+         * Original raises DTR+RTS on open, disables flow control
+         * so writes don't block waiting for CTS from modem. */
+        memset(&dcb, 0, sizeof(dcb));
+        dcb.DCBlength = sizeof(dcb);
         GetCommState(sp->hCom, &dcb);
-        dcb.BaudRate = 9600;
-        dcb.ByteSize = 8;
-        dcb.Parity   = NOPARITY;
-        dcb.StopBits = ONESTOPBIT;
-        dcb.fBinary  = TRUE;
+        dcb.BaudRate     = 9600;
+        dcb.ByteSize     = 8;
+        dcb.Parity       = NOPARITY;
+        dcb.StopBits     = ONESTOPBIT;
+        dcb.fBinary      = TRUE;
+
+        /* Flow control — disabled by default (original behavior).
+         * CTS/DSR flow blocks writes if modem doesn't assert CTS.
+         * XON/XOFF can interfere with Zmodem binary transfers. */
+        dcb.fOutxCtsFlow = FALSE;
+        dcb.fOutxDsrFlow = FALSE;
+        dcb.fOutX        = FALSE;
+        dcb.fInX         = FALSE;
+
+        /* DTR+RTS control — raise both on open.
+         * DTR tells modem "DTE is ready" — modem won't respond
+         * to AT commands without DTR raised.
+         * RTS tells modem "ready to receive" — needed for hardware
+         * handshaking even when we disable CTS flow control. */
+        dcb.fDtrControl  = DTR_CONTROL_ENABLE;
+        dcb.fRtsControl  = RTS_CONTROL_ENABLE;
+
+        /* Modem signal sensitivity */
+        dcb.fDsrSensitivity = FALSE;  /* Don't ignore data if DSR off */
+        dcb.fAbortOnError   = FALSE;  /* Don't abort on parity/frame err */
+        dcb.fNull           = FALSE;  /* Don't discard null bytes */
+
         SetCommState(sp->hCom, &dcb);
+
+        /* Set buffer sizes — 4K each like original FOSSIL buffers */
+        SetupComm(sp->hCom, 4096, 4096);
 
         /* Set timeouts: 100ms read timeout */
         timeouts.ReadIntervalTimeout = 100;
@@ -364,7 +393,9 @@ int ser_set_baud(SerPort *sp, uint32_t baud)
         DCB dcb;
         GetCommState(sp->hCom, &dcb);
         dcb.BaudRate = baud;
+        /* Preserve flow control settings from ser_open */
         SetCommState(sp->hCom, &dcb);
+        qf_log(LOG_INFO, "Baud rate set to %lu", (unsigned long)baud);
     }
 #elif defined(QF_DOS)
     if (sp->type == SER_FOSSIL) {

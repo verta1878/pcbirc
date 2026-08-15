@@ -272,7 +272,7 @@ and pcbwave to use what Clark already designed.
 
 ---
 
-## Binary Count: 33 programs
+## Binary Count: 36 programs
 
 ### Clark Binaries — Main (Watcom DOS4G port, bin/watcom/)
 

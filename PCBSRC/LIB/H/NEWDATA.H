@@ -372,7 +372,7 @@ typedef struct {
 
 #define ADDCONFUNUSED      64
 #define N2_SIZE            48
-#define ADDCONFRESERVE     (ADDCONFUNUSED+N2_SIZE) /* Size of end of struct to not copy */
+#define ADDCONFRESERVE     (ADDCONFUNUSED+N2_SIZE) /* PCBSM skips FilebaseFlags+Name2   */
 #pragma pack(1)
 typedef struct {
   bool ForceEcho;          /* turn off echo question, force all msgs to echo */
@@ -399,7 +399,14 @@ typedef struct {
   float ChargeTime;
   float ChargeMsgRead;
   float ChargeMsgWrite;
-  char Reserved[ADDCONFUNUSED];  /* reserved for future growth               */
+  char FilebaseFlags[ADDCONFUNUSED]; /* Per-filebase bit flags (pcb_conf_ext)  */
+                                 /*   1 bit per filebase, 8 flags per filebase  */
+                                 /*   FilebaseFlags[N/8] bit (N%8) = filebase N */
+                                 /*   Bit 0: FBFLAG_ISO (ISO-backed filebase)   */
+                                 /*   Bits 1-7: reserved for future flags       */
+                                 /*   Supports up to 512 filebases/conference   */
+                                 /*   Zero-initialized by PCBoard. Read by PCBISO*/
+                                 /*   Works on PCBoard 15.4+                    */
   char Name2[N2_SIZE];     /* conf name (SDR : 2 of 2 : internet compat)     */
 } addconftype;
 #pragma pack()

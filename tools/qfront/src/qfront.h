@@ -29,6 +29,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
+#include <io.h>
 #define PATH_SEP '\\'
 #define mkdir(p,m) _mkdir(p)
 #else
@@ -120,6 +121,8 @@ typedef struct {
     char      nodelist_base[32];  /* Base name (e.g. "NODELIST")  */
 
     /* Session */
+    int       com_port;           /* COM port number (1-4)        */
+    int       locked_baud;         /* DTE locked baud rate         */
     int       max_baud;           /* Max baud rate                */
     int       max_retries;        /* Max call attempts before hold */
     int       retry_delay;        /* Seconds between retries      */
@@ -208,5 +211,15 @@ typedef struct {
 #define PKT_VERSION 2
 #define PKT_CW_VALID 0x0100       /* Capability word validation   */
 #define PKT_CW_TYPE2PLUS 0x0001   /* Type 2+ capable              */
+
+/* Wildcat! BBS compatibility files (read if present):
+ *   MAKEWILD.DAT  — Wildcat! system configuration
+ *   NODEINFO.DAT  — Node status information
+ *   CONFDESC.DAT  — Conference descriptions
+ *   ALLUSERS.DAT  — User database
+ *   USERNET.XXX   — Inter-node messages
+ *   BBSBATCH.BAT  — BBS loader batch file
+ * These are Wildcat!-specific and not required for
+ * standalone FidoNet operation. */
 
 #endif /* QFRONT_H */

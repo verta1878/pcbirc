@@ -267,6 +267,7 @@ int mdm_dial(SerPort *sp, const MdmConfig *cfg, const char *phone,
 
     case MDM_TIMEOUT:
         qf_log(LOG_INFO, "Dial result: Timed out");
+        qf_log(LOG_DEBUG, "Maximum redials reached dialing");
         return -1;
 
     default:

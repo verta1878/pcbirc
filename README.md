@@ -24,7 +24,7 @@ to OpenWatcom 2.0 for cross-compilation on modern Linux.
 
 | Metric | Count |
 |---|---|
-| Programs | 33 (28 Clark + 5 new tools) |
+| Programs | 36 (28 Clark + 8 new tools) |
 | Clark binaries (Watcom DOS4G) | 28 (16 main + 12 Phase 0 utilities) |
 | New tools | 5 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis) |
 | PPE collection | 5,703 archives (incl. Roy/SAC donation) |
@@ -74,6 +74,7 @@ All 12 Clark utilities that shipped with PCBoard, ported to Watcom DOS4G:
 | pcbdraw | 1,826 | ANSI art viewer/editor |
 | pcbpscan | 770 | Upload file scanner |
 | pcbfido | 778 | FidoNet console (15.41) |
+| pcbiso | 969 | ISO/CD-ROM file area indexer (15.4+) |
 | pcbis.exe | 5,710 | Internet services daemon (18 Pascal units) |
 
 ## pcbis — PCBoard Internet Services
