@@ -243,18 +243,39 @@ int ser_open(SerPort *sp, int port_num, int use_fossil)
 
         sp->type = SER_POSIX;
         qf_log(LOG_INFO, "Opening port %s", devname);
+        qf_log(LOG_DEBUG, "  fd=%d, raw mode 9600 8N1, VMIN=0 VTIME=1",
+               sp->fd);
     }
 #endif
 
+    qf_log(LOG_DEBUG, "ser_open: port_num=%d type=%d success",
+           sp->port_num, (int)sp->type);
     return 0;
 }
 
 
-/* ---- Close Port ---- */
+/*-----------------------------------------------------------------------*/
+/* ser_close() — Close the serial port and restore original settings     */
+/*                                                                         */
+/* On POSIX: restores the original termios settings saved in ser_open()  */
+/* so we don't leave the port in raw mode for other programs.            */
+/*                                                                         */
+/* On DOS FOSSIL: sends the FOSSIL deinit call (INT 14h AH=05). This    */
+/* releases the FOSSIL driver's buffers and interrupt hooks. Failing to  */
+/* call this leaks interrupt vectors and can crash the system.           */
+/*                                                                         */
+/* On DOS UART: disables the 16550 FIFO to leave the hardware clean.    */
+/*                                                                         */
+/* IMPORTANT: For inbound human callers, we close the port handle but    */
+/* do NOT drop DTR — the modem connection must stay up so PCBoard can    */
+/* take over the caller. DTR drop is handled separately by mdm_hangup(). */
+/*-----------------------------------------------------------------------*/
 
 void ser_close(SerPort *sp)
 {
     if (!sp) return;
+    qf_log(LOG_DEBUG, "ser_close: closing COM%d (type=%d)",
+           sp->port_num, (int)sp->type);
 
 #ifdef _WIN32
     if (sp->type == SER_WIN32 && sp->hCom != INVALID_HANDLE_VALUE) {
@@ -283,7 +304,25 @@ void ser_close(SerPort *sp)
 }
 
 
-/* ---- Read Byte (with timeout in ms, -1 = no data) ---- */
+/*-----------------------------------------------------------------------*/
+/* ser_read_byte() — Read a single byte with timeout                     */
+/*                                                                         */
+/* This is the fundamental receive primitive. All protocol modules       */
+/* (EMSI, YooHoo, Zmodem, Xmodem) call this to read from the port.     */
+/*                                                                         */
+/* Returns the byte value (0-255) on success, or -1 on timeout.         */
+/*                                                                         */
+/* Implementation per platform:                                           */
+/*   Win32:  ReadFile with ReadTotalTimeoutConstant                      */
+/*   FOSSIL: INT 14h AH=02 (read with wait, blocks until data)         */
+/*   UART:   Poll LSR Data Ready bit until timeout                       */
+/*   POSIX:  select() with timeout, then read()                          */
+/*                                                                         */
+/* Note: On DOS FOSSIL, the timeout is handled by the FOSSIL driver      */
+/* itself — our timeout_ms parameter is approximate. The FOSSIL read     */
+/* function blocks until a byte is available. For timeout behavior,     */
+/* use ser_data_ready() to poll first, or use the UART path.            */
+/*-----------------------------------------------------------------------*/
 
 int ser_read_byte(SerPort *sp, int timeout_ms)
 {
@@ -452,7 +491,23 @@ int ser_set_baud(SerPort *sp, uint32_t baud)
 }
 
 
-/* ---- Get DCD (Carrier Detect) ---- */
+/*-----------------------------------------------------------------------*/
+/* ser_get_dcd() — Read Data Carrier Detect signal from modem            */
+/*                                                                         */
+/* DCD (pin 8 on DB-25, pin 1 on DB-9) tells us whether the modem       */
+/* has an active carrier — i.e., whether someone is on the line.         */
+/*                                                                         */
+/* This is checked frequently during file transfers (Zmodem, etc.)      */
+/* to detect if the caller hung up. Without this check, the mailer      */
+/* would sit in a transfer loop waiting for bytes that never come.       */
+/*                                                                         */
+/* Returns: 1 = carrier present (connected), 0 = no carrier.            */
+/*                                                                         */
+/* On Win32: MS_RLSD_ON flag from GetCommModemStatus.                    */
+/* On DOS FOSSIL: INT 14h AH=03 status, bit 7 of AL.                   */
+/* On DOS UART: MSR register bit 7 (DCD).                               */
+/* On POSIX: TIOCM_CD flag from ioctl(TIOCMGET).                        */
+/*-----------------------------------------------------------------------*/
 
 int ser_get_dcd(SerPort *sp)
 {
@@ -481,10 +536,28 @@ int ser_get_dcd(SerPort *sp)
 }
 
 
-/* ---- Set DTR ---- */
+/*-----------------------------------------------------------------------*/
+/* ser_set_dtr() — Control the Data Terminal Ready signal                 */
+/*                                                                         */
+/* DTR (pin 20 on DB-25, pin 4 on DB-9) tells the modem that the DTE    */
+/* (our computer) is ready. Most modems are configured (AT&D2) to:       */
+/*   - Hang up the call when DTR drops                                   */
+/*   - Ignore AT commands when DTR is low                                */
+/*   - Start auto-answer when DTR is raised (if S0>0)                    */
+/*                                                                         */
+/* Usage in QFront:                                                       */
+/*   ser_set_dtr(sp, 1)  — Raise DTR after opening port (ready)         */
+/*   ser_set_dtr(sp, 0)  — Drop DTR to hang up the call                 */
+/*                                                                         */
+/* CRITICAL: For human callers (errorlevel 1 path), we must NOT drop    */
+/* DTR before closing the port, or the caller gets disconnected before  */
+/* PCBoard can take over.                                                */
+/*-----------------------------------------------------------------------*/
 
 void ser_set_dtr(SerPort *sp, int on)
 {
+    qf_log(LOG_DEBUG, "ser_set_dtr: COM%d DTR=%s",
+           sp->port_num, on ? "ON" : "OFF");
 #ifdef _WIN32
     EscapeCommFunction(sp->hCom, on ? SETDTR : CLRDTR);
 #elif defined(QF_DOS)
@@ -510,10 +583,22 @@ void ser_set_dtr(SerPort *sp, int on)
 }
 
 
-/* ---- Flush Buffers ---- */
+/*-----------------------------------------------------------------------*/
+/* ser_flush() — Discard all data in serial port buffers                  */
+/*                                                                         */
+/* Clears both the receive and transmit buffers. Called before sending    */
+/* AT commands to ensure we read the response to our command, not        */
+/* stale data from a previous exchange.                                  */
+/*                                                                         */
+/* On POSIX: tcflush(TCIOFLUSH) clears both input and output queues.    */
+/* On Win32: PurgeComm with PURGE_RXCLEAR|PURGE_TXCLEAR.               */
+/* On FOSSIL: INT 14h AH=08 (flush output buffer).                     */
+/* On UART: Read and discard bytes until the RX buffer is empty.         */
+/*-----------------------------------------------------------------------*/
 
 void ser_flush(SerPort *sp)
 {
+    qf_log(LOG_DEBUG, "ser_flush: clearing buffers COM%d", sp->port_num);
 #ifdef _WIN32
     FlushFileBuffers(sp->hCom);
     PurgeComm(sp->hCom, PURGE_RXCLEAR | PURGE_TXCLEAR);

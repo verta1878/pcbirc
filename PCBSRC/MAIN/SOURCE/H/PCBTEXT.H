@@ -775,14 +775,13 @@ void LIBENTRY substpcbtext(int PcbTextNum, DISPLAYTYPE Display, char *Search, ch
 #define TXT_SHOWLONGDESC       745
 #define TXT_USESHORTDESC       746
 
-/* 15.4 additions — prompts for the Personal PSA fields.  Text values are
- * taken verbatim from the 15.4b MKPCBTXT.EXE data section (recovered in
- * v0.016; see mkpcbtxt_15_4_new_prompts.txt).  Slot numbers 747-750 are
- * the next unused after the 15.3 baseline of 746.
+/* 15.4 additions — prompts for Personal PSA fields and color selection.
+ * Values match STRS15.C (extracted from 15.4b MKPCBTXT.EXE binary).
+ * Slots 747-750 are the next unused after the 15.3 baseline of 746.
  */
 #define TXT_ENTERGENDER        747      /* "Enter your gender (M/F)" */
-#define TXT_ENTEREMAILADDR     748      /* "Enter your E-mail address" */
+#define TXT_ENTERBIRTHDATE     748      /* "Enter your birthdate" */
 #define TXT_ENTERWEBADDR       749      /* "Enter your WEB address" */
-#define TXT_ENTERBIRTHDATE     750      /* "Enter your birthday (MM/DD/YY)" */
+#define TXT_ENTERCOLOR         750      /* "Enter color (B)lue,(G)reen,(C)yan,(R)ed,(M)agenta,(Y)ellow,(W)hite,(+/-)" */
 
 #endif  /* ifndef H_PCBTEXT */

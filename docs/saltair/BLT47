@@ -1,0 +1,34 @@
+SENDING E-MAIL TO OTHER NETWORKS
+ 
+ 
+There are a number of computer networks that are not directly part of the 
+Net, but which are now connected through "gateways" that allow the 
+passing of e-mail.
+ 
+MCIMail 
+-------
+ 
+To send mail to somebody with an MCIMail account, add "@mcimail.com to 
+the end of their name or numerical address. For example: 
+       
+     555-1212@mcimail.com 
+ 
+or 
+     
+     jsmith@mcimail.com 
+ 
+Note that if there is more than one MCIMail subscriber with that name, 
+you will get a mail message back from MCI giving you their names and 
+numerical addresses. You'll then have to figure out which one you want 
+and re-send the message. 
+ 
+From MCI, a user would type 
+ 
+     Your Name (EMS) 
+ 
+at the "To:" prompt.  At the EMS prompt, he or she would type 
+ 
+    internet 
+ 
+followed by your Net address at the "Mbx:" prompt. 
+ 

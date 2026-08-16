@@ -37,12 +37,30 @@ typedef struct {
 
 /* ---- Parse a TIC File ---- */
 
+/*-----------------------------------------------------------------------*/
+/* tic_parse() — Parse a .TIC file into a TicFile struct                 */
+/*                                                                         */
+/* TIC files are text-based metadata files that accompany file area      */
+/* distributions in FidoNet. Each .TIC file describes one attached       */
+/* file: its name, the area it belongs to, where it came from, an       */
+/* optional CRC-32, and a description.                                   */
+/*                                                                         */
+/* Security: We reject filenames containing path separators (/ \ :) or  */
+/* ".." to prevent directory traversal attacks. A malicious .TIC file    */
+/* could otherwise overwrite system files by specifying paths like       */
+/* "../../etc/passwd" in the File field.                                  */
+/*                                                                         */
+/* Returns 0 on success (valid TIC with both filename and area set),     */
+/* -1 on any parse error or security violation.                          */
+/*-----------------------------------------------------------------------*/
+
 static int tic_parse(const char *path, TicFile *tic)
 {
     FILE *f;
     char line[512];
 
     memset(tic, 0, sizeof(*tic));
+    qf_log(LOG_DEBUG, "tic_parse: reading %s", path);
 
     f = fopen(path, "r");
     if (!f) return -1;

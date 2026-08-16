@@ -1,0 +1,74 @@
+@X0F           [ @X09D R O P P I N G   C A R R I E R   U N D E R   O S / 2@X0F ]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0A
+There is a common problem with dropping carrier while shelling out to dos
+programs under OS/2.  This document will explain why this happens and some
+possible solutions.
+
+
+@X0BTHE CAUSE
+---------
+@X03Carrier is dropped when your serial driver detects that carrier has dropped.
+When PCBoard shells to a dos program, it closes the comm port but DTR is not
+dropped.  This is because PCBoard holds the DTR up.  It expects the dos window
+to open the port again before DTR drops.
+
+If the software that is being shelled to does not open the port in time,
+carrier may be lost.
+
+When the dos program exits, the port closes again, and PCBoard will pick it up.
+if DTR is dropped, again, carrier loss will occur.  The problem is that most
+applications don't have a STICKY DTR feature to hold the DTR up like PCBoard
+does.
+
+
+
+@X0BUSING A FOSSIL DRIVER
+---------------------
+@X03Since your fossil driver is usually unique to your serial driver and your
+serial driver is unique to your serial ports, this may mean changing serial
+cards or serial drivers.
+
+When using the SIO driver, there is fossil support available and it will work
+with most non-intelligent UART-type serial ports, which means that you need not
+replace any serial ports.
+
+SIO.SYS was written by Ray Gwinn and replaces your default OS/2 serial drivers.
+There is a shareware version of SIO on Salt Air (@X0CSIO153.ZIP@X03) which is limited
+to 4 ports.
+
+To install SIO, run the install program and let it update your CONFIG.SYS.
+When the program asks if you are running a HAYES ESP semi-intelligent card,
+it is referring to a multi-port serial board from Hayes.  You'll know if you're
+running one.  Most users must answer no.
+
+When it is done, edit your CONFIG.SYS file.  Toward the bottom, look for:
+
+@X0FDEVICE=C:\PATH\SIO.SYS
+DEVICE=C:\PATH\VSIO.SYS
+
+@X03Now insert a line just below this which says:
+
+@X0FDEVICE=C:\PATH\VX00.SYS
+
+@X03and that will install your fossil layer.  To ensure that there are no errors,
+open a dos window on your desktop.  You should see the VX00 fossil driver
+information at the top of the screen.  If you don't, rename your AUTOEXEC.BAT,
+close the window, and try again in a new dos window.  Check for any errors on
+this screen.  When you're done, be sure to replace your autoexec.bat with your
+backup.
+
+
+@X0BSTICKY DTR
+----------
+@X03PCBoard holds the DTR up with a sticky DTR switch.  To turn this switch on, run
+@X02PCBSETUP@X03.  Select @X02MODEM INFORMATION @X03and then select @X02CONFIGURATION SWITCHES@X03.
+There you'll find a setting which says @X02LEAVE DTR UP AT DROP TO DOS:@X03 where you
+need to enter <Y>es.
+
+You may find that the carrier drop occurs when RETURNING to PCBoard from a
+shell.  This is because the software that is running in the batch file does NOT
+have a sticky DTR function.  To solve this, replace it with a program which
+DOES have sticky DTR.
+

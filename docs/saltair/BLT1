@@ -1,0 +1,172 @@
+  @X0DIntroducing MetaWorlds Internet Server Online Software that
+brings together the best that the Internet and BBSes have to offer!
+ 
+@X0F(The feature set and functionality of the software described in this
+document is subject to change without prior notice.)
+
+                          @X0B MetaWorlds
+                           ==========
+
+@X0FClark Technologies is proud to introduce MetaWorlds, a revolutionary
+new online system formerly known by the code name Project Genesis.
+MetaWorlds was developed by Clark Development Company, Inc. - the same
+company that created PCBoard BBS Software, the most popular and award
+winning BBS software in the world.
+
+MetaWorlds represents the beginning of a new and exciting era in the
+online communications industry.  MetaWorlds will allow access to
+Windows NT and Windows 95 servers from Windows 3.1, Windows 95 and
+Windows NT standard Web clients.
+
+MetaWorlds is designed for maximum connectivity, expandability and
+speed.
+
+Connectivity is more important than ever before.  MetaWorlds servers
+can be accessed with any standard World Wide Web browser (such as
+Netscape, Mosaic or Internet Explorer), standard Mail, News and
+FTP clients, and any standard ANSI terminal program.
+
+The MetaWorlds Server is built on standard TCP/IP protocols, and
+supports connections via the Internet, Intranets or Local Area
+Networks.  Dial-In (modem) connections are supported by MetaWorlds own
+PPP server, which provides a TCP/IP connection directly to the client
+machine.  ANSI terminal logons are supported via Dial-In or Telnet
+connections and are made possible by a special Virtual Terminal
+application on the MetaWorlds Server.
+
+The MetaWorlds Server is designed for maximum capacity, expandability
+and speed with support for  multiple simultaneous client connections
+per machine, multiple tasks per connection and can run on multiple
+networked PC's. Or said another way, many people can be connected to
+your MetaWorlds server at the same time, and they can all do more
+than one thing at a time (such as download files, chat with other
+users and read/compose email at the same time).
+
+MetaWorlds is based on a powerful collection of API's that make it
+possible for third parties and vertical software developers to easily
+adapt their windows programs to take advantage of the connectivity and
+security that the MetaWorlds Client & Server provide, while adding new
+functionality to the MetaWorlds system.  Component development by
+outside companies will be encouraged, and is expected to result in a
+wealth of powerful add-on products, much like we saw with the
+introduction of DOOR's and PPE's for PCBoard.
+
+
+@X0D                        Design Overview
+                        ===============
+
+@X0BStandards Based
+===============
+@X0FMetaWorlds is designed to leverage the standard protocols already in
+use on the Internet, thereby allowing MetaWorlds to interact with a
+large number of client and server programs developed by other vendors.
+Some of the standard protocols that MetaWorlds supports include HTTP,
+POP3, FTP, SMTP, NNTP and IRC.
+
+@X0BInternet Access
+===============
+@X0FMetaWorlds supports Dial-In connections with it's own PPP server,
+which delivers a controlled TCP/IP feed to the client PC.  This allows
+the Sysop to offer Internet Access through their MetaWorlds Server and
+allows end users to access the MetaWorlds Server, or any other
+Internet Server, with standard Internet applications.
+
+@X0BMultiple Client Access
+======================
+@X0FThe MetaWorlds Server allows end users to access the system with the
+standard Internet client software (Web Browsers, FTP Clients,
+Mail Clients) and ANSI terminal programs.  This ensures that all your
+end users will be able to read and write messages, transfer files, and
+otherwise use your MetaWorlds Server no matter what operating system
+they use or where they are - even if they are dialing into the server
+using a PDA over a cellular modem, or following a link to your site on
+the World Wide Web. The ability of MetaWorlds to support a text based
+connection will play a big role in allowing PCBoard BBSes to easily and
+painlessly transition from their text-based BBSes to the new, graphical
+MetaWorlds Servers.
+
+@X0BBackwards Compatibility
+=======================
+@X0FClark Development is committed to backward compatibility between
+established PCBoard BBSes and the new MetaWorlds Servers wherever
+possible.  This will allow long-time users of PCBoard to either
+quickly switch from PCBoard to MetaWorlds or slowly transition their
+existing user base from the PCBoard BBS to the MetaWorlds Server.
+Users on the MetaWorlds system will be able to access the existing
+PCBoard message bases and file areas - allowing the MetaWorlds Server
+to co-exist with an established PCBoard BBS.
+ 
+@X0BFlexible/Extendable Configuration
+=================================
+@X0FThe configuration and organization of a MetaWorlds Server is extremely
+flexible.  At the foundation of this design are the concepts of Sub-Areas
+and Sub-Systems.  Any Sub-Area can consist of any number of
+other Sub-Areas and Sub-Systems.  Common Sub-Systems include message
+bases, file areas, chat rooms and bulletins.  This is a radical
+departure from the "flat" architecture of a PCBoard BBS where all
+conferences come off the "Main" conference and each conference has
+only one message base.  In a MetaWorlds system, you can create any
+hierarchy you desire.  Sub-Systems (or Applications) developed by 3rd
+parties are treated just like the standard MetaWorlds Sub-Systems,
+making them easy to use so they look and feel just like the built-in
+subsystems.  Configuration is handled through a graphical "Explorer"
+type interface with support for drag-and-drop and virtual links
+between Sub-Areas and Sub-Systems.
+
+@X0BGroup/Family Accounts
+=====================
+@X0FOne of the really powerful new features in MetaWorlds is the way that
+user accounts are now managed.  Individual user accounts can be
+created, much like PCBoard, or user accounts can be treated as members
+of a group or family.  Each group has one or more Supervisor Users
+that are able to manage and control access to the system by the other
+members of the group, using the same configuration and maintenance
+tools that the Sysop uses.  This is a strong selling point for
+businesses and families with children.  In a business environment,
+departmental managers can restrict their employees access to sensitive
+company  information, or to games and entertainment areas of the
+system during business hours.  For families, parents can create login
+accounts for their children and have the peace of mind to know that
+they can restrict access to any area of the system that they don't
+want their children to access.
+ 
+@X0BPersonal Areas and Storage
+==========================
+@X0FThe MetaWorlds Server is capable of allowing each user to have their
+own area on the system, complete with file storage, message bases,
+etc...just like any other conference or sub-area on the system except
+that the end user performs all maintenance and controls access to
+their area.  "Personal Web Pages" have become very popular and
+MetaWorlds Personal Areas takes the concept a giant leap further by
+adding message bases,  file areas, chat and any other MetaWorlds Sub-System
+to the users personal area.
+
+@X0BPublished API's
+===============
+@X0FThe foundation of the MetaWorlds system is a collection of API's.  All
+aspects of the MetaWorlds system, including all standard modules and
+3rd party add-on modules, utilize the API's.  The two most commonly
+used API's are the SAPI, or Server Application Programming Interface,
+and the CAPI, or Client Application Programming Interface.  API's are
+also used for standard system modules such as the replaceable database
+layer, message base interface and file system interface.
+
+@X0BSub-Systems
+===========
+@X0FAll areas of the MetaWorlds Server that interact with the user and
+actually do anything are considered Sub-Systems.  Common Sub-Systems
+include: Messages, E-Mail, Internet News, Local Message Bases, File
+Systems, Chat, DOORs, Other Sysop defined subsystems
+
+@X0BBackward Compatibility with PCBoard
+===================================
+@X0FBackwards compatibility between MetaWorlds Servers and PCBoard BBSes
+is very important to Clark Development.  While many existing PCBoard
+BBSes will simply switch from their PCBoard BBS to the new MetaWorlds
+Server, many others will transition from the PCBoard BBS to the
+MetaWorlds Server over a period of time.  One of the primary goals of
+the MetaWorlds Server is to share Message Bases and File Areas with
+the PCBoard BBS so that the two systems can co-exist while end users
+transition from using the PCBoard BBS to using the MetaWorlds Client &
+Server.
+

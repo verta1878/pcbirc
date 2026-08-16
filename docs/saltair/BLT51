@@ -1,0 +1,139 @@
+What is a FidoNet Address?
+==========================
+   A FidoNet Address is a key concept: Every BBS which is a member of
+FidoNet has an address. The full address consists of the following:
+   
+Zone:          Zone 1 is North America
+Region:        Part of a Zone (NOT part of the addressing scheme)
+Network:       A group of local Nodes (unique number in a zone)
+Node:          An individual BBS (unique number in a net)
+Point:         A User who is set up like a BBS off your Node
+
+A Typical FidoNet address:    1:350/201
+
+Zone:          1
+Region:        17
+Network:       350
+Node:          201
+
+Note: There is no mention of the REGION in the Network address. The
+REGION is for administrative purposes only.
+   Your address, then, consists of your zone, your network, and your
+node numbers. In practice, you often can leave the zone number off the
+address. So when you see an address like: 350/201 you know the zone
+number is implicitly "1" unless stated otherwise. If you were located
+in Europe, you'd know the "2" was assumed because Zone 2 is Europe.
+Much of the Fido-compatible software will allow similar shorthand
+addressing.
+
+Domain Addressing
+-----------------
+   A Typical FidoNet address: 1:350/201@fidonet.org
+
+Zone:          1
+Region:        17
+Network:       350
+Node:          201
+Net:           fidonet.org
+
+   It's getting worse! This is called "domain addressing." It reflects
+the fact that FidoNet is only one of many large-scale networks in the
+world today. The "@fidonet.org" denotes that this Node is a member of
+FidoNet as opposed to TrekNet or Usenet. Domain addressing is
+currently optional, but you do see it from time to time, especially in
+messages from other boards. If you are familiar with "The Internet,"
+you may have seen domain addressing before. This makes FidoNet
+compatible with Internet addressing--sort of.
+   Your address is assigned by your NC. He chooses the address, not
+you. If you want a special number, you can ask, but it's not required
+you be given your favorite magic number. The scheme for numbering is
+up to the NC. In Net 350 Jim has a pattern of numbering that includes
+three digit numbers for Nodes that are remote from the Central Kitsap
+Area. That's why I'm "201" and Evin is "501." The "five hundreds" are
+the Gig Harbor area. The "two hundreds" are on Bainbridge. Just accept
+whatever number you're given. It doesn't matter that much. It's just
+like a phone number.
+   Once you get your address, however, you don't want to change it. If
+you do, your HUB will have to change all your echo feeds to a new
+address. Also, some of the software you may use is keyed off your
+address. You pay money, they send you a key. If you change your
+address, you pay more money, or at least hassle with getting your key
+changed. Obviously, we all want to avoid such things.
+   
+What's a Point?
+===============
+   Good point. A Point is usually a sophisticated user of a FidoNet
+BBS who does not wish to be an official FidoNet Node. Instead, he sets
+himself up with a mailer and polls his BOSSNODE for mail. The BOSSNODE
+is a legitimate FidoNet Node in the Nodelist. A Node with many Points
+is actually running a local mini-network.
+
+Advantages of being a Point
+---------------------------
+   There are several advantages of being a Point. First, you don't
+need as much disk space because all you have to have is a working
+mailer. If you use Front Door, you don't even need a BBS behind the
+mailer. You can just read messages from there.
+   Secondly, you maintain privacy. No one will be calling your number
+at all hours expecting to see a BBS. Your BOSSNODE is responsible for
+hiding your phone number and origin from the rest of the FidoNet
+world. IF YOU WANT TO BE AN UNLISTED NODE, a better way would be to
+Point off an existing Node instead. PRIVATE Nodes are discouraged in
+FidoNet. They take up space in the Nodelist, and no one can get to
+you. The purpose of FidoNet is to promote communication, so an
+unlisted Node is a contradiction.
+   Thirdly, it's a nice way to get running on FidoNet without pressure
+as you get used to the system. When you're ready and everything
+actually works, you can always apply for your own Node number. Many
+people start out in FidoNet this way just to learn the ropes. All you
+have to do is find a Node that wants to learn the ropes of running a
+Point and you're all set, to your mutual benefit.
+   Fourth, you don't need to be up 24 hours or during Zone Mail Hour.
+You can call your BOSSNODE at any time you both agree on.
+   Right now I run a Point system off my own BBS. At work I run Front
+Door without a BBS. It's address is as a Point. This means I can use
+the mailer to mail out files to local boards, but by doing so I won't
+automatically pick up mail destined for my own board. When I first
+started this I had the same address: 350/201. But after I received a
+couple of Nodediff files on hold for me at the wrong location I
+changed to a Point to prevent this from happening. I was circumventing
+my own autopilot-mode every time I had to cart a Nodediff home on a
+disk and put the thing in manually.
+   As a Point to myself, I don't run a BBS on this address--just a
+mailer. And I only run up Front Door when I have some business to
+transact. It's very convenient for me to do it this way.
+
+Disadvantages of being a Point
+------------------------------
+   As a hidden Point, you cannot really participate in FidoNet
+activities as easily or directly as a real Node. There are many
+FidoNet Nodes, for example, which refuse to accept mail or file
+requests from "unlisted" Nodes, though many do. (In fact, I'll make a
+blanket statement and say that most do.) As a Point, you are an
+"unlisted Node" because you aren't in the Nodelist. One of the
+exciting things about FidoNet is the ability to get files from any
+Node on the system. You will run into roadblocks doing this as a
+Point. Your alternative is to get your BOSSNODE to do it for you.
+   In the case of any elections in FidoNet (they do happen) you have
+no standing as a Point. You don't get a vote or a say in how the
+network is run.
+   Points are supposed to remain INVISIBLE to FidoNet. As a Point you
+may not have access to echo conferences that are for Sysops Only
+because you're not an official FidoNet Sysop if you run only a Point.
+You also are not supposed to interact with FidoNet in any other way
+EXCEPT through your Bossnode. So I guess I'm violating that provision
+myself right now by not going through my own node. But I only do so
+within the Net, and everybody knows what I'm doing and why.
+   
+Point Addressing
+----------------
+   A Point is designated as a number past the Node number in a FidoNet
+address.
+   
+A typical FidoNet Point address:   1:350/201.1
+
+   Here you see the "Point One" off the normal FidoNet Node address.
+The assignment of Point numbers is strictly under the control of the
+Node, just as Node numbers are under control of the Network
+Coordinator.
+   

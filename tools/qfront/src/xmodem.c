@@ -79,6 +79,23 @@ static unsigned char xm_checksum(const void *data, int len)
 
 /* ---- Send File via Xmodem ---- */
 
+/*-----------------------------------------------------------------------*/
+/* xm_send_file() — Send a file via Xmodem / Xmodem-1K / Xmodem-CRC    */
+/*                                                                         */
+/* Xmodem is the fallback protocol when Zmodem negotiation fails.       */
+/* It's much slower than Zmodem (half-duplex, 128 or 1024 byte blocks,  */
+/* ACK required for every block) but nearly universally supported.      */
+/*                                                                         */
+/* Parameters:                                                            */
+/*   use_1k:  1 = Xmodem-1K (1024-byte blocks), 0 = classic (128-byte) */
+/*   use_crc: 1 = CRC-16 error checking, 0 = simple checksum           */
+/*                                                                         */
+/* The receiver initiates by sending NAK (checksum mode) or 'C' (CRC    */
+/* mode). We detect which one and adapt accordingly.                     */
+/*                                                                         */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
+
 int xm_send_file(SerPort *sp, const char *filepath, int use_1k,
                   int use_crc)
 {
@@ -192,6 +209,21 @@ int xm_send_file(SerPort *sp, const char *filepath, int use_1k,
 
 
 /* ---- Receive File via Xmodem ---- */
+
+/*-----------------------------------------------------------------------*/
+/* xm_recv_file() — Receive a file via Xmodem / Xmodem-1K / Xmodem-CRC */
+/*                                                                         */
+/* We initiate by sending 'C' (CRC mode request) or NAK (checksum mode).*/
+/* The sender responds with blocks containing SOH (128-byte) or STX     */
+/* (1024-byte) headers, a block number, the data, and error check bytes.*/
+/*                                                                         */
+/* Block numbers wrap at 255 — block 256 is numbered 0 again.           */
+/* Duplicate blocks (retransmissions) are ACKed but not written to disk. */
+/*                                                                         */
+/* EOT from the sender signals end of file. We ACK the EOT and return.  */
+/*                                                                         */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
 
 int xm_recv_file(SerPort *sp, const char *filepath, int use_1k,
                   int use_crc)

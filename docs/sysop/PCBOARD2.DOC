@@ -1,0 +1,277 @@
+The following information is being provided to as a means of helping those who
+are testing the OS/2 version of PCBoard to catch up with the changes that have
+been made and to aid in setting it up.
+
+- As a standard, the naming conventions for our products, PCBoard-for-DOS and
+  PCBoard-for-OS/2, may be abbreviated as PCB-DOS and PCB-OS2.
+
+- See the NEWBOARD.DOC file for sample a sample BOARD.CMD file and a discussion
+  of why you'll want to change your BOARD.BAT file, door batch files, and
+  event batch files.
+
+- NOTE:  Most DOS-based third party programs are going to want to talk to a
+  FOSSIL driver.  So in order to use DOS-based doors, file transfer protocols,
+  etc, you'll want to load a FOSSIL driver.  If you are using the SIO comm
+  driver, this is easy.  Just add DEVICE=\SIO\VX00.SYS to your config.sys
+  file.
+
+- A new environment variable has been created called PCBOS2 which is set to Y
+  if you are shelled out from PCB-OS2.  You can test for this in a batch file
+  using a line such as the following:
+
+      if "%PCBOS2%" == "Y" ... then do whatever
+
+  The quotes are not necessary... they just avoid an error message on the
+  screen if PCBOS2 is not declared.
+
+- When PCBoard is shelling out to to either an OS/2 or DOS program, it
+  automatically inherits the "environment" that PCBoard is using, including the
+  SET PCBDRIVE=, SET PCBDIR=, and other environment variables.
+
+  The OS/2 environment automatically inherits PCBoard's environment when
+  shelling.  But PCBoard has to perform a bit of "behind the scenes magic" in
+  order to get the environment settings into the DOS environment.  You don't
+  normally see this and won't need to care about it.  However, if you have
+  PCBoard shell out to an OS/2 program, and then you want to have that OS/2
+  program shell out to a DOS program, the DOS program will NOT have the
+  environment settings.
+
+       Here is the secret:
+
+  Have the OS/2 application shell out to the DOS application via PCBDOS.BAT.
+
+  For example, if you wanted to run TESTPROG.EXE with command line parameters
+  of TESTONE and TESTTWO, you would run it like this:
+
+       PCBDOS.BAT TESTPROG.EXE TESTONE TESTTWO
+
+  The PCBDOS.BAT file will then pass the PCBoard environment settings into the
+  environment in which TESTPROG is running.
+
+- NOTE: There is a file called ENV2DOS.DOC file included in the DOCS.ZIP file
+  which answers some questions about how to pass environment variables from
+  your OS/2 session over to a DOS session.
+
+- There is a tiny .COM program called PCBTITLE.COM.  It is called by
+  PCBDOS.BAT and its sole purpose is to change the OS/2 "title bar" to
+  indicate the node number of the node that opened the window.  It is only used
+  by DOS sessions because the title bar for OS/2 command shells are
+  automatically set by PCBoard.
+
+- CMD versus BAT
+
+  In most cases, PCBoard will use either a .BAT file or a .CMD file (the
+  former are for DOS batch files, the latter are for OS/2 batch files).
+  Deciding which to use should be based on what kind of executable the batch
+  file will be running.  For instance, if you create a CMD file that calls
+  several DOS programs, you will slow down the system because it will have to
+  repeatedly open and close a DOS window to handle each of them.  In other
+  words, you can do it... it just won't be efficient.  Instead, you should use
+  a .BAT file in that scenario.
+
+  For example, to run an OS/2 door, you go into PCBSetup's DOOR.LST editor and
+  answer Y in the OS/2 column.  This will cause PCBoard to create a DOOR.CMD
+  when it runs a door.  Therefore, it won't have to create a DOS VDM to run
+  the program.  This can also be done if you were to run a DOS program from the
+  DOOR.CMD .. but it may be more efficient to leave the OS/2 setting at 'N' and
+  run a DOOR.BAT file instead.
+
+  Also, PCBoard will automatically detect and use a .BAT versus .CMD file for
+  its shells.  For example, you can continue to use the PCBSZ.BAT and PCBRZ.BAT
+  files for your Zmodem file transfers, utilizing the DOS version of Zmodem.
+  But if you happen to have an OS/2 module to implement Zmodem, you could
+  create PCBSZ.CMD and PCBRZ.CMD files instead.
+
+  PCBoard searches first for a .CMD file and then, only if a .CMD version of
+  the file is not found, it will then search for a .BAT file and run it.
+
+  Many of your existing .BAT files (such as $$LOGOFF.BAT) can be run more
+  efficiently as .CMD files (assuming they are not running DOS programs).  To
+  get PCBoard to run them as a CMD file, then, all you need to do is copy the
+  batch file to its CMD counterpart (i.e. $$LOGOFF.BAT becomes $$LOGOFF.CMD).
+
+- Running OS/2 programs with PCBoard:  As mentioned above, in cases where
+  PCBoard is shelling out, it will find the appropriate type of batch file to
+  execute.  But two more places exist where it is important to allow you to
+  decide what type of application to run, these are your doors and events.
+
+  In the DOORS.LST file there is a new OS/2 column.  If you put a Y in that
+  column then PCBoard creates a DOOR.CMD file and runs it instead of a DOOR.BAT
+  file.  Also, if you have any nodes running the DOS version of PCBoard, these
+  doors will be treated as if they were not defined.
+
+  Similarly, in the EVENT.LST file there is also a new OS/2 column.  If you put
+  a Y in that column, then only your OS/2 nodes will see the event and when
+  the event is executed it will use EVENT.CMD instead of EVENT.BAT.
+
+- There are native OS/2 versions of PCBMoni, PCBPack and USERNET (named
+  PCBMONI2.EXE, PCBPACK2.EXE and USERNET2.EXE, respectively). However, no other
+  utilities have been converted to native OS/2 versions at this time.  The main
+  reason is due to a third party library for which an OS/2 version is not
+  available.  We will probably replace this library in the future so a future
+  release may contain more native OS/2 utilities.
+
+  Performance-wise, PCBPack for OS/2 is not much different from the DOS
+  version because it is primarily spending its time waiting for the hard disk
+  and both the DOS and OS/2 versions can "wait" just as effectively. <g>  It
+  is included, however, in case it may simplify your event processing by
+  using a native OS/2 product.
+
+  Ditto for USERNET2.EXE.  It's inclusion is primarily to make handling events
+  inside of .CMD files more seamless.
+
+  PCBMoni for OS/2 is practically unnecessary, due to the existence of the
+  PCBoard Control Panel.  However, it is included for those who wish to use
+  text-mode applications in a TSHELL environment.
+
+- NOTE:  At this time, an OS/2 version of Zmodem is NOT included in the
+  package.  This probably won't change (but could) before v15.22 is released.
+  However, PCBoard-for-DOS, including the Zmodem modules, is already very well
+  behaved under OS/2 and very "cpu friendly" during file transfers.  So
+  although a native OS/2 zmodem will be missed, the existing DOS version will
+  run quite effectively with PCBoard-for-OS/2.
+
+  This points out another very important point to keep in mind.  Most of your
+  existing DOS applications (doors, utilities, etc) can continue to run,
+  unmodified, under PCBoard-for-OS/2!  Except for having to change a few
+  batch files (per instructions found in NEWBOARD.DOC), you can convert an
+  existing DOS setup over to OS/2 with very little effort.
+
+- Tuning your DOS Applications:
+
+  OS/2 provides a nice set of tuning parameters which you can set for your
+  DOS applications by right clicking on an icon and going into the Notebook
+  settings.  For instance, you can change the name of the autoexec.bat file, or
+  you can set the memory limits, or turn on options to load DOS high or set the
+  idle sensitivity, etc.
+
+  This is fine for programs which the WPS launches...  but these settings have
+  no effect on programs which PCBoard launches.  However, there is a way to
+  configure programs that PCBoard launches.  You can do this in two different
+  ways:
+
+  1) You can create a configuration which is specific to a program by creating
+     a file by the same name, but with a .OS2 extension, with the settings
+     you want specified inside the file.  For example, if PCBoard is shelling
+     out to C:\PCB\MYPROG.EXE then it will look for C:\PCB\MYPROG.OS2 to find
+     the settings that are specific to MYPROG.EXE.
+
+  2) You can create a "default" configuration file, called PCBDOS.OS2, which
+     will hold the settings for any program for which a customized .OS2 file
+     is not found.  NOTE:  These are not additive, PCBoard will use one or
+     the other but not both, searching first for the customized version then
+     for the default file if the customized version is not found.
+
+  The contents of these files look a lot like the DOS Settings page in the
+  notebook, with one setting per line.  Here are some examples:
+
+     DOS_HIGH=0
+     XMS_MEMORY_LIMIT=0
+     EMS_MEMORY_LIMIT=0
+
+  If the above were found in PCBDOS.OS2, and you had no other .OS2 files, then
+  every DOS window opened would load DOS low and completely disable any EMS
+  or XMS memory.
+
+  If you have a program which requires lots of memory, then you might want to
+  create a special .OS2 file for it and set DOS_HIGH=1 and appropriate values
+  for the EMS and XMS limits.
+
+  You also might want to include a line such as IDLE_SENSITIVITY=25 for any
+  programs which like to hog the CPU.  <g>
+
+  NOTE:  I was unable to get VIDEO_MODE_RESTRICTION=CGA to work, even though
+  everything else that I tried worked fine.
+
+  NOTE:  These settings files only pertain to programs which PCBoard shells to
+  directly.  For example, your PCBSZ.BAT file (which would be PCBSZ.OS2).
+  But it does NOT have any effect on DOS windows which are launched by CMD.EXE,
+  so any .CMD files that cause a DOS window to be opened will do so using the
+  normal OS/2 defaults for DOS windows.
+
+  NOTE:  The name and location of the settings file for a DOOR would be the
+  name of the door + .OS2 and the file would be stored in the same directory
+  as the DOOR batch file.  For example, if your DOORS.LST file looks like this:
+
+                                USER DOOR            Charges Per     Path to
+     Filename   Pwrd  Sec Login SYS  SYS  Shell Os2 Minute    Use  DOOR Files
+    ออออออออออ ออออออ อออ อออออ ออออ ออออ อออออ อออ อออออออออออออ ออออออออออออ
+      MYDOOR            0   N    Y    N     Y    N       0      0 C:\PCB\MAIN
+
+  Then PCBoard will look for a file called C:\PCB\MAIN\MYDOOR.OS2 to find the
+  settings.
+
+- There is a new OS/2 Settings screen in the configuration options menu:
+
+                                Configuration Options
+                                    OS/2 Settings
+
+      Minimize Window Settings      PCBoard   Shell
+      ออออออออออออออออออออออออ      อออออออ   อออออ
+      $$LOGON/$$LOGOFF Processing  : N      : Y
+      External Protocols           : Y      : N
+      Door Applications            : Y      : N
+      Upload Verification Process  : N      : Y
+      File Viewer                  : Y      : N
+      PCBQWK & PCBCMPRS Processing : N      : Y
+      All Other Shells             : Y      : N
+
+      Priority Settings
+      อออออออออออออออออ
+      Normal Processing            :   5
+      External Protocols           :   0
+      PCBQWK & PCBCMPRS Processing :  -2
+      Fido Import Processing       :  -5
+      Fido Export Processing       :  -5
+      All Other Shells             :  -2
+
+  For the "Minimize Window Settings" section of the screen, you can control
+  whether PCBoard should "minimize itself" when it shells out, or whether it
+  should "minimize the shelled window".  For example, you may want to see what
+  is going on while shelled out to a protocol, but you don't necessarily want
+  to watch PCBoard compress a mail packet.  So you set PCBoard to minimize the
+  shelled window for PCBQWK and PCBCMPRS processing, but on the external
+  protocols, it would be nice to remove PCBoard from the screen while the
+  protocol is running (to reduce clutter) so you have PCBoard minimize itself.
+
+  In addition, you can set the default priorities for PCBoard's normal
+  processing as well as some of the subprocesses.  A setting of 0 allows OS/2
+  to completely handle the scheduling of the applications and their threads
+  all on its own.  THIS MAY BE THE BEST SETTING OF ALL!  But if you want to
+  control the settings yourself, you can enter a value from -31 to 31 to
+  adjust the scheduling.  A value of -1 or less reduces the priority, while a
+  value of 1 or more increases the priority.
+
+  The example shown above gives PCBoard a slight priority boost while running.
+  Meanwhile, things that PCBoard shells out to have their priorities reduced
+  a bit so that they can't take time away from active PCBoard processing being
+  performed by other nodes.  Finally, the Fido importing and exporting is
+  assumed (in this example) to be less important (we don't want to impact the
+  performance that an online caller sees) so the priority is reduced even
+  further.  NOTE:  THIS IS JUST AN EXAMPLE, IT IS NOT A RECOMMENDATION!
+
+     CAUTION:  When in doubt - leave the settings at 0!
+
+  By messing with priorities, you can really screw up the scheduler.  So use
+  this power and flexibility wisely.  If you make a change, be sure to test it
+  afterwards so that you understand the implications of the change.
+
+  Further explanation on the above and how everything relates:
+
+   a) "Normal Processing" is the default "boost" in priority that you might
+      assign to PCBoard.  If you leave it set to 0, then OS/2 assigns a
+      priority of 1 to the process.  This is the normal default for all
+      applications and is probably the *best* setting to use unless you have
+      a specific reason to change it.
+
+   b) Down below that first line, everything else is "relative".  So if you set
+      "Normal Processing" to 5 and then set all of the other values to 0,
+      then the entire system will operate with a priority boost of 5.
+
+   c) Given the example up above, then, you can see that external protocols
+      would continue to run at a priority boost of 5, while the PCBQWK and
+      PCBCMPRS processing would drop down to a boost of only +3 (taking the
+      default boost of 5 and subtracting 2 from it).  And Fido's importing and
+      exporting would run back at OS/2's default priority setting.
+
+

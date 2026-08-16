@@ -1,0 +1,2207 @@
+
+
+                                PCBoard v15.2
+
+                                   Addendum
+
+
+                      New Features for v15.2 of PCBoard
+
+ ****************************************************************************
+ *                              WHAT'S NEW                                  *
+ ****************************************************************************
+
+ Welcome to version v15.21 of PCBoard!  Although the version number denotes
+ a minor upgrade, you'll find there are quite a few significant additions.
+
+ The bulk of changes can be found in the Fido technology mailer, UUCP
+ (Internet e-mail & newsgroups), and in PCBMail the PCBoard mail client for
+ Windows.  This addendum is dedicated to covering these major changes.
+
+ To start off, we thought you'd like to see the short list of what we managed
+ to sneak into this release.  For a more comprehensive description of these
+ additions and many others, refer to WHATSNEW.DOC in the \PCB directory.
+
+ PCBoard
+ ============================================================================
+       Ranging from security to flexibility, there is something new in
+       PCBoard for every application.
+
+   Security
+   ~~~~~~~~
+       As more people access more information, security becomes a greater
+       concern.  This section discusses some of the security related
+       additions in this release.
+
+     Shared Secret Logons
+     --------------------
+       One problem with the Internet is just how "open" it really is.  A
+       hacker equipped with a TCP/IP packet "sniffer" can capture logins to
+       a system looking for password information inside the packets, then
+       later use that information to log into the system.  Admittedly, it
+       would take a very serious hacker to go to that kind of effort.
+
+       To help combat the situation, and make your PCBoard logins more
+       secure, PCBoard supports the MD5 Shared Secret algorithm.  This
+       allows a caller to log into the system using a code which cannot be
+       decrypted, but can only be used to confirm a "shared secret," in
+       this case, the password.
+
+       This feature is enabled in all /M (multiport) versions of PCBoard
+       and requires no effort on your part to configure it.  A caller must
+       simply use a communications program capable of shared secret logins.
+
+     Protect Shells to DOS
+     ---------------------
+       The size of PCBoard systems around the world are growing immensely.
+       Therefore, it is common to find more than one system operator
+       responsible for a system.
+
+       With maintenance being distributed to different people, it is more
+       important to protect potential security violations like dropping to
+       DOS.  PCBFiler inherits a feature PCBEdit has had for quite some
+       time--the ability to disable a shell to DOS within the program.
+
+       PCBFiler's /NODOS command line parameter disables shells to DOS.
+       Typically this will be done in some type of door operation where a
+       redirector like DOORWAY is being used.  The following is a sample:
+
+         PCBFILER /NODOS
+
+       To test the disabling of shells to DOS, go into the directory editor
+       and attempt to press ALT-O to shell to DOS.  If nothing happens, the
+       ability to shell is disabled.
+
+   Custom Built
+   ~~~~~~~~~~~~
+       Many PCBoard SysOps have taken advantage of the power and
+       flexibility of MNU files.  Part of the learning curve in adding
+       custom menus to a system is learning how the keyboard stuffing
+       technology works.  As a result, we have added two new options to MNU
+       files.  These options give you the ability to access internal
+       PCBoard commands directly. One uses commands defined in the CMD.LST
+       files while the other executes commands directly.
+
+       Example:
+
+            Keyword    Sec   Type   Parameters
+            -------    ---   ----   ----------
+         1) E          0     CMD    E @PARAMS@
+
+       The following describes the function of the new menu types:
+
+     CLST
+     ----
+       The menu will attempt to process the specified parameters as a
+       command line to PCBoard via the CMD.LST file. If the command entered
+       in the parameters field of MKPCBMNU does not exist,
+
+       PCBoard will search to see if an internal command is defined by that
+       name.
+
+     CMD
+     ---
+       The menu will attempt to process the specified parameters as a
+       command line to PCBoard without searching the CMD.LST file.
+
+   Mass Storage
+   ------------
+       CD-ROMs provide a fast and cheap way to put a lot of information on
+       a bulletin board.  As a result, it is not uncommon to see a
+       multi-disc changer as part of a bulletin board system.
+
+       Concerned about the speed factor of multiple users accessing the
+       CD-ROM at the same time, we optimized PCBoard to prepare files for
+       download by drive letter.  The net effect is less skipping from disc
+       to disc and therefore better system performance.
+
+   Events at a Glance
+   ------------------
+       Being able to monitor how your system  is operating becomes more
+       important as the number of nodes increases. Recognizing this fact,
+       we have added a new feature to the event editor which allows you to
+       view the contents of the Last Date for each node in your system.
+       Pressing ALT-V prompts you for a node number to view.  Once you
+       input the number, press ENTER and the screen will be updated as
+       necessary.
+
+   Custom Installations
+   ~~~~~~~~~~~~~~~~~~~~
+       The PCBoard installation program allows you to choose among four
+       custom types of installation: Technical Support, Sales, Corporate,
+       Hobbyist, or the default (unconfigured) installation.  Each of
+       these configurations is installed as a 2-node configuration allowing
+       you to easily expand to more nodes based on your needs.
+
+       Choosing a custom installation makes the following changes to the
+       default:
+
+          1.  Automatic installation of a multi-node (multiple phone line)
+              configuration.
+
+          2.  Modifies the subdirectory structure as follows:
+
+                \PCBÄÂÄÄÄ\NODE1
+                     ÀÄÄÄ\NODE2
+
+              Creating the two node directories allows you to start with a
+              two line installation of PCBoard and use the existing
+              installation to create additional nodes if you wish.
+
+          3.  Automatically configures conferences, bulletins, file
+              directories, etc. to reflect each type of installation.
+
+       The file SAMPLES.DOC contains more detailed information regarding
+       each type of installation.  If you have any questions regarding any
+       of the custom installations, review that file by using any ASCII file
+       editor.  To use DOS's editor, type the command
+
+                EDIT SAMPLES.DOC
+
+       while inside the \PCB directory.
+
+ PPLC
+ ============================================================================
+
+   COMMAND ViaCmdLst, CommandLine
+   ------------------------------
+
+     ViaCmdLst
+     ~~~~~~~~~
+       This parameter is a Boolean value indicating whether or not to try
+       to find the command in CMD.LST.  A value of TRUE means search
+       CMD.LST, FALSE means do not.  If TRUE and the command is not in
+       CMD.LST, it will try the standard commands automatically.  The
+       statement will fail if the is not internal nor is there a
+       corresponding entry in CMD.LST.
+
+     CommandLine
+     ~~~~~~~~~~~
+       This parameter is a string value with the command and parameters to
+       execute (e.g.,  "R A Y O S").
+
+       What does this mean?  A good example to illustrate this is to show
+       how a PPE could be used to start entering a message
+
+         COMMAND FALSE,"E"
+
+       Then regain control at the statement after COMMAND and continue!  No
+       more keyboard stuffing is required to run other commands!
+
+   FINDFIRST & FINDNEXT
+   --------------------
+       For the power PPL programmer who can appreciate the power findfirst
+       and findnext functions offer, your day has come. New in this release
+       are two new functions:
+
+     findfirst(filespec) : STRING
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     findnext() : STRING
+     ~~~~~~~~~~~~~~~~~~~
+
+       Both functions only return the filename.  Additional file
+       information such as file size, date, and time attributes can be
+       obtained through the fileinf() function.  This way the string will
+       not need to be parsed in PPL and execution will be much faster.
+
+   SELECT CASE
+   -----------
+       The SELECT CASE statement allows you to organize multiple execution
+       paths into a clean, easy to read format. If you are unfamiliar with
+       how a BASIC SELECT CASE or C SWITCH construct works you can think of
+       it as being similar to a IF-ELSEIF-ELSE construct.  The following
+       code segment illustrates the SELECT CASE statement:
+
+         INTEGER i
+         i = 2
+
+         SELECT CASE i
+           CASE 1
+             PRINTLN "Variable = 1"
+           CASE 2
+             PRINTLN "Variable = 2"
+           CASE 3,4
+             PRINTLN "Variable is equal to 3 or 4"
+           CASE 5..10
+             PRINTLN "Variable is between 5 and 10"
+           DEFAULT
+             PRINTLN "The Variable exceeds expected range."
+             PRINTLN "Please change the variable."
+           ENDSELECT
+
+       Analyzing this code segment we can see where it reduces the amount
+       of code to do something only IF-THEN-ELSE structures could do in
+       prior versions of PPL.  There may be some aspects of this example
+       which are not clear so the rest of this section is dedicated to
+       explaining these aspects.
+
+       The SELECT CASE i  in the example simply evaluates the expression to
+       the right of the word CASE.  Since we already assigned i to equal 2,
+       that value is passed into the processing portion of the statement.
+
+       The CASE 3-10  statement will execute anytime the CASE expression
+       evaluates to a value between 3 and 10.  Because we elected to fix the
+       value of i, this statement will never execute.  Furthermore, the
+       keyword DEFAULT is a catchall in that if nothing else matches, the
+       statements listed before the DEFAULT and ENDCASE are executed.
+
+       Type this example in and compile it.  Once you get it working, try
+       changing the value of i to the following values: 1, 3, 6, and 15.
+       Did you notice how the response changes as you change the variable?
+
+
+ ****************************************************************************
+ *                               PCBFido                                    *
+ ****************************************************************************
+
+ Introduction
+ ============================================================================
+       Welcome to PCBFido!  The Fido technology gives you the ability to
+       exchange mail from all around the world or just between a few
+       systems in the same valley.
+
+       The configuration of the PCBFido part of PCBoard consists of the
+       following:
+
+         o Setting up the Fido portion of the PCBSetup screens
+         o Creating user accounts for the systems you will transfer messages
+           with
+         o Getting a node list
+         o Obtaining a node number by sending netmail to the net coordinator
+           for your area
+         o Creating and configuring the conferences which will exchange
+           messages and netmail
+         o Configuring one or more events to exchange messages
+
+       This document focuses on giving details and background information
+       of the configuration fields relevant to PCBFido in PCBSetup.  If you
+       need additional information on how to perform any of the steps
+       outlined above,  please refer to FIDO.DOC in your \PCB subdirectory.
+
+ PCBSetup
+ ============================================================================
+
+       Nearly every option and file location related to the Fido
+       implementation within PCBoard can be edited from the Fido
+       Configuration menu on PCBSetup's main menu.  Once this option is
+       selected, several other menu options become available.  The
+       following sections describe each option:
+
+   Fido Configuration
+   ------------------
+
+     Enable Fido Processing
+     ~~~~~~~~~~~~~~~~~~~~~~
+       This selection determines whether or not Fido processing is enabled
+       for the current node.  Valid options are:
+
+         Y       Fido processing is enabled.
+         N       Fido processing is disabled.
+
+     Import/Export Configuration File
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       The filename entered in this field is the Fido configuration file.
+       This file stores many of the other options/paths configured in
+       subsequent Fido screens.  The default for this file is a file named
+       PCBFIDO.CFG in the \PCB\MAIN\ subdirectory.
+
+     Name/Location of Fido Queue
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       The queue file contains information about what packets to send, when
+       they will go, and to which site they should be sent.  The filename
+       entered in this field determines the location of this file.  When
+       two or more nodes process Fido packets, it is advisable to insure
+       the nodes share the same queue file.
+
+     Import Immediately After File Transfers
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       An efficient way to handle the importing of mail is to disable all
+       scanning for mail to import (scan every 0 minutes) and enable
+       importing directly after a file transfer. Once mail has been
+       exchanged between two sites, any messages waiting for import will be
+       in the incoming subdirectory on your system.  The following are
+       valid responses:
+
+         Y       A scan for new mail will occur immediately after the call
+                 takes place.  Any messages waiting to be imported are
+                 added to the system at this time.  Make sure you disable
+                 the periodic scanning of messages to import as it is
+                 pointless when this switch is enabled.
+
+         N       PCBoard will not scan for mail to import upon hanging up
+                 the phone.  Make sure periodic scanning of mail to import
+                 is enabled (scan every 1 minute or greater) or messages
+                 will never get added to the system.
+
+       NOTE:  When enabled, this setting forces a node to process mail even
+              if the node is configured to not allow the processing of
+              incoming packets.
+
+     Allow Node to Process Incoming Packets
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       This setting determines if the node will process incoming packets.
+       It is entirely possible for a setup to exist where the node(s) on
+       your system will receive the incoming packets to a network drive and
+       then have a local-only node do all of the processing (importing into
+       the message bases).  The valid settings for this field are:
+
+         Y       The node will process all incoming packets as per the Scan
+                 for Inbound Packets Frequency field also found on this
+                 screen.
+
+         N       The node will NOT process incoming packets. Instead, some
+                 other node will have to process or import the messages
+                 into PCBoard's message base files.
+
+     Scan for Inbound Packets Frequency (min)
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       PCBoard scans for incoming Fido packets while at the call-waiting
+       screen.  The value entered in this field determines how many minutes
+       elapse between each import scan.  Please understand that the elapsed
+       time is only counted while at the call-waiting screen. If a caller
+       calls in before the time has elapsed, the timer will be reset when
+       the caller hangs up.  For this reason, it is important to set the
+       value in this field to a small enough value that all mail can be
+       processed.  A setting between 2 and 10 is a good starting point.  2
+       minutes for the busier system and 10 for a system which is not quite
+       as busy. Valid responses are between 1 and 1439.
+
+       NOTE: This option is only applicable if the node is configured to
+       process incoming Fido packets.
+
+     Allow Node to Export Mail
+     ~~~~~~~~~~~~~~~~~~~~~~~~~
+       A good recommendation for exporting Fido mail on your system is to
+       allow only one node to export.  All other nodes should be configured
+       to NOT export mail.  This setting controls whether or not the
+       current node will build the outbound packets. Valid responses are:
+
+         Y       This node will export mail posted on the system.
+         N       Mail will not be exported by this node.
+
+     Scan for Mail to Export Frequency (min)
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       This selection is similar to scanning for inbound mail frequency in
+       that it tells PCBoard how often to scan your Fido conferences for
+       outbound mail (in minutes).  The same recommendations for inbound
+       frequency settings apply to outbound frequency settings.  Valid
+       responses are between 1 and 1439.
+
+       NOTE:  The value entered here only has relevance when
+       the node is configured to export mail.
+
+     Allow Node to Dial Out
+     ~~~~~~~~~~~~~~~~~~~~~~
+       This selection determines whether or not this node will dial out to
+       send packets or to poll another Fido node. Always make sure at least
+       one node is configured to dial out. Valid selections are:
+
+         Y       The node will be able to make calls to poll other nodes or
+                 to send outbound mail.
+
+         N       This node cannot dial-out.
+
+     Scan for Outbound Packets Frequency (min)
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       If outbound packets exist and the current node is allowed to dial
+       out, the outbound packets will be sent to another node/hub.  The
+       amount of time which must elapse between each scan for outbound mail
+       is determined by this field. Remember, only the time spent at the
+       call-waiting screen counts. If you have the frequency set at every
+       five minutes and callers are logging in every 3 minutes to your
+       system, a successful scan will never occur.  Use a low enough
+       setting that mail can be sent as often as you desire.
+
+       NOTE:  Each time PCBoard dials a system it will only attempt that
+       one system.  This is an important fact to remember especially if
+       circumstances require multiple sites to be dialed. The next time the
+       timer triggers, the next system is called.
+
+
+
+     Default Zone and Net
+     ~~~~~~~~~~~~~~~~~~~~
+       When used in conjunction with the Default Net field, default values
+       will be used when entering an address at the Fido menu available
+       from the call-waiting screen.  Using the defaults you may enter just
+       the node number to poll and PCBoard will fill in the zone and net
+       numbers with the default values.
+
+       The defaults can be overridden simply by including the zone or net
+       information when polling.  Here are some examples based on a default
+       zone=1 and net=828
+
+         You Enter: 5
+         Site Polled: 1:828/5    (Use default values)
+
+         You Enter: 56/6
+         Site Polled: 1:56/6     (Default net overridden)
+
+         You Enter: 2:29/30
+         Site Polled: 2:29/30    (All defaults overridden)
+
+     Security Req'd for +C and +D Modifiers
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       When a netmail message is addressed with a <+C> on the addressee
+       line, it becomes what is known as crash mail. Crash mail ignores all
+       event information which means a message can be sent to any sight
+       regardless of the settings of the crash Fido verb in the current
+       event.
+
+       Entering the <+D> flag on a netmail message forces PCBoard to ignore
+       any routing and instead go directly to the node.  With an
+       international network, this can be a very costly feature if put in
+       the power of unauthorized individuals.
+
+       If you give users access to the netmail conference, set an
+       appropriate security level to send Crash and Direct mail. It's not
+       hard for a user to abuse the netmail privileges if you let them.
+
+     Fido Logging Level (higher=more detail)
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       This configuration option controls how detailed the log entries are
+       for Fido transfers and tossing.  The higher the number you enter,
+       the more detailed the entries in the caller logs will be.  The
+       following list summarizes the valid options for this field:
+
+         0       Normal log entries
+         1       More details for mail transfers
+         2       More details for tossing
+         3       More details for mail transfers and tossing
+         4       Used only for debugging purposes
+         5       Used only for debugging purposes
+
+       NOTE:  Because selecting a value higher than 1 results in more
+       information being logged, be aware that the size of logs on disk
+       will increase.
+
+   Create MSG with Outbound Packets Attached
+   -----------------------------------------
+       This option is designed for use with a configuration where PCBoard
+       will not be the one exporting the packets to other systems.  If
+       PCBoard will be the software used to transfer packets to other
+       systems, leave this option set to N.  Valid options for this field
+       follow:
+
+         Y       All outbound packets created by PCBoard are placed as file
+                 attachment to MSG files.  Any MSG compatible mailer can
+                 then transfer the mail to the necessary sites.  You must
+                 simply tell the third-party mailer that the import/export
+                 directory for MSG files is the directory specified by
+                 PCBSetup | Fido Configuration | File & Directory
+                 Information.  Make sure the /MSG switch is not specified
+                 in the PCBFIDO environment variable when this option is
+                 selected.
+
+         N       PCBoard will handle both the exporting of mail and also the
+                 dialing of other systems.  This is the default choice.
+
+   Enable Inbound Routing
+   ----------------------
+       The purpose of this option is to control whether inbound routing is
+       enabled.  With inbound routing enabled, a packet for another system
+       can be transferred to your system and held in your outbound queue for
+       transfer to another site.  In this type of configuration the system
+       operates in a "middle-man" type role.  This type of functionality is
+       usually only required by hubs.  Valid options for this field are:
+
+         Y       Packets can be routed from one system to another through
+                 your system.
+
+         N       All packets sent to your system are imported. In other
+                 words, all routing information is ignored.
+
+   Node Configuration
+   ------------------
+       When this menu option is selected, an editor screen is displayed
+       where nodes receiving outbound packets can be configured.  In other
+       words, this screen will list all nodes who will receive mail from
+       your system, what type of archiver they use, and what type of packet
+       to create.
+
+       The fields on this screen are as follows:
+
+       Node: Enter the node number to which mail will be sent.  The format
+       for the node number is <zone>:<net>/<node>.
+
+       Arc: Enter the archive type to be used for the node being defined.
+       Valid entries are 0-3: 0=ZIP, 1=ARJ, 2=ARC, and 3=LZH.  Make sure
+       the proper entries are made in PCBSetup | Fido Configuration |
+       Archive Configuration for each type.  If you are unsure of the type
+       to enter, contact the SysOp of the node for the proper  setting.
+
+       Pkt: PCBoard's implementation of Fido supports two type of packets:
+         1) Stone Age (type 1)
+         2) Type 2+.
+       Select the appropriate type for the node being defined.  If unsure
+       of which selection to make, contact the SysOp of the node in
+       question to get the proper setting.
+
+       NOTE:  The default settings for every site are to use ZIP compression
+       and Type 2+ packets.  If the site you are exchanging mail with uses
+       these values, an entry does not need to be made.  Only add an entry
+       when you must override the default values.
+
+   System Address
+   --------------
+
+       On this screen you must enter the Fido address/node number assigned
+       to you.  Remember the format is in the <zone>:<net>/<node> format.
+       Use ALT-I to add new fields where AKA (Also Known As) addresses can
+       be entered.
+
+       This selection allows you to tell PCBoard what your Fido system
+       address in the standard form of zone:net/node. You can make several
+       entries to allow for AKA's.  Why use AKAs?  If you are involved with
+       multiple Fido based networks, you'll have more than one node address
+       and will need the AKAs to properly identify your node.
+
+       A question that gets asked quite often revolves around node number
+       security.  If you can enter any node number, how can you stop someone
+       from enter your assigned node number and picking up your mail?  The
+       answer is that you cannot stop them from entering the number.
+       However, a password can be defined on the host system to prevent
+       others from acting as your node number.
+
+       Example system addresses follow:
+
+         10:125/56
+         1:583/5
+         6:5/82
+
+       NOTE:  If running more than one mail network, see The Fido Conference
+       Configuration Screen section for additional fields you may want to
+       change.
+
+   EMSI Profile
+   ------------
+       EMSI could be described as a negotiation protocol for Fido systems.
+       The information regarding your system name, city, phone number, baud,
+       etc. are sent during the negotiation sequence.
+
+       Normally this information is available in the node list but PCBoard
+       will gather the information from this screen and use it to override
+       what is in the nodelist.  It is important to enter the information
+       accurately because some hosts may use it to update node lists.  The
+       following describes each field:
+
+       BBS Name  : Enter the name of your BBS in this field.
+
+       SysOp Name: In this field, enter the name of the SysOp in the first
+       name / last name format.
+
+       City/State: Enter the city and state / province information where
+       your BBS operates.
+
+       Phone : Enter the phone number used for incoming Fido calls.  Make
+       sure you do not list your general BBS number if it is different from
+       the Fido number.
+
+       Baud: Enter the maximum baud rate your system supports.  In FidoNet,
+       9600 is generally considered to be a maximum value.  What you enter
+       here has no effect on what speed you call other systems; it is for
+       informational purposes only.
+
+       Flags : Ask your node coordinator what should be entered in the flags
+       field.  If in doubt, leave the default values.
+
+   File & Directory Configuration
+   ------------------------------
+       The Fido configuration needs the locations of several paths defined.
+       On this screen you will be entering the paths you want for incoming
+       packets, bad packets, etc.  Each directory location is described in
+       detail in the following sections:
+
+     Dir of Incoming Packets
+     ~~~~~~~~~~~~~~~~~~~~~~~
+       This field refers to the location where incoming mail packets are
+       stored.  Realizing that incoming packets can be large in size,
+       specifying a drive with plenty of free space.
+
+     Dir of Outgoing Packets
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       Enter the subdirectory where compressed outgoing packets will be
+       stored before being sent out.
+
+     Dir to store Bad Packets
+     ~~~~~~~~~~~~~~~~~~~~~~~~
+       In this field, enter the subdirectory where bad incoming packets
+       will be stored.  A packet is considered to be bad when any of the
+       following occur:
+
+         * Invalid password in the packet file
+         * File based errors such as unable to read the file from disk
+
+     Dir of Nodelist Database
+     ~~~~~~~~~~~~~~~~~~~~~~~~
+       The compiled nodelist database is essential to Fido especially when
+       dialing out.  This field points to the directory where your nodelist
+       file is stored.  The location of the nodelist file to compile is
+       located in PCBSetup | Fido Configuration | Nodelist Configuration.
+
+     Work Directory
+     ~~~~~~~~~~~~~~
+       While processing mail packets temporary files will need to be
+       created. In this field, enter the subdirectory where these temporary
+       files will be stored.  Remember, the drive where this is located
+       must have plenty of free space available.
+
+       An ideal location to specify is one that is local to the node
+       processing mail.  This helps cut down on network traffic and
+       therefore increases the performance.
+
+     Dir to store *.MSG
+     ~~~~~~~~~~~~~~~~~~
+       A popular standard for messages in FidoNet is known as *.MSG
+       (star-dot-MSG).  Using the /MSG switch for the PCBFIDO environment
+       variable, you can have PCBoard keep a mirror image of all netmail
+       messages in MSG format.  Additionally, you may place .MSG files in
+       this subdirectory to be imported into the netmail message base.  The
+       use of MSG files are particularly useful for third party
+       applications and integrating them with your use of PCBoard.
+
+   Archiver Configuration
+   ----------------------
+       The Fido implementation in PCBoard supports four types of compressed
+       packets:  1) PKZIP, 2) ARJ, 3) ARC, and 4) LHA/LZH. This particular
+       screen is where the various compression programs are configured.
+       For each archiver the program name for compressing and decompressing
+       must be specified.  Additionally, any necessary switches must be
+       specified. The following shows a sample of what may be entered:
+
+   Phone Number Translation
+   ------------------------
+       The Fido network spans many countries across the globe and relies on
+       being able to call one node from another. Phone numbers for each
+       site are obtained by searching the nodelist database.  Each entry in
+       the nodelist contains the FULL contact number for each site.  For
+       example, the phone number for a site in the United States may
+       resemble this entry:
+
+         1-352-555-1212
+
+       Why would any type of phone number translation have to be done if
+       the full phone number is there?  The quick answer is that many nodes
+       call one another within a local calling area. Using the previous
+       example number, we could say the following two phone numbers
+       exchange mail:
+
+         1-352-555-5555
+         1-352-555-1212
+
+       When the first site calls the second, it needs to be able to strip
+       off the 1-352- because that is used only for long-distance calling.
+
+       Creating the translation is very easy.  On this screen are two
+       columns.  The first is the information to search for in a phone
+       number and the second column lists the replacement information.  If
+       nothing is entered in the Change To column, the matching information
+       will be stripped.  The following entry shows how the 1-352- can be
+       stripped.
+
+             Find                    Change To
+           ---------                 -----------------------
+        1) 1-352-
+
+     International Calling
+     ~~~~~~~~~~~~~~~~~~~~~
+       If the setup of the network requires international calls to be made,
+       you must enter two entries in the translation list defining your
+       country information.  These entries will look like the following if
+       you live in the United States:
+
+             Find                    Change To
+           ---------                 -----------------------
+        1) IP                        011
+        2) IPX                       1-
+
+       The first entry, IP, defines the international prefix.  In other
+       words, international calls made from the United States must begin
+       with 011 followed by the country code, and other appropriate phone
+       numbers. If unsure about the international prefix, contact your
+       local phone service provider for additional information.
+
+       The second entry, IPX, defines the country code.  The United States
+       country code is 1.  Most phone service providers make this
+       information available.  If in doubt, contact them for additional
+       details.
+
+     Prefixes and Suffixes
+     ~~~~~~~~~~~~~~~~~~~~~
+       Your situation may require the use of prefixes (numbers to dial
+       before every phone number) and suffixes (numbers to dial AFTER every
+       phone number).
+
+       A classic example of this in the United States comes into play if
+       you have call-waiting.  It is possible to disable call-waiting by
+       dialing *70, before every phone number.  Another example for
+       prefixing is in a business situation where a 9 must be entered
+       before every outgoing phone call.
+
+       Suffixes are not typically used as much but are still quite useful.
+       For example, some long-distance carriers allow you to require a
+       password or special code on every long-distance call.  This code is
+       entered after the phone number--a perfect use of the suffix.
+       Prefixes are defined by entering GP in the Find field.  In the
+       Change To field, enter the number(s) to add before every phone
+       number.  Suffixes are done in much the same manner.  In the Find
+       field, enter GS followed by the suffix to add in the Change To
+       field.  As you may have guessed by now, GP stands for Global Prefix
+       and GS stands for Global Suffix.
+
+       Examples:
+
+               Find                                  Change To
+             ---------                               -----------
+          1) GP                                      *70,
+          2) GS                                      ,,1994
+
+       The first example shows a prefix defined as *70, and the second
+       shows a suffix defined of ,,1994.  The commas are used in modem dial
+       strings to define a 2 second pause.
+
+   Nodelist configuration
+   ----------------------
+
+       On this screen, you tell PCBoard where the nodelist file is stored.
+       The nodelist compiler will use this information when compiling the
+       nodelist.  There is no limit to the number of nodelists you can have.
+       Each file will be appended into the database until there are no more
+       lists to compile.
+
+     Diff Filenames
+     ~~~~~~~~~~~~~~
+       A Diff (DIF) file is used to update existing nodelist.  If you are
+       participating in the worldwide Fido network, you have seen how the
+       full nodelist can be several megabytes in size.  To prevent members
+       of the network from having to transfer such a large file each time,
+       updates or DIF files are usually available from the same location
+       where you can find a nodelist.
+
+       The nodelist compiler will properly update the local nodelist
+       database using the information stored in these DIF files.  To be
+       properly updated, the DIF file must be in the same directory as the
+       nodelist. Just the base filename of the DIF file needs to be entered
+       on the screen as the extension simply refers to the revision of the
+       file.
+
+       To help explain the relationship between the nodelist
+       and the DIF files, look at the following entry:
+
+            Nodelist Path (No Extension)         Diff Filename
+            ----------------------------         -------------
+         1) C:\PCB\FIDO\NODELIST                  NODEDIF
+
+       Here is what will happen:
+
+         * Begin by compiling just the nodelist file
+
+         * As time passes, DIF files will be distributed by your network.
+           Pick up the DIF files, uncompress them to the same directory
+           where the nodelist file listed in column one is.
+
+         * Recompile the nodelist database with the compiler using the /DIFF
+           switch.
+
+       NOTE:  All filenames listed on this screen refer to the uncompressed
+       filenames.  You must uncompress the files manually before attempting
+       to compile the nodelist database. Compression types range from system
+       to system.  Ask if you are unsure about the type of compression.
+
+   FREQ Path List
+   --------------
+       When a Fido node requests a file from your site, PCBoard will search
+       all subdirectories listed on this screen. If a matching filename is
+       found in any subdirectory, the file is sent.
+
+       NOTE:  It is important to remember that any file in these
+       subdirectories can be obtained from a remote site. Therefore, do not
+       put confidential files in these directories.
+
+   FREQ Restrictions
+   -----------------
+
+       File Requests (FREQs) tie up your system for the time it takes to
+       pick up the files.  Therefore, a way to restrict the amount of time,
+       or bytes another site can pick up.  Several fields define how the
+       file requests can be restricted.  The following describes each:
+
+       Session Max Time
+
+       Enter the maximum number of minutes another site can spend FREQing
+       during the current call.
+
+       Session Max KBytes
+
+       Enter the number of kilobytes (1024 bytes) a remote site will be
+       allowed to download during a single connect.
+
+       Daily Max Time
+
+       The value in this field represents the total amount of time a remote
+       site can spend transferring files during any one daily period.  A
+       day to PCBoard is considered to be from midnight to 11:59pm (via the
+       host computer not the remote site).
+
+       Daily Max KBytes
+
+       Enter the total number of kilobytes a remote site may FREQ during a
+       daily period (midnight to 11:59pm).
+
+       Allowed Nodes
+
+       This field defines which remote sites will be able to FREQ a file
+       from your system.  The following describes each available option:
+
+         A       All Fido sites regardless if they are listed in your user
+                 or nodelist will be able to FREQ a file.  Keeping in mind
+                 it is possible to FREQ using wildcards is another reason
+                 not to put confidential information in your FREQ paths.
+
+         L       Any Fido site listed in the nodelist or in your user file
+                 will be able to FREQ a file.
+
+         N       Only those Fido sites listed in the nodelist will be able
+                 to FREQ a file.  This option is ideal when you are
+                 involved in a smaller Fido-based network but do not want
+                 just any Fido capable mailer to be able to FREQ a file.
+
+         U       Only those sites listed in your user file will be allowed to
+                 FREQ a file.
+
+       Min Allowed Baud
+
+       Because transferring files can be time consuming, you may choose to
+       limit FREQs to only those sites capable of a certain baud rate or
+       higher. For example, you may want to only allow those systems capable
+       of a 14400 connection or higher to FREQ.  With this type of
+       configuration, sites using 9600 baud modems would only be able to
+       transfer mail and not files.
+
+       In this field, enter the required baud rate for transferring files.
+       Any site capable of the speed you enter or higher will be able to
+       request files.
+
+   FREQ Magic Names
+   ----------------
+       A "Magic Name" can also be seen as an alias to a filename which can
+       be FREQed.  A common example of an alias is for a remote site to
+       FREQ a file called "FILES" on your system. This is commonly
+       understood to be a list of files available on your system.  What do
+       you do though if your list is called ALLFILES.LST?  Since FILES is a
+       de facto standard, you want to make this available to other nodes
+       but do not want to waste the space an additional copy occupies.
+       That is where the magic name comes in handy.  Simply make an entry
+       similar to the following:
+
+            Magic Name            Filename
+            ----------            --------
+         1) FILES                 C:\PCB\FILES\ALLFILES.LST
+
+       From this example you can tell that the alias or magic name is
+       entered in the left column and the actual filename to send is
+       entered on the right.
+
+       NOTE: For this to work, the C:\PCB\FILES\ subdirectory MUST be
+       listed in the FREQ Path list.  FULL pathnames are required.
+
+       A more sophisticated example involves wildcarding. You produce a
+       program which consists of 3 zip files (3 disks). Rather than having
+       remote sites requesting BOBOB-1.ZIP, BOBOB-2.ZIP, and BOBOB-3.ZIP
+       you want them to simply FREQ BOBOB. The following example
+       illustrates:
+
+            Magic Name            Filename
+            ----------            --------
+         1) BOBOB                 C:\PCB\FILES\BOBOB-?.ZIP
+
+       Notice how the ? DOS wildcard character is used to make sure all 3
+       disks are included when BOBOB is requested.
+
+   FREQ Deny Nodelist
+   ------------------
+       Some remote sites may abuse their ability to FREQ. To deny these
+       sites the ability to FREQ from your system, add them to this list.
+       The entire node number/address must be entered.
+
+ Modem Related Options for PCBFido
+ ============================================================================
+       New to the PCBSetup | Modem Information | Modem Setup screen are
+       fields relating to the Fido configuration.  These fields control
+       what command PCBoard will send to your modem for dialing other
+       systems, and how many attempts should be made when a call results in
+       a busy signal or failed attempt.  These fields are as follows:
+
+         Modem Dialout String           : ATDT
+         Max # of Redials on Busy       :    1
+         Max # of Attempts to Connect   :  100
+
+     Modem Dialout String
+     ~~~~~~~~~~~~~~~~~~~~
+       The command entered in this field is sent to the modem before a
+       number is dialed.  Notice the default of ATDT which is a standard
+       for nearly every modem.  The only time you may have to use something
+       different is when the modem must be switched from say fax to data
+       mode or some other special circumstance.
+
+     Max # of Redials on Busy
+     ~~~~~~~~~~~~~~~~~~~~~~~~
+       When dialing a node it is not uncommon to get a busy signal as a
+       response.  This field controls how many attempts PCBoard will make
+       before it returns to the call-waiting screen to let the dial-timer
+       expire again.
+
+     Max # of Attempts to Connect
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       A call that results in a NO CARRIER, VOICE, or an unexpected modem
+       response is considered to be a failed attempt. After an attempt
+       fails, PCBoard will return to the call waiting screen.  This field
+       controls the number of failed attempts that may accumulate when
+       trying to send this packet.  Once a packet reaches this limit, it
+       will not be sent until you view the outbound queue and reset the
+       failed attempts counter.
+
+ Call Waiting Screen
+ ============================================================================
+
+       Pressing ALT-F from the call-waiting screen reveals the following
+       menu (Fido must be enabled in PCBSetup | Fido Configuration | Fido
+       Configuration):
+
+   Poll a Node
+   -----------
+       Although it is possible to setup a regular Poll to take place in an
+       event, you may want to make a manual run to pick up mail or maybe
+       even poll a site your event does not normally handle.
+
+       When this option is selected, you will be asked to enter the address
+       of the node to queue.  The full address can be entered in the form of
+       <zone>:<net>/<node> or if defaults have been entered in PCBSetup for
+       the zone and net, just the node number may be entered.  Once the
+       address in entered, an entry to crash poll the node is added to the
+       outbound queue.
+
+       NOTE:  In order to actually poll the node, you must send the packet
+       from the outbound queue.  This can be done by selecting either Force
+       Next Call or Send Mail to a Node from the Fido Menu.
+
+   Request a file
+   --------------
+       It is possible to FREQ a file from another node by selecting this
+       menu option.  You are first asked for the address.  Any defaults
+       entered in PCBSetup | Fido Configuration | Fido Configuration are in
+       effect.
+
+       Next, you are prompted for the filename to request from the site.
+       Either a filename or magic name may be entered as both are perfectly
+       acceptable.  Once the filename is entered, the request is added to
+       the outbound queue.
+
+   Transmit a file
+   ---------------
+       To send a file to another site, an entry must be added to the
+       outbound queue by selecting this option.  First you are asked to
+       enter the site address where the file is to be sent.  Next, enter
+       the filename to send.  Make sure you enter the full path and
+       filename to send and that it exists.  If the file does not exist,
+       the entry will NOT be added to the outbound queue.
+
+   Force next call
+   ---------------
+       This option simply forces the next call to occur.  If the outbound
+       queue is empty, it will appear as if no activity took place.
+
+   View/Modify Queue
+   -----------------
+
+       The outbound queue stores outbound requests or activities (polling a
+       node, sending a file, FREQing a file, etc.)  To view the contents of
+       the queue, use this menu option. When entries are in the outbound
+       queue, entries similar to the following are shown:
+
+       Filename:  This field lists the filename to transfer or it shows the
+       activity taking place if not involving a file request (polling is a
+       good example).
+
+       Address:  Shows the full address where the request is being sent.
+
+       F)lag:  Allows you to change the flagged status of this entry.
+       Valid options are CRASH (send immediately), NORMAL (wait for normal
+       event processing), and HOLD (wait for the other node to call you).
+
+       S)end:  Process this request immediately and ignore the flag status
+       (HOLD or NORMAL) of the packet.  All packets in the outbound queue
+       for this node will be sent once a connection is made.
+
+       D)elete:  When this menu item is selected, the current queue entry is
+       deleted.
+
+       N)ext:  View the next entry in the queue.
+
+       P)revious:  View the previous entry in the queue.
+
+       C)lear Failed Connect:  Resets the failed call counter to 0 making a
+       dialing attempt appear to be a first time call.
+
+       R)e-Address Entry:  Use this option to change the current address
+       where a packet is to be sent.
+
+   Scan for outbound mail
+   ----------------------
+       All netmail and echo mail entered on your system will be prepared
+       for sending to your hub.  This option is designed to manually scan
+       for mail as this is normally taken care of by the timers in PCBSetup
+       | Fido Configuration | Fido Configuration.
+
+   Process inbound mail
+   --------------------
+       Manually checks to see if there is any incoming mail to be
+       processed. Normally, PCBoard will check at regular intervals for new
+       mail. However, you may have a need to make a manual run and
+       therefore must force the incoming mail to be processed.
+
+   Compile Nodelist
+   ----------------
+       This option executes the PCBNLC (node list compiler) program.  Use
+       this option to generate a new node list database.
+
+   Send Mail to a node
+   -------------------
+       This option lists all nodes with outgoing mail (or requests).
+       Select the site to send all requests to and these requests will be
+       processed immediately.  This option is identical to the S)end option
+       when viewing the queue except it lists by node number instead of by
+       packet.
+
+ The Fido Conference Configuration Screen
+ ============================================================================
+
+       As you are aware, there is more than one setup screen for a
+       conference.  Pressing PgDn when editing the configuration of a
+       conference will take you to a screen full of further options
+       beginning with Auto-Rejoin into this Conf.  Also on this screen is
+       an option titled Type of NetMail Conference.  When this field is set
+       to 5, pressing d will bring you to what is known as the Fido
+       Conference Configuration screen.
+
+         PCBoard Conference   : 0
+         Messages file        : C:\PCB\MAIN\MSGS
+
+         Fido Area Name       :
+         Default AKA          :
+         Default Origin       :
+         High Ascii (S/R/C/N) :
+
+       The first two fields on the screen are just for reference purposes
+       only and may not be edited.  The others, however, can be edited and
+       relate to Fido issues only.  The following sections describe each of
+       the available fields.
+
+   Fido Area Name
+   --------------
+
+       This field holds the tag name for the conference. Every echo area in
+       Fido has a tag name which identifies the topic of discussion.
+       Simply enter the tag for the echo area this conference will
+       represent.
+
+       When a large number of conferences needs to be added, look into
+       using UUUTIL.  See FIDO.DOC in the same directory where PCBoard was
+       installed for further information.
+
+   Default AKA
+   -----------
+       When you are involved in multiple networks, you'll have more than
+       one node address.  These additional addresses are called AKAs which
+       stands for Also Known As.  When this field is blank, the address
+       associated with it is the first entry in PCBSetup | Fido
+       Configuration | System Address.  For conferences associated with
+       other networks, enter the node address you use for the network in
+       each conference used by this network.
+
+   Default Origin
+   --------------
+       Origin lines are added to each message sent out. When dealing with
+       multiple Fido based networks you may find it desirable to override
+       the default origin line which displays the node number.  To override
+       what is sent on the origin information, simply enter the information
+       in the field provided.
+
+   High Ascii
+   ----------
+       Most sites in Fido do not allow high ASCII characters in messages
+       yet if you are involved with other networks they may allow such
+       characters to be entered.  To accommodate this problem, PCBoard
+       allows you to determine how high ASCII characters are handled on a
+       conference by conference basis.  The following are valid selections:
+
+         S       Removes all high ASCII characters and replaces
+                 with nothing.
+
+         R       Replaces all high ASCII characters with periods (.)
+
+         C       Converts high-ASCII characters to similar looking low
+                 ASCII equivalents.
+
+         N       Do no translations or modifications to high ASCII
+                 characters.
+
+       The safest choice is option C because it guarantees low ASCII
+       characters will be used but yet it still attempts to portray the
+       effect of any high ASCII characters.
+
+ Fido Batch Files
+ ============================================================================
+
+       There are a few hooks within PCBFido where it is desirable to use
+       third-party utilities to facilitate the flow of messages in a Fido
+       base network.  By hooks, we are referring to the use of batch files
+       where these third-party programs can be run.  The purpose of this
+       section is to explain detailed information about these batch files.
+
+   POSTCALL.BAT
+   ------------
+
+       After a successful Fido transfer, this batch file is run to process
+       the packets before PCBoard imports them.  This is of particular
+       interest to those SysOps involved in a file echo (files are
+       exchanged instead of messages).  In this type of scenario, a
+       third-party TIC processor must be used to handle the packets after a
+       mail transfer occurs.
+
+   FIDOSEND.BAT & FIDORECV.BAT
+   ---------------------------
+       Most sites support type 2+ packets which also denote ZModem
+       capabilities.  By default, Fido executes ZMSEND.EXE and ZMRECV.EXE
+       for its ZModem needs.  If you need to use a third-party version of
+       ZModem, use these two batch files to load the program.  The
+       parameters passed to the batch files are identical to those PCBoard
+       passes to an external protocol in your normal configuration (refer
+       to the PCBoard manual for additional information).  FIDOSEND.BAT is
+       used when a packet is sent from your system, while FIDORECV.BAT is
+       used to receive a file to your system.
+
+ New PCBoard Switches
+ ===============================================================================
+       New PCBoard command line and environment switches have been added to
+       help facilitate those who are running multiple nodes off of one
+       PCBOARD.DAT or who may want to manually control mail transfers.
+
+   "SET PCB=" Environment Switches
+   -------------------------------
+
+     /NOFIDO
+     ~~~~~~~
+       Disables Fido processing.  This is equivalent to answering N to the
+       Enable Fido Processing in PCBSetup | Fido Configuration | Fido
+       Configuration.  Example:
+
+         SET PCB=/NOFIDO
+
+   "SET PCBFIDO=" Environment Switches
+   -----------------------------------
+       This is actually a newly supported environment variable.  The
+       existence of the variable will enable Fido Processing (just the
+       opposite of the /NOFIDO switch).  This new variable supports the
+       following switches:
+
+     /MSG
+     ~~~~
+
+       Enable the mirroring support for netmail.  .MSG files can be imported
+       if put in the .MSG subdirectory and copies of all netmail messages
+       exported are keep in the same directory (in .MSG format.)
+
+     /IMPORT:[min]
+     ~~~~~~~~~~~~~
+       Overrides all settings in PCBSetup and checks for mail every x
+       minutes with x being the number of minutes entered after the colon.
+
+     /EXPORT:[min]
+     ~~~~~~~~~~~~~
+       Overrides the settings in PCBSetup and checks for items needing
+       export every x minutes with x being the number of minutes specified
+       after the colon.
+
+     /DIAL:[min]
+     ~~~~~~~~~~~
+       This option overrides any setting in PCBSetup and will change the
+       dialing frequency to the number of minutes specified after the colon.
+
+     Examples:
+     ~~~~~~~~~
+
+         SET PCBFIDO=/IMPORT:5 /EXPORT:3
+
+       This particular environment setting will check for importing every
+       five minutes and exporting every three minutes.
+
+         SET PCBFIDO=/DIAL:10
+
+       PCBoard checks every 10 minutes to see if any dialing attempts must
+       be made.
+
+   Command Line Parameters
+   -----------------------
+       To better facilitate manual processing of Fido mail, PCBoard accepts
+       two new command line parameters.  When used, PCBoard will
+       automatically import or export mail.
+
+     /IMPORT
+     ~~~~~~~
+       Manually import all new mail.  A synonym for this
+       parameter  is /TOSS.  Example:
+
+         PCBOARD /IMPORT
+         or
+         PCBOARD /TOSS
+
+     /EXPORT
+     ~~~~~~~
+       Manually export all outgoing mail.  A synonym for this  parameter is
+       /SCAN.  Example:
+
+         PCBOARD /EXPORT
+         or
+         PCBOARD /SCAN
+
+
+ **************************************************************************
+ *                           PCBoard's UUCP                               *
+ **************************************************************************
+
+
+ Introduction
+ ============================================================================
+
+       Millions of messages or articles are posted each year in Usenet
+       ranging across a wide variety of topics. Additionally, millions of
+       people communicate using Internet e-mail.  With PCBoard and a Usenet
+       feed, both information sources can be tapped.
+
+       The configuration of the UUCP part of PCBoard consists of the
+       following:
+
+         o Obtaining a Usenet and e-mail feed through a provider
+         o Configuring the relevant fields in PCBSetup
+         o Creating and configuring the conferences which will exchange
+           articles and e-mail
+         o Creating an entry in the SYSTEMS file for your provider
+         o Configuring one or more events to exchange mail and news
+
+       This document focuses on giving details and background information
+       of the configuration fields relevant to UUCP in PCBSetup.  In
+       addition, the syntax and options for all of the auxiliary UUCP
+       programs such as UUIN, UUOUT, and UUXFER are described.  If you need
+       additional information on how to setup a SYSTEMS file, configuring
+       conferences and so forth, please refer to UUCP.DOC in your \PCB
+       subdirectory.
+
+ PCBSetup
+ ============================================================================
+
+       When the UUCP Configuration options is selected from the Main Menu,
+       the screen displays the UUCP options and paths for PCBoard.  This
+       information is used to determine where outgoing e-mail can be found
+       and where incoming e-mail will be placed.  It also controls
+       addressing information such as domain names and their format.
+
+       For the fields on this screen to have any relevance, you must have
+       access to an Internet/Usenet provider.  Your answer to the fields like
+       Email Host, Domain Name, and News Host all assume the information can
+       be obtained from your provider if required.
+
+       Let's start by looking at the UUCP configuration screen and explain
+       each field.
+
+     Organization
+     ~~~~~~~~~~~~
+
+       With every message sent out from your system a description of your
+       site is included in the message header.  The text you enter in this
+       field is the description PCBoard will add to each message.  Common
+       information to include is your BBS name, and a way to contact the
+       system such as a phone number or IP address.
+
+     Base UUCP Path
+     ~~~~~~~~~~~~~~
+       UUCP uses auxiliary files to control many things: alias name
+       translation, determining which message headers are kept, etc.  What
+       is important to understand is that these auxiliary files are stored
+       in the directory labeled as the Base UUCP Path.  The default
+       location is \PCB\UUCP.  Information about these files is available
+       in the UUCP Programs section. Specifically, you'll be looking for
+       files like ALIAS.IN, ALIAS.OUT, and HDRKEYS.LST.
+
+     Spool Directory
+     ~~~~~~~~~~~~~~~
+       The subdirectory entered in this field represents the base spool
+       subdirectory.  Underneath this subdirectory is another
+       subdirectory--one for each site/provider.  For example, assuming the
+       name of your email host is site1 and the base subdirectory is
+       C:\PCB\UUCP\SPOOL\, the spool subdirectory for this site is
+       C:\PCB\UUCP\SPOOL\SITE1.  UUOUT and UUXFER will create these
+       subdirectories as needed.  The only time you will have to create the
+       spool directory is if your feed is coming off of a satellite service
+       such as PageSat or Planet Connect.  The following shows two examples
+       of directory trees.
+
+       The tree on the left is representative of a system where the email
+       and newsgroups are picked up from one site. On the right is a tree
+       representing a BBS where the newsgroup feed is put into the SATELLIT
+       subdirectory, and the SITE1 subdirectory is used for all e-mail and
+       outbound newsgroup articles.
+
+       It is important to remember that a subdirectory must exist underneath
+       the base UUCP directory for every site you interact with (either
+       download email/news from or upload email/news to.)
+
+       NOTE:  UUOUT, the exporting utility, will automatically create the
+       spool files as required.  The only time you must concern yourself
+       with creating them is when you have an inbound feed only such as a
+       satellite service.
+
+     Log File Directory
+     ~~~~~~~~~~~~~~~~~~
+       The log files for the various UUCP utilities such as UUIN, UUOUT,
+       and UUXFER are stored in this subdirectory.  It is useful to look at
+       log files when there is question to the activities performed by the
+       programs.  For example, to see what messages were exported to the
+       system last week.  Assuming the log file is not deleted daily, the
+       information can be retrieved from the log files.
+
+       These log files can grow quite large in size. Therefore, it would be
+       wise for you to either backup or delete these log files on a regular
+       basis.  Defining an event in PCBoard to do this daily, weekly, or
+       monthly is a good idea.
+
+     Decompress Batch File
+     ~~~~~~~~~~~~~~~~~~~~~
+       In this field, enter the path and file name of a batch file to run
+       to decompress batched news.  Generally, this will be a simple call
+       to a single program.  Included with the PCBoard package is a sample
+       DECOMP.BAT in the base UUCP subdirectory.  This batch file makes a
+       call to a program called COMP430D.EXE which, due to the unknown
+       origin, we cannot distribute with PCBoard.  COMP430D is used by
+       several providers but the assumption cannot be made that it will
+       work for all of them.  If in doubt or if you experience problems,
+       contact your provider for information on the compression program
+       used for batched news.  They should have the necessary software.
+
+       Only one parameter, %1, is passed to this batch file. This parameter
+       specifies the path and filename to decompress. Let's look at a
+       sample DECOMP.BAT.
+
+         @echo off
+         cls
+         c:\pcb\uucp\comp430d -db12 %1
+
+     Moderator List File
+     ~~~~~~~~~~~~~~~~~~~
+       Some newsgroups are moderated.  This means that an article is not
+       posted until the moderator reviews the message and determines if the
+       content is appropriate.  If desired, you can maintain a list of
+       moderators by pressing F2 while this field is highlighted.  Leave
+       all entries in this file blank when UUCP should handle the
+       moderating.
+
+       NOTE:  UUCP will automatically send messages left in a moderated
+       newsgroup to a central hub where it is then forwarded to the current
+       moderator.  Therefore, it is best to let this be handled in the
+       normal fashion unless circumstances dictate maintenance of your own
+       list.
+
+     UUCP Name
+     ~~~~~~~~~
+       In this field enter your UUCP name.  A UUCP site name must be
+       registered by you or with the help of the service provider.
+
+     UUCP Domain Name
+     ~~~~~~~~~~~~~~~~
+
+       Every site has a domain name on the Internet.  When you setup an
+       account with your provider this information should have been given to
+       you.  Typically your domain name is a name consisting of lower case
+       characters with dots as separators as shown in the following example:
+
+         saltair.com
+         m.cc.utah.edu
+         npo.org
+
+       Applying for a node name is your responsibility although many
+       providers will either do the work for you or at the very least assist
+       your efforts.  Contact them for additional information.
+
+     UUCP Email Host
+     ~~~~~~~~~~~~~~~
+       An e-mail host name refers to the name the provider uses to exchange
+       e-mail.  Typically this name is 8 characters or less.
+
+     UUCP News Host
+     ~~~~~~~~~~~~~~
+       In this field, enter the news host name of the provider where all
+       outbound news articles are sent.
+
+     News Distribution
+     ~~~~~~~~~~~~~~~~~
+       Enter the default news distribution for your site. (world for all
+       sites, na for North America only, usa for USA, etc.)  If you are
+       unsure, enter world.
+
+     Time Zone Offset from GMT
+     ~~~~~~~~~~~~~~~~~~~~~~~~~
+       This field is used to specify how many hours and minutes your site
+       differs from Greenwich Mean Time.  Common values are:
+
+                 AST -0400  ADT -0300
+         EST -0500  EDT -0400
+         CST -0600  CDT -0500
+         MST -0700  MDT -0600
+         PST -0800  PDT -0700
+
+     Name Separator
+     ~~~~~~~~~~~~~~
+       This character is used to separate name elements when converting
+       names from PCBoard format to Internet format.  For example, using a
+       period (the default), the name FRED CLARK is converted to
+       fred.clark.
+
+     Internet Email Conference
+     ~~~~~~~~~~~~~~~~~~~~~~~~~
+       All incoming e-mail is sent to the conference number you enter in
+       this field.
+
+     Usenet Junk Conference
+     ~~~~~~~~~~~~~~~~~~~~~~
+       This field contains the conference number into which Usenet junk is
+       imported (primarily articles which do not have a valid newsgroup
+       entry for the system).  Periodically looking at this conference
+       helps insure all your conferences are setup for the news articles
+       received.
+
+     Bang Domain
+     ~~~~~~~~~~~
+       Normally, UUOUT will generate addresses of the form user@domain
+       (i.e., FRED CLARK at saltair.com becomes fred.clark@saltair.com).
+       Sometimes other processing is needed. If this field is set to Y,
+       addresses are formed in the following fashion: host!user@domain.
+       With this switch enabled, the name you enter as the UUCP Domain Name
+       is the domain name of your email host as illustrated in this
+       example:
+
+         UUCP Name                 : yourbbs
+         UUCP Domain Name          : site1.com
+         UUCP Email Host           : site1
+         UUCP News Host            : site1
+
+       A bang name for a user at this address will look like this example:
+       yourbbs!user.name@site1.com.
+
+       NOTE:  The bang domain or sub-domain name addressing is only used
+       when you did not register a unique domain name through your
+       provider.
+
+     Sub Domain
+     ~~~~~~~~~~
+       Normally, UUOUT will generate addresses of the form user@domain
+       (i.e., FRED CLARK at saltair.com would become
+       fred.clark@saltair.com). Sometimes other processing is needed. If
+       this field is set to Y, addresses will be formed in the following
+       fashion:  user%host@domain. With this switch enabled, the name you
+       enter as the UUCP Domain Name is the domain name of your email host
+       as illustrated in the example for bang domain addressing.  The
+       generated address for this example using sub-domain processing will
+       look like user.name%yourbbs@site.com.
+
+     High Ascii
+     ~~~~~~~~~~
+       The Internet is made up of a conglomerate of machines.  Some of
+       these machines may be PCs, Workstations, Macintosh, etc.  Not all of
+       these machines are able to handle high-ASCII characters.  Therefore,
+       PCBoard gives you control of how to deal with high-ASCII characters
+       when exporting messages. Valid settings are:
+
+         S       Strip all high ASCII on export, replacing with nothing
+         R       Replace all high ASCII characters with a period (.)
+         C       Convert all high ASCII to roughly equivalent standard ASCII
+         N       Perform no processing on high ASCII characters
+
+ UUUTIL.EXE
+ ============================================================================
+
+       It's not uncommon for a system carrying Usenet conferences to
+       handles hundreds or thousands of new conferences. That could entail
+       a lot of extra work on behalf of the SysOp. Much of this work can be
+       prevented by using a program called UUUTIL which is included with
+       every PCBoard package.  Its purpose is simple; assist in the
+       creating and setup of Usenet conferences.  To run UUUTIL, load the
+       UUUTIL.EXE using any of the following command line parameters:
+
+   /ACTIVE:d:\path\active
+   ----------------------
+       This option scans the active file (obtainable from your provider)
+       and sets the appropriate newsgroup type for each newsgroup on your
+       system. The active file is a UNIX formatted text file (i.e., each
+       line ends with a line feed instead of a carriage return/line feed
+       pair).
+
+       NOTE:  This parameter does NOT create the conference it simply
+       insures a conference has the proper setting (moderator versus
+       un moderated news group).  Furthermore, if moderated newsgroups are
+       not carried, this switch will never have to be used because the
+       /IMPORT switch defaults to an un moderated group.
+
+   /EXPORT:d:\path\localng.lst
+   ---------------------------
+       This option exports a list of all newsgroups on your system in the
+       following format:
+
+         alt.news.group1,num1
+         alt.news.group2,num2
+
+       The text to the left of the comma is the newsgroup or conference
+       name. The number to the right of the comma represents the conference
+       number.
+
+       NOTE:  This file can be used as the input file for the /IMPORT option.
+
+   /IMPORT:d:\path\localng.lst
+   ---------------------------
+       This option is used to import a list of newsgroups from a text file
+       and set up the basic information for them (location of MSGS file,
+       conference type, etc.)  The text file you provide must resemble the
+       following format:
+
+         alt.news.group1[,num1]
+         alt.news.group2[,num2]
+
+       In other words, the exact name of the newsgroup (like
+       alt.bbs.pcboard) is the first item on the line.  Optionally, you may
+       include a comma and a number if you want that newsgroup to be a
+       specific number.  For example:
+
+         alt.bbs.pcboard,100
+         news.groups,200
+         news.answers
+
+       If this file was used as the import file, the following will occur:
+
+         1. The name of conference 100 will become alt.bbs.pcboard.  The
+            information for the conference is based on the conference
+            specified with the /TEMPLATE parameter or conference 0 if that
+            parameter is not passed.
+
+         2. Conference 200's name is set to news.groups
+
+         3. Because the last conference number used was 200, the
+            news.answers entry will be assigned to the next number which in
+            this case is 201.
+
+       Note the [,num?] portion of the example.  This allows you to specify
+       a particular conference number for a particular newsgroup, or the
+       start of a range for a set of newsgroups.  If /START is not used,
+       the first conference attempted is 1, otherwise the specified number
+       is used. Any time a conference number appears after a newsgroup
+       name, that number is used as the new "start" number for that
+       conference and all future conferences.  Additionally, conference 0
+       will never be overwritten and if a conference is already in use, you
+       will be warned and allowed to overwrite, skip, or find the next
+       available conference.
+
+       To avoid situations where a single directory is completely
+       overloaded with files (or other directories), this option will
+       attempt to create a balanced directory tree off your base UUCP
+       directory to hold each of the necessary message files for each
+       newsgroup initialized.  It does this by using the first letter of
+       each newsgroup hierarchy level and as much of the last level as
+       possible.  In other words, if you have a base UUCP path of
+       C:\PCB\UUCP, and you are initializing alt.bbs.pcboard, the MSGS file
+       entry is specified as C:\PCB\UUCP\A\B\PCBOA001.
+
+   /INDEX
+   -------
+       This option is used to force a rebuild of the CNAMES.IDX file.  The
+       index can also be regenerated by doing a full save when exiting
+       PCBSetup.
+
+   /MODERATORS:d:\path\moderators
+   ------------------------------
+       By default, UUCP forwards moderated mail to a big provider like
+       UUNET and lets it forward to the appropriate moderator.  Should you
+       desire to control the list of moderators yourself, this parameter
+       can be used to import a list of moderators into your system.  The
+       basic format for this file is:
+
+         newsgroup.name:e-mail.address
+
+       Example:
+
+         alt.bbs.pcboard:support@saltair.com
+
+       The purpose of this option is to scan the moderator file given by
+       your provider and add the appropriate information to the USENET.MOD
+       file for each moderated newsgroup you carry. The moderators file is
+       a UNIX formatted text file (i.e., each line ends with a line feed
+       instead of a carriage return/ line feed pair).
+
+   /SETNAMES:d:\path\localng.lst
+   -----------------------------
+       This option is of particular interest to those currently using
+       third-party products to handle their UUCP needs but are looking to
+       convert to PCBoard.  In this scenario it is quite likely the
+       conferences are already setup and ready to go but there are a few
+       items not taken care of:
+
+         1. The conference names may not truly reflect the newsgroup they
+            carry.
+
+         2. Options in the second configuration screen determining the
+            conference type among other things are not set.
+
+       Using this option, the existing conference information is preserved
+       and only necessary options are changed. This is how the option is
+       useful for those seeking to convert from a previous news or e-mail
+       handling program.  In all other ways, this option is identical to the
+       /IMPORT option.
+
+   /START:confnum
+   --------------
+       This option is used to specify the start conference number for an
+       import operation.  Any conference numbers specified in the text file
+       used by /IMPORT or /SETNAMES override this setting.
+
+   /TEMPLATE:confnum
+   -----------------
+       Unless otherwise specified, all new conferences are based on the Main
+       Board (conference 0).  To select a different conference from which to
+       clone new ones from, the /TEMPLATE option must be used.  After the
+       colon, simply enter the conference number to use as the cloning
+       conference.
+
+ The UUCP Programs
+ ============================================================================
+
+       There are three programs encompassing the normal operation of UUCP
+       in PCBoard--UUOUT, UUXFER, and UUIN which export, transfer, and
+       import messages respectively.  When the feed is coming from and
+       going to a provider via modem, all three programs must be run from
+       an event.  On the other hand, if the feed is provided from a
+       satellite or similar device, only UUIN must to be run to import the
+       messages into PCBoard. The following sections describe each of the
+       main programs in the UUCP package.
+
+   UUOUT.EXE
+   ---------
+       The process of transferring mail entered on your system back to the
+       Internet involves what is called exporting mail.  This job falls to
+       UUOUT which scans the PCBoard conferences for mail and prepares
+       these messages in the form of packets so UUXFER can send them to the
+       provider.
+
+       Running UUOUT with no parameters is the easiest way to get things
+       going as it will automatically scan all newsgroups and e-mail
+       conferences.  Your situation may require special circumstances in
+       which case look at the Translating Names and Selecting Conferences
+       for Export topics in this section for more details.
+
+       For most configurations, UUOUT is run by executing UUOUT.EXE with no
+       parameters.  Mind you, the program must be run from a directory
+       containing a valid PCBOARD.DAT file so information about the base
+       UUCP path and such can be properly located.
+
+     Translating Names
+     ~~~~~~~~~~~~~~~~~
+       When exporting messages to other systems around the world, it is
+       quite likely you may want to change the name used for the FROM name.
+       A good example of this is the SysOp account. As you know, PCBoard
+       gives the SysOp the ability to hide behind an alias (see PCBSetup |
+       Sysop Information).  In situations such as this, mail will go out
+       being written by sysop@yoursite.com. What if you want to change it
+       so you're real name is used? After all, how will someone half-way
+       around the world know you're the SysOp of the site the message is
+       coming from and will it be of concern to them?
+
+       For purposes such as this, create an file named ALIAS.OUT and put it
+       in the UUCP Base Path.  This file is a simple ASCII text file listing
+       the name to look for and the replacement name to use as shown in the
+       following example:
+
+         sysop,john.doe
+
+       This sample entry will make any message from a user titled sysop go
+       out as being from john.doe.  The search for a match is not case
+       sensitive.  Make note, the period in the replacement name is critical
+       as the Internet does not use a space to separate names.
+
+       The ALIAS.OUT file simply translates the major portion of the FROM
+       address, it also does not update what is referred to as the short
+       name, which is the name in parentheses or the name after the comma
+       (if reading with PCBoard).  Let's look at a sample FROM line:
+
+         From: sysop@yoursite.com, SYSOP
+
+       If you use the ALIAS.OUT example, the name sysop will be translated
+       to john.doe making the FROM address appear as:
+
+         From: john.doe@yoursite.com, SYSOP
+
+       From the viewpoint of protecting your identity this is not a good
+       situation because now people can easily tell if you're the SysOp or
+       not.   Luckily the -f command line parameter for UUOUT which will
+       force the short name to be changed as well as the regular FROM
+       address.  An example of how to execute the UUOUT program in this
+       situation follows:
+
+         UUOUT -f
+
+     Selecting Conferences for Export
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       The default for UUOUT is to scan all conferences for mail or news to
+       export.  Should your situation dictate only certain conferences be
+       scanned use the -c command line parameter.  Let's start by looking
+       at a few sample UUOUT command lines and discuss them so you have a
+       better understanding how this works:
+
+         UUOUT
+         UUOUT -c 101
+         UUOUT -c 101,103-150,160
+         UUOUT -c 101-
+         UUOUT -c -150
+
+       The first line of this example set will scan all conferences because
+       no -c parameter was used.  Only conference 101 will be scanned if we
+       use the second line.  On the third line, conference 101, 103 through
+       150, and 160 will be scanned. The last two lines illustrate how to
+       setup an open ended range--line five will scan all conferences
+       between 101 and your highest defined conference while the last line
+       scans conferences 0 to 150.
+
+       Why would anyone want to use an open ended range? Many UUCP
+       configurations will start at a particular conference number like 100
+       or 101 and go to whatever number is necessary. By using an open
+       ended range, you will not have to remember to update your batch
+       files every time you add a new conference to the system.  This can
+       be a very time-saving feature.
+
+     File Attachments
+     ~~~~~~~~~~~~~~~~
+       If a file attachment is found, it will be automatically UUENCODED
+       and transmitted as part of the message body.  Messages larger than
+       approximately 64k are broken down into multi-part messages.  This is
+       done because many sites limit the size of incoming e-mail messages
+       to this limit.
+
+       NOTE:  It is the responsibility of the recipient to properly DECODE
+       the message to its original form.
+
+     RFC-822 Compliancy
+     ~~~~~~~~~~~~~~~~~~
+
+       The standard referred to as RFC822 is the prevalent format to send
+       messages between Internet addresses.  When PCBoard exports the
+       message this is the format it uses.  Should you want to override any
+       of the typical message header information such as DISTRIBUTION,
+       FOLLOWUP-TO, NEWSGROUPS, REFERENCES, REPLY-TO, SUBJECT, or TO, you
+       may include the field to replace followed by a colon and the text to
+       be used.  For example, to change the REPLY-TO field in a message
+       refer to the following example:
+
+         To: winbeta@microsoft.com     Subj: We're interested in testing.
+        (-------------------------------------------------------------------)
+         1: REPLY-TO: president@saltair.com
+         2:
+         3: Hello, we are interested in testing the latest beta.  Please
+         4: forward appropriate information.
+         5:
+         6: Management
+
+       The allowed headers are DISTRIBUTION:, FOLLOWUP-TO:, NEWSGROUPS:,
+       REFERENCE:, REPLY-TO:, SUBJECT:, and TO:.  Scanning will continue
+       for as long as valid headers are found.  The first invalid header
+       line will be considered the first line of the message.
+
+   UUXFER.EXE
+   ----------
+       The sole purpose of UUXFER is to transfer email/news to and from
+       your BBS to a provider over a modem connection.  You can think of
+       the program as a very specialized terminal program running a script
+       to get and receive mail.  In fact, the instructions required to
+       login to the provider is in what is known as the systems file.
+
+       Before we start talking about the systems file, you must understand
+       how the UUXFER program is called.  This program is used to dial a
+       UUCP service provider, send outbound email and news, and receive
+       inbound email and news.  In order to know which provider to call, a
+       site must be specified via the -s switch.  For example:
+
+         UUXFER -s xmission
+
+       This example shows how UUXFER is used to call up a provider with the
+       site name of xmission.  By looking at the systems file, UUXFER will
+       know how to dial the site and how to get logged in.  The next topic
+       of this section discusses this file in detail.
+
+     What is the Systems File?
+     ~~~~~~~~~~~~~~~~~~~~~~~~~
+       The only external configuration file required by UUXFER is the
+       SYSTEMS file. It must be created and maintained in the Base UUCP
+       Path.
+
+ # The # comments out a line in the file
+ # try modifying one of these lines to match your site
+ xmission f1 f2 f3 f4 g "" ATZ OK \dATDT5390900 CONNECT \c gin--gin Name
+ word pwd
+
+       This example SYSTEM file gives you some sense for what is required
+       to create or modify an entry.  To fully understand this file you
+       must realize that any line not beginning with a # represents an
+       entry for a system.  Each entry consists of a set of fields which
+       UUXFER will access and use to login to the system.  A description of
+       each field follows:
+
+         1. xmission - Quite simply, this is the site name UUXFER will look
+            up based on what you pass via the -s command line parameter.
+            In this case, a site named xmission is being defined.
+
+         2. f1 - While this field is not used  by UUXFER other programs
+            similar to UUXFER use it to determine valid times of the day to
+            call.
+
+         3. f2 - This field is not used by UUXFER but similar programs use
+            it to determine the serial port to use for communications.
+
+         4. f3 -  Some programs use this field to determine what type of
+            serial interface to use but UUXFER obtains this information
+            from PCBoard.
+
+         5. f4 - While UUXFER does not use this field, other similar
+            programs use it to control the opening port rate.
+
+         6. g - This field represents the protocol to use.  At this time,
+            UUXFER uses the widely used g protocol.  Once you have the
+            entry working and transferring mail/news you may want to adjust
+            a parameter of the protocol to increase performance. The
+            defaults are to use a packet size of 64 bytes and a window size
+            of 3 packets.  To override the defaults, put a two digit number
+            to the right of the g (i.e., g3 or g32). The first digit
+            controls the size of the transfer window and must be 1 through
+            7 (the default is 3 if unspecified).  The second digit controls
+            the size of the individual packets and must be 1 through 8 (for
+            packet sizes of 32, 64, 128, 256, 512, 1024, 2048, or 4096,
+            respectively; the default is 2 if unspecified).
+
+         7. Everything to the right of the protocol specification is
+            considered the chat script.  What the chat script amounts to is
+            a string of text to expect and a string of text to send when
+            the expected text is found.  For example, I will have the
+            script wait for login.  When that text is received, send my
+            login name.  This is expressed in the following manner on the
+            system line:
+
+              login user_name
+
+       Looking at the example SYSTEMS file you may see the special
+       character sequences \d and \c.  The former tells UUXFER to wait 2
+       seconds before going to the next step.  The latter tells UUXFER to
+       suppress the extra carriage return tacked on to everything sent out.
+
+       For a detailed description and some examples of how to create the
+       chat script portion of the entry, please refer to UUCP.DOC mentioned
+       at the beginning of this section.
+
+     Command Line Parameters
+     ~~~~~~~~~~~~~~~~~~~~~~~
+         -7      Start in 7 data bit, even parity, 1 stop bit
+                 (7E1) mode for the login connection
+
+         -g      This switch gives you the ability to take advantage of
+                 file grading if your provider supports it.  File grading
+                 is where a type of communication like e-mail has a higher
+                 grade than that of a newsgroup article.  By specifying the
+                 grade, you can control what type of communications will be
+                 sent for one call.
+
+         -n      Overrides the UUCP Name field in PCBSetup | UUCP
+                 Configuration.  This option is useful when you call
+                 multiple sites to exchange mail/news where your system or
+                 UUCP name is different for each system.  The name and -n
+                 must be separated by a space (e.g., -n pcboard)
+
+         -o      Take the modem off hook when finished
+
+         -s      This option controls the system name to dial. Enter a
+                 specific system name, all to dial every site defined in
+                 the SYSTEMS file, or any to dial only cites with files
+                 waiting to be sent.
+
+         -t      Specifies the time-out during chat script processing (-t 60)
+
+     Error levels Set Upon Exit
+     ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+       UUXFER.EXE supports several error level codes to alert you (and allow
+       batch file programming) that certain events have occurred or
+       conditions have been met.  Following is a list of error codes that
+       will be returned:
+
+         0 = No errors
+         1 = Failure processing chat script
+         2 = Lost carrier after chat script completion
+         3 = Site not found in SYSTEMS file
+         4 = Invalid entry found in SYSTEMS file
+         5 = No message found during Shere exchange
+         6 = Bad message found during Shere exchange
+         7 = UUCP G protocol not available at site
+         8 = Error during UUCP G protocol
+
+   UUIN.EXE
+   --------
+       This program is used to import email and news from a spool directory
+       to PCBoard.  Its job is accomplished by scanning all spool
+       directories for mail or news to import which is accomplished by
+       simply typing
+
+         UUIN
+
+       at a DOS prompt.  You may limit the spool directory to scan by using
+       the -s parameter as shown in this example:
+
+         UUIN -s xmission
+
+       This shows how UUIN can be used to scan just the spool directory for
+       the xmission site.  Assuming the spool directory is defined as
+       C:\PCB\UUCP\SPOOL, UUIN will scan C:\PCB\UUCP\SPOOL\XMISSION.
+
+     DECOMP.BAT: How it is Used for Importing
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       Many Internet providers will give the news in a format called
+       compressed batch.  To import the news UUIN does require a packet to
+       be in uncompressed batch form.  Although two providers may both
+       compress their news packets there is no guarantee they will use the
+       same programs to compress or even uncompress the packets.
+
+       Due to a lack of a true standard, UUIN will run DECOMP.BAT (in the
+       base UUCP subdirectory) whenever it examines a packet and finds out
+       if it is compressed or not.  "Wait a second.  If UUIN can detect a
+       compressed packet, why not just uncompress it?", you ask.  The key
+       piece of information to understand is that the packet merely states
+       whether it is compressed or not.  No information is provided
+       regarding the type of compression used.
+
+       With that settled, let's continue with UUIN running DECOMP.BAT.  In
+       running the batch file, only the filename to uncompress is sent.
+       The assumption is made that the decompression program will
+       automatically strip the extension of the filename when out putting
+       the uncompressed file.
+
+       The following shows the sample DECOMP.BAT included with the package:
+
+    rem *** This is a sample batch file only!  Customize for your system!
+    comp430d -db12 %1
+
+     File Attachments
+     ~~~~~~~~~~~~~~~~
+       Message attachments are automatically handled by UUIN and UUOUT.  In
+       other words, if a uuencoded message comes into the system, it will be
+       automatically added to a message as a file attachment.  This saves a
+       lot of time for the users who would otherwise have to manually encode
+       the message to its original form.
+
+       NOTE:  Many encoded messages are split into multiple parts for
+       transfer.  Since there is no standard splitting the messages, there
+       is no guarantee UUIN will be able to properly turn all uuencoded
+       messages into file attachments.  You'll know a message was not
+       decoded if you see text similar to the following example:
+
+         M^<?[SH`^`=`%1"QSISAQFM>\[ZX!KD`,`*%`.@Q]PWC/SNP'^H4J^I`&I1*+&
+         M2C9MF:^7@#]8"<F8<A/"_M>H`&8#`E%H2!-&DB;^_J98NW>X@:4NZJ=<]"/=U
+
+     Name Translations and Aliases
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       It is not common for a business or BBS to want to create an alias to
+       make it easier for others to send mail.  For example, on the PCBoard
+       support system we want to allow you to always be able to send mail
+       to support@saltair.com and know it will be re-addressed to someone
+       in charge of support (the SysOp for example.)  To translate an
+       incoming name, a file named ALIAS.IN must be created and stored in
+       the UUCP base path.  The format of the file is ASCII text.  On each
+       line is the incoming user name to translate followed by a comma, and
+       finally the user name the message will ultimately be addressed to.
+       Example:
+
+         support,bob smith
+         sales,john clark
+
+     Bouncing a Message
+     ~~~~~~~~~~~~~~~~~~
+       If a message is imported but an alias or user record cannot be found
+       on the system for this user name, the message will be bounced.  When
+       a message is bounced, notice is sent to the receiver that something
+       was wrong with the message.  You may create a custom message to
+       bounce back to the sender of the message by editing a file called
+       BOUNCE.TXT in the base UUCP subdirectory.
+
+       NOTE:  Additionally, messages to the following users will be
+       imported regardless of their presence in the users file: postmaster,
+       root, uucp, sysop, and usenet.
+
+     Header Information in Messages
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       By default, all header lines are imported into the message body,
+       just like they come in from your service provider. However, that can
+       take up a lot of extra space that you might like to use for other
+       purposes. For this reason, you can create a file named HDRKEYS.LST
+       in your base UUCP path directory that has certain key words to scan
+       for to include in your message.  If one of the key words matches the
+       start of the header, the header will be included in the message
+       body.  Otherwise, the header itself will be scanned for necessary
+       information, but it won't be included in the message body within the
+       PCBoard message base. So, for example, to include only the FROM:,
+       SUBJECT:, DATE:, and MESSAGE-ID: headers, create a file like this:
+
+         FROM:
+         SUBJECT:
+         DATE:
+         MESSAGE-ID:
+
+       UUIN can be configured to strip all headers by creating a
+       HDRDKEYS.LST file which contains just the following line:
+
+         NOHEADERS
+
+       NOTE:  While the colons are not required, they help ensure that you
+       only desired headers are kept with the messages imported into the
+       system.
+
+     Satellite Feeds
+     ~~~~~~~~~~~~~~~
+       UUIN.EXE also supports Usenet satellite feeds such as PageSat and
+       Planet Connect.  These systems transfer BAG files, which are simply
+       batched (but not compressed) news files. PageSat creates *.BAG files
+       directly.  Planet Connect actually creates PCUSENET.* files, which
+       are zipped (compressed) *.BAG files, one per file.  To import these
+       sources of news, you must unzip the PCUSENET.* files first (in the
+       case of Planet Connect) and move the *.BAG files to an appropriate
+       spool directory.
+
+     Command Line Parameters
+     ~~~~~~~~~~~~~~~~~~~~~~~
+
+         -f      Force email to be imported regardless of whether or not
+                 the user name is found in the USERS file.
+
+         -j      Normally when mail cannot be properly placed by UUIN (a
+                 conference does not exist, etc.) the mail is placed in the
+                 junk conference.  Use of this switch will simply ignore
+                 junk mail as if it had never came in.  This is useful when
+                 the feed comes in via satellite dish setups where it is
+                 known in advance that junk will be coming in as part of
+                 the feed and is not an error in the setup.
+
+         -l      This switch is used to disable import of long TO names.
+                 While they are useful in determining exactly how the
+                 original message was addressed, they are not essential.
+                 Remember how mail will come in addressed similar to
+                 joe.smith@yourbbs.com, JOE SMITH?  When this switch is
+                 used, the message will simply be addressed to JOE SMITH.
+
+         -o      This switch will scan the junk conference and output a
+                 list of newsgroups the messages originally came from. This
+                 list is in ASCII format and is quite usable by UUUTIL to
+                 add these newsgroups as new conferences.
+
+         -s      Remember that UUIN, by default, scans all spool
+                 directories. To single out a specific spool directory to
+                 scan, use this switch followed by a space, and the name of
+                 the spool directory to scan.  For example, if the spool
+                 directory is C:\PCB\UUCP\SPOOL\XMISSION, run UUIN -s
+                 XMISSION.
+
+         -u      Use this switch to disable UUIN's automatic decoding of
+                 file attachments.  Use of this switch will require the
+                 user to decode the message back into the original file
+                 type.
+
+ ****************************************************************************
+ *                               PCBMail                                    *
+ ****************************************************************************
+
+
+ What is PCBMail?
+ ============================================================================
+
+       PCBMail is an on-line mail manager specifically designed to work
+       with PCBoard.  Ease of use, and powerful functionality make PCBMail
+       a helpful tool in a stand alone environment.  PCBMail is designed for
+       use on local nodes. Features include reading/writing/replying to
+       mail, message filtering support for mailing lists and much more.
+
+       This manual and software assumes the reader has some basic prior
+       knowledge of using PCBoard and Microsoft Windows. The goal of this
+       section is to simply get PCBMail installed. Once in PCBMail you may
+       press F1 to access the extensive on line help.
+
+ System Requirements
+ ============================================================================
+
+   Hardware
+   --------
+         * IBM or compatible computer (80386 SX or higher)
+         * 4 MB of memory
+         * Hard disk drive with at least 1 MB of free space for PCBMail
+           executable, plus another 1 MB free for storage of your saved
+           messages and downloaded files.
+         * Mouse
+         * Printer (optional; required to print messages)
+
+   Software
+   --------
+         * MS-DOS version 5.0 or later
+         * Microsoft Windows 3.1
+         * PCBoard Software v15.2 or higher
+
+ Installing PCBMail
+ ============================================================================
+
+       The necessary files for PCBMail are installed in the PCBMAIL
+       subdirectory underneath the directory where PCBoard is installed.
+       Files needed for PCBMail to run are:
+
+         PCBMAIL.EXE     PCBMail executable.
+         PCBMAIL.HLP     Windows help file for use with PCBMAIL.EXE.
+         BWCC.DLL        Dynamically Linked Library for screen controls, etc.
+
+ How to make a PCBMail group in Windows ?
+ ============================================================================
+
+         1. Go to the File pull down menu item and select New
+            and then Program Group.
+
+         2. Enter in the group name and description into the text fields.
+
+         3. Select New Program Item from the File pull down menu.
+
+         4. Enter PCBMail in the description field.
+
+         5. Enter the path and file name of your PCBMAIL.EXE file.
+
+         6. As the working directory, enter the subdirectory where
+            PCBMAIL.EXE is located.
+
+ Loading PCBMail
+ ============================================================================
+
+       The first time you run PCBMail the configuration dialogue box will
+       appear prompting you for the necessary information to get
+       operational. The only field you must complete is the full path and
+       location to PCBOARD.DAT.  Example:
+
+         C:\PCB\PCBOARD.DAT
+
+       You will be notified if the file cannot be found in which case
+       another chance will be given to enter the proper location.
+
+       If desired, fill in the rest of the options on the configuration
+       screen.  You may change these values from the Config menu option or
+       by loading PCBMail with the -config command line parameter.
+ 

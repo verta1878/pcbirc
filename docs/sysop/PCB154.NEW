@@ -1,0 +1,62 @@
+*******************************************************************************
+                      What Is New in PCBoard 15.4
+              (Unreleased beta — recovered by pcbirc crew 2026)
+*******************************************************************************
+
+NOTE: PCBoard 15.4 was never officially released by Clark Development
+Company. These changes were found in the 15.4b beta source code and
+MKPCBTXT.EXE binary. This document reconstructs what Clark intended
+for 15.4 based on source code analysis.
+
+
+PCBoard Additions/Changes
+=========================
+
+Personal Storage Area (PSA_PERSONAL)
+-------------------------------------
+Added user profile fields as a new Personal Storage Area (PSA):
+  - Gender (M/F)
+  - Birthdate
+  - WEB address (URL)
+
+These fields are stored in the user record as PSA_PERSONAL, a new
+entry in PCBoard's modular PSA system (PSA_ALIAS, PSA_VERIFY,
+PSA_ADDRESS, PSA_PASSWORD, PSA_STATS, PSA_NOTES, PSA_ACCOUNT,
+PSA_QWKNET, PSA_PERSONAL, PSA_BANK). Prompted during new user
+registration or profile update.
+
+
+PCBTEXT String Additions
+------------------------
+Four new PCBTEXT strings added (slots 747-750):
+
+  747: "Enter your gender (M/F)"
+  748: "Enter your birthdate"
+  749: "Enter your WEB address"
+  750: "Enter color (B)lue,(G)reen,(C)yan,(R)ed,(M)agenta,(Y)ellow,(W)hite,(+/-)"
+
+The version tag in STRS15.C for these strings is 154, confirming they
+were intended for PCBoard 15.4.
+
+Sysops should run MKPCBTXT to regenerate their PCBTEXT file.
+
+
+PCBOARD.DAT
+------------
+Line 349 remains the last field (same as 15.3). No new PCBOARD.DAT
+lines were added in 15.4.
+
+
+Source Code Changes from 15.3
+-----------------------------
+The 15.3 source (pcb153src0014) contains 14 internal snapshots
+(versions 000 through 014) showing incremental development. Changes
+include bug fixes, code cleanup, and preparation for the Personal Storage Area
+(PSA_PERSONAL) fields. The PCBSRCV directory preserves all 14 snapshots.
+
+
+Compiler
+--------
+Clark's 15.3/15.4 used Borland C++ 3.1 with Borland inline assembler.
+The pcbirc project has ported the codebase to OpenWatcom 2.0 for
+cross-platform compilation — see PCB1541.NEW for details.

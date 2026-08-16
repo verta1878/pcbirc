@@ -1,0 +1,108 @@
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+This file is a capture of a couple of messages which cover the topic of passing
+your Environment Variables from an OS/2 session over to a DOS session.
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+Date: 07-28-95 (11:30)              Number: 7177 of 7499 (Refer# NONE)
+  To: IVAN WINDON
+From: DAVID TERRY
+Subj: Beta PCBOARD.EXE features
+Read: 07-29-95 (10:43)                       Status: PUBLIC MESSAGE
+Conf: Beta Support (5)                    Read Type: TEXT SCAN (+) HAS REPLIES
+
+-> Also just a little problem, but everything but one door works on the new
+-> OS/2 code, it's the Tradewars door, it's not taking the SET TWNODE=1 anymore
+-> in the board.cmd file.
+
+The problem is that the DOS ENVIRONMENT does not know what you put into your
+OS/2 ENVIRONMENT.
+
+So when you put the SET TWNODE=1 into your OS/2 environment, that setting is
+*not* available to programs running inside of a DOS session.
+
+However, there may be an easy solution for you.  Is this TWNODE=1 supposed to
+be defining your PCBoard node number (but for TradeWars' usage)?  If so, then
+try putting this line inside of the TradeWars door file itself:
+
+        SET TWNODE=%PCBNODE%
+
+That way the TWNODE environment variable will be set at the time that TradeWars
+is run, and it will pull the proper node number from PCBoard's environment
+variable.
+
+        David W. Terry
+   Clark Development Company
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+-------------------------------------------------------------------------------
+
+Date: 08-03-95 (06:16)              Number: 7402 of 7499 (Refer# NONE)
+  To: GREG HETMAN
+From: DAVID TERRY
+Subj: Environmental Variables
+Read: 08-03-95 (09:20)                       Status: PUBLIC MESSAGE
+Conf: Beta Support (5)                    Read Type: TEXT SCAN (+) HAS REPLIES
+
+-> For running Doors under PCB 4 OS/2, I am still using standard Batchfiles for
+-> running the doors (although modified for the CALL statement in BOARD.CMD).
+-> I was under the impression that the Environmental variables are
+-> automatically passed to the DOS window as soon as the shell window is
+-> created.  This is a DOS window correct?
+
+Normally, when OS/2 creates a DOS window it does NOT pass *any* environment
+variables between the parent OS/2 window and the child DOS window.  None
+whatsoever.
+
+However, because PCBoard is control of creating this "DOS Window" in which the
+DOOR application is run, PCBoard will pass any environment variables that it
+*knows* about, over to the DOS window.  These environment variables are the
+PCBxxxx= variables (i.e. PCB=, PCBDIR=, PCBDAT=, PCBDRIVE=, etc).  But PCBoard
+also realizes that there is a DSZPORT= and DSZLOG= environment variable that is
+likely to be set, so it passes these through too (if they happen to exist).
+
+But PCBoard does NOT attempt to pass through any other environment variables.
+In other words, if you edit your BOARD.CMD file and put a line in there that
+says SET MYVARIABLE=XYZ.  That environment setting will go into the OS/2
+session in which BOARD.CMD is running, but it will NOT be passed through to the
+DOS session because OS/2 doesn't pass it, and because PCBoard doesn't know
+about it so PCBoard doesn't pass it either.  So the environment variable is
+useful to any OS/2 session windows that PCBoard spawns off, but any DOS windows
+it spawns will NOT see this environment variable.
+
+There are ways around this though...  you could have your BOARD.CMD file (or
+STARTOS2.CMD if you're using it) create a .BAT file.  For example, you might
+use the line "ECHO SET MYVARIABLE=XYZ > MYSETS.BAT" in your CMD file, then in
+your DOS batch file you would put a "CALL MYSETS.BAT" file to run this BAT file
+and pull the set statement(s) into your DOS environment.
+
+In fact, this is what PCBoard is having to do.  It is creating a PCBDOS.BAT
+file which is where it puts all of the environment variables that *it* knows
+about.  Then whenever it runs a DOS program, it actually calls PCBDOS.BAT
+*first* so that the SET statements can get executed.  PCBoard creates this file
+every time it recycles, however, so you can't just modify this batch file to
+suit your needs because any modifications you make to it will be lost.
+
+One more idea for you.  If the environment variable you need could be "derived"
+from the information already in the environment, then your DOOR batch file
+could be the one to create the SET statement.
+
+For example, there is a PCBPORT= environment variable which holds the port
+number of the comm port.  If your door simply needs to know what the port
+number is, but it uses a MYPORT= environment, then your door batch file could
+have a line in it that says "SET MYPORT=%PCBPORT%" and in that manner, the door
+batch file itself would create the MYPORT= environment variable each time it is
+run.
+
+Give those ideas some thought.  The work arounds aren't difficult, but knowing
+that a workaround is required because environment variables aren't passed
+between OS/2 and DOS sessions is a necessary first step.
+
+        David W. Terry
+   Clark Development Company
+  ßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+

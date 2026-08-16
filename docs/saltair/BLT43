@@ -1,0 +1,22 @@
+SENDING E-MAIL TO OTHER NETWORKS
+ 
+ 
+There are a number of computer networks that are not directly part of the 
+Net, but which are now connected through "gateways" that allow the 
+passing of e-mail.
+ 
+ATTMail 
+-------
+ 
+Address your message to user@attmail.com. 
+   
+From ATTMail, a user would send mail to you in this form: 
+ 
+     internet!domain!user 
+ 
+So if your address were nancyr@world.std.com, your correspondent would 
+send a message to you at 
+ 
+     internet!world.std.com!nancyr 
+ 
+ 

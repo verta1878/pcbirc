@@ -1,0 +1,70 @@
+PCBoard 15.4 Revival (pcbirc) — License Information
+====================================================
+
+This repository contains code from multiple sources with different licenses:
+
+
+Clark Development Company Source Code
+-------------------------------------
+Files in PCBSRC/ are proprietary source code from Clark Development
+Company, Inc. Copyright (C) 1983-1997 Clark Development Company, Inc.
+
+The source code was legally purchased under Clark's Personal Source
+Code License program ($299-$499, see docs/saltair/BLT17).
+
+Clark Development Company went bankrupt in July 1997. The source code
+license terms permitted building PCBoard products. This project
+continues that work.
+
+
+pcbirc Crew Additions (GPLv3)
+-----------------------------
+New code written by the pcbirc crew is licensed under the
+GNU General Public License v3.0.
+
+This includes:
+  - PCBSRC/MAIN/SOURCE/UTIL/PCBISO/ (PCBISO utility)
+  - tools/qfront/src/ (QFront FidoNet mailer suite)
+  - pcbis/src/ (PCBoard Internet Services)
+  - platform/fossil/ (FOSSIL drivers)
+  - Compatibility shims (conio_compat.c, async_wrap.c, etc.)
+  - All files in patches/
+  - All .md documentation files
+
+See https://www.gnu.org/licenses/gpl-3.0.html
+
+
+CodeBase Library
+----------------
+CodeBase dBASE I/O library. LGPL v3.0.
+Used by PCBNLC for nodelist compilation.
+See https://www.gnu.org/licenses/lgpl-3.0.html
+
+
+QFront Original
+---------------
+Original QFront v1.20a by Robert Couture (Strstruc Computing),
+1995-2000. Freeware/donationware. Original binaries preserved
+at tools/qfront/original/ for reference.
+
+Our clean-room rewrite (tools/qfront/src/) is GPLv3.
+
+
+PPL Engine (PPL/pplengine/)
+---------------------------
+PPLEngine by Mike Krüger (mkrueger@posteo.de).
+Apache License 2.0.
+See PPL/pplengine/LICENSE
+
+
+PCBoard Wiki Content
+--------------------
+docs/PCBoard_154_Reference.txt based on the PCBoard Wiki at
+https://kuehlbox.wtf/wiki/
+CC Attribution 4.0 International.
+
+
+Roy/SAC PPE Collection
+----------------------
+PPE archives donated by Roy/SAC (Carsten Cumbrowski).
+Freeware/public domain (individual PPE licenses vary).

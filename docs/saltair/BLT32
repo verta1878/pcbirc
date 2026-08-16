@@ -1,0 +1,67 @@
+@X09            [ @X0FSHARING A PCBOARD.DAT FILE USING MULTIPLE NODES ]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+@X0B
+WHAT IS A PCBOARD.DAT?
+----------------------
+@X03PCBoard.DAT is the primary configuration data file that PCBoard reads, and
+which contains the path and filename of all other configuration files.
+When using multiple nodes, there is the dilemma that the comm port information
+is contained in this file, and it becomes necessary to use one PCBOARD.DAT file
+for each separate node.  However, it is possible to use just ONE pcboard.dat
+file and run multiple nodes on separate comm ports.
+
+@X0BSETTING UP MULTIPLE NODES
+-------------------------
+@X03Each node needs a separate and unique subdirectory in order to run.  This
+directory will at some point contain temporary files with information that
+is specific to that node.  All nodes should be using this directory as the
+current subdirectory when the node is launched.  When using multiple pcboard.dat
+files, this is where the pcboard.dat file is placed.
+
+When using a single pcboard.dat file, the file should reside in the \PCB
+directory.
+
+In PCBSetup, select MODEM INFORMATION, then select MODEM SETUP.  This
+information will be ignored when sharing a single pcboard.dat file if you
+follow the information provided in this document under the header SETTING
+ENVIRONMENT VARIABLES.
+ 
+In PCBSetup, select NODE CONFIGURATION.  Highlight the field labeled
+ 
+RUNNING A NETWORK/MULTITASKER SYSTEM:
+ 
+Enter a <Y> and press ESCape twice to save.  Enter <Q> to save only changes
+made.
+ 
+@X0BSETTING ENVIRONMENT VARIABLES
+-----------------------------
+@X03Comm port and node information, among other things, can be specified in the PCB
+environment variable.  You can specify an environment variable from a batch
+file or dos prompt/OS2 propmpt.  The command is:
+
+SET PCB= [param / data /content]
+
+An example under Os/2 might be:
+ 
+SET PCB=/NODE:1 /PORT1: /BAUD:38400 /BASE:3F8 /IRQ:4 /OS
+
+An example under DOS might be:
+
+SET PCB=/NODE:1 /COM1: /BAUD:38400 /F
+
+Valid parameters for this environment variable are specified in your manual.
+PCBoard will look at the com port information specified here before looking
+at the PCBoard.DAT file.
+
+
+
+
+
+
+
+
+
+
+
+ 
+

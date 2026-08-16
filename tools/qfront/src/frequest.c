@@ -196,6 +196,23 @@ typedef struct {
     int  is_update;               /* Update request (only newer) */
 } FreqFile;
 
+/*-----------------------------------------------------------------------*/
+/* freq_process_req() — Parse a .REQ file and resolve filenames          */
+/*                                                                         */
+/* .REQ file format (FTS-0006 Section 6):                                */
+/*   One filename per line, with optional modifiers:                     */
+/*     FILENAME            — request this file                           */
+/*     FILENAME !password  — password-protected request                  */
+/*     FILENAME +datetime  — update request (only send if newer)         */
+/*                                                                         */
+/* Resolution order:                                                      */
+/*   1. Check magic filenames (QMAGIC.DAT aliases like "FILES")          */
+/*   2. Search request directories (semicolon-separated in config)       */
+/*   3. Log "File not found" if neither matches                          */
+/*                                                                         */
+/* Returns number of files resolved for sending.                         */
+/*-----------------------------------------------------------------------*/
+
 int freq_process_req(const char *req_path, const char *req_dirs,
                       FreqFile *files, int max_files)
 {
@@ -207,6 +224,7 @@ int freq_process_req(const char *req_path, const char *req_dirs,
     if (!f) return 0;
 
     qf_log(LOG_INFO, "Processing request file: %s", req_path);
+    qf_log(LOG_DEBUG, "  search dirs: %s", req_dirs);
 
     while (fgets(line, sizeof(line), f) && count < max_files) {
         char *p = line;

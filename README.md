@@ -26,7 +26,7 @@ to OpenWatcom 2.0 for cross-compilation on modern Linux.
 |---|---|
 | Programs | 36 (28 Clark + 8 new tools) |
 | Clark binaries (Watcom DOS4G) | 28 (16 main + 12 Phase 0 utilities) |
-| New tools | 5 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis) |
+| New tools | 8 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis, QFront, pcbfoss, pcbiso) |
 | PPE collection | 5,703 archives (incl. Roy/SAC donation) |
 
 ### Clark Binaries — Main (OpenWatcom 2.0)
@@ -97,7 +97,7 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 
 | Driver | Lead | Description |
 |---|---|---|
-| SIO v1/2K | evga | OS/2 serial I/O, 31 bugs fixed, clean-room |
+| SIO v1/2K | evga | OS/2 serial I/O, 26 bugs fixed, clean-room |
 | FOSSIL | sysop/0 + kiddo | Cross-platform FOSSIL socket layer |
 
 ## Libraries Written for Phase 0

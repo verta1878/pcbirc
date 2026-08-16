@@ -1,0 +1,166 @@
+What is FidoNet?
+====================
+   FidoNet is a loose confederation of bulletin board systems which
+stretches around the entire world. Each BBS belongs to a local
+NETWORK. Each Network handles its own operations more or less
+independently of other networks in the world. Each Network belongs to
+a larger REGION, and each Region belongs to a ZONE. A ZONE is as large
+as a continent. Zone 1 is North America. A Region can be part of a
+continent, or an individual country. The Regions in North America are
+divided geographically and often cross the US-Canadian border. In
+Europe, Regions tend to be defined by national borders.
+   FidoNet is able to grow because it has a dynamic structure. There
+is no centralized authority. When one Network gets too big, some folks
+can split off and start another Network. It's that easy. One thing to
+remember, though, is that FidoNet is organized by GEOGRAPHY, not by
+interest. That means if you start a BBS in one geographic area, you
+probably have no choice of which network you join. You join the local
+network. If you don't like the local network, move. If you don't like
+the local Region, move further.
+   That's a key point. Networks are based on calling areas. You don't
+form FidoNet networks based on interest, ever. Instead, you can deal
+with your interests through EchoMail, which is topic oriented.
+   The real key to joining the local Net is in finding the Network
+coordinator. How do you do that? Well, you find ANY FidoNet board in
+the area and ask. I met Jim at a King's Table restaurant at a Sysop
+meeting totally by accident. I just happened to say to Jim that I
+wondered what this Fido business was all about, and he said,
+   "Well, I'm the coordinator for everything West of Puget Sound."
+Once he made that statement, things got a whole lot easier for me. If
+you don't frequent King's Table restaurants or Pizza parlors, then if
+you sign onto a BBS and it says, "Press [Escape] to continue," you are
+probably getting pretty warm. Ask around.
+   
+What does FidoNet Cost?
+---------------------------
+   I've run into this idea several times lately. Apparently some folks
+think it costs money to join FidoNet. That's just not true at all. It
+is very possible to join FidoNet without ANY cost involved for the
+network itself. Providing you have a computer and a modem in the first
+place, you can use freeware programs to construct the BBS itself
+easily.
+   If you want to avail yourself of some of the benefits of FidoNet,
+such as EchoMail (explained below) local networks usually have some
+provisions for cost-sharing to get the conferences from one of the
+backbone hubs. And, of course, once you're on FidoNet the temptation
+to call long distance to get your favorite new hot file will be very
+strong, indeed. But even here, you just pay for the long distance
+call, which you don't make without conscious effort on your part.
+   
+What is a Network Coordinator?
+==================================
+   That's the "NC" He's the HOST of the network. The word "host" was
+carefully chosen in the beginnings of FidoNet to get away from
+authoritarian overtones. His responsibilities are to coordinate
+FidoNet within the network. NC's often do lots of things that are
+beyond what they have to do. But they only are required to do a few
+things. Here's what they are:
+   The NC is supposed to make the Nodelist available to you. We'll
+talk about the Nodelist below. He's supposed to provide you with
+copies of "The Snooze," which is the slang name of the weekly FidoNet
+newsletter. He's supposed to provide FidoNet information to you. And
+he's supposed to take you in and out of the Nodelist, as appropriate.
+He's also supposed to promote FidoNet, but that's a responsibility of
+all Sysops.
+   That's just about all, period. Further, he has to make this stuff
+available, but he doesn't have to send it to you. You have to go get
+it unless he decides it would be easier to send it to you instead. You
+shouldn't be costing your NC any extra money. If you need access to
+FidoNet services, it's on your dime. You get to make the call. That
+way, you don't have to be rich to serve in a HOST capacity.
+   But frankly, NC's spend a lot of money on your behalf anyway.
+That's just how this whole thing works. You can't expect, really, to
+run a BBS without spending some money. It's the same with a NC. He
+will never break even unless, perhaps, a big Net incorporates and gets
+very official about the whole thing. There are "Sugar Daddies" in
+FidoNet who will provide free services to a network. These guys are
+either independently wealthy or they can somehow write it off, but
+this is very rare, as you might expect. It's a gift.
+   Now: Who appoints the NC? The Regional Coordinator. Who appoints
+the Regional Coordinator? The Zone Coordinator. Who appoints the Zone
+Coordinator? The Regional Coordinators themselves. That's how it
+works. Some Networks hold elections. They are NOT REQUIRED TO DO SO.
+Go read the Policy 4 document if you want more legalese.
+   The reason I bring this up is because it comes up all the time
+around FidoNet. Lots of people think they live "in a democracy,
+therefore..." Right. We do. Lots of FidoNet Sysops don't, by the way.
+But we do. So go elect the President. The Constitution is about the
+Federal Government of the country. It isn't about FidoNet. You don't
+have the right to elect people in FidoNet to any position unless the
+policy documents spell out that right. Currently, they don't. Unless
+it's changed, they won't.
+   Now, that doesn't mean the local Network can't set up an official
+elections process at the network level. Many do; and the practice is
+spreading. But it isn't required. All those people who keep whining
+about the right to elections just don't get it. They ARE clueless.
+   Ideally, a network operates in a "collegial" atmosphere with
+everyone in the network contributing to its smooth operation. It's
+like a college department. No professors really want to be the Chair
+of the Department. So they grumble a lot, and one of them will take it
+for a couple of years and "do his time" fighting with the Dean. Then
+he says he wants to resign and just teach, and some other professor
+grumbles, but finally takes his turn for awhile so the rest of them
+will leave him alone. Sometimes you'll get someone who grooves on the
+power, then everyone hates him and either drives him out or waits for
+him to retire, when the cycle begins anew.
+   The NC may need to appoint a "NEC" a "Network EchoMail Coordinator"
+to help with the mail. There may be other "positions" as well, just to
+help out. Lots of Networks have several "HUBS" that take on the
+responsibility of hauling in the mail. Lots of arrangements are
+possible. We get to use our imaginations on this.
+   Ideally, costs are shared. It costs money to haul in echo mail, for
+example. A Network can require Nodes to pay a share of the costs.
+Sometimes it's a flat rate. Sometime's it's "per echo." All this cost
+sharing is perfectly legal and proper. Be prepared to pay your fair
+share. It's usually not much. There's more than one way to do it. You
+get a lot more than you pay for.
+   
+What is a Regional Coordinator?
+-----------------------------------
+   Well, since we mentioned this earlier, we'd better explain it a
+little further. The original purpose of the Regional Coordinator was
+to be a catch-all network for those nodes which were not close to a
+network of their own. That's all. But as FidoNet grew, so did the
+Nodelist, and so did the PIECES of the Nodelist. Since these were all
+being sent to the Zone Coordinator for incorporation into the master
+list, this began to be an overwhelming job for the Zone Coordinator.
+   So someone noticed that the Regional Coordinators didn't have much
+to do, so why couldn't they coordinate the Nodelist segments from
+within their region, then send the larger segments to the Zone
+Coordinator? That way the ZC would have fewer segments to patch
+together. This would lessen the load, spread it out amongst the
+regions, and everything would be better.
+   According to Tom Jennings, founder of FidoNet: "Bad mistake.
+Sorry." (I heard him say this at the first ONE BBSCON convention in
+Denver.) Why was it a mistake? Because it inadvertently created a
+hierarchical power structure. The Regional Coordinators suddenly had a
+whole lot to do with everyone in their regions, not just the folks in
+their little catch-all network intended to mop up remote nodes. When
+EchoMail began to take off, Regional Coordinators were selected to
+choose which echoes got on the backbone. It was only a vote, but the
+requirement of two Regional Coordinator's affirmative votes gave more
+power to them.
+   Understand that at that time there was severe pressure to keep the
+backbone echoes down to a dull roar. This was because lots of software
+couldn't handle more than 256, then 512 conferences. So this was done,
+it looks like from here, with perfectly legitimate technical reasons
+in mind. These reasons have largely evaporated, but that's how it all
+started. Technology was driving policy.
+   Regional Coordinators are now responsible for appointing Network
+Coordinators. They are also responsible for the smooth operations of
+networks within their region. They are responsible for assigning
+numbers to new networks being formed, and for ensuring that new nodes
+belong to the right geographic networks. They also are part of the
+appeal process when a node has problems with a Network Coordinator.
+You can see from this description that Regional Coordinators now do
+far more than the original job of taking care of the odd node not
+belonging to a network.
+   Regional Coordinators now play an important role in FidoNet. Many
+of them are elected these days, and their contribution is not trivial.
+It's just that Fido lost some of it's "Band of networks united for a
+common purpose" philosophy when this structure grew into place. There
+is some sentiment within FidoNet currently to reduce the size of
+Regions, for the same reason Regions were created in the first place.
+They've all grown huge, and it's a big responsibility in FidoLand
+today.
+

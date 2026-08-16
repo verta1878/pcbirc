@@ -292,20 +292,44 @@ NlDatabase *nl_open(const char *path)
 
 /* ---- Lookup a Node ---- */
 
+/*-----------------------------------------------------------------------*/
+/* nl_lookup() — Find a node in the parsed nodelist database             */
+/*                                                                         */
+/* Linear scan — acceptable for nodelists up to ~65K nodes.             */
+/* A production implementation would use a hash table or binary search   */
+/* on the pre-compiled .NDX index for O(1) / O(log n) lookup.           */
+/*                                                                         */
+/* Matches on zone:net/node only. Point matching is not implemented     */
+/* because points are typically in separate pointlists with Boss headers.*/
+/*                                                                         */
+/* Returns a pointer to the NlEntry, or NULL if not found.               */
+/*-----------------------------------------------------------------------*/
+
 const NlEntry *nl_lookup(const NlDatabase *db, const FTN_ADDR *addr)
 {
     int i;
+    char buf[64];
 
     if (!db) return NULL;
+
+    ftn_format_addr(addr, buf, sizeof(buf));
+    qf_log(LOG_DEBUG, "nl_lookup: searching for %s in %d entries",
+           buf, db->count);
 
     for (i = 0; i < db->count; i++) {
         if (db->entries[i].addr.zone == addr->zone &&
             db->entries[i].addr.net  == addr->net &&
             db->entries[i].addr.node == addr->node) {
+            qf_log(LOG_DEBUG, "nl_lookup: found %s — \"%s\" by %s "
+                   "(cm=%d down=%d hold=%d ibn=%d)",
+                   buf, db->entries[i].system, db->entries[i].sysop,
+                   db->entries[i].is_cm, db->entries[i].is_down,
+                   db->entries[i].is_hold, db->entries[i].has_ibn);
             return &db->entries[i];
         }
     }
 
+    qf_log(LOG_DEBUG, "nl_lookup: %s not found", buf);
     return NULL;
 }
 

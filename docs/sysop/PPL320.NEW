@@ -1,0 +1,718 @@
+                              WHATSNEW.PPL
+              Items added to PPL for version 3.20
+
+============================================================================
+
+  STATEMENT KILLMSG INTEGER confnum, INTEGER msgnum
+
+  Parameters : confnum = conference number in which the doomed message resides.
+               msgnum  = message number to kill
+
+  EXAMPLE    :
+
+              KILLMSG 10,10234
+
+
+  --------------------------------------------------------------------------
+  FUNCTION INTEGER FTELL(INTEGER channel)
+
+  Parameters : channel - The file channel to process
+
+  Return Val : 4 byte signed integer containing the file pointer offet
+               of the file attached to channel.
+
+  EXAMPLE    :
+               FOPEN 1,"C:\MYFILE.TXT",O_RD,S_DN
+               FSEEK 1,10,SEEK_SET
+               PRINTLN "Current file offset for MYFILE.TXT is ",FTELL(1)
+               FCLOSE 1
+
+  Description: FTELL returns the current file pointer offset for the specified
+               file channel. If the channel is not open, it will return 0.
+               Otherwise it will return the cirrent postion in the open file.
+
+  --------------------------------------------------------------------------
+  FUNCTION INTEGER OS()
+
+  Parameters : None
+
+  Return Val : An Integer indicating which operating system/ pcboard version
+               the PPE is currently running under. 1=DOS, 2 = OS2, 0 = unknown.
+
+  Example    :
+
+               SELECT CASE ( OS() )
+                   CASE 1: PRINTLN "Running DOS version of PCBoard"
+                   CASE 2: PRINTLN "Running OS/2 version of Pcboard"
+               END SELECT
+
+
+  --------------------------------------------------------------------------
+  FUNCTION BS2I  Converts a 4 byte bsreal to a PPL integer.
+        Syntax  INTEGER  BS2I(BIGSTR bsreal)
+        parameters:  bsreal is a BIGSTR type since BIGSTR types can contain
+                     binary data. For this function, PPL will convert the first
+                     4 bytes of the BIGSTR into an INTEGER variable and retun
+                     it.
+
+      Return value:  Returns a converted 4 byte bsreal in the form of a 4 byte
+                     integer
+
+      Example:
+
+        BIGSTR str1
+        INTEGER int1
+
+        fopen 1,"d:\test\pcb\main\net", O_RD,S_DN
+        fread 1,str1,4
+
+        int1 = BS2I(str1)
+        println "integer after conversion = ", int1
+
+  ----------------------------------------------------------------------------
+  FUNCTION BD2I  Converts an 8 byte bdreal to a PPL integer
+        See BS2I
+        Example:
+
+        BIGSTR str1
+        INTEGER int1
+
+        fopen 1,"d:\test\pcb\main\net", O_RD,S_DN
+        fread 1,str1,8
+
+        int1 = BS2I(str1)
+        println "integer after conversion = ", int1
+
+  ----------------------------------------------------------------------------
+  FUNCTION I2BS  Converts a 4 byte PPL INTEGER into a 4 byte bsreal and stores it
+        in a BIGSTR.
+
+        Syntax:  BIGSTR I2BS(INTEGER value)
+        Params:  value- a PPL INTEGER value
+        returns: A BIGSTR containing the binary immage of the bsreal
+
+        EXAMPLE:
+
+        BIGSTR str1
+        INTEGER int1
+
+        int1 = 37;
+        str1 = I2BS(int1)
+
+        fopen 1,"d:\test\pcb\main\net", O_RD,S_DN
+        fwrite 1,str1,4
+
+
+  ------------------------------------------------------------------------
+  FUNCTION I2BD  Converts a 4 byte PPL INTEGER into an 8 byte bdreal and stores it
+        in a BIGSTR
+        See I2BS
+
+  --------------------------------------------------------------------------
+
+STATEMENT  SOUNDDELAY INTEGER frequency, INTEGER duration
+      Params: frequency = frequency at which to sound the PC speaker
+              duration  = length, in clock ticks (18 = 1 second), to leave
+                          the speaker on
+
+      EXAMPLE:
+
+      If (inputval != validInputVal) SOUNDDELAY 500,18
+
+      Comments: This function was added to replace the
+                SOUND 500
+                SOUND 0
+                combination required for DOS, since this functionality
+                is not available under OS/2.
+
+----------------------------------------------------------------------------
+STATEMENT  USELMRS BOOLEAN uselmrs
+      Params: uselmrs = Instructs PCBoard NOT to load an alternate users LMRS
+                        when a GETALTUSER is executed.
+
+      EXAMPLE:
+      USELMRS FAlSE
+
+      GETLALTUSER 300
+
+      println " I still have plenty of memory left for this PPE because I "
+      println " didn't have to load user # 300's Last Message Read Pointers"
+
+      USELMRS TRUE
+      GETALTUSER 300
+
+      println "I'll problably never see this message bacause I didn't have"
+      println "enough memory to lead user #300's Last Message read Pointers."
+
+    Comments:
+      This statment can save a significant amount of memory when a GETALTUSER
+      is executed at a later time. When GETALTUSER is executed, it loads
+      the users LMR's by default. If you have a significant number of conferences
+      on your system, this can require a great deal of memory. Since PCBoard
+      is so rich with features, it can take most if not all available
+      conventional memory, leaving PPEs out to dry. If an alternate users
+      LMRs are not needed by the PPE application, then you can use this
+      statement to tell PCBoard not to load the LMR data.
+
+      See also the FUNCTION USELMRS, this will return the current status
+      of USELMRS. Eg, if the funtion USELMRS returns TRUE, then a GETALTUSEr
+      will load LMRS, if it returns FALSE, LMRS will not be loaded.
+
+----------------------------------------------------------------------------
+STATEMENT ADDUSER STRING username,BOOLEAN uservars
+      Params: username = name of the new user to add
+              uservars = TRUE instructs PCBoard to leave the new user's
+                         variables active, as if a GETALTUSER were executed
+                         using the new user record number.
+                         FALSE will restore the current users variables.
+
+
+    Comments: This statement allows PPL to create a new user record, filling
+              in all fields but the name with pcboard default values.
+
+---------------------------------------------------------------------------
+
+FUNCTION STRING TINKEY(INTEGER ticks)
+
+      Params: ticks: Number of clock ticks to wait for input.
+  Return Val: input entered by user
+
+
+    Comments: Waits for input from a user.
+
+
+     Example:
+
+      STRING  str
+
+      PRINTLN "Please enter your response within 10 seconds"
+      str = TINKEY(182)
+
+ Comments:
+     ticks is the number of clock ticks you wish TINEKY to wait for input
+     before timing out. 1 second = 18 ticks (approx)
+
+     A tick value of 0 will cause TINKEY to wait indefinatly for input with
+     a maximum timout time of about 4 hours. Carrier loss will also terminate
+     TINKEY.
+
+
+
+
+
+
+
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+
+
+FUNCTION INTEGER GETDRIVE()
+
+      Params:
+  Return Val: Drive number for current drive
+
+
+    Comments: Drive numbers correspond to drive letters in the following way
+              A: = 0
+              B: = 1
+              C: = 2
+              etc...
+
+
+     Example: drive = GETDRIVE()
+              if (drive == 2) println "Current drive is 'C'"
+
+
+
+   See Also:  MKDIR, RMDIR, CWD
+
+
+
+----------------------------------------------------------------------------
+
+
+STATEMENT MKDIR STRING path
+
+      Params: path = DOS path string for directory to create.
+  Return Val: NA
+
+
+    Comments: This statement can be used to create a DOS directory.
+
+
+     Example: MKDIR "\PPE\TEST"
+
+
+
+   See Also:  MKDIR, RMDIR, CWD
+
+
+----------------------------------------------------------------------------
+
+
+STATEMENT RMDIR STRING path
+
+      Params: path = DOS path string for directory to remove.
+  Return Val: NA
+
+
+    Comments: This statement can be used to remove a DOS directory.
+              The directory must be empty before removing it.
+
+
+     Example: RMDIR "\PPE\TEST"
+
+
+
+   See Also:  MKDIR, RMDIR, CWD
+
+
+----------------------------------------------------------------------------
+
+
+FUNCTION STRING CWD
+
+      Params: NA
+  Return Val: Reruns a string containing the Current Working Directory
+
+
+    Comments: This statement can be used to determine the current DOS
+              directory.
+
+
+     Example: Println "Current working directory = ",CWD()
+
+
+
+   See Also:  MKDIR, RMDIR, CWD
+
+-----------------------------------------------------------------------------
+
+
+STATEMENT ADJTUBYTES INTEGER bytes
+
+      Params: bytes = number of bytes to adjust current users upload bytes with.
+              This can be a positive or negative value
+  Return Val: NA
+
+
+    Comments: This statement can be used to adjust a users total uploads bytes
+              up or down.
+
+
+     Example: GETALTUSER 10
+              ADJTUBYTES -2000
+              PUTALTUSER
+
+
+
+
+   See Also:  ADJ
+
+-----------------------------------------------------------------------------
+
+
+
+STATEMENT GRAFMODE INTEGER mode
+
+      Params: mode = Graphics mode to switch to.
+              1= If user has ANSI capabilities it will change graphics to color
+                 ANSI
+              2= Will attempt to put user in color ansi regardless of ansi ability
+              3= Puts user in ansi-black and white mode
+              4= Puts user in non-ansi black and white mode
+              5= If user has RIP ability, will put user in RIP mode.
+  Return Val: NA
+
+
+    Comments: This statement can be used to change a users graphics mode while
+              online.
+
+
+     Example: PRINTLN "Changing to color ansi mode"
+              GRAFMODE 1
+              PRINTLN "Ohhh what a great example! "
+
+
+
+
+
+
+   See Also:
+
+-----------------------------------------------------------------------------
+
+
+
+STATEMENT FDOQADD STRING addr, STRING file, INTEGER flags
+
+      Params: addr = Fido address to send to
+              file = filename to add to queue
+              flags= queue flags for Crash Hold etc
+              NORMAL = 1
+              CRASH  = 2
+              HOLD   = 3
+  Return Val: NA
+
+
+    Comments: This statement can be used to add entries to the FIDO queue.
+
+
+     Example: FDOQADD "1/311/40","c:\pkts\094fc869.pkt",2
+
+
+
+
+
+
+
+
+   See Also:
+
+-----------------------------------------------------------------------------
+
+
+
+STATEMENT FDOQMOD INTEGER recnum, STRING addr, STRING file, INTEGER flags
+
+      Params: recnum = queue record number to modify
+              addr = Fido address to send to
+              file = filename to add to queue
+              flags= queue flags for Crash Hold etc
+              NORMAL = 1
+              CRASH  = 2
+              HOLD   = 3
+  Return Val: NA
+
+
+    Comments: This statement can be used to modify fido queue records.
+
+
+     Example: FDOQMOD "1/311/40","c:\pkts\094fc869.pkt",2
+
+
+
+   See Also:
+
+-----------------------------------------------------------------------------
+
+STATEMENT FDOQMOD INTEGER recnum, STRING addr, STRING file, INTEGER flags
+
+      Params: recnum = queue record number to modify
+              addr = Fido address to send to
+              file = filename to add to queue
+              flags= queue flags for Crash Hold etc
+              NORMAL = 1
+              CRASH  = 2
+              HOLD   = 3
+  Return Val: NA
+
+
+    Comments: This statement can be used to modify fido queue records.
+
+
+     Example: FDOQMOD "1/311/40","c:\pkts\094fc869.pkt",2
+
+
+
+   See Also:
+
+-----------------------------------------------------------------------------
+
+STATEMENT FDOQDEL INTEGER recnum
+
+      Params: recnum = queue record number to delete
+  Return Val: NA
+
+
+    Comments: This statement can be used to delete fido queue records.
+
+
+     Example: FDOQDEL 6
+
+
+   See Also:
+
+-----------------------------------------------------------------------------
+
+STATEMENT CONFINFO INTEGER confnum, INTEGER field, VAR newValue
+
+      Params: confnum  = Conference number to get
+              field    = Conference field to modify. (See note)
+              newValue = New value to store in field
+              VAR denotes a variable expression of the appropriate type.
+      Return Val: NA
+
+    **NOTE
+    The field numbers range from 1 to 54 and correspond to the fields
+    in the conference setup screens in PCBSETUP. here is a list of the fields.
+    Note that the fields appear in the same order as they would in the
+    conference setups screens, not the field number.
+
+     1: STRING     Conference Name
+     2: BOOLEAN    Public Conference
+     8: INTEGER    Required Security if public
+    40: STRING     Password to Join if Private;
+    43: STRING     Auto-Register Flags
+    11: INTEGER    Number of Message Blocks
+    12: STRING     Name/Loc of MSGS File
+    13: STRING     Name/Loc of Users's Menu
+    14: STRING     Name/Loc of Sysops Menu
+    15: STRING     Name/Loc of NEWS file.
+    41: STRING     Name/Loc of Conf INTRO File
+    42: STRING     Location for Attachments
+    16: INTEGER    Public Upload Sort
+    17: STRING     Name/Loc upload DIR file
+    18: STRING     Location of Public Uploads
+    19: INTEGER    Private Upload Sort
+    20: STRING     Name/Loc Private Upload DIR file
+    21: STRING     Location of private uploads
+    22: STRING     Doors Menu
+    23: STRING     Doors File
+    24: STRING     Bulletin Menu
+    25: STRING     Bulletin File
+    26: STRING     Script Menu
+    27: STRING     Script File
+    28: STRING     Directories Menu
+    29: STRING     Directories File
+    30: STRING     Download Paths File
+     3: BOOLEAN    Auto Rejoin
+     4: BOOLEAN    View Other Users
+     5: BOOLEAN    Make Uploads Private
+     6: BOOLEAN    Make All Messages Private
+     7: BOOLEAN    Echo Mail in Conf
+    31: BOOLEAN    Force Echo on All Messages
+    50: BYTE       Type of NetMail Conference
+    48: BOOLEAN    Allow Internet (long) TO: Names
+    32: BOOLEAN    Make Conference Read Only
+    33: BOOLEAN    Disallow Private Messages
+    35: BOOLEAN    Place Origin Info In Messages
+    36: BOOLEAN    Prompt For Route info
+    37: BOOLEAN    Allow Aliases to be used
+    38: BOOLEAN    Show INTRO in 'R A' Scan
+    47: BOOLEAN    Maintain Old MSGS.NDX File
+    46: STRING     Conf-Specific CMD.LST File
+     9: INTEGER    Additional Conference Security
+    10: INTEGER    Additional Conference Time
+    44: BYTE       Level to Save File Attachment
+    39: INTEGER    Level to Enter a Message
+    34: INTEGER    Level to Request Return Receipt
+    49: BYTE       Level to Enter Carbon List Msgs
+    45: BYTE       Carbon Copy List Limit
+    52: DREAL      Charge Per Minute
+    53: DREAL      Charge per Message Read
+    54: DREAL      Charge per MEssage Written
+    51: INTEGER    Last MEssage Exported
+
+
+
+    Comments: This statement can be used to modify a field in the conference
+              configuration.
+
+
+     Example: CONFINFO 200,1,"Stan's New Conference Name"
+
+
+   See Also:  FUNCTION CONFINFO
+
+-----------------------------------------------------------------------------
+
+FUNCTION VAR CONFINFO INTEGER confnum, INTEGER field
+
+      Params: confnum = conference number to access
+  Return Val: VARIABLE of the type corresponding to the field accessed.
+
+
+    Comments: This statement can be used access a value in the conference
+              configuration. Following is a list of the fields and their
+              TYPE.
+
+
+     1: STRING     Conference Name
+     2: BOOLEAN    Public Conference
+     8: INTEGER    Required Security if public
+    40: STRING     Password to Join if Private;
+    43: STRING     Auto-Register Flags
+    11: INTEGER    Number of Message Blocks
+    12: STRING     Name/Loc of MSGS File
+    13: STRING     Name/Loc of Users's Menu
+    14: STRING     Name/Loc of Sysops Menu
+    15: STRING     Name/Loc of NEWS file.
+    41: STRING     Name/Loc of Conf INTRO File
+    42: STRING     Location for Attachments
+    16: INTEGER    Public Upload Sort
+    17: STRING     Name/Loc upload DIR file
+    18: STRING     Location of Public Uploads
+    19: INTEGER    Private Upload Sort
+    20: STRING     Name/Loc Private Upload DIR file
+    21: STRING     Location of private uploads
+    22: STRING     Doors Menu
+    23: STRING     Doors File
+    24: STRING     Bulletin Menu
+    25: STRING     Bulletin File
+    26: STRING     Script Menu
+    27: STRING     Script File
+    28: STRING     Directories Menu
+    29: STRING     Directories File
+    30: STRING     Download Paths File
+     3: BOOLEAN    Auto Rejoin
+     4: BOOLEAN    View Other Users
+     5: BOOLEAN    Make Uploads Private
+     6: BOOLEAN    Make All Messages Private
+     7: BOOLEAN    Echo Mail in Conf
+    31: BOOLEAN    Force Echo on All Messages
+    50: BYTE       Type of NetMail Conference
+    48: BOOLEAN    Allow Internet (long) TO: Names
+    32: BOOLEAN    Make Conference Read Only
+    33: BOOLEAN    Disallow Private Messages
+    35: BOOLEAN    Place Origin Info In Messages
+    36: BOOLEAN    Prompt For Route info
+    37: BOOLEAN    Allow Aliases to be used
+    38: BOOLEAN    Show INTRO in 'R A' Scan
+    47: BOOLEAN    Maintain Old MSGS.NDX File
+    46: STRING     Conf-Specific CMD.LST File
+     9: INTEGER    Additional Conference Security
+    10: INTEGER    Additional Conference Time
+    44: BYTE       Level to Save File Attachment
+    39: INTEGER    Level to Enter a Message
+    34: INTEGER    Level to Request Return Receipt
+    49: BYTE       Level to Enter Carbon List Msgs
+    45: BYTE       Carbon Copy List Limit
+    52: DREAL      Charge Per Minute
+    53: DREAL      Charge per Message Read
+    54: DREAL      Charge per MEssage Written
+    51: INTEGER    Last MEssage Exported
+
+
+     Example: if (CONFINFO(100,50) == 5) println "Conference 100 is a FIDO conference"
+
+
+   See Also: STATEMENT CONFINFO
+
+-----------------------------------------------------------------------------
+
+FUNCTION CONFINFO INTEGER recnum
+
+      Params: recnum = queue record number to delete
+  Return Val: NA
+
+
+    Comments: This statement can be used to delete fido queue records.
+
+
+     Example: FDOQDEL 6
+
+
+   See Also:
+
+-----------------------------------------------------------------------------
+
+
+FINDFIRST()   Function   (3.10)
+==============================================================================
+  Function
+
+    This function determines if there are any files matching a specified pattern.
+
+  Syntax
+
+    FINDFIRST(file)
+      file    A string expression with the path and file name to access information about.  Quite often this expression involves a DOS wildcard (e.g., *.*, *.BAT, etc.)
+
+    Return Type & Value
+      STRING  Returns the first filename matching the filename criteria.
+
+    Remarks
+
+      This function is designed to help locate files matching a specific
+      criteria.  For example, you may want to delete all files matching
+      *.BAK in the current directory.  This can be done easily because
+      FINDFIRST() locates the first match, while FINDNEXT() locates
+      additional matches.
+
+      It should be noted that only the filenames are returned.  If you need
+      additional information such as date, time, or size of the file, use
+      the FILEINF() function.
+
+    Example
+
+      STRING file2Delete
+      file2Delete = FINDFIRST("*.BAK")
+      WHILE (file2Delete != "") DO
+        DELETE file2Delete
+        PRINTLN file2Delete, " has been deleted."
+        file2Delete = FINDNEXT()
+      ENDWHILE
+
+    See Also
+
+      FINDNEXT() Function, EXIST() Function, FILEINF() Function
+
+FINDNEXT() Function   (3.10)
+==============================================================================
+  Function
+
+    This function determines if there are any more files matching a
+    specified pattern.
+
+  Syntax
+
+    FINDNEXT()
+      No arguments are required.
+
+  Return Type & Value
+
+    STRING  Returns the next filename matching the filename criteria or an
+            empty string if there are no more matching files.
+
+  Remarks
+
+    This function is designed to continue where the FINDFIRST() function
+    leaves off because it locates any additional files matching the pattern
+    last searched for.  There are no more matching files when the return
+    value is null or an empty string. Because you do not know how many
+    matching files there are, a WHILE loop is usually involved in gathering
+    all of the filenames.
+
+    It should be noted that only the filenames are returned.  If you need
+    additional information such as date, time, or size of the file, use the
+    FILEINF() function.
+
+  Example
+
+    STRING file2Delete
+    file2Delete = FINDFIRST("*.BAK")
+    WHILE (file2Delete != "") DO
+      DELETE file2Delete
+      PRINTLN file2Delete, " has been deleted."
+      file2Delete = FINDNEXT()
+    ENDWHILE
+
+  See Also
+
+    FINDFIRST Function, EXIST() Function, FILEINF() Function
+
+
+===============================================================================
+Bug Fixes:
+
+    SCANMSGHDR: Now uses the correct message number when searching messages
+                Also closes all message base files when done.
+
+
+    DBASE MEMO: DBASE MEMO fields are now working correctly
+
+    Nested SELCT CASE statements have been fixed.
+
+    There are several STATEMENTS/FUNCTIONS in PPL that are not supported
+    in the OS/2 version. One of these is the SOUND statement. Under OS/2,
+    the SOUND statement will beep at the frequency specified for 1/4 second.
+    Sorry about that, it's the price paid of porting existing code to another
+    platform. To get consistent functionality, look at the SOUNDDELAY statement.
+    This will work the same under DOS and OS/2.
+
+    Here is a list of other statements. functions that are not supported and
+    will be ignored by the OS/2 version.
+
+

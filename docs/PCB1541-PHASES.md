@@ -426,10 +426,25 @@ Phases 2-12 can run in parallel after Phase 1. Phase 13 requires all others.
 No PCBOARD.DAT changes needed for Phase 5/5a — ISO config uses the
 64 reserved bytes in CNAMES.ADD (per-conference, already exists in 15.4).
 
-Future PCBOARD.DAT extensions (if any feature requires global config
-that doesn't fit per-conference) will append after NetCopy[32] using
-the same pattern Clark used between versions. upd1541.exe would
-migrate existing files. No fields defined yet.
+PCBOARD.DAT is a TEXT file (one field per line, not a binary struct).
+Clark added lines at the end for each version:
+  Lines 1-150:   v14.0-14.2
+  Lines 151-198: v14.5
+  Lines 199-266: v15.0
+  Lines 267-272: v15.1
+  Lines 273-318: v15.2
+  Lines 319-323: v15.21
+  Lines 324-348: v15.22
+  Line 349:      v15.3
+
+If a future feature needs new PCBOARD.DAT fields, PCBOARD.EXE reads
+the old file, detects the missing lines, and appends them with defaults
+on first run. No separate upd1541.exe utility needed — this is how
+Clark handled it between versions. See docs/devkit/PCBDAT.DOC.
+
+For 15.22->15.23 (bug fix), Clark used binary EXE patches (.RTP files).
+For 10.0->14.2 (major upgrade), Clark used 10DAT142.EXE to convert all
+data files. Neither approach is needed for 15.41 — drop-in upgrade.
 
 ## Rules
 

@@ -1,0 +1,73 @@
+What is Zone Mail Hour?
+=======================
+   Zone Mail Hour (ZMH) is a common hour in a zone where all boards
+are available for sending and receiving NetMail, and they refuse to
+accept human callers or file requests or echo mail transfers during
+that time. Because Zone 1 is North America, there are probably eight
+different zones, from the eastern tip of Canada clear to Alaska and
+Hawaii.
+   Obviously, the local mail hour is different for each time zone. And
+also, it changes every time we go on or off Daylight Savings Time,
+thus messing up our carefully scheduled events.
+   ZMH is 02:00-03:00 Pacific Daylight Time, or 01:00-02:00 Pacific
+Standard Time. As we head East, it's later in the day. Mountain
+Standard would be 02:00-03:00. Eastern would 04:00-05:00. That way all
+boards in the zone are "open" at once for NetMail, the original
+intention.
+   In some sense ZMH is an anachronistic remnant of a time when
+continuous mailers were not yet invented. At that time all Mail events
+had to be precisely coordinated in time slots where you had to kick
+callers off your board and receive mail during your slot from your
+hub. A minute's deviation and you would run over into someone else's
+time, creating havoc, not to mention angry Sysops. FidoNet was a
+precisely engineered clock until CM Mailers made the whole idea
+obsolete. Everyone had clock programs that would automatically call
+the Naval Observatory and set the system clock to the hundredth of a
+second.
+   Nevertheless, one of the requirements of FidoNet membership is that
+your board be available for NetMail during ZMH, whether it is a full
+or a part-time board. In other words, if you're part-time, one of your
+"UP" times will be ZMH. You donate one hour to NetMail exclusively.
+This means you don't send or receive EchoMail during this time. You
+don't send or receive files during this time. And your users can't use
+your board at this time. Zone Mail Hour is for NetMail only. Can you
+get away with not being up during ZMH? Oh, probably.
+   
+What's a DOWN Board?
+====================
+   If you are NOT up during ZMH, then you can be taken off the
+Nodelist, or at least marked DOWN until you again comply with the
+requirement. It's not that your NC will check your board every day
+during ZMH. That won't happen. But "flaky" boards are not appreciated
+in FidoNet. That ensures the Nodelist is fairly accurate. In my
+experience keeping the BBS list for Kitsap, there is usually a 20%
+change per month on boards. I think Fido boards are more stable than
+others, but they still go up and down all the time.
+   DOWN in the Nodelist is supposed to be a temporary affliction not
+to last for more than two weeks. If you're still DOWN after two weeks
+of Nodediff entries, you get taken off the Nodelist altogether. In
+practice, this might not happen so quickly, but if it does, you really
+have no cause to complain. Some NC's are more strict about this than
+others.
+   FidoNet Sysops really do have to make an attempt to be up, if for
+nothing else then to accept mail packets. Your HUB has to store copies
+of your mail until those packets can be sent to you. I don't know what
+the average board takes in the way of mail. Everyone seems to think
+they haul in "only a few" echoes. But if your feed is a megabyte a
+day, that's not at all unusual.
+   Your HUB stores that on a daily basis, as well as everyone else he
+feeds. If the next board gets the same batch of messages you do, he
+stores duplicate copies, taking up twice as much space. If all 20
+nodes get a megabyte a day, that means 20 MB of storage needs to be
+available. He CANNOT store your mail on his hard disk indefinitely. It
+MUST get off his disk so he has more room for the next round of mail
+coming from the Regional Hub. If you are DOWN, you're causing your Hub
+a problem. It probably won't last for long because he'll take you "off
+distribution" so your mail won't build up. Then you miss all your
+feeds.
+   So, the bottom line is that if you are going to be gone away from
+your BBS for an extended period of time, let your Hub know in advance.
+If your board DOES crash, he'll know why the mail can't get through.
+At least he'll be more tolerant of the situation because he knows
+you're not around to fix it.
+   

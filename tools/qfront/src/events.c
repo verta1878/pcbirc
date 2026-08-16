@@ -275,6 +275,9 @@ const QfEventDef *ev_check_active(void)
     dow = tm->tm_wday;
     cur_min = tm->tm_hour * 60 + tm->tm_min;
 
+    qf_log(LOG_DEBUG, "ev_check_active: dow=%d cur_min=%d checking %d events",
+           dow, cur_min, g_num_events);
+
     for (i = 0; i < g_num_events; i++) {
         const QfEventDef *ev = &g_events[i];
         int start_min, end_min;
@@ -302,9 +305,24 @@ const QfEventDef *ev_check_active(void)
 /* ---- Should We Poll This Node During This Event? ----
  * Checks event flags against node capabilities (CM, etc.) */
 
+/*-----------------------------------------------------------------------*/
+/* ev_should_poll() — Check whether to poll a node during this event    */
+/*                                                                         */
+/* Some events restrict which nodes can be polled:                       */
+/*   EVF_RECV_ONLY  — don't dial out at all (receive-only event)        */
+/*   EVF_CM_ONLY    — only dial Continuous Mail nodes (24hr systems)    */
+/*   EVF_NONCM_ONLY — only dial non-CM nodes                            */
+/*   EVF_LISTED_ONLY — only dial nodes found in the nodelist            */
+/*                                                                         */
+/* Returns 1 = OK to poll, 0 = skip this node.                           */
+/*-----------------------------------------------------------------------*/
+
 int ev_should_poll(const QfEventDef *ev, int is_cm, int is_listed)
 {
     if (!ev) return 1;            /* No event = always poll       */
+
+    qf_log(LOG_DEBUG, "ev_should_poll: event=\"%s\" flags=0x%08X "
+           "is_cm=%d is_listed=%d", ev->tag, ev->flags, is_cm, is_listed);
 
     if (ev->flags & EVF_RECV_ONLY)
         return 0;                 /* Receive-only = don't dial    */

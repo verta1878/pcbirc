@@ -1,0 +1,310 @@
+*******************************************************************************
+                      What Is New in PCBoard 15.3
+*******************************************************************************
+
+PCBoard Additions/Changes
+=========================
+- Added support for the the @iname@ macro, which is translated to the internet
+  e-mail address of the user that is online.  NOTE:  For this macro to work
+  properly, you must set the UUCP Domain Name field in PCBSetup's UUCP section.
+
+- Added a feature to beep if you read a message that is addressed to you.
+
+  If the message is to you, and if you are not capturing mail, then PCBoard
+  will make a bell sound to a remote caller, but the sound will be heard by the
+  local sysop only if the Alarm flag is set to ON.
+
+  NOTE: If you are doing an R Y command it won't make the bell sound (but
+  will if you do an R YA command) because by definition an R Y command
+  will find *only* mail that is TO you, and that means every message found
+  would sound the alarm, making the alarm redundant.
+
+- Added a new Sysop Function 16.  This function is keyed off of the same
+  security level which is used to view files (Sysop Function 6) and will allow
+  the sysop to perform standard DOS or OS/2 "DIR" commands in order to view
+  directories on his system.
+
+  The command is used either in a prompted or stacked fashion.  For example,
+  you can type "16 *.*" to view the files in the current directory, or you can
+  type "16" and press enter, then type "*.*" at the "Enter DIR Command?"
+  prompt.
+
+  While this is implemented as a Sysop Function, the sysop might want to create
+  a CMD.LST entry called "DIR" which would map over to Sysop Function 16.  In
+  this manner, the sysop could then issue commands such as "DIR *.*".
+
+- Added the ability to display file directories either in the traditional LONG
+  format (as many lines as are available in the description) or a new SHORT
+  format which displays only the first line of each file description.
+
+  This feature is enabled (or disabled) at the following points:
+
+  1) Logging in as a new user, or using the (W)rite User Info command, you can
+     set your "default" preference for long or short (the default for existing
+     users is long format).
+
+  2) From the File List Command prompt, you can type "LONG" or "SHORT" to
+     set the current status.  This status will be reset to your default any
+     time you log off or go out through a door, etc.
+
+  In addition, when in "short" mode, you will see a new "more?" prompt which
+  includes a (S)how Description option.  If you see a file whose description
+  you would like to read in full, you can type "S" and press enter, then
+  type in the name of the file to view when prompted, or you can type "S" and
+  the name of the file on the same line.  This will allow you to, for example,
+  stay in short mode for most of your file viewing needs and then switch to
+  long mode to examine the descriptions you are more interested in.
+
+- Added a new style IDX file for use inside of the DLPATH.LST file (i.e. for
+  controlling access to download files).  This new style IDX has the following
+  benefits:
+
+  1) It increases the per-index file limit from the old limit of 64K files per
+     IDX to a new limit of 4G per IDX.  If you have more than 64K worth of
+     files available for download you may have previously been forced to use
+     more than one IDX file.  Now you may use a single file if desired and,
+     in the process, you can increase the efficiency with which files are
+     found on your system by reducing IDX overhead.
+
+  2) The new IDX format now includes file sizes within the index so that when
+     PCBoard is flagging files for download, it can immediately determine the
+     size of the file without having to perform a directory lookup.  While this
+     provides only a marginal improvement in efficiency for hard disk and
+     network based systems, it can provide huge improvements in efficiency
+     when dealing with CD-ROM "changers" since the files being flagged may
+     reside on a CD which is not currently loaded in the changer.
+
+  With the addition of this new style IDX, the MAKEIDX utility has been
+  modified.
+
+- Modified the "Slow Drive" support in PCBoard to enhance performance on
+  systems using CD-ROM "changers".  These modifications come in two forms:
+
+  1) PCBoard used to allow only one node at a time to access the changer.  So
+     if node 1 locked drives F-J in order to access files on drive G:, the
+     entire changer would be inaccessible to the rest of the system.
+
+     Now, the other nodes will be allowed to determine which specific drive
+     letter is in use and, if it is the same drive, PCBoard will go ahead and
+     access it.  For example, if drives F-J are locked, and drive G: is in
+     use, and another node tries to access a file on drive F:, it will be
+     denied access and have to wait.  But if the node tries to access a file
+     on drive G: then it will be permitted to access the files and this will
+     allow the changer to service both nodes without having to wait for the
+     lock to be removed by the first node.
+
+  2) The second enhancement is that PCBoard used to stop and wait if the
+     drive range it wanted to access was currently in use.  For example, if
+     you have drives F-J and K-O and PCBoard needed to access a file on drive
+     F: while another node already had a disk in drive G:, then PCBoard would
+     be forced to wait until the F-J drives were unlocked.
+
+     Now, if the caller has flagged up multiple files on multiple drives,
+     PCBoard will skip over the locked drive and see if it can service other
+     requests first and then go back and copy the files that were on the
+     locked drives.
+
+  Combining the two enhancements together, PCBoard v15.3 first reduces
+  contention for slow drives, and second it more efficiently gets to the files
+  that it is able to access.  The end result is the caller spends less time
+  online waiting for the CD-ROM drives.
+
+- Added the ability to shell out to an "external copy command" to perform
+  file copies.  This is specified in PCBSetup | File Locations | Configuration
+  Files.  If used, PCBoard will shell out to the command that is specified
+  rather than using its own internal file copying routines.
+
+  The main reason why you would want to utilize this feature is if you run
+  PCBoard on a network which has a network file copying command which copies
+  files directly on the server without transferring data around the network.
+  This can greatly improve the speed of the file copy procedure and also
+  reduce network traffic.
+
+  When used with the "Slow Drive" support, this feature can further enhance
+  the performance that is seen by your end users.
+
+  NOTE:  Some network copy commands may restrict the command such that it only
+  works if you are copying a file from and to directories that exist on *that*
+  server and so the copy command will fail if copying files to or from a local
+  drive or another server.  In such cases, you should only enable this feature
+  if you are sure that all file copies will be on the server's drive.
+
+- Modified PCBoard to handle greater-than 4 gigabyte totals in the user record
+  for total bytes uploaded and downloaded.
+
+  The file structure that PCBoard uses has supported this "feature" ever since
+  the days when it was written in Compiled Basic.  However, at the time when
+  PCBoard was rewritten in C, PCBoard began using long integers (in memory)
+  instead of the Microsoft Binary Format which was used to store in the user
+  record.  So this change in v15.3 is simply reverting back to using floating
+  point values but with the difference being that, while it continues to use
+  MBF format in the user record, it now uses the native IEEE format (that C
+  programs use) to store the values internally.
+
+  With the speed of modems in the days of version 14.5 it wasn't likely that
+  this would ever be a problem.  With today's modems and, especially, internet
+  file transfer speeds, limiting the byte counters to just 4G began causing
+  problems.  PCBoard v15.3 will now, once again, store these byte counters
+  internally in a floating point format.
+
+  For developers:  Nothing has changed inside of the user record structure
+  since these counters were always stored in Microsoft Binary Format (MBF).
+  However, the USERS.SYS file now includes both the older long integer counters
+  (for compatibility) plus the two new counters at the end of the record which
+  are in the IEEE format for an 8-byte double precision value.  NOTE:  This
+  makes the long integer counters 'write-only' since PCBoard will now write
+  those values but will not use them upon returning from a door.  Therefore,
+  if your application updates these values, it will need to be updated to use
+  the new floating point fields instead of the long integer fields.
+
+  NOTE:  You can still get a 15.2 formatted USERS.SYS file by entering
+         a 3 in the USERS.SYS column of DOORS.LST.
+
+- For the OS/2 version of PCBoard - to help with tech support and debugging
+  purposes, added the ability to record the name of the .OS2 file that is in
+  use during a DOS shell.  This is activated by using a SET PCB=/DEBUG:# value
+  of 1 or greater and can help sysops figure out whether or not PCBoard is
+  utilizing the .OS2 file they have created.  The result of the /DEBUG:#
+  setting will be a line in the caller log that looks something like this:
+
+      DOS Settings File: C:\PCB\PCBDOS.OS2
+
+
+PPL Additions/Changes
+=====================
+- PPLC implements a few small changes to the PPE format mainly to just slow
+  down the decompiler writers for a little while.
+
+
+PCBSetup Additions/Changes
+==========================
+- Added a new "conference name" search capability while in the Conference Menu.
+
+  Similar to the way that you can begin typing a number and then jump to that
+  conference, you can now simply begin typing the name of the conference.
+  As soon as you type either a space or an alphabetical character, a pop-up
+  screen will appear in which you can continue typing the rest of the name
+  until a match is found, or you can use the arrow keys to maneuver around an
+  alphabetical list of names.  Pressing ENTER accepts the currently highlighted
+  selection and jumps directly to that conference.
+
+- Added a new option to the PCBSetup main menu which lets you perform a global
+  "Search and Replace" operation against all of the file name and path fields
+  in the PCBoard configuration.  This includes updating not only the
+  pcboard.dat settings, but also settings inside of the CNAMES.* files,
+  including settings inside of each of the *.LST files (doors, blts, scripts,
+  dirs, dlpath and cmds).  You can specify which areas you want to be scanned
+  at the same time that you enter the search and replace criteria.  Then
+  press PGDN to begin the process which, by utilizing expanded memory, won't
+  take long even if you have thousands of conferences on your system.
+
+  The biggest advantage to this new option is the ability it provides for
+  moving your system from one drive to another.  For instance, if you used to
+  have PCBoard set up on drive C: in the \PCB directory, and it is now stored
+  in drive D: in the \P directory, you could search for "C:\PCB" and replace
+  it with "D:\P" and have PCBSetup search the entire configuration and change
+  everything at once.
+
+- PCBoard has the ability to use the SET PCB= environment variable to override
+  various settings that are normally stored inside the pcboard.dat file such
+  as the node number, comm port number, etc.  To help reduce confusion,
+  PCBSetup will now indicate these overrides inside the various input screens
+  so that you can see what the current value is regardless of what is being
+  stored in the configuration.
+
+  For example, if you have uset SET PCB=/NODE:10 but the pcboard.dat
+  configuration is set to node 1, when you go into PCBSetup | Node Information
+  you will see a highlighted indicator on screen telling you that the node
+  number is 10 and an explanation below indicating that the node number is
+  being overridden by the SET PCB= setting.
+
+  The SET PCB= settings which are reported on by PCBSetup are:  /NODE, /COM,
+  /PORT, /OS, /BASE, /IRQ, /INIT, /PAD and /NO16550.
+
+- Added an option in the DOORS.LST editor to create a 15.2 formatted USERS.SYS
+  file for applications that need it.  Instead of specifying a Y or an N,
+  enter a value of 3.  Below is a chart explaining the current set of values
+  for that field:
+
+      Y = create a users.sys file that is native to the PCB version in use
+      1 = create a users.sys file that is compatible with v14.5
+      2 = create a users.sys file that is compatible with v15.0
+      3 = create a users.sys file that is compatible with v15.2
+      N = do not create a users.sys file
+
+- You can now put colons (:) in the conference names.
+
+
+PCBPack Additions/Changes
+=========================
+- Strengthened PCBPack's ability to catch duplicate messages by adding the
+  following enhancements:  1) it now checks for tearlines of the form "-!-" in
+  addition to the existing (and standard) "---" form, 2) it now calculates the
+  CRC of the message header after first capitalizing the header to avoid CRC
+  mismatches that occur due to a message being posted that is identical except
+  that the subject or some other portion of the header in one is uppercase and
+  mixed case in the other, and 3) added the ability to ignore Fido's CTRL-A
+  "Kludge Lines" if they are found at the end of the message.
+
+  Combining these three changes, PCBPack will now be able to catch more
+  duplicate messages, especially in conferences carrying fido messages.
+
+
+PCBSM Additions/Changes
+=======================
+- To accommodate the change in PCBoard for handling byte counter values greater
+  than 4G (for total bytes uploaded and downloaded), PCBSM's editor has been
+  modified to increase the size of the input field and change the data type to
+  a floating point value.  In addition, the other support areas (like sorting,
+  printing, adjusting by ratio) have been modified to support the floating
+  point internal storage.
+
+- Added the new field in the long view of the user record for changing the
+  file description preference (long or short).
+
+PCBUUCP Additions/Changes
+=========================
+- UUIN now handles MIME encoded messages and will turn them  into file
+  attachments.  Each "part" of the MIME message is saved as a separate
+  message.
+
+  Outgoing messages are still sent out in UUENCODED format.
+
+- UUIN, UUXFER, and UUOUT now honor the /NOGIVEUP PCBoard environment variable.
+  Recall that this environment switch is used to signal PCBoard to not give
+  up timeslices and therefore let the OS do all of the CPU cycle give-up.
+  This seems to be the most effective strategy for running under Windows 95.
+
+- Added a new parameter to UUOUT.   The -a nnn parameter where nnn is
+  the maximum number of kilobytes in an outgoing message.  The default
+  value is to make the maximum outgoing size 64 kilobytes.  Increasing this
+  setting is only of use when your provider accepts the larger message size
+  and if you do a lot of file attachment work.
+
+- Added the capability to export to a large mailing list.  In ALIAS.OUT file
+  if you enter a %filename specification after the name, the message is sent
+  to the list of people specified by the people.
+
+  For example, suppose, you want to regularly send updates to a particular
+  set of mail addresses.  You can do this by following these steps:
+
+     1.  Create an ASCII file with a mailing address on each line.  Example:
+
+            first.last@site.com
+            jdoe@coolsite.com
+
+     2.  Modify ALIAS.OUT to reference this mailing list.  The format is:
+
+            username, %filename
+
+         where username is the user that the message is from.  If you make
+         an entry with the following information,
+
+             mail.list, %c:\pcb\uucp\list.txt
+
+         the e-mail message, must be from the PCBoard user "MAIL LIST".  You
+         can either create the account MAIL LIST or manually change who the
+         message is from using the "E" End of Message Command.
+
+  Note:  This is a uni-directional mailing list.  It does not have any type
+         of subscribe or unsubscribe capability.

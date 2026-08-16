@@ -1,0 +1,35 @@
+High-ascii
+----------
+   High-ascii characters are those above ascii 127, i.e.: 128-255
+inclusive. These represent cute little boxes and other symbols on IBM
+machines. But to other computers they can represent gibberish. That's
+because where the codes for characters are fairly standard below 128,
+they are divergent above 128. There are many, many high-ascii
+character sets.
+   FidoNet has a policy of "NO HIGH-ASCII" on the echoes. So if you
+have a habit of writing messages with cute boxes, barcodes, and other
+fanciness, prepare to stop doing it on any echoed conference. Offline
+mail readers are particularly prone to using this kind of stuff to
+offset quotes. MegaMail, anyone?
+   This is a courtesy to those of us who DO NOT USE IBM-type
+computers. There are lots of Mac's, Amigas, and Commodores out there
+used by people as users, and often as host machines for BBS's
+themselves. We have three FidoNet members in Network 350 who use
+Amigas, for example. Macs are equally proficient in using FidoNet.
+   High-ascii can also be a problem for some mailer software.
+Apparently high-ascii is used as screen writing codes on some
+operating systems (OS9 has often been mentioned) which, if you think
+about it, would create absolute havoc on the machine that had to
+process such messages.
+   If you do happen to let high-ascii characters creep into EchoMail,
+you're likely to get a note back from the Moderator, and lots of other
+users, telling you they are not appropriate.
+   For your users there are often special programs they can run to see
+high-ascii on their screens. I have lots of high-ascii used on my
+menus, and I don't want to remove them. I have some Mac users who use
+a special program that can run as a TSR over the communications
+program to allow them to see the "beauty of the board." This last has
+nothing to do with EchoMail, of course. It's local to my board and
+doesn't get sent out anywhere. But high-Ascii is not a trivial
+problem, and you shouldn't ignore it or be ethnocentric about it.
+   

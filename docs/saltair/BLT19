@@ -1,0 +1,33 @@
+
+  @X0F[@X0EU@X0F] @X0DUPLOAD A FILE
+ 
+      @X0BWhen you upload a file to a BBS you are adding a particular file to the
+      system so other users can download the file.  When you upload the
+      file(s) it could immediately be made available for download, or the
+      SysOp may make all uploads private to review files before posting them.
+ 
+      When you begin an upload, you must specify the filename to upload and
+      provide a description for the file before PCBoard will proceed with the
+      transfer.  After the filename(s) and description(s) has been provided,
+      you will see the following:
+ 
+        @X0EUpload Drive:  341,188,608 Free Disk Space
+        Upload Status: Posted Immediately
+        Protocol Type: Ymodem/G BATCH
+        (Ctrl-X) Aborts Transfer
+ 
+       @X0DExamples:
+ 
+         @X0AIf you want to upload a file called TMAL352.ZIP using Ymodem/G
+         (Which is protocol G), type in the following:
+ 
+           @X0EU TMAL352.ZIP G @X0F[@X0CENTER@X0F]
+ 
+         @X0AYou will then be asked for a description of this file.
+ 
+         @X0BIf you want to upload file(s) privately, use the "/" at the
+         beginning of your description(s) of the file(s).
+ 
+ 
+ 
+

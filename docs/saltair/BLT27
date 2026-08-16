@@ -1,0 +1,188 @@
+         @X09[ @X0B I N S T A L L I N G   A   M U L T I P O R T   C A R D @X09]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+ 
+ 
+@X0BIntroduction to multiport cards-
+--------------------------------
+@X03There are 2 general types of multiport cards.  There are intelligent cards,
+which have an onboard risc processor.  The advantage to these cards is that
+they will take overhead off the machine.  Non-intelligent cards are simpler.
+They can be installed in a similar manner as with a standard serial card.
+ 
+@X0BIntelligent Cards-
+------------------
+@X03Most intelligent cards have the ability to use just one IRQ all ports on the
+card.  In some cards such as GTEK, they are able to share an IRQ between
+several "daisy-chained" cards.
+ 
+Under DOS, you can use a program called COMMDRV.  This program supports both
+intelligent and non-intelligent (also called dumb) cards.
+ 
+Type @X02DRVSETUP COMMDRV.DAT@X03.  Some cards, such as DIGI 8e and 4e have a .DAT file
+already set up for you.  Substitute that file for commdrv.dat.  Ex.
+@X02DRVSETUP DIGI4E.DAT@X03.  If the .DAT file is not set up already, then follow these
+steps:
+ 
+@X091) Press F2 under @X03CARD TYPE@X09.
+   Select card type.  For DIGI cards, the selection is often PC/XI (including
+   the 4e and 8e cards.)  If your card is digi compatible or is not on the
+   list, try this selection.  Other card types are fairly straight forward on
+   the list.
+ 
+2) In the next field, select the @X03SUB PORT@X09.
+   The sub port is the port number that you want your card to START with.  For
+   example, If you have a standard serial card with com1 and com2, you'll want
+   a 4 port card to start on com3.  @X04
+   NOTE: The port number is always at least 1 higher than the CHANNEL number,
+   since the port numbers start at 1 and the channel numbers start at 0.
+ 
+@X093) In the @X03BASE ADDRESS @X09field, select an address that IS NOT OCCUPIED.  If the
+memory address is occupied by another program or hardware, then the  card will
+fail to initialize or operate properly.  The base address that you select must
+ahve the next 64k free.  The base address may be the same for all ports on an
+intelligent card.  With some cards, the base address should increment for each
+port by 8h.  The base address used should be specified with a jumper setting
+on the card.  The IRQ can be specified as any IRQ that you may have free.
+The IRQ need not be specified by a jumper setting on the card.  The onboard
+computer can autodetect the IRQ.  Intelligent cards also have a memory region
+that they use.  This region is specified in the @X03CARD SEGMENT@X09 field in the
+commdrv setup.  The default for many intelligent cards is D000h.  In the @X03FOSSIL @X09
+field, specify whether or not you want COMMDRV to provide a fossil interface
+for you.  A fossil driver is often necessary under OS/2 or windows95/NT for
+doors, zmodem transfers or QWK transfers.  At this point your commdrv is set
+up.
+ 
+@X03
+You will need to make a change to your config.sys file.  The expanded memory
+manager you are using must exclude your card segment address.
+ 
+You are ready to install your commdrv setup.  From the command line (in your
+AUTOEXEC.BAT) type:
+@X07COMMTSR -i COMMDRV.DAT
+@X03Notice that the -i is in lower case.. this is necessary.
+Save your changes, and then reboot your computer.
+
+If you are running an Intelligent card under OS/2, you'll need OS/2 drivers for
+that card from the maker of the card.  These are not always available, so use
+caution when buying an intelligent card for OS/2.  GTEK, ARNET, DIGI, COMMTROL
+all come have OS/2 SERIAL drivers, but only GTEK also has a FOSSIL driver.
+Again, this is important.  The installation for these serial/fossil drivers is
+dependant on the driver and the card.  Most of the time, they'll both be
+installed in the config.sys.
+
+
+@X0BNON-INTELLIGENT CARDS-
+----------------------
+@X03Dumb cards can be specified as UART type cards.  They are capable of sharing
+IRQs between ports and (in some models) daisy chained cards.  There is no
+card segment and no memory region to exclude from EMM386 or QEMM.  The base
+address should increment by 8h with ALL cards.
+ 
+As is the case with intelligent cards, the memory address specified in the
+base address MUST NOT be occupied by any other application or hardware.
+ 
+COMMDRV can be used under DOS, Win95 can use it's own drivers, and OS/2 can
+use it's default serial driver, but will not be able to support more than 4
+ports and will not support Fossil.  You can use drivers that are specific to
+the card (from the maker of the card), and you'll have more luck.
+ 
+Another alternative under OS/2 is SIO.SYS by Ray Gwinn.  The shareware version
+of this driver is available on Salt Air - @X0CSIO153.ZIP@X03.  To install SIO153.ZIP,
+just type INSTALL from the directory where you unzipped it.  It will install
+SIO.SYS and VSIO.SYS (which are both necessary and work in conjunction with
+each other) in your config.sys.  It will ask you about if you're using a Hayes
+ESP card.  If you have purchased  Hayes ESP 2 or 8 port multiserial port card
+(you'll know if you have), then enter YES.  If not, enter NO.
+
+
+@X0BSEMI-INTELLIGENT CARDS-
+-----------------------
+
+@X03The Hayes ESP card is a semi-intelligent card.  These cards have on onboard
+risc processor like an intelligent card, but they can be accessed as a UART.
+This is why SIO can access the card.  The advantage to this card is that it
+will take the overhead off the computer, and can be accessed by almost any
+generic non-intelligent driver which makes it easy to provide a fossil
+interface for the card.  The disadvantage is that it is difficult to use
+under any operating system other than OS/2.
+
+@X0B
+
+@X03
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+

@@ -1,0 +1,300 @@
+      The purpose of this document is to discuss topics that relate to acting
+      as a hub in a Fido network.  We assume that you have already connected
+      to the Fido network by using FIDONET.DOC.
+
+      The foundation laid in that document will be built upon based on the
+      assumption that you want to act as a hub.  In reality, there are very
+      few differences between being a hub and just a node.  Ultimately, we'll
+      cover most of the differences so that you understand them thoroughly.
+
+Uplinks Versus Downlinks
+==============================================================================
+
+      When your system acts only as a node, you are a downlink to your hub.
+      The term downlink is used because you take things "down" from the
+      other system.  A hub, on the other hand, is referred to as an uplink
+      because it receives information from other nodes.
+
+      What does this mean to you?  Ultimately, it means that you are not
+      only responsible for getting mail to your system but also making sure
+      it gets distributed properly to your downlinks.
+
+      PCBoard differentiates an uplink from a downlink in the Fido User
+      record.  When you are looking at the Fido View of the user record, you
+      see a field which reads "uplink".  This field is only used for AreaFix
+      forwarding at the current time.  Only one Fido record can have this
+      field enabled for each network you participate in.
+
+
+The Importance of the User Record
+===============================================================================
+
+      There is not much of a difference between Fido records for a node and
+      Fido records for a hub.  The main difference when you are acting as
+      a hub is that there are more user records because there is one for
+      your uplink(s) and one for each of your downlinks.
+
+      The important thing to remember in relationship with records for your
+      downlinks is that now the conference flags in their accounts determine
+      if they are able to carry the area or not.  Let's look at a sample:
+
+
+         Num   Conference     Flags  Last Msg
+        컴컴� 컴컴컴컴컴컴�   컴컴�  컴컴컴컴
+           30 DR_DEBUG - Do : RS   :        0
+           31 BATPOWER - Ba : R    :        0
+           32 BINKLEY - Bin : RS   :        0
+           33               :      :        0
+           34 CFORSALE      : R    :        0
+           35               :      :        0
+           36 USRMDMS - USR : RS   :        0
+           37 MENSA - Mensa : RS   :        0
+           38 DESQVIEW - De : RS   :        0
+           39 FIDOPCB       :      :        0
+           40 MUFFIN - Maxi : R    :        0
+           41               :      :        0
+           42 PCBOARD - PCB : RS   :        0
+           43 PCBNET - PCBO : RS   :        0
+
+      In this sample, this downlink can carry the following areas because
+      the R (registered) flag is set.
+
+         DR_DEBUG       USRMDMS         PCBOARD
+         BATPOWER       MENSA           PCBNET
+         BINKLEY        DESQVIEW
+         CFORSALE       MUFFIN
+
+       From this list, we can tell the downlink does not want to carry
+       the following areas because there is no corresponding S (selected)
+       flag for the conference.
+
+         BATPOWER
+         CFORSALE
+         MUFFIN
+
+       Using AreaFix requests, the downlink chooses which areas to cover
+       based on which ones they are registered with on your system.
+
+Registering Users For Conference Access
+===============================================================================
+
+       When creating accounts for your downlinks, set up their security levels
+       so that they are all the same.  By doing this, System Manager can be
+       used to register the downlinks in one swoop.
+
+       Let's use an example to illustrate the point.  You are a hub for the
+       1:311 network.  Your address is 1:311/1, and you are responsible for
+       the following nodes as downlinks:
+
+             1:311/2                1:311/4               1:311/6
+             1:311/3                1:311/5
+
+       Rather than manual registering each Fido user record in the hundreds
+       of Fido echoes you carry, simply make sure all accounts have the same
+       security level.  Make sure the security level assigned is not already
+       defined in your PWRD file or you will alter the conference
+       registrations of other, non-Fido, users on the system.  Let's make
+       that level 26 for the sake of this example.
+
+       Now simply go into System Manager | User File Maintenance | Insert
+       Group Conference.  Here, we will register all level 26 (Fido) users
+       in conferences 100-300 with the following screen:
+
+          First number of conferences to be inserted in registrations  :   100
+          Last  number of conferences to be inserted in registrations  :   300
+
+          Adjust conferences user is normally allowed to join          : Y
+          Adjust conferences user can join with expired subscription   : N
+          Adjust the user selected conferences for scanning            : N
+          Adjust conferences where user becomes a sysop when joining   : N
+          Adjust conferences where user has Net Status                 : N
+          Reset user's last message read to zero in these conferences  : N
+
+          Adjust users with a security level greater than or equal to  :  26
+                                            and less than or equal to  :  26
+                           Press PGDN to continue or ESC to abort
+
+       Press PgDn and you're done.  Now the downlinks can use AreaFix
+       requests to select which ones they want to carry.  The topic of
+       AreaFixing is covered in the FIDONET.DOC file.
+
+
+Areas of PCBSetup That Relate to Hubbing
+===============================================================================
+
+       In this portion of the document, we're going to talk about elements
+       of PCBSetup that relate to hubbing.  Our focus is not to describe
+       what the options do per se, but rather make you aware of what options
+       are targeted toward Fido hubs to provide you a quick reference.
+
+       The following is an abbreviated list of areas to be concerned with:
+
+         PCBSetup | Fido Configuration | Fido Tosser Configuration
+            Generate Response Messages
+            Enable PassThru's
+            Enable Areafix Forwarding
+            Auto Add Fido Areas as PassThru's
+
+         PCBSetup | Fido Configuration | FREQ Path List
+         PCBSetup | Fido Configuration | FREQ Restrictions
+         PCBSetup | Fido Configuration | FREQ Magic Names
+         PCBSetup | Fido Configuration | FREQ Deny Nodelist
+
+       Notice that most of these deal with AreaFix, FREQ, and PassThru
+       setup.  This should come as no surprise because these are three
+       areas that are quite heavily used in relationship to Fido hubs.
+
+
+Routing Mail : Advanced Discussion
+===============================================================================
+
+       In nearly all cases where we talk about routing packets, we are
+       referring to netmail messages.  PCBFido's configurability in this
+       area is quite extensive.  As a result, this section will discuss
+       primarily on helping you understand how one routing option affects
+       the other and what will happen to the incoming packets.
+
+       Mail is only considered routable from your site if it gets
+       transferred to you but is not for you.  A perfect analogy for this is
+       in thinking about the US Mail system.  If you get mail in your box
+       that is not addressed to you, what do you do with it?  Do you hold on
+       to it, throw it away, or deliver to the person just down the street
+       who it IS addressed to?  These are the question PCBFido has to deal
+       with in this scenario.
+
+           +---------+---------+---------------------------------------+
+           | Inbound |  Allow  |                                       |
+           | Routing |  Route  |                  Action               |
+           +---------+---------+---------------------------------------+
+           |    Y    |   Y     | Automatically readdress packets to    |
+           |         |         | the address they should be routed to  |
+           |         |         | and add them to the queue.            |
+           +---------+---------+---------------------------------------+
+           |    Y    |   N     | Put packets in the queue that are not |
+           |         |         | addressed for you, but mark them with |
+           |         |         | HOLD status.                          |
+           +---------+---------+---------------------------------------+
+           |    N    |   Y     | Import all messages into the NetMail  |
+           |    N    |   N     | area.  Messages that are not to your  |
+           |         |         | site are then added to the queue on   |
+           |         |         | the next export because PCBFido does  |
+           |         |         | not pay attention to who the message  |
+           |         |         | is from, just who it is to.           |
+           +---------+---------+---------------------------------------+
+
+             Inbound Routing = Enable Inbound Routing in PCBSetup |
+                               Fido Configuration | Tosser Configuration
+
+             Allow Route     = Allow Route-To Verb in a Fido Event.  Yes
+                               means it is enabled for the node that the
+                               netmail is COMING FROM, while N signifies the
+                               incoming message is not set to route.
+
+       There is an additional feature to be concerned with as we discuss
+       routing messages--secure netmail.  Continuing with the US Mail
+       analogy, secure netmail is the equivalent of only opening envelopes
+       addressed from people you know (have Fido user records for).
+
+       With this option enabled, many messages may be thrown away before
+       the routing issue even comes into play because they did not have
+       a Fido record.  On the other hand, if they do have a Fido record
+       the routing table outline previously is in effect.
+
+       What's The Best Routing Method
+       ------------------------------
+       Obviously there are options for a reason.  If there was a
+       universally accepted way to route that was in everyone's best
+       interest, the routing options would not be required.
+
+       A good recommendation for a large number of systems is to enable all
+       of the options: secure netmail, inbound routing, and the
+       ALLOW-ROUTE-TO verb.  With this configuration, it pretty much
+       prevents other sites from "mail-bombing" you and having you route a
+       message to Siberia or somewhere else across the world.  Why?  Because
+       netmail is only allowed from sites you have user records for and
+       ALLOW-ROUTE-TO has to be enabled for the calling site for the packet
+       to go back out automatically.
+
+
+AreaFixing As It Relates To A Hub
+===============================================================================
+
+       The process of AreaFixing takes on a new angle when you start
+       talking about a hub.  No longer are you talking about sending AreaFix
+       requests, but rather the topic shifts to that of receiving the
+       requests.
+
+       The only configuration items to worry about with AreaFixing are the
+       response files.  When a downlink sends you an AreaFix request,
+       PCBoard automatically sends back a response message in the form of
+       netmail to let the other node know the status of their request.
+
+       Response files are simply text files.  Their location is controlled
+       in PCBSetup | Fido Configuration | File & Directory Configuration.
+       On the other hand, the filenames are unchangable.  The following list
+       shows the names of the response files and describes when they are
+       sent out:
+
+         AFIXFAIL.MSG  Areafix failed. Added text: Why it failed
+         AFIXLST.HDR   Areas Currently received by remote site
+         AFIXAVL.HDR   Areas Available to remote site
+         FREQINFO.MSG  FREQ information for your system (files available, etc.)
+         FREQFAIL.MSG  FREQ failed. Added Text: Reason for failure.
+
+       No doubt, you'll want to customize these files for your system.
+       Simply use any ASCII text editor to make or edit these files.
+
+   AreaFix Forwarding
+   ------------------
+       The concept of AreaFix Forwarding allows for you to forward area
+       requests that you do not carry to your uplink.  If the uplink carries
+       the area, they will send it back as a PassThru area.
+
+       What is required to make all of this work?  Not very much really.
+       Check the following list to make sure you follow all of the steps:
+
+         1.  In PCBSetup | Fido Configuration | Tosser Configuration make
+             sure the following options are enabled:
+
+               Enable PassThru's
+               Enable Areafix Forwarding
+               Auto Add Fido Areas as PassThrus
+
+         2.  Make sure the Fido user record for your uplink has the Uplink
+             status enabled from the Fido View.
+
+PassThrus
+===============================================================================
+
+       A PassThru area is a tag that one of your downlinks want to carry,
+       but not one that you want to carry on your own system.  Here is what
+       happens in general terms (assuming you are the hub).
+
+         1.  You pick up the echo mail messages from your hub.
+
+         2.  Upon importing, your system will realize that is a PassThru
+             area and move it to the passthru file on your system.  The
+             messages are never actually imported, just held until your
+             downlink calls and picks them up.
+
+       The concepts of AreaFix Forwarding and PassThru areas are
+       intertwined. The reason that these two are integral components of one
+       another is that if you do not carry an area, the AreaFix request must
+       be forwarded to your hub if you want it to be a PassThru area.
+
+       With PCBFido, you can have new areas automatically added as PassThru
+       areas, which means very little work is actually required on your
+       behalf. For areas to be automatically added, you have to have "Auto
+       Add Fido Areas as PassThru's" enabled in PCBSetup | Fido
+       Configuration | Tosser Configuration.
+
+       When a downlink makes an AreaFix request that is forwarded, the
+       PassThru area is automatically added and the downlink is registered
+       to carry the area.
+
+       With the auto-add areas any area that comes into your system for
+       which no tag exists, will be automatically added as a PassThru
+       area.  Normally, the messages targeted for the non-existent area
+       would go to the BAD tag.  Since they go to PassThru areas, you can
+       periodically scan the PassThru areas using FIDOUTIL.EXE to see if
+       there are any areas you want to permanently setup as conferences.

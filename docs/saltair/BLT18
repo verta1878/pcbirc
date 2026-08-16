@@ -1,0 +1,22 @@
+
+ @X0F[@X0ED@X0F]  @X0DDOWNLOAD A FILE
+ 
+      @X0BExamples:
+ 
+         @X0ATo download a file called TEXTEDIT.ZIP, the user can issue the
+         following:
+ 
+           @X0ED TEXTEDIT.ZIP @X0F[@X0E@X0CENTER@X0F]
+ 
+         @X0ATo Download NEWUTIL.ZIP and ISD320.ZIP using the G protocol letter:
+ 
+           @X0ED NEWUTIL.ZIP ISD320.ZIP G @X0F[@X0CENTER@X0F]
+ 
+         @X0ATo download NEWUTIL.ZIP and immediately disconnect when the transfer
+         is complete:
+ 
+           @X0ED NEWUTIL.ZIP BYE @X0F[@X0CENTER@X0F]
+ 
+ 
+ 
+

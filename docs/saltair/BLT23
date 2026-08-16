@@ -1,0 +1,38 @@
+   @X0F[@X0ER@X0F] @X0DRead message(s)
+ 
+       @X0BThis command permits you to read messages on the BBS.  Messages may be
+       addressed to you, or to other people.
+ 
+        @X0AExamples:
+ 
+           @X0ER @X0B= @X0DRead
+           @X0EY @X0B= @X0DYour
+           @X0ES @X0B= @X0DSince last time on the BBS
+           @X0EA @X0B= @X0DAll conferences
+ 
+          @X0BTo read all YOUR messages in a conference last time on
+ 
+            @X0ER Y S  @X0F[@X0CENTER@X0F]
+ 
+          @X0BTo read all YOUR messages in @X0Call@X0B conference areas since last time on
+ 
+            @X0ER Y S A @X0F[@X0CENTER@X0F]
+ 
+          @X0BTo read @X0Call@X0B messages in a conference area since last time on
+ 
+            @X0ER S @X0F[@X0CENTER@X0F]
+ 
+          @X0BTo read @X0Call@X0B messages in @X0Call@X0B conference areas since last time on
+ 
+            @X0ER S A @X0F[@X0CENTER@X0F]
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+

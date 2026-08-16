@@ -1,0 +1,177 @@
+What is the difference between Fido and RIME?
+=============================================
+   RelayNet International Mail Exchange (RIME) is another large
+network very much like FidoNet in the end result to BBS systems. It
+uses much different technology to get the same job done, and its
+structure is much different. Therefore it might do us well to compare
+the two systems to highlight the differences so you better understand
+what FidoNet is about.
+   As we do this, please bear in mind that the intent of this document
+is not to claim that one network is better than another. RIME is every
+bit as "good" as FidoNet. FidoNet is every bit as "good" as RIME. To
+those who wish to play the "My network is better than yours" routine,
+have at it on the playground. That's juvenile behavior at best. It has
+no place here.
+   
+Technical Differences
+---------------------
+   As you can tell from the above, most FidoNet Sysops put up a 24-
+hour "mailer" program ahead of the BBS. This allows you to receive
+mail calls any time of day. Your Hub can call any time to send you
+mail. You can call out any time to send mail. Because of the nature of
+mailers, if they don't get through on the first call, they keep trying
+until they do.
+   RIME does not use mailer software. Instead, RIME uses a special
+program called "PostLink" which works very similar to an offline mail
+reader. If you've ever used MegaMail, PostLink will be familiar. Kip
+Compton wrote both programs. The local Sysop writes a batch file to
+hook to his hub, sign onto the BBS, enter a special door, and perform
+mail transfers through the door. In most cases there are time slots
+assigned when a given BBS can hook to a hub, or when a hub can hook to
+a regional hub. Each local RIME board must use PostLink (or the
+earlier PC Relay), and each board must also pay for it. Hooking to one
+hub doesn't mean you can hook to another hub or even another RIME
+board, ever. Batch files tend to be unique to each board.
+   You can see that the basic difference here is one of time. RIME
+boards either have a dedicated line or a time-slot on a caller line
+where and when these mail events take place. This means no callers can
+be on the board (or the line) when a mail event is scheduled. Fido
+boards are a little more lenient in this regard because mail events
+can take place any old time, in between callers.
+   Also, RIME boards can only connect to designated other boards. Fido
+Boards can connect to each other, no matter what, via the mailers.
+   Is one way better than the other? Doesn't matter to talk that way.
+RIME resembles the way Fido used to schedule events a long time ago.
+Both methods get the job done.
+   I think it is fair to say that RIME is easier to run than FidoNet.
+There is only one way to do things. There are fewer parts. PostLink as
+a mailer does everything a mailer, tosser, scanner, and router would
+do in FidoNet. It's very fancy with pull-down menus. It is usually
+(though not exclusively) used with commercial software where you type
+"SETUP" and Enter to come up with a working board. RIME is an
+automatic transmission.
+   FidoNet is a manual transmission. You have to learn how to use a
+clutch. There are more pieces to put together. You are not going to
+get away with not knowing how your system operates to make it work.
+There are no Install programs to make it easy for you. But when you
+get done, you will have accomplished something.
+   
+Administrative Differences
+--------------------------
+   Fido has a very broad-based hierarchy. No one "owns" the system. In
+fact, "FidoNet" is a collective noun which does not refer to a legal
+organization. Local Networks band together for a common purpose to
+distribute EchoMail and files. Some are incorporated; some aren't.
+Lots of things are possible. In Fido, moderators of conferences
+absolutely own them. They can pretty much do what they want. The
+Policy document for Fido is fairly small, all things considered.
+   With FidoNet anyone can be a member if they have the technical
+competence to put up a board. Unless they become "excessively
+annoying," they can stay a member. No one can tell you you can't. The
+latest Nodelist from FidoNet (October, 1992) shows about 19,000 nodes.
+   RIME is a little different. It has a "top down" hierarchy, a
+headquarters board (Running Board A) and someone who runs the show
+(Bonnie Anthony is CEO as of this writing.) It is similar to a typical
+corporate hierarchy in the way it operates. You must use the PostLink
+software (or PC Relay) to do mail transfers. You must pay for this
+program, and there is a yearly (though nominal) fee to be a part of
+the network.
+   With RIME you petition to join the network, and you do so as a
+probationary member until the hierarchy decides to vote you into
+permanent status. The latest BBS list I have from RIME (April, 1992)
+shows about 1,000 nodes, but it is growing rapidly.
+   RIME moderators still rule the conferences, but they don't have as
+much absolute authority as Fido moderators. There are levels of appeal
+for people who feel they have been mis-treated within a conference.
+The system can still control what kind of messages get posted on the
+network and where. In terms of a quotient of "nasty messages from the
+boss," both FidoNet and RIME have them, in probably equal amounts. The
+rules within RIME conferences are more uniform, mostly because they
+are controlled from the top. Uniform rules make it easier, of course,
+for a user to know what is likely to be allowed.
+   The way conferences are started is also quite different. With RIME
+an idea for a conference must past muster with the Conference
+Coordinator. You are issued a prospecting number which you MUST USE
+when prospecting for boards which may wish to carry your conference.
+You are allowed to prospect only in five other RIME conferences, and
+you must solicit support in a particular manner. This is the way you
+get other boards to commit to carrying a conference, and if this is
+done, you are allowed to start the conference on what amounts to the
+RIME backbone, even though they don't call it that.
+   With FidoNet, anyone can start a conference for any reason. You can
+promote it any way you want to. If you've done the bureaucratic work
+of getting it listed, and easy process, you need convince only two
+Regional Coordinators to get it placed on the backbone. Even if you
+don't succeed in reaching this status, you can promote the conference
+locally or regionally. There is a lot more freedom to promote within
+FidoNet. No one is going to tell you you didn't post your prospecting
+number when asking for support.
+   Fido has roots in anarchism. That probably doesn't mean what you
+think it does. We tend to define "anarchy" as disarray, but what it
+really means is "without order." Translated to the vernacular,
+anarchism means that no one gets to tell you what to do, period.
+Government is unnecessary because it is intrusive and authoritarian.
+The founder of FidoNet doesn't have a job.
+   RIME looks like corporate America. It is much more tightly
+organized in the way it feels to operate, and in the structure of the
+organization. There is a Steering Committee which rules the network
+like a Board of Trustees does to a large corporation. The CEO of RIME
+is a medical doctor.
+   So, what do we have? Actually a broad spectrum of boards with
+varied interests. If you were to place one type of board against
+another on a scale, FidoNet would be left of center; RIME would be
+right of center. Fido boards tend to be more individualistic and
+resentful of authority. RIME boards tend to be more subscription-
+oriented and commercial. These aren't hard and fast rules; you may
+find either type of board at either extreme. It's just that if you
+drew two curves to measure these tendencies, this is what you would
+find as a statistical average.
+   Once again, which is better? The one you feel most comfortable
+with. But just because you personally feel more comfortable with one,
+does not mean the other is bad. To believe otherwise is terribly
+ethnocentric.
+   
+Functional Differences
+----------------------
+   Some of these attitudinal differences show themselves in what
+services are offered by either network. Fido is a loose association of
+Sysops running boards that usually are subscription-free, usually for
+the benefit of the Sysop alone, and incidentally to users.
+   This can be seen especially in the area of Host-routed NetMail.
+RIME does it; Fido would prefer not to. That is, if you send a NetMail
+message in Fido, you are expected to call direct unless other
+arrangements have been made. On RIME, all mail is host-routed by
+definition, and travels along with the echo conferences and file
+requests.
+   The tradeoff here is probably one of time, insofar as that is
+important. FidoNet Netmail arrives instantly. RIME mail takes the
+host-route and gets there eventually. If you call direct, Fido boards
+will pay the long distance. With RIME, costs are absorbed because the
+EchoMail transfers are such a huge percentage of the transfer.
+   Now, having said that, the fact is that Fido boards are
+increasingly taking advantage of host-routing techniques, so I would
+expect this difference to fade over time.
+   
+Board differences
+-----------------
+   RIME boards tend to be PCBoard or Gap systems, and, as far as I
+know, they all are MS-DOS machines. They both are commercial products.
+PCBoard, in particular, can be used in multi-line setups fairly
+easily. As I understand it, the RIME technical methods were developed
+in conjunction with PCBoard.
+   That doesn't make it a PCBoard network. Use of the "UTI"
+(Universal Text Interface) means that RIME messages can be imported
+into and exported from lots of different board types, including many
+which were designed more with FidoNet in mind.
+   FidoNet boards tend to use shareware software. Maximus, QuickBBS,
+Remote Access, Opus--these are some of the names usually associated
+with FidoNet. On the whole, they have roots in the hacker community
+rather than in the commercial software industry. Yet as long as the
+tosser/scanner combination exists, any board can run FidoNet
+technology messages as well. PCBoard can be used with FidoNet.  So can
+Wildcat! and tbbs (The Bread Board System), both commercial BBS
+software packages.
+   So, you see, either kind of board can run either kind of network.
+They just TEND to run one or another because of historical reasons and
+easy availability of interface software.
+   

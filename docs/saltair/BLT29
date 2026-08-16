@@ -1,0 +1,124 @@
+                 @X09[ @X0BI N S T A L L I N G   P C B O A R D @X09]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0BREQUIREMENTS-
+-------------
+
+@X03To install PCBoard, you'll need at least 530k conventional memory free.  To
+make sure that you meet this requirement:
+
+@X091) Open a dos session.  If you're already in dos, exit any multitasker you may
+   be using.  From the dos command prompt, type
+   @X07mem /c | more
+   @X09This will provide page breaks.  Now, look at the line that says @X03Largest
+   Executable Program Size:@X09.  This will indicate the memory that we're focusing
+   on.  If it is less than 530k, then you'll need to disable some drivers, or
+   load them into upper memory until you have 530k free.  The programs listed
+   above are those that are already loaded.  It will tell you if they're in
+   conventional memory and how much space they take.
+
+@X03You'll encounter problems during the installation process as soon as you run
+out of memory.  So it may be a memory problem even if the install program loads
+successfully at first.
+ 
+You'll also need a 386 or higher PC to install the program.  If you're using a
+286 or slower machine, contact voice support at CDC (1-801-261-1686) for
+details on how to install on a 286.
+ 
+@X0B
+PROCEDURE-
+----------
+ 
+@X03When you first run the install program, it will ask you for a drive and
+directory to install pcboard in.  The default directory is \PCB.  You will
+find that keeping your installation consistent with the defaults will avoid
+future problems and complications.  If there is a problem with \PCB or you
+have another preference, enter it here.
+ 
+Next, you are prompted for your first name.  Second, your last name.  Third,
+your city and State.  Lastly, a password.  These are the name and password
+that will be used to create your sysop login record for the BBS.
+@X04This CAN be changed later.@X03
+ 
+At a later point, it will prompt you for the components to install.  If this is
+your first installation, you MUST install a @X0BFIRST TIME INSTALL@X03.  Press the
+space bar to select it.  Now, select the additional (optional) components you'd
+like installed.  This may include @X0BCOMMDRV@X03, @X0BPPLC@X03, or @X0BOS/2 FILES@X03.  If you're
+running OS/2, you'll need OS/2 FILES, and you will not need COMMDRV.  If you
+have PPLC, you'll want to install that as well.  PPLC will be an option even
+if you do not have PPLC.  If you are not sure, you can select to install it,
+and it will not cause any problems.  When you are finished installing, you can
+check by looking for @X0CPPLC.EXE @X03in the \PCB directory.
+ 
+Do *NOT* select @X0BUPGRADE INSTALL@X03 if this is your first time installation.
+ 
+If this is not your first time install, you are upgrading, or need to install
+certain components to your machine, then you'll need to select @X0BUPGRADE INSTALL@X03.
+This will tell the install program to install whatever you like, but NOT the
+initial install files and .EXE programs.  They will not install unless you also
+select UPGRADE INSTALL.
+ 
+Now you'll see pcboard shell to a text browser and show you SAMPLES.DOC.  This
+document will allow you to read about the different kind of boards that PCBoard
+can install.  When you're finished browsing, press the ESC key to go on.
+Next, It will ask you for the type of BBS that you would like install.  If you
+want ALL features installed, you will want to select a Hobby Board.  With all
+features installed, you have the option to disable those that you don't want.
+
+It will prompt you to tell it to update your autoexec.bat.  You'll want to
+select <Y>es.  This will put the \PCB directory in your path.  If you tell it
+no, then it will not update it, and you will have to update it manually.  It
+will next probmpt you to update your config.sys file.  If you do not tell it it
+update your config.sys file, you'll need to manually do it later.
+ 
+ 
+@X0B
+ 
+SETUP-
+-------
+
+@X03The PCBsetup program is now run to allow you to make any immediate necessary
+changes to your BBS.  The only necessary change (under DOS, Windows 95,
+Windows 3.1)is @X0BPCBSETUP | NODE CONFIGURATION | RUNNING A NETWORK/MULTITASKER
+SYSTEM <y/n>?  @X03You'll need to select no, or run share before loading PCBoard.
+ 
+Upon completion of the execution of PCBsetup, the setup procedure continues
+to run the pcbmodem program.  This program will test your modem for response
+and also reset the NRAM settings for the modem.
+
+First you must select your make of modem.  Next, the model.  NOTE:  If you have
+a 28.8 kbps modem and it is not listed, look for v.34.  This is the protocol
+that is capable of giving modems their 28.8 speed.  This will be the
+appropriate setting.
+
+Second, you'll need to enter a portspeed.  This can be confusing for some
+people.  If you only have a 28.8 modem, how can you open the com port at 57600?
+If you set your portspeed to 38400, 57600, or  115,200, then they'll all be
+faster than 28.8, right?  well, the portspeed is bottlenecked by your modem.
+Most serial cards are capable of 115.200 kbps.  You'll want to set it higher
+than your maximum modem speed, but not TOO much higher.  You'll find that
+having a 1200 baud modem connect to a 115,200 connection is a difference of
+114000 bps.  That's a lot of speed to negotiate and sometimes you can't
+connect that way.  It is recommended that you set the openign portspeed as
+close to the modem's maximum baud rate as possible, and still keep it higher
+so that it's not handicapped.
+ 
+It will ask you for your comm driver to use.  If you are using dos and have
+a fossil interface installed, Select F.
+ 
+If you have COMMDRV (COMMTSR) installed, then you'll want to select C.  Note
+that this is only valid in a dos environment.
+ 
+If you are running under OS/2, select O.  This is regardless of the PCBoard
+version, the serial driver, the fossil driver, the serial card, or any other
+circumstances.  If you're under OS/2, select O.
+ 
+If you are using no multitaskers, no GUIs, no multiport serial boards, and
+are running under a straight dos session, then select A for direct UART
+communication.
+ 
+Next, you'll be prompted for the com port.  This is what determines which modem
+is to be initialized.  If you select com2, then the modem connected to com2 will
+be initialized.  This change is unique to the modem, not the com port.
+
+

@@ -1,0 +1,133 @@
+@X09   [ @X0BH O W    T O    S E T    U P    P C B O A R D    U N D E R    O S / 2 @X09]
+
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0BControl Panel
+-------------
+@X03The Control panel is a program which is designed to launch multiple pcboard
+nodes with minimal batch files involved, and gives you additional control over
+the status of your nodes, as well as displaying the status, user, and user
+location for each node.
+
+The filename for Control Panel is PCBCP.EXE.  This filename should have a
+read-only attribute assigned to it, and should be located in the \PCB
+directory.
+
+A few things that are necessary for all OS/2 installations of PCBoard (dos
+or OS/2).
+
+@X091) In your CONFIG.SYS file, edit the line that says:
+   @X07SET PATH=
+   @X09Append to the end:
+   @X07C:\PCB;
+   @X09Make sure that all paths are separated by a semicolon (;).
+ 
+2) In your AUTOEXEC.BAT file, edit the line that says:
+   @X07PATH=
+   @X09Append to the end:
+   @X07C:\PCB;
+   @X09Make sure that all paths are separated by a semicolon (;).
+
+If your PCBoard installation is on a drive other than C:, then substitute that
+drive letter in the paths specified in steps 1 and 2 above.
+
+@X03As stated in bulletin #1, don't assume anything.  DOUBLE check these lines.
+If you have any trouble with any pcboard function that involves shells, then
+it's likely that this is the reason.
+
+@X0AThe steps outlined above apply to either the dos version OR the OS/2 version.
+
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0BSetting up the control panel-
+-------------------------------
+ 
+@X03First, create an OS/2 icon on your desktop.  An easy way to do this is to open
+your @X02OS/2 SYSTEM @X03folder.  Once inside, open your @X02COMMAND PROMPTS@X03 folder.  Now,
+right click on the @X02OS/2 WINDOW @X03icon.  Click on @X02CREATE ANOTHER @X03line (NOT the
+arrow).  Change the title to CONTROL PANEL, then click on CREATE.  The SETTINGS
+screen pops up.  AT this point,there is a control panel icon in your command
+prompts folder.  Do not close your SETTINGS window yet.
+ 
+The SETTINGS screen should like like the following:
+
+    @X07Path and filename to execute:
+    ------------------------------
+    @X0F\pcb\pcbcp.exe
+@X07
+    Optional parameters:
+    ------------------------------
+    @X0F\pcb\main\usernet.xxx
+
+    @X07Working directory:
+    ------------------------------
+    @X0F\pcb
+
+@X03Close the SETTINGS window by double-clicking on the square icon in the
+upper-left corner of the window.  It will save automatically.
+
+Drag the Control Panel icon from the command prompts folder to your @X02STARTUP
+@X03folder (which is also under OS/2 SYSTEM).  Now, the control panel will launch
+automatically when you load OS/2.
+ 
+@X0BConfiguring The Control Panel-
+---------------------------------
+@X03Load the control panel by double-clicking on the control panel icon.  (Dragging
+a shadow of the icon to the launchpad makes things easier!)
+ 
+Select @X02FILE@X03 and go to node limits.  Select your low node number.  This is the
+first node that the control panel can control.  This does *not* tell control
+panel to launch the node. It only allows it to control the node.  Once it's
+selected, do the same for the high node number.  This is the last node that
+control panel can control.
+ 
+Select @X02OPTIONS@X03.  Click on @X02SAVE...@X03 .  This will save the high and low node
+numbers.  Now select @X02FILE@X03 again and go to node settings.  From here, select the
+first node that you'd like the control panel to *LAUNCH*.
+
+The Filename to Execute field should be the name of the BAT file or CMD file to
+execute.  The working directory should be \PCB (although you should have a
+directory under that for each node).  Optional parameters should be left blank.
+@X02Optional Port Number @X03should be set to the port number that the node will be
+accessing.  Remeber that port 0 or COM0 starts local node and doesn't use a
+modem.
+ 
+Click on @X02RUN SETTINGS @X03and select your preference for the appearance of the
+nodes.  At first, you may want to select windowed so that you can tell what
+they're doing and see that they're coming up.
+
+Set your @X02AUTO RUN SETTINGS @X03to RUN ON STARTUP.  This should launch the nodes
+when the control panel is run.  Go back to @X02NODE SETTINGS @X03and make sure that
+the information entered is still there.  If not, re-enter it.
+
+If you need batch files for your control panel, they can be downloaded from
+@X0ESalt Air BBS@X03.  The filename is @X0CCMD.ZIP@X03.  You'll need to set the port #, node #,
+drive letter, data path, and current directory.  The rest will be set up for
+you.
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+

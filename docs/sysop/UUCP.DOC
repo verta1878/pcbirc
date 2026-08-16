@@ -1,0 +1,1503 @@
+
+Introduction
+===============================================================================
+
+      Millions of messages or articles are posted each year in Usenet
+      ranging across a wide variety of topics. Additionally, millions of
+      people communicate using Internet e-mail.  With PCBoard and a Usenet
+      feed, both information sources can be tapped.
+
+      The configuration of the UUCP part of PCBoard consists of the
+      following:
+
+        o Obtaining a Usenet and e-mail feed through a provider
+        o Configuring the relevant fields in PCBSetup
+        o Creating and configuring the conferences which will exchange
+          articles and e-mail
+        o Creating an entry in the SYSTEMS file for your provider
+        o Configuring one or more events to exchange mail and news
+
+
+Getting Started
+===============================================================================
+
+  Contacting a Provider
+  ---------------------
+    With the explosive growth of the Internet, services helping you get
+    connected are popping up all over the world.  Call into Salt Air and
+    download a file called PROVIDER.ZIP for a list of Internet Providers.
+    Additionally, you can ask around on local bulletin boards to see if
+    anyone knows of a provider in the local area.
+
+  What about domain and site names?
+  ---------------------------------------
+    The terms "domain name" and "site name" refer to different identification
+    schemes.  Domain name identifies a site on the Internet while site name
+    refers to a site in the UUCP network.  The Internet and UUCP systems are
+    not one in the same although most bulletin boards carry both Internet
+    e-mail and UUCP news.
+
+    Now that you have obtained an Internet provider, you need to get the
+    following information from them:
+
+      1.  Your UUCP site name
+      2.  Provider's UUCP site name
+      3.  Your domain name
+      4.  Compression program used for compressed and batched mail (used later)
+
+      NOTE:  It is possible to transfer mail and news without your own
+      domain name.  In this situation either sub or bang domain processing
+      must be used.  More on this topic is discussed in the "PCBSetup"
+      section of this document.
+
+  Setting UUCP Options in PCBSetup
+  --------------------------------
+    The bulk of configuration for UUCP in PCBSetup is contained in the
+    screen titled "UUCP Configuration" from PCBSetup's Main Menu.  For the
+    purpose of this section, we assume you have some familiarity with
+    the fields in PCBSetup.  If you want detailed explanations of these
+    fields, refer to the PCBSetup section of this document or press F1 to
+    access PCBSetup's online help.
+
+    Let's begin be looking at the first section of the screen.  This section
+    stores organization and path information:
+
+        Organization : Salt Air BBS / Murray, UT  801-261-1686
+
+        Base UUCP Path            : ..\UUCP\
+        Spool Directory           : ..\UUCP\SPOOL\
+        Log File Directory        : ..\UUCP\LOGS\
+        Decompress Batch File     : ..\UUCP\DECOMP.BAT
+        Moderator List File       : ..\UUCP\USENET.MOD
+
+    Organization:  Enter information about your system including but not
+    limited to the name, location, and phone.  This information is posted in
+    the header of all e-mail and news messages exported from your system.
+
+    Base UUCP Path:  Since this is the beginning subdirectory for all UUCP
+    activity, it's best to keep this in a central location.  If you run
+    in a network environment, specify a directory on the server (e.g.,
+    F:\PCB\UUCP\, C:\PCB\UUCP\).
+
+    Spool Directory:  An additional tree is created beneath the subdirectory
+    specified in this field.  In fact, one subdirectory is created for each
+    provider.  Large volumes of information are stored in the subdirectories
+    specified so make sure PLENTY of FREE SPACE exists.
+
+    Log File Directory:  Extensive logs are kept regarding importing,
+    exporting, and transfer of messages.  These files will grow gradually
+    so you should plan on deleting or archiving them regularly to prevent
+    them from filling up the drive.
+
+    Decompress Batch File:  This field specifies the batch file to run to
+    uncompress batched messages from your provider.  The program you should
+    run in this batch file depends largely on the information gathered from
+    the provider in the previous question.  The two most popular compression
+    programs are Compress (COMP430D) and GZip.  Your provider will either
+    have or know where to get the proper decompression program to put in
+    this batch file.
+
+    Moderator List File:  Generally leave this field unmodified.  This
+    file only has to be modified in very special circumstances since
+    UUCP attempts to handle all moderation information automatically.
+
+        UUCP Name                 :
+        UUCP Domain Name          :
+        UUCP Email Host           :
+        UUCP News Host            :
+
+    UUCP Name:  Enter YOUR UUCP site name obtained from the provider.
+
+    UUCP Domain Name:  Enter YOUR domain name obtained from the provider.
+    If no domain name is being used, you must enter the domain name of the
+    provider.
+
+    UUCP Email Host:  Enter the PROVIDER's UUCP site name in this field.
+
+    UUCP News Host:  Enter the PROVIDER's UUCP site name in this field.
+
+        Internet Email Conference :     0
+        Usenet Junk Conference    :     0
+
+    You must inform PCBSetup of two special conferences on your system.
+    The first conference is where all Internet e-mail is imported into.  The
+    second is the conference number where all unclassified mail is put.
+
+    At this point we're ready to exit PCBSetup and save the configuration.
+    It's time to edit/create the SYSTEMS file which is used to call the
+    provider.
+
+  Strategy for Developing the SYSTEMS File
+  ----------------------------------------
+
+    The SYSTEMS file is important to you because it controls all of the
+    information necessary to call a provider.  Not only does it store
+    information like the name of a provider but also phone number and
+    instructions of how to logon.
+
+    Editing the SYSTEMS File
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    The SYSTEMS file is simply an ASCII file and is stored in the Base UUCP
+    Path.  To edit the file, a text editor must be used.  When this file is
+    edited for the first time, it will resemble this:
+
+# The # comments out a line in the file
+# try modifying one of these lines to match your site
+xmission f1 f2 f3 f4 g "" ATZ OK \dATDT5390900 CONNECT \c gin--gin Name word pwd
+
+    This example SYSTEM file gives you some sense for what is required to
+    create or modify an entry.  To fully understand this file you must
+    realize that any line NOT beginning with a # represents an entry for a
+    system.  Each entry consists of a set of fields which UUXFER will access
+    and use to login to the system.  Use the descriptions that follow to help
+    you make an entry for your provider.
+
+       1. xmission - Quite simply, this is the site name UUXFER will look up
+          based on what you pass via the -s command line parameter.  In this
+          case, a site named xmission is being defined.  This name refers to
+          your Internet provider.
+
+       2. f1 - While this field is not used by UUXFER, other programs
+          similar to UUXFER use it to determine valid times of the day to
+          call.
+
+       3. f2 - This field is not used by UUXFER but similar programs use it
+          to determine the serial port to use for communications.
+
+       4. f3 -  Some programs use this field to determine what type of
+          serial interface to use, but UUXFER obtains this information from
+          PCBoard.
+
+       5. f4 - While UUXFER does not use this field, other similar programs
+          use it to control the opening port rate.  Instead, this
+          information is obtained from PCBoard.
+
+       6. g - This field represents the protocol to use.  At this time,
+          UUXFER uses the widely used g protocol.  Once you have the entry
+          working and transferring mail/news you may want to adjust a
+          parameter of the protocol to increase performance. The defaults
+          are to use a packet size of 64 bytes and a window size of 3
+          packets.  To override the defaults, put a two digit number to the
+          right of the g (i.e., g34 or g32). The first digit controls the
+          size of the transfer window and must be 1 through 7 (the default
+          is 3 if unspecified).  The second digit controls the size of the
+          individual packets and must be 1 through 8 (for packet sizes of
+          32, 64, 128, 256, 512, 1024, 2048, or 4096, respectively; the
+          default is 2 if unspecified).
+
+       7. Everything to the right of the protocol specification is
+          considered the chat script.  What the chat script amounts to is a
+          string of text to expect and a string of text to send when the
+          expected text is found.  For example, I will have the script wait
+          for login.  When that text is received, send my login name.  This
+          is expressed in the following manner on the system line:
+
+            login yourbbs   (where yourbbs is the login name for the system)
+
+    Before proceeding to the next section, make sure you have an entry in
+    the SYSTEMS file comprising of the first 6 fields.  Example:
+
+      provider f1 f2 f3 f4 g
+
+    With this much information entered for your site, go ahead and save the
+    file and exit.  We're ready to write the chat script.
+
+    Writing the Chat Script
+    ~~~~~~~~~~~~~~~~~~~~~~~
+    Writing the chat script requires three major steps.  First, you must
+    capture an actual logon attempt to a text file.  Second, an
+    understanding of special characters utilized in a chat script is
+    required.  Finally, we'll use the text file created in step 1 and the
+    knowledge acquired in step 2 to write the chat script.
+
+      Capturing a Login to a Text File
+      ................................
+      To capture a manual login session with your Internet provider, you'll
+      need to load your communications program (Procomm Plus, Telix, etc.)
+      Once it is loaded, type "ATE1 <ENTER>" which enables echo mode
+      on modem commands.
+
+      Next, turn on the capture log.  For most communications programs,
+      this is done by pressing ALT-L.  The program you are using may differ so
+      consult your manual if questions arise.
+
+      Before calling your system, make sure you know the user ID and
+      password required to login.  Without it, the next 5 steps cannot
+      be completed.
+
+          1.  Issue the command to dial your internet provider.  Typically,
+              this is ATDT followed by the phone number of the provider.
+              (e.g., ATDT 555-1212)  Once the phone number is entered,
+              press ENTER to begin dialing.  If it's busy, continue trying
+              at regular intervals.
+
+          2.  Assuming your connected at this point, the first prompt you
+              see is going to be a login prompt.  It may look something
+              like this:
+
+                 (slc-ts1 port 0) provider.com login:
+
+               NOTE:  Some sites may have a menu you have to navigate before
+               logging into the system.  Go ahead and select the menu option
+               which allows you to login.
+
+          3.  Type in the login name for your UUCP account.  Once the name
+              is properly entered, you're typically asked for a password.
+              Enter the required password in this field.
+
+          4.  At this point, you should see something like "SHERE" appear on
+              your screen.  This is the beginning handshake sequence for
+              sending mail and news.  Congratulations!
+
+          5.  Close the log file because are task is completed.
+
+      Special Commands/Sequences in a Chat Script
+      ...........................................
+      Recall that the chat script is nothing more than a sequence of strings
+      to expect and strings to send once a match is found.  These sequences
+      are separated with spaces.  Example:
+
+           <expect> <send> <expect> <send> <expect> <send>
+
+      Occasionally, a special character will be used in one of these strings
+      to delay for a second or two, send a carriage return or even a space
+      (since a space character separates an expect/send sequence).
+
+      This section is dedicated to telling you about the most common special
+      characters and their uses.  The last part of the section will discuss
+      the lesser used characters in case your situation requires their usage.
+
+      The most common special characters are:
+
+         "" - Placeholder for nothing.  Represents a place holder for nothing.
+              Typically this is used in the expect portion of the sequence
+              meaning not to expect anything.  This will always match so
+              whatever is to be sent out will be.  A good example of this is
+              the sequence which initializes the modem before dialing out:
+
+                 "" ATZ
+
+              If you do not want to send anything out, you'll also have to
+              suppress the carriage return automatically entered to every
+              outgoing response.
+
+         \c - Suppress Carriage Return.  Every response sent out via the
+              chat script has a carriage return automatically appended to
+              the end.  For example, if you tell the chat script to send
+              "Triangle", it will send "Triangle <cr>" where the <cr> is a
+              carriage return or ENTER key.  Example:
+
+                CONNECT /c
+
+         \d - Delay two seconds.  Sometimes it is useful to have a chat
+              script delay.  A delay is most often need when sending a
+              response not when expecting something.  This point can be
+              illustrated best when initializing the modem and waiting
+              for an OK to come back.  Upon receiving the OK, you'll send
+              the dial string.  The problem is that some modems have a
+              problem immediately receiving a command after responding to
+              one.  Therefore, adding a delay before dialing is wise.
+              Example:
+
+                OK /d/d"ATDT555-1212"
+
+         \r - Send a carriage return.  When you need to send a carriage
+              return, use this special code.  Remember, there is already a
+              carriage return sent with EVERY sequence unless the /c code is
+              sent.
+
+      The following lists sums up the rest of the special characters and
+      a brief description of each:
+
+        \8    - Shift to 8N1 mode
+        \b    - Backspace character
+        \e    - Shift to 7E1 mode
+        \K    - Send BREAK (NUL)
+        \n    - Send the character for a new line
+        \N    - Send NUL
+        \p    - Delay a fractional second
+        \q    - Quietly display send field
+                ("\qpassword" to not display password)
+        \s    - Space character
+        \t    - Tab character
+        \\    - Backslash character
+        \###  - Any three octal digits to define any character
+        \?    - Quotes any other character (denoted by ?)
+        BREAK - Send BREAK (NUL)
+        EOT   - Send EOT character
+
+      Analyzing the Log File
+      ......................
+      It is now time to look at the log file we gathered in the first
+      step and combine that with our knowledge of the special chat script
+      codes to complete our chat script.  To do this task, we will look
+      at a few lines of the log file at a time to see if we can decipher
+      what we need to do.
+
+      Let's begin by looking at what it will take to dial the phone number:
+
+         ATZ
+         OK
+         ATDT5551212
+
+      According to our sample log file, the first thing we do is initialize
+      the modem followed by dialing our site.  As far as the chat script
+      is concerned, this is expressed as:
+
+        "" ATZ OK /dATDT5551212
+        ------ ----------------
+          1           2
+
+      Notice the use of two special characters--one in each sequence.
+      Remember the delay is just to keep the modem the happiest.  Otherwise,
+      your dial attempt may fail.
+
+      Proceeding on, let's see what we have to analyze next:
+
+         CONNECT 9600/ARQ/V32/LAPM/V42BIS
+
+         (slc-ts1 port 0) indirect.com login:yourname
+
+      Here we have two things going.  First of all, we have the response from
+      our modem telling us we connected.  Immediately after that we have
+      the login prompt where we type our name.
+
+      In our chat script we want to watch for both items.  When we find the
+      CONNECT string we're not going to send anything back.  With the login
+      prompt though, we'll need to send our login name.  The following shows
+      what our chat script looks like now:
+
+        "" ATZ OK /dATDT5551212 CONNECT /c gin:--gin: yourname
+        ------ ---------------- ---------- -------------------
+          1           2             3              4
+
+      On initial inspection you're probably wondering what is going on with
+      sequence #4.  According to our capture file we will never see the text
+      "gin:--gin:".  You are correct.  What we have done though is bought
+      a little bit of insurance.  This expect sequence will search for
+      'gin:' for the timeout period (default of 60 seconds).  If it is not
+      found, a carriage return will be sent and the chat script will attempt
+      to find 'gin:' again.  On the off chance that it is not found, the
+      script will abort after the second try.
+
+      Let's look at the final part of our capture file--the password prompt:
+
+        Password:
+
+      This one is the easiest segments we had to write for.  Here we have
+      to basically do what we did for the login prompt.
+
+        word:--word: pwrd
+
+      We look for the text "word:" up to two times.  If we find it, we'll
+      send a password of 'pwrd'.  With this final piece in place, our
+      chat script looks like this:
+
+       "" ATZ OK /dATDT5551212 CONNECT /c gin:--gin: yourname word:--word: pwrd
+       ------ ---------------- ---------- ------------------- -----------------
+         1           2             3              4                  5
+
+      With the chat script done, we need to test it out to make sure it works
+      okay.  This is the theme of the next section.
+
+    Testing The SYSTEMS File
+    ------------------------
+    With the entry in the SYSTEMS file complete, it becomes important to
+    test it.  By going to a directory with a PCBOARD.DAT and running UUXFER,
+    we can find out if our entry works correctly or not.  By default, UUXFER
+    calls all systems.  To test a single site, use the -s command line
+    parameter.  Assuming the entry we made in the previous section is
+    for a site named "provider", type:
+
+        uuxfer -sprovider
+
+    If a screen appears but then quickly disappears it could be due to any
+    of the following problems:
+
+       1) There is no PCBOARD.DAT in the current directory
+       2) You did not specify the -s parameter with a site name to call.
+       3) The site name specified is incorrect.  In other words, an entry
+          for it does not exist in the SYSTEMS file.
+
+    Ultimately, the UUXFER.LOG file will tell you why it did not complete.
+    Please refer to that file to assure yourself of the reason for not
+    running as expected.
+
+    When everything is done properly in regards to loading UUXFER, you'll
+    see a screen similar to the following:
+
+ ÚÄÄÄÄÄÄÄÄÄÄ UUXFER Version 1.10 -- UUCP/UUCICO Utility for PCBoard ÄÄÄÄÄÄÄÄÄÄ¿
+ ³ Processing Chat Script for PROVIDER                                        ³
+ ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+ ³                                     ³³                                     ³
+ ³                1                    ³³                2                    ³
+ ³                                     ³³                                     ³
+ ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+ ³                                     ³³                                     ³
+ ³ ""             3                    ³³ ATZ                  4              ³
+ ³ OK                                  ³³ \d\d\dATDT5551212                   ³
+ ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+ ³ ATZ                                                                        ³
+ ³ OK                                  5                                      ³
+ ³                                                                            ³
+
+    We have numbered each segment of the screen to make it easier to explain
+    what you are seeing.
+
+      1.  Displays g protocol information about the packets coming into the
+          system.  This information may include items such as packet number,
+          packet size, etc.
+
+      2.  Similar to window 1, this window shows the information for packets
+          sent from the system.
+
+      3.  This window is very much a multi-purpose window meaning the
+          information displayed varies depending on the progress of the
+          call.  For our concern--testing the chat script--this region of
+          the screen shows you what the chat script is expecting to find.
+          In the example presented, the first thing searched for is ""
+          (nothing), followed by "OK".
+
+      4.  Like window 3, this window displays varying information.  While
+          processing the chat script, it shows what text has been sent out
+          to the modem.
+
+    Because UUXFER gets its information from the PCBOARD.DAT file, make sure
+    it is run in a configuration where it can dial out.  A node that is not
+    configured for a modem is not a good place to test UUXFER.
+
+    Closely watch the chat script progress.  If a problem is discovered while
+    the chat script is processed, make the necessary changes to the script
+    and try again.  As soon as the chat script is complete are you are logged
+    into the provider, you should see the top of the screen change to read:
+
+ ÚÄÄÄÄÄÄÄÄÄÄ UUXFER Version 1.10 -- UUCP/UUCICO Utility for PCBoard ÄÄÄÄÄÄÄÄÄÄ¿
+ ³ Performing UUCP G Protocol File Transfers for PROVIDER (Master Mode)       ³
+ ³ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ³
+
+   This message is our goal.  It lets us know that we successfully logged into
+   the provider, negotiated the connected and began sending information using
+   the G protocol.  Congratulations on setting up the SYSTEMS file and getting
+   it working properly!
+
+  Configuring / Creating the Conferences
+  --------------------------------------
+    The conferences on the system handle all the message traffic.  Topics
+    of discussion are broken down into conferences.  In a UUCP configuration,
+    a conference must be created for Internet e-mail, junk mail, and
+    one for each newsgroup carried.
+
+    These requirements amount to a lot of new conferences on your system.
+    What we will guide you to do is setup these conferences.  What follows
+    assumes knowledge of how to create a conference in PCBoard.  If this
+    topic is unfamiliar, consult the index in the printed manual for
+    additional information.
+
+    When adding the conferences to the system, many SysOps like to make the
+    starting number an even one.  A good example of this is making the first
+    conference number 100, 200, or 1000.  Following this type of number
+    scheme provides a good way to group conferences.
+
+    For the purpose of this example, let's make the starting conference
+    number 100.  We'll make conference 100 the "Junk Mail" conference and
+    101 will send/receive the e-mail.
+
+    Create conferences 100 and 101 and configure them to be clones of the
+    Main Board (#0).  Once that is done, all that remains is to edit the
+    location of the message bases and configure a few options.  The following
+    breaks down all that must be done to configure the two conferences after
+    being cloned.
+
+    "Junk Mail" (Conference 100)
+
+      1.  Change the name/location of the message base to point to a JUNK
+          file in the base UUCP path.  For example, if PCBSetup says the
+          base UUCP path is F:\PCB\UUCP\, enter the message location of
+          F:\PCB\UUCP\JUNK.
+
+      2.  Press PgDn to edit the conference options.
+
+      3.  Change the "Type of netmail" option to 2 so PCBoard will know it is
+          the UUCP junk conference.
+
+      4.  Update the junk conference number in PCBSetup | UUCP Configuration
+          to reflect the proper conference number.
+
+    "Internet E-Mail" (Conference 101)
+
+      1.  Change the name/location of the message base to point to a file
+          named I-EMAIL in the base UUCP path.  For example, if PCBSetup
+          says the base UUCP path is F:\PCB\UUCP\, enter the message
+          location of F:\PCB\UUCP\I-EMAIL.
+
+      2.  Press PgDn to edit the conference options.
+
+      3.  Using the list below, set the fields listed in the left column to
+          the response in the right column.
+
+             Make All Messages Private         Y
+             Force Echo on All Messages        Y
+             Type of Netmail Conference        1
+             Allow Internet (long) TO: Names   Y
+
+    The procedure for adding the conferences for UUCP news and mail areas
+    are:
+
+      1.  Get an ACTIVE file from your coordinator.
+      2.  Determine what areas you want to carry
+      3.  Prepare PCBoard to handle the increased conference load
+      4.  Use UUUTIL.EXE to add the additional conferences.
+
+    That is the shortened list of what you have to do.  Over the next few
+    paragraphs, detailed descriptions of each task is given.
+
+      1. Talk to your provider.  They will have a copy of the ACTIVE file
+         which lists newsgroups they carry.
+
+      2. The ACTIVE file is nothing more than an ASCII file with a newsgroup
+         name on each line.
+
+         The next task is to trim down the list to include only those
+         newsgroups which interest you or your callers.  Don't be afraid to
+         be picky here as there are costs involved for carrying each.
+         Trimming the list is done by loading the file into a text
+         editor--any editor will do.   When you see a newsgroup you do not
+         want, delete the line (CTRL-Y usually works).  When done, save the
+         file and exit the editor.  That's all there is to it.
+
+         Look at this sample segment of the ACTIVE file:
+
+                comp.sys.ibm.pc.hardware.cd-rom 0000011602 0000011565 y
+                comp.sys.ibm.pc.hardware.chips 0000019503 0000019443 y
+                comp.sys.ibm.pc.hardware.comm 0000007566 0000007546 y
+                comp.sys.ibm.pc.hardware.misc 0000020206 0000020148 y
+
+         Deciding I do not want the ibm.pc.hardware.chips group, I'll use
+         the text editor to make this section look like this:
+
+                comp.sys.ibm.pc.hardware.cd-rom 0000011602 0000011565 y
+                comp.sys.ibm.pc.hardware.comm 0000007566 0000007546 y
+                comp.sys.ibm.pc.hardware.misc 0000020206 0000020148 y
+
+         See how easy that was!
+
+      3. Next we must confirm the PCBoard setup is properly configured for
+         the hundreds of new conferences that will be added.  Make a
+         determination for a starting conference number; most SysOps elect
+         to start at an even number of 100.  Say for example the highest
+         conference currently in use is 78.  The common thing to do is to
+         start the conferences at 100.
+
+         Once the starting conference number is determined, find out how
+         many areas you'll be carrying and add it to the starting conference
+         number. As an example let's assume you'll start the conferences at
+         200 and will be adding 212 areas.   This makes your highest
+         conference 412 so check PCBSetup | Configuration Options | Messages
+         to see if the "Highest Conference Desired" is set to the an
+         appropriate value.
+
+         If you have to change the number, load System Manager | User Info
+         File Maintenance | Change Conference Allocation to ensure the
+         USERS.INF file is up-to-date is upgraded too.
+
+      4. A utility is included with the PCBoard package called UUUTIL.  With
+         this utility the tedious task of setting up conferences is greatly
+         simplified.  Consult the following checklist before continuing:
+
+           1.  You have an ACTIVE file and have trimmed it down to list
+               only those areas you desire to carry.
+
+           2.  An adequate number of conferences is configured in PCBSetup |
+               Configuration Options | Messages.
+
+           3.  You know the starting conference number for the conferences.
+
+           4.  You have a copy of UUUTIL.EXE and know its location.
+
+         Now you're ready to import the new conferences to your system. The
+         command line for UUUTIL will be:
+
+            UUUTIL /START:[conf] /IMPORT:[ACTIVE]
+
+         The conference number entered after the /START parameter must be
+         your starting conference number for the conferences.
+
+         The next parameter passed is /IMPORT.  This parameter tells UUUTIL
+         where it can find the ACTIVE file.  This file has information about
+         the newsgroups you want to carry.
+
+         NOTE:  The default message base locations configured by UUUTIL are
+         put underneath the base UUCP path.  To help balance the number of
+         files in a directory, UUUTIL creates subdirectories for each message
+         base.  For example, if adding alt.tv.reruns, PCBoard will specify
+         the location as G:\PCB\UUCP\A\T\RERUN001.
+
+         Notice how the message base is constructed.  "alt" is abbreviated to
+         the subdirectory "A", followed by "tv" being abbreviated to the "T"
+         subdirectory, and finally the first five characters of "RERUNS" are
+         taken and a 001 is appended (the number changes to prevent duplicates)
+
+         A little practice in this naming convention will go a long ways.
+         Therefore, let's see what type of directory structure is obtained
+         if we carry the following newsgroups:
+
+            alt.fan.oldshows
+            alt.bubba.bo.bob.brain
+            comp.bbs.pcboard
+            soc.culture.brazil
+
+            \PCB\UUCP\---A\
+                      |   +---B\
+                      |   |    +---B\
+                      |   |        +---B\  (holds alt.bubba.bo.bob.brain)
+                      |   +---F\           (holds alt.fan.oldshows)
+                      |
+                      +--C\
+                      |   +---B\           (holds comp.bbs.pcboard)
+                      |
+                      +--S\
+                          +---C\           (holds soc.culture.brazil)
+
+
+         NOTE: If you run UUUTIL and the screen clears but nothing seems to
+               have happened, make sure you are running UUUTIL from a
+               directory where a valid PCBOARD.DAT for your system exists.
+
+         When UUUTIL is running, you will see text indicating the progress
+         of the import which resembles the following:
+
+            Checking conference 100 ...
+            Inserting (soc.culture.afghanistan) as conference 100 ...
+
+            Checking conference 101 ...
+            Inserting (soc.culture.african.american) as conference 101 ...
+
+            Checking conference 102 ...
+            Inserting (soc.culture.arabic) as conference 102 ...
+
+            Checking conference 103 ...
+            Inserting (soc.culture.argentina) as conference 103 ...
+
+         Once a conference is "inserted" by UUUTIL, the following has
+         occurred:
+
+           1) The conference name has been updated
+
+           2) The message base location has been updated.  The format for
+              the messages file location is the first 5 characters of the
+              conference name's last segment.  In our soc.culture.brazil
+              name, the last segment is BRAZIL so we would use BRAZI for
+              the first five characters.  The next three characters are
+              simply a number to prevent duplicates.
+
+           3) The "Echo Mail in Conference" is set to Y while the "Type of
+              Netmail Conference" field is set to 4.
+
+  UUCP Events
+  -----------
+    Obviously, we'll need to take advantage of PCBoard's events to regularly
+    call our provider and exchange mail.  The goal of this section is to
+    show you how to do this task.  We'll begin by creating a separate batch
+    file on disk that all events can run followed by making the entries in
+    the event editor.
+
+    Let's begin with creating the DOUUCP.BAT file.  The purpose of this
+    batch file is to run UUOUT (message export), UUXFER (message transfer),
+    and UUIN (message import).  To create this file, change to your UUCP
+    Base directory.  Use a text editor to create DOUUCP.BAT as shown in
+    this example:
+
+       F:\PCB\UUOUT.EXE
+       F:\PCB\UUXFER.EXE -s ANY -b 20
+       F:\PCB\UUIN.EXE
+
+    Notice how simple this batch file is.  We scan for mail to export,
+    transfer the mail, and finally import any mail we picked up during
+    the transfer.
+
+    NOTE:  The beauty of DOUUCP.BAT is that you can easily make a manual run
+    by running this batch file.  With the bulk of effort out of the way,
+    let's proceed to configuring the events in PCBoard.
+
+    Go to the event editor (edit EVENT.DAT) in PCBSetup | Event Setup.  The
+    normal scream looks like this:
+
+                       Batch     Begin  End                         Last
+             Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+             ÍÍÍ  ÍÍÍ  ÍÍÍÍÍÍÍÍ  ÍÍÍÍÍ  ÍÍÍÍÍ  ÍÍÍÍÍÍÍ  ÍÍÍÍÍÍÍÍ  ÍÍÍÍÍÍÍÍ
+        1)    Y    E   DAILY     06:45  08:00  YYYYYYY            00-00-00
+
+    There is nothing really special about the UUCP events because their
+    purpose is to simply run DOUUCP.BAT.  Let's look at a sample set of
+    events to add:
+
+                       Batch     Begin  End                         Last
+             Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+             ÍÍÍ  ÍÍÍ  ÍÍÍÍÍÍÍÍ  ÍÍÍÍÍ  ÍÍÍÍÍ  ÍÍÍÍÍÍÍ  ÍÍÍÍÍÍÍÍ  ÍÍÍÍÍÍÍÍ
+        1)    Y    S   UUXFER    01:00  04:59  YYYYYYY            00-00-00
+        2)    Y    S   UUXFER    05:00  04:59  YYYYYYY            00-00-00
+        3)    Y    S   UUXFER    09:00  12:59  YYYYYYY            00-00-00
+        4)    Y    S   UUXFER    13:00  16:59  YYYYYYY            00-00-00
+        5)    Y    S   UUXFER    17:00  20:59  YYYYYYY            00-00-00
+        6)    Y    S   UUXFER    21:00  23:59  YYYYYYY            00-00-00
+
+    What we have done here is run an event every 4 hours.  Notice all of the
+    batch file names are the same because we are doing the same thing during
+    every event.
+
+    While on one of the entries in the editor, press F2 to edit the batch
+    file.  All the event batch file needs to do is run DOUUCP.BAT in your
+    UUCP base subdirectory.  Once you modify the event batch file once,
+    all 6 events inherit the changes.  With this in mind, our event batch
+    file will look like this:
+
+       F:\PCB\UUCP\DOUUCP.BAT
+
+    It's that simple.  Now all six events are setup and you're ready to
+    transfer mail every 4 hours.
+
+PCBSetup
+===============================================================================
+
+      When the UUCP Configuration options is selected from the Main Menu,
+      the screen displays the UUCP options and paths for PCBoard.  This
+      information is used to determine where outgoing e-mail can be found
+      and where incoming e-mail will be placed.  It also controls addressing
+      information such as domain names and their format.
+
+      For the fields on this screen to have any relevance, you must have
+      access to an Internet/Usenet provider.  Your answer to the fields like
+      Email Host, Domain Name, and News Host all assume the information can
+      be obtained from your provider if required.
+
+      Let's start by looking at the UUCP configuration screen and explain
+      each field.
+
+    Organization
+    ~~~~~~~~~~~~
+
+      With every message sent out from your system a description of your
+      site is included in the message header.  The text you enter in this
+      field is the description PCBoard will add to each message.  Common
+      information to include is your BBS name, and a way to contact the
+      system such as a phone number or IP address.
+
+    Base UUCP Path
+    ~~~~~~~~~~~~~~
+      UUCP uses auxiliary files to control many things: alias name
+      translation, determining which message headers are kept, etc.  What is
+      important to understand is that these auxiliary files are stored in
+      the directory labeled as the Base UUCP Path.  The default location is
+      \PCB\UUCP.  Information about these files is available in the UUCP
+      Programs section. Specifically, you'll be looking for files like
+      ALIAS.IN, ALIAS.OUT, and HDRKEYS.LST.
+
+    Spool Directory
+    ~~~~~~~~~~~~~~~
+      The subdirectory entered in this field represents the base spool
+      subdirectory.  Underneath this subdirectory is another
+      subdirectory--one for each site/provider.  For example, assuming the
+      name of your email host is site1 and the base subdirectory is
+      C:\PCB\UUCP\SPOOL\, the spool subdirectory for this site is
+      C:\PCB\UUCP\SPOOL\SITE1.  UUOUT and UUXFER will create these
+      subdirectories as needed.  The only time you will have to create the
+      spool directory is if your feed is coming off of a satellite service
+      such as PageSat or Planet Connect.  The following shows two examples
+      of directory trees.
+
+      The tree on the left is representative of a system where the email and
+      newsgroups are picked up from one site. On the right is a tree
+      representing a BBS where the newsgroup feed is put into the SATELLIT
+      subdirectory, and the SITE1 subdirectory is used for all e-mail and
+      outbound newsgroup articles.
+
+      It is important to remember that a subdirectory must exist underneath
+      the base UUCP directory for every site you interact with (either
+      download email/news from or upload email/news to.)
+
+      NOTE:  UUOUT, the exporting utility, will automatically create the
+      spool files as required.  The only time you must concern yourself with
+      creating them is when you have an inbound feed only such as a
+      satellite service.
+
+    Log File Directory
+    ~~~~~~~~~~~~~~~~~~
+      The log files for the various UUCP utilities such as UUIN, UUOUT, and
+      UUXFER are stored in this subdirectory.  It is useful to look at log
+      files when there is question to the activities performed by the
+      programs.  For example, to see what messages were exported to the
+      system last week.  Assuming the log file is not deleted daily, the
+      information can be retrieved from the log files.
+
+      These log files can grow quite large in size. Therefore, it would be
+      wise for you to either backup or delete these log files on a regular
+      basis.  Defining an event in PCBoard to do this daily, weekly, or
+      monthly is a good idea.
+
+    Decompress Batch File
+    ~~~~~~~~~~~~~~~~~~~~~
+      In this field, enter the path and file name of a batch file to run to
+      decompress batched news.  Generally, this will be a simple call to a
+      single program.  Included with the PCBoard package is a sample
+      DECOMP.BAT in the base UUCP subdirectory.  This batch file makes a
+      call to a program called COMP430D.EXE which, due to the unknown
+      origin, we cannot distribute with PCBoard.  COMP430D is used by
+      several providers but the assumption cannot be made that it will work
+      for all of them.  If in doubt or if you experience problems, contact
+      your provider for information on the compression program used for
+      batched news.  They should have the necessary software.
+
+      Only one parameter, %1, is passed to this batch file. This parameter
+      specifies the path and filename to decompress. Let's look at a sample
+      DECOMP.BAT.
+
+        @echo off
+        cls
+        c:\pcb\uucp\comp430d -db12 %1
+
+    Moderator List File
+    ~~~~~~~~~~~~~~~~~~~
+      Some newsgroups are moderated.  This means that an article is not
+      posted until the moderator reviews the message and determines if the
+      content is appropriate.  If desired, you can maintain a list of
+      moderators by pressing F2 while this field is highlighted.  Leave all
+      entries in this file blank when UUCP should handle the moderating.
+
+      NOTE:  UUCP will automatically send messages left in a moderated
+      newsgroup to a central hub where it is then forwarded to the current
+      moderator.  Therefore, it is best to let this be handled in the normal
+      fashion unless circumstances dictate maintenance of your own list.
+
+    UUCP Name
+    ~~~~~~~~~
+      In this field enter your UUCP name.  A UUCP site name must be
+      registered by you or with the help of the service provider.
+
+    UUCP Domain Name
+    ~~~~~~~~~~~~~~~~
+
+      Every site has a domain name on the Internet.  When you setup an
+      account with your provider this information should have been given to
+      you.  Typically your domain name is a name consisting of lower case
+      characters with dots as separators as shown in the following example:
+
+        saltair.com
+        m.cc.utah.edu
+        npo.org
+
+      Applying for a node name is your responsibility although many
+      providers will either do the work for you or at the very least assist
+      your efforts.  Contact them for additional information.
+
+    UUCP Email Host
+    ~~~~~~~~~~~~~~~
+      An e-mail host name refers to the name the provider uses to exchange
+      e-mail.  Typically this name is 8 characters or less.
+
+    UUCP News Host
+    ~~~~~~~~~~~~~~
+      In this field, enter the news host name of the provider where all
+      outbound news articles are sent.
+
+    News Distribution
+    ~~~~~~~~~~~~~~~~~
+      Enter the default news distribution for your site. (world for all
+      sites, na for North America only, usa for USA, etc.)  If you are
+      unsure, enter world.
+
+    Time Zone Offset from GMT
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+      This field is used to specify how many hours and minutes your site
+      differs from Greenwich Mean Time.  Common values are:
+
+        	AST -0400  ADT -0300
+	EST -0500  EDT -0400
+	CST -0600  CDT -0500
+	MST -0700  MDT -0600
+	PST -0800  PDT -0700
+
+    Name Separator
+    ~~~~~~~~~~~~~~
+      This character is used to separate name elements when converting names
+      from PCBoard format to Internet format.  For example, using a period
+      (the default), the name FRED CLARK is converted to fred.clark.
+
+    Internet Email Conference
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+      All incoming e-mail is sent to the conference number you enter in this
+      field.
+
+    Usenet Junk Conference
+    ~~~~~~~~~~~~~~~~~~~~~~
+      This field contains the conference number into which Usenet junk is
+      imported (primarily articles which do not have a valid newsgroup entry
+      for the system).  Periodically looking at this conference helps insure
+      all your conferences are setup for the news articles received.
+
+    Bang Domain
+    ~~~~~~~~~~~
+      Normally, UUOUT will generate addresses of the form user@domain (i.e.,
+      FRED CLARK at saltair.com becomes fred.clark@saltair.com).  Sometimes
+      other processing is needed. If this field is set to Y, addresses are
+      formed in the following fashion: host!user@domain.  With this switch
+      enabled, the name you enter as the UUCP Domain Name is the domain name
+      of your email host as illustrated in this example:
+
+        UUCP Name                 : yourbbs
+        UUCP Domain Name          : site1.com
+        UUCP Email Host           : site1
+        UUCP News Host            : site1
+
+      A bang name for a user at this address will look like this example:
+      yourbbs!user.name@site1.com.
+
+      NOTE:  The bang domain or sub-domain name addressing is only used when
+      you did not register a unique domain name through your provider.
+
+    Sub Domain
+    ~~~~~~~~~~
+      Normally, UUOUT will generate addresses of the form user@domain (i.e.,
+      FRED CLARK at saltair.com would become fred.clark@saltair.com).
+      Sometimes other processing is needed. If this field is set to Y,
+      addresses will be formed in the following fashion:  user%host@domain.
+      With this switch enabled, the name you enter as the UUCP Domain Name
+      is the domain name of your email host as illustrated in the example
+      for bang domain addressing.  The generated address for this example
+      using sub-domain processing will look like user.name%yourbbs@site.com.
+
+    High Ascii
+    ~~~~~~~~~~
+      The Internet is made up of a conglomerate of machines.  Some of these
+      machines may be PCs, Workstations, Macintosh, etc.  Not all of these
+      machines are able to handle high-ASCII characters.  Therefore, PCBoard
+      gives you control of how to deal with high-ASCII characters when
+      exporting messages. Valid settings are:
+
+        S       Strip all high ASCII on export, replacing with nothing
+        R       Replace all high ASCII characters with a period (.)
+        C       Convert all high ASCII to roughly equivalent standard ASCII
+      	N	Perform no processing on high ASCII characters
+
+UUUTIL.EXE
+===============================================================================
+
+      It's not uncommon for a system carrying Usenet conferences to handles
+      hundreds or thousands of new conferences. That could entail a lot of
+      extra work on behalf of the SysOp. Much of this work can be prevented
+      by using a program called UUUTIL which is included with every PCBoard
+      package.  Its purpose is simple; assist in the creating and setup of
+      Usenet conferences.  To run UUUTIL, load the UUUTIL.EXE using any of
+      the following command line parameters:
+
+  /ACTIVE:d:\path\active
+  ----------------------
+      This option scans the active file (obtainable from your provider) and
+      sets the appropriate newsgroup type for each newsgroup on your system.
+      The active file is a UNIX formatted text file (i.e., each line ends
+      with a line feed instead of a carriage return/line feed pair).
+
+      NOTE:  This parameter does NOT create the conference it simply insures
+      a conference has the proper setting (moderator versus unmoderated news
+      group).  Furthermore, if moderated newsgroups are not carried, this
+      switch will never have to be used because the /IMPORT switch defaults
+      to an unmoderated group.
+
+  /EXPORT:d:\path\localng.lst
+  ---------------------------
+      This option exports a list of all newsgroups on your system in the
+      following format:
+
+        alt.news.group1,num1
+        alt.news.group2,num2
+
+      The text to the left of the comma is the newsgroup or conference name.
+      The number to the right of the comma represents the conference number.
+
+      NOTE:  This file can be used as the input file for the /IMPORT option.
+
+  /IMPORT:d:\path\localng.lst
+  ---------------------------
+      This option is used to import a list of newsgroups from a text file
+      and set up the basic information for them (location of MSGS file,
+      conference type, etc.)  The text file you provide must resemble the
+      following format:
+
+        alt.news.group1[,num1]
+        alt.news.group2[,num2]
+
+      In other words, the exact name of the newsgroup (like alt.bbs.pcboard)
+      is the first item on the line.  Optionally, you may include a comma
+      and a number if you want that newsgroup to be a specific number.  For
+      example:
+
+        alt.bbs.pcboard,100
+        news.groups,200
+        news.answers
+
+      If this file was used as the import file, the following will occur:
+
+        1. The name of conference 100 will become alt.bbs.pcboard.  The
+           information for the conference is based on the conference
+           specified with the /TEMPLATE parameter or conference 0 if that
+           parameter is not passed.
+
+        2. Conference 200's name is set to news.groups
+
+        3. Because the last conference number used was 200, the news.answers
+           entry will be assigned to the next number which in this case is
+           201.
+
+      Note the [,num?] portion of the example.  This allows you to specify a
+      particular conference number for a particular newsgroup, or the start
+      of a range for a set of newsgroups.  If /START is not used, the first
+      conference attempted is 1, otherwise the specified number is used.
+      Any time a conference number appears after a newsgroup name, that
+      number is used as the new "start" number for that conference and all
+      future conferences.  Additionally, conference 0 will never be
+      overwritten and if a conference is already in use, you will be warned
+      and allowed to overwrite, skip, or find the next available conference.
+
+      To avoid situations where a single directory is completely overloaded
+      with files (or other directories), this option will attempt to create
+      a balanced directory tree off your base UUCP directory to hold each of
+      the necessary message files for each newsgroup initialized.  It does
+      this by using the first letter of each newsgroup hierarchy level and
+      as much of the last level as possible.  In other words, if you have a
+      base UUCP path of C:\PCB\UUCP, and you are initializing
+      alt.bbs.pcboard, the MSGS file entry is specified as
+      C:\PCB\UUCP\A\B\PCBOA001.
+
+  /INDEX
+  -------
+      This option is used to force a rebuild of the CNAMES.IDX file.  The
+      index can also be regenerated by doing a full save when exiting
+      PCBSetup.
+
+  /MODERATORS:d:\path\moderators
+  ------------------------------
+      By default, UUCP forwards moderated mail to a big provider like UUNET
+      and lets it forward to the appropriate moderator.  Should you desire
+      to control the list of moderators yourself, this parameter can be used
+      to import a list of moderators into your system.  The basic format for
+      this file is:
+
+        newsgroup.name:e-mail.address
+
+      Example:
+
+        alt.bbs.pcboard:support@saltair.com
+
+      The purpose of this option is to scan the moderator file given by your
+      provider and add the appropriate information to the USENET.MOD file
+      for each moderated newsgroup you carry. The moderators file is a UNIX
+      formatted text file (i.e., each line ends with a line feed instead of
+      a carriage return/ line feed pair).
+
+  /SETNAMES:d:\path\localng.lst
+  -----------------------------
+      This option is of particular interest to those currently using
+      third-party products to handle their UUCP needs but are looking to
+      convert to PCBoard.  In this scenario it is quite likely the
+      conferences are already setup and ready to go but there are a few
+      items not taken care of:
+
+        1. The conference names may not truly reflect the newsgroup they
+           carry.
+
+        2. Options in the second configuration screen determining the
+           conference type among other things are not set.
+
+      Using this option, the existing conference information is preserved
+      and only necessary options are changed. This is how the option is
+      useful for those seeking to convert from a previous news or e-mail
+      handling program.  In all other ways, this option is identical to the
+      /IMPORT option.
+
+  /START:confnum
+  --------------
+      This option is used to specify the start conference number for an
+      import operation.  Any conference numbers specified in the text file
+      used by /IMPORT or /SETNAMES override this setting.
+
+  /TEMPLATE:confnum
+  -----------------
+      Unless otherwise specified, all new conferences are based on the Main
+      Board (conference 0).  To select a different conference from which to
+      clone new ones from, the /TEMPLATE option must be used.  After the
+      colon, simply enter the conference number to use as the cloning
+      conference.
+
+The UUCP Programs
+===============================================================================
+
+      There are three programs encompassing the normal operation of UUCP in
+      PCBoard--UUOUT, UUXFER, and UUIN which export, transfer, and import
+      messages respectively.  When the feed is coming from and going to a
+      provider via modem, all three programs must be run from an event.  On
+      the other hand, if the feed is provided from a satellite or similar
+      device, only UUIN must to be run to import the messages into PCBoard.
+      The following sections describe each of the main programs in the UUCP
+      package.
+
+  UUOUT.EXE
+  ---------
+      The process of transferring mail entered on your system back to the
+      Internet involves what is called exporting mail.  This job falls to
+      UUOUT which scans the PCBoard conferences for mail and prepares these
+      messages in the form of packets so UUXFER can send them to the
+      provider.
+
+      Running UUOUT with no parameters is the easiest way to get things
+      going as it will automatically scan all newsgroups and e-mail
+      conferences.  Your situation may require special circumstances in
+      which case look at the Translating Names and Selecting Conferences for
+      Export topics in this section for more details.
+
+      For most configurations, UUOUT is run by executing UUOUT.EXE with no
+      parameters.  Mind you, the program must be run from a directory
+      containing a valid PCBOARD.DAT file so information about the base UUCP
+      path and such can be properly located.
+
+    Translating Names
+    ~~~~~~~~~~~~~~~~~
+      When exporting messages to other systems around the world, it is quite
+      likely you may want to change the name used for the FROM name.  A good
+      example of this is the SysOp account. As you know, PCBoard gives the
+      SysOp the ability to hide behind an alias (see PCBSetup | Sysop
+      Information).  In situations such as this, mail will go out being
+      written by sysop@yoursite.com. What if you want to change it so you're
+      real name is used? After all, how will someone half-way around the
+      world know you're the SysOp of the site the message is coming from and
+      will it be of concern to them?
+
+      For purposes such as this, create an file named ALIAS.OUT and put it
+      in the UUCP Base Path.  This file is a simple ASCII text file listing
+      the name to look for and the replacement name to use as shown in the
+      following example:
+
+        sysop,john.doe
+
+      This sample entry will make any message from a user titled sysop go
+      out as being from john.doe.  The search for a match is not case
+      sensitive.  Make note, the period in the replacement name is critical
+      as the Internet does not use a space to separate names.
+
+      The ALIAS.OUT file simply translates the major portion of the FROM
+      address, it also does not update what is referred to as the short
+      name, which is the name in parentheses or the name after the comma (if
+      reading with PCBoard).  Let's look at a sample FROM line:
+
+        From: sysop@yoursite.com, SYSOP
+
+      If you use the ALIAS.OUT example, the name sysop will be translated to
+      john.doe making the FROM address appear as:
+
+        From: john.doe@yoursite.com, SYSOP
+
+      From the viewpoint of protecting your identity this is not a good
+      situation because now people can easily tell if you're the SysOp or
+      not.   Luckily the -f command line parameter for UUOUT which will
+      force the short name to be changed as well as the regular FROM
+      address.  An example of how to execute the UUOUT program in this
+      situation follows:
+
+        UUOUT -f
+
+    Selecting Conferences for Export
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      The default for UUOUT is to scan all conferences for mail or news to
+      export.  Should your situation dictate only certain conferences be
+      scanned use the -c command line parameter.  Let's start by looking at
+      a few sample UUOUT command lines and discuss them so you have a better
+      understanding how this works:
+
+        UUOUT
+        UUOUT -c 101
+        UUOUT -c 101,103-150,160
+        UUOUT -c 101-
+        UUOUT -c -150
+
+      The first line of this example set will scan all conferences because
+      no -c parameter was used.  Only conference 101 will be scanned if we
+      use the second line.  On the third line, conference 101, 103 through
+      150, and 160 will be scanned. The last two lines illustrate how to
+      setup an open ended range--line five will scan all conferences between
+      101 and your highest defined conference while the last line scans
+      conferences 0 to 150.
+
+      Why would anyone want to use an open ended range? Many UUCP
+      configurations will start at a particular conference number like 100
+      or 101 and go to whatever number is necessary. By using an open ended
+      range, you will not have to remember to update your batch files every
+      time you add a new conference to the system.  This can be a very
+      time-saving feature.
+
+    File Attachments
+    ~~~~~~~~~~~~~~~~
+      If a file attachment is found, it will be automatically UUENCODED and
+      transmitted as part of the message body.  Messages larger than
+      approximately 64k are broken down into multi-part messages.  This is
+      done because many sites limit the size of incoming e-mail messages to
+      this limit.
+
+      NOTE:  It is the responsibility of the recipient to properly DECODE
+      the message to its original form.
+
+    RFC-822 Compliancy
+    ~~~~~~~~~~~~~~~~~~
+
+      The standard referred to as RFC822 is the prevalent format to send
+      messages between Internet addresses.  When PCBoard exports the message
+      this is the format it uses.  Should you want to override any of the
+      typical message header information such as DISTRIBUTION, FOLLOWUP-TO,
+      NEWSGROUPS, REFERENCES, REPLY-TO, SUBJECT, or TO, you may include the
+      field to replace followed by a colon and the text to be used.  For
+      example, to change the REPLY-TO field in a message refer to the
+      following example:
+
+        To: winbeta@microsoft.com     Subj: We're interested in testing.
+       (-------------------------------------------------------------------)
+        1: REPLY-TO: president@saltair.com
+        2:
+        3: Hello, we are interested in testing the latest beta.  Please
+        4: forward appropriate information.
+        5:
+        6: Management
+
+      The allowed headers are DISTRIBUTION:, FOLLOWUP-TO:, NEWSGROUPS:,
+      REFERENCE:, REPLY-TO:, SUBJECT:, and TO:.  Scanning will continue for
+      as long as valid headers are found.  The first invalid header line
+      will be considered the first line of the message.
+
+  UUXFER.EXE
+  ----------
+      The sole purpose of UUXFER is to transfer email/news to and from your
+      BBS to a provider over a modem connection.  You can think of the
+      program as a very specialized terminal program running a script to get
+      and receive mail.  In fact, the instructions required to login to the
+      provider is in what is known as the systems file.
+
+      Before we start talking about the systems file, you must understand
+      how the UUXFER program is called.  This program is used to dial a UUCP
+      service provider, send outbound email and news, and receive inbound
+      email and news.  In order to know which provider to call, a site must
+      be specified via the -s switch.  For example:
+
+        UUXFER -s xmission
+
+      This example shows how UUXFER is used to call up a provider with the
+      site name of xmission.  By looking at the SYSTEMS file, UUXFER will
+      know how to dial the site and how to get logged in.
+
+    Command Line Parameters
+    ~~~~~~~~~~~~~~~~~~~~~~~
+      	-7	Start in 7 data bit, even parity, 1 stop bit
+                (7E1) mode for the login connection
+
+        -b      When calling a provider and the number is busy, UUXFER will
+                normally abort back to dos.  Use of this command line
+                parameter sets the number of dial attempts.
+
+        -g      This switch gives you the ability to take advantage of file
+                grading if your provider supports it.  File grading is where
+                a type of communication like e-mail has a higher grade than
+                that of a newsgroup article.  By specifying the grade, you
+                can control what type of communications will be sent for one
+                call.
+
+        -n      Overrides the UUCP Name field in PCBSetup | UUCP
+                Configuration.  This option is useful when you call multiple
+                sites to exchange mail/news where your system or UUCP name
+                is different for each system.  The name and -n must be
+                separated by a space (e.g., -n pcboard)
+
+      	-o 	Take the modem off hook when finished
+
+        -s      This option controls the system name to dial. Enter a
+                specific system name, all to dial every site defined in the
+                SYSTEMS file, or any to dial only cites with files waiting
+                to be sent.
+
+        -t      Specifies the time-out during chat script processing (-t 60)
+
+    Errorlevels Set Upon Exit
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      UUXFER.EXE supports several errorlevel codes to alert you (and allow
+      batch file programming) that certain events have occurred or
+      conditions have been met.  Following is a list of error codes that
+      will be returned:
+
+      	0 = No errors
+      	1 = Failure processing chat script
+      	2 = Lost carrier after chat script completion
+      	3 = Site not found in SYSTEMS file
+      	4 = Invalid entry found in SYSTEMS file
+      	5 = No message found during Shere exchange
+      	6 = Bad message found during Shere exchange
+      	7 = UUCP G protocol not available at site
+      	8 = Error during UUCP G protocol
+
+  UUIN.EXE
+  --------
+      This program is used to import email and news from a spool directory
+      to PCBoard.  Its job is accomplished by scanning all spool directories
+      for mail or news to import which is accomplished by simply typing
+
+        UUIN
+
+      at a DOS prompt.  You may limit the spool directory to scan by using
+      the -s parameter as shown in this example:
+
+        UUIN -s xmission
+
+      This shows how UUIN can be used to scan just the spool directory for
+      the xmission site.  Assuming the spool directory is defined as
+      C:\PCB\UUCP\SPOOL, UUIN will scan C:\PCB\UUCP\SPOOL\XMISSION.
+
+    DECOMP.BAT: How it is Used for Importing
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Many Internet providers will give the news in a format called
+      compressed batch.  To import the news UUIN does require a packet to be
+      in uncompressed batch form.  Although two providers may both compress
+      their news packets there is no guarantee they will use the same
+      programs to compress or even uncompress the packets.
+
+      Due to a lack of a true standard, UUIN will run DECOMP.BAT (in the
+      base UUCP subdirectory) whenever it examines a packet and finds out if
+      it is compressed or not.  "Wait a second.  If UUIN can detect a
+      compressed packet, why not just uncompress it?", you ask.  The key
+      piece of information to understand is that the packet merely states
+      whether it is compressed or not.  No information is provided regarding
+      the type of compression used.
+
+      With that settled, let's continue with UUIN running DECOMP.BAT.  In
+      running the batch file, only the filename to uncompress is sent.  The
+      assumption is made that the decompression program will automatically
+      strip the extension of the filename when outputting the uncompressed
+      file.
+
+      The following shows the sample DECOMP.BAT included with the package:
+
+        rem *** This is a sample batch file only!  Customize for your system!
+        comp430d -db12 %1
+
+    File Attachments
+    ~~~~~~~~~~~~~~~~
+      Message attachments are automatically handled by UUIN and UUOUT.  In
+      other words, if a uuencoded message comes into the system, it will be
+      automatically added to a message as a file attachment.  This saves a
+      lot of time for the users who would otherwise have to manually encode
+      the message to its original form.
+
+      NOTE:  Many encoded messages are split into multiple parts for
+      transfer.  Since there is no standard splitting the messages, there is
+      no guarantee UUIN will be able to properly turn all uuencoded messages
+      into file attachments.  You'll know a message was not decoded if you
+      see text similar to the following example:
+
+        M^<?[SH`^`=`%1"QSISAQFM>\[ZX!KD`,`*%`.@Q]PWC/SNP'^H4J^I`&I1*+&
+        M2C9MF:^7@#]8"<F8<A/"_M>H`&8#`E%H2!-&DB;^_J98NW>X@:4NZJ=<]"/=U
+
+    Name Translations and Aliases
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      It is not common for a business or BBS to want to create an alias to
+      make it easier for others to send mail.  For example, on the PCBoard
+      support system we want to allow you to always be able to send mail to
+      support@saltair.com and know it will be re-addressed to someone in
+      charge of support (the SysOp for example.)  To translate an incoming
+      name, a file named ALIAS.IN must be created and stored in the UUCP
+      base path.  The format of the file is ASCII text.  On each line is the
+      incoming user name to translate followed by a comma, and finally the
+      user name the message will ultimately be addressed to.  Example:
+
+        support,bob smith
+        sales,john clark
+
+    Bouncing a Message
+    ~~~~~~~~~~~~~~~~~~
+      If a message is imported but an alias or user record cannot be found
+      on the system for this user name, the message will be bounced.  When a
+      message is bounced, notice is sent to the receiver that something was
+      wrong with the message.  You may create a custom message to bounce
+      back to the sender of the message by editing a file called BOUNCE.TXT
+      in the base UUCP subdirectory.
+
+      NOTE:  Additionally, messages to the following users will be imported
+      regardless of their presence in the users file: postmaster, root,
+      uucp, sysop, and usenet.
+
+    Header Information in Messages
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      By default, all header lines are imported into the message body, just
+      like they come in from your service provider. However, that can take
+      up a lot of extra space that you might like to use for other purposes.
+      For this reason, you can create a file named HDRKEYS.LST in your base
+      UUCP path directory that has certain keywords to scan for to include
+      in your message.  If one of the keywords matches the start of the
+      header, the header will be included in the message body.  Otherwise,
+      the header itself will be scanned for necessary information, but it
+      won't be included in the message body within the PCBoard message base.
+      So, for example, to include only the FROM:, SUBJECT:, DATE:, and
+      MESSAGE-ID: headers, create a file like this:
+
+        FROM:
+        SUBJECT:
+        DATE:
+        MESSAGE-ID:
+
+      UUIN can be configured to strip all headers by creating a HDRDKEYS.LST
+      file which contains just the following line:
+
+        NOHEADERS
+
+      NOTE:  While the colons are not required, they help ensure that you
+      only desired headers are kept with the messages imported into the
+      system.
+
+    Satellite Feeds
+    ~~~~~~~~~~~~~~~
+      UUIN.EXE also supports Usenet satellite feeds such as PageSat and
+      Planet Connect.  These systems transfer BAG files, which are simply
+      batched (but not compressed) news files. PageSat creates *.BAG files
+      directly.  Planet Connect actually creates PCUSENET.* files, which are
+      zipped (compressed) *.BAG files, one per file.  To import these
+      sources of news, you must unzip the PCUSENET.* files first (in the
+      case of Planet Connect) and move the *.BAG files to an appropriate
+      spool directory.
+
+    Command Line Parameters
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+        -f      Force email to be imported regardless of whether or not the
+                user name is found in the USERS file.
+
+        -j      Normally when mail cannot be properly placed by UUIN (a
+                conference does not exist, etc.) the mail is placed in the
+                junk conference.  Use of this switch will simply ignore junk
+                mail as if it had never came in.  This is useful when the
+                feed comes in via satellite dish setups where it is known in
+                advance that junk will be coming in as part of the feed and
+                is not an error in the setup.
+
+        -l      This switch is used to disable import of long TO names.
+                While they are useful in determining exactly how the
+                original message was addressed, they are not essential.
+                Remember how mail will come in addressed similar to
+                joe.smith@yourbbs.com, JOE SMITH?  When this switch is used,
+                the message will simply be addressed to JOE SMITH.
+
+        -o      This switch will scan the junk conference and output a list
+                of newsgroups the messages originally came from. This list
+                is in ASCII format and is quite usable by UUUTIL to add
+                these newsgroups as new conferences.
+
+        -s      Remember that UUIN, by default, scans all spool directories.
+                To single out a specific spool directory to scan, use this
+                switch followed by a space, and the name of the spool
+                directory to scan.  For example, if the spool directory is
+                C:\PCB\UUCP\SPOOL\XMISSION, run UUIN -s XMISSION.
+
+        -u      Use this switch to disable UUIN's automatic decoding of file
+                attachments.  Use of this switch will require the user to
+                decode the message back into the original file type.

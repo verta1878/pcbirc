@@ -32,10 +32,24 @@ static PolledEntry g_polled[MAX_POLLED];
 static int         g_polled_count = 0;
 
 
-/* Record that we polled a node. */
+/*-----------------------------------------------------------------------*/
+/* sem_mark_polled() — Record that we just polled a node                 */
+/*                                                                         */
+/* Stores the current timestamp for this address. sem_was_polled()       */
+/* checks this to enforce the cooldown window (retry_delay seconds)     */
+/* between successive calls to the same node.                            */
+/*                                                                         */
+/* Without cooldown, the mailer would redial a busy node on every        */
+/* loop iteration (every 1-5 seconds), wasting phone charges and        */
+/* annoying the remote sysop.                                            */
+/*-----------------------------------------------------------------------*/
+
 void sem_mark_polled(const FTN_ADDR *addr)
 {
     int i;
+    char buf[64];
+    ftn_format_addr(addr, buf, sizeof(buf));
+    qf_log(LOG_DEBUG, "sem_mark_polled: %s", buf);
 
     /* Check if already in list — update timestamp */
     for (i = 0; i < g_polled_count; i++) {
@@ -197,11 +211,32 @@ void sem_add_trigger(const char *path, int errorlevel)
     g_num_sem_triggers++;
 }
 
-/* Check for semaphore files. Returns errorlevel if found, -1 if none. */
+/*-----------------------------------------------------------------------*/
+/* sem_check_triggers() — Check for semaphore exit trigger files          */
+/*                                                                         */
+/* Semaphore files are a simple IPC mechanism for multi-node BBS systems.*/
+/* Another program (PCBoard, a door game, a batch file) creates a file   */
+/* with a specific name, and QFront checks for it periodically. When     */
+/* found, QFront deletes the file and exits with the configured          */
+/* errorlevel.                                                            */
+/*                                                                         */
+/* This allows external programs to tell QFront to:                      */
+/*   - Reload configuration (exit and restart via BOARD.BAT)             */
+/*   - Compile nodelist (exit with errorlevel that triggers QNLIST)     */
+/*   - Shut down for maintenance                                        */
+/*                                                                         */
+/* From binary: "Semaphore file <name> found, exiting with errorlevel"  */
+/*                                                                         */
+/* Returns: errorlevel if a trigger file was found, -1 if none.          */
+/*-----------------------------------------------------------------------*/
+
 int sem_check_triggers(void)
 {
     int i;
     FILE *f;
+
+    qf_log(LOG_DEBUG, "sem_check_triggers: checking %d trigger files",
+           g_num_sem_triggers);
 
     for (i = 0; i < g_num_sem_triggers; i++) {
         f = fopen(g_sem_triggers[i].path, "r");

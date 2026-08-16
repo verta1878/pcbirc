@@ -1,0 +1,102 @@
+PUBLIC-ACCESS INTERNET PROVIDERS
+
+ 
+When you have your communications program dial one of these host systems, 
+one of two things will happen when you connect.  You'll either see a lot 
+of gibberish on your screen, or you'll be asked to log in.  If you see 
+gibberish, chances are you have to change your software's parameters (to 
+8-1-N or 7-1-E as the case may be).  Hang up (see your modem's manual for 
+information on this), make the change and then dial in again. 
+
+When you've connected, chances are you'll see something like this: 
+ 
+               Welcome to THE WORLD
+               Public Access UNIX for the '90s
+               Login as 'new' if you do not have an account
+   
+               login: 
+ 
+That last line is a prompt asking you to do something.  Since this is 
+your first call, type 
+ 
+                new
+ 
+and hit enter (at least on this particular system; each system has a 
+different log-in procedure for newcomers)  Often, when you're asked to type 
+something by a host system, you'll be told what to type in quotation 
+marks (for example, 'new').  Don't include the quotation marks.  Repeat: 
+Don't include the quotation marks. 
+
+what you see next depends on the system, but will generally consist 
+of information about its costs and services (you might want to turn on 
+your communication software's logging function, to save this 
+information).  You'll likely be asked if you want to establish an account 
+now or just look around the system.  
+ 
+You'll also likely be asked for your "user name."  This is not your 
+full name, but a one-word name you want to use while online.  It can be 
+any combination of letters or numbers, all in lower case.  Many people 
+use their first initial and last name (for example, "jdoe"); their first 
+name and the first letter of their last name (for example, "johnd"); or 
+their initials ("jxd").  Others use a nickname.  You might want to think 
+about this for a second, because this user name will become part of your 
+electronic-mail address (see chapter 2 for more on that).  The main 
+exception are the various Free-Net systems, all of which assign you a 
+user name consisting of an arbitrary sequence of letters and numbers. 
+
+You are now on the Net.  Look around the system.  See if there are 
+any help files for you to read.  If it's a menu-based host system, choose 
+different options just to see what happens (and if all you see is a 
+simple prompt, try typing 'help' or read on).  Remember: You can't break 
+anything.  The more you play, the more comfortable you'll be. 
+
+what follows are lists of public-access Internet sites, which are 
+computer systems that offer access to the Net.  The first list is for 
+North America; the second  for the rest of the world.  All offer 
+international e-mail and Usenet (international conferences).  In 
+addition, they offer: 
+   
+     FTP: File-transfer protocol -- access to hundreds of file 
+     libraries (everything from computer software to historical 
+     documents to song lyrics).  You'll be able to transfer 
+     these files from the Net to your own computer.
+ 
+     Telnet: Access to databases, computerized library card 
+     catalogs, weather reports and other information services, 
+     as well as live, online games that let you compete with 
+     players from around the world. 
+ 
+        Additional services that may be offered include:
+ 
+     Lynx: An easy-to-use interface for the World-Wide Web 
+     information resource.
+
+     WAIS:  Wide-area Information Server; a program that 
+     can search dozens of databases in one search. 
+ 
+     Gopher:  A program that gives you easy access to dozens 
+     of other online databases and services by making 
+     selections on a menu. You'll also be able to use these
+     to copy text files and some programs to your mailbox.
+ 
+     IRC:  Internet Relay Chat, a CB simulator that lets 
+     you have live keyboard chats with people around the 
+     world. 
+
+     SLIP/PPP service.  you'll need this if you want to interact with
+     the internet directly on your own computer.  will often cost more 
+     than standard dial-up service.
+
+However, even on systems that do not provide all these services directly, 
+you will be able to use a number of them through telnet (see Chapter 6). 
+
+In the lists that follow, systems that let you access services through 
+menus are noted; otherwise assume that when you connect, you'll be dumped 
+right into Unix (a.k.a. MS-DOS with a college degree). Several of these 
+sites are available nationwide through national data networks such as the 
+CompuServe Packet Network and SprintNet. 
+
+Please note that all listed charges are subject to change.  Many sites 
+require new or prospective users to log on a particular way on their 
+first call; this list provides the name you'll use in such cases. 
+

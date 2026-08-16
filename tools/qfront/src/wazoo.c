@@ -89,11 +89,31 @@ static uint16_t yh_crc16(const void *data, int len)
 
 /* ---- Build Hello Packet ---- */
 
+/*-----------------------------------------------------------------------*/
+/* yh_build_hello() — Build a 128-byte YooHoo hello packet               */
+/*                                                                         */
+/* FTS-0006 Section 3: The hello packet contains our identity —          */
+/* address, sysop name, system name, session password, and capability    */
+/* flags (what protocols we support for file transfer).                  */
+/*                                                                         */
+/* The packet is exactly 128 bytes with CRC-16 at bytes 126-127.         */
+/* All multi-byte fields are little-endian (Intel byte order).           */
+/*                                                                         */
+/* Product code 0xFE = "Unknown/custom" — registered mailers have        */
+/* assigned codes (e.g. BinkleyTerm=0x11, FrontDoor=0x19).              */
+/*                                                                         */
+/* Capability flags we advertise:                                         */
+/*   Y_DIETIFNA (0x01)  — can do basic FTS-0001 sessions                */
+/*   Y_ZED_ZMODEM (0x04) — can do Zmodem file transfer                  */
+/*-----------------------------------------------------------------------*/
+
 static void yh_build_hello(YooHooHello *hello, const FTN_ADDR *addr,
                             const char *sysop, const char *system_name,
                             const char *password, uint16_t caps)
 {
     memset(hello, 0, sizeof(*hello));
+    qf_log(LOG_DEBUG, "yh_build_hello: %d:%d/%d.%d caps=0x%04X",
+           addr->zone, addr->net, addr->node, addr->point, caps);
 
     hello->signal       = YOOHOO_SIGNAL;
     hello->hello_version = YOOHOO_VERSION;
@@ -184,7 +204,11 @@ static int yh_recv_hello(SerPort *sp, YooHooHello *hello, int timeout_ms)
         return -1;
     }
 
-    qf_log(LOG_DEBUG, "Received hello packet");
+    qf_log(LOG_DEBUG, "Received hello packet: %d:%d/%d.%d \"%s\" (\"%s\")",
+           hello->my_zone, hello->my_net, hello->my_node, hello->my_point,
+           hello->system_name, hello->sysop);
+    qf_log(LOG_DEBUG, "  caps=0x%04X product=0x%02X version=%d",
+           hello->capabilities, hello->product_code, hello->hello_version);
     return 0;
 }
 

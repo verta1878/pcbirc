@@ -1,0 +1,89 @@
+  @X0F [ @X09U S I N G   P C B O A R D  S   L I S T S E R V E R   F U N C T I O N S @X0F]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0EPCBoard 15.3 contains some new listserver functionality.  This function allows
+you to send a particular message to any number of addresses, which are
+contained in a list (file), and save your message only once.  This means you
+do not need to enter the addresses when entering the message, and you do not
+end up with a message for each using being posted in the message base.  This
+document will walk SysOps through the setup and operation of the listserver
+function.
+ 
+@X0BSETTING UP A LIST
+-----------------
+ 
+@X03There are 4 steps to setting up a list.
+ 
+@X02STEP 1 - NAMES LIST
+-------------------
+@X03
+First, create a file by any name and put it anywhere on your network.  In this
+file are the names to send a message to.  Ex.
+ 
+@X07phil.gilmore@saltair.com
+cory.robin@saltair.com
+askjay@aol.com
+jmartin@xmission.com
+ 
+@X03with one name on each line, beginning on line 1.  This is your names list.  You
+can edit this file at any time without changing any other setup parameters.
+ 
+@X02STEP 2 - ALIAS.OUT FILE
+-----------------------
+ 
+@X03Next, you must make an entry in your ALIAS.OUT file.  The location of your
+ALIAS.OUT file is specified in PCBSetup.  Edit this file and append a line to
+the end of it.  This line should indicate a BBS name, and then an alias.  The
+Alias should be the name of the list, preceded by a % character.  Ex.
+ 
+bbs.user,%c:\pcb\uucp\employees
+ 
+Would indicate that the user on your BBS is named BBS USER.  This is not an
+actual user, but simply the name in the FROM field of the message to send.
+ 
+@X02STEP 3 - CREATE A USER RECORD
+-----------------------------
+ 
+@X03You must have a user record for each list that you use.  The user record needs
+to have a user name which is entered in the ALIAS.OUT file before the
+specification of the list filename.
+ 
+You'll want to make sure the user is registered in the e-mail conference and
+has sufficient security to enter a message in that conference.  Make sure that
+the password is something that nobody can guess.  This account could still be
+used to gain access to your BBS.
+ 
+@X02
+
+@X0BOPERATION
+---------
+ 
+@X02STEP 4 - ENTERING THE MESSAGE
+-----------------------------
+@X03
+Enter the message to the sysop.  The body of the message can be anything you
+would put in a normal e-mail message.  When you're finished, edit the message
+header.  Change the from field to your LISTSERVER user name.  Save the message.
+You'll only see the one message in the message base.  Now do a mail run.  You
+will see UUXFER send that message to each user in the list.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+

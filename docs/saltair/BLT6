@@ -1,0 +1,103 @@
+                @X0DClark Development is pleased to announce!
+ 
+ 
+                       @X0BPCBoard v15.3 is Shipping!
+ 
+@X0FThis exciting new release includes all features of PCBoard v15.23 and
+adds new functionality to several key areas of PCBoard.  The upgrade
+will be available to all PCBoard sysops with current PCBoard Download
+Access.
+ 
+     @X0DPCBoard
+     @X0F=======
+ 
+     @X0B+    @X0FA new PCBoard display macro has been added, to display the
+          assigned Internet address of the current node.
+ 
+     @X0B+    @X0FUsers can now choose to view single line file descriptions when
+          accessing the PCBoard file system.
+ 
+     @X0B+    @X0FWhen reading messages online, the system will beep when a
+          message addressed to the user is displayed.
+ 
+     @X0B+    @X0FA new online sysop function has been added, allowing the sysop
+          to easily view the contents of a directory.
+ 
+     @X0B+    @X0FPCBSetup has been modified to include an on-screen display of
+          the PCB= environment variable overrides for Node and Comm
+          port settings, if they apply.
+ 
+     @X0B+    @X0FPCBSetup supports a new name search capability, allowing you to
+          jump directly to a conference by name rather than by number.
+ 
+     @X0B+    @X0FPCBSetup now includes a Global Search & Replace option, making
+          it easy for you to globally change drive assignments or
+          directory names all at once.
+ 
+     @X0B+    @X0FPCBoard verifies the existence of each file selected for
+          download as they are flagged for download.  If the files
+          reside on a hard disk or dedicated CD-ROM this verification
+          is very quick, but can result in excessive delays if the
+          files are stored on a CD-ROM changer.  A new file index
+          option allows PCBoard to flag the file for download without
+          verifying that it exists first.
+ 
+     @X0B+    @X0FSome networks support a quicker, but proprietary, method of
+          copying files from network drives to the local hard disk.
+          The slow-drive copy routine now supports an option to shell
+          out and run the specified program for copying files to the
+          local hard disk before downloading.
+ 
+     @X0B+    @X0FPCBoard will now automatically handle U/L and D/L byte totals
+          exceeding 4Gig.
+ 
+     @X0B+    @X0FVarious other enhancements necessary for your PCBoard BBS to
+          co-exist with a MetaWorlds server.  The combination of
+          PCBoard v15.3, MetaWorlds and the PCBoard-MetaWorlds
+          Interface Kit will allow you to operate your PCBoard BBS and
+          your MetaWorlds system concurrently with both systems
+          sharing the PCBoard message bases and file areas.  This means
+          that you can install the new MetaWorlds system without taking
+          your PCBoard BBS offline.  Your users can then logon to either
+          system, making the transition to the new MetaWorlds system as
+          easy as possible.
+ 
+     @X0BPPLC
+     @X0F====
+ 
+     @X0D+    @X0FThe encryption routine has been modified (again) to make it
+          more difficult for decompilers to recover your source code.
+ 
+ 
+     @X0DUUCP
+     @X0F====
+ 
+     @X0B+    @X0FIf the name of a text file is specified in the alias.out list,
+          outbound messages addressed to the specified alias will be
+          sent to each email address found in the file.  This provides
+          an easy way for you to send the same email message to many
+          recipients and provides the foundation for  listserv
+          activities.
+ 
+     @X0B+    @X0FPrior versions of UUOUT automatically split file attachments
+          into 45K segments.  With this release, you can now override
+          this by specifying the maximum size yourself.
+ 
+     @X0B+    @X0FAutomatic decoding of MIME messages received via email.
+ 
+     @X0B+    @X0FBuilt-in Support for Multiple file attachments
+ 
+ 
+     @X0BFIDO
+     @X0F====
+ 
+     @X0D+    @X0FPCBoard v15.3 includes all of the Fido enhancements listed
+          in the PCBoard v15.23 description.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

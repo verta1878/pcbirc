@@ -1,0 +1,30 @@
+   @X0F[@X0EQWK@X0F] @X0DQWK UPLOAD/DOWNLOAD
+ 
+      @X0BThis command will allow you to transfer mail packets in QWK format to
+      and from the BBS.  Using the appropriate programs, mail can be read
+      and replied to off-line.
+ 
+        @X0AExamples:
+ 
+          @X0BTo upload a QWK packet (.REP format):
+ 
+            @X0EQWK U @X0F[@X0CENTER@X0F]
+ 
+          @X0BTo download a QWK packet:
+ 
+            @X0EQWK D @X0F[@X0CENTER@X0F]
+ 
+          @X0BTo download/upload a QWK packet and disconnect immediately:
+ 
+            @X0EQWK D BYE @X0F[@X0CENTER@X0F]
+            @X0EQWK U BYE @X0F[@X0CENTER@X0F]
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+

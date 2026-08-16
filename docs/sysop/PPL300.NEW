@@ -1,0 +1,1362 @@
+
+                              PPL ver. 3.0
+          Copyright (C) 1994 - Clark Development Company, Inc.
+                                9-14-94
+
+                       Highlights of New Features
+  ============================================================================
+
+
+         PPL version 3.0 introduces several extensions to the syntax of
+  the language itself. The most significant of which is the addition of
+  user defined functions and procedures. The syntax and use of user
+  defined functions and procedures follows closely to the Pascal
+  programming language. User defined functions and procedures can be
+  called as standalone statements. Please see the detailed explanation
+  in the section entitled USER DEFINED FUNCTIONS AND PROCEDURES.
+
+         Another extension to the PPL language syntax is the addition of
+  a BASIC like SELECT CASE construct. This introduces a very useful and
+  convenient way to control program flow for several related execution
+  paths. See the section called SELECT CASE for details.
+
+         Perhaps the biggest addition to the functionality of PPL is
+  support for DBase III+. Several intrinsic functions and statements
+  have been added to support development and management of DBase III+
+  files and indexes. More information on DBase can be found in the
+  section entitled DBASE.
+
+         Support of the new accounting features in PCBoard has also been
+  added to PPL v3.0. PPL Programmers can record charges for activities
+  as well as report on what will be charged by PCBoard.
+
+         Version 3.0 also allows access to the message base via scanning
+  message headers and reading messages into files.
+
+         Several other miscellaneous intrinsic funtions, statements and
+  constants have been added to the language as well. See the section
+  entitled MISCELLANEOUS for details on these additions.
+
+         PCBoard 15.2 does require more memory then previous versions.
+  Because of this many of you, especially those running Desqview, may
+  not have enough memory to run larger PPE's. If you receive an error
+  message running a PPE saying something about allocating a variable or
+  SCRIPT BUFFER, then you need to increase available memory to PCBoard.
+  There are many ways to do this. You can contact your local guru to
+  find out how to get more memory.
+
+          Another effect due to increased memory requirements is the
+  speed of executing PPEs. To keep PPEs running as fast as your used to,
+  adjust your overlay buffer size using OVLSIZE.EXE. A size of 20 should
+  be sufficient. If you are running DBase applications you may need to
+  increase this to 25 or more. This will increase your memory
+  requirements, so play around with it till you reach an acceptable
+  level of performace and available memory.
+
+  =============================================================================
+
+  Section I.          User Defined Functions and Procedures
+
+
+         Using user defined functions and procedures reduces the need
+  for GOTO and GOSUB statements. PPL programs can now take advantage of
+  the benefits of structured programming. Functions differ from
+  procedures in that functions return a value and procedures do not. The
+  best way to introduce the syntax used to declare, define and call
+  functions and procedures is by looking at an example.
+
+  EXAMPLE 1
+  --------
+
+ 1  DECLARE PROCEDURE proc1(INTEGER i, STRING str, VAR INTEGER j)
+ 2
+ 3  *$USEFUNCS
+ 4
+ 5  BEGIN
+ 6
+ 7  INTEGER int1,int2
+ 8  STRING  s1
+ 9
+ 10       LET int1 = 1
+ 11       LET int2 = 2
+ 12       LET s1   = "Hello Beta testers!"
+ 13
+ 14       PRINTLN "The value of int2 before call to proc1 is ",int2
+ 15
+ 16       proc1(int1,s1,int2)
+ 17
+ 18        PRINTLN "The value of int2  after call to proc1 is ",int2
+ 19
+ 20 END
+ 21
+ 22
+ 23 PROCEDURE proc1(INTEGER i,STRING str, VAR INTEGER j)
+ 24
+ 25        PRINTLN "I'm in proc1"
+ 26        LET i = 30
+ 27        LET j = 15
+ 28
+ 29 ENDPROC
+
+         Line 1 introduces the procedure proc1 into the program. A
+  procedure/function cannot be used unless it has been declared first.
+  This declaration can take place anywhere in the program as long as it
+  is before the procedure/function is used or defined. It must also be
+  declared with global scope i.e. not inside another function/procedure
+  definition. Note the VAR keyword before the third parameter j. This
+  will be explained when line 23 is described.
+
+         Line 3 uses the USEFUNCS compiler directive. This is a new
+  directive and was introduced so that the main body of a PPE can be
+  anywhere in the source file delimited by BEGIN and END keywords. This
+  directive is used in conjunction with the BEGIN keyword found on line
+  5. The USEFUNCS and BEGIN keywords are not required in the case where
+  the main body of the program comes before any function/procedure
+  definitions. However, when using functions/procedures it is highly
+  recommend to use USEFUNCS and BEGIN. If you forget to include the
+  *$USEFUNCS directive and put a functio or peocedure definition before
+  the main body, your PPE will not run at all. Lines 6-15 look like any
+  other PPE so I won't describe them in detail. Note that an explicit
+  END keyword is used. This is not required, but is highly recommended.
+
+         Line 16 is where the procedure proc1 is called/invoked. This
+  causes program execution to jump to the code in proc1, passing the
+  parameters, and begin executing on line 23. Parameters will be
+  implicitly converted to the type the procedure expects. The normal
+  implicit type conversion rules which have always been in PPL apply.
+
+         Line 23 is where the DEFINITION of the procedure proc1 begins.
+  The parameters must be accompanied by the TYPE information for that
+  parameter. The VAR keyword is valid for procedure parameters ONLY. It
+  is optional and changes the way the parameter is handled. When the VAR
+  keyword is used for a procedure parameter, changes made to that
+  parameter within the procedure will be reflected on the variable
+  outside of the procedure. In this example the actual parameter int2
+  has a value of 2 before proc1 is called. After the call it will have a
+  value of 15. If the VAR keyword were left out, int2 would have the
+  same value of 2 after the call to proc1. Constants and expressions
+  cannot be passed as VAR parameters. The rest of the procedure body
+  looks like any other PPE except for the ENDPROC keyword. This is
+  specific to procedures and marks the end of the procedure definition.
+
+         Now lets look at an example of a function.
+
+  EXAMPLE 2
+  --------
+
+ 1  DECLARE FUNCTION func1(STRING str,INTEGER i) STRING
+ 2
+ 3  *$USEFUNCS
+ 4
+ 5  BEGIN
+ 6
+ 7  STRING  s1
+ 8  INTEGER k
+ 9
+ 10       LET s1 = "Is it lunch time yet?"
+ 11       LET k  = 0
+ 12
+ 13       println s1
+ 14       println func1(s1,k)
+ 15 END
+ 16
+ 17 FUNCTION func1(STRING str, INTEGER i) STRING
+ 18
+ 19        if (i = 0) func1 = "No"
+ 20        if (i = 1) func1 = "Yes"
+ 21
+ 22 ENDFUNC
+
+         Functions are declared nearly the same way as procedures with
+  one exception. The return type of the function must be specified after
+  the parameter list. In this example the function func1 will return a
+  STRING as seen on line 1. Function defintions are nearly the same as
+  procedures. First, the return type must be specified after the
+  parameter list as seen on line 17. Second the keyword ENDFUNC is used
+  instead of ENDPROC.
+
+         The big difference between functions and procedures is that
+  functions return a value. To assign the return value inside a
+  function, simply use the name of the function just like a variable.
+  You do not need to declare this variable, it is done for you. When the
+  function is finished executing the value in the return variable will
+  be made available as the return value.
+
+         Note that function calls can take place anywhere inside of an
+  expression as well as stand-alone statements. This can be useful in
+  situations where the functions return value is not needed, but the
+  function's side effects are.
+
+        Now lets look at some practicle examples. It is a good idea to
+  keep related functions and procedures in a seperate file called a
+  library. The use of the *$INCLUDE compiler directive allows the
+  inclusion of code libraries. Here is an example of a library
+  containing some useful math routines.
+
+FILE: MAIN.PPS
+-----------------------
+  *$USEFUNCS
+  *$INCLUDE:MATH.LIB
+
+  BEGIN
+       PRINTLN "4 to the 3rd power = ",Xto_theY(4,3)
+       PRINTLN "4 squared = ",square(4)
+  END
+
+FILE: MATH.LIB
+-----------------------
+  DECLARE FUNCTION Xto_theY(INTEGER x, INTEGER y) INTEGER
+  DECLARE FUNCTION square(INTEGER x) INTEGER
+
+  FUNCTION Xto_theY(INTEGER x, INTEGER y) INTEGER
+
+    INTEGER i
+      Xto_theY = x
+      for i = 2 to y
+        Xto_theY = Xto_theY * x
+      next i
+
+  ENDFUNC
+
+  FUNCTION square(INTEGER x) INTEGER
+
+    square = x * x
+
+  ENDFUNC
+
+
+        It is important that the DECLARE statements for each function or
+  procedure appear before a call to that function/procedure. The
+  folowing code is ILLEGAL in PPL.
+
+  BEGIN
+       PRINTLN "4 squared = ",square(4)
+  END
+
+  DECLARE FUNCTION square(INTEGER x) INTEGER
+
+  FUNCTION square(INTEGER x) INTEGER
+    square = x * x
+  ENDFUNC
+  
+        Remember to use the *$USEFUNCS compiler directive when using
+  functions and procedures. This will allow you to put your main body of
+  code anywhere in your source file(s).
+
+  *Beginners note. The main body of code is the code that appears between
+  BEGIN
+    and
+  END
+
+        Now would be a good time to take a close look at PROCEDURES.
+  Especially the VAR parameter modifier. Procedures should be used when
+  a return value is irrelevant, or if there needs to be several return
+  values. The VAR modifier makes this possible. Parameters are passed
+  into procedures by name. What this means is that what you pass into a
+  procedure is copied into a local variable of the same type. For
+  example the procedure call
+
+          COPY_STRING("Hello",str)
+
+  where the procedure COPY_STRING is declared as
+
+          DECLARE PROCEDURE COPY_STRING(STRING s1, VAR STRING s2)
+
+          PROCEDURE COPY_STRING(STRING s1, VAR STRING s2)
+             s2 = s1
+          ENDPROC
+
+        This is an oversimplified example which illustrates how the VAR
+  modifier works. The string "HELLO" is copied into a local variable
+  called s1. The string str is copied into a local variable s2.
+
+  *BEGGINERS NOTE
+   A local variable is a variable which can only be used within the function
+   or procedure in which it is declared. In this case they are formal parameters
+   and are declared for you by the compiler.
+
+        The VAR modifier tells PPL to copy the contents of the local
+  variable s2 back into str when the procedure is finished processing.
+  If the VAR modifier were left out, the contents of s2 would not be
+  copied back into str and would be lost. This can be useful when you
+  have a parameter variable that must not be modified by a procedure,
+  but the procedure needs to temporarily modify the local copy of it for
+  some reason.
+
+        Functions cannot use the VAR modifier for two reasons. Number 1
+  is because the basic definition of a function is a process which takes
+  several values as parameters and returns a single value. Reason number
+  2 is a basic limitation in PPL. Because functions return a value,
+  memory is set aside to do so. In order to keep PPL backward compatible
+  there are only so many bytes to squeeze this information into. There
+  just wasn't room to maintain VAR information for functions.
+
+        Another important consideration when using the VAR modifier is
+  that of passing constants and expressions as VAR parameters. Think
+  about the following example.
+
+  DECLARE PROCEDURE DECREMENT(VAR INTEGER x)
+  INTEGER i
+  BEGIN
+    LET i = 4
+    DECREMENT(4)                    ;Illegal!
+    DECREMENT(CURCONF())            ;Illegal!
+    DECREMENT(i)                    ;Legal
+  END
+
+  PROCEDURE DECREMENT(VAR INTEGER x)
+    x = x-1
+  ENDPROC
+
+        Can you see why this would be a problem? The first call to
+  DECREMENT is passing a constant or a constant expression. If this were
+  allowed, the procedure DECREMENT would decrement the value of the
+  constant 4 by 1. Once this has been done, every time you use the
+  constant 4 it would acutally be 3. eg PRINTLN 4 would actually print
+  the number 3.
+
+        The second call to DECREMENT(CURCONF()) would try to decrement
+  the value returned by CURCONF(). However, there is no variable
+  associated with that value. If this were allowed to happen, the value
+  returned by CURCONF() would be lost forever in the bit bucket.
+  Fortunatly the compiler will catch both of these types of errors. Note
+  that if there were no VAR modifier both these examples would be
+  perfectly valid.
+
+        The addition of functions and procedures is an exciting addition
+  to PPL. Using structured programming can make your PPE's look much
+  more organized. Putting often used functions and procedures into
+  libraries can help you see your code in an organized way.
+
+  *BEGINNERS NOTE
+       A very simple explanation of structured programming
+       ---------------------------------------------------
+
+    PPL allows the use of GOTO, GOSUB and multiple logical statements
+    per line. The use of these statements leads to unstructured, hard to
+    follow code. The following is an example of an unstructured program.
+
+    PRINT "Hello" : goto goodbye
+    gosub farewell : call "next.ppe" : PRINT "Boy am I a mess"
+    :goodbye
+    PRINT "Goodbye" : PRINT "Cruel " : PRINT "World " : end
+    :farewell
+    PRINTLN "I wish I could say farewell, but I will never be executed"
+    RETURN
+
+    You can see how this can turn into a big mess. In fact this piece of
+    code will not even execute as you might think at first glance. Here
+    is a better example using structured programming.
+
+    DECLARE PROCEDURE  hello()
+    DECLARE PROCERDURE goodbye()
+    DECLARE PROCEDURE  farewell()
+
+    BEGIN
+      hello()
+      goodbye()
+      farewell()
+    END
+    PROCEDURE hello()
+      PRINTLN "Hello "
+    ENDPROC
+
+    PROCEDURE goodbye()
+      PRINTLN "Goodbye Cruel World!"
+    ENDPROC
+
+    PROCEDURE farewell()
+      PRINTLN "Farewell "
+    ENDPROC
+
+           You can see how much easier a structured program is to write,
+   read and debug. As a general rule of thumb, *never* use GOSUB
+   whatever you can do with a GOSUB you can do it better with a function
+   or procedure , use GOTO sparingly and stay away from multiple
+   statements on single lines unless it really makes sense. eg i = 1 : j
+   = 2 : k = 3 makes sense.
+
+    If (i == 3)  then : PRINTLN "i == 3"
+    elseif (i == 4)
+    PRINTLN "I = 4" : endif
+
+    This dosen't make sense. (I've seen people write code like this too!)
+
+
+  ===========================================================================
+
+  Section II.            SELECT CASE
+
+
+        The SELECT CASE construct allows you to organize multiple
+  execution paths into a clean, easy to read format. If you are
+  unfamiliar with how a BASIC SELECT CASE or C SWITCH construct works
+  you can think of it as being similar to a IF-ELSEIF-ELSE construct.
+
+         Here is how a SELECT CASE construct looks in PPL
+
+  1      INTEGER i
+  2
+  3         LET i = 3
+  4
+  5          SELECT CASE (i)
+  6
+  7                CASE 1
+  8
+  9                       PRINTLN "i = 1"
+ 10                       proc1(i)
+ 11
+ 12                CASE 2,6,10
+ 13
+ 14                       PRINTLN "i is 2,6 or 10"
+ 15                       proc2(i)
+ 16
+ 17                CASE 3
+ 18
+ 19                       PRINTLN "i is 3"
+ 20
+ 21                CASE 11..35
+ 22
+ 23                       PRINTLN "i is between 11 and 35"
+ 24
+ 25                CASE 50..60,64,78
+ 26
+ 27                       PRINTLN "I is between 50 and 60 or 64 or 78
+ 28
+ 29                DEFAULT
+ 30
+ 31                        PRINTLN "i is not a valid value"
+ 32
+ 33           END SELECT
+
+
+
+         This syntax is straight foward. Line 5 contains the SELECT CASE
+  keyword which is followed by an expression (i). This expression can be
+  any valid PPL expression. The parenthesis are optional.
+
+         Each CASE contains one or more expressions delimited by commas.
+  Each CASE expression is compared to the SELECT CASE expression
+  logically. If it is TRUE the body of the CASE is executed. The CASE
+  body can contain as many statements as needed, including function
+  calls.Note that ranges include the boundry values. eg 11..35 includes
+  11 and 35.
+
+         The DEFAULT case will be executed when none of the other CASE
+  expressions evaluate to TRUE. For BASIC programmers, the CASE ELSE is
+  also valid instead of DEFAULT.
+
+         Here is a more practical example. Suppose you have a menu from
+  which the user selects an option. After reading the users input, a
+  SELECT CASE construct can be used to branch to the correct section of
+  your PPL code. This is an exellent place to put function and procedure
+  calls.
+
+            STRING str
+            STRING res
+
+            DISPLAY_MENU()
+            INPUT "@X04Enter your selection",str
+
+            SELECT CASE (str)
+
+              CASE "A","a"
+                   PRINTLN "Your selection was A"
+                   SELECTION_A()                 ; Call procedure A
+
+              CASE "B","b"
+                   PRINTLN "Your selection was B"
+                   SELECTION_B()                 ; Call procedure B
+
+              CASE "Q","q"
+                   PRINTLN "About to end program execution"
+                   inputyn("Are you sure you want to quit?",res,@X04
+                   if (res == "Y") END           ; Quit program
+
+              CASE ELSE                          ; Case invalid input
+              
+                   PRINTLN "The choice you entered is not a menu item"
+                   PRINTLN "Please enter another selection from the menu"
+                   LOG("Invalid menu selection",FALSE)
+
+          You can see how easy this is to write, read and debug compared
+  to a coresponding IF-ELSEIF-ELSE construct. The abiltiy to put any
+  expression in the SELECT CASE expression, eg SELECT CASE (i), SELECT
+  CASE (i-2), SELECT CASE ( (i-j)/y ) , SELECT CASE (U_NAME()) makes
+  this a very powerful method of controlling program execution. Also the
+  ability to use any expression, range or enumerated list in a CASE
+  expression makes life much easier.
+
+         CASE 1,3,9,34
+              ...
+              ...
+         CASE 3*i/j
+
+         CASE 10..30
+
+
+
+
+
+  ===========================================================================
+
+  Section III            DBase III+
+
+         The addition of DBase III+ support to PPL opens an exciting
+  door for PPL programmers. No more reading and parsing text files to
+  extract records and fields from your own concoction of a database.
+  Indexing will make record access much faster and more efficient.
+
+         The choice of using DBase III+ instead of DBase IV was to
+  provide for a wider variety of existing databases. We here at Clark
+  Development felt a compromise was needed between an existing DBase
+  file base and a newer standard in DBase IV.
+
+         Several intrinsic functions and statements have been added to
+  PPL to facilitate database management from within a PPE. All DBase
+  functions and statements begin with a D. Most DBase statements have
+  function equivalents which return an error status or some other useful
+  value. A quick Description of these functions and statements follow.
+  Please see the file HOWTODBF.TXT for a slightly more detailed
+  introduction to using PPL and  DBase.
+
+
+     Statements:
+     ~~~~~~~~~~~
+
+     DCREATE    channel,name,exclusive,fieldInfo ; create DBF file
+     DOPEN      channel,name,exclusive           ; open DBF file
+     DCLOSE     channel                          ; close DBF file
+     DSETALIAS  channel,name                     ; set DBF alias
+     DPACK      channel                          ; pack DBF file
+     DLOCK      channel                          ; lock DBF file
+     DLOCKF     channel                          ; lock DBF file (same as DLOCK)
+     DLOCKR     channel,recno                    ; lock a record
+     DLOCKG     channel,recnos,count             ; lock a group of records
+     DUNLOCK    channel                          ; unlock any current locks
+     DNCREATE   channel,name,expression          ; create NDX file
+     DNOPEN     channel,name                     ; open NDX file
+     DNCLOSE    channel,name                     ; close NDX file
+     DNCLOSEALL channel                          ; close all NDX files
+     DNEW       channel                          ; start a new record
+     DADD       channel                          ; add the new record
+     DAPPEND    channel                          ; append a blank record
+     DTOP       channel                          ; go to top record
+     DGO        channel,recno                    ; go to specific record
+     DBOTTOM    channel                          ; go to bottom record
+     DSKIP      channel,number                   ; skip +/- a number of records
+     DBLANK     channel                          ; blank the record
+     DDELETE    channel                          ; delete the record
+     DRECALL    channel                          ; recall the record
+     DTAG       channel,name                     ; select a tag
+     DSEEK      channel,expression               ; string or double
+     DFBLANK    channel,name                     ; blank a named field
+     DGET       channel,name,var                 ; get a value from a named field
+     DPUT       channel,name,expression          ; put a value to a named field
+     DFCOPY     channel,name,channel,name        ; copy a field to a field
+     DCLOSEALL                                   ; close all DBF files
+
+     Functions:
+     ~~~~~~~~~~
+     DRECCOUNT (channel)        (INTEGER)        ; return the number of records
+     DRECNO    (channel)        (INTEGER)        ; return the current record number
+     DBOF      (channel)        (BOOLEAN)        ; return the begin of file status
+     DEOF      (channel)        (BOOLEAN)        ; return the end of file status
+     DDELETED  (channel)        (BOOLEAN)        ; return the deleted flag
+     DCHANGED  (channel)        (BOOLEAN)        ; return the changed flag
+     DFIELDS   (channel)        (INTEGER)        ; return count of fields
+     DNAME     (channel,number) (STRING)         ; return name of numbered field
+     DTYPE     (channel,name)   (STRING)         ; return type of named field
+     DLENGTH   (channel,name)   (INTEGER)        ; return length of named field
+     DDECIMALS (channel,name)   (INTEGER)        ; return decimals of named field
+     DSELECT   (alias)          (INTEGER)        ; returns channel assiciated with alias
+     DSEEK     (channel,expression) (INTEGER)    ; returns error status ( 0|1 )
+                                                ; or seek success (0 = Error
+                                                ; 1 = success, 2 = following record
+                                                ; 3 = end of file )
+     DGETALIAS (channel)        (STRING)                 ; return the current alias
+     DCLOSEALL                  (BOOLEAN) error status   ; close all DBF files
+     DOPEN     (channel,name,exclusive)(BOOLEAN) error   ; open DBF file
+     DCLOSE    (channel)        (BOOLEAN) error status   ; close DBF file
+     DSETALIAS (channel,name)   (BOOLEAN) error status   ; set DBF alias
+     DPACK     (channel)        (BOOLEAN) error status   ; pack DBF file
+     DLOCK     (channel)        (BOOLEAN) error status   ; lock DBF file
+     DLOCKR    (channel,recno)  (BOOLEAN) error status   ; lock a record
+     DUNLOCK   (channel)        (BOOLEAN) error status   ; unlock any current locks
+     DNOPEN    (channel,name)   (BOOLEAN) error status   ; open NDX file
+     DNCLOSE   (channel,name)   (BOOLEAN) error status   ; close NDX file
+     DNCLOSEALL(channel)        (BOOLEAN) error status   ; close all NDX files
+     DNEW      (channel)        (BOOLEAN) error status   ; start a new record
+     DADD      (channel)        (BOOLEAN) error status   ; add the new record
+     DAPPEND   (channel)        (BOOLEAN) error status   ; append a blank record
+     DTOP      (channel)        (BOOLEAN) error status   ; go to top record
+     DGO       (channel,recno)  (BOOLEAN) error status   ; go to specific record
+     DBOTTOM   (channel)        (BOOLEAN) error status   ; go to bottom record
+     DSKIP     (channel,number) (BOOLEAN) error status   ; skip +/- a number of records
+     DBLANK    (channel)        (BOOLEAN) error status   ; blank the record
+     DDELETE   (channel)        (BOOLEAN) error status   ; delete the record
+     DRECALL   (channel)        (BOOLEAN) error status   ; recall the record
+     DTAG      (channel,name)   (BOOLEAN) error status   ; select a tag
+     DFBLANK   (channel,name)   (BOOLEAN) error status   ; blank a named field
+     DGET      (channel,name)   (STRING)                 ; get a value from a named field
+     DPUT      (channel,name,expression)(BOOLEAN) error  ; put a value to a named field
+     DFCOPY    (channel,name,channel,name)(BOOLEAN) error; copy a field to a field
+     DERR      (channel)        (BOOLEAN)        ; return error flag for channel
+     DERRMSG   (errcode)(STRING)                 ; returns last DBase error text.
+
+      CAUTION: DBase functions that return the error status actually
+              return !ERROR. This is to provide a consistent way to
+              express an error in an expression. For example:
+              if ( DERR (...)) println "Error!"       ;DERR  returns 1 or TRUE on an error.
+              if (!DSEEK(...)) println "Seek failed!" ;DSEEK returns 0 or FALSE on an error.
+
+     KEY:
+     *NOTE Where file names are used, file extensions are optional.
+           Any extension you provide will be ignored. DBF and IDX are the default.
+
+     channel  :  Any value between 0 and 7
+     name     :  Char string
+     exclusive:  Integer (TRUE || FALSE)
+     fieldinfo:  Character string with the following fields
+
+                 1- Field name
+                 2- Field Type
+                         C = Character
+                         N = Numeric
+                         F = Floating Point
+                         D = Date
+                         L = Logical
+                         M = Memo
+                 3- Field Length
+                 4- Decimal (number of digits to the right of the decimal)
+
+                 EXAMPLE: string finfo(3)
+                          let finfo(0) = "First,C,20,0"
+                          let finfo(1) = "Last,C,20,0"
+                          let finfo(2) = "Phone,C,15,0"
+                          *NOTE multiple fields require an array of
+                          strings. 1 string for each field.
+
+     expression : Character String with search criteria on a field.
+
+
+                 EXAMPLE: string expr
+                         let expr = "First"
+
+     recno,recnos,number,count : integers
+
+
+         These intrinsic functions and statements are used in the same
+  way as any other PPL functions/statements. It is beyond the scope of this
+  document to go into how to program a database. Please see the file
+  HOWTODBF.TXT to get started on DBase programming.
+
+  ============================================================================
+
+  Section IV       Miscellaneous Intrinsic Functions and Statements
+
+
+
+
+    FUNCTION  DRIVESPACE.
+              Usage: DRIVESPACE(drivespec)
+         Return Val: Amount of divespace left of drive drivespec.
+            Example: integer left
+                     left = DRIVESPACE("c:\")
+                     println "There are ",tostring(left)," bytes on drive C."
+
+           Comments: drivespec must include at least a drive letter AND
+           a colon. Backslash is optional. With directory specs it will
+           work also. valid drivespecs are C: C:\ C:\PCB These will all
+           return drivespace left on dirve C *NOTE On LANTASTIC this
+           will return drivespace of the current physical drive even if
+           it is mapped as a directory.
+
+  =============================================================================
+    KEYWORD SETLMR
+              Usage: SETLMR conf#,msg#
+         Return VAl: None
+            Example: Integer conf,msg
+                     if(newuser == TRUE) then         ; If new user
+                       while(conf < HICONFNUM() ) DO  ; set all LMR's to
+                          join conf                   ; HI_MSG - 10
+                          SETLMR conf,HIMSGNUM()-10
+                          INC conf
+                       endwhile
+                     endif
+
+           Comments: If conf# is greater than the number of actual
+                     confrences conf# will default to the highest
+                     conference number If msg# is greater than the
+                     highest message number in that conference, it will
+                     default to the highest message number in that
+                     conference. This could be used to set a new users
+                     mesg popinters to recent messages so they aren't
+                     replying to 3 year old messages.  A useful feature
+                     would be to get the high conference number.
+
+           See Also  HICONFNUM(),HIMSGNUM(),NUMACTMSG(),LOWMSGNUM()
+
+  =============================================================================
+    KEYWORD SETENV
+
+              Usage: SETENV env_var
+         Return Val: N/A
+            Example: string s
+                     let s = "stan=Stan"
+                     SETENV s
+                     ...
+                     ..
+                     .
+                     if (GETENV("stan") = "Stan") then
+                       Println "Environment variable stan = Stan "
+                     endif
+
+           Comments: Used to set DOS environment variable. This can be
+                     used for PPE's to communicate with other PPE's. The
+                     environment variables set within PPL will NOT be
+                     available to DOORs.  Environment variables set
+                     within PPL will be cleared the next time PCBoard
+                     recycles through DOS. Care should be taken by the
+                     PPL programmer to clear environment variables when
+                     possible.
+
+                     see also GETENV, SHELL, CALL
+
+
+  =============================================================================
+
+    STATEMENT FCLOSEALL
+
+              Usage: Closes all file channels
+         Return Val: N/A
+            Example: fopen 1, "Autoexec.bat"
+                     fopen 2, "Config.sys"
+                     .
+                     .
+                     .
+                     fcloseall
+
+
+           Comments: Closes all file channels.
+                     Checking if they are acutally open is taken care
+                     of elsewhere.
+
+  ==============================================================================
+     FUNCTION FNEXT
+               Usage:  println "The next available file channel is ",FNEXT()
+
+          Return Val:  Returns an availble file channel. -1 when none are
+                      available.
+
+           Comments:  FNEXT was created in order to better support code
+                      libraries made possible by functions and
+                      procedures. File channel numbers can now be
+                      determined at runtime.
+
+                      *CAUTION Until you actually OPEN a file FNEXT will return
+                      the same value over and over.
+                      chan1 = FNEXT()
+                      chan2 = FNEXT()  WRONG! chan1 will equal chan2
+
+                      another gotcha:
+                      FOPEN FNEXT(),blah blah
+
+                         There is no way to determine what channel was used
+                         to open the file!
+
+                      Here's an example of how it should be used:
+
+                      chan1 = FNEXT()
+                      FOPEN   chan1,...
+
+                      chan2 = FNEXT()
+                      FOPEN   chan2,...
+================================================================================
+
+    FUNCTION HICONFNUM
+
+              Usage: let i = HICONFNUM()
+         Return Val: The highest conference number available on the board
+            Example: integer i
+                     println "The highest conference available is ",HICONFNUM()
+
+
+           Comments: If a conference is installed it will be counted,
+           even if it is not being used.
+
+  ==============================================================================
+    FUNCTION OUTBYTES()
+
+              Usage: OUTBYTES()
+         Return Val: returns the number of bytes waiting in the modems output
+                     buffer
+            Example: integer i
+                     println "Bytes waiting in the modem output buffer ",OUTBYTES()
+
+
+           Comments: Not available in local mode.
+
+  =============================================================================
+
+
+    FUNCTION INBYTES()
+
+              Usage: INBYTES()
+         Return Val: Returns number of bytes waiting in the modem input buffer
+            Example: integer i
+                     println "Bytes in modem input buffer = ",INBYTES()
+
+           Comments: Not available in local mode.
+
+  =============================================================================
+
+    FUNCTION PCBMAC()
+
+              Usage: str = PCBMAC("@macro@")
+         Return Val: Returns a BIGSTR containing the expanded text of a PCB
+                     MACRO
+            Example: integer i,j, res
+                     j = PCBMAC("@Timelimit@")
+                     i = PCBMAC("@Timeused@")
+                     res = j-i
+                     println "You have ",res, " Minutes left"
+
+   PCB MACROS not supported:
+   @automore@ @beep@ @clreol@ @cls@ @delay@ @more@ @pause@ @poff@ @pon@ @pos@
+   @qoff@ @qon@ @wait@ @who@ @x@
+
+
+
+  ===============================================================================
+
+     FUNCTION CRC32()
+
+              Usage: UNSIGNEDTYPE = CRC32(CRC_FILE,"C:\AUTOEXEC,BAT")
+                                  = CRC32(CRC_STR,"Stan is super cool")
+         Return Val: Returns an UNSIGNED value of the CRC of a file or string.
+            Example: Println "CRC on the file AUTOEXEC.BAT is",
+                     CRC32(CRC_FILE,"C:\AUTOEXEC.BAT")
+
+           Comments: the constants CRC_FILE and CRC_STR are the same as TRUE
+                     and FALSE. They were added to make it easier to see if a
+                     file or string was being processed.
+
+                     *Caution. CRC32(CRC_STR,"c:\Autoexec.bat") will return
+                     the CRC on the string "C:\AUTOEXEC.BAT"
+
+  =============================================================================
+
+
+    FUNCTION ACTMSGNUM()
+
+              Usage: ACTMSGNUM()
+         Return Val: Returns number of active messages in current conference
+            Example: integer i
+                     println "There are ",ACTMSGNUM()," messages in conference ",CURCONF()
+
+           Comments:
+
+  =============================================================================
+    FUNCTION STACKLEFT()
+
+              Usage: STACKLEFT()
+         Return Val: Returns the number of bytes left on the *system* stack.
+            Example: println "There are ",STACKLEFT()," bytes left on the stack"
+
+                     ;recursive call support
+                     function stan(integer i,string str)
+                       if(stackleft() > STK_LIMIT) stan(i,"Debra")
+                     endfunc
+
+           Comments: This function was added to support nested and recursive
+                     function calls. Since function calls take a lot of stack
+                     space. As of now only about 26 nested or recursive calls
+                     can eat up the stack. This lets the programmer know when
+                     he/she is running out of stack space as to avoid a runtime
+                     error. Both recursion and nested function calls should
+                     check this value if more than just a few calls are to be
+                     executed.
+
+  =============================================================================
+
+     FUNCTION STACKERR()
+
+              Usage: STACKERR()
+         Return Val: Returns a boolean value which indicates a stack error
+                     has occured if TRUE.
+
+            Example: if (STACKERR()) then
+                       println "An error has occured "
+                       end
+                     endif
+
+           Comments: Because of the limited stack space for recursive and nested
+                     function calls this function was created. It allows the
+                     programmer to determine if a stack error has occured
+                     while executing a PPE. This is in addition to the error
+                     message when the error occurs. The only way this will be
+                     useful is if the PPL programmer has told PPL not to abort
+                     on stack errors. PPL will *not* allow system memory to
+                     be corrupted when stack space has been exausted. It will
+                     disallow any more function calls when there is no system
+                     stack space left.
+                     *Note nested/recursive procedure calls are limited by heap
+                     space, not stack space.
+
+
+  =============================================================================
+
+     STATEMENT STACKABORT
+              Usage: STACKABORT TRUE | FALSE
+         Return Val: N/A
+
+            Example: STACKABORT TRUE (Default is TRUE)
+
+           Comments: This allows the programmer to tell the runtime module
+                     to try its best to continue executing after a stack error
+                     has occurred. If it is passed FALSE, it will abort
+                     execution after a stack error. If it is passed TRUE
+                     the PPE will continue to run.
+                     *CAUTION! If you continue to execute after a stack
+                     error, program execution will be unpredictable. PPL
+                     will not allow system memory to be corrupted because of
+                     a stack error.
+
+  ============================================================================
+
+     CONSTANT STK_LIMIT
+              Usage: if (stackleft() > stk_limit)
+                        ;recursive call
+         Return Val: N/A
+
+           Comments: This constant was added so the PPL programmer could
+                     determine how close they are getting to the stack limit
+                     when using recursion.
+
+==============================================================================
+
+     CONSTANT(S) CRC_FILE, CRC_STR
+
+              Usage: CRC32(CRC_FILE,"C:\AUTOEXEC.BAT")
+                     CRC32(CRC_STR ,"Hello There Bill")
+         Return Val: N/A
+
+           Comments: These constants were added to avoid confusion when telling
+                     the function CRC32 what it is taking the CRC of. CRC_FILE
+                     tells CRC32 to calculate the CRC of the file contained
+                     within the string argument. CRC_STR tells CRC32 to
+                     calculate the CRC of the string argument itself.
+                     CRC_FILE has a value of 1 (TRUE) CRC_STR has a value of
+                     0 (FALSE)
+
+
+ ==============================================================================
+
+      FUNCTION DNEXT
+              Usage:  println "The next available dbase file channel is ",DNEXT()
+
+         Return Val:  Returns an available dbase file channel. -1 when none are
+                      available.
+
+           Comments:  DNEXT was created in order to better support code
+                      libraries made possible by functions and procedures.
+                      File channel numbers can now be determined at runtime.
+
+                      *CAUTION Until you actually OPEN a file DNEXT will return
+                      the same value over and over.
+                      chan1 = DNEXT()
+                      chan2 = DNEXT()  WRONG! chan1 will equal chan2
+
+                      another gotcha:
+                      FOPEN DNEXT(),...
+
+                         There is no way to determine what channel was used
+                         to open the file!
+
+                      Here's an example of how it should be used:
+
+                      chan1 = DNEXT()
+                      FOPEN   chan1,...
+
+                      chan2 = DNEXT()
+                      FOPEN   chan2,...
+ ===============================================================================
+
+       TYPE DDATE
+
+              Usage: DDATE d1,d2,d3
+
+              Value: Signed long integer for julian date.
+
+           Comments: DDATE is for use with DBase date fields. It holds a long
+                     integer for julian dates. When coerced to string type it
+                     is in the format CCYYMMDD or 19940527
+
+ ==============================================================================
+
+      FUNCTION TODDATE()
+              Usage: DATE d1
+                     DDATE d2
+                     d2 = TODDATE(d1)
+
+       Return Value: A DDATE type variable.
+
+           Comments: Converts any PPL type to DDATE type.
+
+                     *NOTE this is an explicit type conversion. Implicit
+                     type conversion is also valid as with all other PPL types.
+
+==============================================================================
+
+
+    STATEMENT FREALTUSER
+             Usage: FREALTUSER
+
+       Return Value: N/A
+
+           Commnets: Since only one GETALTUSER can be active at one time,
+                     FREALTUSER can allow other processes which need to use
+                     GETALTUSER (such as the MESSAGE command) to do so.
+
+            Example:string name
+                    GETALTUSER 20
+                    name = U_NAME()
+                    FREALTUSER
+                    message 1,name,...
+
+
+==============================================================================
+ACCOUNTING
+
+          Several functions and statements have been added to support PCBoard
+accounting features. Also, many system constants have been added to make
+using these funtions and statements easier for the PPL programmer.
+
+
+CONSTANTS
+         There are three new functions which return accounting information.
+         Each function will return a value based on a parameter passed to it.
+         Several constants have been added to make accessing these values
+         easier. The following list details these consts and what they are
+         used for.
+
+for use with PCBACCOUNT() only!
+Val Constant            Assosiated value                       Example
+=============================================================================
+0  NEWBALANCE      Credits given to a new user account        PCBACCOUNT(NEWBALANCE)
+1  CHRG_CALL       Credits charged for a call                 PCBACCOUNT(CHRG_CALL)
+2  CHRG_TIME       Credits charged for time used (in minutes) PCBACCOUNT(CHRG_TIME)
+3  CHRG_PEAKTIME   Credits charged for peak time used         PCBACCOUNT(CHRG_PEAKTIME)
+4  CHRG_CHAT       Credits charged for chat session           PCBACCOUNT(CHRG_CHAT)
+5  CHRG_MSGREAD    Credits charged for reading a message      PCBACCOUNT(CHRG_MSGREAD)
+6  CHRG_MSGCAP     Credits charged for capturing a message    PCBACCOUNT(CHRG_MSGCAP)
+7  CHRG_MSGWRITE   Credits charged for writing a message      PCBACCOUNT(CHRG_MSGWRITE)
+8  CHRG_MSGECHOED  Credits charged for writing an echoed message PCBACCOUNT(CHRG_MSGECHOED)
+9  CHRG_MSGPRIVATE Credits charged for writing a private message PCBACCOUNT(CHRG_MSGPRIVATE)
+10 CHRG_DOWNFILE   Credits charged for downloading a file     PCBACCOUNT(CHRG_DOWNFILE)
+11 CHRG_DOWNBYTES  Credits charged for downloading bytes      PCBACCOUNT(CHRG_DOWNBYTES)
+12 PAY_UPFILE      Credits given   for uploading a file       PCBACCOUNT(PAY_UPFILE)
+13 PAY_UPBYTES     Credits given   for uploading bytes        PCBACCOUNT(PAY_UPBYTES)
+14 WARN_LEVEL      Credit  threshold for low credit warning   PCBACCOUNT(WARN_LEVEL)
+
+
+The following are for use with PCBACCSTAT() only!
+val    constant
+--------------------------
+0      ACC_STAT    Returns status of the "Enable Accounting"  PABACCSTAT(ACC_STAT)
+                   switch in the PWRD file.  0=Accounting
+                   disabled (N), 1=Tracking (T), and
+                   2=Enabled (Y).
+1      ACC_TIME    The amount of ADDITIONAL units to charge   PCBACCSTAT(ACC_TIME)
+                   per minute while in the current
+                   conference.
+2      ACC_MSGR    The amount to charge in ADDITION for each  PCBACCSTAT(ACC_MSGREAD)
+                   message read in the current conference.
+3      ACC_MSGW    The amount to charge in ADDITION for each  PCBACCSTAT(ACC_MSGWRITE)
+                   message entered in the current conference.
+
+4      ACC_CUR_BAL Return the up to the minute user balance.
+
+The following are for use with ACCOUNT(), ACCOUNT and RECORDUSAGE only!
+val constant       description                                example
+----------------------------------------------------------------------
+0  START_BAL       Users starting balance.                    ACCOUNT(START_BAL)
+1  START_SESSION   Users starting balance for this session    ACCOUNT(START_SESSION)
+2  DEB_CALL        Debit for this call                        ACCOUNT DEB_CALL,10
+3  DEB_TIME        Debit for time on                          ACCOUNT DEB_TIME,10
+4  DEB_MSGREAD     Debit for reading message                  ACCOUNT DEB_MSGREAD,100
+5  DEB_MSGCAP      Debit for capturing a message              ACCOUNT(DEB_MSGCAP)
+6  DEB_MSGWRITE    Debit for writing a message                ACCOUNT(DEB_MSGWRITE)
+7  DEB_MSGECHOED   Debit for echoed message                   ACCOUNT DEB_MSGECHOED 3
+8  DEB_MSGPRIVATE  Debit for writing private message          ACCOUNT DEB_MSGPRIVATE 10
+9  DEB_DOWNFILE    Debit for downloading a file               ACCOUNT DEB_DOWNFILE 100
+10 DEB_DOWNBYTES   Debit for downloading bytes                ACCOUNT(DEB_DOWNBYTES)
+11 DEB_CHAT        Debit for chat                             ACCOUNT(DEB_CHAT)
+12 DEB_TPU         Debit for TPU                              ACCOUNT(DEB_TPU)
+13 DEB_SPECIAL     Debit special                              ACCOUNT(DEB_SPECIAL)
+14 CRED_UPFILE     Credit for uploading a file                ACCOUNT(CRED_UPFILE)
+15 CRED_UPBYTES    Credit for uploading bytes                 ACCOUNT(CRED_UPBYTES)
+16 CRED_SPECIAL    Credit special                             ACCOUNT(CRED_SPECIAL)
+17 SEC_DROP        Security level to drop to at 0 credits     ACCOUNT(SEC_DROP)
+
+                This group of constants can be used to access or modify
+user account information using the ACCOUNT() function ,ACCOUNT statement and/or
+RECORDUSAGE. The ACCOUNT() function returns the current value and the
+ACCOUNT statement is used to modify a value. Record usage also modifies a
+value with more information stored in a usage file. See description below for
+more details. These constants can also be used for the RECORDUSAGE statement
+with the acception of the following.
+STARTBAL, STARTSESSION, SEC_DROP;
+
+
+=================================================================================
+FUNCTION ACCOUNT(INTEGER field)
+
+         Usage:  println "You have been charged ",ACCOUNT(DEB_CHAT)," for chat"
+  Return Value:  Returns amount of credits charged for services corresponding
+                 to the field parameter.
+    Parameters:  The field number to access (1-14) or using DEB_ constants
+
+      Commnets:  The account function is used to retrieve account information
+                 from PCBoard.
+                 These are the constants which can be used with the ACCOUNT()
+                 function.
+
+Val Constant      Descripttion                                Example
+-------------------------------------------------------------------------------
+0  START_BAL       Users starting balance.                    ACCOUNT(START_BAL)
+1  START_SESSION   Users starting balance for this session    ACCOUNT(START_SESSION)
+2  DEB_CALL        Debit for this call                        ACCOUNT DEB_CALL,10
+3  DEB_TIME        Debit for time on                          ACCOUNT DEB_TIME,10
+4  DEB_MSGREAD     Debit for reading message                  ACCOUNT DEB_MSGREAD,100
+5  DEB_MSGCAP      Debit for capturing a message              ACCOUNT(DEB_MSGCAP)
+6  DEB_MSGWRITE    Debit for writing a message                ACCOUNT(DEB_MSGWRITE)
+7  DEB_MSGECHOED   Debit for echoed message                   ACCOUNT DEB_MSGECHOED 3
+8  DEB_MSGPRIVATE  Debit for writing private message          ACCOUNT DEB_MSGPRIVATE 10
+9  DEB_DOWNFILE    Debit for downloading a file               ACCOUNT DEB_DOWNFILE 100
+10 DEB_DOWNBYTES   Debit for downloading bytes                ACCOUNT(DEB_DOWNBYTES)
+11 DEB_CHAT        Debit for chat                             ACCOUNT(DEB_CHAT)
+12 DEB_TPU         Debit for TPU                              ACCOUNT(DEB_TPU)
+13 DEB_SPECIAL     Debit special                              ACCOUNT(DEB_SPECIAL)
+14 CRED_UPFILE     Credit for uploading a file                ACCOUNT(CRED_UPFILE)
+15 CRED_UPBYTES    Credit for uploading bytes                 ACCOUNT(CRED_UPBYTES)
+16 CRED_SPECIAL    Credit special                             ACCOUNT(CRED_SPECIAL)
+17 SEC_DROP        Security level to drop to at 0 credits     ACCOUNT(SEC_DROP)
+=================================================================================
+STATEMENT ACCOUNT INTEGER field, INTEGER value
+
+
+          Usage: ACCOUNT DEB_CHAT,10
+     Parameters:  field: A value between 0-14. Using system constants is reccomended.
+                  value: The amount of credits to add or subtract to field the field
+
+        Example: Record a use of 10 credits for chatting
+                ACCOUNT DEB_CHAT,10
+
+       Commnets: The ACCOUNT statement is used to modify accounting information
+                 for a user. This statement will simply modify a debit value
+                 whereas the RECORDUSAGE will do the same thing as well as
+                 record information in the accounting file.
+
+                 The valid constants for this statement are the same as those
+                 used for the ACCOUNT() Function.
+=================================================================================
+STATEMENT RECORDUSAGE INTEGER field,STRING desc1,STRING desc2,DWORD unitcost,INTEGER value
+
+          Usage: RECORDUSAGE DEB_CHAT,"Debit for chat", "Using PPE",10,10
+     Parameters: field  Same as ACCOUNT
+                 descr1 Descripttion of charge
+                 descr2 Subdescription of charge
+                 unitcost cost per unit
+                 value  number of units
+       Comments: Recordusage will update debit values in PCBoard as well
+                 as record descriptions and other information in an accouinting
+                 file.
+                 Valid values for the field parameter are 2-16. The constants
+                 corresponding with these values (DEB_???) could and should
+                 be used here.
+
+                 The constants used for this statement are the same as those
+                 used for the ACCOUNT() function above.
+================================================================================
+
+FUNCTION PCBACCOUNT(INTEGER field)
+         Usage: println "You will be charged ",PCBACCOUNT(CHRG_CHAT)," for chat"
+
+    Parameters: field  value from 0-10 designating which field to access
+
+      Commnets:
+                This function returns what PCBoard will charge a user for a
+                certian activity. These are values the SysOp assigns in
+                PCBsetup when accounting is configures and enabled.
+                Valid values for the field paramter are 0-14. Use of the
+                corresponding constants is encouraged.
+
+                Here are the fileds PCBACCOUNT can access in the accounting
+                configuration.
+
+Val    PPL Constant       FIELD                        Description
+-----------------------------------------------------------------------------------------
+0      NEWBALANCE        New user balance              Credits given to a new user account
+1      CHRG_CALL         Charge for call               Credits charged for a call
+2      CHRG_TIME         Charge for time               Credits charged for time used (in mi
+3      CHRG_PEAKTIME     Peak time charge              Credits charged for peak time used
+4      CHRG_CHAT         Charge for chat               Credits charged for chat session
+5      CHRG_MSGREAD      Message read  CHARGE          Credits charged for reading a messag
+6      CHRG_MSGCAP       Charge for message capture    Credits charged for capturing a mess
+7      CHRG_MSGWRITE     Charge for writing a message  Credits charged for writing a messag
+8      CHRG_MSGECHOED    Charge for echoing a message  Credits charged for writing an echoe
+9      CHRG_MSGPRIVATE   Charge for leaving privatemsg Credits charged for writing a privat
+10     CHRG_DOWNFILE     Charge for downloading a file Credits charged for downloading a fi
+11     CHRG_DOWNBYTES    Charge dor downloading bytes  Credits charged for downloading byte
+12     PAY_UPFILE        Credit for uploading a file   Credits given   for uploading a file
+13     PAY_UPBYTES       Credit for uploading bytes    Credits given   for uploading bytes
+
+       These fields are not modifiable from within PPL. Only in PCBsetup.
+
+===========================================================================
+
+  FUNCTION  PCBACCSTAT(INTEGER field)
+
+        Usage: PRINTLN "Mutiplier for credits is ",PCBACCSTAT(ACC_STAT)
+ Return Value: Value in status field
+
+     Comments: This function can and should be used in conjunction with the
+               ACC_??? constants as the field parameter.
+               Valid values for field are 0-3.
+val    constant
+--------------------------
+0      ACC_STAT    Returns status of the "Enable Accounting"  PABACCSTAT(ACC_STAT)
+                   switch in the PWRD file.  0=Accounting
+                   disabled (N), 1=Tracking (T), and
+                   2=Enabled (Y).
+1      ACC_TIME    The amount of ADDITIONAL units to charge   PCBACCSTAT(ACC_TIME)
+                   per minute while in the current
+                   conference.
+2      ACC_MSGR    The amount to charge in ADDITION for each  PCBACCSTAT(ACC_MSGREAD)
+                   message read in the current conference.
+3      ACC_MSGW    The amount to charge in ADDITION for each  PCBACCSTAT(ACC_MSGWRITE)
+                   message entered in the current conference.
+4      ACC_CUR_BAL Current up to the minute user balance
+
+
+===========================================================================
+Message Base Access
+
+===========================================================================
+ CONSTANTS Message header field access constants.
+
+    Field      Value hex    dec    Field Description
+===========================================================================
+
+    HDR_ACTIVE       0x0E   14     Message active flag field
+    HDR_BLOCKS       0x04    4     Number of 128 byte blocks in message
+    HDR_DATE         0x05    5     Date message was written
+    HDR_ECHO         0x0F   15     Echoed message flag
+    HDR_FROM         0x0B   11     Who the message is from
+    HDR_MSGNUM       0x02    2     Message number
+    HDR_MSGREF       0x03    3     Reference message
+    HDR_PWD          0x0D   13     Message password
+    HDR_REPLY        0x0A   10     Message reply flag
+    HDR_RPLYDATE     0x08    8     Reply message date
+    HDR_RPLYTIME     0x09    9     Reply message time
+    HDR_STATUS       0x01    1     Message status
+    HDR_SUBJ         0x0C   12     Message subject
+    HDR_TIME         0x06    6     Message time
+    HDR_TO           0x07    7     Who the message is to.
+
+    These constants are for use with SCANMSGHDR(conf_num,start_msg,field,text)
+in the FIELD parameter.
+
+===============================================================================
+
+FUNCTION SCANMSGHDR(conf,start_msg,field,test)
+
+        Usage: integer msgno
+               msgno = SCANMSGHDR(0,1,HDR_TO,"Stan")
+ Return Value: The first message number in the message base which matches
+               the search criteria.
+
+      Example: ;Searching for the first message with a subject of PPL
+               ;in conference 0 starting at message 100
+               INTEGER num
+               num = SCANMSGHDR(0,100,HDR_SUBJ,"PPL")
+
+     Comments: This function can be used to scan PCBoard message basses
+               for certian information. All fields in the standard header
+               can be searched. There are 15 fields in the standard
+               header. Valid values for field are 1-15. See the section
+               on PPL constants related to this function.
+
+               See also MSGTOFILE,Constants HDR_????
+
+===========================================================================
+
+ STATEMENT MSGTOFILE conf,msg_no,filename
+
+        Usage: MSGTOFILE 0,20,"msg.txt"
+
+      Example: ;Using SCANMSGHDR to search for a message
+               MSGTOFILE 0,200,"d:\msg1.txt"
+               DISPFILE "D:\msg1.txt",DEFS
+
+     comments: This statement will take the given message and write it to a
+               text file. The file's first 15 lines will contain standard
+               header information. (One field per line) The headers are formatted
+               to make parsing easier. The 16th line will state how many
+               extended headers are present. The following line(s) will contain
+               extended headers. (one per line) Finally, after the extended
+               headers, will be a line containing "Message body:". Everything
+               after that is the body of the message.
+
+           See also SCANMSGHDR,DISPFILE,Constants HDR_????
+===========================================================================
+
+* Important note. You *must* use GETUSER AND PUTUSER with these QWK functions.
+
+STATEMENT QWKLIMITS field,limit
+
+        Usage: QWKLIMITS field,limit
+
+      Example:
+              GETUSER
+              QWKLIMITS MAXMSGS,500
+              PUTUSER
+
+     comments: This statement allows the PPL programmer to modify a users
+               QWK limits. Four fields can be modified with thei statement.
+
+               - Max Messages: Maximum messages allowed in a qwk packet
+                 * Note: If you specify a number higher than that contained
+                         in PCBSETUP the values in PCBSETUP will be used.
+
+               - Max Messages per Conference: Maximum messages allowed in
+                 a qwk packet per conference.
+                 * Note: If you specify a number higher than that contained
+                         in PCBSETUP the values in PCBSETUP will be used.
+
+               - Personal Attach Limit: Maximum number of bytes in attached files
+                 for the user.
+
+               - Public Attach Limit: Maximum number of bytes in attached files
+                 for the user.
+
+                Four constants have been defined to identify the FIELD value.
+
+                Constant        Value     Field
+                MAXMSGS         0         Max messages per qwk packet
+                CMAXMSGS        1         Max Messages per conference
+                ATTACH_LIM_U    2         Personal attach bytes limit
+                ATTACH_LIM_P    3         Public attach bytes limit
+                                      ^___________________________________
+FUNCTION QWKLIMITS(field)                                                 |
+                                                                          |
+         Example                                                          |
+                GETUSER                                                   |
+                PRINTLN QWKLIMITS(MAXMSGS)                                |
+                                                                          |
+       Comments                                                           |
+               This functions returns the values contained in the users   |
+               QWK configuration. The same constants used in the QWKLIMITS|
+               statements can be used with the field parameter. -----------

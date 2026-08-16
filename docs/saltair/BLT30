@@ -1,0 +1,152 @@
+@X0F   [ @X09B A S I C   P C B O A R D   P A T H S   A N D   B A T C H   F I L E S @X0F]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0E
+Many problems that our tech support department encounters are path problems.
+These problems are often avoided if the sysop sticks to the default paths.
+Of course, some deviation may be necessary, and that's why PCBoard is as
+flexible as it is.  This document will cover the default paths and batch files,
+and help you gain an understanding of what is necessary and what can be
+changed.
+
+@X0BNODE1.BAT / BOARD.BAT
+---------------------
+
+@X03The default files that PCBoard's install program creates for you is the
+node1.bat, node2.bat and board.bat.  The function of the NODE?.BAT files is
+simply to set environment variables.  These variables are primarily used only
+for these batch files, so they may vary, depending on how your batch file is
+written.
+ 
+All node?.bat files (node1.bat, node2.bat, node3.bat, etc.) will "CALL" the
+board.bat when they are finished.  The board.bat is shared between all nodes.
+The advantage to this is low maintenance.  If you want to make a change, you
+only have to update ONE batch file.
+ 
+Since the BOARD.BAT is shared, the information in it is global.  The NODE
+batch files have all the node-specific information in them, and that's why it
+is necessary to have one for each node.
+
+Examples are:
+
+
+@X0BNODE1.BAT:
+----------
+@X07SET PCBNODE=1
+SET PCBPORT=1
+SET PCBDRIVE=C:
+SET PCBDIR=\PCB\NODE%PCBNODE%
+SET PCBDAT=%PCBDRIVE%%PCBDIR%\PCBOARD.DAT
+SET PCB=/NODE:%PCBNODE% /COM%PCBPORT%:
+SET DSZLOG=PCBDSZ.LOG
+BOARD.BAT
+
+
+@X0BBOARD.BAT:
+----------
+@X07IF EXIST PCBOARD.SYS DEL PCBOARD.SYS
+:TOP
+%PCBDRIVE%
+CD %PCBDIR%
+IF EXIST REMOTE.BAT REN REMOTE.SYS
+IF EXIST EVENT.BAT DEL EVENT.BAT
+IF EXIST DOOR.BAT DEL DOOR.BAT
+PCBOARDM.EXE /FILE:%PCBDAT%
+IF EXIST REMOTE.BAT CALL REMOTE.BAT
+IF EXIST EVENT.BAT CALL EVENT.BAT
+IF EXIST DOOR.BAT CALL DOOR.BAT
+IF NOT EXIST ENDPCB GOTO TOP
+:END
+
+
+@X03As you can see, the SET statements in the node?.bat file set the node number,
+com port number, current directory, etc.  It is necessary to give each node
+it's own subdirectory.  This is because PCBoard will create files in the
+current directory which are node-specific.  These files shouldn't be read by
+other nodes, or problems would arise.  Among these are the EVENT.BAT, DOOR.BAT,
+REMOTE.BAT, and PCBOARD.SYS.  Looking at the BOARD.BAT, you see why they must
+have their own subdirectory, and it must be the current directory.
+
+Let's look at the NODE1.BAT above, line-by-line.  The first two lines mean
+nothing to PCBoard, but can easily be changed once, and affect all lines which
+refer to them in the batch file.  PCBDRIVE and PCBDIR are referred to by the
+BOARD.BAT (with the @X07%pcbdrive% @X03and @X07CD %pcbdir%@X03).  The board.bat could be
+changed to say :
+@X07
+C:
+CD \PCB\NODE%PCBNODE%
+ 
+@X03That wouldn't be a problem.
+ 
+The 6th line is very important.  The SET PCB= line sets the %pcb% environment
+variable.  The information on this line overrides all settings in the PCBSETUP
+program.  The node number, com port or fossil port, baud rate, IRQ, base
+address, and several other switches can be specified here.  This line can be
+left blank, but it is necessary to put these parameters on that line to share
+a pcboard.dat file.
+
+This is a diagram of how the batch files work:
+
+@X0C+---------+  +---------+
+|node1.bat|  |node2.bat|
++---------+  +---------+
+     |             |
+     v             v
+
+     +-------------+
+     |  board.bat  | <-+
+     +-------------+   |
+            |          |
+            v          |
+                       |
+       PCBOARDM.EXE ---+
+
+
+@X0BPATHS
+-----
+@X03A basic diagram of the path structure is shown below:
+
+
+      +- \NODE1
+\PCB -+- \NODE2
+      |
+      +- \GEN
+      +- \MAIN
+      |
+      +- \CONF1
+      +- \CONF2
+ 
+The \PCB directory contains all .EXE files and utilities partaining to PCBoard.
+
+The node subdirectories are the current directories when PCBOARDM.EXE is run.
+
+The GEN directory contains most ascii/ansi screens, and files for the main
+board (conference 0).
+
+The MAIN directory contains most PCBoard System files (users, conferences,
+etc.)
+
+CONF1 and CONF2 are directories which would actual have a name which is
+derived from the name of the corresponding conference.  These directories
+contain all files which partain to the configuration of that conference, just
+as the \pcb\gen conference contains files partaining to the main board.
+
+Many default paths in the PCBSetup are indicated as ..\gen\ or ..\main\  .
+This is to indicate that the current directory is NODE1 or NODE2.  PCBoard will
+back up into the \PCB directory (indicated by the two periods <..>), then go
+into the GEN or MAIN directory from there.  This causes a problem if your
+current directory is not a directory under the PCB directory.
+
+For example, if your current directory is \PCB, then it will go back one (to
+the root directory), and then look for the \GEN or \MAIN directory from there.
+It won't find it, and will report an error.
+
+If you would like to make your current directory a directory other than the
+\PCB\NODE? directory, then you'll need to change all relative paths (..\) in
+the pcbsetup program.
+
+
+
+
+ 
+

@@ -1,0 +1,33 @@
+   @X0F[@X0EJ@X0F] @X0DJoin a Conference
+ 
+       @X0BConferences serve as a way to seperate information and topics on a BBS.
+       By dividing up the infformation, you can find what you are after
+       quicker than before.
+ 
+       @X0AExamples:
+ 
+          @X0EJ @X0B= @X0DJoin a Conference
+          @X0EA @X0B= @X0DAbandon the Conference
+ 
+         @X0ASee a list of conference areas:
+ 
+          @X0EJ @X0F[@X0CENTER@X0F]
+ 
+         @X0AJoin a conference by number:
+ 
+          @X0EJ 12 @X0F[@X0CENTER@X0F]
+ 
+         @X0AJoin a conference by name:
+ 
+          @X0EJ SUPPORT @X0F[@X0CENTER@X0F]
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+

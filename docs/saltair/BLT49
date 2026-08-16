@@ -1,0 +1,45 @@
+                            Usenet for PC Board
+
+What is Usenet?
+
+Usenet is a vast network of computers that exchange public messages
+(called news articles) on thousands of topics. All types of computers
+are on Usenet, it's not just PCs. There are mini computers,
+workstations and mainframes, too. Topics range from the serious to the
+ridiculous and everywhere in between.  These machines are run by BBS
+sysops, universities and corporations.
+
+PCBoard's support for Internet mail and Usenet news is provided for in a
+new built-in UUCP interface. UUCP is a file transfer protocol used in
+the UNIX and Internet world. BBS sysops have recently started adding
+UUCP interfaces to their BBSes, but until now a low-cost integrated
+solution was not available.
+
+How hard is it to set PCBoard up to do UUCP? Not hard at all! Inside
+PCBoard's integrated setup utility, PCBSetup, you enter your Internet
+address information, which conference number you want as your Internet
+mail conference, what Usenet conferences you want, etc. However the
+first step in setting PCBoard up for UUCP is shopping for an Internet
+provider.
+
+There are a wide range of providers out there. Some operations are
+small, some are large - prices and quality do vary. When shopping for a
+provider it is important to obtain a list of all charges. Also don't
+lock yourself in for a full year with the first one that strikes your
+fancy. Try one out for a month or two and see how they work. You will
+quickly learn how easy it is to get onto their system, whether their
+system is fast enough for your needs, and how they treat you after the
+initial sale. Most providers do an excellent job, but each one's
+knowledge about how to be a good provider can vary.
+
+Monthly fees for UUCP accounts range from $10 to $100 a month, depending
+on your location, provider, and on the volume of E-mail and Usenet
+traffic you want.  An increasingly popular option with PCBoard sysops is
+receiving Usenet news from a satellite (such as PageSat(2) or Planet
+Connect(3)). The satellite option allows you to receive as many
+newsgroups as you want,  and then pay less to a land-line provider
+(since all you would be transferring to them would be E-mail and Usenet
+postings).
+
+
+

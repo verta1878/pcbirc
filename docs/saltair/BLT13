@@ -1,0 +1,182 @@
+                       @X0E PCBoard Comparison Guide@X07
+
+@X0FIn order to help you compare the features of PCBoard against other BBS
+software packages, the following comparison guide has been developed.  All
+features listed are available in the current release of PCBoard.  When
+comparing  PCBoard with another program, simply place a check mark in the
+small box next to the feature line for those items which are included in the
+other program (or their system limit).  We think you will be pleasantly
+surprised at how PCBoard stacks up against the competition!  A free demo
+disk of our software can be obtained by calling us at 800.356.1686 (US and
+Canada), or at 801.261.1686 (for all other locations).
+
+@X0DPCBoard V 15.22@X07
+
+@X0F- Built-in UUCP
+- Built-in FIDO Mailer/Tosser (no front end needed)
+- Complete Credit Accounting System
+- QWK Net Status
+- PCBMail - Windows Mail Reader
+
+@X0DFile Transfers@X07
+
+@X0F* Default protocols: Xmodem, Xmodem-CRC, 1-K Xmodem, 1-K  Xmodem/G,
+* Ymodem (Batch), Ymodem/G (Batch), Zmodem, and ASCII
+* External protocols: Bimodem (Batch), HS/Link (Batch), etc.
+* Zmodem module for both non-intelligent and intelligent serial cards
+* 'Local' file transfers built-in for 'in-house' E-Mail systems, etc.
+* Automatically scan uploaded files for viruses, duplicates or
+        other problems using your preferred file verification software
+* Allows 'testing' of files prior to downloading
+* Ability to index downloadable files for instant access -including CD-ROMs
+* Jukebox and 'slow' CD-ROM support
+* Extended file searches by date and filename
+* Extended file description searches using 'AND', 'OR' and 'NOT'operators for
+* maximum querying capability
+* Allows viewing of files and their contents prior to downloading
+* Dynamic byte ratios for file transfers
+* Optional instantaneous byte or time credits on uploads
+* Stores total number of bytes and files transferred by each caller
+* Allows specifying files as 'FREE' (no charge against byte limit) or 'NOTIME'
+        (no charge for time spent downloading)
+
+@X0DGeneral@X07
+
+@X0F- Real-Time (by keystroke) '255 Channel' Node CHAT capability
+- ALIAS support on a per-conference basis
+- Caller-ID and incoming FAX support
+- SysOp definable program text and prompts
+- Fully customizable system commands and appropriate menus
+- Menuing system allows creating sub-menus, directories, etc.
+- Hot-Key configuration, execution of commands with a single keystroke
+- Full subscription operation with expired messages, levels, registrations, etc.
+- Configurable new user logon script questionnaire
+- Configurable logoff script questionnaire
+- Requires only 450K of memory per node for operation
+- Supports up to 115,200 bps
+- Full 16550A UART (FIFO) support
+- Built-in credit and accounting system
+- Automatic conference rejoin on subsequent calls
+- Ability for third party programs to store their information inside USER's file
+- Third party DOORs may be directly accessed as a menu command
+- Auto-Login DOOR capability definable by security level
+- Front-DOOR support for FIDO type front-end programs
+- Remote DOS access for SysOp including DOORWAY support
+- Fastest operation of ANY BBS software!  All C/C++ code!
+- Easy installation - code is running within 5 minutes of typing 'INSTALL'
+- PCBoard can be installed from either a floppy or hard disk
+
+@X0DGraphics@X07
+
+@X0F* On-the-fly colorization of all system text and files based on caller's ANSI
+        capabilities
+* RIP scrip support for remote callers
+* Full @ Code substitution support (color, files, and prompts)
+* Built-In high speed ANSI driver
+* Support for SysOp defined @ Macros
+* Built in graphics editor `PCBEdit'
+
+@X0DInternational Operation@X07
+
+@X0F- True multilingual support including all display files and 'internal' text
+- Full support for double-byte international display character sets
+- Full world-wide Internationalization
+- Reverse printing for right-toleft code page languages
+
+@X0DMessaging System@X07
+
+@X0F* Comments to the SysOp are part of the message base for easy access
+* Dynamic size control of message files to conserve disk space
+* Extended message search capabilities by name, subject, text body, etc.
+* Built-in .QWK message packet support and downloading
+* Index files for rapid QWK search / creation
+* Extended message search capabilities using 'AND', 'OR' and 'NOT' Boolean
+        operators for maximum querying capability
+* Search for messages `To' or `From' individual accounts
+* Import text files from disk directly into a message (local login)
+* Upload an ASCII text file directly into a message from remote
+* File attachment to messages
+* 'FLAG' or view files while reading messages
+* Capture messages and text to disk file (local login)
+* Capture messages to ZIP file for automatic download from remote
+* Allows editing of a saved message including both the header and text body
+* Thread reading of message topics (both forward and reverse)
+* 'Reference' message numbers for easy threading of a topic
+* Message upload using any available file transfer protocol
+* Message 'Carbon-Copy' list support
+* Message 'Return-Receipt' response support
+* Automatic reference number purification during message base pack
+* Provides message 'Echo' capabilities for third party NetMail programs
+* Largest third party NetMail support of any BBS program
+* Full-Screen or Line-Oriented message entry/editing functions (user selectable)
+* SysOp access to caller's USER file record during message read functions
+* Full recognition of PC keyboard controls or CTRL+ codes during full-screen
+        message entry/edit
+* Each message can contain up to 400 lines
+* Automatic 'quoting' of original message if desired
+* Message addressing to individuals, groups, security level groups, etc.
+
+@X0DMultitasking/Network Support@X0F
+
+- Multitasking (OS/2, DESQview, Windows, others) aware - gives back time
+        slices when node is 'idle'
+- OS/2 direct COM driver support
+- Supports 'intelligent' single IRQ serial cards when using /M code
+- Up to 4 nodes on 80386/80486 using 'standard' COM ports
+- 4, 8, or 16 nodes on 80386/80486 using /M code and 'intelligent' serial card
+- Mix or match multitasking with networked PC's for up to 65,535 nodes
+- Ability to 'float' to next available node if node is busy (local logins)
+- File, record locking on all NetBIOS networks as well as NTNX software
+- Supports both dial-in and 'local-only' nodes on same system
+- Node-to-Node as well as Group CHAT (CB Chat) capability
+- Node specific environment variables for easy multi-node DOOR support
+- SysOp has ability to view/search all other node's caller logs from current
+        node
+- Auto-Logoff any/all nodes from current node
+- Shut down any/all nodes to DOS from current node
+- Full Packet-Switch (PAD) network support
+- Unlimited FOSSIL support for virtually any serial card
+
+@X0DSecurity@X0F
+
+* Every command is controlled by a specific security level
+* Optional USER file encryption for maximum security
+* Full file download protection by security level and password
+* Upload protection by security level, password and file name or file type
+* Different menus can be displayed based on caller's security level
+* DOORs can be protected by security level and/or password
+
+@X0DSupport@X0F
+
+- One year of free software updates via download from Salt Air BBS
+- 24 Hour-a-day BBS (modem) technical support lines (365 days/year)
+- 1 Year of voice technical support with each new PCBoard purchase
+- Lifetime BBS support for all packages purchased
+
+@X0DSysOp Utilities Included with each Package!@X0F (@X0BFree@X0F)
+
+* PCBEdit - Graphics & text editor
+* PCBFiler - File maintenance utility
+* PCBModem - Modem configuration Utility
+* PCBMoni - Node monitoring utility
+* PCBPack - Message base maintenance utility
+* PCBSetup - BBS configuration Utility
+* PCBSysMgr - User and System maintenance utility
+
+@X0DSystem Limits@X0F
+
+- Supports over @X0E2 Billion@X0F user records
+- Up to 65,535 Nodes can be run in a network environment
+- Up to 65,535 conference areas may be defined
+- Up to 32,767 messages may be written in each conference
+- Up to 16,777,216 messages may be entered
+- Up to 32,767 DOORs can be defined per conference area
+- Up to 32,767 Script Questionnaires can be defined per  conference area
+- Up to 32,767 Bulletins can be defined per conference area
+- Up to 32,767 File Directory Listings can be defined per conference area
+- Up to 32,767 bytes per individual message
+- Up to 64 scheduled 'events' per day
+- Schedule events by day, week, month, or date
+- No limit on size of files attached to messages
+- Up to 60 description lines for each downloadable file listing entry
+- Up to 36 file transfer protocols can be defined

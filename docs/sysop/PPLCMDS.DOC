@@ -1,0 +1,20 @@
+Now that PCBoard is available in a DOS and OS/2 environment, it is helpful
+to know which PPL commands are specific to one operating environment or the
+other.  The purpose of this document is to briefly list which statements
+are specific and what environment they are specific to.  For descriptions of
+the statments or functions listed, refer to the PPLC manual.
+
+ Command             Specific To
+ -----------------   -----------------
+ DOINTR              DOS
+ MKADDR              DOS
+ PEEKW               DOS
+ PEEKDW              DOS
+ PEEKB               DOS
+ POKEW               DOS
+ POKEDW              DOS
+ POKEB               DOS
+ REG...              DOS
+ SOUND               Emits a 1/4 second tone under OS/2.
+ VAROFF              DOS
+ VARADDR             DOS

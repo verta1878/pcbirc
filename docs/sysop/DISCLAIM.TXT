@@ -1,0 +1,40 @@
+            Copyright (C) 1995 Clark Development Company, Inc.
+
+      This software product is copyrighted and all rights are reserved by
+      Clark Development Co., Inc.  No part of the contents of this manual
+      may be reproduced or transmitted in any form or by any means without
+      the written permission of the publisher.
+
+      Clark Development Company, Inc. does not assume any liability arising
+      out of the application or use of any products described herein.  Clark
+      Development Co., Inc. further reserves the right to make changes in
+      any products described herein without notice.  This document is
+      subject to change without notice.
+
+      PCBoard is a registered trademark of Clark Development.  All other
+      brand and product names mentioned in this manual are trademarks or
+      registered trademarks of their respective companies.
+      
+
+
+      Information in this document is subject to change without notice and
+      does not reflect a commitment on the part of Clark Development Company
+      (CDC).
+
+      CDC provides this document as is, without warranty of any kind, either
+      expressed or implied, including, but not limited to, the particular
+      purpose.  CDC may make improvements and/or changes in this manual or
+      in the product(s) and/or the program described in this manual at any
+      time.
+
+      This product could include technical inaccuracies or typographical
+      errors.  Changes are periodically made to the information herein;
+      these changes may be incorporated in new editions of the publication.
+
+
+                      Clark Development Company, Inc.
+                               PO Box 571365
+                           Murray, UT  84157-1365
+                                801.261.1686
+
+

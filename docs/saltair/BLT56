@@ -1,0 +1,40 @@
+Other Nets
+----------
+   FidoNet technology is used for lots of networks other than FidoNet.
+Over the years there have been many splinter groups which charge off
+to start their own network, either because they have a topic they want
+to explore in more depth, or because they're mad at FidoNet politics.
+There are lots of reasons. When they do this they choose a new zone
+number and make up their own Nodelist and their own set of conferences
+and their own set of rules and bylaws.
+   Here are a few of the Fido-compatible networks: TrekNet is for the
+Starfleet fan club organization. MufoNet is part of the Mutual UFO
+Network. SBBSNet is for the users of Super BBS. SLNet is for users of
+SearchLight software. WorldNet is a FidoNet offshoot which, if memory
+serves, comes out of the remnants of EggNet. There are over a hundred
+Fido-compatible networks out there. You may want to join one of them.
+Somewhere around here is a file of "Other Nets" with contact
+addresses. As a matter of fact, Fido even has an echo conference
+devoted to other nets.
+   You can usually merge the Nodelists from other networks into the
+FidoNet Nodelist via the Nodelist Compiler, if they are done according
+to FidoNet specifications. That way your board can send mail to
+addresses in these other zones. It really depends a lot on the
+software you use. Being "Zone Aware" in FidoNet is a concept that not
+all software handles very well. It will probably take some work on
+your part to handle more than one network smoothly.
+   I'm a member of four supposedly FidoNet compatible networks, but
+only one of them uses its own addressing scheme. All the others use
+FidoNet node numbers to arrange transfer of EchoMail. It's as if I
+have several different "FidoNet" hubs. One just happens to be in
+Colorado, and another in Tennessee.
+   There are also lots of networks that are NOT FidoNet compatible.
+The biggest example is RelayNet International (RIME). These folks do
+not use FidoNet technology. There are no front-end mailers. There are
+no Nodelists. Instead, they operate very much like offline mail
+readers to transfer conference information. Sports Complex is the
+NorthWest Hub for RelayNet, so we have some expertise and lots of
+activity right here in Kitsap County. There's some more information on
+RelayNet at the end of this document.
+   Now, the reason Fido versus non-Fido is important is because it
+might affect the type of software you use to start your BBS.

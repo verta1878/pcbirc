@@ -1,0 +1,59 @@
+SENDING E-MAIL TO OTHER NETWORKS
+ 
+ 
+There are a number of computer networks that are not directly part of the 
+Net, but which are now connected through "gateways" that allow the 
+passing of e-mail.
+ 
+Fidonet 
+-------
+ 
+To send mail to people using a Fidonet BBS, you need the name they use to 
+log onto that system and its "node number.''  Fidonet node numbers or 
+addresses consist of three numbers, in this form: 1:322/190.  The first 
+number tells which of several broad geographic zones the BBS is in (1 
+represents the U.S. and Canada, 2 Europe and Israel, 3 Pacific Asia, 4 
+South America).  The second number represents the BBS's network, while 
+the final number is the BBS's "FidoNode'' number in that network. If your 
+correspondent only gives you two numbers (for example, 322/190), it means 
+the system is in zone 1.   
+
+Now comes the tricky part. You have to reverse the numbers and add to 
+them the letters f, n and z (which stand for "FidoNode,''"network,'' and 
+"zone'). For example, the address above would become 
+ 
+     f190.n322.z1. 
+ 
+Now add "fidonet.org'' at the end, to get f190.n322.z1.fidonet.org. Then 
+add "FirstName.LastName@', to get 
+ 
+     FirstName.LastName@f190.n322.z1.fidonet.org
+ 
+Note the period between the first and last names. Also, some countries 
+now have their own Fidonet "backbone" systems, which might affect 
+addressing.  For example, were the above address in Germany, you would 
+end it with "fido.de" instead of "fidonet.org." 
+     
+Whew! 
+
+The reverse process is totally different. First, the person has to have 
+access to his or her BBS's "net mail" area and know the Fidonet address 
+of his or her local Fidonet/UUCP gateway (often their system operator 
+will know it).  Your Fidonet correspondent should address a net-mail 
+message to UUCP (not your name) in the "to:" field.  In the node-number 
+field, they should type in the node number of the Fidonet/UUCP gateway 
+(if the gateway system is in the same regional network as their system, 
+they need only type the last number, for example, 390 instead of 
+322/390).  Then, the first line of the message has to be your Internet 
+address, followed by a blank line.  After that, the person can write the 
+message and send it.  
+
+Because of the way Fidonet moves mail, it could take a day or two for a 
+message to be delivered in either direction.  Also, because many Fidonet 
+systems are run as hobbies, it is considered good form to ask the gateway 
+sysop's permission if you intend to pass large amounts of mail back and 
+forth. Messages of a commercial nature are strictly forbidden (even if 
+it's something the other person asked for). Also, consider it very likely 
+that somebody other than the recipient will read your messages. 
+ 
+ 

@@ -407,8 +407,28 @@ static void zm_send_cancel(SerPort *sp)
 
 /* ---- Send File via Zmodem ---- */
 
+/*-----------------------------------------------------------------------*/
+/* zm_send_file() — Send a single file via Zmodem batch protocol         */
+/*                                                                         */
+/* Implements the Zmodem sender state machine:                           */
+/*   1. Send ZRQINIT (request receiver to initialize)                    */
+/*   2. Wait for ZRINIT from receiver                                    */
+/*   3. Send ZFILE header with filename, size, timestamp                 */
+/*   4. Wait for ZRPOS (receiver's position — 0 for new, >0 for resume) */
+/*   5. Send file data in ZCRCG subpackets (streaming, no ack per block) */
+/*   6. Send ZEOF when all data sent                                     */
+/*   7. Wait for ZRINIT (receiver ready for next file)                   */
+/*                                                                         */
+/* Block size starts at 8K ("Using Zmodem 8k block size" from binary)    */
+/* and may be reduced on error for noisy lines. CRC-32 is used for      */
+/* data integrity.                                                        */
+/*                                                                         */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
+
 int zm_send_file(SerPort *sp, const char *filepath)
 {
+    qf_log(LOG_DEBUG, "zm_send_file: %s", filepath);
     FILE *f;
     ZmHeader hdr;
     unsigned char block[ZM_BLOCK_SIZE];
@@ -584,8 +604,26 @@ int zm_send_zfin(SerPort *sp)
 
 /* ---- Receive File via Zmodem ---- */
 
+/*-----------------------------------------------------------------------*/
+/* zm_recv_file() — Receive a single file via Zmodem batch protocol      */
+/*                                                                         */
+/* Implements the Zmodem receiver state machine:                         */
+/*   1. Send ZRINIT (we're ready to receive)                             */
+/*   2. Wait for ZFILE header (contains filename, size, timestamp)       */
+/*   3. Send ZRPOS with file offset (0 for new, filesize for resume)    */
+/*   4. Receive data subpackets, write to disk                           */
+/*   5. On ZEOF, verify file size matches                                */
+/*   6. Send ZRINIT to request next file                                 */
+/*                                                                         */
+/* Files are written to inbound_dir. If a partial file exists with the   */
+/* same name, Zmodem resume is attempted ("Attempting resume").          */
+/*                                                                         */
+/* Returns 0 on success (file received), -1 on error or no more files.  */
+/*-----------------------------------------------------------------------*/
+
 int zm_recv_file(SerPort *sp, const char *inbound_dir)
 {
+    qf_log(LOG_DEBUG, "zm_recv_file: inbound=%s", inbound_dir);
     ZmHeader hdr;
     FILE *f = NULL;
     char filepath[520];

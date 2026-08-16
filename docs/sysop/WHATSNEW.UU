@@ -1,0 +1,153 @@
+                    What's new in PCBoard/UUCP 1.20
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  General Info
+  ~~~~~~~~~~~~
+  - PCBoard now supports up to 120 characters for subject lines.  When a
+    person replies to a message online, they are prevented from editing
+    the subject line.  Then, when UUOUT exports the message, it will
+    prefix the subject with "Re: " if it isn't already there and will
+    look up the original message id and copy it to the references header
+    line.
+
+  UUUTIL.EXE
+  ~~~~~~~~~~
+  - Support for FIDO has been removed from this UUCP program and added
+    to PCBFUTIL, a new program included with PCBoard 15.22.
+
+  UUOUT.EXE
+  ~~~~~~~~~
+  - Apologies to those who reported a bug in message-id/references
+    header processing.  I've held fast for a while that it was working.
+    I finally found what I think is the reported problem.  When UUIN
+    imports a message, it takes the message id and stores it in a
+    PCBoard extended header named UMSGID.  Ok so far.  Unfortunately,
+    UUOUT was looking for a MSGID (without the U) extended header.  I
+    believe this is now fixed and references should be working "more"
+    correctly than they were previously.  Again, apologies for not
+    seeing this before.
+
+  - @LIST@ messages are now sent to each user specified and not just
+    once to the (invalid) user @LIST@.  Before anyone asks, it is not
+    possible to get more than 50 characters per address when using
+    @LIST@, so if you need to send mail to an address longer than 50
+    characters you'll have to do it with a separate message.
+
+  UUXFER.EXE
+  ~~~~~~~~~~
+  - Some internal changes that are for the most part transparent.  The
+    only thing that may be noticeable is that the program may use less
+    time under multitasking environments (may, and not a lot) due to
+    improved communications port buffering code.
+
+  - Had several reports of program hangs in the protocol that would
+    prevent UUXFER from timing out and disconnecting if the service
+    provider gets stuck.  Apparently fixed.
+
+  - Had several reports of program hangs with 2K and 4K block sizes.
+    Apparently fixed.
+
+  - NOTE:  Apparently fixed means that we were never able to reliably
+    reproduce the problem in house and as a result, any fixes that
+    appear to fix it haven't been rigorously tested.  However, it
+    "appears" to have fixed the problems experienced by selected test
+    sites.
+
+  UUIN.EXE
+  ~~~~~~~~
+  - Multiple email conferences are now supported in the following manner:
+
+      First, a conference with the internet user name is searched for
+        and used if found (and the message will be forced public to
+        ALL unless it's an email type conference in which case it will
+        be forced private to ALL).
+
+      Second, a conference named "site.email.l" is searched for and used
+        if found (where site is the UUCP Name defined in PCBSetup and l
+        is the first letter of their internet user name from A to Z [if
+        the letter is less than A it will be adjusted up to A, and if
+        greater than Z it will be adjusted down to Z]).
+
+      Third, a conference named "site.email" is searched for and used if
+        found.
+
+      Finally, if none of the above resulted in a successful match, the
+        default email conference defined in PCBSetup is used.
+
+    For example, imagine email comes to site lcars for
+    "david.letterman.topten.lists@lcars.com".  UUIN would try to post
+    the message in the following manner:
+
+      First, a conference named "david.letterman.topten.lists" would be
+        searched for and used if found (and the message will be forced
+        public to ALL).
+
+      Second, if "david.letterman.topten.lists" didn't exist, a
+        conference named "lcars.email.d" would be searched for and used
+        if found.
+
+      Third, if "lcars.email.d" didn't exist, a conference named
+        "lcars.email" would be searched for and used if found.
+
+      Finally, if "lcars.email" didn't exist, the email conference
+        defined in PCBSetup would be used.
+
+    The first lookup is useful for subscribing to a mail list for the
+    entire system.  Merely subscribe under the conference name you wish
+    to use for the mail list.  Set the conference type to 3 for
+    Moderated Newsgroup and set the address of the moderator to the list
+    address, if desired.
+
+    The second lookup is useful for spreading email around multiple
+    conferences based on the user name, keeping the traffic in a single
+    conference to a minimum.
+
+    The third lookup is used to provide a "default" email conference
+    with the same name format as the second lookup.
+
+    The fourth lookup is to provide backward compatibility with earlier
+    versions of UUIN.
+
+  - Added "infobot" support.  Simply add a line like this to your
+    ALIAS.IN file:
+
+      info,%c:\pcb\uucp\info.txt
+
+    And any messages that come to info will be automatically replied to
+    with the file (c:\pcb\uucp\info.txt) specified after the percent
+    sign (%).  Multiple infobots may be set up if desired.
+
+  - Added "auto forward" support.  It's like an alias that goes to a
+    different site.  Add a line like this to your ALIAS.IN file:
+
+      scott.robison,scott.robison@lcars.com
+
+    And define a file named FORWARD.TXT in your Base UUCP directory
+    (similar to the BOUNCE.TXT file).  When a message comes in to
+    scott.robison, it will be forwarded to the address to the right of
+    the comma.  FORWARD.TXT should include information you wish to give
+    to the person receiving the forwarded message, such as instructions
+    on informing contacts of their new address.
+
+  - All headers are imported regardless of the lines specified in
+    HDRKEYS.LST.  However, the lines in HDRKEYS.LST will be hidden.
+    They are stored so that they information contained therein may be
+    accessed later by programs which know how to access it.
+
+  - Added -w switch to UUIN to allow the number of days to hang on to
+    incomplete multipart messages to be specified.  The default is 7 (as
+    now).  To change it, use it like this:
+
+       uuin -s site -w 3
+
+    That command line would only hold onto incomplete mail for 3 days.
+
+  - In conjunction with the -w switch, incomplete messages will now be
+    imported as plain text instead of being thrown away at the end of
+    the wait period to ensure no data loss.
+
+  - Whenever a message is automatically handled by UUIN, the original
+    message will be sent in it's entirety to the recipient of the
+    auto-reply.  This will help them in knowing why they received an
+    auto-reply.
+

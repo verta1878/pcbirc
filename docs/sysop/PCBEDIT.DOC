@@ -1,0 +1,776 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    PCBEdit
+
+                                  Version 1.30
+
+                                Alpha Release 1
+
+                                  16 June 1995
+
+
+
+            Copyright (C) 1994-1995, Clark Development Company, Inc.
+
+                        Clark Development Company, Inc.
+                                P.O. Box 571365
+                             Murray, UT  84157-1365
+
+                             Sales - (800) 356-1686
+                              FAX - (801) 261-8987
+                         Voice Support - (801) 261-1686
+                          BBS Support - (801) 261-8976
+
+                         Written by Scott Dale Robison
+
+
+
+
+
+
+
+
+
+
+                            LICENSE TO USE AGREEMENT
+                            ------------------------
+
+
+Clark Development Company (CDC) grants to the purchaser of PCBoard
+
+Professional Bulletin Board Software (PCBoard) a nonexclusive license to
+
+use PCBEdit.  PCBEdit may only be used by purchasers of PCBoard.
+
+Contact CDC for purchasing information.  The purchaser is licensed to
+
+use PCBEdit according to the same terms and conditions as found in the
+
+PCBoard LICENSE TO USE AGREEMENT located on the software envelope
+
+included with your PCBoard package.
+
+
+If the purchaser transfers ownership of PCBoard to another party, the
+
+right to use PCBEdit is also transferred.
+
+
+PCBEdit is provided at no cost to purchasers of PCBoard.  CDC makes no
+
+warranties of any kind, expressed or implied, with respect to the
+
+quality, performance, accuracy, or fitness of PCBEdit.  CDC assumes no
+
+responsibility for any decisions made or actions taken on the part of
+
+the purchaser because of the use of PCBEdit.  In no event shall CDC, or
+
+any of its representatives, be liable for any loss of profit or damage
+
+arising from the use or inability to use PCBEdit even if CDC or an
+
+authorized agent of CDC has been advised of the possibility of damage.
+
+
+CDC reserves the right to make changes, enhancements, and improvements
+
+to PCBEdit at any time and without notice.
+
+
+
+
+
+
+                                 USING PCBEDIT
+                                 -------------
+
+The documentation for PCBEdit is still under development.  However,
+since you've all been clamoring for it for *SO* long now, we've decided
+to go ahead and make it available for you to use right now, rather than
+forcing you to wait for PCBoard Version 15 to be released.
+
+PCBEdit is not meant to replace programs such as TheDraw (TheSoft
+Programming Services/Ian E. Davis), PCBDraw (Jim Dailey) and TDXL (Fred
+Bertagnolli).  They are still incredibly useful for screen design.
+PCBEdit is designed to allow you to write what we call "information
+intensive" display files (such as NEWS and BLT files), as opposed to
+"display intensive" files (such as WELCOME and BRDM.)
+
+PCBEdit should be installed in your PCB subdirectory (or whereever you
+have installed your PCBoard EXE files.)  It may be set up as an editor
+in PCBoard System Manager (PCBSM) option G (Define Text & Graphics
+Editors.)  Because it deals with @X codes and @ macros, it can be used
+to design all files, eliminating the need for separate graphics display
+files.
+
+PCBEdit is used just as you would use any editor:  PCBEDIT FILENAME.  It
+supports many configuration options which may be specified either on the
+command line, in an environment variable, or in a configuration file.
+(More on this later.)
+
+A couple of notes on getting help.  First, there is a complete reference
+of commands and configuration options available via the Alt-H key when
+editing.  Alt-W goes to an information screen.
+
+
+
+                                STARTING PCBEDIT
+                                ----------------
+
+The PCBEdit command line takes the following format:
+
+    PCBEDIT [/OPTION ...] [FILENAME]
+
+The following are valid /option's:
+
+    /AT                 /ATMAC              /ATX                /BAK
+    /BUZZ               /CATTR              /COLOR              /DIALOGATTR
+    /DIALOGDIRATTR      /DIALOGDRVATTR      /DIALOGFILEATTR     /DIALOGHLATTR
+    /DIALOGOPTATTR      /DOS                /HELPATTR           /HELPHLATTR
+    /IO                 /LLEND              /MACRO              /MATTR
+    /MONO               /NOAT               /NOATX              /NOBAK
+    /NOBUZZ             /NODOS              /NOIO               /NOQUICK
+    /NOSNOW             /QUICK              /RIBATTR            /RIBHLATTR
+    /SET                /SNOW               /STARTATTR          /STATATTR
+    /STATUS             /STRIPG             /TRYNOG             /USEG
+    REM /
+
+Any valid DOS filename may be used.  [Of course, you probably don't want
+to use PCBEdit to edit an EXE or COM file!]  :)
+
+                                STARTUP OPTIONS
+                                ---------------
+
+/AT - /AT
+    Forces PCBEdit to interpret @ macros (and @X codes if /ATX is in
+    effect).  (Default)
+
+/ATMAC - /ATMAC:@MAC@[:TEXT]
+    Replaces the default text (used to preview a file) associated with
+    the specified @ macro with new text.
+        @MAC@ -- the @ macro to modify
+        TEXT -- (optional) the new default text (for preview purposes)
+            to assign to @MAC@; if not specified, reverts to the
+            original default text
+
+/ATX - /ATX
+    If /AT is in effect, forces PCBEdit to interpret @X codes.
+    (Default)
+
+/BAK - /BAK
+    Forces PCBEdit to keep backup files.  (Default)
+
+/BUZZ - /BUZZ
+    Enables a buzzing sound to alert the user to error conditions.
+    (Default)
+
+/CATTR - /CATTR
+    Updates all configurable attributes with default values for a color
+    display adapter.  (Default)
+
+/COLOR - /COLOR
+    Forces PCBEdit to use a color display adapter card.
+
+/DIALOGATTR - /DIALOGATTR:ATTR
+    Changes the default attribute used for the file select dialog
+    screen.
+        ATTR -- the decimal value of the new attribute to use
+
+/DIALOGDIRATTR - /DIALOGDIRATTR:ATTR
+    Changes the default attribute used for displaying directory names on
+    the file select dialog screen.
+        ATTR -- the decimal value of the new attribute to use
+
+/DIALOGDRVATTR - /DIALOGDRVATTR:ATTR
+    Changes the default attribute used for displaying drive letters on
+    the file select dialog screen.
+        ATTR -- the decimal value of the new attribute to use
+
+/DIALOGFILEATTR - /DIALOGFILEATTR:ATTR
+    Changes the default attribute used for displaying file names on the
+    file select dialog screen.
+        ATTR -- the decimal value of the new attribute to use
+
+/DIALOGHLATTR - /DIALOGHLATTR:ATTR
+    Changes the default attribute used for displaying highlighted items
+    on the file select dialog screen.
+        ATTR -- the decimal value of the new attribute to use
+
+/DIALOGOPTATTR - /DIALOGOPTATTR:ATTR
+    Changes the default attribute used for displaying command options on
+    the file select dialog screen.
+        ATTR -- the decimal value of the new attribute to use
+
+/DOS - /DOS
+    Forces PCBEdit to allow shells to DOS.  (Default)
+
+/HELPATTR - /HELPATTR:ATTR
+    Changes the default attribute used for help screens.
+        ATTR -- the decimal value of the new attribute to use
+
+/HELPHLATTR - /HELPHLATTR:ATTR
+    Changes the default attribute used for highlighted portions of
+    help screens.
+        ATTR -- the decimal value of the new attribute to use
+
+/IO - /IO
+    Allows all normal file input/output operations.  (Default)
+
+/LLEND - /LLEND:ASC[;ASC[...]]
+    Specifies a different character sequence to be appended to the last
+    line of a file.  (By default, the last line is written with a
+    carriage return/ line feed appended to it.  With this switch, you
+    can change it to several carriage return/line feed pairs, an end of
+    file character, etc.)
+        ASC -- any valid decimal ASCII code (0 - 255)
+
+/MACRO - /MACRO:FILENAME.EXT
+    Loads the specified macro file.
+        FILENAME.EXT -- a valid DOS filename used to specify the desired
+            macro file
+
+/MATTR - /MATTR
+    Updates all configurable attributes with default values for a
+    monochrome display adapter.
+
+/MONO - /MONO
+    Forces PCBEdit to use a monochrome display adapter card.
+
+/NOAT - /NOAT
+    Forces PCBEdit to not interpret @ macros or @X codes (regardless of
+    whether or not /ATX is in effect).
+
+/NOATX - /NOATX
+    Forces PCBEdit to ignore @X codes and to display all text in the
+    attribute specified via the /STARTATTR option.
+
+/NOBAK - /NOBAK
+    Forces PCBEdit to not keep backup files.
+
+/NOBUZZ - /NOBUZZ
+    Disables the buzzing sound for alerting the user about error
+    conditions.
+
+/NODOS - /NODOS
+    Forces PCBEdit to not allow shells to DOS.
+
+/NOIO - /NOIO
+    Disables the Alt-I, Alt-K and Alt-L functions.  Also disables the
+    ability to specify the filename to save in the Alt-S function.
+
+/NOQUICK - /NOQUICK
+    Displays the welcome screen when PCBEdit starts.
+
+/NOSNOW - /NOSNOW
+    Tells PCBEdit to not test for CGA screen snow.  (Default)
+
+
+
+
+
+
+/NOSS - /NOSS
+    Tells PCBEdit to not strip trailing spaces from lines.
+
+/QUICK - /QUICK
+    Circumvents display of the welcome screen at program start.
+    (Default)
+
+/RIBATTR - /RIBATTR:ATTR
+    Changes the default attribute used for the code ribbon.
+        ATTR -- the decimal value of the new attribute to use
+
+/RIBHLATTR - /RIBHLATTR:ATTR
+    Changes the default attribute used for the high-lighted portion of
+    the code ribbon.
+        ATTR -- the decimal value of the new attribute to use
+
+/SET - /SET:FILENAME.EXT
+    Loads the specified function key character set file.
+        FILENAME.EXT -- a valid DOS filename used to specify the desired
+            function key character set file
+
+/SNOW - /SNOW
+    Tells PCBEdit to test for CGA screen snow.
+
+/SS - /SS
+    Tells PCBEdit to strip trailing spaces from lines.
+
+/STARTATTR - /STARTATTR:ATTR
+    Changes the default attribute used for the edit buffer.
+        ATTR -- the decimal value of the new attribute to use
+
+/STATATTR - /STATATTR:ATTR
+    Changes the default attribute used for the status line.
+        ATTR -- the decimal value of the new attribute to use
+
+/STATUS - /STATUS:TYPE
+    Changes the default status bar type.
+        TYPE -- one of the following:
+            0 = detailed status bar with code ribbon  (Default)
+            1 = function key status bar with code ribbon
+            2 = no status bar or code ribbon
+
+/STRIPG - /STRIPG
+    Always strip the G graphics file specification (if present) prior to
+    attempting a file load.
+
+/TRYNOG - /TRYNOG
+    Strip the G graphics file specification (if present) if a file with
+    the G as part of the filename doesn't exist.
+
+/USEG - /USEG
+    Never automatically strip the G graphics file specification.
+    (Default)
+
+
+
+
+
+
+REM /... - REM /COLOR
+    Removes the startup option temporarily from processing (works with
+    any option that begins with a forward slash [/], including options
+    not currently defined [REM /BOB]).
+
+
+If you need to enter a startup option that with an embedded space,
+surround the entire option with quotes.  Quotes cannot be included in an
+option. For example:
+
+    PCBEDIT "/ATMAC:@USER@:SCOTT ROBISON"
+
+
+
+
+
+
+                           SPECIFYING STARTUP OPTIONS
+                           --------------------------
+
+There are three ways of specifying startup options.  The first is on the
+PCBEdit command line.  For example:
+
+    PCBEDIT /NOQUICK /MACRO:MAIN.MAC /SET:MAIN.SET NEWSG
+
+The second means of specifying startup options is through the PCBEDIT
+environment variable, which you could SET in your AUTOEXEC.BAT file.  An
+example line would look like this:
+
+    SET PCBEDIT=/QUICK "/ATMAC:@USER@:SCOTT ROBISON"
+
+Finally, startup options may be specified in a a configuration file.  It
+is named PCBEDIT.CFG and can be located in the same directory as
+PCBEDIT.EXE or in the current directory.  It can be created with any
+text editor, may have as many lines as necessary, and may have several
+options on one line, as long as all lines are limited to 127 characters
+or less.  Here's an example:
+
+    +----------------------------------------------------------------------+
+    |                                                                      |
+    |  /QUICK /MACRO:MAIN.MAC /SET:MAIN.SET                                |
+    |  "/ATMAC:@USER@:SCOTT ROBISON"  /ATMAC:@FIRSTU@:SCOTT                |
+    |  /ATMAC:@FIRST@:Scott  REM /NOQUICK  /CATTR NEWSG                    |
+    |                                                                      |
+    +----------------------------------------------------------------------+
+
+PCBEdit searches for startup options in the following order:
+PCBEDIT.CFG (first in directory with PCBEdit, then in the current
+directory); PCBEDIT environment variable; PCBEDIT command line.  In this
+way, an option in the PCBEDIT.EXE directory configuration file can be
+overridden by another option later in the same file, in the other
+configuration file, environment variable or command line; an option in
+the current directory configuration file can be overridden by an option
+later in the same file, in the environment variable or on the command
+line, and so on.
+
+
+
+
+
+
+                                 PCBEDIT MACROS
+                                 --------------
+
+Fifteen sets of user-defined macros are supported by PCBoard.  Each set
+consists of ten strings that may be accessed via the F1 - F10 function
+keys. Different sets may be accessed by utilizing the
+Shift-Alt-F1 - Shift-Alt-F10 keys for sets 1 - 10 and the
+Shift-^F1 - Shift-^F5 keys for sets 11 - 15.  The macros may be selected
+from and maintained with the Alt-G key.  Each macro may consist of
+whatever text the user would like.  Additionally, the following special
+sequences are recognized by PCBEdit:
+
+    \XXXX - Backslash followed by 4 hex digits will be converted to a
+            keyboard code and stuffed in the keyboard buffer (Sorry, no
+            list of keyboard codes yet; they will be forthcoming)
+
+    \X    - Stuffs the character following backslash in the keyboard
+            buffer (\\ to stuff a literal backslash)
+
+    \     - By itself at the end of a macro with nothing following it
+            will stuff a literal backslash in the keyboard buffer
+
+    ~X    - Stuffs the lowercase letter X in the keyboard buffer
+
+    ~#    - Stuffs the code for function key F# in the keyboard buffer
+
+    ~     - By itself at the end of a macro with nothing following it
+            will stuff a literal tilde in the keyboard buffer
+
+    #X    - Stuffs the uppercase letter X in the keyboard buffer
+
+    ##    - Stuffs the code for function key Shift-F# in the keyboard
+            buffer
+
+    #     - By itself at the end of a macro with nothing following it
+            will stuff a literal pound sign in the keyboard buffer
+
+    ^X    - Stuffs a control X in the keyboard buffer
+
+    ^#    - Stuffs the code for function key control F# in the keyboard
+            buffer
+
+    ^     - By itself at the end of a macro with nothing following it
+            will stuff a literal carat in the keyboard buffer
+
+    !X    - Stuffs an alt X in the keyboard buffer
+
+    !#    - Stuffs the code for function key alt F# in the keyboard
+            buffer
+
+    !     - By itself at the end of a macro with nothing following it
+            will stuff a literal exclamation point in the keyboard
+            buffer
+
+
+
+
+
+
+							KEYCODE TABLE FOR MACROS
+                            ------------------------
+
+
+   Ctrl-A = ^A   Alt-A = !A   Backspace  = ^H      Backslash         (\) = \\
+   Ctrl-B = ^B   Alt-B = !B   TAB        = ^I      Tilde             (~) = \~
+   Ctrl-C = ^C   Alt-C = !C   Line Feed  = ^J      Pound Sign        (#) = \#
+   Ctrl-D = ^D   Alt-D = !D   ^ENTER     = ^J      Carat             (^) = \^
+   Ctrl-E = ^E   Alt-E = !E   ENTER      = ^M      Exclamation Point (!) = \!
+   Ctrl-F = ^F   Alt-F = !F   ESC        = \001B
+   Ctrl-G = ^G	 Alt-G = !G
+   Ctrl-H = ^H	 Alt-H = !H   Shift-TAB  = \010F
+   Ctrl-I = ^I   Alt-I = !I
+   Ctrl-J = ^J	 Alt-J = !J   INS		 = \0152
+   Ctrl-K = ^K	 Alt-K = !K   DEL		 = \0153
+   Ctrl-L = ^L   Alt-L = !L
+   Ctrl-M = ^M   Alt-M = !M   LEFT       = \014B   Ctrl-LEFT  = \0173
+   Ctrl-N = ^N   Alt-N = !N   RIGHT      = \014D   Ctrl-RIGHT = \0174
+   Ctrl-O = ^O   Alt-O = !O   UP         = \0148
+   Ctrl-P = ^P   Alt-P = !P   DOWN       = \0150
+   Ctrl-Q = ^Q   Alt-Q = !Q   PGUP       = \0149   Ctrl-PGUP  = \0184
+   Ctrl-R = ^R   Alt-R = !R   PGDN       = \0151   Ctrl-PGDN  = \0176
+   Ctrl-S = ^S   Alt-S = !S   HOME       = \0147   Ctrl-HOME  = \0177
+   Ctrl-T = ^T   Alt-T = !T   END        = \014F   Ctrl-END   = \0175
+   Ctrl-U = ^U   Alt-U = !U
+   Ctrl-V = ^V   Alt-V = !V
+   Ctrl-W = ^W   Alt-W = !W
+   Ctrl-X = ^X   Alt-X = !X
+   Ctrl-Y = ^Y   Alt-Y = !Y
+   Ctrl-Z = ^Z   Alt-Z = !Z
+
+
+		 F1  = ~1	  Shift-F1	= #1	 Ctrl-F1  = ^1	   Alt-F1  = !1
+		 F2  = ~2	  Shift-F2	= #2	 Ctrl-F2  = ^2	   Alt-F2  = !2
+		 F3  = ~3	  Shift-F3	= #3	 Ctrl-F3  = ^3	   Alt-F3  = !3
+		 F4  = ~4	  Shift-F4	= #4	 Ctrl-F4  = ^4	   Alt-F4  = !4
+		 F5  = ~5	  Shift-F5	= #5	 Ctrl-F5  = ^5	   Alt-F5  = !5
+		 F6  = ~6	  Shift-F6	= #6	 Ctrl-F6  = ^6	   Alt-F6  = !6
+		 F7  = ~7	  Shift-F7	= #7	 Ctrl-F7  = ^7	   Alt-F7  = !7
+		 F8  = ~8	  Shift-F8	= #8	 Ctrl-F8  = ^8	   Alt-F8  = !8
+		 F9  = ~9	  Shift-F9	= #9	 Ctrl-F9  = ^9	   Alt-F9  = !9
+		 F10 = ~0	  Shift-F10 = #0	 Ctrl-F10 = ^0	   Alt-F10 = !0
+
+
+
+
+
+
+
+                                 @X COLOR CODES
+                                 --------------
+
+    +--------+------------------------------+------------------------------+
+    |        |                              |                              |
+    |  Code  |      Background Meaning      |      Foreground Meaning      |
+    |        |                              |                              |
+    +--------+------------------------------+------------------------------+
+    |        |                              |                              |
+	| 0 ( 0) |	  Black 	  (No Blink)	|		 Black				   |
+    |        |                              |                              |
+	| 1 ( 1) |	  Blue		  (No Blink)	|		 Blue				   |
+    |        |                              |                              |
+	| 2 ( 2) |	  Green 	  (No Blink)	|		 Green				   |
+    |        |                              |                              |
+	| 3 ( 3) |	  Cyan		  (No Blink)	|		 Cyan				   |
+    |        |                              |                              |
+	| 4 ( 4) |	  Red		  (No Blink)	|		 Red				   |
+    |        |                              |                              |
+	| 5 ( 5) |	  Magenta	  (No Blink)	|		 Magenta			   |
+    |        |                              |                              |
+	| 6 ( 6) |	  Brown 	  (No Blink)	|		 Brown				   |
+    |        |                              |                              |
+	| 7 ( 7) |	  Light Grey  (No Blink)	|		 Light Grey 		   |
+    |        |                              |                              |
+	| 8 ( 8) |	  Black 	  (Blink)		|		 Dark Grey			   |
+    |        |                              |                              |
+	| 9 ( 9) |	  Blue		  (Blink)		|		 Light Blue 		   |
+    |        |                              |                              |
+	| A (10) |	  Green 	  (Blink)		|		 Light Green		   |
+    |        |                              |                              |
+	| B (11) |	  Cyan		  (Blink)		|		 Light Cyan 		   |
+    |        |                              |                              |
+	| C (12) |	  Red		  (Blink)		|		 Light Red			   |
+    |        |                              |                              |
+	| D (13) |	  Magenta	  (Blink)		|		 Light Magenta		   |
+    |        |                              |                              |
+	| E (14) |	  Brown 	  (Blink)		|		 Yellow 			   |
+    |        |                              |                              |
+	| F (15) |	  Light Grey  (Blink)		|		 White				   |
+    |        |                              |                              |
+    +--------+------------------------------+------------------------------+
+
+
+@X color codes are implemented in the following format:  @XBF, where the
+B is the background attribute and the F is the foreground attribute,
+both taken from the above table.  In other words, @XCF would be flashing
+white letters on a red background.  There are two exceptions:
+
+
+	@X00 - Save the current attribute
+	@XFF - Recall the last attribute saved with @X00
+
+
+
+
+
+
+
+                           STARTUP OPTION ATTRIBUTES
+						   -------------------------
+
+To calculate the attribute (color code) for a startup option (such as
+/HELPATTR), take the decimal value (in parenthesis) for the desired
+background, multiply it by 16, and add the decimal value (in
+parenthesis) for the desired foreground.
+
+For example, if you wanted to use flashing bright white letters on a red
+background, you would use the following set of calculations:
+
+	(B * 16) + F =
+	((RED w/BLINKING FOREGROUND) * 16) + BRIGHT WHITE =
+	(12 * 16) + 15 =
+	192 + 15 =
+	207
+
+If you wanted to use that for the help attribute, you would include a
+startup option of the following format:
+
+	/HELPATTR:207
+
+
+
+                              SUPPORT FOR PCBEDIT
+                              -------------------
+
+If you have a question about PCBEdit, first read this document
+completely.  If you wish to report a bug in PCBEdit, read the
+HISTORY.TXT document completely.  If you can't find the answer to your
+question or a mention of your bug being fixed, then leave a message to
+SCOTT ROBISON in the BETA conference (6) on the SALT AIR BBS.  Please
+include in the message the wide area beta version number and/or release
+date of the software (found at the top of this document and on the
+information screen (Alt-W key) in PCBEdit).  Depending on the
+circumstances, We may also need to get a copy of the configuration
+and/or display files in use at the time, so keep them handy.  However,
+you will not need to upload them unless requested.  Remember, this is
+*BETA* software.  It is not, nor should it be expected to be perfect.
+Be sure to save your work often, and preferably back it up before you
+attempt to edit it.  While this program has been tested extensively in
+house, you are bound to do something we didn't take into account.
+Please report any problems and we will fix them as quickly as possible.
+
+Summary:
+
+    Use the SALT AIR BBS BETA conference (6) for PCBEdit reports.
+    Leave them to SCOTT ROBISON.
+    Tell him what version/beta release you are using.
+    Be prepared to supply him with samples of configuration and/or
+        display files.
+    Be patient!  :)
+
+
+
+
+
+
+                          ANSWERS TO COMMON QUESTIONS
+                          ---------------------------
+
+Q:  The Alt-O optimize function doesn't seem to work.  What's wrong?
+
+A:  It is being worked on.  We haven't experienced it removing necessary
+    codes; it just won't always remove unnecessary codes (which is it's
+    function).  It will never be perfect; there are too many potential
+    cases for it to reliably take into account.  However, it will
+    improve with time.  If you feel you have a case that is OBVIOUSLY
+    incorrect, upload the display file to SALT AIR and leave a message
+    to SCOTT ROBISON to take a look at it with the PCBEdit Alt-O
+    command.
+
+
+Q:  PCBEdit saves files with a carriage return/line feed after the last
+    line, but I need an end of file character after the last line. Is
+    there a way to accomplish this?
+
+A:  There are a couple of ways to do this.  One is to position yourself
+    at the end of the last line just before saving it and hit ^Z or
+    Alt-26 (the EOF character).  Another option, if you want it to save
+    that way everytime you save the file, is to use the /LLEND option to
+    change the last line ending sequence of characters.  /LLEND:26 will
+    save an EOF after the last line instead of a CR-LF.
+
+
+Q:  When I change background colors and type spaces all the way to the
+    end of the line it displays as expected.  But sometimes if I move
+    the cursor off of that line (and always after a save and reload of
+    the same file) it background color no longer appears across the
+    entire line.  What happened?
+
+A:  The effect you desire is automatic when using screen oriented
+    editors (such as TheDraw and PCBDraw) because the save the entire
+    screen (80X25), and that's why you can only edit that size of
+    display with those programs. However, since PCBEdit functions more
+    as a text editor instead of a screen editor, it attempts to optimize
+    the output of the file before saving by stripping trailing spaces
+    before writing the file to disk.  This is easily avoided by simply
+    including a color change at the end of the line back to the original
+    background color.  For example, to include a blue bar on a line
+    (with nothing else) on a line, you could type in something like
+    this:
+
+        @X00@X1F     @XFF
+
+    Since the @XFF appears after the spaces, the spaces are treated as
+    significant and are saved with the file.  Since the @XFF only
+    performs a color change, nothing textual is displayed after the
+    spaces, giving you the desired effect.  Additionally, if you wish to
+    have the color change affect the rest of the current line you could
+    use an @CLREOL@ macro to change the color of the line.
+
+
+
+
+
+
+                          ANSWERS TO COMMON QUESTIONS
+                          ---------------------------
+
+Q:  I prefer the status bar format from TheDraw and PCBDraw.  Is there
+    any way to implement this?
+
+A:  It's been there since the original release!  You can use the Alt-T
+    key to toggle status line types between the default one, one that
+    appears more like the TheDraw/PCBDraw status line, or no status line
+    at all.  Or you can use the /STATUS configuration option to select
+    which one you want by default (/STATUS syntax and options are
+    documented above).
+
+
+Q:  If I mark a block to change the color or delete, it also removes the
+    color codes and non-displayable macros to the left and right of the
+    block.  Why does this happen and is there a way around it?
+
+A:  There are three block types:  block, line and character.  Line and
+    character are straight forward; they mark a range from the beginning
+    to the end and everything in-between without including any extra.  A
+    true block (any rectangular region) is a different beast though.  In
+    PCBoard display files, one physical character in the document does
+    not necessarily equal one displayable character.  For example, @QON@
+    does absolutely nothing to the display, but instructs PCBoard to do
+    something.  Alternatively, @BOARDNAME@ can potentially be much
+    longer than the physical 11 characters it occupies.  PCBEdit needs
+    to take these cases (and others) into account in a true rectangular
+    block so that it can line up correctly on the left and right sides
+    of the block.  The only way around it is to select a line or
+    character block instead of a true rectangular screen block.  Make
+    sense?  No?  Don't worry about it, just remember that L and C blocks
+    are handled differently than B blocks.
+
+
+
+
+
+
+                          NEW FEATURES IN VERSION 1.10
+                          ----------------------------
+
+    The following new macros from PCBoard Version 15.1 are supported in
+    PCBEdit Version 1.10:
+
+        @ALIAS@     @BYTECREDIT@    @DIRNAME@       @DIRNUM@
+        @ENV@       @FBYTES@        @FFILES@        @FILECREDIT@
+        @FNUM@      @LOGDATE@       @LOGTIME@       @MAXBYTES@
+        @MAXFILES@  @NOCHAR@        @NUMCONF@       @PWXDATE@
+        @PWXDAYS@   @RATIOBYTES@    @RATIOFILES@    @YESCHAR@
+
+    Note especially the new @ENV@ macro.  The exact syntax for it's use is:
+
+        @ENV=VAR@
+
+    Where VAR is the name of an environment variable.  The actual
+    environment variable should named @VAR@ (it should be surrounded with
+    @ symbols).
+
+    All of these new @ macros support field width and justification
+    specifiers.  In other words, @ALIAS@, @ALIAS:50@, and @ALIAS:50C@ are
+    all valid @ macros.
+
+
+
+
+
+
+                          NEW FEATURES IN VERSION 1.20
+                          ----------------------------
+
+    The following new macros from PCBoard Version 15.2 are supported in
+    PCBEdit Version 1.20:
+
+        @CREDLEFT@  @CREDNOW@       @CREDSTART@     @CREDUSED@
+        @XOFF@      @XON@
+
+    It also includes one macro inadvertently left out of v1.10 from
+    PCBoard Version 1.10:
+
+        @REAL@
+

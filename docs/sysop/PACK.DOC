@@ -1,0 +1,11 @@
+                              PCBPACK.EXE
+                    Copyright 1995 Clark Development
+                          All Rights Reserved
+
+This utility is written for PCBoard 15.21 to pack the FIDO configuration
+file PCBFIDO.CFG.
+
+To use this program, place it in a directory which contains a copy of
+PCBOARD.DAT. Make sure you make a backup copy of PCBFIDO.CFG. Then type PACKFIDO.
+As records are packed out of the file. it will be noted on the screen.
+

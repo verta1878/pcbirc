@@ -1,0 +1,215 @@
+What is The Nodelist?
+=====================
+   The "Nodelist" is a very large file which consists of one line for
+each FidoNet Node in the world. As of this writing it is about 700K
+compressed. An un-compressed Nodelist and its various indexes can take
+two or three megabytes easily, depending on the variety of indexes you
+create. Currently the Nodelist contains about 19,000 Nodes (November,
+1992). It has been doubling every eighteen months. That means you'd
+better have some serious disk space handy.
+   The Nodelist is like a phone book. It is the basic way you
+communicate with other FidoNet boards. Your software will allow you to
+write messages to these boards using your FidoNet address. The
+Nodelist will contain all the pertinent information on your board:
+Address, name of your BBS, your name, your phone number, the speed of
+your modem, and various codes (called "flags") which denote how your
+board operates.
+   The Nodelist is arranged by Network. All the Network 350 Nodes are
+listed together. Networks are listed more or less geographically by
+region. And zones, of course, list their segments together.
+   Every week your NC sends Nodelist updates to his Regional
+Coordinator, who then sends the Regional updates to the Zone
+Coordinator. These segments are then combined into the weekly
+Nodelist. The changes are made available in the Nodediff files, which
+then trickle back the other way to each Node in the system. Obviously,
+everything in this scenario must happen ON TIME or the changes will
+not be reflected in the Nodediff files.
+   The obvious problem with the Nodelist is its increasing size. There
+are Zone-specific Nodelists available, though we don't run with such
+lists in Net 350. There will come a time when the Nodelist gets so
+unwieldy that we'll probably have to change the way this whole thing
+works. It won't be the first time. The first Nodelist was restricted
+to 256 Nodes, total. That was before there were regions, zones, or
+even networks.
+   The Nodelist would take you almost an hour to download at 2400
+baud. You have to have one before you can do much of anything with
+FidoNet. Perhaps you can find a kind soul who will run a disk off for
+you and mail it to you. I've been known to do that sometimes, if
+someone sends me a formatted disk and a return disk mailer, complete
+with an address affixed to it along with sufficient stamps. In other
+words, all I have to do is copy the Nodelist onto your disk and throw
+it in the mail. And, no, I don't care what kind of disk it is.
+   Or perhaps this one point alone is enough to convince you of a 9600
+bps modem. With an HST or v32bis connection you can download a
+Nodelist in about eight minutes. Quite a difference when you can
+travel at 14.4!
+   Here's an (old) example of the Network 350 portion of the Nodelist
+just to give you an idea of what it looks like. Multiply this segment
+by about a thousand and you get an idea of the size of the Nodelist in
+real life.
+   
+Host,350,Kitsap_Peninsula_Gateway,Silverdale_WA,Jim_Barth,1-206-698-1044,9600,XA
+,10,Ground_Zero,Bremerton_WA,George_Bargmeyer,1-206-377-0907,9600,XW,CM,HST
+,21,The_Jimby_BBS,Brownsville_WA,Jim_Barth,1-206-698-1044,9600,XA,CM,HST,V32,V42
+,24,My_Electronic_Dungeon,Bremerton_WA,Bill_Hippe,1-206-830-9319,9600,XA,CM,HST,
+,30,Cloud's_Corner,Bremerton_WA,Larry_Cloud,1-206-377-4290,9600,XA,CM,HST,V32,V4
+,31,Kitt's_Korner_BBS,Bremerton_WA,Keith_Kittlesen,1-206-698-0515,9600,XA,CM
+,32,USS_Enterprise,Bremerton_WA,Keith_Thibodeaux,1-206-377-3170,9600,XA,CM
+,33,The_Pyramid_BBS,Bremerton_WA,Al_Tuttle,1-206-373-5749,9600,XA,CM,V32,V32,V42
+,34,Full_Armor_of_God_Node_1,Silverdale_WA,Joel_Wingert,1-206-698-7308,9600,XA,C
+,40,The_Monitor_BBS,Bremerton_WA,Brad_Boyce,1-206-830-5338,9600,XA,CM,V32
+,50,Magnetic_North,Kingston_WA,Paul_Wolfe,1-206-297-4567,9600,XA,CM,V32,V42b
+,75,Molokai_Express,Silverdale_WA,Michael_Wenman,1-206-698-7019,9600,XA,CM,V32
+,77,The_ARMOR_OF_GOD_bbs_Node_2,Port_Orchard_WA,John_Christopher,1-206-871-9241,
+,201,Quicksilver,Bainbridge_Is_WA,Michael_Schuyler,1-206-780-2011,9600,XA,CM,HST,V32,V42B
+,301,The_Metal_Shop,Belfair_WA,Gene_Thompson,1-206-275-5063,9600,XA,CM,V32
+,401,Ten_Forward,Port_Angeles_WA,Sheldon_Koehler,1-206-452-7681,9600,XX,CM,HST
+
+   You'll notice the first entry is the Host of Network 350. It has a
+Node address of 00 (even though it doesn't say so). This has its own
+name, but is the same number as Node 21. Yes, they are the same
+person. Jim is the NC, the Host of 350. But his board is also online
+for other people, so it gets a separate listing. You can send mail to
+Jim either to his HOST address, or to his NODE address. It will still
+get to him just fine. I always use the Node address myself.
+   HUB entries also get an extra listing and number by virtue of their
+extra responsibilities. Sometimes it looks like the Nodelist is full
+of lots of duplicate entries, but overall that's not really true. Your
+Nodelist compiler will probably report to you how many individual
+Nodes there really are in FidoNet. The duplicate entries are a small
+portion of the total.
+   Other things to notice? There are no spaces. Underscores substitute
+for them. And there are flags at the end of each line. "CM," for
+example, means "Continuous Mail," a board that can accept NetMail 24
+hours a day. Most flags have to do with modem types. V32 means a
+standard 9600 baud connection can be made with this modem. HST means,
+of course, that the Sysop is running some sort of US Robotics HST
+modem (There are at least three varieties these days.)
+   You don't have to worry about any of this. The NC will fill out
+your listing depending on the information you have given him. But it
+is this raw data that is used by your BBS software and your mailer
+software to actually make outgoing calls from your board.
+   
+The Nodediff files
+------------------
+   The "Nodediff" files are smaller weekly updates to the Nodelist
+made available by your Network Coordinator. They erase Nodes which
+have left FidoNet, and add new ones. They contain the weekly changes.
+   Every time you receive a NODEDIFF file, you must merge it into your
+existing Nodelist file. Because of internal error checking, you can't
+skip any Nodediff files when you "recompile" your Nodelist. They must
+be done in order. This is your responsibility.
+   You perform this task by using a NODELIST COMPILER, a special
+program designed for this purpose. A few of the names out there are:
+XlaxNode, Parselst, QNode, or FDNC. Each of these compilers can be
+used under different circumstances, and it may depend on which
+"mailer" you choose to run which compiler you will use.
+   Both d'Bridge and Front Door come with their own compilers. It's
+just part of the package. Binkley doesn't, so you have to go hunt one
+up.
+   The compiler not only merges the NODEDIFF into the NODELIST, it
+also sets up lots of other information from the list. For example, it
+writes all the various indexes you may need to use the Nodelist
+effectively. It also sets up "cost tables" to help your BBS software
+determine how much it will cost you to make a long distance call. You
+input your local exchange numbers, and everything else is long
+distance! You may also set up password files through this Nodelist
+compiler. This may be necessary when connecting to your hub to ensure
+no one else calls and gets your mail.
+   A key point: You may need TWO programs, depending on what compiler
+you use, because there are TWO tasks to perform. The FIRST task is to
+merge the Nodediff into the Nodelist. All the updates are moved into
+the new Nodelist, which is renamed to a larger Julian date. For
+example, NODEDIFF.290 is merged with NODELIST.283 to form
+NODELIST.290, seven days later. The new nodelist is a human-readable
+file.
+   The SECOND task is to actually compile the NEW Nodelist, and
+perhaps automatically erase the old one. This part of the process is
+what writes the indexes so your mailer will work. It may write
+different indexes depending on your mailer and your BBS software.
+QuickBBS needs a different set of indexes than Maximus.
+   Nodediff files arrive in compressed format, usually ARC or ZIP, and
+are named by Julian Date, that is: The first day of the year is number
+1; the last day is number 365. So a Nodediff file for the 91st day of
+the year would be named NODEDIFF.091. It would arrive at your board as
+NODEDIFF.A91. The "A" means it is in "ARC" format. If it were named
+NODEDIFF.Z91, you'd know it was in PKZIP format. You just un-arc (or
+un-zip) it, then run your Nodelist compiler.
+   Nodediff files are used for one obvious reason: They are only 50K
+or so in length and take no time at all to download. It's a whole lot
+easier than trying to download a new Nodelist every week. Currently,
+Nodediff files are published on Saturdays. They should be made
+available as soon thereafter as is practical, but may depend on proper
+"feeds" being in place for your Host to get them.
+   But...Doodoo happens! USUALLY you can expect a Nodediff the same
+time every week. Robot software takes care of it automatically. As
+long as its consistent, no one notices. But sometimes there is a major
+feed problem at a Regional level. Computers break, after all, and the
+computers used for regional feeds are usually big ones with expensive
+hard disks. You don't just plug in a replacement 500MB drive. There
+are secondary feeds available just in case this kind of thing happens,
+but they may take a little while to get going. A burp is likely to be
+felt throughout the system.
+   Recently we had a Nodediff come through with a single character
+flaw caused by two programs treating a carriage return, line feed
+combination differently. This particular circumstance had never
+happened before. It was a very obscure and rare incompatibility--not
+even a bug, legally. It wasn't noticed until the deed was done. Some
+Nodelist Compilers didn't care. Others did. The result was a flawed
+Nodelist that didn't make itself apparent until the NEXT Nodediff
+showed up the following week, at which point all hell broke loose all
+over FidoNet. Nearly every Sysop had to import a COMPLETE new Nodelist
+and start over. We had a couple of weeks of disarray there. It caused
+a lot of problems. That particular flaw will NEVER happen again! It
+upset 19,000 people (mostly fairly aggressive males) all at once. I'm
+glad I wasn't responsible! That's not the kind of attention you want
+to draw on yourself.
+   So plan on problems.
+   The most important thing to remember about NODEDIFF files is that
+they MUST BE USED and merged into your Nodelist in sequential order.
+You can NEVER SKIP a Nodediff. If you do, the checking values will
+never be right, and you'll have to start over with a newer Nodelist.
+Since this thing is so huge, you don't really want to do that if you
+can help it.
+   EXCEPT when you're first starting up a board you'll be doing a lot
+of experimenting. The Nodediff compiling is just one more hassle to
+worry about. Therefore my suggestion, particularly if you have a fast
+modem, is to get yourself a Nodelist one time and not worry about
+updating it initially. Maybe get a couple of Nodediff files to merge
+into it, but don't use excess energy worrying about it. Your task at
+that point is to make the rest of the board work. The older Nodelist
+will work just fine for experimentation. Not all boards will suddenly
+change telephone numbers. That's the only reason you need new ones, to
+take care of the changes and keep the list up to date.
+   When everything works right and you are ready to get serious, THEN
+get another full Nodelist and start updating it weekly, on time.
+That's when you have to start paying attention. But by that time,
+you're board may be on auto-pilot anyway, particularly in reference to
+the Nodelist compiling, which can easily be done by a batch file.
+   
+Nodelist Summary to Further Confuse the Issue
+---------------------------------------------
+   The Nodelist is used as a phone book for your mailer. Since the
+mailer is your interface to FidoLand, this is important. But you also
+have a BBS. As we stated above, the mailer and the BBS can be entirely
+different. You can use any of the three popular mailers with any of
+the BBS programs.
+   When you actually send out NetMail, you do so from within your BBS,
+usually, though some mailers allow you to "do it" there as well. If
+you send mail from within the BBS, that software must also know about
+the nodelist. And it will usually do it through a separate set of
+indexes from your mailer. Your BBS software may also have "cost
+tables" so it can deduct money from users' accounts when they use
+NetMail. This is all set up either by your nodelist compiler itself
+when you tell it to produce indexes for the BBS software, or sometimes
+through a separate nodelist compiler for the BBS software.
+   THIS MEANS that you may wind up with more than one set of indexes.
+You will have the RAW NODELIST which is what you start with. You'll
+have the compiled nodelist for your MAILER program. AND you may have a
+compiled nodelist for your BBS software.
+   This is no big deal, really. It can be a little confusing because
+sometimes you have to do this compile-thing twice. But once you set it
+up it's on autopilot anyway, so you don't have to worry about the
+complication. Just remember: The Mailer is SEPARATE from the BBS. That
+little fact has consequences.
+

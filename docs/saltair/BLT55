@@ -1,0 +1,266 @@
+What is NetMail?
+================
+   NetMail IS FidoNet. NetMail is why FidoNet was started in the first
+place. The whole idea was to send messages back and forth, in the dead
+of night, from one computer to another. At Midnight the telephone
+costs are at their cheapest. Even with slow modems you can transmit a
+fair sized letter in less than a minute. At AT&T Reach Out America
+rates, that's less than twelve cents. Compare that to a postage stamp,
+the cost of envelopes and paper, and a trip to the Post Office. Of
+course, you don't have to have a thousand dollar computer to mail a
+letter, but the idea is you already have one anyway, so why not put it
+to good use?
+   Because every FidoNet BBS has an address, you can send NetMail
+directly to that board. Your BBS calls another BBS long distance,
+transmits the mail packet, and hangs up. Neat, fast, easy! Your
+electronic letter is just like a real one. It is to a specific person,
+and only that person will probably see it. Because NetMail was
+developed by Sysops for Sysops, most senders of NetMail are Sysops
+anyway.
+   NetMail can be made available to users of your BBS. That's your
+choice. You'll probably want to charge them for it, at least a few
+cents, because they are using your telephone number to make a long
+distance call. That's all between you and your users. No one else
+cares all that much how you spend your money. But it is like a
+stranger walking into your house, picking up the telephone, and making
+a long distance call. BBS systems that are "Fido aware" allow you to
+give credit to your users in their own accounts. When they enter a
+NetMail message, the BBS software deducts the cost of the call, as set
+up in a cost table for that purpose. In these cases you would normally
+charge your users a couple of dollars in advance, then ask for
+additional dollars when the account was depleted. If you run a
+subscription board, you may give your users a certain amount of
+NetMail credits as part of their purchase.
+   Let's take a moment to cover this possibility. Let's say you wanted
+to allow your users access to NetMail. Why would they want to? How
+would you do it?
+   A user might want to send NetMail to a regular correspondent
+somewhere else. That person would need to have access to NetMail on
+the board he called. So a couple of logistical details would have to
+be worked out in advance. If your correspondent were in Boston, you
+would have to find the FidoNet address of the board in Boston (as
+opposed to the banned in Boston. Ouch!) and make sure your local user
+understood how to enter the correct address in his letters. The Boston
+correspondent would have to make similar arrangements with the board
+he called. All this is perfectly possible to set up, at your
+discretion.
+   So what are the characteristics of NetMail? It is sent DIRECTLY
+from one board to another using the FidoNet addressing scheme. It is
+usually a private message from one person to another. It is a long
+distance call, usually, done late at night to take advantage of cheap
+rates. That's NetMail.
+   
+What is EchoMail?
+=================
+   It's NetMail with a few differences. The technology is (pretty
+much) the same. But this time your messages are related to a single
+subject and placed in a subject-message area on your BBS along with
+lots of other people's messages. All the messages on this subject are
+then bundled up and sent out of your BBS to a HUB which bundles your
+messages with others entered on other BBS systems in the area and re-
+transmits all these messages to another HUB, which then reverses the
+process.
+   Eventually all the messages on a given topic are transmitted
+(echoed) to ALL the BBS systems that carry this topic on their own
+boards. Someone on one of those other BBS systems may choose to answer
+your message. Eventually you, and every other BBS, will receive this
+answer. Although it may be addressed to you, everyone else will see
+it. These messages are public (not private) and they are seen by
+everyone. This is sort of like extending a conversation on a given
+topic all across the world so everyone can participate, a huge party
+line.
+   In this case you probably would not charge your users for entering
+messages. The only practical way to do that would be to charge a
+subscription fee for access to the EchoMail areas of your board.
+EchoMail will cost you money to haul in, though usually not a lot. But
+your users probably won't pay for that. That's one of your many
+contributions to being a FidoNet Sysop.
+   There is some compensation in that most EchoMail conferences allow
+PUBLIC messages only, not private ones. And this is something you can
+force on your board. That means your users will not be able to send
+private mail through the echoes. The idea is that everyone benefits
+from postings, even though they may be addressed to an individual.
+   You will find that the "signal to noise ratio" on some conferences
+is higher than others. Some are designed for "chatting" rather than
+substance. But even the most strictly managed conferences can have
+quite a lot of noise for every bit of hard information gleaned from
+the postings.
+   EchoMail forms the bulk of activity in FidoNet. Since it's
+invention it has eclipsed NetMail by magnitudes! In fact, it is
+impossible to know how many EchoMail areas exist on FidoNet. There are
+several sources:
+   
+Backbone
+--------
+   The "BackBone" is a series of approximately 500 echo conferences
+that are carried all over North America. Other zones have their own
+backbones, and some of the echoes are "gated" between zones so they
+appear all over. Most of the busy message areas are backbone echoes.
+The file that lists these echoes is usually called FIDONET.NA (North
+America). We can USUALLY get backbone echoes into this Network through
+the normal feed system. Sometimes we can't, but it is fair to say that
+by far the largest majority of backbone conferences (echoes: same
+thing) are available.
+   To be on the "backbone" is a bit of an undertaking. The echo must
+first be on the "E-List," an official list of conferences with all the
+relevant information. You have to send information on a new echo in a
+specific format compatible with the E-list robot software, yet
+something else to learn. Secondly, it must be requested by at least
+two Regional Coordinators. That means some lobbying to convince them
+the echo is important. Then, as slots become available, and echo may
+be listed on the backbone and carried all over the country. Backbone
+echoes tend to have a lot of traffic. They're busy.
+   If you ever get to the point where you want to start your own Echo,
+we can talk more about that. At this point the task is to get an echo,
+not start one up.
+   Important Point! The E-List is NOT just a list of Backbone echoes.
+It's a list of any old echoes someone wants to put into the E-List and
+keep updated every six months (or they get dropped). That's all.
+Backbone echoes MUST be in the E-List, but E-List echoes aren't all on
+the Backbone! One of the reasons the E-List is important is because it
+holds the name of the official Moderator of the conference, and you
+can only change the Moderator name if you know the password.
+   
+The Moderator
+-------------
+   The Moderator is a key concept with echo conferences. Basically the
+Moderator "owns" the conference and is the only one that knows the E-
+List password. He or she can make up any rules he or she wants to with
+reference to behavior on echoes. Most moderators have a standard suite
+of rules: No swearing, no flaming. Be nice, stay on topic, etc. But
+some may be more stringent than that.
+   The "on topic" rule is particularly important. "On topic" means
+what the moderator says it means. As a general rule it means you talk
+about dogs on the dog conference and talk about cats on the cat
+conference. If you don't, the moderator will step in and correct you.
+But he could also rule that Pomeranians were off-topic in the dog
+echo. And no matter how much you wanted to talk about Pomeranians, you
+can't do it on the dog echo.
+   Not long ago "Cyberpunk" science fiction was ruled off-topic in the
+Science Fiction Echo. Religion was ruled off topic in the UFO echo, as
+was Faster-than-light travel. Why? Mostly because these topics caused
+so much hate and discontent that the echoes became overwhelmed in
+controversy. It's the moderator's job to keep the echo functioning.
+   If you seek controversy, there are echoes for that purpose. In
+FLAME, for example, there are no rules. Enter that arena with your
+swords drawn and have at it. That's its purpose.
+   One more thing: The Moderator can cut your access to an echo. If he
+doesn't like your messages, you can be barred from a conference,
+period, though this is very rare. The Moderator may warn you directly,
+via NetMail what the problem is and ask you to stop. Or the Moderator
+may tell you to stop on the echo itself. Or the Moderator will write
+to your NC and ask to have your access cut to an echo.
+   The person barred can be a user of your BBS. In which case, you get
+to cut access to this person. That's only happened one time in a year
+in Network 350. If you don't and the behavior continues, the Moderator
+will ask to have the BBS feed cut. If your NC doesn't cut you off then
+HIS feed can be cut, and so on down the line. HUBS will pretty much
+follow Moderator request on this issue, since their feeds are at stake
+and they may have several nodes carrying a given conference. Why
+should they get a feed cut to several nodes just because of one
+problem node?
+   USUALLY people are barred from an echo for perfectly legitimate
+reasons. They are being unreasonable and causing a problem. We've all
+had problems with users from time to time. It's the same thing on a
+national scale.
+   Here's another example. On an echo I frequent a Canadian posted a
+message critical of the US Government and Americans in particular. It
+was an unwarranted attack. Someone responded about the Canucks and
+told them to go hunt moose. Another Canadian saw THAT message and
+became rightly outraged. He didn't see the ORIGINAL message which
+started it all. You can see what was about to happen. So the Moderator
+stepped in and said "No cross-border talk, period." That ended the
+controversy. Thank goodness.
+   But sometimes someone may be barred for no good reason at all.
+Someone doesn't like the rules and questions them, or there is a
+severe difference of opinion. Or someone dominates the echo to the
+point where other people are shouted down. Is this fair? No. Do you
+have recourse? No. Does it happen often? No. Do you need to concern
+yourself with this? No.
+   Just be aware that the Moderator rules. He chooses his own
+successor. If you can't live with that, start your own echo. Make it
+popular. Get it on the backbone. That's how all the echoes started.
+   
+   This Moderator thing causes a lot of problems with some people.
+(They live in a democracy and they have free speech rights, and,
+and....). FidoNet Sysops tend to be aggressive individualists rather
+than cooperative peacemakers. That's true; it's the nature of the
+beast. So we like to think no one can tell us what to do. That's a
+very American point of view, too, isn't it?
+   If you've participated in Echo Mail conferences before, you know
+what it's like out there. To put it bluntly: The signal to noise ratio
+is very high. You get a lot of noise for every useful piece of
+information you can glean from a conference. A lot of people are
+pretty impressed with themselves, at the expense of everyone else. You
+have to endure to gain in this situation.
+   The Moderator's job is really to get the signal to noise ratio as
+low as possible, so that useful information gets transmitted, not just
+someone's unruly opinions. It's sort of like being in a big party and
+having someone continually remind us to keep the noise level down.
+   FidoNet Sysops pretty quickly develop a low tolerance for junk on
+echoes. The reason is simple: It costs real money to cart messages
+around. If we all cut our verbiage by 20%, the cost of transmitting
+echo mail would drop 20%.
+   Now: One additional problem. Lots of people seem to feel moderators
+*censor* messages. That isn't true at all. If you stop and think about
+it, it is technologically impossible anyway. If you are participating
+in an echo conference, your message enters the "echo stream" through
+your hub. So do everyone else's. So do the Moderator's. The Moderator
+can certainly react to an existing message, but he can't control the
+flow of traffic. Anyone who suggests otherwise isn't being very
+intelligent about this issue. I've seen people suggest this in
+conferences, and the hoots of derisive laughter are overwhelming in
+response.
+   So although we all tend to get our backs up at the mention of the
+control of Moderators, the only people who really have a problem on
+echoes are those people who are basically impolite. So if you stay on
+topic in a conference and contribute meaningfully, you'll earn the
+gratitude of the Moderator, and the rest of the participants as well.
+It would be a shame if you decided not to participate in FidoNet just
+because you heard there is a problem with "moderators who play God."
+Such behavior is no more or less prevalent than any other area of
+life.
+   
+Regional
+--------
+   We were originally talking about the sources of echo traffic here.
+We were talking about the "backbone" before we got sidetracked by
+Moderators. Back on topic: Another source of conferences is Regional
+Echoes. Our Region is 17. I think it is the largest. It covers the
+Northwest as well as Western Canada. Personally, I like it that way. I
+don't want the Region to split at the border. I enjoy and look forward
+to the Canadian perspective on our local issues. Economically we have
+lots more in common with Western Canada than either of us do to the
+East Coast.
+   RGN17 is a Regional Echo that covers regional topics. There are
+also quite a few "PNW" (Pacific Northwest) conferences on various
+topics available. It's another source of fairly wide-ranging
+conferences.
+   Frequently new conferences are offered to a Region before they "go
+national." A new echo on the Supra v.32/fax modem was just started by
+a fellow in Vancouver, B.C. Although now those interested call him
+directly, I predict this will soon be a Regional Echo available to us
+locally. If it takes off, it will probably make it to the backbone
+eventually.
+   
+Local
+-----
+   We have a couple of local conferences: BREM-AIRE is for everyone.
+CHAFF is for Sysops only. This is where we keep in touch with each
+other. We could start additional echoes on any topic we wanted. This
+is a local Net decision. It might be a nice way to "test the waters"
+for an echo concept in preparation for launching it regionally or
+nationwide.
+   It's easy to get carried away with echo ideas, but the bottom line
+of these ideas is participation. That's the ultimate test. There are
+quite a few "local" echoes around the county, mostly outside of
+FidoNet. They get very little participation. I try to keep tabs on
+some of them because I keep the BBS list for the county. I use an
+offline mail reader for this, and week after week after week there are
+zero new messages. Just having a slot for messages doesn't mean
+anyone's going to fill it.
+   Probably the best way to start an "echo" is to start a local
+conference on your own BBS. If participation builds at that level,
+talk about the possibility of carrying the conference with other
+FidoNet Sysops locally. If a few of them take it on, you can begin
+promoting it outside the local net to the region.

@@ -1,0 +1,71 @@
+ Running PPEs on your system
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    What to do in case of Unable to Allocate Memory problems for PPEs
+    -----------------------------------------------------------------
+    Because of added memory requirements, some people may experience
+    problems running out of memory when running PPE's, especially
+    DESQview users where memory may already be tight.
+
+    There are a couple of approaches to solving this problem.  The
+    following outlines a few of them.  You may only need one of the
+    solutions mentioned below, or you may need a combination of them or
+    others.
+
+    1) Reduce PCBoard's memory consumption.  You can do this by turning
+       off the Pre-load PCBTEXT and Pre-load CNAMES options in PCBSetup |
+       Configuration Options | Switches.  You can also reduce memory
+       consumption during local logins by reducing the size of the
+       scrollback buffer.
+
+    2) Increase conventional memory availability.  Many memory managers
+       allow usage of VGA memory when not in VGA mode.  For example,
+       using QEMM you can add the following to your CONFIG.SYS file...
+
+   DEVICE=C:\QEMM\QEMM386.SYS I=A000-B7FF  (plus any additional parameters)
+                              ^^^^^^^^^^^
+       This will add up to 96K of conventional memory to your system.  The
+       drawback to this change is that you will no longer have EGA/VGA
+       graphics capabilities.  Therefore, this change is only useful
+       for multitasking environments such as DESQview which operate in
+       text mode.
+
+    3) If you are using DESQview, you can sometimes get more memory by
+       NOT using DOS=HIGH in your CONFIG.SYS.  Rarely, you can get more
+       *by* using DOS=HIGH. It is best to experiment both with and
+       without and open up a DESQview window after each test to see how
+       much memory is really free.
+
+    4) You can adjust the amount of free memory even more by reducing the
+       "DOS Buffers for EMS" and the "Shared Memory" settings found in
+       the DV Setup program.  However, these changes should be a last
+       resort unless the existing settings are excessively high.
+       Recommended settings would be about 18-20 K for the shared memory
+       and 6-8 K for the DOS Buffers for EMS setting.
+
+    What to do if a PPE executes slowly or appears to halt
+    ------------------------------------------------------
+    This is usual a problem of overlay thrashing.  With the size of the
+    overlay buffers set too small, PCBoard can spend an excessive amount
+    of time pulling code into the overlay buffers which will have
+    anywhere from a small to an huge impact on PPE performance.
+
+    An overlay buffer size of 20 will probably work for most people who
+    want to run PPEs.  If your PPEs will be accessing dBase files, then a
+    buffer size of 25 or more may be necessary for optimum performance.
+
+    You can set the overlay buffer size by using the OVLSIZE.EXE program
+    to adjust your PCBOARD.EXE (or PCBOARDM.EXE) file like this:
+
+       OVLSIZE PCBOARD.EXE      <-- tells you the current setting
+
+       OVLSIZE PCBOARD.EXE 25   <-- sets the overlay size to 25
+
+    Remember:  if your pcboard.exe file is set to read-only, you will
+    need to make it read/write first, then run OVLSIZE, then make it
+    read-only once again.  The procedure looks something like this:
+
+       ATTRIB -R PCBOARD.EXE
+       OVLSIZE PCBOARD.EXE 25
+       ATTRIB +R PCBOARD.EXE
+

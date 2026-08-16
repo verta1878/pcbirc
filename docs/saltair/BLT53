@@ -1,0 +1,34 @@
+What is Freqing?
+================
+   FREQ = "File Request" When you "freq" a file, you request it from
+another Node. This is the basic way you get files across the country
+in a few minutes. It's why a shareware package released in Australia
+makes it to the East Coast of America the same day. To many Sysops,
+"freqing" is the single most advantageous thing about FidoNet.
+   You can usually freq a file through your mailer software, which
+sends the appropriate request to the Node in question. Sometimes you
+can do it from within your BBS software. Also, third party utilities
+enable freqing. BONK, for example, is used in conjunction with BINKley
+for this purpose.
+   You can usually freq a list of files on another BBS by requesting
+FILES. This is a "magic name" that will get you whatever list is
+appropriate of files available on the board you called. That way
+you'll get the file names correct the next time you call.
+   "Magic Names" can be used for some files, depending on how a Sysop
+has set them up. This is particularly useful when versions of
+filenames change quite often. A good example is Nodediff files. If I
+set up the "magic name" of "Nodediff," then if you request a file by
+that name, you'll always get the latest version, no matter what the
+actual filename is. Magic names are unique to each individual board
+and will be most useful to you when you request files from the same
+board often.
+   The opposite of freqing is sending, of course, which you may also
+find occasion to do. I send the BBS list to all FidoNet Nodes this
+way, usually by one command. This sends the same file to all Nodes. It
+surely makes that process easier for me. You may get the Nodelist and
+the Snooze in the same manner.
+   It is considered common courtesy to inform the Sysop of the BBS
+where you are freqing that you did request a file. Some software will
+write a courtesy packet automatically so you don't have to. When you
+request files with Front Door, it will send an empty NetMail letter
+with the file requested as the subject.

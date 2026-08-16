@@ -1,0 +1,175 @@
+@X0D
+               Special Offer to Sysops, VARs and DOOR Authors
+@X0E
+ 
+             PCBoard BBS Software Source Code Licenses Available
+ 
+@X0F   Customize your BBS like never before with a PCBoard BBS Software Source
+   Code License!
+ 
+   With a PCBoard BBS Software Source Code License you can customize your
+   BBS in ways never before possible.  Add new features, change the look
+   and feel of the system, or satisfy your curiosity to see how we
+   implemented certain features.
+ 
+   We are offering the PCBoard BBS Software Source Code License because you
+   asked for it.  Sysops asked for a way to add new features to the
+   software and to change the built-in look & feel of your BBS.  VARs asked
+   for a way to customize PCBoard for your specific customers and
+   industries.
+ 
+   There are so many PCBoard BBSes in use today, and every one is unique.
+   When we decide which features to add into a new release, we have to
+   weigh the needs and desires of all our customers. If you request a new
+   feature that appeals to a significant portion of our user base, without
+   negatively affecting the rest of our customers, chances are pretty good
+   that we will implement it.  But quite often the features you request are
+   great suggestions but we can't implement them because that feature would
+   change the way someone else needs their BBS to operate or it simply does
+   not appeal to enough of our installed base to justify the development
+   time.  Now, with the PCBoard Source Code License, you can enhance your
+   own copy of PCBoard with the features that are most important to you.
+ 
+   Imagine the possibilities and new opportunities available to VARs with a
+   PCBoard Source Code License.  You can use PCBoard as the foundation for
+   custom applications, and exploit all the built-in functionality to make
+   your product even more exciting (a valid PCBoard license is required for
+   each installation that includes PCBoard or any program created from
+   PCBoard Source Code).
+ 
+   Warning!  PCBoard is a sophisticated program that has been developed
+   over a period of many years.  Modifications and enhancements should only
+   be attempted by experienced programmers.  Clark Development will not be
+   responsible for any changes you make or any executable programs you
+   create. The PCBoard Source Code is available "as is" with no warranties
+   whatsoever. Limited support is available by email only, no voice support
+   is available.
+ 
+ 
+         @X0EHow does it work?  The process is really quite simple.
+ 
+ 
+@X0DStep 1 @X0F- Contact Joe Robinson (801-261-1686 x1304 or email to
+         joe.robinson@saltair.com).  He will send you a copy of the License
+         Agreement after determining that you are interested in the PCBoard
+         BBS Software Source Code License.
+ 
+ 
+@X0DStep 2 @X0F- You will receive two copies of the License Agreement.  Sign
+         both and return them with your payment.
+ 
+ 
+@X0DStep 3 @X0F- When we receive your signed License Agreements and payment, we
+         will then sign the License Agreements and return one copy to you
+         along with the PCBoard Source Code on disk.
+
+ 
+@X0E                          Questions & Answers@X0B
+ 
+ 
+Q.   How much of the PCBoard Source Code will I get?
+ 
+@X0FA.   You will receive all source code to PCBoard and the accompanying
+     utility programs that were created by Clark Development and shipped
+     as part of the PCBoard package.
+ 
+ 
+@X0BQ.   What about updates?  Will I get new source code when PCBoard is
+     updated?
+ 
+@X0FA.   Yes.  As long as your PCBoard Download Access is current, you will
+     receive updated PCBoard Source Code whenever we release a new
+     version.
+ 
+ 
+@X0BQ.   What programming language is PCBoard written in?
+ 
+@X0FA.   PCBoard was written in C, C++ and Assembly.
+ 
+ 
+@X0BQ.   After I license the PCBoard Source Code, what else do I need to buy
+     so that I can modify and rebuild the software?
+ 
+@X0FA.   To recompile and link PCBoard you will need a copy of Borland C/C++
+     and CodeBase.  Some of the PCBoard utilities also require VMData
+     from PocketSoft.  PCBoard can be compiled without CodeBase if you
+     don't need the dBase capability available through PPL.  VMData is
+     used in certain PCBoard utility programs (like PCBFiler) but it is
+     not needed to recompile PCBoard.
+
+
+@X0BQ.   Can I port PCBoard to another platform, like UNIX or Windows NT?
+
+@X0FA.   You are welcome to port PCBoard to any other operating system as
+     long as you do not operate more copies of PCBoard than you have
+     licensed from Clark Development.
+
+
+@X0BQ.   What about support?
+
+@X0FA.   The PCBoard Source Code License does not include any support or
+     consulting time.  Simple questions will be answered via email only.
+     Technical support and consulting services are available via
+     telephone or email only when prior arrangements have been made to
+     pay for these services on an hourly basis.
+ 
+ 
+@X0BQ.   I have written some DOORs with the PCBoard Door Developers Toolkit.
+     Is there any advantage to having the PCBoard Source Code?
+
+@X0FA.   Yes.  Since the Toolkit is simply a collection of library routines
+     from PCBoard itself, programs that have been written with the
+     Toolkit can be integrated right into PCBoard itself, eliminating
+     the need to shell out and run another program.
+ 
+
+@X0BQ.   After I enhance the software, can I give copies to other sysops?
+
+@X0FA.   Every PCBoard installation must be licensed by Clark Development
+     Company, Inc.  Your PCBoard Source Code License Agreement does not
+     give you the right to license the software to anyone else.
+     However, you may share your source code modifications with anyone
+     else that has a valid PCBoard Source Code License from Clark
+     Development Company, Inc.  You may also provide updated executables
+     (i.e. pcboard.exe) to any registered PCBoard sysop that has a legal
+     copy of the current version of PCBoard.  Remember that Clark
+     Development can not support any installation that is running a
+     modified copy of PCBoard.
+ 
+
+@X0BQ.   If I make an enhancement to PCBoard and send you my updated source
+     code, will you include it in the next PCBoard upgrade?
+
+@X0FA.   You are always welcome to send your modified source code to us.  We
+     will review your enhancements and consider adding them to the next
+     PCBoard upgrade.  If we do use your enhancements, we will give you
+     recognition in the documentation.  By sending your modified source
+     code to us, you are giving us full rights to use your enhancements
+     as we see fit without any payment to you.
+
+
+@X0BQ.   Can I use PCBoard Source Code in other programs?
+
+@X0FA.   Yes but certain restrictions apply.  If you use PCBoard source code
+     in your own program, every copy of your program that is installed
+     must accompany a valid PCBoard license.  For example, if you use
+     PCBoard source code to create a program that runs with PCBoard
+     BBSes, then you have no problem because every installation will
+     already have a valid PCBoard license.  If you create a program that
+     uses PCBoard source code, but that program does not require PCBoard
+     itself, you will need a PCBoard license for every copy of your
+     program that you install.  PCBoard source code may not be used in
+     any programs that compete with PCBoard or that aid in the
+     conversion of a PCBoard BBS to any program that competes with
+     PCBoard.
+ 
+ 
+@X0BQ.   I want to enhance PCBoard for a specific vertical market.  Can I
+     get an OEM license to PCBoard so that I can package the software
+     under my own name and license it directly to my customers?
+ 
+@X0FA.   PCBoard OEM Licenses are available.  With a PCBoard OEM License you
+     package and distribute the software yourself, then pay a single
+     royalty payment to Clark Development at the end of each month.  If
+     you are interested in a PCBoard OEM License please contact us for
+     more information.@X07 

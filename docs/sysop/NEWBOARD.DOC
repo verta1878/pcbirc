@@ -1,0 +1,127 @@
+Included in SAMPLES.ZIP there are some sample BOARD.BAT and BOARD.CMD files.
+These look very similar to what has been used in the past, but there are some
+significant differences which may surprise you.
+
+   If your board suddenly lands at a DOS prompt, or if the window closes
+   at the end of a door or event, then this section should be re-read.
+
+The changes to BOARD.CMD are out of necessity, due to the way OS/2 handles
+calling .BAT files from within an OS/2 session.  The changes made to BOARD.BAT
+are nearly identical, and were made simply for consistency.  If you run both
+DOS and OS/2 versions, then updating your BOARD.BAT file to this new standard
+will help you to set up the OS/2 version in a way that keeps both versions
+working the same way using the same files, and that'll save some hair. <g>
+
+- PCB-OS2 should be run from a BOARD.CMD which is structured nearly identical
+  to the BOARD.BAT file.  Examples of the BOARD.BAT and BOARD.CMD files follow:
+
+    BOARD.BAT
+    ---------
+    @echo off
+    :top
+    c:
+    cd\pcb
+    if exist remote.bat REN remote.bat remote.sys
+    if exist door.bat   DEL door.bat
+    if exist endpcb     DEL endpcb
+    pcboardm
+    if exist remote.bat CALL remote.bat
+    if exist door.bat   CALL door.bat
+    if exist event.bat  CALL event.bat
+    if NOT exist endpcb GOTO top
+    :end
+
+    BOARD.CMD
+    ---------
+    @echo off
+    :top
+    c:
+    cd\pcb
+    set dszlog=pcbdsz.log
+    if exist remote.cmd REN remote.cmd remote.sys
+    if exist endpcb     DEL endpcb
+    pcboard2
+    if exist remote.cmd CALL remote.cmd
+    if exist event.cmd  CALL event.cmd
+    if exist event.bat  CALL event.bat
+    if NOT exist endpcb GOTO top
+    :end
+
+  NOTE: Inside PCBCP.DOC you can find a slightly modified version of BOARD.CMD
+        which makes it easy to set up multiple nodes sharing a single copy of
+        the board.cmd file and a single copy of the pcboard.dat file by
+        utilizing a startup file which simply sets some environment variables.
+
+  NOTE: The above BOARD.BAT file requires that you be using DOS version 3.3 or
+        later.  Of course, if you're running a DOS window under OS/2, that will
+        work as well.  Specifically, the CALL statement was not added to DOS
+        until version 3.3.
+
+- There are differences in the way OS/2 handles calls to .BAT files from within
+  a .CMD file as compared to how DOS handles a call to a .BAT file from within
+  another .BAT file.  These differences could complicate your doors and events
+  if you are running both DOS and OS/2 versions of PCBoard because the .BAT
+  files would need to work one way for DOS and another way for OS/2.
+
+  To help simplify the matter, the sample BOARD.BAT and BOARD.CMD files shown
+  above have some changes in them.  Specifically, the usage of the CALL
+  statement, and the method of recycling the batch file.
+
+  The reasons for adding the CALL statement are as follows:
+
+  1) It means that you can now REMOVE any reference to BOARD.BAT from your
+     door batch files.  The reason is that under DOS, you'll want to return
+     back to BOARD.BAT but under OS/2 you'll want to return to BOARD.CMD.
+
+     NOTE:  If you are running both DOS and OS/2 nodes, then your BOARD.BAT
+            file should receive the same treatment.  Go thru the BOARD.BAT
+            file and add CALL to each of the lines that transfer control to
+            a batch file (see the BOARD.BAT file above as an example).
+
+  2) Another reason why this change is required is that, under DOS when you
+     execute a batch file, it transfers control to that batch file and it
+     never comes back.  But if an OS/2 .CMD file executes a .BAT file, it will
+     open up a window to run the .BAT file and then it *will* come back when
+     its done (as if a CALL statement had been used).  So to resolve the
+     differences and have both DOS and OS/2 work the same way, it is best to
+     explicitly use a CALL statement.  That way you can be sure that it will
+     always come back to BOARD.BAT or BOARD.CMD as appropriate.
+
+  NOTE: Since the DOOR batch files are going to be CALL'ed, in order to be
+        consistent, the sample BOARD.BAT and BOARD.CMD files have been modified
+        so that the rest of the batch files use CALL statements to run them.
+        This means that you should edit your REMOTE.SYS file as well as your
+        EVENT batch files and remove the reference to BOARD.BAT.
+
+  Another change you may have noticed is that the BOARD.CMD file no longer
+  tests for DOOR.BAT.  This is because the OS/2 version of PCBoard runs all
+  doors as "shelled" doors.  So PCBoard creates the door.bat and then shells
+  out to run it (instead of "exiting to dos" and letting the board.bat file or
+  board.cmd control execution of the door).
+
+  NOTE:  PCBoard runs either a DOOR.BAT or a DOOR.CMD file, depending on
+         whether or not you put a Y in the OS/2 column of the DOORS.LST file.
+
+  Also, you'll note that there are TWO event lines in the batch file.  One
+  which checks for the existence of EVENT.CMD and another to check for the
+  existence of EVENT.BAT.  This is because you can set a Y/N flag in the
+  event editor to indicate if an event is an OS/2 or DOS event.  PCBoard then
+  creates the event batch file of the appropriate type (BAT or CMD) and exits
+  to allow BOARD.CMD run the batch file.
+
+  The last change that was made is not so much out of necessity, as it is for
+  simplication.  In the past, BOARD.BAT would check for the existence of
+  ENDPCB and would exit if ENDPCB existed.  The above example instead checks
+  for the NON-existence of ENDPCB and if it does NOT exist, it simply jumps to
+  the top of the BOARD.CMD file and resumes execution.
+
+  NOTE:  This means that you would need to remove the call to BOARD.BAT from
+         the end of an existing BOARD.BAT file.
+
+  The advantage to this change is that it means your door batch files, your
+  event batch files, and your remote.sys file no longer need to change the
+  drive or directory because right after the :top statement, the drive and
+  directory are properly set by BOARD.CMD.  Keeping the drive and directory
+  changes in your batch files won't hurt anything, but setting them wrong will
+  no longer mean that you will accidently return back to the wrong node!
+

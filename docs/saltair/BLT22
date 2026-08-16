@@ -1,0 +1,22 @@
+   @X0F(@X0EE@X0F)@X0Dnter a message
+ 
+     @X0BEnables you to leave a message to one of us or to a user on the BBS.
+ 
+     When you are in a conference where the messages are not made PRIVATE, you
+     have an option of what kind of security you want your message to be.
+ 
+       @X0ER @X0B= @X0DReceiver only (Private)
+       @X0EN @X0B= @X0DNone (public, everyone can read it)
+       @X0ED @X0B= @X0DPack-out Date (have the message purged at a specified date reached)
+       @X0ES @X0B= @X0DSender Password (only you can kill the message)
+       @X0EG @X0B= @X0DGroup Password (a group of people who knows the password, can read
+                           your message)
+ 
+ 
+     @X0BAfter you enter your message, press @X0EESC@X0B and use "@X0ES@X0B" to save the message.
+ 
+     If you are sending a message to one of us at CDC, you should be getting
+     a response to your original message @X0C(excluding weekends and holidays)@X0B.
+ 
+ 
+

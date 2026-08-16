@@ -1,0 +1,486 @@
+                   Whats new in PCBoard version 15.1
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   The following is a summary of what has changed in PCBoard v15.1
+   ============================================================================
+
+   PCBOARD.EXE
+   -----------
+ - Modified DIR file processing in the following ways:
+
+   a) Added IDX support to speed (N)ew and (L)ocate commands - including
+      automatic on-the-fly creation of the IDX files, as well as automatic
+      detection of out-of-sync IDX files and automatic regeneration.
+   b) Modified the DIR title line display so that, if the caller has ANSI, it
+      will no longer scroll the titles up the screen unless a filename is found
+   c) Modified the filename display so that a "more?" prompt does not appear in
+      the middle of a description.
+   d) Modified upload processing so that after posting an upload the IDX file
+      is updated.
+
+  **** NOTE ****************************************************************
+  The new IDX files that PCBoard/PCBFiler create, are not redundant.  They
+  add new capabilities to PCBoard.  These new IDX files speed up PCBoard's
+  ability to locate file DESCRIPTIONS via the (N)ew and (L)ocate commands.
+
+  The IDX files that you create, using MAKEIDX, and put into your DLPATH.LST
+  file, on the other hand, are used to speed up the search for the PHYSICAL
+  file.  Together, the two IDX files complement each other.
+  **** NOTE ****************************************************************
+
+ - Added the ability to scan the users file to set mail waiting flags whenever
+   @user@, @##@, or @##-##@, is used.  WARNING:  This could take awhile to
+   process.  Prior to doing setting the flags, PCBoard will ask you first if
+   you want to.  If you do, a percentage display will be shown on screen to
+   let you know how far it has progressed.
+
+ - Modified the QWK;D and R;C/D/Z/QWK commands so that they will ignore the
+   Show INTRO During R;A setting in PCBSetup.
+
+ - Added the ability to set the "HAS REPLIES" flag on an upload when using the
+   QWK U command.
+
+- Modified the "QWK D BYE" so that, if you have any files flagged for
+  download, PCBoard will perform the QWK scan and then immediately jump into
+  the file transfer, skipping the "Download flagged files?" question.
+
+ - Added the ability to display a file PRIOR to executing a built-in command.
+   The location of the Command Display Files is defined in PCbSetup.  If it is
+   non-blank, then PCBoard will look in the directory specified to see if a
+   file, by the name of the command, exists and display it to the caller prior
+   to executing the command.
+
+   For example, if the user types the command "U", and a file called "U" is
+   found in the CMDFILES directory, PCBoard will display the contents of the
+   file to the caller.  This could be used to inform the caller of upload
+   policies, etc.
+
+   Several special Command Display Files exists:
+
+   PREFILE:  If this file exists then, prior to commencement of a File Display,
+             for example, the output of an "F 1" command, or an "N A S"
+             command, or a "Z PCB A" command, PCBoard will display the contents
+             of PREFILE.  This can be useful in setting up the display
+             requirements for RIP.  For example, if PREFILER exists (the "R"
+             means RIPscrip), it can contain any background, buttons, or other
+             RIP "necessities" prior to displaying a file directory.
+
+   PREEDIT:  Similarly, if PREDIT exists then, immediately prior to entering
+             the message editor workspace, PCBoard will display the contents of
+             PREEDIT.
+
+   PREMSG:   If PREMSG exists, then it will be displayed immeidately prior to
+             displaying the message header when reading messages.
+
+   PREOPEN:  If PREOPEN exists, then it will be displayed just prior to running
+             a DOOR application regardless of whether the DOOR is launched by
+             an OPEN or DOOR command versus typing the name of the DOOR at the
+             command line.
+
+   PREVIEW:  If PREVIEW exists, then it will be displayed just prior to
+             shelling out to PCBVIEW.BAT (for the "F;V" command).
+
+   PREPROT:  If PREPROT exists, then it will be displayed before the list of
+             protocols is shown to the user.
+
+   PROT:     If PROT exists, then it will be used INSTEAD OF the built-in list
+             of protocols that PCBoard displays.
+
+   PRESTAT:  If PRESTAT exists, then it will be displayed before the list of
+             settings/statistic are displayed by the (V)iew Settings command.
+             These are also shown, if enabled, during the login process.
+
+   STAT:     If STAT exists, then it will be used INSTEAD OF the built-in
+             settings/statistics display shown by the (V)iew Settings command.
+
+  PREML:    If PREML exists, then it will be displayed before the list of
+            languages are displayed, both at login, and when the LANG command
+            is used.
+
+  ML:       IF ML exists, then it will be displayed INSTEAD OF the normal
+            display of the PCBML.DAT file.
+
+   NOTE:  Other extensions work as well..  Going back to the "F" Command
+   Display File example, you could also have an FG file, an FR file, even files
+   such as F20 or F.FRE (security and language specific versions).
+
+ - Modified the MESSAGE statement in PPL so that the Mail Waiting flag for the
+   current user can be set.
+
+ - Modified the bulletin download capability so that it now:  1) no longer
+   needs to have the bulletin listed in the DLPATH.LST file, and 2) but now
+   uses the FSEC file to determine access or FREE/NOTIME status.  It will also
+   write an entry to the caller log now to indicate that the bulletin has been
+   read.
+
+ - Added a few new @-macros:
+
+   Users's Alias         : @alias@
+   Users's Real Name     : @real@
+   Current DIR Name      : @dirname@
+   Current DIR Number    : @dirnum@
+   # of Flagged Bytes    : @fbytes@
+   # of Flagged Files    : @ffiles@
+   Next File Number      : @fnum@
+   Download File Limit   : @maxfiles@
+   Download Byte Limit   : @maxbytes@
+   Byte Ratio Limit      : @ratiobytes@
+   File Ratio Limit      : @ratiofiles@
+   Credit for Byte Ratio : @bytecredit@
+   Credit for File Ratio : @filecredit@
+   No Character          : @nochar@
+   Yes Character         : @yeschar@
+   Pwrd Expiration Date  : @pwxdate@
+   Pwrd Expiration Days  : @pwxdays@
+   Logon Date            : @logdate@
+   Logon Time            : @logtime@
+   Conference Number     : @numconf@
+
+   Also, in v15.1, is the ability to use DOS's environment variables to
+   store values for macros.  To view DOS environment variables, they must
+   begin and end with @.  For example, SET @PHONE@=801-261-1686.  Then,
+   using the @env@ macro, you would display the phone number like this:
+   @env=phone@.  Of course, "env" would have to be typed in uppercase
+   letters.  NOTE:  The name of the environment variable is surrounded by
+   @ characters (i.e. SET @PHONE@= instead of SET PHONE=).  This is to
+   avoid potential security leaks (access to non-@-surrounded variables).
+
+ - Changed @expdays@ to show UNLIMITED (using PCBTEXT) if no expiration date is
+   defined (i.e. 00-00-00).
+
+ - Added new command line switches:
+
+     /CSTR:string                the connect string from the modem
+     /CID:string                 the caller-id string from the modem
+     /DTE:####                   the speed at which to open the comm port
+
+   These are used in connection with the /C: switch, which is used by Front
+   End programs.  The /ERR command line switch, normally used with /C:, is
+   not necessary if the /CSTR: value indicates an error corrected connection.
+
+  With the /CSTR: and /CID: values, any underscores presented on the command
+  line will be converted to spaces, by PCBoard, before recording them in the
+  caller log or making use of them internally.
+
+ - Added the ability to skip over the protocol selection during the new user
+   login process.  It then defaults the protocol to (N)one.  This switch is
+   defined in PCBSetup.
+
+ - Added the ability to skip over the alias selection during the new user login
+   process.  This switch is defined in PCBSetup.
+
+ - Added the ability to force the display of the INTRO file.  For example, if
+   a caller types "J;1;Q" he would normally skip the INTRO file.  By setting
+   the switch in PCBSetup you can force the caller to see it.
+
+ - Modified SET PCB=/PORTx so that if "F" is appended, PCBoard/M will use a
+   FOSSIL driver to access the ports. (e.g. SET PCB=/PORT1F)
+
+ - Added the ability to exit to DOS if a "no carrier" countdown occurs at the
+   call waiting screen.  An errorlevel of 8 can be used to detect when this
+   occurs.  This switch is defined in PCBSetup.
+
+ - Modified the password processing (when the Password PSA is installed) so
+   that it is more strict on how it detects a name subset or an old password
+   match.
+
+   For instance, in v15.0 you could use a password of JOHND because "JOHND" is
+   not a subset of "JOHN DOE".  In v15.1, after the first test passes it
+   turns the check around and tests to see if "JOHN" is a subset of "JOHND"
+   (finding the caller's name inside the password in addition to looking for
+   the password inside the caller's name).
+
+   Also, if the old password was TEST*DUMP, a new password of TEST*DUMP2 will
+   no longer be allowed.  PCBoard will check the first "Len-2" characters for
+   a match and call it a "previously used password" if it matches.
+
+ - Procomm Plus behaves differently for its Ymodem/G as compared to Ymodem
+   protocol when performing an upload.  It was not accepting an ACK
+   character and would not be able to start uploading to PCBoard.  Modified
+   PCBoard to use the character that Procomm was expecting, which also appears
+   to work with other comm programs as well (the ACK character was not found
+   to be a problem for any other program, nor even for any other protocol in
+   Procomm excpet Ymodem/G).
+
+ - Added sysop function help (i.e. typing "H 1" will obtain help for sysop
+   function 1).  Also added help for the ALIAS command.
+
+ - NOTE:  You need to RENAME your HLPBR file (found in \PCB\HELP) to HLPBRD.
+   PCBoard has been changed so that the help for the (BR)oadcast command does
+   not conflict with the RIPscrip version of the help for the B command.
+
+ - Modified the multitasker detection so that loading an emulator, such as
+   OS2SPEED, will not cause PCBoard to use DV time slice giveup when running
+   under OS/2.  The native OS/2 time slice give up is more efficient.
+
+ - Modified the 16550A transmit routines so that if OS/2 is used and a comm
+   driver, such as Ray Gwinn's SIO is in use, PCBoard can send more than 16
+   bytes into the transmit buffer if the driver is ready for them.
+
+ - Modified the shell to PCBTEST.BAT so that pcboard.sys will be updated just
+   prior to the shell.
+
+ - Modified the new user login process so that the verification information as
+   well as newask information can be "guaranteed to be answered" before the
+   user record is written to disk.
+
+ - Modified the "7 F" command so that you can pass the user name on the command
+   line.  (i.e. "7 F JOHN DOE" will now work)
+
+ - Added Password PSA information to the records displayed on the screen via
+   Sysop Function 7 (if the PSA is installed).
+
+ - Modified the slow drive processing so that, if a "Slow Drive Batch File" is
+   used to modify the file (add a BBS AD, for example) PCBoard will pick up the
+   new file size.
+
+ - Kind of "in cooperation with" FLAG.PPE, PCBoard has been modified so that it
+   now does NOT display the file listing "more?" prompt unless there are files
+   on the screen.  If there are no files on screen, then it displays the
+   standard "more" prompt instead.  This gets rid of the need to run FLAG.PPE
+   if there are no files on screen.
+
+   Then, if, at the end of the file listing, there are still filenames on the
+   screen, the "more?" prompt will be issued prior to returning to the
+   file listing command prompt or even the main board command prompt.  This
+   will give callers a chance to use FLAG.PPE to flag files.  However, it will
+   not be displayed if the caller was in non-stop mode (i.e. N U S will cause
+   a "more?" prompt to be displayed at the end, but N U S NS will not).
+
+ - Modified the upload verification procedure so that you may now change the
+   name of the file during the verification process (PCBTEST.BAT).  To do so,
+   you must place the new filename in the upload description file (%3)
+   overwriting the old filename.  This will allow for archive formats to be
+   changed during the upload verification process.
+
+ - Modified the upload testing procedure where PCBoard indicates that the test
+   will take awhile and offers the caller the ability to hit "H" to hang up
+   now.  This will continue to function as before with one small change.  If
+   the caller has requested an auto-goodbye after file transfer, and if the
+   caller does not type anything at the "hit H to hang up now" prompt, then
+   after the prompt expires (10 seconds), PCBoard will hang up and finish the
+   processing.
+
+ - Modified FILE_ID.DIZ detection so that if the archive has the filename in
+   lowercase letters (i.e. "file_id.diz") it will still be detected.  Also,
+   the updated LZH/LHA routines.
+
+ - Added back into PCBoard a prompt that was in 14.2 but was removed in v15.0.
+   If you are using the R;A command (or R;ALL) to read all conferences, and
+   then you abort the read with an "N" to stop it, when you later do the next
+   "R;A" command PCBoard will prompt you like this:
+
+        (A)ll Abort Detected. Continue with scan (Enter)=yes
+
+   If you answer YES to the above question, PCBoard will resume the previous
+   R;A command from where you left off (the conference you were last in).  If
+   you answer NO to the question, PCBoard would start a fresh R;A scan from the
+   main board (or your first selected conference).
+
+ - Similar to the way PCBoard automatically switches a "L WORD WORD A" command
+   into a "Z WORD WORD A" command (because multiple words are not valid search
+   criteria for an L command), PCBoard will now automatically switch a wildcard
+   search such as "Z FILE*.* A" over to an "L FILE*.* A" since the "*.*" is
+   generally not going to be found inside of a file description.  Just trying
+   to keep callers from getting frustrated by their mistakes in usage...
+
+ - Added a SET PCB=/NOCONF environment switch which tells PCBoard to NOT write
+   the conference registration information out to the DOOR.SYS file.  This
+   switch is normally not needed.  But on a system with a very large number of
+   conferences, it can be used to reduce the size of the door.sys file as well
+   as the time required to create it.
+
+ - Added a SET PCB=/ISDN switch which tells PCBoard to consider all connections
+   as "error corrected" connections, regardless of the connect string.  This
+   makes available the protocols (such as Ymodem/G) which require MNP or v.42.
+
+ - Added a SET PCB=/CDROM:xx;xx-xx switch which tells PCBoard to avoid writing
+   the new DIR "IDX" files out to CD-ROM drives.
+
+ - Modified the CMD.LST file so that it can now contain nested CMD.LST files.
+   For example, you might have something like this:
+
+            Command     Security  PPE/MNU File -or- Keystroke Replacement
+        ออออออออออออออ  ออออออออ  อออออออออออออออออออออออออออออออออออออออ
+     1) STATS               0     H:\PCB\PPE\STATS\STATS.PPE
+     2) DEMO                0     FLAG;PCBDEMO.ZIP
+     3) SEARCH              0     H:\PCB\PPE\SEARCH\SEARCH.PPE
+     4)                     0     %C:\PCB\LST\CMD.LST
+
+   The last entry, in the example above, will pull in a second list of commands
+   which could, in turn, pull in another list, and so on.  In this manner, you
+   could have conference-specific commands in the top-level CMD.LST file and
+   then simply by include your main commands into the list.
+
+ - Added an "R" sub-command to the Conference to Join prompt, to re-list the
+   conference menu.
+
+ - Added "WHO" and "CHAT" sub-commands to the "End of Message Command" prompt.
+   Now a caller can type "CHAT" while reading messages and jump into chat mode
+   and then, upon returning from chat, resume his read display from where he
+   left off.  Similarly, typing "WHO" while reading messages will allow him to
+   view who is online without interrupting the message reading process.
+
+ - Modified the caller log functions so that it will always pick up the
+   caller's real name when writing the logon/logoff records in the log.
+
+ - Modified the caller log reporting for downloads.  If a non-batch (single
+   file) download is performed it will now be recorded in the log like this:
+
+       (D) FILENAME.ZIP  Completed using G  T/E=0  CPS=1653
+       Batch Dnld: 1  Bytes: 705416  Avg. CPS: 1653
+
+   While this makes the log a little larger (on single file transfers) it
+   adds the Bytes Transfered to the log making it possible for caller log
+   analyzers to obtain more information.
+
+ - Modified the login process so that PCBoard writes the language selected to
+   the caller log so that there is no ambiguity what language the caller is
+   using after login.
+
+ - Added the ability to use environment variables as part of the path for
+   DISPLAY files.  For example, in PCBSetup:
+
+       Name/Loc of WELCOME File          : %GEN%\WELCOME
+
+   or inside of a PCBTEXT record or another display file:
+
+       %%RIP%\MYFILE
+       !%PPE%\MYPROG.PPE
+
+   For the above examples to work, you might have the following lines in your
+   BOARD.BAT file:
+
+      SET GEN=C:\PCB\GEN
+      SET RIP=C:\PCB\RIP
+      SET PPE=C:\PCB\PPE
+
+   NOTE:  This ONLY works on DISPLAY files and PPE files.  Files that are
+   either displayed to the caller by PCBoard, or PPE files which are launched
+   by PCBoard.  These can be specified in PCBSetup, or they can be %FILESPEC
+   and !FILESPEC.PPE files inside of PCBTEXT records, or %FILESPEC and
+   !FILESPEC.PPE lines inside of *other* display files.  But configuration
+   files, such as FSEC, PWRD, your WORK directory, etc, will not be able to use
+   environment variables.
+
+ - Modified MNU file processing in the following ways:
+
+   a) Added the ability to force the display file on callers regardless of
+      their expert status.  See the FORCE DISPLAY field in MKPCBMNU.EXE.
+
+   b) Added the ability to utilize hot keys in menus (in other words, the
+      caller simply hits the one letter keyword and it is activated without
+      hitting the enter key).  See the USE HOT KEYS field in MKPCBMNU.EXE.
+
+   c) Added the ability to automatically pass undefined options through to
+      PCBoard (in other words, if the user attempts to select an option that
+      is not defined in the MNU file, it will be passed to PCBoard as though
+      it were defined in the MNU as a STFQ option type).  See the PASS THROUGH
+      field in MKPCBMNU.EXE.
+
+   d) Added support for replacement text file specifications (%filespec) and
+      PPE file specifications (!ppespec) to custom MNU file prompts.
+
+   e) Added the DORX option type.  This option selects a door from the
+      DOORS.LST file for the conference but doesn't restore the MNU afterward.
+
+   f) Added the PPEX option type.  This option starts executing a PPE file and
+      exits the MNU afterward.
+
+ - Added support for FIDO's CTRL-A lines inside of messages.
+
+ - Modified the COMMENT subject field so that if you are forcing comments into
+   the main board it will include an extra "(confname)" in the text of the
+   subject to indicate which conference the caller was in at the time the
+   comment was entered.
+
+ - Added direct support for OS/2 COMM Drivers when using the PCBoard/M
+   software under OS/2.  This allows multiport hardware such as the ARNET and
+   DIGIBOARD products to be used by loading their respective OS/2 Device
+   Drivers and then allowing PCBoard to talk to OS/2's Comm API.
+
+
+   PCBFILER.EXE
+   ------------
+ - Added support for IDX files.  When moving files between DIR files, they IDX
+   is automatically created or updated.  Also, when sorting DIR files.
+
+ - Added a /INDEX command line switch.  This will automatically index all of
+   the DIR files at once.  Just issue the command PCBFILER /INDEX.
+
+   A sub-list of conferences can be specified like this:  PCBFILER /INDEX;xx-yy
+
+ - When moving a FILE DESCRIPTION to a new DIR FILE, if the target DIR FILE was
+   the same file as the source DIR FILE an error would occur and PCBFiler would
+   "back out" all changes that were made thus far.  Fixed by allowing the
+   description to remain "in place" since the source and target DIR files are
+   the same.
+
+ - Extended the number of unique paths allowed in the DLPATH.LST file from 300
+   up to 512.  Also, added a pop-up screen which informs the sysop when that
+   limit has been reached.
+
+ - In a memory-constrained environment, PCBFiler's "Verify file existence"
+   operation would show non-existent files as existing.  Fixed.
+
+
+   PCBSETUP.EXE
+   ------------
+ - Added "Command Display Files Location" in File Locations : System Files.
+
+ - Added "Drop to DOS on Missed Connect" in Modem Configuration : Switches.
+
+ - Added "Force INTRO Display on Join" in Configuration Options : Switches.
+
+ - Added "Skip Protocol When Registering" in Configuration Options : System
+   Control.
+
+ - Added "Skip Alias When Registering" in Configuration Options : System
+   Control.
+
+
+   PCBSM.EXE
+   ---------
+ - Added '!' as a valid character in the printer/file output definition.
+
+ - Enhanced the ALT-R (repeat search) command so that it remembers the previous
+   answer given for searching into PSAs.
+
+ - Found that if the users file was encrypted the ALT-S function, to search for
+   text in the users file, would not work.  Fixed.
+
+
+   PCBPACK.EXE
+   -----------
+ - Added a /THRESHOLD:nn command line parameter which allows you to set a
+   "Minimum Active Messages" threshold for packing conferences.  For example,
+   if /THRESHOLD:100 were used, then PCBPack would skip over any conferences
+   that don't have at least 100 messages in them.
+
+- The /RANGE command, which was documented in v15.0, was never actually
+  implemented in PCBPack.  Now it is.  /RANGE can be used to remove a range
+  of messages from a conference.
+
+
+   ZMSEND.EXE
+   ----------
+ - The time stamp sent was 1-hour previous to the actual file being
+   transmitted.  (i.e.  a file with a time stamp of 08:00am would arrive on the
+   caller's system with a time stamp of 07:00am) Fixed.
+
+ - Improved compatibility between ZMSEND and some other popular comm programs.
+
+
+   PCBDIAG.EXE
+   -----------
+ - Fixed a lockup that would occur if the EVENT.DAT file was missing when
+   trying to print the configuration.
+
+
+   PCBDESC.EXE
+   -----------
+ - Modified FILE_ID.DIZ detection so that if the archive has the filename in
+   lowercase letters (i.e. "file_id.diz") it will still be detected.
+
+ - Improved support for LHZ/LHA.
+

@@ -1,0 +1,28 @@
+             @X0FClark Development is pleased to announces!
+ 
+@X0DPCBoard v15.23@X00
+--------------
+@X0BThis maintenance release of PCBoard corrects known bugs in PCBoard's
+FIDO Mailer & Tosser and will be made available for FREE to all
+registered PCBoard v15.22 customers even if their PCBoard Download
+Access has expired.
+ 
+     @X0D+ @X0FPassthru's now work correctly
+     @X0D+ @X0FAreafix forwarding now works correctly
+     @X0D+ @X0FEnhanced Logging
+          @X0B+ @X0FDate and Time stamps on every log entry
+          @X0B+ @X0FErrant logging in FREQs has been corrected
+          @X0B+ @X0FUnneeded logging has been removed
+     @X0D+ @X0FEnhanced response messages
+          @X0B+ @X0FFailed FREQ requests will report the file name that was
+               not found
+          @X0B+ @X0FFilename is now logged on password failures
+          @X0B+ @X0FLarge responses to Areafix requests will be broken into
+               smaller files
+     @X0D+ @X0FPackets addressed to points are now removed from the queue
+          after being transmitted
+     @X0D+ @X0FFidoutil now correctly overwrites old conference settings with
+          new settings
+     @X0D+ @X0FBetter support for the FTS-0001 protocol
+     @X0D+ @X0FOther miscellaneous bugs have been fixed
+

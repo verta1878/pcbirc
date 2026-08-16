@@ -70,6 +70,13 @@ extern int nl_entry_is_down(const NlEntry *e);
 extern int nl_entry_is_hold(const NlEntry *e);
 extern const char *nl_entry_ibn_host(const NlEntry *e);
 
+/* modem.c — inbound answer (uses opaque SerPort* from serial.c) */
+extern int mdm_wait_ring(void *sp, int timeout_ms);
+extern int mdm_answer_call(void *sp, void *mcfg, int *connect_speed);
+
+/* session.c — inbound session */
+extern int qf_answer_session(void *sp, const QfConfig *cfg, int *files_in, int *files_out);
+
 
 /* ---- Logging ---- */
 
@@ -775,13 +782,88 @@ int main(int argc, char *argv[])
         sem_save_state(cfg.outbound);
         fixup_save(cfg.outbound);
 
+        /* ---- Check for incoming calls ---- */
+        /*
+         * Between outbound poll cycles, check the modem for incoming
+         * calls. qf_answer_session() handles the full inbound flow:
+         *   - Wait for RING (times out after retry_delay seconds)
+         *   - Answer with ATA
+         *   - Detect FidoNet handshake vs human caller
+         *   - Run FidoNet session or exit for PCBoard
+         *
+         * Return codes from qf_answer_session():
+         *   -1 = no call (timeout) — normal, loop back to outbound
+         *    0 = FidoNet session completed — toss mail, loop
+         *    1 = human caller — EXIT QFront, return errorlevel 1
+         *    5 = FAX call — EXIT QFront, return errorlevel 5
+         *
+         * Errorlevels 1 and 5 cause QFront to terminate so BOARD.BAT
+         * can load the appropriate program (PCBoard or FAX receiver).
+         */
+        if (!single_pass && !g_shutdown) {
+            int answer_rc;
+            int files_in = 0, files_out = 0;
+
+            qf_log(LOG_DEBUG, "Checking for incoming calls on COM%d",
+                   cfg.com_port);
+
+            answer_rc = qf_answer_session(NULL, &cfg, &files_in, &files_out);
+
+            qf_log(LOG_DEBUG, "qf_answer_session returned %d "
+                   "(files_in=%d, files_out=%d)",
+                   answer_rc, files_in, files_out);
+
+            if (answer_rc == 1) {
+                /*
+                 * Human caller detected. QFront exits with errorlevel 1.
+                 * BOARD.BAT sees this and loads PCBOARD.EXE.
+                 * The modem carrier is still up — PCBoard finds a
+                 * connected caller on the COM port.
+                 */
+                qf_log(LOG_INFO, "Human caller — exiting with errorlevel 1");
+                qf_log(LOG_INFO, "BOARD.BAT should load PCBOARD.EXE now");
+                sem_save_state(cfg.outbound);
+                fixup_save(cfg.outbound);
+                nl_close(nodelist);
+                qf_log_close();
+                return 1;
+            } else if (answer_rc == 5) {
+                /*
+                 * FAX tone detected. QFront exits with errorlevel 5.
+                 * BOARD.BAT can route to FAX software if configured.
+                 */
+                qf_log(LOG_INFO, "FAX call — exiting with errorlevel 5");
+                sem_save_state(cfg.outbound);
+                fixup_save(cfg.outbound);
+                nl_close(nodelist);
+                qf_log_close();
+                return 5;
+            } else if (answer_rc == 0) {
+                /*
+                 * FidoNet session completed. Files are in the inbound
+                 * directory. The toss cycle (qscan) will process them
+                 * into PCBoard message bases on the next pass.
+                 */
+                if (files_in > 0 || files_out > 0) {
+                    qf_log(LOG_INFO, "Inbound session complete: "
+                           "%d file(s) received, %d file(s) sent",
+                           files_in, files_out);
+                    any_success = 1;
+                } else {
+                    qf_log(LOG_DEBUG, "FidoNet session OK but no files "
+                           "exchanged (handshake only?)");
+                }
+            }
+            /* answer_rc == -1: no call, normal timeout — continue loop */
+        }
+
         /* ---- Sleep ---- */
-        if (!single_pass) {
+        if (!single_pass && !g_shutdown) {
             qf_status("Waiting for a call", &cfg, 0, ev);
 #ifdef _WIN32
-            Sleep(cfg.retry_delay * 1000);
+            Sleep(1000);
 #else
-            sleep(cfg.retry_delay);
+            sleep(1);
 #endif
         }
 

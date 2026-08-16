@@ -1,0 +1,51 @@
+
+   QFront v1.0.0 — FidoNet Mailer for PCBoard 15.4
+   ============================================================================
+
+   Clean-room implementation by the pcbirc crew, 2026.
+   License: GPLv3 — source code included.
+
+   INCLUDED FILES:
+
+   Programs:
+     QFRONT.EXE      Main mailer (DOS4G)
+     QFCONFIG.EXE    Configuration editor (DOS4G)
+     QSCAN.EXE       EchoMail tosser/scanner (DOS4G)
+     QNLIST.EXE      Nodelist compiler (DOS4G)
+     QFUTIL.EXE      Utility program (DOS4G)
+     DOS4GW.EXE      DOS4G extender stub
+
+   Documentation:
+     QFRONT.DOC      Sysop manual (38 pages)
+     QFRONT-CFG.DOC  Configuration file reference
+     HISTORY.DOC     Change history
+     INSTALL.TXT     Quick installation guide for PCBoard
+     README.1ST      This file
+
+   Display files:
+     NORMAL.TXT      Normal session display
+     CRITICAL.TXT    Critical session display
+     FAILED.TXT      Failed session display
+     LOWBAUD.TXT     Low baud rate display
+     AREAFIX.TXT     Areafix help text
+
+   Configuration:
+     qfront.cfg      Example configuration (edit for your system)
+     QMAGIC.DAT      Magic filename aliases (optional)
+     QRLIMIT.DAT     File request limits (optional)
+
+   Source code:
+     src/            Complete source (21 files, 10,123 lines)
+
+   QUICK START:
+
+   1. Copy files to C:\QFRONT
+   2. Run QFCONFIG to set your address, paths, COM port
+   3. Set up BOARD.BAT (see QFRONT.DOC page 7)
+   4. Run BOARD.BAT
+
+   See QFRONT.DOC for full documentation.
+
+   ============================================================================
+   github.com/verta1878/pcbirc
+   ============================================================================

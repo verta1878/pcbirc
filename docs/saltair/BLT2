@@ -1,0 +1,66 @@
+@CLS@@X07@X0F                    @X0DMetaWorlds Prices and Licensing
+ 
+@X0F  We have decided on a very simple price structure for the MetaWorlds
+  software.  The names of the different packages are not yet set in stone,
+  so the names used below are working names only and may change before
+  release.
+ 
+  Package Name         Retail    Upgrade (2,5,10)      Upgrade (25+)
+  ------------------------------------------------------------------------
+  Personal Server      @X0B$99.00    $99.00                $99.00
+@X0F  Community Server     @X0B$249.00   $199.00 (@X0FSave $50@X0B)    $149.00 (@X0FSave $100@X0B)
+@X0F  Enterprise Server   @X0B $499.00   $399.00 (@X0FSave $100@X0B)   $299.00 (@X0FSave $200@X0B)
+@X0F  Client/Server Option @X0B$199.00
+ 
+@X0F  The Personal Server will allow 2 simultaneous users to be logged onto
+  the system, the Community Server will allow up to 8 simultaneous
+  users, and the Enterprise Server has no defined limit to the number of
+  simultaneous users logged onto the system and will be limited only by
+  the capacity of the computer on which it is running.  These licenses are
+  per computer - meaning that if you want to run the software on two PC's
+  then you purchase two copies of the server software.  This makes more
+  sense than counting nodes.  We use the 2 and 8 node counts on the
+  Personal and Community Servers only as a means of compelling larger or
+  more active users to upgrade to the larger packages.
+ 
+  The node count limitations in the Personal and Community Servers only
+  apply to users that are actually logged in to the MetaWorlds Server.
+  Logins are required to access Message Bases, File Areas, Chat, and any
+  other  Sub-System on the MetaWorlds Server.  Logins are not required
+  for users to access your publicly available web pages.  Even with the
+  Personal Server the number of users simultaneously accessing your
+  public web pages is limited only by the capacity of your computer and
+  the available bandwidth.
+ 
+  PCBoard customers with @X0D2@X0F, @X0D5 @X0For @X0D10 @X0FNode licenses will save @X0D$50.00 @X0Fwhen
+  they upgrade to the Community Server or @X0D$100.00 @X0Fwhen they upgrade to
+  the Enterprise Server.  PCBoard customers with @X0D25 @X0FNode or larger
+  licenses will save @X0D$100.00 @X0Fwhen they upgrade to the Community Server
+  and @X0D$200.00 @X0Fwhen they upgrade to the Enterprise Server.  Because of
+  the already low price, we do not plan on offering a discount on
+  upgrades to the Personal Server.
+ 
+  The Client/Server Option is required for any installations running
+  multiple MetaWorlds servers.
+ 
+  With MetaWorlds, the Internet functionality is not an afterthought or
+  add-on purchase, it's standard, right out of the box.  Even the $99.00
+  Personal Server supports dial-up @X0DPPP @X0Fconnections, @X0DHTTP@X0F, @X0DSMTP@X0F, @X0DPOP3@X0F @X0Fand
+@X0D  TELNET@X0F in version 1.0!  In the future @X0DNNTP@X0F, @X0DFTP@X0F and @X0DIRC@X0F will be available.
+ 
+  When you compare our prices with the prices our competitors are
+  charging, be sure to add all their expensive options like Internet
+  @X0DPPP@X0F, @X0DIRC@X0F, @X0DSMTP@X0F, @X0DPOP3@X0F, @X0DNNTP@X0F, @X0DFTP @X0Fand dynamic @X0DHTML @X0Fgeneration.  We think
+  you'll be shocked by the contrast.  If you run a large system on
+  several servers and many simultaneous users the price difference is
+  even more extreme.  Don't pay more than you have to for add-on's that
+  should be included in the basic system.  Buy MetaWorlds!
+ 
+  Benchmarks determining the maximum number of simultaneous users that a
+  single computer can service are not yet available and will be
+  published at a later time.  Because of the highly efficient design of
+  the software, we expect that the MetaWorlds servers will be able to
+  service a high number of users per computer.  Of course, the maximum
+  number of users that can be simultaneously serviced at any given time
+  will depend largely on what those users are doing at the time.
+ 

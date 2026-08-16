@@ -1,0 +1,100 @@
+*******************************************************************************
+                      What Is New in PCBoard 15.41
+                      pcbirc crew — August 2026
+*******************************************************************************
+
+PCBoard Additions/Changes
+=========================
+
+CNAMES.ADD Extension — FilebaseFlags
+-------------------------------------
+The 64-byte Reserved field in each CNAMES.ADD conference record has been
+redefined as FilebaseFlags[64]. This provides per-filebase bit flags with
+one bit per filebase, supporting up to 512 filebases per conference.
+
+  Bit 0: FBFLAG_ISO — marks a filebase as ISO/CD-ROM backed
+  Bits 1-7: Reserved for future use
+
+PCBoard 15.4 zero-initializes these bytes and never reads them. PCBSM
+skips them during conference operations (via ADDCONFRESERVE). All existing
+15.4 installations are forward-compatible — no upgrade utility needed.
+
+See docs/devkit/CNAMES.DOC for the original field documentation.
+See PCBSRC/LIB/H/NEWDATA.H for the FilebaseFlags definition.
+
+
+New Utility — PCBISO (ISO/CD-ROM File Area Indexer)
+---------------------------------------------------
+PCBISO is a standalone utility for managing ISO/CD-ROM file areas.
+It reads CNAMES.@@@ and CNAMES.ADD to find configured file areas,
+scans source paths, and generates PCBoard DIR listing text files
+with automatic FILE_ID.DIZ extraction from ZIP archives.
+
+Commands:
+  PCBISO /INDEX <path> <dirfile>      Scan path, generate DIR listing
+  PCBISO /INDEX ALL <cnames> <add>    Index all ISO-backed conferences
+  PCBISO /REBUILD <path> <dirfile>    Delete and regenerate DIR listing
+  PCBISO /LIST <cnames> <add>         List configured file areas
+  PCBISO /STATUS <cnames> <add>       Detailed status with file counts
+  PCBISO /SETISO <conf> <fb> <add>    Mark filebase as ISO-backed
+  PCBISO /CLEARISO <conf> <fb> <add>  Clear ISO flag
+  PCBISO /MOUNT <iso>                 Register ISO in mount table
+  PCBISO /UNMOUNT <drive>             Release drive letter
+
+Location: PCBSRC/MAIN/SOURCE/UTIL/PCBISO/
+Works on PCBoard 15.4+ — no upgrade needed.
+
+
+New Utility Suite — QFront (FidoNet Mailer)
+-------------------------------------------
+Clean-room FidoNet mailer suite. 9,112 lines, 20 source files, GPLv3.
+5 programs: qfront (orchestrator), qscan (tosser/scanner), qnlist
+(nodelist compiler), qfconfig (TUI config editor), qfutil (utility).
+
+Protocols: EMSI/WaZOO, Zmodem, Xmodem, SEAlink
+Standards: FTS-5005 BSO, FTS-5001 nodelist, FTS-0001 PKT, FSC-0056 EMSI
+
+Location: tools/qfront/
+See tools/qfront/INSTALL.TXT for PCBoard 15.3/15.4 setup instructions.
+
+
+PCBTEXT String Additions
+------------------------
+The four PCBTEXT strings added in 15.4 (slots 747-750) are documented
+in PCB154.NEW. No additional PCBTEXT strings were added in 15.41.
+
+
+PCBOARD.DAT
+-----------
+No changes to PCBOARD.DAT in 15.41. The file format remains at 349 lines
+(same as 15.3). Future extensions will append lines after 349 following
+Clark's established pattern — see docs/devkit/PCBDAT.DOC.
+
+
+Compiler Change
+---------------
+PCBoard 15.41 is compiled with OpenWatcom 2.0 (openwatcom2irc fork)
+replacing Borland C++ 3.1. All 28 Clark binaries target DOS4G.
+Borland-specific code (inline ASM, conio.h, dos.h) replaced with
+Watcom-compatible equivalents.
+
+
+Bug Fixes
+---------
+26 bugs fixed across pcbis (11), pcbfoss (6), and QFront (9).
+See docs/PCB1541-PHASES.md for the complete bug list.
+
+
+Developer Documentation
+-----------------------
+Clark's original developer kit (Develop.zip) has been extracted to
+docs/devkit/ with all 23 file format specification documents including:
+
+  PCBDAT.DOC   — PCBOARD.DAT file format (text, one field per line)
+  CNAMES.DOC   — CNAMES.@@@ and CNAMES.ADD conference file formats
+  USERS.DOC    — Users file format
+  MSGS.DOC     — Message base format
+  DIR.DOC      — DIR listing format
+  STRUCTS.DOC  — General data structures
+
+Full list: docs/devkit/README.1ST

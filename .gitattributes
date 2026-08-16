@@ -1,0 +1,47 @@
+# PCBoard 15.4 Revival — Git Attributes
+
+# Force LF line endings for source code
+*.c text eol=lf
+*.h text eol=lf
+*.cpp text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+
+# Keep CRLF for DOS batch files
+*.bat text eol=crlf
+*.BAT text eol=crlf
+*.cfg text eol=crlf
+
+# Binary files
+*.exe binary
+*.obj binary
+*.zip binary
+*.7z binary
+*.pdf binary
+*.EXE binary
+*.OBJ binary
+*.ZIP binary
+
+# Language overrides for GitHub stats
+# Clark's PCBoard source is C, not other languages
+*.H linguist-language=C
+*.C linguist-language=C
+*.CPP linguist-language=C++
+*.MAK linguist-language=Makefile
+
+# PPL Engine is Rust (correctly detected)
+*.rs linguist-language=Rust
+
+# Pascal source
+*.pas linguist-language=Pascal
+*.PAS linguist-language=Pascal
+
+# Assembly
+*.asm linguist-language=Assembly
+*.ASM linguist-language=Assembly
+
+# Don't count documentation in language stats
+docs/** linguist-documentation
+*.DOC linguist-documentation
+*.NEW linguist-documentation
+*.TXT linguist-documentation

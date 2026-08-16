@@ -14,8 +14,26 @@
 
 /* ---- FTN Address Helpers ---- */
 
-/* Parse "1:234/56.7@fidonet" into FTN_ADDR.
- * Minimal format: "net/node". Zone defaults to 1, point to 0. */
+/*-----------------------------------------------------------------------*/
+/* ftn_parse_addr() — Parse a FidoNet 5D address string                  */
+/*                                                                         */
+/* Accepts these formats (most to least specific):                       */
+/*   "1:234/56.7@fidonet"   — full 5D (zone:net/node.point@domain)       */
+/*   "1:234/56.7"           — 4D (zone:net/node.point)                   */
+/*   "1:234/56"             — 3D (zone:net/node)                         */
+/*   "234/56"               — 2D (net/node, zone defaults to 1)          */
+/*                                                                         */
+/* The slash between net and node is REQUIRED — anything without '/'     */
+/* is rejected (returns -1). Zone defaults to 1 if no colon is present. */
+/* Point defaults to 0 if no dot is present.                             */
+/*                                                                         */
+/* Domain (the @fidonet part) is stored but rarely used in practice.     */
+/* Most FidoNet software ignores domains entirely. We store it for       */
+/* completeness per FTS-5005.                                            */
+/*                                                                         */
+/* Returns 0 on success, -1 on parse error.                              */
+/*-----------------------------------------------------------------------*/
+
 int ftn_parse_addr(const char *str, FTN_ADDR *addr)
 {
     const char *p = str;
@@ -113,11 +131,29 @@ static void bso_full_path(const QfConfig *cfg, const FTN_ADDR *addr,
 
 /* Create a .bsy lock file for an address.
  * Returns 0 on success, -1 if already locked. */
+/*-----------------------------------------------------------------------*/
+/* bso_lock() — Create a .bsy lock file for an address                   */
+/*                                                                         */
+/* FTS-5005 Section 5.1: Before calling a node, create NNNNNNNN.bsy      */
+/* in the outbound directory. This prevents other mailer instances        */
+/* (on other BBS nodes) from dialing the same system simultaneously.     */
+/*                                                                         */
+/* Uses O_CREAT|O_EXCL (exclusive create) for atomic locking — avoids    */
+/* the TOCTOU race condition where two instances check for the file,     */
+/* both find it missing, and both create it.                              */
+/*                                                                         */
+/* The .bsy file contains our PID for diagnostics — if a lock is stale   */
+/* (process died), the sysop can check whether the PID is still alive.   */
+/*                                                                         */
+/* Returns 0 on success (lock acquired), -1 if already locked.           */
+/*-----------------------------------------------------------------------*/
+
 int bso_lock(const QfConfig *cfg, const FTN_ADDR *addr)
 {
     char path[260];
 
     bso_full_path(cfg, addr, "bsy", path, sizeof(path));
+    qf_log(LOG_DEBUG, "bso_lock: attempting lock %s", path);
 
     /* Check if already locked — don't overwrite (FTS-5005 race
      * condition warning). Use exclusive create. */
@@ -146,17 +182,39 @@ int bso_lock(const QfConfig *cfg, const FTN_ADDR *addr)
 #endif
 }
 
-/* Remove the .bsy lock file. */
+/*-----------------------------------------------------------------------*/
+/* bso_unlock() — Remove the .bsy lock file                              */
+/*                                                                         */
+/* Called after a session completes (success or failure) to release the  */
+/* lock so other mailer instances can call this node.                    */
+/*                                                                         */
+/* IMPORTANT: Must be called in ALL exit paths — success, failure,       */
+/* signal handler, etc. A leaked .bsy file blocks all future calls to    */
+/* this node until the sysop manually deletes it.                        */
+/*-----------------------------------------------------------------------*/
+
 void bso_unlock(const QfConfig *cfg, const FTN_ADDR *addr)
 {
     char path[260];
     bso_full_path(cfg, addr, "bsy", path, sizeof(path));
+    qf_log(LOG_DEBUG, "bso_unlock: removing lock %s", path);
     remove(path);
 }
 
-/* Check if a .hld (hold) file exists and hasn't expired.
- * FTS-5005 Section 5.3: hld contains UNIX timestamp of expiry.
- * Returns 1 if held (don't call), 0 if clear. */
+/*-----------------------------------------------------------------------*/
+/* bso_check_hold() — Check if a node is on hold                         */
+/*                                                                         */
+/* FTS-5005 Section 5.3: A .hld file contains a UNIX timestamp of when  */
+/* the hold expires. If the current time is past the expiry, the hold    */
+/* is cleared (file deleted) and we return 0 (clear to call).            */
+/*                                                                         */
+/* Hold files are created when a node exceeds max_retries — we stop      */
+/* calling them for hold_time seconds (typically 1 hour). This prevents  */
+/* hammering a down system and wasting phone charges.                    */
+/*                                                                         */
+/* Returns: 1 = held (don't call), 0 = clear to call.                    */
+/*-----------------------------------------------------------------------*/
+
 int bso_check_hold(const QfConfig *cfg, const FTN_ADDR *addr)
 {
     FILE *f;
@@ -180,11 +238,27 @@ int bso_check_hold(const QfConfig *cfg, const FTN_ADDR *addr)
     return 0;
 }
 
-/* Record a session attempt in the .try file.
- * FTS-5005 Section 5.4: tracks good/bad connect counts. */
+/*-----------------------------------------------------------------------*/
+/* bso_record_try() — Record a session attempt in the .try file          */
+/*                                                                         */
+/* FTS-5005 Section 5.4: The .try file stores session attempt history    */
+/* for a node. Format is binary:                                          */
+/*   Offset 0-1: NOK (uint16 BE) — number of successful sessions       */
+/*   Offset 2-3: NBAD (uint16 BE) — number of failed sessions          */
+/*   Offset 4:   CLength (uint8) — comment string length               */
+/*   Offset 5+:  Comment (CLength bytes) — last attempt result         */
+/*                                                                         */
+/* This data is used by sem_is_undialable() to decide when a node        */
+/* has failed too many times and should be put on hold.                  */
+/*                                                                         */
+/* TODO: Read existing .try to increment counters instead of resetting. */
+/*-----------------------------------------------------------------------*/
+
 void bso_record_try(const QfConfig *cfg, const FTN_ADDR *addr,
                     int success, const char *msg)
 {
+    qf_log(LOG_DEBUG, "bso_record_try: %s (success=%d, msg=%s)",
+           success ? "OK" : "FAIL", success, msg);
     FILE *f;
     char path[260];
 
@@ -243,9 +317,33 @@ int bso_scan(const QfConfig *cfg, BsoItem *items, int max_items)
     char pattern[280];
 #endif
 
-    /* Scan outbound for each zone we have an AKA in */
+    /*
+     * Scan outbound for each zone we have an AKA in.
+     *
+     * FTS-5005: The outbound directory structure is:
+     *   outbound/           — default zone (our primary zone)
+     *   outbound.002/       — zone 2 (hex)
+     *   outbound.003/       — zone 3
+     *
+     * Each directory contains files named NNNNNNNN.ext where:
+     *   NNNNNNNN = net(4 hex) + node(4 hex), zero-padded
+     *   ext = flavour_char + type_chars
+     *
+     * Flow file types:
+     *   .iut / .cut / .dut / .fut / .hut — netmail PKT (by flavour)
+     *   .ilo / .clo / .dlo / .flo / .hlo — file reference list
+     *   .req                              — file request
+     *
+     * Flavour priority (highest first):
+     *   i = immediate, c = continuous, d = direct, f = normal, h = hold
+     *
+     * When multiple flavours exist for the same node, we use the
+     * highest priority one for scheduling decisions.
+     */
     for (zi = 0; zi < cfg->num_aka && count < max_items; zi++) {
         bso_zone_dir(cfg, cfg->aka[zi].zone, zonedir, sizeof(zonedir));
+        qf_log(LOG_DEBUG, "bso_scan: scanning zone dir %s (zone %d)",
+               zonedir, cfg->aka[zi].zone);
 
 #ifndef _WIN32
         d = opendir(zonedir);

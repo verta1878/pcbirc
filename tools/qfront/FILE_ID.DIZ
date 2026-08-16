@@ -1,0 +1,9 @@
+QFront v1.0.0 - FidoNet Mailer for PCBoard 15.4
+================================================
+Clean-room FidoNet front-end mailer and mail
+processor. EMSI/YooHoo/FTS-1 handshake, Zmodem/
+Xmodem transfer, BSO outbound, 19-flag event
+scheduler, Areafix robot, nodelist compiler,
+file requests. 5 DOS4G binaries + Linux.
+21 source files, 10,123 lines. GPLv3.
+pcbirc crew 2026 - github.com/verta1878/pcbirc

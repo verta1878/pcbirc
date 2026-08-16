@@ -1,0 +1,106 @@
+ WHATSNEW in the PCBoard Programming Language (PPL) version 3.10:
+ ----------------------------------------------------------------
+
+ - Added FINDFIRST() and FINDNEXT() functions.
+
+   Syntax:
+
+     FINDFIRST(FILESPEC)
+     FINDNEXT()
+
+   EXAMPLE 1:
+
+     STRING str
+     PRINTLN "Directory listing of *.*"
+
+     LET str = FINDFIRST("*.*")
+     WHILE (str != "") DO
+       PRINTLN str
+       LET str = FINDNEXT()
+     ENDWHILE
+     PRINTLN "Done!"
+
+   EXAMPLE 2:
+
+     STRING str
+     PRINTLN "Deleting *.*"
+
+     LET str = FINDFIRST("*.*")
+     WHILE (str != "") DO
+       DELETE str
+       LET str = FINDNEXT()
+     ENDWHILE
+     PRINTLN "Done!"
+
+   Both functions only return the filename.  Any other information normally
+   returned in a findfirst/findnext implementation, such as file size, data
+   time attributes, can be obtained through the fileinf function.  This way
+   the string will not need to be parsed in PPL and execution will be much
+   faster.
+
+ - Added COMMAND statement.
+
+     COMMAND ViaCmdLst,CommandLine
+
+       ViaCmdLst
+         A boolean value indicating whether or not to try to find the command
+         in CMD.LST (TRUE means search CMD.LST, FALSE means do not; if TRUE
+         and the command is not in CMD.LST, it will try the standard commands
+         automatically, failing if the command does not exist)
+
+       CommandLine
+         A string value with the command and parameters to execute
+         (like "R A Y O S")
+
+   What does this mean?  It means, simply, that you can have a PPE do some
+   setup processing, then run the message editor like this:
+
+     COMMAND FALSE,"E"
+
+   Then *regain* control at the statement *after* COMMAND and continue!  No
+   more messy state files and keyboard stuffing just to run other commands!
+   That's not to say that keyboard stuffing doesn't have it's place (it will
+   continue to be very useful), but for certain types of processing, COMMAND
+   can't be beat.  An example PPS file:
+
+     CLS
+     PRINTLN "You are about to enter a message..."
+     WAIT
+     COMMAND FALSE,"E SCOTT ROBISON"
+     CLS
+     PRINTLN "You are about to read a message..."
+     WAIT
+     COMMAND FALSE,"R O L"
+     CLS
+
+   As you can see, this allows you flexibility that wasn't possible before
+   now.
+
+   NOTES!!!  Not all portions of PCBoard are re-entrant.  For example, you
+   should not try to have two message editor processes active at the same time
+   (in other words, you shouldn't launch the message editor from within a MNU
+   and then launch a PPE from a shifted function key that tries to enter
+   another message).  So you'll need to be careful about *nested* COMMAND (or
+   equivalent) calls.  But sequential processing shouldn't be a problem at
+   all.
+
+   If it is determined at some point in the future that allowing this
+   flexibility causes more problems than it solves, the COMMAND statement will
+   be scaled back to ensure that attempts are not made to re-enter code.  So
+   use it well and wisely!
+
+ - Due to a possible overflow in DATE values, the valid range of dates has
+   been changed from 1/1/1900-12/31/79 to 1/1/1900-12/31/78.
+
+   Dates from mm/dd/79 to mm/dd/99 will be considered 1900's, while dates from
+   mm/dd/00 to mm/dd/00 to mm/dd/78 will be considered 2000's.
+
+   NOTE:  Processing has also been changed to allow you to convert dates from
+   the string form "mm/dd/yyyy" as well as the "mm/dd/yy" format.  In other
+   words, you can now set DATE = "01/01/1936" and it will properly convert the
+   date value.  However, conversion back (date back to a string) will still
+   result in a 2-digit year (i.e. if STRING="01/01/1936" and you used the
+   commands DATE=STRING then STRING=DATE, the final value of STRING would be
+   "01/01/36").
+
+

@@ -1,0 +1,757 @@
+                           Whats new in PCBoard
+                           ~~~~~~~~~~~~~~~~~~~~
+
+
+  NOTE:  PCBoard v15.21 primarily exists to introduce FIDO which did not make
+  it into the v15.2 release.
+
+  The following is a BRIEF summary of the FIDO features available in this
+  release:
+
+     Built in mailer
+     ---------------
+     A. Seamless FIDO login. FIDO negotiation invisible to human callers.
+     B. Supports multiple networks.
+     C. Definable events for dial out control.
+     D. Supports EMSI, FTS-0006 and FTS-0001 protocols.
+     E. Manual or automatic execution.
+     F. Nodelist compiler and node-diff processing.
+     G. File Request and File send capabilities.
+     H. Event driven and forced polling.
+     I. Session, Packet and areafix password protection.
+     J. Inbound and outbound routing.
+
+     Built in mail tosser
+     --------------------
+     A. Supports FIDO and non-FIDO specific echos.
+     B. Netmail. (seamless internet style addressing)
+     C. *.MSG (.TIC processing available through third party)
+     D. Secure conference access.
+     E. Command line execution.
+     F. Fast import speed.
+
+  You can read more about FIDO in the FIDO.DOC file.  However, in addition to
+  FIDO, the following other enhancments have also been made since the v15.2
+  release:
+
+
+  PCBOARD.EXE
+  -----------
+  - Added a SET PCB=/NORIP switch to avoid automatic RIP detection completely.
+    This can speed up the initial login sequence of connect.
+
+  - Added a SET PCB=/PAD switch which forces PCBoard into PAD mode (Packet
+    Switch Network) without setting it in PCBOARD.DAT.
+
+  - Added SET PCB=/NOVIEWSEC setting which can be used to ignore the FSEC
+    "security level" requirement when using the F;V command to view the
+    contents of files.
+
+ - Added SET PCB=/NOPROTECT setting which is used to *disable* PCBoard's
+   protection of alias names.  At this point in time, it is used to disable:
+
+     a) The automatic increase in required security for the USERS command
+        inside of a conference where aliases are allowed.
+     b) The ignoring of "real names" by the soundex search when performed in
+        a conference where aliases are allowed.
+
+ - SHARED SECRET PASSWORD LOGINS
+
+   One problem with the internet is just how "open" it really is.  A hacker
+   equipped with a TCP/IP packet "sniffer" could capture logins to a system
+   looking for password information inside the packets, then later use that
+   information to log into the system.
+
+   Admittedly, it would take a very serious hacker to go to that kind of
+   effort, but it *is* possible for it to happen.
+
+   To help combat the situation, and make your PCBoard logins more secure,
+   PCBoard (/M only) now supports the MD5 Shared Secret algorythm.  This
+   allows a caller to log into the system using a code which cannot be
+   decrypted, but can only be used to confirm a "shared secret", in this case,
+   his password.
+
+   What happens is this:  PCBoard sends a unique identifier at login, a string
+   which PCBoard will never repeat again, and the caller's system captures
+   that string and uses it as a key in encrypting the caller's password.  The
+   caller's system then sends back a 128-bit number.  This is not a copy of
+   the password (encrypted or otherwise), but rather, it is like a digital
+   "fingerprint" which can be used to securely establish a match.  PCBoard
+   then compares that 128-bit number to it's own 128-bit number, generated
+   from the original unique string it sent out combined with what it knows the
+   caller's password to be.
+
+   If both PCBoard and the caller generate the same 128-bit number, then the
+   passwords match and the caller is allowed to log in.
+
+   What does the caller see?
+
+       At login, PCBoard sends the unique string, but backspaces it out.
+       Chances are, the caller won't even see it or have to worry about it.
+       The caller's system automatically captures the string, encodes his
+       password, and sends back the 128-bit number.  All of this occurs behind
+       the scenes and the caller sees nothing different.
+
+       At the point where the caller is to log in, he types in his first and
+       last name, after pressing enter, PCBoard logs him into the system
+       *without* asking him for his password since the password can already be
+       identified based on the 128-bit number it received.  (unless the number
+       doesn't match, in which case PCBoard prompts the caller for a password)
+
+    How is this done?
+
+       To be done effictively, the caller's system has to be able to receive
+       the unique string, perform the MD5 calculations, and send the 128-bit
+       number back all on its own.  The best place for this to be implemented
+       is in the comm program (such as Telix, Procomm, etc) as part of a login
+       script, for example.
+
+    But how can I use it today?
+
+       Ray Gwinn has implemented the MD5 algorythm into VMODEM.  Effectively,
+       *every* comm program that dials out through VMODEM can inherit this
+       capability without any changes whatsoever.  To use it, you need to have
+       SIO version 1.42 or later.  Then, using VMODEM, you would telnet into
+       the BBS by giving the ATDT command, followed by the name or IP address,
+       followed by the password to be used.
+
+       For example, you could reach Salt Air like this:
+
+               ATDT 199.67.41.2 "MYPASSWORD"
+
+       VMODEM will take "MYPASSWORD" and perform the MD5 algorythm on it as
+       soon as it receives the unique string from the BBS, then it will send
+       back the 128-bit number.  Again, all of this occurs seamlessly - the
+       end-user will see nothing different, except that the BBS will not
+       require him to enter a password at login.
+
+   If I would like to read more about this algorythm, or if I am developing a
+   comm program, where can I get more information about this MD5 algorythm for
+   implementation into my own software?
+
+       Read RFC documents 1321 and 1725.  You can obtain copies of these files
+       on the internet at FTP.PSI.COM.  Or you can get information and source
+       code from Ray Gwinn by sending a message to ray@gwinn.com asking for a
+       copy of MD5.ZIP.
+
+  - Added a new @-macro modifier (similar to 'R' and 'C').  The new one is 'T'
+    for TRUNCATE.  This one will truncate the length of an @-macro to fit the
+    field length defined.  For example, if you use the following:
+
+         @user@
+         @user:10@
+         @user:10T@
+
+    The first display will be left-justied displaying *only* the length of the
+    user name.  The second one will also be left justified and if the user name
+    is 10 characters or less, it will fill a full 10 characters.  If the name
+    is LONGER than 10 characters, it will show the complete name without any
+    truncation.  The third one is also left justified, if the user name is less
+    than 10 characters, it will be padded to 10.  But if the user name is
+    longer than 10 characters, it will be TRUNCATED down to just 10 characters.
+
+    Another idea for usage:  if you have long conference names, you might need
+    this in order to make the conference names fit on your screen.
+
+  - Improved FOSSIL efficiency (more so in ZMODEM than PCBoard).
+
+  - Changed the Bulletin Search capability so that it will now look for records
+    within the bulletin based on lines which start with either a dash (-) or
+    equals sign (=) in the first column.  PCBoard will then display only the
+    "records" that match rather than displaying the entire bulletin.
+
+    If separators ARE being used in the bulletins, then the top portion of the
+    bulletin (the header) will be displayed prior to displaying any search
+    matches - but only if a match is found.  In other words, if you type "B A S
+    FINDTHIS" and the word FINDTHIS is found in bulletins 3 and 5, then the
+    header for 3 will be displayed, followed by the records in bulletin 3 that
+    match it, then the header for bulletin 5 and the records in bulletin 5 that
+    match.
+
+  - Made a modification so that if you have accounting enabled and you are
+    charging callers for time spent online, then if a file is marked as NOTIME
+    (or FREETIME) then after downloading the file PCBoard will record a
+    "FILETIME CREDIT" equal to the time spent downloading the file.
+
+  - Modified the recycle process so that if a Packet Switch Network environment
+    is in use PCBoard will avoid leaving DTR up at drop to DOS.
+
+  - Modified the "Slow Drive" support to pull files off of slow drives in
+    sorted drive order in order to reduce CD swapping on a CD-ROM changer.
+
+ - Modified the FORWARD command so that it will not allow you to forward a
+   generic message (such as @user@ or @##@) unless your security level is high
+   enough to copy or move messages (normally a sysop-only function).
+
+ - Removed the 2K requirement for COMM-DRV buffer size.  You can manually edit
+   the COMM-DRV configuration file and reduce the buffer sizes.  Then, upon
+   loading COMTSR it will use less memory.
+
+ - Modified the routines that take the modem off hook so that, if the system
+   is configured for a PAD environment (packet switch network), where taking
+   the modem off hook is not possible, PCBoard will turn DTR off to indicate
+   that it is not ready for calls.  Also, in a few other areas where PCBoard
+   may need to do some processing before recycling due to carrier loss, it
+   will drop DTR to try to prevent any further calls from getting thru the PAD
+   until it is ready to handle them.  This modification was also applied to
+   the Zmodem modules to handle carrier loss during file transfers as well.
+
+ - PCBoard now monitors the CONNECT string to determine if a TELNET connection
+   via VMODEM is being established.  VMODEM indicates a TELNET connection by
+   appending "/TEL" to the CONNECT string.  If a TELNET connection is
+   established, it will be noted and recorded in the pcboard.sys file.  This
+   information is then utilized by Zmodem to adjust the method by which
+   control characters are transferred.
+
+ - Modified the caller-id reporting in the caller log so that if the string is
+   too long to fit on one line in the log it will spill over to the next line.
+
+  PPL Processing
+  --------------
+  - Added findfirst and findnext functions.
+
+    Syntax:
+      findfirst(filespec)
+      findnext()
+
+    EXAMPLE 1:
+    STRING str
+      println "Directory listing of *.*"
+
+      str = findfirst("*.*")
+      println str
+      while(str != "") do
+        str = findnext()
+        println str
+      endwhile
+      println "Done!"
+
+    EXAMPLE 2:
+    STRING str
+      println "Deleting *.*"
+      DELETE findfirst("*.*")
+      while(str != "") do
+        str = findnext()
+        DELETE str
+      enswhile
+      println "Done!"
+
+    Both functions only return the filename.  Any other information normally
+    returned in a findfirst/findnext implementation, such as file size, data
+    time attributes, can be obtained through the fileinf function.  This way
+    the string will not need to be parsed in PPL and execution will be much
+    faster.
+
+ - Added a new statement to the language:
+
+     COMMAND ViaCmdLst,CommandLine
+
+       ViaCmdLst
+         A boolean value indicating whether or not to try to find the command
+         in CMD.LST (TRUE means search CMD.LST, FALSE means do not; if TRUE
+         and the command is not in CMD.LST, it will try the standard commands
+         automatically, failing if the command does not exist)
+
+       CommandLine
+         A string value with the command and parameters to execute
+         (like "R A Y O S")
+
+   What does this mean?  It means, simply, that you can have a PPE do some
+   setup processing, then run the message editor like this:
+
+     COMMAND FALSE,"E"
+
+   Then *regain* control at the statement *after* COMMAND and continue!  No
+   more messy state files and keyboard stuffing just to run other commands!
+   That's not to say that keyboard stuffing doesn't have it's place (it will
+   continue to be very useful), but for certain types of processing, COMMAND
+   can't be beat.  An example PPS file:
+
+     CLS
+     PRINTLN "You are about to enter a message..."
+     WAIT
+     COMMAND FALSE,"E SCOTT ROBISON"
+     CLS
+     PRINTLN "You are about to read a message..."
+     WAIT
+     COMMAND FALSE,"R O L"
+     CLS
+
+   As you can see, this allows you flexibility that wasn't possible before
+   now.
+
+   NOTES!!!  Not all portions of PCBoard are re-entrant.  For example, you
+   should not try to have two message editor processes active at the same time
+   (in other words, you shouldn't launch the message editor from within a MNU
+   and then launch a PPE from a shifted function key that tries to enter
+   another message).  So you'll need to be careful about *nested* COMMAND (or
+   equivalent) calls.  But sequential processing shouldn't be a problem at
+   all.
+
+   If it is determined at some point in the future that allowing this
+   flexibility causes more problems than it solves, the COMMAND statement will
+   be scaled back to ensure that attempts are not made to re-enter code.  So
+   use it well and wisely!
+
+ - Due to a possible overflow in DATE values, the valid range of dates has
+   been changed from 1/1/1900-12/31/79 to 1/1/1900-12/31/78.
+
+   Dates from mm/dd/79 to mm/dd/99 will be considered 1900's, while dates from
+   mm/dd/00 to mm/dd/00 to mm/dd/78 will be considered 2000's.
+
+   NOTE:  Processing has also been changed to allow you to convert dates from
+   the string form "mm/dd/yyyy" as well as the "mm/dd/yy" format.  In other
+   words, you can now set DATE = "01/01/1936" and it will properly convert the
+   date value.  However, conversion back (date back to a string) will still
+   result in a 2-digit year (i.e. if STRING="01/01/1936" and you used the
+   commands DATE=STRING then STRING=DATE, the final value of STRING would be
+   "01/01/36").
+
+
+  PCBSETUP.EXE
+  ------------
+  - Added an "Ignore Empty Security Level" setting on the accounting
+    configuration screen to accomodate setups where the users should remain at
+    the same security level all the time and only grant or deny access to
+    system functions based on the account balance.
+
+  - Added an ALT-V command to the Event Editor which lets you view a different
+    node's last date run values without having to exit the Event Editor screen.
+
+ - Modified the DECOMP.BAT field on the UUCP screen so that you can press the
+   F2 function key to edit the file.
+
+ - Modified the event editor to remove the restriction that prevents event
+   times from 23:59 to 00:01 from being entered.  Valid range is now 00:00 to
+   23:59.
+
+
+  PCBFILER.EXE
+  ------------
+  - Added a /NODOS command line parameter which disables the ability to shell
+    out to DOS.
+
+ - With PCBFiler's "Scan for Duplicate or Missing Files" feature, PCBFiler can
+   quickly scan all of the drives on the system to determine what files are
+   duplicate or missing and make use if the IDX files to speed the process up
+   even further.
+
+   However, if the IDX is pointing to a slow CD-ROM (worse yet, is if the
+   CD-ROM is a CD changer where the CD may not even be in the drive yet) it
+   can take awhile to check the file size and date since that information is
+   not stored in the IDX file and requires that PCBFiler call DOS's findfirst
+   function to locate the file on the slow drive.
+
+   Keying off of the "Slow Drive" list (found in PCBSetup), PCBFiler will now
+   check the slow drive list to see if the file is on a slow drive before
+   reporting on it.  If the file is found on a slow drive, then it will avoid
+   checking for the date or size of the file and will instead just show the
+   file name and path from where it was found together with a message
+   indicating that the file is on a slow drive.
+
+   If the date and size are necessary to the report you are generating, then
+   it is recommended that you temporarily empty the Slow Drive list in
+   PCBSetup (i.e.  blank it out).
+
+
+  PCBSM.EXE
+  ---------
+  - Added the following command line switch:
+
+        PCBSM /EDIT:first;last
+
+    This will jump to the specified user in the user record.  Note the colon
+    separator between keyword and name, and the semi-colon separator between
+    the first and last names.  (i.e. put semi-colons where spaces would
+    normally go in the user name)
+
+
+  PCBPACK.EXE
+  -----------
+  - Added a /IGNORE command line parameter which will ignore PACKOUT dates in
+    messages.
+
+ - Added a new /COMPRESS command line parameter.
+
+   The /COMPRESS switch is a little dangerous in that it does NOT create any
+   temporary or backup files.  Instead, it packs the file "in place".  In
+   other words, it takes your MSGS file and compresses the contents of the
+   file, removing packed-out messages simply by moving the next active message
+   that comes after the packed-out message into the space previously held by
+   the packed-out message.
+
+   This new option brings with it the following advantages:
+
+   1) Assuming most of the messages near the beginning of the file will not
+      have to be packed out, the packing process will go faster since PCBPack
+      can simply skip over messages which are not being deleted rather than
+      having to "copy" those messages into a temporary file.
+
+      However, if you are packing by date, chances are good that the messages
+      near the front of the file will need to be packed out which will cancel
+      this advantage since PCBPack must then copy the message within the same
+      file to move it to its new location.
+
+      So /COMPRESS improves speed the greatest on message bases which do not
+      need to be packed at all, or on message bases in which the messages that
+      are being removed are nearer to the end rather than the beginning of the
+      message base.
+
+   2) Time spent deleting the old backups, and renaming the original files to
+      the backup names, and renaming the new files to the original filenames,
+      is completely avoided and could result in a small time savings.
+
+   3) Packing "in place" means that PCBPack does NOT require any additional
+      disk space, because no new files will be created.  So the check for free
+      space is avoided which can reduce the packing time as well.
+
+   4) And because the packing is performed "in place", without the use of
+      temporary files, it means that there will be a lot less disk
+      fragmentation that is caused by running PCBPack.  (however, remember
+      that the normal every day operation of adding messages into the message
+      base will still fragment the files and using /COMPRESS will actually
+      avoid *defragmenting* the message base, so don't stop defragmenting your
+      hard disk just because you're using the /COMPRESS switch).
+
+   Notes on the /COMPRESS switch:
+
+   - The /KILLBAK switch is unnecessary when using /COMPRESS since no backup
+     files are made.
+
+   - The ESC key is *disabled* in the middle of the conference, because when
+     you are compressing the file, you cannot abort in the middle without
+     messing up the file.  So if you press ESC, PCBPack will wait until it
+     finishes the conference it is working on before aborting the pack.
+
+   - A reminder:  Because no backups are made, rebooting the machine in the
+     middle of a pack will potentially cause problems.  It would be best if
+     the machine performing the pack were run on a UPS (uninterruptable power
+     supply) in order to avoid such problems.  The problems themselves won't
+     be too serious ...  re-running PCBPack will fix any actual problems ...
+     but you may end up with duplicate messages in the message base so the
+     recommended solution would be to run PCBPack with the /KILLDUPS option.
+
+ - In addition to the /COMPRESS switch, there were also a couple of other
+   speed optimizations applied to PCBPack which affect the regular packing
+   methods as well (not just the /COMPRESS switch).
+
+ - Some fido mail tossers are putting messages into the PCBoard message base
+   with invalid dates in them.  The only evidence you usually see of this is
+   that PCBPack then complains saying that it has encountered an invalid
+   header in the message base.  Effectively, PCBPack ends up removing the
+   messages which have the invalid dates in them.
+
+   To help you to see the problem, I have added a /NODATE command line
+   parameter to PCBPack which disables the "date validation" routine that is
+   used as part of the header verification before deciding whether or not a
+   message header is valid.  To use it, you would type something like this:
+
+          PCBPACK /AREA:100 /NODATE
+
+   By using the /NODATE option, PCBPack will avoid packing out messages that
+   would have been removed due to having a bad date.
+
+   !!!WARNING!!!  In so doing, that means you will end up with whatever date
+   on the message that the tosser put onto it.  The intention here is to give
+   you some way of providing feedback to the author of the tosser so that he
+   can fix his software.  But the drawback is that if you pack out by DAYS
+   only then PCBPack may not delete the message for a long time (if the
+   invalid date is a futuristic date) or it may delete it immediately (if the
+   invalid date is outside of the number days that you keep mail).  It is
+   therefore suggested that you at least add a /MAX:  switch to the command
+   line to keep the number of messages down to a reasonable maximum so that
+   even messages with futuristic dates will eventually be packed out.
+
+ - Modified the /KILLALL switch so that, if used by itself, PCBPack will scan
+   thru the messages and remove any file attachments encountered along the
+   way.  You can speed up the /KILLALL switch by using /FAST.  When /FAST is
+   used, PCBPack simply truncates the message base.  This is very fast, but
+   if there were any file attachments, they are then orphaned and will have
+   to be removed manually.
+
+
+  ZMSEND.EXE
+  ----------
+  - Made changes which help ZMSEND to work better on an internet connection by
+    dynamically adjusting timeouts.
+
+ - Added a /TELNET command line option.  When used, Zmodem avoids sending
+   control characters which helps increase the likelyhood that Zmodem will
+   work for a particular TELNET setup (though some setups will still have
+   problems).  This option is also in ZMRECV.
+
+
+  ZMRECV.EXE
+  ----------
+ - Added support for receiving 8K packets (for FIDO)
+
+
+ MKPCBMNU.EXE
+ ------------
+ - Added two new option types to the option editor:
+
+     CLST
+       Attempt to process the specified parameters as a command line to
+       PCBoard via the CMD.LST file (if the command is not defined in CMD.LST
+       it will try the standard commands automatically, failing if the command
+       does not exist)
+
+     CMD
+       Attempt to process the specified parameters as a command line to
+       PCBoard without searching the CMD.LST file
+
+   What does this mean?  It means, simply, that you can have a MNU run a
+   command without having to give up control via keyboard stuffing!  For
+   example, up to now you'd need a command like this to run the message
+   editor:
+
+        Keyword    Sec   Type   Parameters
+        컴컴컴�    컴�   컴컴   컴컴컴컴컴
+     1) E          0     STFQ   E @PARAMS@
+
+   Now all you need is:
+
+        Keyword    Sec   Type   Parameters
+        컴컴컴�    컴�   컴컴   컴컴컴컴컴
+     1) E          0     CMD    E @PARAMS@
+
+   This allows you to run commands without ever having to leave the MNU
+   environment!  That's not to say that keyboard stuffing doesn't have it's
+   place (it will continue to be very useful), but for certain types of
+   processing, CLST and CMD can't be beat.  As you can see, this allows you
+   flexibility that wasn't possible before now.
+
+   NOTE:  Not all portions of PCBoard are re-entrant.  For example, you should
+   not try to have two message editor processes active at the same time (in
+   other words, you shouldn't launch the message editor from within a MNU and
+   then launch a PPE from a shifted function key that tries to enter another
+   message).  So you'll need to be careful about *nested* CLST/CMD (or
+   equivalent) calls.  But sequential processing shouldn't be a problem at
+   all.
+
+
+ PCBDIAG.EXE
+ -----------
+ - Made changes to bring PCBDIAG up to date with v15.21.  (NOTE:  only the
+   main fido screen is printed out, the rest of the fido information, which is
+   stored in PCBFIDO.CFG, is not printed out)
+
+
+  What's New in PCBoard/UUCP
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  UUUTIL.EXE
+  ----------
+  - Added support for importing a FIDONET.NA file (/MSGS & /FIMPORT switches).
+
+      Example command line.
+
+      UUUTIL /START:<NUMBER> /TEMPLATE:<NUMBER> /MSGS:<PATH>
+        /FIMPORT:C:\FIDONET.NA
+
+      /START    is the number to start adding conferences.
+      /TEMPLATE is the conference number to use for defaults.
+      /MSGS     is a path to store the message files in *MUST* include the
+                trailing backslash.
+      /FIMPORT  has the path to a FIDONET.NA style file.
+
+      Fidonet.NA is formatted as follows.
+
+      <Tagname> <Description>
+
+      The tagname is the Fidonet area name.
+      The Description is used for the name of the PCBOARD conference.
+
+   Also added the following switches for FIDO processing:
+
+     /USEAREA   - Will use the area tag as the conference name instead of the
+                  description.
+
+     /FSETNAMES - Will set all information for FIDO conferences except for the
+                  message base name.
+
+
+  UUOUT.EXE
+  ---------
+  - Added support to scan a "References:" line from the body of a message.
+
+  - Modified log file processing to allow reading the file whether or not it
+    was being updated.
+
+  - Added start date and time to program logging.
+
+  - Added support to help off-line readers that don't add distribution lines.
+
+  - Modified screen display code to get more info in less space.
+
+ - Added -f switch to force UUOUT to perform alias translation for short from
+   names as well as long from names (the long from name is the user@domain
+   internet style address; the short from name is the PCBoard user name in
+   parenthesis after the user@domain).
+
+
+  UUXFER.EXE
+  ----------
+  - Added multi-tasker friendly code to give up time not being used.
+
+  - Modified log file processing to allow reading the file whether or not it
+    was being updated.
+
+  - Added start date and time to program logging.
+
+  - Modified screen display code to get more info in less space.
+
+ - Added support for file grading.  Add -gX (where X is the grade to use) to
+   your UUXFER command line.  Grading *can* allow your site to request only
+   certain types of files (such as email only instead of email and news)
+   from your service provider.  For specific information on how grading
+   might help your feed, contact your service provider about their
+   support of file grading.
+
+ - Added support to automatically detect BUSY reports from the modem and
+   redial a configurable number of times.  The -b command line switch is used
+   to specify how many attempts to make.  The way it works is simple:  If the
+   expect sequence is CONNECT (no more, no less), BUSY will also be watched
+   for.  If BUSY is found, it will issue the previous send sequence (which
+   should be the dial command for your service provider).  For example:
+
+      UUXFER -s uucpnet -t 60 -b 10
+
+   The above command line would redial up to ten times.
+
+
+  UUIN.EXE
+  --------
+  - Added code to rename data files (*.BAG/*.D) to *.BAD (and bad execute
+    files from *.X to *.BAX) on certain error conditions involving bad packets
+    and to simply keep them on errors saving the messages.
+
+  - Added some conditional code to help reduce the size of the UUIN.LOG file.
+    The default (debug level 0) is to keep the same amount of logged
+    information.  If you use the -x switch to specify the debug level, the
+    following values are valid at this time:
+
+       0    = All debug information
+       1- 9 = Type of packet/filename/spool/error logging
+      10-19 = Decompressing/*.X/*.BAG logging
+      20-?? = Individual message logging
+
+  - Added support for tracking multi-part encoded files and automatically
+    decoding them.  This process involves tracking messages in temporary files
+    for up to a week in order to gather all parts of a multi-part post
+    together.  Most things that *can* be imported immediately *is* imported
+    immediately instead of going to temporary files.  If the -u switch is used
+    to disable automatic UUDECODING, no temporary files are tracked.  If
+    temporary files processed, they will be stored as random file names of the
+    form XXXXXXXX.XXX.  The X's are random hexa-decimal digits (0-9 and A-F).
+    A file named MSGINFO.DAT will be tracked with or without the -u switch.  It
+    is a simple database of information about the temporary files (0 bytes if
+    there are no temporary files).
+
+    NOTE:  Due to this new processing, the speed of UUIN has dropped noticably.
+    I believe it is still faster than most programs, but the demand for this
+    feature has mandated it's inclusion at the expense of some processing
+    speed.  Hopefully it won't put that big a drain on most systems.
+
+  - Modified log file processing to allow reading the file whether or not it
+    was being updated.
+
+  - Added start date and time to program logging.
+
+  - Added support for PageSat mail bags.
+
+  - Modified screen display code to get more info in less space.
+
+ - Added -o switch to output a list of newsgroups not found on your system
+   during import.  The file will be named JNKGROUP.LST and stored in your base
+   uucp directory.  It will be a simple text file, one newsgroup per line,
+   with duplicates.  For example, if you have 4 messages come in for
+   alt.bbs.bob, and you don't have alt.bbs.bob, you will have 4 lines with
+   alt.bbs.bob.  You will need to sort the file and remove duplicates before
+   creating the new conferences.
+
+ - Added support for an addition Date: header line format.
+
+ - Added code to copy text from the original message when bouncing.
+   NOTE:  This will only copy the text you would have imported into your
+   message base after stripping any undesired headers, so you may wish to keep
+   selected extra headers (such as TO:  FROM:  DATE:  SUBJECT:) so that the
+   original sender will get sufficient information to know who/why their
+   message bounced.
+
+ - Added -d switch to force UUIN to use the current system date and time when
+   posting messages instead of the date and time from the Date: header in the
+   message header.
+
+   This can be useful for showing when a message was imported, while keeping
+   the internet date header inside the message body to indicate when the
+   message was written.  It also avoids packing out a message too soon when
+   the message is delayed several days before being received and imported.
+
+ - Added -g switch to force UUIN to giveup time slices during message imports
+   and exports.  This switch is not necessary for UUIN operation, though you
+   may wish to use it if you are doing continuous processing for a satellite
+   connection and don't want UUIN to be as greedy with system resources.
+
+
+
+  PCBEDIT.EXE
+  -----------
+  - Added one macro (@real@) that was left out from v1.10 (the PCBoard
+    v15.1 update) and six new macros that were added to PCBoard v15.2
+    (@credleft@, @crednow@, @credstart@, @credused@, @xoff@, @xon@)
+
+  - Added support for the new T (Truncate) format justification specifier.
+
+
+  PCBMAIL.EXE
+  ~~~~~~~~~~~
+  Message Editor
+  ==============
+  -   Ctrl-left/Ctrl-right for next previous word
+  -   Ctrl keys for CUT/COPY/PASTE/CLEAR to clipboard
+  -   Holding Shift key to mark text
+  -   If you change the login configuration dialog box location of the
+      PCBOARD.DAT filename PCBMail will now tell you that you need to exit
+      PCBMail for changes to take place. After dialog box is displayed
+      PCBMail will then terminate.
+  -   Display only destination filename when downloading a file.
+  -   Delete key deletes selected block in message editor
+
+  General
+  =======
+  -   Added prompting user when new message is detected that has been
+      written to them.
+  -   Jumping to messages dialog box will default to the referenced
+      message.
+  -   Display only destination filename when downloading a file.
+  -   Changed conference selection dialog box to page in and out
+      conference names, so that all of the conference name could be
+      viewed.
+  -   UUOUT wasn't exporting messages written in PCBMail
+      because PCBMail wasn't saving messages with ECHO flags set.
+  -   Added Hot keys to the following commands
+      - Conference Selection          ALT S
+      - Jumping to messages           ALT J
+      - Check for new mail            ALT K
+      - Mailing list dialog box       ALT M
+      - Message Filter dialog box     ALT T
+  -   Password protection when selecting conferences.
+  -   Displays forwarding extended header information in message body.
+ -   Added feature that allows the user to skip over the login dialog box
+     and directly log the user into the system.  If the information
+     contained in the startup name/password is incorrect then PCBMail
+     will tell the user that the name/password that was entered was
+     incorrect and then it brings up the login dialog box.  This option
+     is available through the startup configuration options.
+ -   Optimized the read message window so that PCBmail will display
+     messages much quicker.  Especially when blocking text and display is
+     much quicker when viewing large messages.
+
+ -   Optimized the message editor.
+
+ -   Sped up the message quoting feature.
+
+
+
+***  Don't forget to read FIDO.DOC to find out more about FIDO. ***
+

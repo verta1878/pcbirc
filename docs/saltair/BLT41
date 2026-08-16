@@ -1,0 +1,130 @@
+INTERNET EMAIL ADDRESSING EXPLAINED
+
+So now you're ready to send e-mail to other people on the Net.  Of
+course, you need somebody's address to send them mail.  How do you get 
+it?  
+
+Alas, the simplest answer is not what you'd call the most elegant: you 
+call them up on the phone or write them a letter on paper and ask them.  
+Residents of the electronic frontier are only beginning to develop the 
+equivalent of phone books, and the ones that exist today are far from 
+complete.
+
+Eventually, you'll start corresponding with people, which means you'll 
+want to know how to address mail to them.  It's vital to know how to do 
+this, because the smallest mistake -- using a comma when you should have 
+used a period, for instance, can bounce the message back to you, 
+undelivered.  In this sense, Net addresses are like phone numbers: one 
+wrong digit and you get the wrong person.  Fortunately, most net 
+addresses now adhere to a relatively easy-to-understand system. 
+
+Sending mail outside of your system, will require the use of the Net
+equivalent of area codes, called "domains." A basic Net address will
+look something like this: 
+ 
+     tomg@world.std.com 
+ 
+Tomg is somebody's user ID, and he is at (hence the @ sign) a site (or in 
+Internetese, a "domain") known as std.com.  Large organizations often 
+have more than one computer linked to the Internet; in this case, the 
+name of the particular machine is world (you will quickly notice that, 
+like boat owners, Internet computer owners always name their machines). 
+
+Domains tell you the name of the organization that runs a given e-mail 
+site and what kind of site it is or, if it's not in the U.S., what 
+country it's located in.  Large organizations may have more than one 
+computer or gateway tied to the Internet, so you'll often see a two-part 
+domain name; and sometimes even three- or four-part domain names. 
+
+In general, American addresses end in an organizational suffix, such as 
+".edu"  (which means the site is at a college or university). Other 
+American suffixes include: 
+          
+     .com for businesses 
+     .org for non-profit organizations 
+     .gov and .mil for government and military agencies 
+     .net for companies or organizations that run large networks.  
+ 
+Sites in the rest of the world tend to use a two-letter code that 
+represents their country.  Most make sense, such as .ca for Canadian 
+sites, but there are a couple of seemingly odd ones (at least to 
+Americans).  Swiss sites end in .ch, while South African ones end in .za.  
+A few U.S. sites have followed this international convention (such as 
+nred.reading.ma.us). 
+
+You'll notice that the above addresses are all in lower-case.  Unlike 
+almost everything else having anything at all to do with Unix, most Net 
+mailing systems don't care about case, so you generally don't have to 
+worry about capitalizing e-mail addresses.  Alas, there are a few 
+exceptions -- some public-access sites do allow for capital letters in 
+user names.  When in doubt, ask the person you want to write to, or let 
+her send you a message first (recall how a person's e-mail address is 
+usually found on the top of her message). The domain name, the part of 
+the address after the @ sign, never has to be capitalized.               
+
+It's all a fairly simple system that works very well, except, again, it's 
+vital to get the address exactly right -- just as you have to dial a 
+phone number exactly right.  Send a message to tomg@unm.edu (which is the 
+University of New Mexico) when you meant to send it to tomg@umn.edu (the 
+University of Minnesota), and your letter will either bounce back to you 
+undelivered, or go to the wrong person. 
+
+If your message is bounced back to you as undeliverable, you'll get an 
+ominous looking-message from MAILER-DAEMON (actually a rather benign Unix 
+program that exists to handle mail), with an evil-looking header followed 
+by the text of your message. Sometimes, you can tell what went wrong by 
+looking at the first few lines of the bounced message.  Besides an 
+incorrect address, it's possible your host system does not have the other 
+site in the "map" it maintains of other host systems. Or you could be 
+trying to send mail to another network, such as Bitnet or CompuServe, 
+that has special addressing requirements. 
+
+Sometimes, figuring all this out can prove highly frustrating.  But 
+remember the prime Net commandment: Ask.  Send a message to your system 
+administrator. Include a copy of the header from the original message.  
+He or she might be able to help decipher the problem. 
+
+There is one kind of address that may give your host system particular 
+problems.  There are two main ways that Unix systems exchange mail.  One 
+is known as UUCP and started out with a different addressing system than 
+the rest of the Net.  Most UUCP systems have since switched over to the 
+standard Net addressing system, but a few traditional sites still cling 
+to their original type, which tends to have lots of exclamation points in 
+it, like this: 
+ 
+     uunet!somesite!othersite!mybuddy 
+ 
+The problem for many host sites is that exclamation points (also known as 
+"bangs") now mean something special in the more common systems or 
+"shells" used to operate many Unix computers. This means that addressing 
+mail to such a site (or even responding to a message you received from 
+one) could confuse the poor computer to no end and your message never 
+gets sent out. If that happens, try putting backslashes in front of each 
+exclamation point, so that you get an address that looks like this: 
+          
+     uunet\!somesite\!othersite\!mybuddy 
+ 
+Note that this means you may not be able to respond to such a message by 
+typing a lowercase r  -- you may get an error message and you'll have to 
+create a brand-new message.
+
+If you want to get a taste of what's possible on the Net, start a message 
+to this address: 
+
+     president@whitehouse.gov
+
+Compose some well wishes (or grumblings, if you're so inclined).  Send 
+off the message, and within a few seconds to a few hours (depending on 
+the state of your Net connection), you'll get back a reply that your 
+message has been received.  If you don't feel like starting at the top, 
+send a message instead to 
+
+     vice-president@whitehouse.gov
+
+
+The "mail" program is actually a very powerful one and a Netwide 
+standard, at least on Unix computers.  But it can be hard to figure out -
+- you can type a question mark to get a list of commands, but these may 
+be of limited use unless you're already familiar with Unix. Fortunately, 
+there are a couple of other mail programs that are easier to use. 
+

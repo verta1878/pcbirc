@@ -1,0 +1,215 @@
+     @X09 [@X0B C O N N E C T I N G   A   B B S   T O   T H E   I N T E R N E T @X09]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X07
+@X03There are two basic methods of physically connecting to the Internet - dialup,
+and digital full-time connections (T1, 56k, 128k, etc.)
+
+@X0BFINDING A PROVIDER
+------------------
+@X03To connect to the Internet, you must find an Internet Service Provider (ISP).
+This is a site somewhere which will let you connect to them, and they will
+then connect you to the rest of the world.  There may be a problem finding a
+provider in some areas.  If you need help finding a provider, then download
+the file @X0CPROVIDER.ZIP@X03 from Salt Air.  This will tell you which providers are
+available in your area code.  Once you have found a provider, you'll need to
+decide which connectivity options you want.
+
+
+@X0BDECIDING WHAT YOU WANT
+----------------------
+@X03Deciding what you want is important when connecting to an ISP.  Your ISP
+will need to know what kind of connection you want, and the difference in
+price between connections CAN vary greatly.
+
+
+SLIP and PPP lines are available for DIAL-UP access, meaning that your
+computer can call your provider through a modem adn a phone line and connect.
+If you have just one or two users using a single SLIP or PPP dialup
+connection, you'll be okay, but a modem connection support several users will
+be divided by the number of users at the time, and can be bogged down very
+quickly.
+
+
+For a powerful and sturdy connection to the Internet, you may want a digital
+line.  This is a dedicated full-time connection that usually uses
+fiber-optics, and is WIRED stright into your house through your walls like a
+phone line, and is done so by your provider.  The advantage to this connection
+is that it is very fast, will support many users at a time, and will not
+require negotiation like a modem will, and is much easier to connect.  Refused
+connections and "DEAD" lines are usually the only cause for a missed
+connection.  The single line will not cut in half after the second user, and,
+depending on the badnwidth (or functional size) of the connection, will take
+several connections without bogging down.  Examples of this type of connection
+are:  56k line, 128k line, T1 line, T3 line.  A T1 will supply over 16
+connections with little slowdown. a T3 will supply more than most people need.
+
+@X0BWHAT YOU NEED
+-------------
+@X03Using a SLIP or PPP connection, you'll need software to call your provider and
+etablish a connection.  This software is not supplied by Clark Development,
+but you may find some on our Support BBS.  KSP is an example.
+
+Using a digital line, you will need some basic hardware.  A CSU/DSU unit and a
+router are necessary for most features.  A router needs to be networked using
+an ethernet connection in most cases.  This is your basic hardware.
+Descriptions below require ethernet-type network unless otherwise specified.
+ 
+@X0AISDN
+----
+@X03Requires 128k line or faster.  Connect a digital modem to your router, then run
+it into your com ports.  Does not require network.
+ 
+NOTE: Some ISDN modems have a built-in router, and don't require a separate
+router.
+ 
+@X0D+--------+
+| Basic  |
+|hardware|--> ISDN modem --> Serial Board/DIGI board
++--------+
+ 
+ 
+@X0ATELNET
+------
+@X03Dependant on your operating system.
+
+
+@X02OS/2
+----
+@X03Connect ethernet connection to Router.  Use SIO.SYS software as a serial
+driver.  This software comes with a program called VModem which will
+vitualize a com port.  This means that you can assign port 16 (any port
+really) that doesn't exist, and any application can access it.  This port
+is actually going through your network card.
+
+PCBoard communicates with a virtual port which goes to the router through
+an ethernet connection.  Ports are defined through SIO.SYS.  SIO.SYS is
+available on Salt Air.  Filenames are:  @X0CSIO153.ZIP@X03,@X0C SIO155.ZIP@X03.
+
+
+@X0D+--------+
+| Basic  |
+|Hardware|--> Ethernet network --> Ethernet Card --> Vmodem software
++--------+
+
+
+@X02WINDOWS 95,NT,3.x,DOS
+---------------------
+@X03
+          How to make PCBoard telnettable with VCOM in Windows 95
+
+Background:
+
+VCom is high-performance 32-bit Windows 95 telnet client/server program that
+emulates a virtual modem(s) with 16550 FIFO buffered UART over an inbound or
+outbound telnet connection.
+
+Using this utility, Sysops can make their board telnettable on a Windows 95
+machine instead of switching over to OS/2 and using SIO/VModem.
+
+VCom is obtainable from Salt-Air BBS, called VCOM.ZIP, or latest updates are
+obtainable from the author's site at http://www.netime.com/~infrared/vcom.
+
+You will also need to obtain the FOSSIL driver that works well with VCom
+under Windows 95.  ADF_141.ZIP is obtainable from Salt-Air BBS, or from
+ftp.cdrom.com, or via FidoNet, 2:203/620.
+
+Note: Traditional DOS FOSSIL Drivers such as BNU or X00 do not work with VCom.
+
+The instructions below are to help you get started in having your PCBoard
+system telnettable.  The steps below are what was done on one or two systems.
+Since there are many different configurations, these instructions may not
+exactly match what you must do to get it running for your system.  If you
+run into any difficulty with any steps, consult the documentation and/or
+authors of these respective utilities.
+
+Instructions:
+
+1. Add a device statement in your system.ini for vcom.386:
+
+   [386Enh]
+   device=c:\vcom\vcom.386
+
+2. If you want a base address other than 2a0h and/or irq other than 7, then
+   specify the base address and irq for the virtual com port in your
+   system.ini:
+
+   (Example)
+
+   [vcom.386]
+   port=2a0h
+   irq=7h
+
+3. Reboot your computer.
+
+4. In the same DOS window where you will load PCBoard, load the fossil driver
+   called ADF.  Have the FOSSIL driver to use IRQ 7 and Base 2A0.  The
+   command line will vary depending on your port/address configuration with
+   VCOM (SYSTEM.INI).
+
+   The correct command line for ADF as follows:
+
+   adf com5 2a0 7 115200 2048 2048 14
+
+5. Configure PCBoard to use Fossil, Com5, locked at 115200, and simple "AT"
+   command to check if VCOM is responding (no ATZ, ATH, etc).
+
+   Note: PCBoard Modem port configuration varies depending on the VCOM side
+   you set at.
+
+6. Since you've already loaded ADF, load VCOM, enable the server and then
+   load PCBoard.
+
+Note! - You must load PCBoard from the same window you loaded the fossil
+driver.  Otherwise the fossil driver that was loaded in memory will be gone.
+
+FYI - If you load the ADF Fossil driver from Windows 95's Autoexec.Bat file,
+then there shouldn't be a problem loading VCom and PCBoard anytime.
+
+
+
+
+HARDWARE SOLUTION
+
+The digital signal that comes into your router from the internet needs to
+be used by your comm ports, so it must be converted to an RS-232 signal.
+This can be accomplished with a TERMINAL SERVER.  However, when a terminal
+server is used, the CTS/RTS signals are not straightened out the way they
+would be when using a modem.  To remedy this, we use NULL MODEM connectors.
+The signal then goes to your comm ports.
+
+This requires a physical serial port for every node.
+
+@X0D+--------+
+| Basic  |
+|Hardware|--> Term Server --> Null Modem Cable --> Serial port
++--------+
+ 
+<EOF>
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

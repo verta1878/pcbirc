@@ -1,0 +1,769 @@
+ WHATSNEW in the PCBoard Programming Language (PPL) version 2.00:
+ ----------------------------------------------------------------
+
+ - The following new types have been added to PPL 2.00:
+
+     BIGSTR   -> Allows up to 2048 characters per big string
+                   (up from 256 for STRING variables)
+                 May include CHR(0) characters in the middle of the big string
+                   (unlike STRING variables which may not)
+
+     EDATE    -> Julian date in earth date format
+                 Deals with dates formatted YYMM.DD
+                 Range:  Same as DATE
+
+     REAL     -> 4-byte floating point number
+                 Range:  +/-3.4E-38 - +/-3.4E+38 (7-digit precision)
+
+     DREAL    -> 8-byte floating point number
+                 Range:  +/-1.7E-308 - +/-1.7E+308 (15-digit precision)
+
+     FLOAT    -> 4-byte floating point number        (same as REAL)
+                 Range:  +/-3.4E-38 - +/-3.4E+38 (7-digit precision)
+
+     DOUBLE   -> 8-byte floating point number        (same as DREAL)
+                 Range:  +/-1.7E-308 - +/-1.7E+308 (15-digit precision)
+
+     UNSIGNED -> 4-byte unsigned integer
+                 Range:  0 - 4,294,967,295
+
+     BYTE     -> 1-byte unsigned integer
+                 Range:  0 - 255
+
+     WORD     -> 2-byte unsigned integer
+                 Range:  0 - 65,535
+
+     DWORD    -> 4-byte unsigned integer             (same as UNSIGNED)
+                 Range:  0 - 4,294,967,295
+
+     UBYTE    -> 1-byte unsigned integer             (same as BYTE)
+                 Range:  0 - 255
+
+     UWORD    -> 2-byte unsigned integer             (same as WORD)
+                 Range:  0 - 65,535
+
+     UDWORD   -> 4-byte unsigned integer             (same as UNSIGNED)
+                 Range:  0 - 4,294,967,295
+
+     SBYTE    -> 1-byte signed integer
+                 Range:  -128 - 127
+
+     SWORD    -> 2-byte signed integer
+                 Range:  -32,768 - 32,767
+
+     SDWORD   -> 4-byte signed integer               (same as INTEGER)
+                 Range:  -2,147,483,648 - 2,147,483,647
+
+     SHORT    -> 1-byte signed integer               (same as SBYTE)
+                 Range:  -128 - 127
+
+     INT      -> 2-byte signed integer               (same as SWORD)
+                 Range:  -32,768 - 32,767
+
+     LONG     -> 4-byte signed integer               (same as INTEGER)
+                 Range:  -2,147,483,648 - 2,147,483,647
+
+ - Added a BREAK statement which can be used to break out of a WHILE or FOR
+     loop without the use of a GOTO statement
+
+ - Added a QUIT statement which can be used to break out of a WHILE or FOR
+     loop without the use of a GOTO statement (alias for BREAK)
+
+ - Added a CONTINUE statement which can be used to abort the current iteration
+     of a WHILE or FOR loop and resume with the next iteration of the loop
+
+ - Added a LOOP statement which can be used to abort the current iteration
+     of a WHILE or FOR loop and resume with the next iteration of the loop
+     (alias for CONTINUE)
+
+ - Modified FCLOSE to accept channel -1 as the READLINE() function
+     'channel' and close it
+
+ - Added a FFLUSH statement to flush a specified channels changes to disk
+
+     Usage:  FFLUSH channel
+
+ - Added a FSEEK statement to position to any random location within a file
+
+     Usage:  FSEEK channel,bytes,position
+
+             bytes is the number of bytes to move (+/-) relative to position
+
+             position is the base location to start the seek from
+               (SEEK_SET (0) for the beginning of the file, SEEK_CUR (1) for
+               the current file pointer location, SEEK_END (2) for the end of
+               the file)
+
+ - Added a FREAD statement to read binary data from a file
+
+     Usage:  FREAD channel,var,size
+
+             var is the variable into which data should be read
+
+             size is the size of data to read into var (0 - 2048)
+
+ - Added a FWRITE statement to write binary data to a file
+
+     Usage:  FWRITE channel,exp,size
+
+             exp is the expression whose result should be written
+
+             size is the size of data to write to var
+
+ - Added a FDEFIN statement to specify a default input file channel
+     (used to speed up file input)
+
+     Usage:  FDEFIN channel
+
+ - Added a FDEFOUT statement to specify a default output file channel
+     (used to speed up file output)
+
+     Usage:  FDEFOUT channel
+
+ - Added the following default channel input statements:  FDGET & FDREAD
+   They use the exact same arguments as FGET & FREAD except a channel
+     parameter (the channel specified by FDEFIN is assumed)
+
+ - Added the following default channel output statements:  FDPUT, FDPUTLN,
+     FDPUTPAD, & FDWRITE
+   They use the exact same arguments as FPUT, FPUTLN, FPUTPAD, & FWRITE except
+     a channel parameter (the channel specified by FDEFOUT is assumed)
+
+ - Added a REDIM statement to dynamically redimension an array at
+     run-time. To use it you must declare the array in advance with the
+     number subscripts desired.  This allows the compiler to perform it's
+     standard error checking on subscripts.  For example:
+
+     STRING s(1,1,1)
+     REDIM s,5,5,5
+     LET s(4,4,4) = "Hello, World!"
+     PRINTLN s(4,4,4)
+
+   If an attempt is made to redimension an array with a different number
+     of dimensions, an error or warning (as appropriate) will be
+     generated.
+
+ - Added an APPEND statement to append the contents of one file to
+     another file.  The syntax is:
+
+     APPEND "SRCFILE","DSTFILE"
+
+ - Added a COPY statement to copy the contents of one file to another
+     file.  The syntax is:
+
+     COPY "SRCFILE","DSTFILE"
+
+ - Added a LASTIN statement to set the users last conference in value. It
+     can be used during the logon process to force the user into a
+     particular conference at start up (for example, from a logon
+     script). The syntax is:
+
+     LASTIN 6 ; The user was 'last in' conference 6
+
+ - Added a FLAG statement to allow flagging files for download directly
+     from a PPE.  The syntax is:
+
+     FLAG "C:\PATH\FILENAME.ZIP" ; Or whatever file name desired
+
+   Note that FLAG does not attempt to honor restrictions in the FSEC
+     and/or DLPATH.LST files.  This allows you to flag up any file
+     desired.
+
+ - Added a DOWNLOAD statement to allow downloading files from PPL.  The
+     syntax is:
+
+     DOWNLOAD "CMD;CMD;CMD"
+
+   The string passed to DOWNLOAD is a list of commands in the same format
+     as what a user would type after a D or DB command.  If a file name
+     for download is specified here it must be downloadable according to
+     the criteria established in the FSEC and DLPATH.LST files.  If it is
+     necessary to download a file not normally available via the FSEC
+     and/or DLPATH.LST files the FLAG statement may be used to force it
+     into the list of files to download.
+
+ - Added a FLAGCNT() function to return the number of files flagged for
+     download.
+
+ - Added a WRUSYSDOOR statement to write a USERS.SYS file with a TPA
+     record for a DOOR application.  The syntax is:
+
+     WRUSYSDOOR "DOORNAME"
+
+ - Added KBDSTRING statement to stuff strings to the keyboard (just like
+     KBDSTUFF except 'keystrokes' are echoed to the display)
+
+ - Added a KBDFLUSH statement to flush the local keyboard buffer and any
+     stuffed keystroke buffers.  It takes no arguments.
+
+ - Added a MDMFLUSH statement to flush the incoming modem buffer.  It
+     takes no arguments.
+
+ - Added a KEYFLUSH statement to flush both the local buffers and the
+     incoming modem buffer.  It takes no arguments.
+
+ - Added ALIAS statement to allow PPE control of whether or not the user
+     is using an alias
+
+ - Added a CONFALIAS() function to return TRUE if the current conference
+     is configured to allow aliases
+
+ - Added a USERALIAS() function to return TRUE if the current user is
+     allowed to use an alias
+
+ - Added ALIAS() function to return the users current ALIAS setting
+     (TRUE = alias use on, FALSE = alias use off)
+
+ - Added LANG statement to change the language in use by the current
+     user. The syntax is:
+
+     LANG langNum
+
+ - Added ADJBYTES statement to adjust the users total and daily download
+     bytes.  The syntax is:
+
+     ADJBYTES bytes
+
+   To subtract bytes use a negative number for bytes.  To add bytes use
+     a positive number.
+
+ - Added ADJDBYTES statement to adjust the users daily download bytes.
+     The syntax is:
+
+     ADJDBYTES bytes
+
+   To subtract bytes use a negative number for bytes.  To add bytes use
+     a positive number.
+
+ - Added ADJTBYTES statement to adjust the users total download bytes.
+     The syntax is:
+
+     ADJTBYTES bytes
+
+   To subtract bytes use a negative number for bytes.  To add bytes use
+     a positive number.
+
+ - Added ADJTFILES statement to adjust the users total download files.
+     The syntax is:
+
+     ADJTFILES files
+
+   To subtract files use a negative number for files.  To add files use
+     a positive number.
+
+ - Modified the PUTUSER statement to only update user information if a
+     successful GETUSER or GETALTUSER was issued previously.  This was
+     done to ensure that information for the current user wasn't written
+     to another user or vice versa.
+
+ - Added PUTALTUSER statement to put user information.  It is merely an
+     alias for PUTUSER and may be used anywhere that PUTUSER would be
+     used.
+
+ - Added GETALTUSER statement to get the information for an alternate
+     user.  It will fill the user variables with information from the
+     specified user record as well as redirect user statements and
+     functions.  Thank David for this one guys, he did the hard work, I
+     just hooked it into PPL.  The syntax is:
+
+     GETALTUSER userRecordNumber
+
+   If an attempt is made to get a record number that doesn't exist, the
+     user functions will revert to the current user and the user
+     variables will be invalidated as though no GETUSER/GETALTUSER
+     statement had been issued (though they will continue to maintain
+     any value held). PUTUSER/PUTALTUSER should be issued to commit any
+     variable changes to the user record.  Additionally, there is at
+     least one statement that will not affect alternate users:  ADJTIME.
+     It is restricted to the current user online.  Also, if the
+     alternate user is online, changes to the record won't take hold
+     until after the user has logged off.  Also, if there is not enough
+     memory available (primarily for the last message read pointers)
+     this statement will fail.
+
+ - Added FREALTUSER to deallocate alternate user information and get the
+     information for the current caller.  GETALTUSER must allocate
+     memory to hold the alternate user information.  FREALTUSER is used
+     to free up that memory for other processes.  Additionally, the
+     MESSAGE statement needs to use alternate user information as well
+     and can't if the PPE is already using it.  So this statement is
+     necessary if a MESSAGE statement needs to be used after a
+     GETALTUSER pair.
+
+ - Added CURUSER() function to determine what users information, if any,
+     is available via the user variables.  It takes no arguments and
+     returns one of the following values:
+
+     NO_USER (-1) - User variables are currently undefined
+     CUR_USER (0) - User variables are for the current user
+     Other        - The record number of an alternate user for whom user
+                    variables are defined
+
+ - Added NO_USER constant (-1) for use with the CURUSER() function
+
+ - Added CUR_USER constant (0) for use with the CURUSER() function
+
+ - Added U_LMR(confNum) function to return the number of the last
+     message read for the specified conference.
+
+ - Added KBDBUFSIZE() function to return the number of key presses
+     pending in the KBDSTRING buffer.
+
+ - Added PPLBUFSIZE() function to return the number of key presses
+     pending in the KBDSTUFF buffer.
+
+ - Added KBDFILUSED() function to return TRUE if key presses are being
+     stuffed via a KBDFILE statement.
+
+ - Added LOMSGNUM() function to return the low message number for the
+     current conference.
+
+ - Added HIMSGNUM() function to return the high message number for the
+     current conference.
+
+ - Added CHATSTAT() function to return the current users chat
+     availability status (TRUE means available, FALSE means
+     unavailable).
+
+ - Added DEFANS() function to return the last default answer passed to
+     an INPUT statement.  For example, this allows a PPE to determine
+     what the default answer would have been had a PCBTEXT prompt not
+     been replaced with a PPE.
+
+ - Added LASTANS() function to return the last answer accepted by an
+     INPUT statement.
+
+ - Added the following functions to return a users conference flags
+     (note that each of these functions takes a single argument which is
+     the conference number to check the flag)
+
+     CONFREG(confNum) = Returns TRUE if users registered flag is set,
+                        FALSE otherwise
+
+     CONFEXP(confNum) = Returns TRUE if users expired flag is set,
+                        FALSE otherwise
+                        (NOTE: CONFREG() = FALSE & CONFEXP = TRUE,
+                                           user locked out;
+                               CONFREG() = TRUE  & CONFEXP = TRUE,
+                                           user reg & exp)
+
+     CONFSEL(confNum) = Returns TRUE if user has selected the conference,
+                        FALSE otherwise
+
+     CONFSYS(confNum) = Returns TRUE if user has conference SysOp access,
+                        FALSE otherwise
+
+     CONFMW(confNum)  = Returns TRUE if user has mail waiting in conference,
+                        FALSE otherwise
+
+ - Modified the CCTYPE() function to recognize JCB cards and more Diners
+     Club cards to the CCTYPE() function.
+
+ - Modified the VALCC() function to strip invalid characters from the
+     card number string before attempting to do the checksum.
+
+ - Added an ERRCORRECT() function to return TRUE if a session is
+     determined to be error corrected (or FALSE for non-error corrected
+     sessions).
+
+ - Added MIXED() function to convert a string to mixed (or proper name)
+     case
+
+ - Added LPRINTED() function to return the number of lines printed on the
+     display
+
+ - Added ISNONSTOP() function to return whether or not the display is
+     currently in non-stop mode (ie, did the user type NS as part of
+     their command line)
+
+ - Added a REPLACESTR function; it functions just like the REPLACE function
+     except that a complete sub-string may be specified for both search and
+     replace
+
+     Usage:  REPLACESTR(str,search,replace) (returns BIGSTR)
+
+             str is the string to work on
+
+             search is the string to search for
+
+             replace is the string to replace search with
+
+ - Added a STRIPSTR function; it functions just like the STRIP function
+     except that a complete sub-string may be specified for search
+
+     Usage:  STRIPSTR(str,search) (returns BIGSTR)
+
+             str is the string to work on
+
+             search is the string to search for
+
+ - Added the following functions (one per type):  TOBOOLEAN, TOMONEY,
+     TOSTRING, TOBIGSTR, TOINTEGER, TOUNSIGNED, TOREAL, TODREAL,
+     TOFLOAT, TODOUBLE, TODATE, TOEDATE, TOTIME, TOBYTE, TOWORD,
+     TODWORD, TOUBYTE, TOUWORD, TOUDWORD, TOSBYTE, TOSWORD, TOSDWORD,
+     TOSHORT, TOINT, & TOLONG; they are used to force the result of an
+     expression to a specific type
+
+     Usage:  TOtype(exp) (returns type)
+
+             type is the actual type to force (BIGSTR, BOOLEAN, etc.)
+
+             exp is an expression of any type
+
+ - Added (or documented) the following operators:
+
+     [  -> open  parenthesis (same as ()  (also in 1.00)
+     {  -> open  parenthesis (same as ()  (also in 1.00)
+     ]  -> close parenthesis (same as ))  (also in 1.00)
+     }  -> close parenthesis (same as ))  (also in 1.00)
+
+     == ->            equal  (same as =)  (also in 1.00)
+     != -> not        equal  (same as <>) (also in 1.00)
+     >< -> not        equal  (same as <>) (also in 1.00)
+     =< -> less    or equal  (same as <=) (also in 1.00)
+     => -> greater or equal  (same as >=) (also in 1.00)
+
+     && -> logical and       (same as &)  (also in 1.00)
+     || -> logical or        (same as |)  (also in 1.00)
+
+     ** -> exponentiation    (same as ^)
+
+ - A double quote ("") may be embedded within a string constant to tell
+     the compiler that a single literal quote is desired (in other
+     words, "THIS""IS""A""TEST" would evaluate to THIS"IS"A"TEST after
+     the leading and trailing quotes are removed and the double quotes
+     were folded to single quotes)
+
+ - Labels and variable names may now include the following characters in
+     addition to A-Z, 0-9, and the _ (underscore) character: $ (dollar
+     sign), @ (commercial at), # (pound sign), õ (cents), ú (british
+     pound), ù (japanese yen)
+
+ - A \ (backslash) character as the last character on a line (before any
+     comments) will now allow continuing a logical line from one to the
+     next physical line
+
+ - A : (colon) character may be used to separate multiple logical lines
+     on a single physical line
+
+ - PPLC 1.00 would assume a LET statement if LET was not explicitly specified
+     in the following cases:
+
+     1. The variable name did not match a reserved keyword
+
+     2. The variable name was followed immediately (no space) by an equal
+        sign (=)
+
+   Now the equal sign need not be flush against the variable.  In other
+     words, where "DIR = value" would not work before (because "DIR " is
+     a reserved keyword), it will work now (because the = before the
+     value will implicitly indicate a LET statement to the compiler).
+
+ - The following function(s) now take and return BIGSTRs instead of STRINGs:
+
+     REPLACE   STRIP   STRIPATX   LTRIM   RTRIM   TRIM
+     LOWER     UPPER   MID        LEFT    RIGHT
+
+ - The following function(s) now take            BIGSTRs instead of STRINGs:
+
+     LEN       INSTR
+
+ - The following function(s) now          return BIGSTRs instead of STRINGs:
+
+     SPACE     CHR
+
+ - Added international currency and time support to PPL (based on the current
+     users language selection)
+
+ - The FPUTPAD statement was misdocumented; it does not automatically write a
+     carriage return / line feed pair; if one is needed it must be written
+     with an FPUTLN statement
+
+ - Added a command line switch (/NOUVAR) to PPLC to disable the automatic
+     generation of user variables
+
+ - Added a command line switch (/NODISP) to PPLC to disable cursor
+     positioning during the compile (for example, this disables the
+     compilers whirly-gig)
+
+ - A /DISARR switch was added to PPLC to disable array dimension
+     checking.  This allows a different number of subscripts to be
+     passed to array references without compiler errors or warnings.
+     Additionally it allows the REDIM statement to change the number of
+     subscripts used by a variable.  In other words, code like this
+     would be legal with the /DISARR command line switch:
+
+     STRING s      ' Note no subscripts
+     REDIM s,5,5,5 ' Now it has subscripts
+     LET s(4,4,4) = "Hello, World!"
+     PRINTLN s(4,4,4)
+
+     STRING s(1,1,1) ' Note three subscripts
+     REDIM s,5,5     ' Now it has two subscripts
+     LET s(4,4) = "Hello, World!"
+     PRINTLN s(4,4)
+
+ - A comment may now be started by an asterisk (*) if it is the first
+     non-whitespace character on a line.
+
+ - Source files can now be included from other source files.  This is
+     accomplished with a compiler directive in a comment like this:
+
+      ;$INCLUDE:FILESPEC.EXT
+
+   (Note that the first character need not be the semi-colon.  An
+     apostrophe ['] or asterisk [*] may also be used where appropriate.)
+
+   This allows you to include subroutines from a source code 'library'.
+     This should help in starting reusable code fragments.  When the
+     file is included, it is compiled as though it were in the main
+     source file. For example:
+
+      FOO.INC
+      -------
+      :subroutine
+      PRINTLN "Hello!"
+      RETURN
+
+      FOO.PPS
+      -------
+      PRINTLN "Running FOO.PPS"
+      GOSUB subroutine
+      END ' This line is important!
+      *$INCLUDE:FOO.INC
+
+   Note the use of END in FOO.PPS.  It is important in this case to
+     ensure that you don't accidentally run subroutine twice by just
+     falling through to it.
+
+ - Added the file name to warning and error displays.  For example,
+     where the following error may have once been reported:
+
+     Error in line number 123
+
+   You will now get:
+
+     Error in file FOO.PPS, line 123
+
+   This is necessary for the new file include functionality.
+
+ - Fixed a bug with the MAXNODE function where 2 would always be returned
+     regardless of the actual licensed copy in use
+
+ - Fixed a bug with channel processing for the FPUTPAD statement which would
+     cause the statement to fail
+
+ - Fixed a bug in array subscript processing that has existed since version
+   1.00.  The problem would occur only in multi-dimensional arrays and only if
+   an attempt was made to access the minimum and maximum column subscripts (0
+   and whatever was defined in the source code); a value written to one would
+   overwrite the other.
+
+ - Added a BITCLEAR statement to clear a specified bit from a variable.
+   The syntax is:
+
+     BITCLEAR variable,bit
+
+   This statement is primarily intended to be used with BIGSTR variables
+   which can be up to 2048 bytes long.  However, it will work with other
+   data types as well if desired.  Just be aware of the potential
+   problems in 'bit twidling' non-string buffers and then trying to
+   access them later as their 'intended' type without re-initializing the
+   variable.  If the bit parameter (an integer from 0 to the number of
+   bits in the object) is invalid no processing takes place.
+
+ - Added a BITSET statement to set a specified bit from a variable. The
+   syntax is:
+
+     BITSET variable,bit
+
+   This statement is primarily intended to be used with BIGSTR variables
+   which can be up to 2048 bytes long.  However, it will work with other
+   data types as well if desired.  Just be aware of the potential
+   problems in 'bit twidling' non-string buffers and then trying to
+   access them later as their 'intended' type without re-initializing the
+   variable.  If the bit parameter (an integer from 0 to the number of
+   bits in the object) is invalid no processing takes place.
+
+ - Added an ISBITSET() function to check the status of a specified bit in
+   a variable.  The syntax is:
+
+     ISBITSET(variable,bit)
+
+   This function is primarily intended to be used with BIGSTR variables
+   which can be up to 2048 bytes long.  However, it will work with other
+   data types (and expressions) as well if desired.
+
+ - Added a MOUSEREG statement to set up a RIP mouse region on the remote
+   terminal.  The syntax is:
+
+     MOUSEREG num,x1,y1,x2,y2,fontX,fontY,invert,clear,text
+
+       num    = Is the RIP region number
+       x1,y1  = The (X,Y) coordinates of the upper-left of the region
+       x2,y2  = The (X,Y) coordinates of the lower-right of the region
+       fontX  = The width of each character in pixels
+       fontY  = The height of each character in pixels
+       invert = A boolean flag (TRUE to invert the region when clicked)
+       clear  = A boolean flag (TRUE to clear and full screen the text window)
+       text   = Text that the remote terminal should transmit when the region
+                is clicked
+
+ - Added a MEGANUM() function to convert a decimal number (from 0 to
+   1295) to a hexa-tri-decimal number, or meganum.  The syntax is:
+
+     MEGANUM(number)
+
+ - Added a SCRFILE statement to find a file name and line number that is
+   currently on the screen.  The syntax is:
+
+     SCRFILE lineVar,filenameVar
+
+       lineVar     = Should be set before calling to the line number to start
+                     searching on (1 is the top line); Will be set to the line
+                     number where the file name was found or 0 if no file name
+                     was found
+       filenameVar = Will be set to the file name if one is found on screen
+
+ - Added a SORT statement to sort the contents of an array into a pointer
+   array.  The syntax is:
+
+     SORT sortArray,pointerArray
+
+       sortArray    = The data to sort (Any type may be used for this array)
+       pointerArray = An integer array which will be used as an array of
+                      pointers into sortArray for accessing sortArray in
+                      sorted order (This array should be of type INTEGER)
+
+   Note that sortArray and pointerArray are restricted to one (1) dimensional
+   arrays.
+
+   The following is an example of displaying an array in unsorted and sorted
+   order:
+
+     STRING  s(999) ; Remember that arrays are 0-based, so these statements
+     INTEGER p(999) ; will allocate 1000 elements each
+
+     ; Do something here to read data into s
+
+     SORT s,p
+
+     INTEGER i
+
+     FOR i = 0 TO 999 ; This loop will display in unsorted order
+       PRINTLN s(i)
+     NEXT
+
+     FOR i = 0 TO 999 ; This loop will display in sorted order
+       PRINTLN s(p(i))
+     NEXT
+
+ - Added an EVTTIMEADJ() function to detect if the users time has been
+   adjusted for an upcoming event.  This is useful to detect if a users
+   time left can be increased with the ADJTIME statement.
+
+ - Added a SEARCHINIT statement to initialize search parameters for a
+   faster BOYER-MOORE search algorithm.  The syntax is:
+
+     SEARCHINIT criteria,caseSensitive
+
+       criteria      = A string expression with the search criteria in the same
+                       format used by PCBoard (ie, "THIS & THAT | BOB")
+       caseSensitive = A boolean flag (TRUE to force a case sensitive search,
+                       FALSE otherwise)
+
+ - Added a SEARCHFIND statement to do a BOYER-MOORE search on a text
+   buffer using criteria previously defined with a SEARCHINIT statement.
+   The syntax is:
+
+     SEARCHFIND bufferExpr,foundVar
+
+       bufferExpr = The buffer to search
+       foundVar   = Set to TRUE if bufferExpr contains the search criteria,
+                    FALSE otherwise
+
+ - Added a SEARCHSTOP statement to clear out previously entered search
+   criteria.  It takes no parameters.
+
+ - Added PRFOUND and PRFOUNDLN statements.  These work just like PRINT
+   and PRINTLN but, if the last SEARCHFIND statement resulted in a match,
+   it will automatically highlight found words.
+
+ - Added a TPAGET statement to get static information from a named TPA in
+   string format.  The syntax is:
+
+     TPAGET keyword,infoVar
+
+       keyword = The keyword of the TPA to use
+       infoVar = The variable into which to store the information
+
+ - Added a TPAPUT statement to put static information to a named TPA in
+   string format.  The syntax is:
+
+     TPAPUT keyword,infoExpr
+
+       keyword  = The keyword of the TPA to use
+       infoExpr = The expression to write to store the TPA
+
+ - Added a TPACGET statement to get information from a named TPA for a
+   specified conference in string format.  The syntax is:
+
+     TPACGET keyword,infoVar,confNum
+
+       keyword = The keyword of the TPA to use
+       infoVar = The variable into which to store the information
+       confNum = The conference number for which to retrieve information
+
+ - Added a TPACPUT statement to put information to a named TPA for a
+   specified conference in string format.  The syntax is:
+
+     TPACPUT keyword,infoExpr,confNum
+
+       keyword  = The keyword of the TPA to use
+       infoExpr = The expression to write to store the TPA
+       confNum  = The conference number for which to retrieve information
+
+ - Added a TPAREAD statement to get static information from a named TPA.
+   The syntax is:
+
+     TPAREAD keyword,infoVar
+
+       keyword = The keyword of the TPA to use
+       infoVar = The variable into which to store the information
+
+ - Added a TPAWRITE statement to put static information to a named TPA.
+   The syntax is:
+
+     TPAWRITE keyword,infoExpr
+
+       keyword  = The keyword of the TPA to use
+       infoExpr = The expression to write to store the TPA
+
+ - Added a TPACREAD statement to get information from a named TPA for a
+   specified conference.  The syntax is:
+
+     TPACREAD keyword,infoVar,confNum
+
+       keyword = The keyword of the TPA to use
+       infoVar = The variable into which to store the information
+       confNum = The conference number for which to retrieve information
+
+ - Added a TPACWRITE statement to put information to a named TPA for a
+   specified conference.  The syntax is:
+
+     TPACWRITE keyword,infoExpr,confNum
+
+       keyword  = The keyword of the TPA to use
+       infoExpr = The expression to write to store the TPA
+       confNum  = The conference number for which to retrieve information
+
+ - Added FMTREAL() function to format REAL/DREAL values for display purposes.
+   The syntax is:
+
+     FMTREAL(realExp,fieldWidth,decimalPlaces)
+
+       realExp       = A REAL/DREAL floating point expression
+       fieldWidth    = The minimum number of characters to display
+       decimalPlaces = The number of characters to display to the right of
+                       the decimal point
+

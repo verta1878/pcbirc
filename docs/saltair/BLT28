@@ -1,0 +1,207 @@
+     @X09[@X0B S E T T I N G   U P   P C B O A R D   U N D E R    W I N D O W S @X09]
+@X0D  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú  ú
+
+@X0B      INTRODUCTION
+      ------------
+ 
+@X03      Windows 95, despite what some might say, is a major improvement
+      over the "old" Windows 3.1 or Windows for Workgroups 3.11. Its
+      still no OS/2, either, but it is close, and getting closer.
+ 
+      The purpose of this document is to give a brief overview of the
+      advantages of running PCBoard under Windows 95 versus Windows 3.1.
+      In addition to discussing the benefits, essential information about
+      configuring PCBoard to operate under Windows 95 is also included.
+ 
+      One of the major advances with Win95 is that it is a 32-bit
+      operating system -- not just a 16-bit or 32-bit add-on to
+      DOS like the old Windows. As a 32-bit operating system, it
+      can do something that the old Windows can't: provide device
+      driver support at the (32-bit) operating system level. Device
+      drivers reside in extended memory, and do NOT take up any
+      conventional memory resources.
+ 
+      Why should I try to free conventional (lower) memory?
+      Conventional memory is where programs are actually executed.  The
+      more memory available, the bigger the program you can run.
+ 
+@X0A        THE OLD WINDOWS
+        ---------------
+ 
+@X02        Let me illustrate this with an example:
+ 
+        Suppose you have a system with a CD-ROM drive.
+        Under the old DOS/Windows combination, you'd have a CONFIG.SYS
+        that would look somewhat like the following:
+ 
+        @X07device=c:\dos\setver.exe
+        device=c:\dos\cdrom.sys
+ 
+        @X02And in the AUTOEXEC.BAT:
+ 
+        @X07c:\dos\mscdex.exe /d:mscd001 /v
+ 
+        @X02When you boot the example system under the old Windows, and
+        you open up one or more DOS sessions, Windows assigns a separate
+        conventional memory space for each session.
+ 
+        If you run @X03MEM /C @X02within the DOS session, you'll see that the
+        device drivers and TSRs you've got loaded are "duplicated"
+        in each session's conventional memory space, reducing the
+        amount of free conventional memory available to that session.
+ 
+@X0E
+@X0A        THE NEW WINDOWS
+        ---------------
+ 
+@X02        Windows 95, however, has ways around that problem. To get around
+        the problem, use either a 32-bit Windows driver, or a Windows
+        virtual device driver instead of using old DOS drivers. For
+        example, the CD-ROM drive is most likely plug'n'play
+        recognizable by Win95 without the need for the old drivers
+        you used to use under the old DOS/Windows set-up.
+ 
+        How do you tell the difference between a DOS driver, and
+        a Windows driver?
+ 
+        DOS drivers usually have a .SYS or .COM (when a TSR)
+        extension, and load either through the CONFIG.SYS or
+        AUTOEXEC.BAT.
+ 
+        Windows drivers usually have a .386 or .VXD extension,
+        and they almost always load through the SYSTEM.INI file.
+ 
+        To find out if you've got unnecessary drivers loading,
+        simply REM out the old, possibly unnecessary, statements from
+        your CONFIG.SYS and/or AUTOEXEC.BAT and reboot.
+ 
+        @X09CD-ROMs: @X02Win95 *should* recognize these automatically.
+                 If not, go to Control Panel, Add New Hardware,
+                 and try to add it.
+ 
+        @X09Sound cards: @X02Win95 *should* be able to support it using
+                     the stock drivers included with Win95
+ 
+        @X09LAN cards: @X02A bit trickier. Win95 auto-detect of LAN boards
+                   is not reliable, and can cause lock-ups. It is
+                   perhaps better sometimes to select the hardware yourself.
+                   Use Control Panel, Network, to change LAN
+                   set-up. With Win95, you'll need to configure:
+ 
+                    @X03- an Adapter
+ 
+                    @X02  This is the physical hardware...
+                      IE.. "NE2000" or other network board.
+ 
+                    @X03- a LAN Protocol
+ 
+                    @X02  This is something like TCP/IP, NETBEUI,
+                      LANBIOS, or some other Protocol. The
+                      "language" to be used.  Must be "bound"
+                      to the adapter.
+ 
+                    @X03- a Client
+ 
+                    @X02  This is something like "Novell NetWare"
+                      or "Artisoft LANtastic" or "Microsoft Windows."
+                      The client software allows for use of shared
+                      hard disk, printer, and other network resources.
+                      Must be "bound" to one or more Protocols.
+ 
+@X0E
+@X0B      PCBoard under Windows 95
+      ------------------------
+ 
+@X03      PCBsetup
+ 
+        In PCBsetup | Node configuration answer Y to the Running
+        a Network / Multitasker System question.
+ 
+      BOARD.BAT NODEx.BAT
+ 
+        Locate a SET PCB= line and Add the following.
+ 
+        @X07        SET PCB=/NOGIVEUP
+ 
+      @X03Win95
+ 
+        Add the following to your SYSTEM.INI file.
+ 
+                Under @X02[386enh]
+ 
+      @X07            UniqueDOSPSP=1
+ 
+      @X03          Under @X02[NonWindowsApp]
+ 
+      @X07            CommandEnvSize=768
+ 
+      @X03In program properties change the following settings.
+ 
+      Under @X02PROGRAM
+ 
+        @X07[ ] Close in exit  @X03(Not Checked)
+ 
+                ADVANCED
+ 
+            @X07    [@X0FX@X07] Prevent MS-DOS-based programs from detecting Windows
+            @X07    [ ] Suggest MS-DOS mode as necessary
+            @X07    [ ] MS-DOS mode
+ 
+@X03      Under @X02MEMORY
+ 
+@X07        Conventional Memory
+        Total: @X0FAuto
+@X07        Initial Environment: @X0FAuto
+@X07        [@X0FX@X07] Protected  @X03(Checked)
+@X07        Expanded [EMS] memory: @X0FAuto
+@X07        Extended [XMS] memory: @X0FAuto
+@X07        [ ] Uses HMA  @X03(Not Checked, unless you have a door that can use
+@X07                       @X03the high memory area)
+@X07        MS-DOS protected-mode [DPMI] memory: @X0FAuto
+@X0E
+@X03      It is also recommended that you run PCBoard in a FULL
+      SCREEN, not a window.  The reason, windowed sessions take up to 64k
+      more than a full screen session.  And full screen sessions are faster
+      because Win95 doesn't have to virtualize the textmode screen and
+      convert it into a windows font.
+ 
+ 
+      Under @X02MISC
+ 
+@X07        [ ] Allow Screen Saver  @X03(Not Checked)
+@X07        [ ] Always suspend      @X03(Not Checked)
+@X07        [@X0FX@X07] Warn if still Active @X03(Checked)
+ 
+      @X02Idle sensitivity
+      @X04Low                      High
+@X05      -----------------------@X0D*@X05-----
+@X04                             ^
+@X03      All machines perform differently, so don't be afraid to play around
+      with this setting.  A great way to check priority is to window two
+      sessions side by side and adjust the idle sensitivity.  Watch the
+      system clock, the updates will go faster or slower depending on the
+      setting you choose.
+ 
+ 
+@X0B      CONCLUSION
+      ----------
+ 
+@X03      As explained, Win95 was designed so that you could still use
+      your old device drivers and TSRs with it, but if you do you
+      could pay a penalty in memory, performance, and stability.
+ 
+      Windows drivers are preferred because they:
+ 
+@X09      1. Reside in Extended Memory as 32-bit Extensions to the OS
+      2. Multitask Better
+      3. Do NOT Consume Conventional Memory
+      4. Do NOT Use VM386 Virtual Machines
+      5. Provide Universal OS Access to Your Hardware
+         (IE..hardware accessible by both Windows and DOS apps)
+ 
+@X03      You should be able to get very large conventional memory
+      spaces under Win95, if you eliminate the unnecessary
+      DOS device drivers and TSRs. 580k and up per conventional
+      memory space should be fairly easy to attain.
+
+
