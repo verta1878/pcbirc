@@ -17,7 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "vmdata.hpp"
+#include "vmdata.hpp"
 /* VMData swap types - legacy, not in current headers */
 typedef int VMDataSwapFailureAction;
 typedef int VMDataSwapFailure;
