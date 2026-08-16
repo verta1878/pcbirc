@@ -34,3 +34,13 @@ pcb15everything.zip
 .vscode/
 .idea/
 *.sublime-*
+
+# Allow built binaries
+!tools/qfront/bin/dos/*.exe
+!tools/qfront/bin/dos/*.EXE
+!bin/*.exe
+!bin/*.EXE
+!PCBSRC/MAIN/SOURCE/UTIL/*/*.exe
+!PCBSRC/MAIN/SOURCE/UTIL/*/*.EXE
+!dist/*.exe
+!dist/*.EXE
