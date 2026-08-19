@@ -1,2 +1,0 @@
-vmodem/vmodem.c(262): Warning! W131: No prototype found for function 'close'
-vmodem/vmodem.c(331): Warning! W131: No prototype found for function 'select'

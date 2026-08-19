@@ -1,8 +1,0 @@
-Ray Gwinn's second generation of drivers
-for OS/2. SIO2K.SYS and VSIO2K.SYS are
-replacements of the OS2 communications
-drivers COM.SYS and VCOM.SYS which come
-with OS/2. Providing extended bit rate
-support for most motherboards, virtual
-comm ports over internet (VMODEM), and
-FOSSIL support.

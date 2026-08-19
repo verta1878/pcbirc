@@ -1,8 +1,0 @@
-# VX00.SYS — OpenWatcom linker response file
-# 16-bit DOS device driver
-system dos
-format dos
-option quiet
-option map=out/vx00.map
-name out/VX00.SYS
-file out/vx00.obj
