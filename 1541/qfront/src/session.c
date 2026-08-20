@@ -42,6 +42,11 @@
 
 /* serial.c */
 typedef struct SerPort SerPort;
+
+/* Inbound file transfer stubs (defined at end of file) */
+void sess_receive_files_inbound(SerPort *sp, const QfConfig *cfg);
+void sess_send_files_inbound(SerPort *sp, const QfConfig *cfg, const FTN_ADDR *addr);
+
 extern int  ser_open(SerPort *sp, int port_num, int use_fossil);
 extern void ser_close(SerPort *sp);
 extern int  ser_read_byte(SerPort *sp, int timeout_ms);
@@ -957,4 +962,20 @@ int qf_answer_session(void *sp_override, const QfConfig *cfg,
     /* Close port handle but DON'T drop DTR — keep carrier up */
     if (!sp_override) ser_close(sp);
     return 1;  /* Errorlevel 1 = load BBS */
+}
+
+/*-----------------------------------------------------------------------*/
+/* STUBS — inbound file transfer (not yet implemented)                   */
+/*-----------------------------------------------------------------------*/
+
+void sess_receive_files_inbound(SerPort *sp, const QfConfig *cfg)
+{
+    (void)sp; (void)cfg;
+    qf_log(LOG_INFO, "sess_receive_files_inbound: STUB -- not yet implemented");
+}
+
+void sess_send_files_inbound(SerPort *sp, const QfConfig *cfg, const FTN_ADDR *addr)
+{
+    (void)sp; (void)cfg; (void)addr;
+    qf_log(LOG_INFO, "sess_send_files_inbound: STUB -- not yet implemented");
 }

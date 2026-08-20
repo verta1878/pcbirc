@@ -1,142 +1,170 @@
-/* ====================================================================
- * frequest.c — File Request Processor
- * ====================================================================
- * Processes incoming .REQ (file request) files from remote systems.
- * Handles magic filenames (QMAGIC.DAT) and request limits (QRLIMIT.DAT).
- *
- * From binary:
- *   "Processing request file"
- *   "Requested file(s) <list>"
- *   "Found magic file <name>"
- *   "File request" / "File update request"
- *   "Maximum bytes/number of requests reached"
- *   "Requests not allowed during this event"
- *   "Connect speed too low for file requests"
- *
- * Clean-room from FTS-0006 Section 6 + QFront binary analysis.
- * ==================================================================== */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* frequest.c -- File Request Processor                                     */
+/*                                                                           */
+/* Processes incoming .REQ (file request) files from remote systems.         */
+/* Handles magic filenames (QMAGIC.DAT) and request limits (QRLIMIT.DAT).   */
+/*                                                                           */
+/* From binary:                                                              */
+/*   "Processing request file"                                              */
+/*   "Requested file(s) <list>"                                             */
+/*   "Found magic file <name>"                                              */
+/*   "Maximum bytes/number of requests reached"                             */
+/*   "Requests not allowed during this event"                               */
+/*   "Connect speed too low for file requests"                              */
+/*                                                                           */
+/* Clean-room from FTS-0006 Section 6 + QFront binary analysis.              */
+/*                                                                           */
+/* License: GPLv3                                                            */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #include "qfront.h"
 
-#define MAX_MAGIC      128
-#define MAX_REQ_FILES  64
+#define MAX_MAGIC      128              /* max magic filename entries     */
+#define MAX_REQ_FILES  64               /* max files per request         */
 
-/* ---- Magic Filename Entry ----
- * Maps a short alias to a real file path.
+
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                        Magic Filename Table                               */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/* Maps a short alias to a real file path.
  * From binary: "Found magic file <name>"
  * Stored in QMAGIC.DAT. */
 
 typedef struct {
-    char alias[32];               /* Magic name (e.g. "FILES")   */
-    char path[260];               /* Real file path               */
-    int  security;                /* Required security level      */
+    char Alias[32];                     /* magic name (e.g. "FILES")     */
+    char Path[260];                     /* real file path                */
+    int  Security;                      /* required security level       */
 } MagicEntry;
 
-/* ---- Request Limits ----
- * From binary: "Maximum bytes/number of requests reached"
- * Stored in QRLIMIT.DAT (or in config). */
-
-typedef struct {
-    long max_bytes_session;       /* Max bytes per session        */
-    int  max_files_session;       /* Max files per session        */
-    long max_bytes_day;           /* Max bytes per day            */
-    int  max_files_day;           /* Max files per day            */
-    int  min_speed;               /* Min connect speed required   */
-    int  allow_unlisted;          /* Allow from unlisted nodes    */
-} ReqLimits;
-
-/* ---- Request State ---- */
-
-typedef struct {
-    long bytes_sent;              /* Bytes sent this session      */
-    int  files_sent;              /* Files sent this session      */
-    long bytes_today;             /* Bytes sent today             */
-    int  files_today;             /* Files sent today             */
-} ReqState;
+static MagicEntry g_Magic[MAX_MAGIC];   /* magic filename table          */
+static int        g_MagicCount = 0;     /* entries in magic table        */
 
 
-/* ---- Load Magic Filenames ---- */
+/*-----------------------------------------------------------------------*/
+/* freq_load_magic() -- Load magic filenames from QMAGIC.DAT            */
+/*                                                                       */
+/* Format: ALIAS PATH [security_level]                                   */
+/* Example: FILES C:\PCB\GEN\DLPATH.LST 10                               */
+/*                                                                       */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
 
-static MagicEntry g_magic[MAX_MAGIC];
-static int        g_magic_count = 0;
-
-int freq_load_magic(const char *path)
+int freq_load_magic(const char *Path)
 {
-    FILE *f;
-    char line[512];
+    FILE *f;                            /* magic file handle             */
+    char  Line[512];                    /* line read buffer              */
 
-    g_magic_count = 0;
+    g_MagicCount = 0;
 
-    f = fopen(path, "r");
+    f = fopen(Path, "r");
     if (!f) return -1;
 
-    while (fgets(line, sizeof(line), f) && g_magic_count < MAX_MAGIC) {
-        char alias[32], fpath[260];
-        int sec = 0;
+    while (fgets(Line, sizeof(Line), f) && g_MagicCount < MAX_MAGIC) {
+        char Alias[32];                 /* parsed alias name             */
+        char FPath[260];                /* parsed file path              */
+        int  Sec = 0;                   /* parsed security level         */
 
         /* Format: ALIAS PATH [security_level] */
-        if (sscanf(line, "%31s %259s %d", alias, fpath, &sec) >= 2) {
-            strncpy(g_magic[g_magic_count].alias, alias, 31);
-            strncpy(g_magic[g_magic_count].path, fpath, 259);
-            g_magic[g_magic_count].security = sec;
-            g_magic_count++;
+        if (sscanf(Line, "%31s %259s %d", Alias, FPath, &Sec) >= 2) {
+            strncpy(g_Magic[g_MagicCount].Alias, Alias, 31);
+            strncpy(g_Magic[g_MagicCount].Path, FPath, 259);
+            g_Magic[g_MagicCount].Security = Sec;
+            g_MagicCount++;
         }
     }
 
     fclose(f);
-    qf_log(LOG_DEBUG, "Loaded %d magic filenames", g_magic_count);
+    qf_log(LOG_DEBUG, "Loaded %d magic filenames", g_MagicCount);
     return 0;
 }
 
-/* ---- Lookup Magic Filename ---- */
 
-static const char *freq_find_magic(const char *name)
+/*-----------------------------------------------------------------------*/
+/* freq_find_magic() -- Lookup a magic filename alias                    */
+/*                                                                       */
+/* Case-insensitive search. Returns the real path, or NULL if not found. */
+/*-----------------------------------------------------------------------*/
+
+static const char *freq_find_magic(const char *Name)
 {
-    int i;
-    for (i = 0; i < g_magic_count; i++) {
-        if (strcasecmp(g_magic[i].alias, name) == 0) {
+    int i;                              /* search index                  */
+
+    for (i = 0; i < g_MagicCount; i++) {
+        if (strcasecmp(g_Magic[i].Alias, Name) == 0) {
             qf_log(LOG_DEBUG, "Found magic file \"%s\" -> %s",
-                   name, g_magic[i].path);
-            return g_magic[i].path;
+                   Name, g_Magic[i].Path);
+            return g_Magic[i].Path;
         }
     }
     return NULL;
 }
 
 
-/* ---- Load Request Limits ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                          Request Limits                                   */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-static ReqLimits g_limits = {
-    .max_bytes_session = 999999999L,
-    .max_files_session = 999999999,
-    .max_bytes_day     = 999999999L,
-    .max_files_day     = 999999999,
-    .min_speed         = 0,
-    .allow_unlisted    = 0
+/* From binary: "Maximum bytes/number of requests reached"
+ * Stored in QRLIMIT.DAT (or in config). */
+
+typedef struct {
+    long MaxBytesSession;               /* max bytes per session         */
+    int  MaxFilesSession;               /* max files per session         */
+    long MaxBytesDay;                   /* max bytes per day             */
+    int  MaxFilesDay;                   /* max files per day             */
+    int  MinSpeed;                      /* min connect speed required    */
+    int  AllowUnlisted;                 /* allow from unlisted nodes     */
+} ReqLimits;
+
+typedef struct {
+    long BytesSent;                     /* bytes sent this session       */
+    int  FilesSent;                     /* files sent this session       */
+    long BytesToday;                    /* bytes sent today              */
+    int  FilesToday;                    /* files sent today              */
+} ReqState;
+
+static ReqLimits g_Limits = {
+    999999999L,                         /* MaxBytesSession               */
+    999999999,                          /* MaxFilesSession               */
+    999999999L,                         /* MaxBytesDay                   */
+    999999999,                          /* MaxFilesDay                   */
+    0,                                  /* MinSpeed                      */
+    0                                   /* AllowUnlisted                 */
 };
 
-int freq_load_limits(const char *path)
-{
-    FILE *f;
-    char line[256], key[32], val[32];
 
-    f = fopen(path, "r");
+/*-----------------------------------------------------------------------*/
+/* freq_load_limits() -- Load request limits from QRLIMIT.DAT           */
+/*                                                                       */
+/* Format: Key=Value, one per line.                                      */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
+
+int freq_load_limits(const char *Path)
+{
+    FILE *f;                            /* limits file handle            */
+    char  Line[256];                    /* line read buffer              */
+    char  Key[32];                      /* parsed key                    */
+    char  Val[32];                      /* parsed value                  */
+
+    f = fopen(Path, "r");
     if (!f) return -1;
 
-    while (fgets(line, sizeof(line), f)) {
-        if (sscanf(line, "%31[^=]=%31s", key, val) == 2) {
-            if (strcmp(key, "MaxBytesSession") == 0)
-                g_limits.max_bytes_session = atol(val);
-            else if (strcmp(key, "MaxFilesSession") == 0)
-                g_limits.max_files_session = atoi(val);
-            else if (strcmp(key, "MaxBytesDay") == 0)
-                g_limits.max_bytes_day = atol(val);
-            else if (strcmp(key, "MaxFilesDay") == 0)
-                g_limits.max_files_day = atoi(val);
-            else if (strcmp(key, "MinSpeed") == 0)
-                g_limits.min_speed = atoi(val);
-            else if (strcmp(key, "AllowUnlisted") == 0)
-                g_limits.allow_unlisted = atoi(val);
+    while (fgets(Line, sizeof(Line), f)) {
+        if (sscanf(Line, "%31[^=]=%31s", Key, Val) == 2) {
+            if (strcmp(Key, "MaxBytesSession") == 0)
+                g_Limits.MaxBytesSession = atol(Val);
+            else if (strcmp(Key, "MaxFilesSession") == 0)
+                g_Limits.MaxFilesSession = atoi(Val);
+            else if (strcmp(Key, "MaxBytesDay") == 0)
+                g_Limits.MaxBytesDay = atol(Val);
+            else if (strcmp(Key, "MaxFilesDay") == 0)
+                g_Limits.MaxFilesDay = atoi(Val);
+            else if (strcmp(Key, "MinSpeed") == 0)
+                g_Limits.MinSpeed = atoi(Val);
+            else if (strcmp(Key, "AllowUnlisted") == 0)
+                g_Limits.AllowUnlisted = atoi(Val);
         }
     }
 
@@ -145,34 +173,38 @@ int freq_load_limits(const char *path)
 }
 
 
-/* ---- Check Request Limits ---- */
+/*-----------------------------------------------------------------------*/
+/* freq_check_limits() -- Check if a file request is within limits       */
+/*                                                                       */
+/* Returns 0 if allowed, -1 if limit exceeded.                           */
+/*-----------------------------------------------------------------------*/
 
-static int freq_check_limits(const ReqState *state, long file_size,
-                              int connect_speed, int is_listed)
+static int freq_check_limits(const ReqState *State, long FileSize,
+                              int ConnectSpeed, int IsListed)
 {
-    if (!is_listed && !g_limits.allow_unlisted) {
+    if (!IsListed && !g_Limits.AllowUnlisted) {
         qf_log(LOG_WARN, "Requests not allowed from unlisted system");
         return -1;
     }
 
-    if (connect_speed > 0 && connect_speed < g_limits.min_speed) {
+    if (ConnectSpeed > 0 && ConnectSpeed < g_Limits.MinSpeed) {
         qf_log(LOG_WARN, "Connect speed too low for file requests");
         qf_log(LOG_WARN, "Minimum connect speed required for requests is %d",
-               g_limits.min_speed);
+               g_Limits.MinSpeed);
         return -1;
     }
 
-    if (state->bytes_sent + file_size > g_limits.max_bytes_session) {
+    if (State->BytesSent + FileSize > g_Limits.MaxBytesSession) {
         qf_log(LOG_WARN, "Maximum bytes in requests reached");
         return -1;
     }
 
-    if (state->files_sent >= g_limits.max_files_session) {
+    if (State->FilesSent >= g_Limits.MaxFilesSession) {
         qf_log(LOG_WARN, "Maximum number of requests reached");
         return -1;
     }
 
-    if (state->bytes_today + file_size > g_limits.max_bytes_day) {
+    if (State->BytesToday + FileSize > g_Limits.MaxBytesDay) {
         qf_log(LOG_WARN, "Maximum bytes in requests reached (daily limit)");
         return -1;
     }
@@ -181,149 +213,150 @@ static int freq_check_limits(const ReqState *state, long file_size,
 }
 
 
-/* ---- Build File List from .REQ ----
- *
- * .REQ file format (FTS-0006 Section 6):
- *   One filename per line. Optional:
- *     filename            Request this file
- *     filename !password  Password-protected request
- *     filename +datetime  Update request (only if newer)
- *
- * Returns number of files queued for sending. */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                       Request File Processing                             */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 typedef struct {
-    char path[260];               /* Resolved path to send       */
-    int  is_update;               /* Update request (only newer) */
+    char Path[260];                     /* resolved path to send         */
+    int  IsUpdate;                      /* update request (only newer)   */
 } FreqFile;
 
+
 /*-----------------------------------------------------------------------*/
-/* freq_process_req() — Parse a .REQ file and resolve filenames          */
-/*                                                                         */
+/* freq_process_req() -- Parse a .REQ file and resolve filenames         */
+/*                                                                       */
 /* .REQ file format (FTS-0006 Section 6):                                */
 /*   One filename per line, with optional modifiers:                     */
-/*     FILENAME            — request this file                           */
-/*     FILENAME !password  — password-protected request                  */
-/*     FILENAME +datetime  — update request (only send if newer)         */
-/*                                                                         */
-/* Resolution order:                                                      */
+/*     FILENAME            -- request this file                          */
+/*     FILENAME !password  -- password-protected request                 */
+/*     FILENAME +datetime  -- update request (only send if newer)        */
+/*                                                                       */
+/* Resolution order:                                                     */
 /*   1. Check magic filenames (QMAGIC.DAT aliases like "FILES")          */
 /*   2. Search request directories (semicolon-separated in config)       */
 /*   3. Log "File not found" if neither matches                          */
-/*                                                                         */
+/*                                                                       */
 /* Returns number of files resolved for sending.                         */
 /*-----------------------------------------------------------------------*/
 
-int freq_process_req(const char *req_path, const char *req_dirs,
-                      FreqFile *files, int max_files)
+int freq_process_req(const char *ReqPath, const char *ReqDirs,
+                      FreqFile *Files, int MaxFiles)
 {
-    FILE *f;
-    char line[512];
-    int count = 0;
+    FILE *f;                            /* .REQ file handle              */
+    char  Line[512];                    /* line read buffer              */
+    int   Count = 0;                    /* files resolved                */
 
-    f = fopen(req_path, "r");
+    f = fopen(ReqPath, "r");
     if (!f) return 0;
 
-    qf_log(LOG_INFO, "Processing request file: %s", req_path);
-    qf_log(LOG_DEBUG, "  search dirs: %s", req_dirs);
+    qf_log(LOG_INFO, "Processing request file: %s", ReqPath);
+    qf_log(LOG_DEBUG, "  search dirs: %s", ReqDirs);
 
-    while (fgets(line, sizeof(line), f) && count < max_files) {
-        char *p = line;
-        char name[260];
-        int is_update = 0;
-        const char *magic;
+    while (fgets(Line, sizeof(Line), f) && Count < MaxFiles) {
+        char       *p = Line;           /* line scan pointer             */
+        char        Name[260];          /* requested filename            */
+        int         IsUpdate = 0;       /* update request flag           */
+        const char *MagicPath;          /* resolved magic path           */
 
         /* Strip whitespace */
         while (*p == ' ' || *p == '\t') p++;
         {
-            char *end = p + strlen(p) - 1;
-            while (end > p && (*end == '\n' || *end == '\r' || *end == ' '))
-                *end-- = '\0';
+            char *End = p + strlen(p) - 1;
+            while (End > p && (*End == '\n' || *End == '\r' || *End == ' '))
+                *End-- = '\0';
         }
 
         if (*p == '\0' || *p == ';') continue;
 
         /* Extract filename (first token) */
-        sscanf(p, "%259s", name);
+        sscanf(p, "%259s", Name);
 
         /* Check for update flag (+) */
         if (strchr(p, '+'))
-            is_update = 1;
+            IsUpdate = 1;
 
         /* Check magic filenames first */
-        magic = freq_find_magic(name);
-        if (magic) {
-            strncpy(files[count].path, magic, 259);
-            files[count].is_update = is_update;
-            count++;
+        MagicPath = freq_find_magic(Name);
+        if (MagicPath) {
+            strncpy(Files[Count].Path, MagicPath, 259);
+            Files[Count].IsUpdate = IsUpdate;
+            Count++;
             qf_log(LOG_INFO, "Requested file(s): %s (magic -> %s)",
-                   name, magic);
+                   Name, MagicPath);
             continue;
         }
 
         /* Search request directories for the file */
         {
-            char search[520];
-            char *dir = NULL;
-            char dirs_copy[1024];
-            FILE *test;
+            char  SearchPath[520];      /* candidate file path           */
+            char *Dir = NULL;           /* current search directory      */
+            char  DirsCopy[1024];       /* mutable copy of search dirs   */
+            FILE *Test;                 /* test open handle              */
 
-            strncpy(dirs_copy, req_dirs, sizeof(dirs_copy) - 1);
-            dir = strtok(dirs_copy, ";");
+            strncpy(DirsCopy, ReqDirs, sizeof(DirsCopy) - 1);
+            Dir = strtok(DirsCopy, ";");
 
-            while (dir) {
-                snprintf(search, sizeof(search), "%s%c%s",
-                         dir, PATH_SEP, name);
-                test = fopen(search, "rb");
-                if (test) {
-                    fclose(test);
-                    strncpy(files[count].path, search, 259);
-                    files[count].is_update = is_update;
-                    count++;
-                    qf_log(LOG_INFO, "Requested file(s): %s", search);
+            while (Dir) {
+                snprintf(SearchPath, sizeof(SearchPath), "%s%c%s",
+                         Dir, PATH_SEP, Name);
+                Test = fopen(SearchPath, "rb");
+                if (Test) {
+                    fclose(Test);
+                    strncpy(Files[Count].Path, SearchPath, 259);
+                    Files[Count].IsUpdate = IsUpdate;
+                    Count++;
+                    qf_log(LOG_INFO, "Requested file(s): %s", SearchPath);
                     break;
                 }
-                dir = strtok(NULL, ";");
+                Dir = strtok(NULL, ";");
             }
 
-            if (!dir)
-                qf_log(LOG_WARN, "File not found: %s", name);
+            if (!Dir)
+                qf_log(LOG_WARN, "File not found: %s", Name);
         }
     }
 
     fclose(f);
-    return count;
+    return Count;
 }
 
 
-/* ---- Build Outgoing .REQ File ----
- * Creates a .REQ file in the BSO outbound for a file request. */
+/*-----------------------------------------------------------------------*/
+/* freq_build_req() -- Build outgoing .REQ file in BSO outbound         */
+/*                                                                       */
+/* Creates a .REQ file for a file request to a remote system.            */
+/* FTS-5005: NNNNNNNN.req in the outbound directory.                     */
+/*                                                                       */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
 
-int freq_build_req(const char *outbound, const FTN_ADDR *addr,
-                    const char **filenames, int num_files)
+int freq_build_req(const char *Outbound, const FTN_ADDR *Addr,
+                    const char **Filenames, int NumFiles)
 {
-    char path[260];
-    FILE *f;
-    int i;
+    char  Path[260];                    /* .REQ file path                */
+    FILE *f;                            /* output file handle            */
+    int   i;                            /* file loop index               */
 
     /* Build BSO path: NNNNNNNN.req */
-    snprintf(path, sizeof(path), "%s%c%04x%04x.req",
-             outbound, PATH_SEP, addr->net, addr->node);
+    snprintf(Path, sizeof(Path), "%s%c%04x%04x.req",
+             Outbound, PATH_SEP, Addr->net, Addr->node);
 
-    f = fopen(path, "w");
+    f = fopen(Path, "w");
     if (!f) {
-        qf_log(LOG_ERROR, "Cannot create request file: %s", path);
+        qf_log(LOG_ERROR, "Cannot create request file: %s", Path);
         return -1;
     }
 
-    for (i = 0; i < num_files; i++)
-        fprintf(f, "%s\n", filenames[i]);
+    for (i = 0; i < NumFiles; i++)
+        fprintf(f, "%s\n", Filenames[i]);
 
     fclose(f);
 
     {
-        char buf[64];
-        ftn_format_addr(addr, buf, sizeof(buf));
-        qf_log(LOG_INFO, "File request for %s: %d file(s)", buf, num_files);
+        char AddrBuf[64];               /* formatted address for log     */
+        ftn_format_addr(Addr, AddrBuf, sizeof(AddrBuf));
+        qf_log(LOG_INFO, "File request for %s: %d file(s)", AddrBuf, NumFiles);
     }
 
     return 0;

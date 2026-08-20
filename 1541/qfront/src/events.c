@@ -1,300 +1,320 @@
-/* ====================================================================
- * events.c — Event Scheduler (19 flags from QFCONFIG binary)
- * ====================================================================
- * Full event scheduler matching QFront v1.20a's event system.
- * Parses [Event.NAME] sections from qfront.cfg.
- * Implements all 19 event flags extracted from binary analysis.
- *
- * Event types (from QFCONFIG strings):
- *   "Default FidoMail event"   — standard mail processing
- *   "Run batch file"           — execute external command
- *   "Exit with errorlevel"     — exit program with code
- *
- * Clean-room from QFront documentation + binary analysis.
- * ==================================================================== */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* events.c -- Event Scheduler (19 flags from QFCONFIG binary)              */
+/*                                                                           */
+/* Full event scheduler matching QFront v1.20a's event system. Parses       */
+/* [Event.NAME] sections from qfront.cfg. Implements all 19 event flags     */
+/* extracted from binary analysis.                                           */
+/*                                                                           */
+/* Event types (from QFCONFIG strings):                                      */
+/*   "Default FidoMail event"    -- standard mail processing                */
+/*   "Run batch file"            -- execute external command                */
+/*   "Exit with errorlevel"      -- exit program with code                  */
+/*                                                                           */
+/* Clean-room from QFront documentation + binary analysis.                   */
+/*                                                                           */
+/* License: GPLv3                                                            */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #include "qfront.h"
 
-/* ---- Event Flag Bits ----
- * All 19 flags from QFCONFIG binary analysis. */
 
-#define EVF_SLIDE          0x00000001  /* Slide event time           */
-#define EVF_ECHO_ONLY      0x00000002  /* EchoMail only              */
-#define EVF_NET_ONLY       0x00000004  /* NetMail only               */
-#define EVF_RECV_ONLY      0x00000008  /* Receive-only               */
-#define EVF_CM_ONLY        0x00000010  /* Send to CM systems only    */
-#define EVF_NONCM_ONLY     0x00000020  /* Send to non-CM only        */
-#define EVF_NODE_CRITICAL  0x00000040  /* Node-critical              */
-#define EVF_NO_HELD        0x00000080  /* No HELD attach             */
-#define EVF_LISTED_ONLY    0x00000100  /* Only listed nodes          */
-#define EVF_FORCE_POLL     0x00000200  /* Force outbound poll        */
-#define EVF_POLL_DURING    0x00000400  /* Poll during event          */
-#define EVF_SCAN_BEFORE    0x00000800  /* Scan before event          */
-#define EVF_COMPILE_NL     0x00001000  /* Compile nodelist           */
-#define EVF_COMPILE_RECV   0x00002000  /* Compile when received      */
-#define EVF_RESCAN         0x00004000  /* Rescan on return           */
-#define EVF_END_NOMAIL     0x00008000  /* End event when queue empty */
-#define EVF_EXIT_NOMAIL    0x00010000  /* Exit program, queue empty  */
-#define EVF_EXIT_DONE      0x00020000  /* Exit loop when done        */
-#define EVF_AUTO_POLL      0x00040000  /* Has auto-poll list         */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                       Event Flag Definitions                              */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-/* ---- Event Definition ---- */
+/* All 19 flags from QFCONFIG binary analysis. */
+
+#define EVF_SLIDE          0x00000001   /* slide event time              */
+#define EVF_ECHO_ONLY      0x00000002   /* EchoMail only                 */
+#define EVF_NET_ONLY       0x00000004   /* NetMail only                  */
+#define EVF_RECV_ONLY      0x00000008   /* receive-only                  */
+#define EVF_CM_ONLY        0x00000010   /* send to CM systems only       */
+#define EVF_NONCM_ONLY     0x00000020   /* send to non-CM only           */
+#define EVF_NODE_CRITICAL  0x00000040   /* node-critical                 */
+#define EVF_NO_HELD        0x00000080   /* no HELD attach                */
+#define EVF_LISTED_ONLY    0x00000100   /* only listed nodes             */
+#define EVF_FORCE_POLL     0x00000200   /* force outbound poll           */
+#define EVF_POLL_DURING    0x00000400   /* poll during event             */
+#define EVF_SCAN_BEFORE    0x00000800   /* scan before event             */
+#define EVF_COMPILE_NL     0x00001000   /* compile nodelist              */
+#define EVF_COMPILE_RECV   0x00002000   /* compile when received         */
+#define EVF_RESCAN         0x00004000   /* rescan on return              */
+#define EVF_END_NOMAIL     0x00008000   /* end event when queue empty    */
+#define EVF_EXIT_NOMAIL    0x00010000   /* exit program, queue empty     */
+#define EVF_EXIT_DONE      0x00020000   /* exit loop when done           */
+#define EVF_AUTO_POLL      0x00040000   /* has auto-poll list            */
+
+
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                        Event Definition                                   */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
 typedef struct {
-    char     tag[32];             /* Event name/tag               */
-    char     description[64];     /* Description                  */
-    int      active;              /* Is this event enabled?       */
+    char     Tag[32];                   /* event name/tag                */
+    char     Description[64];           /* description                   */
+    int      Active;                    /* is this event enabled?        */
 
     /* Schedule */
-    int      day_mask;            /* Bit 0=Sun ... Bit 6=Sat      */
-    int      start_hour;
-    int      start_min;
-    int      end_hour;
-    int      end_min;
+    int      DayMask;                   /* bit 0=Sun ... bit 6=Sat       */
+    int      StartHour;                 /* start hour (0-23)             */
+    int      StartMin;                  /* start minute (0-59)           */
+    int      EndHour;                   /* end hour (0-23)               */
+    int      EndMin;                    /* end minute (0-59)             */
 
     /* Flags */
-    uint32_t flags;               /* EVF_* bitmask                */
+    uint32_t Flags;                     /* EVF_* bitmask                 */
 
     /* Exit */
-    int      errorlevel;          /* Exit code (if EVF_EXIT_*)    */
+    int      Errorlevel;                /* exit code (if EVF_EXIT_*)     */
 
     /* Batch file */
-    char     batch[260];          /* Batch file path              */
+    char     Batch[260];                /* batch file path               */
 
     /* Auto-poll list */
-    FTN_ADDR auto_poll[16];
-    int      num_auto_poll;
+    FTN_ADDR AutoPoll[16];              /* addresses to auto-poll        */
+    int      NumAutoPoll;               /* count of auto-poll addresses  */
 
     /* Cost limits (from QFCONFIG: "min/max allowable cost") */
-    int      min_cost;            /* -1 = ignore                  */
-    int      max_cost;            /* -1 = ignore                  */
+    int      MinCost;                   /* -1 = ignore                   */
+    int      MaxCost;                   /* -1 = ignore                   */
 
     /* Tracking */
-    time_t   last_run;            /* Last time this event ran     */
+    time_t   LastRun;                   /* last time this event ran      */
 } QfEventDef;
 
+#define MAX_EVENT_DEFS 32               /* max event definitions         */
 
-#define MAX_EVENT_DEFS 32
-static QfEventDef g_events[MAX_EVENT_DEFS];
-static int        g_num_events = 0;
+static QfEventDef g_Events[MAX_EVENT_DEFS];  /* event table              */
+static int        g_NumEvents = 0;           /* event count              */
 
 
-/* ---- Parse Day Mask ----
- * "MTWTFSs" = Mon-Sun.  "MTWTF" = weekdays. "Ss" = weekends.
- * Also accepts: "Daily", "Weekdays", "Weekends", "Mon", "Tue", etc. */
-static int ev_parse_days(const char *str)
+/*-----------------------------------------------------------------------*/
+/* ev_parse_days() -- Parse day mask from config string                  */
+/*                                                                       */
+/* Accepts: "Daily", "Weekdays", "Weekends", or individual day letters: */
+/*   s=Sun, M=Mon, T=Tue, W=Wed, t=Thu, F=Fri, S=Sat                   */
+/*                                                                       */
+/* Returns bitmask: bit 0=Sun, bit 1=Mon, ... bit 6=Sat.                */
+/*-----------------------------------------------------------------------*/
+
+static int ev_parse_days(const char *Str)
 {
-    int mask = 0;
-    const char *p;
+    int         Mask = 0;               /* accumulated day bitmask       */
+    const char *p;                      /* string scan pointer           */
 
-    if (strcmp(str, "Daily") == 0 || strcmp(str, "daily") == 0)
-        return 0x7F;              /* All 7 days                   */
-    if (strcmp(str, "Weekdays") == 0 || strcmp(str, "weekdays") == 0)
-        return 0x3E;              /* Mon-Fri (bits 1-5)           */
-    if (strcmp(str, "Weekends") == 0 || strcmp(str, "weekends") == 0)
-        return 0x41;              /* Sun + Sat (bits 0,6)         */
+    if (strcmp(Str, "Daily") == 0 || strcmp(Str, "daily") == 0)
+        return 0x7F;                    /* all 7 days                    */
+    if (strcmp(Str, "Weekdays") == 0 || strcmp(Str, "weekdays") == 0)
+        return 0x3E;                    /* Mon-Fri (bits 1-5)            */
+    if (strcmp(Str, "Weekends") == 0 || strcmp(Str, "weekends") == 0)
+        return 0x41;                    /* Sun + Sat (bits 0,6)          */
 
-    for (p = str; *p; p++) {
+    for (p = Str; *p; p++) {
         switch (*p) {
-        case 's': mask |= 0x01; break;  /* Sun (lowercase = Sun) */
-        case 'M': mask |= 0x02; break;  /* Mon */
-        case 'T': mask |= 0x04; break;  /* Tue */
-        case 'W': mask |= 0x08; break;  /* Wed */
-        case 't': mask |= 0x10; break;  /* Thu (lowercase = Thu) */
-        case 'F': mask |= 0x20; break;  /* Fri */
-        case 'S': mask |= 0x40; break;  /* Sat (uppercase = Sat) */
+        case 's': Mask |= 0x01; break; /* Sun (lowercase = Sun)         */
+        case 'M': Mask |= 0x02; break; /* Mon                           */
+        case 'T': Mask |= 0x04; break; /* Tue                           */
+        case 'W': Mask |= 0x08; break; /* Wed                           */
+        case 't': Mask |= 0x10; break; /* Thu (lowercase = Thu)         */
+        case 'F': Mask |= 0x20; break; /* Fri                           */
+        case 'S': Mask |= 0x40; break; /* Sat (uppercase = Sat)         */
         }
     }
 
-    return mask;
+    return Mask;
 }
 
 
-/* ---- Parse Time "HH:MM" ---- */
-static void ev_parse_time(const char *str, int *hour, int *min)
+/*-----------------------------------------------------------------------*/
+/* ev_parse_time() -- Parse "HH:MM" time string                         */
+/*-----------------------------------------------------------------------*/
+
+static void ev_parse_time(const char *Str, int *Hour, int *Min)
 {
-    *hour = 0;
-    *min  = 0;
-    sscanf(str, "%d:%d", hour, min);
+    *Hour = 0;
+    *Min  = 0;
+    sscanf(Str, "%d:%d", Hour, Min);
 }
 
 
-/* ---- Load Events from Config ----
- *
- * Format in qfront.cfg:
- *
- *   [Event.ZMH]
- *   Description=Zone Mail Hour
- *   Days=Daily
- *   Start=01:00
- *   End=05:00
- *   ForcePoll=yes
- *   SendCMOnly=yes
- *   ExitNoMail=yes
- *   Errorlevel=3
- *   AutoPoll=1:234/56,2:5020/0
- */
-int ev_load(const char *cfgpath)
+/*-----------------------------------------------------------------------*/
+/* ev_load() -- Load event definitions from config file                  */
+/*                                                                       */
+/* Parses [Event.NAME] sections from qfront.cfg. Each section contains   */
+/* schedule, flags, and action settings.                                  */
+/*                                                                       */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
+
+int ev_load(const char *CfgPath)
 {
-    FILE *f;
-    char line[512];
-    QfEventDef *cur = NULL;
+    FILE        *f;                     /* config file handle            */
+    char         Line[512];             /* line read buffer              */
+    QfEventDef  *Cur = NULL;            /* current event being parsed    */
 
-    g_num_events = 0;
+    g_NumEvents = 0;
 
-    f = fopen(cfgpath, "r");
+    f = fopen(CfgPath, "r");
     if (!f) return -1;
 
-    while (fgets(line, sizeof(line), f)) {
-        char *p = line;
-        char key[64], val[256];
+    while (fgets(Line, sizeof(Line), f)) {
+        char *p = Line;                 /* line scan pointer             */
+        char  Key[64];                  /* parsed key                    */
+        char  Val[256];                 /* parsed value                  */
 
         while (*p == ' ' || *p == '\t') p++;
         if (*p == '#' || *p == ';' || *p == '\n') continue;
 
         /* Strip trailing whitespace */
         {
-            char *end = p + strlen(p) - 1;
-            while (end > p && (*end == '\n' || *end == '\r' || *end == ' '))
-                *end-- = '\0';
+            char *End = p + strlen(p) - 1;
+            while (End > p && (*End == '\n' || *End == '\r' || *End == ' '))
+                *End-- = '\0';
         }
 
         /* Check for [Event.NAME] section header */
         if (*p == '[' && strncmp(p, "[Event.", 7) == 0) {
-            char tag[32];
-            sscanf(p + 7, "%31[^]]", tag);
+            char EventTag[32];          /* parsed event tag              */
 
-            if (g_num_events >= MAX_EVENT_DEFS) continue;
+            sscanf(p + 7, "%31[^]]", EventTag);
 
-            cur = &g_events[g_num_events++];
-            memset(cur, 0, sizeof(*cur));
-            strncpy(cur->tag, tag, sizeof(cur->tag) - 1);
-            cur->active = 1;
-            cur->min_cost = -1;
-            cur->max_cost = -1;
+            if (g_NumEvents >= MAX_EVENT_DEFS) continue;
+
+            Cur = &g_Events[g_NumEvents++];
+            memset(Cur, 0, sizeof(*Cur));
+            strncpy(Cur->Tag, EventTag, sizeof(Cur->Tag) - 1);
+            Cur->Active  = 1;
+            Cur->MinCost = -1;
+            Cur->MaxCost = -1;
             continue;
         }
 
         /* Skip lines not in an event section */
-        if (!cur) continue;
+        if (!Cur) continue;
 
         /* Don't parse non-event sections */
-        if (*p == '[') { cur = NULL; continue; }
+        if (*p == '[') { Cur = NULL; continue; }
 
         /* Parse KEY=VALUE */
-        if (sscanf(p, "%63[^=]=%255[^\n]", key, val) != 2) continue;
+        if (sscanf(p, "%63[^=]=%255[^\n]", Key, Val) != 2) continue;
 
-        if (strcmp(key, "Description") == 0)
-            strncpy(cur->description, val, sizeof(cur->description) - 1);
-        else if (strcmp(key, "Days") == 0)
-            cur->day_mask = ev_parse_days(val);
-        else if (strcmp(key, "Start") == 0)
-            ev_parse_time(val, &cur->start_hour, &cur->start_min);
-        else if (strcmp(key, "End") == 0)
-            ev_parse_time(val, &cur->end_hour, &cur->end_min);
-        else if (strcmp(key, "Active") == 0)
-            cur->active = (val[0] == 'y' || val[0] == 'Y' || val[0] == '1');
-        else if (strcmp(key, "Errorlevel") == 0)
-            cur->errorlevel = atoi(val);
-        else if (strcmp(key, "Batch") == 0)
-            strncpy(cur->batch, val, sizeof(cur->batch) - 1);
-        else if (strcmp(key, "MinCost") == 0)
-            cur->min_cost = atoi(val);
-        else if (strcmp(key, "MaxCost") == 0)
-            cur->max_cost = atoi(val);
+        if (strcmp(Key, "Description") == 0)
+            strncpy(Cur->Description, Val, sizeof(Cur->Description) - 1);
+        else if (strcmp(Key, "Days") == 0)
+            Cur->DayMask = ev_parse_days(Val);
+        else if (strcmp(Key, "Start") == 0)
+            ev_parse_time(Val, &Cur->StartHour, &Cur->StartMin);
+        else if (strcmp(Key, "End") == 0)
+            ev_parse_time(Val, &Cur->EndHour, &Cur->EndMin);
+        else if (strcmp(Key, "Active") == 0)
+            Cur->Active = (Val[0] == 'y' || Val[0] == 'Y' || Val[0] == '1');
+        else if (strcmp(Key, "Errorlevel") == 0)
+            Cur->Errorlevel = atoi(Val);
+        else if (strcmp(Key, "Batch") == 0)
+            strncpy(Cur->Batch, Val, sizeof(Cur->Batch) - 1);
+        else if (strcmp(Key, "MinCost") == 0)
+            Cur->MinCost = atoi(Val);
+        else if (strcmp(Key, "MaxCost") == 0)
+            Cur->MaxCost = atoi(Val);
 
         /* Boolean flags */
-        else if (strcmp(key, "SlideTime") == 0 && val[0] == 'y')
-            cur->flags |= EVF_SLIDE;
-        else if (strcmp(key, "EchoOnly") == 0 && val[0] == 'y')
-            cur->flags |= EVF_ECHO_ONLY;
-        else if (strcmp(key, "NetOnly") == 0 && val[0] == 'y')
-            cur->flags |= EVF_NET_ONLY;
-        else if (strcmp(key, "ReceiveOnly") == 0 && val[0] == 'y')
-            cur->flags |= EVF_RECV_ONLY;
-        else if (strcmp(key, "SendCMOnly") == 0 && val[0] == 'y')
-            cur->flags |= EVF_CM_ONLY;
-        else if (strcmp(key, "SendNonCMOnly") == 0 && val[0] == 'y')
-            cur->flags |= EVF_NONCM_ONLY;
-        else if (strcmp(key, "NodeCritical") == 0 && val[0] == 'y')
-            cur->flags |= EVF_NODE_CRITICAL;
-        else if (strcmp(key, "NoHeldAttach") == 0 && val[0] == 'y')
-            cur->flags |= EVF_NO_HELD;
-        else if (strcmp(key, "ListedOnly") == 0 && val[0] == 'y')
-            cur->flags |= EVF_LISTED_ONLY;
-        else if (strcmp(key, "ForcePoll") == 0 && val[0] == 'y')
-            cur->flags |= EVF_FORCE_POLL;
-        else if (strcmp(key, "PollDuring") == 0 && val[0] == 'y')
-            cur->flags |= EVF_POLL_DURING;
-        else if (strcmp(key, "ScanBefore") == 0 && val[0] == 'y')
-            cur->flags |= EVF_SCAN_BEFORE;
-        else if (strcmp(key, "CompileNodelist") == 0 && val[0] == 'y')
-            cur->flags |= EVF_COMPILE_NL;
-        else if (strcmp(key, "CompileOnReceive") == 0 && val[0] == 'y')
-            cur->flags |= EVF_COMPILE_RECV;
-        else if (strcmp(key, "Rescan") == 0 && val[0] == 'y')
-            cur->flags |= EVF_RESCAN;
-        else if (strcmp(key, "EndNoMail") == 0 && val[0] == 'y')
-            cur->flags |= EVF_END_NOMAIL;
-        else if (strcmp(key, "ExitNoMail") == 0 && val[0] == 'y')
-            cur->flags |= EVF_EXIT_NOMAIL;
-        else if (strcmp(key, "ExitWhenDone") == 0 && val[0] == 'y')
-            cur->flags |= EVF_EXIT_DONE;
+        else if (strcmp(Key, "SlideTime") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_SLIDE;
+        else if (strcmp(Key, "EchoOnly") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_ECHO_ONLY;
+        else if (strcmp(Key, "NetOnly") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_NET_ONLY;
+        else if (strcmp(Key, "ReceiveOnly") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_RECV_ONLY;
+        else if (strcmp(Key, "SendCMOnly") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_CM_ONLY;
+        else if (strcmp(Key, "SendNonCMOnly") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_NONCM_ONLY;
+        else if (strcmp(Key, "NodeCritical") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_NODE_CRITICAL;
+        else if (strcmp(Key, "NoHeldAttach") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_NO_HELD;
+        else if (strcmp(Key, "ListedOnly") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_LISTED_ONLY;
+        else if (strcmp(Key, "ForcePoll") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_FORCE_POLL;
+        else if (strcmp(Key, "PollDuring") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_POLL_DURING;
+        else if (strcmp(Key, "ScanBefore") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_SCAN_BEFORE;
+        else if (strcmp(Key, "CompileNodelist") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_COMPILE_NL;
+        else if (strcmp(Key, "CompileOnReceive") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_COMPILE_RECV;
+        else if (strcmp(Key, "Rescan") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_RESCAN;
+        else if (strcmp(Key, "EndNoMail") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_END_NOMAIL;
+        else if (strcmp(Key, "ExitNoMail") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_EXIT_NOMAIL;
+        else if (strcmp(Key, "ExitWhenDone") == 0 && Val[0] == 'y')
+            Cur->Flags |= EVF_EXIT_DONE;
 
         /* Auto-poll address list */
-        else if (strcmp(key, "AutoPoll") == 0) {
-            char *tok = strtok(val, ",");
-            cur->flags |= EVF_AUTO_POLL;
-            while (tok && cur->num_auto_poll < 16) {
-                while (*tok == ' ') tok++;
-                ftn_parse_addr(tok, &cur->auto_poll[cur->num_auto_poll++]);
-                tok = strtok(NULL, ",");
+        else if (strcmp(Key, "AutoPoll") == 0) {
+            char *Tok = strtok(Val, ",");
+            Cur->Flags |= EVF_AUTO_POLL;
+            while (Tok && Cur->NumAutoPoll < 16) {
+                while (*Tok == ' ') Tok++;
+                ftn_parse_addr(Tok, &Cur->AutoPoll[Cur->NumAutoPoll++]);
+                Tok = strtok(NULL, ",");
             }
         }
     }
 
     fclose(f);
 
-    qf_log(LOG_INFO, "Events: %d loaded", g_num_events);
+    qf_log(LOG_INFO, "Events: %d loaded", g_NumEvents);
     return 0;
 }
 
 
-/* ---- Check Which Event is Active ----
- * Returns pointer to active event, or NULL if none.
- * First matching event wins. */
+/*-----------------------------------------------------------------------*/
+/* ev_check_active() -- Check which event is currently active            */
+/*                                                                       */
+/* Returns pointer to first matching active event, or NULL if none.      */
+/* Checks day-of-week mask and time window (handles midnight wrap).      */
+/*-----------------------------------------------------------------------*/
 
 const QfEventDef *ev_check_active(void)
 {
-    time_t now;
-    struct tm *tm;
-    int dow, cur_min;
-    int i;
+    time_t     Now;                     /* current time                  */
+    struct tm *Tm;                      /* broken-down time              */
+    int        Dow;                     /* day of week (0=Sun)           */
+    int        CurMin;                  /* current time in minutes       */
+    int        i;                       /* event loop index              */
 
-    time(&now);
-    tm = localtime(&now);
-    dow = tm->tm_wday;
-    cur_min = tm->tm_hour * 60 + tm->tm_min;
+    time(&Now);
+    Tm     = localtime(&Now);
+    Dow    = Tm->tm_wday;
+    CurMin = Tm->tm_hour * 60 + Tm->tm_min;
 
     qf_log(LOG_DEBUG, "ev_check_active: dow=%d cur_min=%d checking %d events",
-           dow, cur_min, g_num_events);
+           Dow, CurMin, g_NumEvents);
 
-    for (i = 0; i < g_num_events; i++) {
-        const QfEventDef *ev = &g_events[i];
-        int start_min, end_min;
+    for (i = 0; i < g_NumEvents; i++) {
+        const QfEventDef *Ev = &g_Events[i];
+        int StartMin;                   /* event start in minutes        */
+        int EndMin;                     /* event end in minutes          */
 
-        if (!ev->active) continue;
-        if (!(ev->day_mask & (1 << dow))) continue;
+        if (!Ev->Active) continue;
+        if (!(Ev->DayMask & (1 << Dow))) continue;
 
-        start_min = ev->start_hour * 60 + ev->start_min;
-        end_min   = ev->end_hour * 60 + ev->end_min;
+        StartMin = Ev->StartHour * 60 + Ev->StartMin;
+        EndMin   = Ev->EndHour * 60 + Ev->EndMin;
 
-        if (end_min <= start_min) {
+        if (EndMin <= StartMin) {
             /* Midnight wrap */
-            if (cur_min >= start_min || cur_min < end_min)
-                return ev;
+            if (CurMin >= StartMin || CurMin < EndMin)
+                return Ev;
         } else {
-            if (cur_min >= start_min && cur_min < end_min)
-                return ev;
+            if (CurMin >= StartMin && CurMin < EndMin)
+                return Ev;
         }
     }
 
@@ -302,131 +322,148 @@ const QfEventDef *ev_check_active(void)
 }
 
 
-/* ---- Should We Poll This Node During This Event? ----
- * Checks event flags against node capabilities (CM, etc.) */
-
 /*-----------------------------------------------------------------------*/
-/* ev_should_poll() — Check whether to poll a node during this event    */
-/*                                                                         */
+/* ev_should_poll() -- Check whether to poll a node during this event    */
+/*                                                                       */
 /* Some events restrict which nodes can be polled:                       */
-/*   EVF_RECV_ONLY  — don't dial out at all (receive-only event)        */
-/*   EVF_CM_ONLY    — only dial Continuous Mail nodes (24hr systems)    */
-/*   EVF_NONCM_ONLY — only dial non-CM nodes                            */
-/*   EVF_LISTED_ONLY — only dial nodes found in the nodelist            */
-/*                                                                         */
+/*   EVF_RECV_ONLY   -- don't dial out at all (receive-only event)       */
+/*   EVF_CM_ONLY     -- only dial Continuous Mail nodes (24hr systems)   */
+/*   EVF_NONCM_ONLY  -- only dial non-CM nodes                          */
+/*   EVF_LISTED_ONLY -- only dial nodes found in the nodelist            */
+/*                                                                       */
 /* Returns 1 = OK to poll, 0 = skip this node.                           */
 /*-----------------------------------------------------------------------*/
 
-int ev_should_poll(const QfEventDef *ev, int is_cm, int is_listed)
+int ev_should_poll(const QfEventDef *Ev, int IsCM, int IsListed)
 {
-    if (!ev) return 1;            /* No event = always poll       */
+    if (!Ev) return 1;                  /* no event = always poll        */
 
     qf_log(LOG_DEBUG, "ev_should_poll: event=\"%s\" flags=0x%08X "
-           "is_cm=%d is_listed=%d", ev->tag, ev->flags, is_cm, is_listed);
+           "is_cm=%d is_listed=%d", Ev->Tag, Ev->Flags, IsCM, IsListed);
 
-    if (ev->flags & EVF_RECV_ONLY)
-        return 0;                 /* Receive-only = don't dial    */
-
-    if ((ev->flags & EVF_CM_ONLY) && !is_cm)
-        return 0;                 /* CM-only event, node is not CM */
-
-    if ((ev->flags & EVF_NONCM_ONLY) && is_cm)
-        return 0;                 /* Non-CM only, node IS CM      */
-
-    if ((ev->flags & EVF_LISTED_ONLY) && !is_listed)
-        return 0;                 /* Listed-only, node unlisted   */
+    if (Ev->Flags & EVF_RECV_ONLY)
+        return 0;                       /* receive-only = don't dial     */
+    if ((Ev->Flags & EVF_CM_ONLY) && !IsCM)
+        return 0;                       /* CM-only event, node not CM    */
+    if ((Ev->Flags & EVF_NONCM_ONLY) && IsCM)
+        return 0;                       /* non-CM only, node IS CM       */
+    if ((Ev->Flags & EVF_LISTED_ONLY) && !IsListed)
+        return 0;                       /* listed-only, node unlisted    */
 
     return 1;
 }
 
 
-/* ---- Run Pre-Event Actions ---- */
+/*-----------------------------------------------------------------------*/
+/* ev_pre_actions() -- Run pre-event actions                             */
+/*                                                                       */
+/* Called when an event becomes active. Runs the tosser if ScanBefore    */
+/* flag is set.                                                          */
+/*                                                                       */
+/* Returns 0.                                                            */
+/*-----------------------------------------------------------------------*/
 
-int ev_pre_actions(const QfEventDef *ev, const QfConfig *cfg)
+int ev_pre_actions(const QfEventDef *Ev, const QfConfig *Cfg)
 {
-    if (!ev) return 0;
+    if (!Ev) return 0;
 
-    qf_log(LOG_INFO, "Running event \"%s\"", ev->tag);
+    qf_log(LOG_INFO, "Running event \"%s\"", Ev->Tag);
 
     /* "Scan for new mail before event" */
-    if ((ev->flags & EVF_SCAN_BEFORE) && cfg->tosser_path[0]) {
-        qf_log(LOG_INFO, "Pre-event scan: %s", cfg->tosser_path);
-        system(cfg->tosser_path);
+    if ((Ev->Flags & EVF_SCAN_BEFORE) && Cfg->tosser_path[0]) {
+        qf_log(LOG_INFO, "Pre-event scan: %s", Cfg->tosser_path);
+        system(Cfg->tosser_path);
     }
 
     return 0;
 }
 
 
-/* ---- Run Post-Event Actions ---- */
+/*-----------------------------------------------------------------------*/
+/* ev_post_actions() -- Run post-event actions                           */
+/*                                                                       */
+/* Called after event processing. Checks exit conditions and runs        */
+/* nodelist compiler if configured.                                      */
+/*                                                                       */
+/* Returns 1 if event should end, 0 to continue.                         */
+/*-----------------------------------------------------------------------*/
 
-int ev_post_actions(const QfEventDef *ev, const QfConfig *cfg,
-                    int queue_empty)
+int ev_post_actions(const QfEventDef *Ev, const QfConfig *Cfg,
+                    int QueueEmpty)
 {
-    if (!ev) return 0;
+    if (!Ev) return 0;
+    (void)Cfg;                          /* used by future actions        */
 
     /* "Compile nodelist" */
-    if (ev->flags & EVF_COMPILE_NL) {
-        /* TODO: call nodelist compiler */
+    if (Ev->Flags & EVF_COMPILE_NL) {
         qf_log(LOG_INFO, "Compiling FidoNet nodelist");
     }
 
-    /* "End (no mail)" — stop processing this event */
-    if ((ev->flags & EVF_END_NOMAIL) && queue_empty) {
-        qf_log(LOG_INFO, "Ending event \"%s\" — no more outbound mail",
-               ev->tag);
-        return 1;                 /* Signal: end event            */
+    /* "End (no mail)" -- stop processing this event */
+    if ((Ev->Flags & EVF_END_NOMAIL) && QueueEmpty) {
+        qf_log(LOG_INFO, "Ending event \"%s\" -- no more outbound mail",
+               Ev->Tag);
+        return 1;                       /* signal: end event             */
     }
 
-    /* "Exit (no mail)" — exit program */
-    if ((ev->flags & EVF_EXIT_NOMAIL) && queue_empty) {
+    /* "Exit (no mail)" -- exit program */
+    if ((Ev->Flags & EVF_EXIT_NOMAIL) && QueueEmpty) {
         qf_log(LOG_INFO,
                "Exiting after no more outbound mail (errorlevel %d)",
-               ev->errorlevel);
-        exit(ev->errorlevel);
+               Ev->Errorlevel);
+        exit(Ev->Errorlevel);
     }
 
     /* "Exit when no more outbound mail" */
-    if ((ev->flags & EVF_EXIT_DONE) && queue_empty) {
-        qf_log(LOG_INFO, "Exiting with errorlevel %d", ev->errorlevel);
-        exit(ev->errorlevel);
+    if ((Ev->Flags & EVF_EXIT_DONE) && QueueEmpty) {
+        qf_log(LOG_INFO, "Exiting with errorlevel %d", Ev->Errorlevel);
+        exit(Ev->Errorlevel);
     }
 
     return 0;
 }
 
 
-/* ---- Run Batch File Event ---- */
+/*-----------------------------------------------------------------------*/
+/* ev_run_batch() -- Run batch file event                                */
+/*                                                                       */
+/* Executes the batch file configured for this event.                    */
+/*                                                                       */
+/* Returns the batch file's exit code, or 0 if no batch configured.     */
+/*-----------------------------------------------------------------------*/
 
-int ev_run_batch(const QfEventDef *ev)
+int ev_run_batch(const QfEventDef *Ev)
 {
-    int rc;
+    int Rc;                             /* batch file exit code           */
 
-    if (!ev || !ev->batch[0]) return 0;
+    if (!Ev || !Ev->Batch[0]) return 0;
 
-    qf_log(LOG_INFO, "Executing event \"%s\" — running \"%s\"",
-           ev->tag, ev->batch);
+    qf_log(LOG_INFO, "Executing event \"%s\" -- running \"%s\"",
+           Ev->Tag, Ev->Batch);
 
-    rc = system(ev->batch);
-    if (rc != 0)
-        qf_log(LOG_WARN, "Event batch file exited with code %d", rc);
+    Rc = system(Ev->Batch);
+    if (Rc != 0)
+        qf_log(LOG_WARN, "Event batch file exited with code %d", Rc);
 
-    return rc;
+    return Rc;
 }
 
-/* ---- Accessors for qfront.c (avoids exposing full struct) ---- */
 
-const char *ev_get_tag(const QfEventDef *ev)
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                      Accessors for qfront.c                               */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+const char *ev_get_tag(const QfEventDef *Ev)
 {
-    return ev ? ev->tag : "(none)";
+    return Ev ? Ev->Tag : "(none)";
 }
 
-uint32_t ev_get_flags(const QfEventDef *ev)
+uint32_t ev_get_flags(const QfEventDef *Ev)
 {
-    return ev ? ev->flags : 0;
+    return Ev ? Ev->Flags : 0;
 }
 
-int ev_get_errorlevel(const QfEventDef *ev)
+int ev_get_errorlevel(const QfEventDef *Ev)
 {
-    return ev ? ev->errorlevel : 0;
+    return Ev ? Ev->Errorlevel : 0;
 }

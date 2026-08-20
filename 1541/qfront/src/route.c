@@ -1,174 +1,168 @@
-/* ====================================================================
- * route.c — NetMail Routing Engine
- * ====================================================================
- * Resolves the actual dial target for a FidoNet address.
- * Implements routing rules equivalent to QFront's QTRANS.DAT:
- *   - Direct (call node directly)
- *   - Via host (route through net host, node 0)
- *   - Via hub (route through specified hub)
- *   - Via address (route through specific node)
- *   - Hold (don't dial, wait for pickup)
- *   - NoPoll (never initiate to this node)
- *
- * Route types match QFCONFIG binary strings:
- *   "Direct to target"
- *   "Route through target's host"
- *   "Route through target's hub"
- *   "Route through another node"
- *   "Hold for target"
- *   "Absolute hold"
- *
- * Clean-room from QFront documentation + FTS-5005.
- * ==================================================================== */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* route.c -- NetMail Routing Engine                                        */
+/*                                                                           */
+/* Resolves the actual dial target for a FidoNet address. Implements         */
+/* routing rules equivalent to QFront's QTRANS.DAT:                          */
+/*   - Direct (call node directly)                                          */
+/*   - Via host (route through net host, node 0)                            */
+/*   - Via hub (route through specified hub)                                */
+/*   - Via address (route through specific node)                            */
+/*   - Hold (don't dial, wait for pickup)                                   */
+/*   - NoPoll (never initiate to this node)                                 */
+/*                                                                           */
+/* Clean-room from QFront documentation + FTS-5005.                          */
+/*                                                                           */
+/* License: GPLv3                                                            */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #include "qfront.h"
 
-#define MAX_ROUTES 256
+#define MAX_ROUTES 256                  /* max routing rules             */
 
-/* ---- Route Rule ---- */
+/* ---- Route Rule Types ---- */
 typedef enum {
-    RT_DIRECT,                    /* Call node directly            */
-    RT_VIA_HOST,                  /* Route through net host (/0)   */
-    RT_VIA_HUB,                  /* Route through hub              */
-    RT_VIA,                       /* Route through specific node   */
-    RT_HOLD,                      /* Hold — wait for them to call  */
-    RT_ABSHOLD,                   /* Absolute hold — never send    */
-    RT_NOPOLL                     /* Never poll this node          */
+    RT_DIRECT,                          /* call node directly            */
+    RT_VIA_HOST,                        /* route through net host (/0)   */
+    RT_VIA_HUB,                         /* route through hub             */
+    RT_VIA,                             /* route through specific node   */
+    RT_HOLD,                            /* hold -- wait for them to call */
+    RT_ABSHOLD,                         /* absolute hold -- never send   */
+    RT_NOPOLL                           /* never poll this node          */
 } RouteType;
 
 typedef struct {
-    FTN_ADDR match;               /* Address pattern to match      */
-    int      match_zone;          /* Match zone? (0=wildcard)      */
-    int      match_net;           /* Match net? (0=wildcard)       */
-    int      match_node;          /* Match node? (0=wildcard)      */
-    RouteType type;               /* How to route                  */
-    FTN_ADDR via;                 /* Route via this address         */
+    FTN_ADDR  Match;                    /* address pattern to match      */
+    int       MatchZone;                /* match zone? (0=wildcard)      */
+    int       MatchNet;                 /* match net? (0=wildcard)       */
+    int       MatchNode;                /* match node? (0=wildcard)      */
+    RouteType Type;                     /* how to route                  */
+    FTN_ADDR  Via;                      /* route via this address        */
 } RouteRule;
 
 typedef struct {
-    RouteRule rules[MAX_ROUTES];
-    int       count;
+    RouteRule Rules[MAX_ROUTES];        /* routing rule table            */
+    int       Count;                    /* number of rules loaded        */
 } RouteTable;
 
-static RouteTable g_routes;
+static RouteTable g_Routes;            /* global routing table          */
 
 
-/* ---- Parse a Route Rule ----
- *
- * Config syntax (in qfront.cfg):
- *   Route <pattern> direct
- *   Route <pattern> via <address>
- *   Route <pattern> host                (route through net host)
- *   Route <pattern> hub <address>       (route through hub)
- *   Route <pattern> hold
- *   Route <pattern> abshold
- *   NoPoll <address>
- *
- * Pattern: zone:net/node or zone:net/* or zone:* or *
- * Wildcard: * means match any value for that position.
- *
- * Examples:
- *   Route 1:234/56 direct               Call 1:234/56 directly
- *   Route 1:234/* via 1:234/0           Route all of net 234 via host
- *   Route 2:* via 2:5020/0             Route all zone 2 via 2:5020/0
- *   Route 1:100/* host                  Route net 100 through its host
- *   NoPoll 1:234/99                     Never poll this node
- */
-static int rt_parse_rule(const char *line, RouteRule *rule)
+/*-----------------------------------------------------------------------*/
+/* rt_parse_rule() -- Parse a routing rule from config line               */
+/*                                                                       */
+/* Config syntax (in qfront.cfg):                                        */
+/*   Route <pattern> direct                                              */
+/*   Route <pattern> via <address>                                       */
+/*   Route <pattern> host          (route through net host)              */
+/*   Route <pattern> hub <address> (route through hub)                   */
+/*   Route <pattern> hold                                                */
+/*   Route <pattern> abshold                                             */
+/*   NoPoll <address>                                                    */
+/*                                                                       */
+/* Pattern: zone:net/node or zone:net/* or zone:* or *                   */
+/* Wildcard: * means match any value for that position.                  */
+/*                                                                       */
+/* Returns 0 on success, -1 on parse error.                              */
+/*-----------------------------------------------------------------------*/
+
+static int rt_parse_rule(const char *Line, RouteRule *Rule)
 {
-    char cmd[16], pattern[64], action[16], via_str[64];
-    int n;
+    char Cmd[16];                       /* command keyword               */
+    char Pattern[64];                   /* address pattern               */
+    char Action[16];                    /* action keyword                */
+    char ViaStr[64];                    /* via address string            */
+    int  NumFields;                     /* sscanf field count            */
 
-    memset(rule, 0, sizeof(*rule));
+    memset(Rule, 0, sizeof(*Rule));
 
-    n = sscanf(line, "%15s %63s %15s %63s", cmd, pattern, action, via_str);
-    if (n < 2) return -1;
+    NumFields = sscanf(Line, "%15s %63s %15s %63s", Cmd, Pattern, Action, ViaStr);
+    if (NumFields < 2) return -1;
 
     /* NoPoll is a shortcut */
-    if (strcmp(cmd, "NoPoll") == 0 || strcmp(cmd, "nopoll") == 0) {
-        if (ftn_parse_addr(pattern, &rule->match) != 0)
+    if (strcmp(Cmd, "NoPoll") == 0 || strcmp(Cmd, "nopoll") == 0) {
+        if (ftn_parse_addr(Pattern, &Rule->Match) != 0)
             return -1;
-        rule->match_zone = 1;
-        rule->match_net  = 1;
-        rule->match_node = 1;
-        rule->type = RT_NOPOLL;
+        Rule->MatchZone = 1;
+        Rule->MatchNet  = 1;
+        Rule->MatchNode = 1;
+        Rule->Type = RT_NOPOLL;
         return 0;
     }
 
-    if (strcmp(cmd, "Route") != 0 && strcmp(cmd, "route") != 0)
+    if (strcmp(Cmd, "Route") != 0 && strcmp(Cmd, "route") != 0)
         return -1;
-
-    if (n < 3) return -1;
+    if (NumFields < 3) return -1;
 
     /* Parse pattern with wildcards */
-    rule->match_zone = 1;
-    rule->match_net  = 1;
-    rule->match_node = 1;
+    Rule->MatchZone = 1;
+    Rule->MatchNet  = 1;
+    Rule->MatchNode = 1;
 
-    /* Check for wildcards in pattern */
     {
-        const char *p = pattern;
-        char zbuf[8] = "", nbuf[8] = "", nobuf[8] = "";
+        const char *p = Pattern;        /* pattern scan pointer          */
+        char ZBuf[8]  = "";             /* zone text buffer              */
+        char NBuf[8]  = "";             /* net text buffer               */
+        char NoBuf[8] = "";             /* node text buffer              */
 
-        if (strcmp(pattern, "*") == 0) {
+        if (strcmp(Pattern, "*") == 0) {
             /* Match everything */
-            rule->match_zone = 0;
-            rule->match_net  = 0;
-            rule->match_node = 0;
+            Rule->MatchZone = 0;
+            Rule->MatchNet  = 0;
+            Rule->MatchNode = 0;
         } else if (strchr(p, ':')) {
             /* Has zone */
-            sscanf(p, "%7[^:]", zbuf);
+            sscanf(p, "%7[^:]", ZBuf);
             p = strchr(p, ':') + 1;
 
-            if (strcmp(zbuf, "*") == 0)
-                rule->match_zone = 0;
+            if (strcmp(ZBuf, "*") == 0)
+                Rule->MatchZone = 0;
             else
-                rule->match.zone = (uint16_t)atoi(zbuf);
+                Rule->Match.zone = (uint16_t)atoi(ZBuf);
 
             if (strchr(p, '/')) {
-                sscanf(p, "%7[^/]", nbuf);
+                sscanf(p, "%7[^/]", NBuf);
                 p = strchr(p, '/') + 1;
-                strncpy(nobuf, p, sizeof(nobuf) - 1);
+                strncpy(NoBuf, p, sizeof(NoBuf) - 1);
 
-                if (strcmp(nbuf, "*") == 0)
-                    rule->match_net = 0;
+                if (strcmp(NBuf, "*") == 0)
+                    Rule->MatchNet = 0;
                 else
-                    rule->match.net = (uint16_t)atoi(nbuf);
+                    Rule->Match.net = (uint16_t)atoi(NBuf);
 
-                if (strcmp(nobuf, "*") == 0)
-                    rule->match_node = 0;
+                if (strcmp(NoBuf, "*") == 0)
+                    Rule->MatchNode = 0;
                 else
-                    rule->match.node = (uint16_t)atoi(nobuf);
+                    Rule->Match.node = (uint16_t)atoi(NoBuf);
             } else {
                 /* zone:* */
-                rule->match_net  = 0;
-                rule->match_node = 0;
+                Rule->MatchNet  = 0;
+                Rule->MatchNode = 0;
             }
         } else {
             /* Just net/node */
-            ftn_parse_addr(pattern, &rule->match);
+            ftn_parse_addr(Pattern, &Rule->Match);
         }
     }
 
     /* Parse action */
-    if (strcmp(action, "direct") == 0)
-        rule->type = RT_DIRECT;
-    else if (strcmp(action, "host") == 0)
-        rule->type = RT_VIA_HOST;
-    else if (strcmp(action, "hold") == 0)
-        rule->type = RT_HOLD;
-    else if (strcmp(action, "abshold") == 0)
-        rule->type = RT_ABSHOLD;
-    else if (strcmp(action, "via") == 0) {
-        if (n < 4) return -1;
-        rule->type = RT_VIA;
-        if (ftn_parse_addr(via_str, &rule->via) != 0)
+    if (strcmp(Action, "direct") == 0)
+        Rule->Type = RT_DIRECT;
+    else if (strcmp(Action, "host") == 0)
+        Rule->Type = RT_VIA_HOST;
+    else if (strcmp(Action, "hold") == 0)
+        Rule->Type = RT_HOLD;
+    else if (strcmp(Action, "abshold") == 0)
+        Rule->Type = RT_ABSHOLD;
+    else if (strcmp(Action, "via") == 0) {
+        if (NumFields < 4) return -1;
+        Rule->Type = RT_VIA;
+        if (ftn_parse_addr(ViaStr, &Rule->Via) != 0)
             return -1;
     }
-    else if (strcmp(action, "hub") == 0) {
-        if (n < 4) return -1;
-        rule->type = RT_VIA_HUB;
-        if (ftn_parse_addr(via_str, &rule->via) != 0)
+    else if (strcmp(Action, "hub") == 0) {
+        if (NumFields < 4) return -1;
+        Rule->Type = RT_VIA_HUB;
+        if (ftn_parse_addr(ViaStr, &Rule->Via) != 0)
             return -1;
     }
     else
@@ -178,122 +172,140 @@ static int rt_parse_rule(const char *line, RouteRule *rule)
 }
 
 
-/* ---- Check if an Address Matches a Rule Pattern ---- */
+/*-----------------------------------------------------------------------*/
+/* rt_matches() -- Check if an address matches a rule pattern            */
+/*                                                                       */
+/* Compares zone/net/node with wildcards. A field with MatchXxx=0        */
+/* matches any value (wildcard).                                         */
+/*                                                                       */
+/* Returns 1 if match, 0 if no match.                                    */
+/*-----------------------------------------------------------------------*/
 
-static int rt_matches(const RouteRule *rule, const FTN_ADDR *addr)
+static int rt_matches(const RouteRule *Rule, const FTN_ADDR *Addr)
 {
-    if (rule->match_zone && rule->match.zone != addr->zone)
+    if (Rule->MatchZone && Rule->Match.zone != Addr->zone)
         return 0;
-    if (rule->match_net && rule->match.net != addr->net)
+    if (Rule->MatchNet && Rule->Match.net != Addr->net)
         return 0;
-    if (rule->match_node && rule->match.node != addr->node)
+    if (Rule->MatchNode && Rule->Match.node != Addr->node)
         return 0;
     return 1;
 }
 
 
-/* ---- Load Routing Rules from Config ---- */
+/*-----------------------------------------------------------------------*/
+/* rt_load() -- Load routing rules from config file                      */
+/*                                                                       */
+/* Reads Route and NoPoll lines from the config file. Rules are          */
+/* stored in order -- first match wins during resolution.                */
+/*                                                                       */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
 
-int rt_load(const char *cfgpath)
+int rt_load(const char *CfgPath)
 {
-    FILE *f;
-    char line[512];
+    FILE *f;                            /* config file handle            */
+    char  Line[512];                    /* line read buffer              */
 
-    g_routes.count = 0;
+    g_Routes.Count = 0;
 
-    f = fopen(cfgpath, "r");
+    f = fopen(CfgPath, "r");
     if (!f) return -1;
 
-    while (fgets(line, sizeof(line), f)) {
-        char *p = line;
-        RouteRule rule;
+    while (fgets(Line, sizeof(Line), f)) {
+        char      *p = Line;            /* line scan pointer             */
+        RouteRule  Rule;                /* parsed rule                   */
 
         while (*p == ' ' || *p == '\t') p++;
         if (*p == '#' || *p == ';' || *p == '\n') continue;
 
         /* Only parse Route and NoPoll lines */
-        if (strncmp(p, "Route", 5) != 0 &&
-            strncmp(p, "route", 5) != 0 &&
+        if (strncmp(p, "Route",  5) != 0 &&
+            strncmp(p, "route",  5) != 0 &&
             strncmp(p, "NoPoll", 6) != 0 &&
             strncmp(p, "nopoll", 6) != 0)
             continue;
 
-        if (rt_parse_rule(p, &rule) == 0 &&
-            g_routes.count < MAX_ROUTES) {
-            g_routes.rules[g_routes.count++] = rule;
+        if (rt_parse_rule(p, &Rule) == 0 &&
+            g_Routes.Count < MAX_ROUTES) {
+            g_Routes.Rules[g_Routes.Count++] = Rule;
         }
     }
 
     fclose(f);
 
-    qf_log(LOG_INFO, "Routing: %d rules loaded", g_routes.count);
+    qf_log(LOG_INFO, "Routing: %d rules loaded", g_Routes.Count);
     return 0;
 }
 
 
-/* ---- Resolve Routing for an Address ----
- *
- * Walks the routing table in order. First match wins.
- * Returns:
- *   0  = direct (call dest_addr directly, dest unchanged)
- *   1  = via (call *via_addr instead, contains the relay node)
- *  -1  = hold/abshold/nopoll (don't call)
- *
- * If no rule matches, default is direct. */
+/*-----------------------------------------------------------------------*/
+/* rt_resolve() -- Resolve routing for an address                        */
+/*                                                                       */
+/* Walks the routing table in order. First match wins.                   */
+/*                                                                       */
+/* Returns:                                                              */
+/*   0  = direct (call DestAddr directly, ViaAddr unchanged)             */
+/*   1  = via (call *ViaAddr instead, contains the relay node)           */
+/*  -1  = hold/abshold/nopoll (don't call)                               */
+/*                                                                       */
+/* If no rule matches, default is direct.                                */
+/*-----------------------------------------------------------------------*/
 
-int rt_resolve(const FTN_ADDR *dest, FTN_ADDR *via_addr)
+int rt_resolve(const FTN_ADDR *DestAddr, FTN_ADDR *ViaAddr)
 {
-    int i;
-    char dbuf[64], vbuf[64];
+    int  i;                             /* rule loop index               */
+    char DestBuf[64];                   /* formatted dest for log        */
+    char ViaBuf[64];                    /* formatted via for log         */
 
-    for (i = 0; i < g_routes.count; i++) {
-        const RouteRule *rule = &g_routes.rules[i];
+    for (i = 0; i < g_Routes.Count; i++) {
+        const RouteRule *Rule = &g_Routes.Rules[i];
 
-        if (!rt_matches(rule, dest))
+        if (!rt_matches(Rule, DestAddr))
             continue;
 
         /* First match wins */
-        switch (rule->type) {
+        switch (Rule->Type) {
         case RT_DIRECT:
-            ftn_format_addr(dest, dbuf, sizeof(dbuf));
-            qf_log(LOG_DEBUG, "Route %s: direct", dbuf);
+            ftn_format_addr(DestAddr, DestBuf, sizeof(DestBuf));
+            qf_log(LOG_DEBUG, "Route %s: direct", DestBuf);
             return 0;
 
         case RT_VIA:
-            *via_addr = rule->via;
-            ftn_format_addr(dest, dbuf, sizeof(dbuf));
-            ftn_format_addr(via_addr, vbuf, sizeof(vbuf));
-            qf_log(LOG_DEBUG, "Route %s: via %s", dbuf, vbuf);
+            *ViaAddr = Rule->Via;
+            ftn_format_addr(DestAddr, DestBuf, sizeof(DestBuf));
+            ftn_format_addr(ViaAddr, ViaBuf, sizeof(ViaBuf));
+            qf_log(LOG_DEBUG, "Route %s: via %s", DestBuf, ViaBuf);
             return 1;
 
         case RT_VIA_HOST:
-            *via_addr = *dest;
-            via_addr->node = 0;  /* Net host is node 0           */
-            ftn_format_addr(dest, dbuf, sizeof(dbuf));
-            ftn_format_addr(via_addr, vbuf, sizeof(vbuf));
-            qf_log(LOG_DEBUG, "Route %s: via host %s", dbuf, vbuf);
+            *ViaAddr = *DestAddr;
+            ViaAddr->node = 0;          /* net host is node 0            */
+            ftn_format_addr(DestAddr, DestBuf, sizeof(DestBuf));
+            ftn_format_addr(ViaAddr, ViaBuf, sizeof(ViaBuf));
+            qf_log(LOG_DEBUG, "Route %s: via host %s", DestBuf, ViaBuf);
             return 1;
 
         case RT_VIA_HUB:
-            *via_addr = rule->via;
-            ftn_format_addr(dest, dbuf, sizeof(dbuf));
-            ftn_format_addr(via_addr, vbuf, sizeof(vbuf));
-            qf_log(LOG_DEBUG, "Route %s: via hub %s", dbuf, vbuf);
+            *ViaAddr = Rule->Via;
+            ftn_format_addr(DestAddr, DestBuf, sizeof(DestBuf));
+            ftn_format_addr(ViaAddr, ViaBuf, sizeof(ViaBuf));
+            qf_log(LOG_DEBUG, "Route %s: via hub %s", DestBuf, ViaBuf);
             return 1;
 
         case RT_HOLD:
         case RT_ABSHOLD:
-            ftn_format_addr(dest, dbuf, sizeof(dbuf));
-            qf_log(LOG_DEBUG, "Route %s: hold", dbuf);
+            ftn_format_addr(DestAddr, DestBuf, sizeof(DestBuf));
+            qf_log(LOG_DEBUG, "Route %s: hold", DestBuf);
             return -1;
 
         case RT_NOPOLL:
-            ftn_format_addr(dest, dbuf, sizeof(dbuf));
-            qf_log(LOG_DEBUG, "Route %s: nopoll", dbuf);
+            ftn_format_addr(DestAddr, DestBuf, sizeof(DestBuf));
+            qf_log(LOG_DEBUG, "Route %s: nopoll", DestBuf);
             return -1;
         }
     }
 
-    /* No matching rule — default to direct */
+    /* No matching rule -- default to direct */
     return 0;
 }

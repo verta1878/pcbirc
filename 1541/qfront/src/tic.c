@@ -1,190 +1,212 @@
-/* ====================================================================
- * tic.c — TIC File Processor
- * ====================================================================
- * Scans the inbound directory for .TIC files, parses them, and
- * either processes them directly or calls an external TIC processor
- * (htick, pcbtic, etc.).
- *
- * TIC format is a simple keyword-value text file:
- *   Area <areaname>
- *   Origin <zone:net/node>
- *   From <zone:net/node>
- *   To <zone:net/node>
- *   File <filename>
- *   Desc <description>
- *   CRC <hex_crc32>
- *   Path <zone:net/node> <unix_timestamp>
- *   Seenby <zone:net/node>
- *   Pw <password>
- *
- * Clean-room from published TIC specification.
- * ==================================================================== */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* tic.c -- TIC File Processor                                              */
+/*                                                                           */
+/* Scans the inbound directory for .TIC files, parses them, and either      */
+/* processes them directly or calls an external TIC processor (htick,        */
+/* pcbtic, etc.).                                                            */
+/*                                                                           */
+/* TIC format is a simple keyword-value text file:                           */
+/*   Area <areaname>        File area name                                   */
+/*   Origin <zone:net/node> Original sender                                  */
+/*   From <zone:net/node>   Immediate sender                                */
+/*   To <zone:net/node>     Destination                                      */
+/*   File <filename>        Attached filename                                */
+/*   Desc <description>     File description                                 */
+/*   CRC <hex_crc32>        CRC-32 of attached file                          */
+/*   Path <addr> <time>     Routing path entry                               */
+/*   Seenby <addr>          Seen-by list entry                               */
+/*   Pw <password>          Area password                                    */
+/*                                                                           */
+/* Clean-room from published TIC specification.                              */
+/*                                                                           */
+/* License: GPLv3                                                            */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #include "qfront.h"
 
 typedef struct {
-    char     area[64];            /* File area name               */
-    char     filename[260];       /* Attached file name           */
-    char     description[256];    /* File description             */
-    FTN_ADDR origin;              /* Original sender              */
-    FTN_ADDR from;                /* Immediate sender             */
-    FTN_ADDR to;                  /* Destination                  */
-    char     password[32];        /* Area password                */
-    uint32_t crc;                 /* CRC-32 of file               */
-    int      has_crc;             /* CRC field present?           */
+    char     Area[64];              /* file area name                    */
+    char     FileName[260];         /* attached file name                */
+    char     Description[256];      /* file description                  */
+    FTN_ADDR Origin;                /* original sender                   */
+    FTN_ADDR From;                  /* immediate sender                  */
+    FTN_ADDR To;                    /* destination                       */
+    char     Password[32];          /* area password                     */
+    uint32_t Crc;                   /* CRC-32 of file                    */
+    int      HasCrc;                /* CRC field present?                */
 } TicFile;
 
 
-/* ---- Parse a TIC File ---- */
-
 /*-----------------------------------------------------------------------*/
-/* tic_parse() — Parse a .TIC file into a TicFile struct                 */
-/*                                                                         */
-/* TIC files are text-based metadata files that accompany file area      */
-/* distributions in FidoNet. Each .TIC file describes one attached       */
-/* file: its name, the area it belongs to, where it came from, an       */
-/* optional CRC-32, and a description.                                   */
-/*                                                                         */
-/* Security: We reject filenames containing path separators (/ \ :) or  */
-/* ".." to prevent directory traversal attacks. A malicious .TIC file    */
-/* could otherwise overwrite system files by specifying paths like       */
+/* tic_parse() -- Parse a .TIC file into a TicFile struct                */
+/*                                                                       */
+/* TIC files are text-based metadata files that accompany file area       */
+/* distributions in FidoNet. Each .TIC file describes one attached        */
+/* file: its name, the area it belongs to, where it came from, an        */
+/* optional CRC-32, and a description.                                    */
+/*                                                                       */
+/* Security: We reject filenames containing path separators (/ \ :) or   */
+/* ".." to prevent directory traversal attacks. A malicious .TIC file     */
+/* could otherwise overwrite system files by specifying paths like        */
 /* "../../etc/passwd" in the File field.                                  */
-/*                                                                         */
+/*                                                                       */
 /* Returns 0 on success (valid TIC with both filename and area set),     */
 /* -1 on any parse error or security violation.                          */
 /*-----------------------------------------------------------------------*/
 
-static int tic_parse(const char *path, TicFile *tic)
+static int tic_parse(const char *Path, TicFile *Tic)
 {
-    FILE *f;
-    char line[512];
+    FILE *f;                            /* TIC file handle               */
+    char  Line[512];                    /* line read buffer              */
 
-    memset(tic, 0, sizeof(*tic));
-    qf_log(LOG_DEBUG, "tic_parse: reading %s", path);
+    memset(Tic, 0, sizeof(*Tic));
+    qf_log(LOG_DEBUG, "tic_parse: reading %s", Path);
 
-    f = fopen(path, "r");
+    f = fopen(Path, "r");
     if (!f) return -1;
 
-    while (fgets(line, sizeof(line), f)) {
-        char *p = line;
-        char *val;
+    while (fgets(Line, sizeof(Line), f)) {
+        char *p = Line;                 /* keyword pointer               */
+        char *Val;                      /* value pointer                 */
 
         /* Strip trailing whitespace */
         {
-            char *end = p + strlen(p) - 1;
-            while (end > p && (*end == '\n' || *end == '\r' || *end == ' '))
-                *end-- = '\0';
+            char *End = p + strlen(p) - 1;
+            while (End > p && (*End == '\n' || *End == '\r' || *End == ' '))
+                *End-- = '\0';
         }
 
         /* Find keyword-value split (first space) */
-        val = strchr(p, ' ');
-        if (!val) continue;
-        *val++ = '\0';
-        while (*val == ' ') val++;
+        Val = strchr(p, ' ');
+        if (!Val) continue;
+        *Val++ = '\0';
+        while (*Val == ' ') Val++;
 
         if (strcasecmp(p, "Area") == 0)
-            strncpy(tic->area, val, sizeof(tic->area) - 1);
+            strncpy(Tic->Area, Val, sizeof(Tic->Area) - 1);
         else if (strcasecmp(p, "File") == 0)
-            strncpy(tic->filename, val, sizeof(tic->filename) - 1);
+            strncpy(Tic->FileName, Val, sizeof(Tic->FileName) - 1);
         else if (strcasecmp(p, "Desc") == 0)
-            strncpy(tic->description, val, sizeof(tic->description) - 1);
+            strncpy(Tic->Description, Val, sizeof(Tic->Description) - 1);
         else if (strcasecmp(p, "Origin") == 0)
-            ftn_parse_addr(val, &tic->origin);
+            ftn_parse_addr(Val, &Tic->Origin);
         else if (strcasecmp(p, "From") == 0)
-            ftn_parse_addr(val, &tic->from);
+            ftn_parse_addr(Val, &Tic->From);
         else if (strcasecmp(p, "To") == 0)
-            ftn_parse_addr(val, &tic->to);
+            ftn_parse_addr(Val, &Tic->To);
         else if (strcasecmp(p, "Pw") == 0)
-            strncpy(tic->password, val, sizeof(tic->password) - 1);
+            strncpy(Tic->Password, Val, sizeof(Tic->Password) - 1);
         else if (strcasecmp(p, "CRC") == 0) {
-            tic->crc = (uint32_t)strtoul(val, NULL, 16);
-            tic->has_crc = 1;
+            Tic->Crc = (uint32_t)strtoul(Val, NULL, 16);
+            Tic->HasCrc = 1;
         }
     }
 
     fclose(f);
-    /* Sanitize filename — reject path separators and ".." */
+
+    /* Sanitize filename -- reject path separators and ".." */
     {
-        const char *p;
-        for (p = tic->filename; *p; p++) {
-            if (*p == '/' || *p == '\\' || *p == ':') {
-                qf_log(LOG_WARN, "TIC: rejecting filename with path chars: %s", tic->filename);
+        const char *Scan;               /* filename scan pointer         */
+
+        for (Scan = Tic->FileName; *Scan; Scan++) {
+            if (*Scan == '/' || *Scan == '\\' || *Scan == ':') {
+                qf_log(LOG_WARN, "TIC: rejecting filename with path chars: %s",
+                       Tic->FileName);
                 return -1;
             }
         }
-        if (strstr(tic->filename, "..")) {
-            qf_log(LOG_WARN, "TIC: rejecting filename with '..': %s", tic->filename);
+        if (strstr(Tic->FileName, "..")) {
+            qf_log(LOG_WARN, "TIC: rejecting filename with '..': %s",
+                   Tic->FileName);
             return -1;
         }
     }
-    return (tic->filename[0] && tic->area[0]) ? 0 : -1;
+
+    return (Tic->FileName[0] && Tic->Area[0]) ? 0 : -1;
 }
 
 
-/* ---- Scan Inbound for TIC Files ---- */
+/*-----------------------------------------------------------------------*/
+/* tic_scan_inbound() -- Scan inbound directory for .TIC files           */
+/*                                                                       */
+/* Walks the inbound directory looking for files ending in .TIC (case-    */
+/* insensitive). Each one is parsed and logged. Count of valid TIC        */
+/* files is returned.                                                     */
+/*                                                                       */
+/* Returns number of valid TIC files found.                              */
+/*-----------------------------------------------------------------------*/
 
-int tic_scan_inbound(const QfConfig *cfg)
+int tic_scan_inbound(const QfConfig *Cfg)
 {
-    int count = 0;
+    int Count = 0;                      /* valid TIC files found         */
 
 #ifndef _WIN32
-    DIR *d;
-    struct dirent *ent;
+    DIR           *d;                   /* directory handle               */
+    struct dirent *Ent;                 /* directory entry                */
 
-    d = opendir(cfg->inbound);
+    d = opendir(Cfg->inbound);
     if (!d) return 0;
 
-    while ((ent = readdir(d)) != NULL) {
-        const char *name = ent->d_name;
-        int len = (int)strlen(name);
-        TicFile tic;
-        char fullpath[520];
-        char addr_buf[64];
+    while ((Ent = readdir(d)) != NULL) {
+        const char *Name;               /* entry filename                */
+        int         Len;                /* filename length               */
+        TicFile     Tic;                /* parsed TIC data               */
+        char        FullPath[520];      /* full path to .TIC file        */
+        char        AddrBuf[64];        /* formatted address for log     */
+
+        Name = Ent->d_name;
+        Len  = (int)strlen(Name);
 
         /* Look for .TIC files (case-insensitive) */
-        if (len < 5) continue;
-        if (strcasecmp(name + len - 4, ".tic") != 0) continue;
+        if (Len < 5) continue;
+        if (strcasecmp(Name + Len - 4, ".tic") != 0) continue;
 
-        snprintf(fullpath, sizeof(fullpath), "%s%c%s",
-                 cfg->inbound, PATH_SEP, name);
+        snprintf(FullPath, sizeof(FullPath), "%s%c%s",
+                 Cfg->inbound, PATH_SEP, Name);
 
-        if (tic_parse(fullpath, &tic) == 0) {
-            ftn_format_addr(&tic.from, addr_buf, sizeof(addr_buf));
+        if (tic_parse(FullPath, &Tic) == 0) {
+            ftn_format_addr(&Tic.From, AddrBuf, sizeof(AddrBuf));
             qf_log(LOG_INFO, "TIC: area=%s file=%s from=%s",
-                   tic.area, tic.filename, addr_buf);
-            count++;
+                   Tic.Area, Tic.FileName, AddrBuf);
+            Count++;
         }
     }
 
     closedir(d);
 #endif
 
-    return count;
+    return Count;
 }
 
 
-/* ---- Process TIC Files ----
- * Calls external TIC processor if configured.
- * Falls back to logging only. */
+/*-----------------------------------------------------------------------*/
+/* tic_process() -- Process TIC files from inbound                       */
+/*                                                                       */
+/* Scans for TIC files, then either calls the configured external TIC     */
+/* processor or logs a warning that no processor is configured.           */
+/*                                                                       */
+/* Returns 0 on success, or the external processor's exit code.          */
+/*-----------------------------------------------------------------------*/
 
-int tic_process(const QfConfig *cfg)
+int tic_process(const QfConfig *Cfg)
 {
-    int count;
+    int Count;                          /* TIC files found               */
 
-    count = tic_scan_inbound(cfg);
-    if (count == 0) return 0;
+    Count = tic_scan_inbound(Cfg);
+    if (Count == 0) return 0;
 
-    qf_log(LOG_INFO, "TIC: %d file(s) to process", count);
+    qf_log(LOG_INFO, "TIC: %d file(s) to process", Count);
 
-    if (cfg->tic_proc[0]) {
-        int rc;
-        qf_log(LOG_INFO, "Running TIC processor: %s", cfg->tic_proc);
-        rc = system(cfg->tic_proc);
-        if (rc != 0)
-            qf_log(LOG_WARN, "TIC processor exited with code %d", rc);
-        return rc;
+    if (Cfg->tic_proc[0]) {
+        int Rc;                         /* external processor exit code  */
+
+        qf_log(LOG_INFO, "Running TIC processor: %s", Cfg->tic_proc);
+        Rc = system(Cfg->tic_proc);
+        if (Rc != 0)
+            qf_log(LOG_WARN, "TIC processor exited with code %d", Rc);
+        return Rc;
     }
 
-    qf_log(LOG_WARN, "No TIC processor configured — files not processed");
+    qf_log(LOG_WARN, "No TIC processor configured -- files not processed");
     return 0;
 }

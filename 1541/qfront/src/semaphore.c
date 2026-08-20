@@ -1,337 +1,416 @@
-/* ====================================================================
- * semaphore.c — Multi-Node Semaphore Management
- * ====================================================================
- * Prevents conflicts between multiple QFront instances running on
- * different BBS nodes. Manages state files identified from binary:
- *
- *   QQUEUE.DAT    — outbound queue serialization
- *   QPOLLED.DAT   — recently polled nodes (cooldown)
- *   QUNDIAL.DAT   — undialable nodes (max retries exceeded)
- *   QFIXUPS.DAT   — incomplete transfers to retry
- *
- * Also handles semaphore file exit triggers:
- *   "Semaphore file <name> found, exiting with errorlevel <n>"
- *
- * Clean-room from QFront binary analysis.
- * ==================================================================== */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* semaphore.c -- Multi-Node Semaphore Management                           */
+/*                                                                           */
+/* Prevents conflicts between multiple QFront instances running on           */
+/* different BBS nodes. Manages state files:                                 */
+/*   QPOLLED.DAT   -- recently polled nodes (cooldown)                      */
+/*   QUNDIAL.DAT   -- undialable nodes (max retries exceeded)               */
+/*   QQUEUE.DAT    -- outbound queue serialization                          */
+/*   QFIXUPS.DAT   -- incomplete transfers to retry                         */
+/*                                                                           */
+/* Also handles semaphore file exit triggers:                                */
+/*   "Semaphore file <name> found, exiting with errorlevel <n>"             */
+/*                                                                           */
+/* Clean-room from QFront binary analysis.                                   */
+/*                                                                           */
+/* License: GPLv3                                                            */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #include "qfront.h"
 
-/* ---- Polled Node Tracking ----
- * Prevents re-polling a node within a cooldown window.
+
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                       Polled Node Tracking                                */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/* Prevents re-polling a node within a cooldown window.
  * Original QFront stored this in QPOLLED.DAT. */
 
-#define MAX_POLLED 512
+#define MAX_POLLED 512                  /* max tracked polled nodes      */
 
 typedef struct {
-    FTN_ADDR addr;
-    time_t   when;                /* When we last polled          */
+    FTN_ADDR Addr;                      /* node address                  */
+    time_t   When;                      /* when we last polled           */
 } PolledEntry;
 
-static PolledEntry g_polled[MAX_POLLED];
-static int         g_polled_count = 0;
+static PolledEntry g_Polled[MAX_POLLED];  /* polled node table           */
+static int         g_PolledCount = 0;     /* entries in polled table     */
 
 
 /*-----------------------------------------------------------------------*/
-/* sem_mark_polled() — Record that we just polled a node                 */
-/*                                                                         */
+/* sem_mark_polled() -- Record that we just polled a node                */
+/*                                                                       */
 /* Stores the current timestamp for this address. sem_was_polled()       */
-/* checks this to enforce the cooldown window (retry_delay seconds)     */
+/* checks this to enforce the cooldown window (retry_delay seconds)      */
 /* between successive calls to the same node.                            */
-/*                                                                         */
+/*                                                                       */
 /* Without cooldown, the mailer would redial a busy node on every        */
-/* loop iteration (every 1-5 seconds), wasting phone charges and        */
+/* loop iteration (every 1-5 seconds), wasting phone charges and         */
 /* annoying the remote sysop.                                            */
 /*-----------------------------------------------------------------------*/
 
-void sem_mark_polled(const FTN_ADDR *addr)
+void sem_mark_polled(const FTN_ADDR *Addr)
 {
-    int i;
-    char buf[64];
-    ftn_format_addr(addr, buf, sizeof(buf));
-    qf_log(LOG_DEBUG, "sem_mark_polled: %s", buf);
+    int  i;                             /* search index                  */
+    char AddrBuf[64];                   /* formatted address for log     */
 
-    /* Check if already in list — update timestamp */
-    for (i = 0; i < g_polled_count; i++) {
-        if (ftn_addr_equal(&g_polled[i].addr, addr)) {
-            g_polled[i].when = time(NULL);
+    ftn_format_addr(Addr, AddrBuf, sizeof(AddrBuf));
+    qf_log(LOG_DEBUG, "sem_mark_polled: %s", AddrBuf);
+
+    /* Check if already in list -- update timestamp */
+    for (i = 0; i < g_PolledCount; i++) {
+        if (ftn_addr_equal(&g_Polled[i].Addr, Addr)) {
+            g_Polled[i].When = time(NULL);
             return;
         }
     }
 
     /* Add new entry */
-    if (g_polled_count < MAX_POLLED) {
-        g_polled[g_polled_count].addr = *addr;
-        g_polled[g_polled_count].when = time(NULL);
-        g_polled_count++;
+    if (g_PolledCount < MAX_POLLED) {
+        g_Polled[g_PolledCount].Addr = *Addr;
+        g_Polled[g_PolledCount].When = time(NULL);
+        g_PolledCount++;
     }
 }
 
-/* Check if we polled this node recently (within cooldown_sec). */
-int sem_was_polled(const FTN_ADDR *addr, int cooldown_sec)
-{
-    int i;
-    time_t now = time(NULL);
 
-    for (i = 0; i < g_polled_count; i++) {
-        if (ftn_addr_equal(&g_polled[i].addr, addr)) {
-            if ((now - g_polled[i].when) < cooldown_sec)
-                return 1;         /* Recently polled — skip       */
-            return 0;             /* Cooldown expired              */
+/*-----------------------------------------------------------------------*/
+/* sem_was_polled() -- Check if we polled a node recently                 */
+/*                                                                       */
+/* Returns 1 if the node was polled within CooldownSec seconds.          */
+/* Returns 0 if cooldown has expired or node was never polled.           */
+/*-----------------------------------------------------------------------*/
+
+int sem_was_polled(const FTN_ADDR *Addr, int CooldownSec)
+{
+    int    i;                           /* search index                  */
+    time_t Now = time(NULL);            /* current time                  */
+
+    for (i = 0; i < g_PolledCount; i++) {
+        if (ftn_addr_equal(&g_Polled[i].Addr, Addr)) {
+            if ((Now - g_Polled[i].When) < CooldownSec)
+                return 1;               /* recently polled -- skip       */
+            return 0;                   /* cooldown expired              */
         }
     }
 
-    return 0;                     /* Never polled                  */
+    return 0;                           /* never polled                  */
 }
 
 
-/* ---- Undialable Node Tracking ----
- * Nodes that have failed too many consecutive sessions.
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                      Undialable Node Tracking                             */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/* Nodes that have failed too many consecutive sessions.
  * Original QFront: "Mark undialable after 3 days" */
 
-#define MAX_UNDIAL 256
+#define MAX_UNDIAL 256                  /* max tracked undialable nodes  */
 
 typedef struct {
-    FTN_ADDR addr;
-    int      fail_count;          /* Consecutive failures         */
-    time_t   first_fail;          /* When failures started        */
-    time_t   last_fail;           /* Most recent failure          */
+    FTN_ADDR Addr;                      /* node address                  */
+    int      FailCount;                 /* consecutive failures          */
+    time_t   FirstFail;                 /* when failures started         */
+    time_t   LastFail;                  /* most recent failure           */
 } UndialEntry;
 
-static UndialEntry g_undial[MAX_UNDIAL];
-static int         g_undial_count = 0;
+static UndialEntry g_Undial[MAX_UNDIAL];  /* undialable node table       */
+static int         g_UndialCount = 0;     /* entries in undial table     */
 
 
-/* Record a session failure for a node. */
-void sem_record_failure(const FTN_ADDR *addr)
+/*-----------------------------------------------------------------------*/
+/* sem_record_failure() -- Record a session failure for a node           */
+/*                                                                       */
+/* Increments the consecutive failure counter. If the node is already    */
+/* in the undial table, updates the counter and timestamp. Otherwise     */
+/* adds a new entry.                                                     */
+/*-----------------------------------------------------------------------*/
+
+void sem_record_failure(const FTN_ADDR *Addr)
 {
-    int i;
-    time_t now = time(NULL);
-    char buf[64];
+    int    i;                           /* search index                  */
+    time_t Now = time(NULL);            /* current time                  */
+    char   AddrBuf[64];                 /* formatted address for log     */
 
     /* Find existing entry */
-    for (i = 0; i < g_undial_count; i++) {
-        if (ftn_addr_equal(&g_undial[i].addr, addr)) {
-            g_undial[i].fail_count++;
-            g_undial[i].last_fail = now;
-            ftn_format_addr(addr, buf, sizeof(buf));
+    for (i = 0; i < g_UndialCount; i++) {
+        if (ftn_addr_equal(&g_Undial[i].Addr, Addr)) {
+            g_Undial[i].FailCount++;
+            g_Undial[i].LastFail = Now;
+            ftn_format_addr(Addr, AddrBuf, sizeof(AddrBuf));
             qf_log(LOG_DEBUG, "Node %s: %d consecutive failures",
-                   buf, g_undial[i].fail_count);
+                   AddrBuf, g_Undial[i].FailCount);
             return;
         }
     }
 
     /* New entry */
-    if (g_undial_count < MAX_UNDIAL) {
-        g_undial[g_undial_count].addr = *addr;
-        g_undial[g_undial_count].fail_count = 1;
-        g_undial[g_undial_count].first_fail = now;
-        g_undial[g_undial_count].last_fail = now;
-        g_undial_count++;
+    if (g_UndialCount < MAX_UNDIAL) {
+        g_Undial[g_UndialCount].Addr      = *Addr;
+        g_Undial[g_UndialCount].FailCount  = 1;
+        g_Undial[g_UndialCount].FirstFail  = Now;
+        g_Undial[g_UndialCount].LastFail   = Now;
+        g_UndialCount++;
     }
 }
 
-/* Record a session success — clears failure counter. */
-void sem_record_success(const FTN_ADDR *addr)
-{
-    int i;
 
-    for (i = 0; i < g_undial_count; i++) {
-        if (ftn_addr_equal(&g_undial[i].addr, addr)) {
-            /* Remove from undial list by swapping with last */
-            g_undial[i] = g_undial[--g_undial_count];
+/*-----------------------------------------------------------------------*/
+/* sem_record_success() -- Record a session success for a node           */
+/*                                                                       */
+/* Clears the failure counter by removing the node from the undial       */
+/* table. Uses swap-with-last for O(1) removal.                          */
+/*-----------------------------------------------------------------------*/
+
+void sem_record_success(const FTN_ADDR *Addr)
+{
+    int i;                              /* search index                  */
+
+    for (i = 0; i < g_UndialCount; i++) {
+        if (ftn_addr_equal(&g_Undial[i].Addr, Addr)) {
+            /* Remove by swapping with last entry */
+            g_Undial[i] = g_Undial[--g_UndialCount];
             return;
         }
     }
 }
 
-/* Check if a node is undialable (exceeded max retries or 3 days). */
-int sem_is_undialable(const FTN_ADDR *addr, int max_retries)
-{
-    int i;
-    time_t now = time(NULL);
 
-    for (i = 0; i < g_undial_count; i++) {
-        if (ftn_addr_equal(&g_undial[i].addr, addr)) {
-            /* "Mark undialable after 3 days" — from QFCONFIG */
-            if ((now - g_undial[i].first_fail) > (3 * 24 * 3600)) {
-                char buf[64];
-                ftn_format_addr(addr, buf, sizeof(buf));
+/*-----------------------------------------------------------------------*/
+/* sem_is_undialable() -- Check if a node is undialable                  */
+/*                                                                       */
+/* A node is undialable if:                                              */
+/*   - It has failed for 3+ consecutive days (from QFCONFIG), OR        */
+/*   - It has exceeded MaxRetries consecutive failures                   */
+/*                                                                       */
+/* Returns 1 if undialable, 0 if clear to call.                          */
+/*-----------------------------------------------------------------------*/
+
+int sem_is_undialable(const FTN_ADDR *Addr, int MaxRetries)
+{
+    int    i;                           /* search index                  */
+    time_t Now = time(NULL);            /* current time                  */
+
+    for (i = 0; i < g_UndialCount; i++) {
+        if (ftn_addr_equal(&g_Undial[i].Addr, Addr)) {
+            /* "Mark undialable after 3 days" -- from QFCONFIG */
+            if ((Now - g_Undial[i].FirstFail) > (3 * 24 * 3600)) {
+                char AddrBuf[64];       /* formatted address for log     */
+                ftn_format_addr(Addr, AddrBuf, sizeof(AddrBuf));
                 qf_log(LOG_INFO, "Node %s is undialable (3+ days of failures)",
-                       buf);
+                       AddrBuf);
                 return 1;
             }
             /* Also check max retries per day */
-            if (g_undial[i].fail_count >= max_retries)
+            if (g_Undial[i].FailCount >= MaxRetries)
                 return 1;
             return 0;
         }
     }
 
-    return 0;
+    return 0;                           /* not in undial table           */
 }
 
-/* Clear undialable status for a node (sysop override). */
-void sem_clear_undialable(const FTN_ADDR *addr)
+
+/*-----------------------------------------------------------------------*/
+/* sem_clear_undialable() -- Clear undialable status (sysop override)    */
+/*                                                                       */
+/* Removes a node from the undial table. Called when the sysop manually  */
+/* clears a node's undialable status via QFUTIL.                         */
+/*-----------------------------------------------------------------------*/
+
+void sem_clear_undialable(const FTN_ADDR *Addr)
 {
-    int i;
-    for (i = 0; i < g_undial_count; i++) {
-        if (ftn_addr_equal(&g_undial[i].addr, addr)) {
-            g_undial[i] = g_undial[--g_undial_count];
+    int i;                              /* search index                  */
+
+    for (i = 0; i < g_UndialCount; i++) {
+        if (ftn_addr_equal(&g_Undial[i].Addr, Addr)) {
+            g_Undial[i] = g_Undial[--g_UndialCount];
             return;
         }
     }
 }
 
 
-/* ---- Semaphore File Exit Triggers ----
- * QFront checks for semaphore files periodically.
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                     Semaphore File Exit Triggers                           */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/* QFront checks for semaphore files periodically.
  * From binary: "Semaphore file <name> found, exiting with errorlevel <n>"
  *
  * Configured in qfront.cfg:
  *   Semaphore=<filename>:<errorlevel>
  */
 
-#define MAX_SEM_FILES 16
+#define MAX_SEM_FILES 16                /* max semaphore triggers         */
 
 typedef struct {
-    char path[260];
-    int  errorlevel;
+    char Path[260];                     /* semaphore file path           */
+    int  Errorlevel;                    /* exit code when triggered      */
 } SemTrigger;
 
-static SemTrigger g_sem_triggers[MAX_SEM_FILES];
-static int        g_num_sem_triggers = 0;
+static SemTrigger g_SemTriggers[MAX_SEM_FILES];  /* trigger table        */
+static int        g_NumSemTriggers = 0;           /* trigger count       */
 
-/* Add a semaphore trigger. */
-void sem_add_trigger(const char *path, int errorlevel)
-{
-    if (g_num_sem_triggers >= MAX_SEM_FILES) return;
-    strncpy(g_sem_triggers[g_num_sem_triggers].path, path, 259);
-    g_sem_triggers[g_num_sem_triggers].errorlevel = errorlevel;
-    g_num_sem_triggers++;
-}
 
 /*-----------------------------------------------------------------------*/
-/* sem_check_triggers() — Check for semaphore exit trigger files          */
-/*                                                                         */
-/* Semaphore files are a simple IPC mechanism for multi-node BBS systems.*/
-/* Another program (PCBoard, a door game, a batch file) creates a file   */
-/* with a specific name, and QFront checks for it periodically. When     */
-/* found, QFront deletes the file and exits with the configured          */
+/* sem_add_trigger() -- Add a semaphore trigger                          */
+/*                                                                       */
+/* Called during config parsing for each Semaphore= line.                */
+/*-----------------------------------------------------------------------*/
+
+void sem_add_trigger(const char *Path, int Errorlevel)
+{
+    if (g_NumSemTriggers >= MAX_SEM_FILES) return;
+    strncpy(g_SemTriggers[g_NumSemTriggers].Path, Path, 259);
+    g_SemTriggers[g_NumSemTriggers].Errorlevel = Errorlevel;
+    g_NumSemTriggers++;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* sem_check_triggers() -- Check for semaphore exit trigger files         */
+/*                                                                       */
+/* Semaphore files are a simple IPC mechanism for multi-node BBS systems. */
+/* Another program (PCBoard, a door game, a batch file) creates a file    */
+/* with a specific name, and QFront checks for it periodically. When      */
+/* found, QFront deletes the file and exits with the configured           */
 /* errorlevel.                                                            */
-/*                                                                         */
+/*                                                                       */
 /* This allows external programs to tell QFront to:                      */
 /*   - Reload configuration (exit and restart via BOARD.BAT)             */
-/*   - Compile nodelist (exit with errorlevel that triggers QNLIST)     */
+/*   - Compile nodelist (exit with errorlevel that triggers QNLIST)      */
 /*   - Shut down for maintenance                                        */
-/*                                                                         */
-/* From binary: "Semaphore file <name> found, exiting with errorlevel"  */
-/*                                                                         */
+/*                                                                       */
 /* Returns: errorlevel if a trigger file was found, -1 if none.          */
 /*-----------------------------------------------------------------------*/
 
 int sem_check_triggers(void)
 {
-    int i;
-    FILE *f;
+    int   i;                            /* trigger loop index            */
+    FILE *f;                            /* test file handle              */
 
     qf_log(LOG_DEBUG, "sem_check_triggers: checking %d trigger files",
-           g_num_sem_triggers);
+           g_NumSemTriggers);
 
-    for (i = 0; i < g_num_sem_triggers; i++) {
-        f = fopen(g_sem_triggers[i].path, "r");
+    for (i = 0; i < g_NumSemTriggers; i++) {
+        f = fopen(g_SemTriggers[i].Path, "r");
         if (f) {
             fclose(f);
             /* Remove the semaphore file after detecting it */
-            remove(g_sem_triggers[i].path);
+            remove(g_SemTriggers[i].Path);
 
             qf_log(LOG_INFO,
                    "Semaphore file \"%s\" found, exiting with errorlevel %d",
-                   g_sem_triggers[i].path, g_sem_triggers[i].errorlevel);
+                   g_SemTriggers[i].Path, g_SemTriggers[i].Errorlevel);
 
-            return g_sem_triggers[i].errorlevel;
+            return g_SemTriggers[i].Errorlevel;
         }
     }
 
-    return -1;                    /* No semaphore found            */
+    return -1;                          /* no semaphore found            */
 }
 
 
-/* ---- Save/Load State ----
- * Persist polled and undialable lists across restarts. */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                         Save/Load State                                   */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-void sem_save_state(const char *dir)
+/* Persist polled and undialable lists across restarts. */
+
+
+/*-----------------------------------------------------------------------*/
+/* sem_save_state() -- Save polled and undialable state to disk          */
+/*                                                                       */
+/* Writes QPOLLED.DAT and QUNDIAL.DAT to the specified directory.        */
+/* Called on clean shutdown so state survives restart.                    */
+/*-----------------------------------------------------------------------*/
+
+void sem_save_state(const char *Dir)
 {
-    char path[260];
-    FILE *f;
-    int i;
+    char  Path[260];                    /* file path buffer              */
+    FILE *f;                            /* output file handle            */
+    int   i;                            /* loop index                    */
 
     /* Save QPOLLED.DAT */
-    snprintf(path, sizeof(path), "%s%cQPOLLED.DAT", dir, PATH_SEP);
-    f = fopen(path, "wb");
+    snprintf(Path, sizeof(Path), "%s%cQPOLLED.DAT", Dir, PATH_SEP);
+    f = fopen(Path, "wb");
     if (f) {
-        for (i = 0; i < g_polled_count; i++) {
+        for (i = 0; i < g_PolledCount; i++) {
             fprintf(f, "%u:%u/%u %ld\n",
-                    g_polled[i].addr.zone,
-                    g_polled[i].addr.net,
-                    g_polled[i].addr.node,
-                    (long)g_polled[i].when);
+                    g_Polled[i].Addr.zone,
+                    g_Polled[i].Addr.net,
+                    g_Polled[i].Addr.node,
+                    (long)g_Polled[i].When);
         }
         fclose(f);
     }
 
     /* Save QUNDIAL.DAT */
-    snprintf(path, sizeof(path), "%s%cQUNDIAL.DAT", dir, PATH_SEP);
-    f = fopen(path, "wb");
+    snprintf(Path, sizeof(Path), "%s%cQUNDIAL.DAT", Dir, PATH_SEP);
+    f = fopen(Path, "wb");
     if (f) {
-        for (i = 0; i < g_undial_count; i++) {
+        for (i = 0; i < g_UndialCount; i++) {
             fprintf(f, "%u:%u/%u %d %ld %ld\n",
-                    g_undial[i].addr.zone,
-                    g_undial[i].addr.net,
-                    g_undial[i].addr.node,
-                    g_undial[i].fail_count,
-                    (long)g_undial[i].first_fail,
-                    (long)g_undial[i].last_fail);
+                    g_Undial[i].Addr.zone,
+                    g_Undial[i].Addr.net,
+                    g_Undial[i].Addr.node,
+                    g_Undial[i].FailCount,
+                    (long)g_Undial[i].FirstFail,
+                    (long)g_Undial[i].LastFail);
         }
         fclose(f);
     }
 }
 
-void sem_load_state(const char *dir)
+
+/*-----------------------------------------------------------------------*/
+/* sem_load_state() -- Load polled and undialable state from disk        */
+/*                                                                       */
+/* Reads QPOLLED.DAT and QUNDIAL.DAT from the specified directory.       */
+/* Called on startup to restore state from previous session.              */
+/*-----------------------------------------------------------------------*/
+
+void sem_load_state(const char *Dir)
 {
-    char path[260], line[256];
-    FILE *f;
+    char  Path[260];                    /* file path buffer              */
+    char  Line[256];                    /* line read buffer              */
+    FILE *f;                            /* input file handle             */
 
     /* Load QPOLLED.DAT */
-    snprintf(path, sizeof(path), "%s%cQPOLLED.DAT", dir, PATH_SEP);
-    f = fopen(path, "r");
+    snprintf(Path, sizeof(Path), "%s%cQPOLLED.DAT", Dir, PATH_SEP);
+    f = fopen(Path, "r");
     if (f) {
-        while (fgets(line, sizeof(line), f) && g_polled_count < MAX_POLLED) {
-            char addr_str[64];
-            long when;
-            if (sscanf(line, "%63s %ld", addr_str, &when) == 2) {
-                ftn_parse_addr(addr_str, &g_polled[g_polled_count].addr);
-                g_polled[g_polled_count].when = (time_t)when;
-                g_polled_count++;
+        while (fgets(Line, sizeof(Line), f) && g_PolledCount < MAX_POLLED) {
+            char AddrStr[64];           /* address string from file      */
+            long When;                  /* timestamp from file           */
+
+            if (sscanf(Line, "%63s %ld", AddrStr, &When) == 2) {
+                ftn_parse_addr(AddrStr, &g_Polled[g_PolledCount].Addr);
+                g_Polled[g_PolledCount].When = (time_t)When;
+                g_PolledCount++;
             }
         }
         fclose(f);
     }
 
     /* Load QUNDIAL.DAT */
-    snprintf(path, sizeof(path), "%s%cQUNDIAL.DAT", dir, PATH_SEP);
-    f = fopen(path, "r");
+    snprintf(Path, sizeof(Path), "%s%cQUNDIAL.DAT", Dir, PATH_SEP);
+    f = fopen(Path, "r");
     if (f) {
-        while (fgets(line, sizeof(line), f) && g_undial_count < MAX_UNDIAL) {
-            char addr_str[64];
-            int fc;
-            long ff, lf;
-            if (sscanf(line, "%63s %d %ld %ld", addr_str, &fc, &ff, &lf) == 4) {
-                ftn_parse_addr(addr_str, &g_undial[g_undial_count].addr);
-                g_undial[g_undial_count].fail_count = fc;
-                g_undial[g_undial_count].first_fail = (time_t)ff;
-                g_undial[g_undial_count].last_fail = (time_t)lf;
-                g_undial_count++;
+        while (fgets(Line, sizeof(Line), f) && g_UndialCount < MAX_UNDIAL) {
+            char AddrStr[64];           /* address string from file      */
+            int  Fc;                    /* fail count from file          */
+            long Ff;                    /* first fail timestamp          */
+            long Lf;                    /* last fail timestamp           */
+
+            if (sscanf(Line, "%63s %d %ld %ld", AddrStr, &Fc, &Ff, &Lf) == 4) {
+                ftn_parse_addr(AddrStr, &g_Undial[g_UndialCount].Addr);
+                g_Undial[g_UndialCount].FailCount  = Fc;
+                g_Undial[g_UndialCount].FirstFail  = (time_t)Ff;
+                g_Undial[g_UndialCount].LastFail   = (time_t)Lf;
+                g_UndialCount++;
             }
         }
         fclose(f);

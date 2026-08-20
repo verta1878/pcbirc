@@ -1,91 +1,101 @@
-/* ====================================================================
- * qfront.c — QFront Main Orchestrator
- * ====================================================================
- * The mailer's main loop — fully wired with all modules:
- *   1. Load config, nodelist, routing rules, events, semaphore state
- *   2. Check event schedule — run pre-event actions
- *   3. Scan BSO outbound for pending nodes
- *   4. For each node: check routing, nodelist, semaphores, events
- *   5. Lock, dispatch session via binkd, unlock, record attempt
- *   6. Post-session: run tosser, TIC processor, check fixups
- *   7. Check semaphore exit triggers
- *   8. Status display, sleep, repeat
- *
- * Clean-room from FTS-5005 (BSO), FTS-0001 (.PKT), FTS-5001 (nodelist).
- * ==================================================================== */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* qfront.c -- QFront Main Orchestrator                                     */
+/*                                                                           */
+/* The mailer's main loop -- fully wired with all modules:                   */
+/*   1. Load config, nodelist, routing rules, events, semaphore state        */
+/*   2. Check event schedule -- run pre-event actions                        */
+/*   3. Scan BSO outbound for pending nodes                                  */
+/*   4. For each node: check routing, nodelist, semaphores, events           */
+/*   5. Lock, dispatch session via binkd, unlock, record attempt             */
+/*   6. Post-session: run tosser, TIC processor, check fixups                */
+/*   7. Check semaphore exit triggers                                        */
+/*   8. Status display, sleep, repeat                                        */
+/*                                                                           */
+/* Clean-room from FTS-5005 (BSO), FTS-0001 (.PKT), FTS-5001 (nodelist).    */
+/*                                                                           */
+/* License: GPLv3                                                            */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #include "qfront.h"
 #include <stdarg.h>
 
 #define QFRONT_VERSION "1.0.0"
 
-/* ---- External module declarations ----
- * These are defined in their respective .c files.
- * We forward-declare here to avoid a massive header. */
+
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                  External Module Declarations                             */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/* These are defined in their respective .c files.
+ * Forward-declared here to avoid a massive header. */
 
 /* nodelist.c */
 typedef struct NlDatabase NlDatabase;
 typedef struct NlEntry NlEntry;
-extern NlDatabase *nl_open(const char *path);
-extern const NlEntry *nl_lookup(const NlDatabase *db, const FTN_ADDR *addr);
-extern const NlEntry *nl_find_host(const NlDatabase *db, const FTN_ADDR *addr);
-extern void nl_close(NlDatabase *db);
+extern NlDatabase  *nl_open(const char *Path);
+extern const NlEntry *nl_lookup(const NlDatabase *Db, const FTN_ADDR *Addr);
+extern const NlEntry *nl_find_host(const NlDatabase *Db, const FTN_ADDR *Addr);
+extern void           nl_close(NlDatabase *Db);
+extern int            nl_entry_is_cm(const NlEntry *E);
+extern int            nl_entry_is_down(const NlEntry *E);
+extern int            nl_entry_is_hold(const NlEntry *E);
+extern const char    *nl_entry_ibn_host(const NlEntry *E);
 
 /* route.c */
-extern int rt_load(const char *cfgpath);
-extern int rt_resolve(const FTN_ADDR *dest, FTN_ADDR *via_addr);
+extern int rt_load(const char *CfgPath);
+extern int rt_resolve(const FTN_ADDR *Dest, FTN_ADDR *ViaAddr);
 
 /* events.c */
 typedef struct QfEventDef QfEventDef;
-extern int ev_load(const char *cfgpath);
-extern const QfEventDef *ev_check_active(void);
-extern int ev_should_poll(const QfEventDef *ev, int is_cm, int is_listed);
-extern int ev_pre_actions(const QfEventDef *ev, const QfConfig *cfg);
-extern int ev_post_actions(const QfEventDef *ev, const QfConfig *cfg, int queue_empty);
-extern int ev_run_batch(const QfEventDef *ev);
-
-/* Access event fields without full struct def */
-extern const char *ev_get_tag(const QfEventDef *ev);
-extern uint32_t ev_get_flags(const QfEventDef *ev);
-extern int ev_get_errorlevel(const QfEventDef *ev);
+extern int                ev_load(const char *CfgPath);
+extern const QfEventDef  *ev_check_active(void);
+extern int                ev_should_poll(const QfEventDef *Ev, int IsCM, int IsListed);
+extern int                ev_pre_actions(const QfEventDef *Ev, const QfConfig *Cfg);
+extern int                ev_post_actions(const QfEventDef *Ev, const QfConfig *Cfg, int QueueEmpty);
+extern int                ev_run_batch(const QfEventDef *Ev);
+extern const char        *ev_get_tag(const QfEventDef *Ev);
+extern uint32_t           ev_get_flags(const QfEventDef *Ev);
+extern int                ev_get_errorlevel(const QfEventDef *Ev);
 
 /* semaphore.c */
-extern void sem_mark_polled(const FTN_ADDR *addr);
-extern int sem_was_polled(const FTN_ADDR *addr, int cooldown_sec);
-extern void sem_record_failure(const FTN_ADDR *addr);
-extern void sem_record_success(const FTN_ADDR *addr);
-extern int sem_is_undialable(const FTN_ADDR *addr, int max_retries);
-extern void sem_clear_undialable(const FTN_ADDR *addr);
-extern void sem_add_trigger(const char *path, int errorlevel);
-extern int sem_check_triggers(void);
-extern void sem_save_state(const char *dir);
-extern void sem_load_state(const char *dir);
+extern void sem_mark_polled(const FTN_ADDR *Addr);
+extern int  sem_was_polled(const FTN_ADDR *Addr, int CooldownSec);
+extern void sem_record_failure(const FTN_ADDR *Addr);
+extern void sem_record_success(const FTN_ADDR *Addr);
+extern int  sem_is_undialable(const FTN_ADDR *Addr, int MaxRetries);
+extern void sem_clear_undialable(const FTN_ADDR *Addr);
+extern void sem_add_trigger(const char *Path, int Errorlevel);
+extern int  sem_check_triggers(void);
+extern void sem_save_state(const char *Dir);
+extern void sem_load_state(const char *Dir);
 
 /* tic.c */
-extern int tic_process(const QfConfig *cfg);
+extern int tic_process(const QfConfig *Cfg);
 
-/* NlEntry field access (avoid exposing full struct) */
-extern int nl_entry_is_cm(const NlEntry *e);
-extern int nl_entry_is_down(const NlEntry *e);
-extern int nl_entry_is_hold(const NlEntry *e);
-extern const char *nl_entry_ibn_host(const NlEntry *e);
+/* modem.c */
+extern int mdm_wait_ring(void *Sp, int TimeoutMs);
+extern int mdm_answer_call(void *Sp, void *Mcfg, int *ConnectSpeed);
 
-/* modem.c — inbound answer (uses opaque SerPort* from serial.c) */
-extern int mdm_wait_ring(void *sp, int timeout_ms);
-extern int mdm_answer_call(void *sp, void *mcfg, int *connect_speed);
-
-/* session.c — inbound session */
-extern int qf_answer_session(void *sp, const QfConfig *cfg, int *files_in, int *files_out);
+/* session.c */
+extern int qf_answer_session(void *Sp, const QfConfig *Cfg,
+                              int *FilesIn, int *FilesOut);
 
 
-/* ---- Logging ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                           Logging                                         */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-static FILE *g_logfp = NULL;
-static int   g_debug = 0;
+static FILE *g_LogFp  = NULL;           /* log file handle               */
+static int   g_Debug  = 0;              /* debug mode flag               */
 
-static const char *log_level_str(LogLevel level)
+
+/*-----------------------------------------------------------------------*/
+/* log_level_str() -- Convert log level to 3-char display string        */
+/*-----------------------------------------------------------------------*/
+
+static const char *log_level_str(LogLevel Level)
 {
-    switch (level) {
+    switch (Level) {
     case LOG_DEBUG: return "DBG";
     case LOG_INFO:  return "   ";
     case LOG_WARN:  return "WRN";
@@ -95,473 +105,595 @@ static const char *log_level_str(LogLevel level)
     }
 }
 
-void qf_log_init(const char *logfile)
+
+/*-----------------------------------------------------------------------*/
+/* qf_log_init() -- Open the log file                                   */
+/*-----------------------------------------------------------------------*/
+
+void qf_log_init(const char *LogFile)
 {
-    if (logfile && logfile[0])
-        g_logfp = fopen(logfile, "a");
+    if (LogFile && LogFile[0])
+        g_LogFp = fopen(LogFile, "a");
 }
+
+
+/*-----------------------------------------------------------------------*/
+/* qf_log_close() -- Close the log file                                 */
+/*-----------------------------------------------------------------------*/
 
 void qf_log_close(void)
 {
-    if (g_logfp) { fclose(g_logfp); g_logfp = NULL; }
+    if (g_LogFp) { fclose(g_LogFp); g_LogFp = NULL; }
 }
 
-void qf_log(LogLevel level, const char *fmt, ...)
+
+/*-----------------------------------------------------------------------*/
+/* qf_log() -- Write a timestamped log message                          */
+/*                                                                       */
+/* Writes to the log file and (for INFO and above) to stderr.            */
+/* Debug messages are suppressed unless g_Debug is set.                  */
+/*-----------------------------------------------------------------------*/
+
+void qf_log(LogLevel Level, const char *Fmt, ...)
 {
-    va_list ap;
-    time_t now;
-    struct tm *tm;
-    char ts[32];
-    FILE *out;
+    va_list    Ap;                      /* variable argument list         */
+    time_t     Now;                     /* current time                  */
+    struct tm *Tm;                      /* broken-down time              */
+    char       Ts[32];                  /* timestamp string              */
+    FILE      *Out;                     /* output file handle            */
 
-    if (level == LOG_DEBUG && !g_debug) return;
+    if (Level == LOG_DEBUG && !g_Debug) return;
 
-    time(&now);
-    tm = localtime(&now);
-    strftime(ts, sizeof(ts), "%Y-%m-%d %H:%M:%S", tm);
+    time(&Now);
+    Tm = localtime(&Now);
+    strftime(Ts, sizeof(Ts), "%Y-%m-%d %H:%M:%S", Tm);
 
-    out = g_logfp ? g_logfp : stderr;
-    fprintf(out, "%s [%s] ", ts, log_level_str(level));
-    va_start(ap, fmt); vfprintf(out, fmt, ap); va_end(ap);
-    fprintf(out, "\n");
-    fflush(out);
+    Out = g_LogFp ? g_LogFp : stderr;
+    fprintf(Out, "%s [%s] ", Ts, log_level_str(Level));
+    va_start(Ap, Fmt); vfprintf(Out, Fmt, Ap); va_end(Ap);
+    fprintf(Out, "\n");
+    fflush(Out);
 
-    if (g_logfp && level >= LOG_INFO) {
-        fprintf(stderr, "%s [%s] ", ts, log_level_str(level));
-        va_start(ap, fmt); vfprintf(stderr, fmt, ap); va_end(ap);
+    if (g_LogFp && Level >= LOG_INFO) {
+        fprintf(stderr, "%s [%s] ", Ts, log_level_str(Level));
+        va_start(Ap, Fmt); vfprintf(stderr, Fmt, Ap); va_end(Ap);
         fprintf(stderr, "\n");
     }
 }
 
 
-/* "Displaying welcome file" — shown to incoming callers */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                     Display and Status                                    */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-/* ---- Display Text File (DOS .TXT files) ----
- * Shows NORMAL.TXT, CRITICAL.TXT, FAILED.TXT, LOWBAUD.TXT,
- * EXPWARN.TXT, NOCALLER.TXT to callers via serial port. */
 
-static void qf_display_file(const char *filename)
+/*-----------------------------------------------------------------------*/
+/* qf_display_file() -- Display a text file (DOS .TXT files)            */
+/*                                                                       */
+/* Shows NORMAL.TXT, CRITICAL.TXT, FAILED.TXT, LOWBAUD.TXT,             */
+/* EXPWARN.TXT, NOCALLER.TXT to callers via serial port.                 */
+/*-----------------------------------------------------------------------*/
+
+static void qf_display_file(const char *FileName)
 {
-    char path[260];
-    FILE *f;
-    char line[256];
+    char  Path[260];                    /* file path                     */
+    FILE *f;                            /* text file handle              */
+    char  Line[256];                    /* line read buffer              */
 
-    snprintf(path, sizeof(path), "%s", filename);
-    f = fopen(path, "r");
+    snprintf(Path, sizeof(Path), "%s", FileName);
+    f = fopen(Path, "r");
     if (!f) return;
 
-    while (fgets(line, sizeof(line), f))
-        qf_log(LOG_DEBUG, "DISPLAY: %s", line);
+    while (fgets(Line, sizeof(Line), f))
+        qf_log(LOG_DEBUG, "DISPLAY: %s", Line);
 
     fclose(f);
 }
 
 
-/* ---- Status Display ---- */
+/*-----------------------------------------------------------------------*/
+/* qf_status() -- Update the status line display                        */
+/*-----------------------------------------------------------------------*/
 
-static void qf_status(const char *state, const QfConfig *cfg,
-                       int queue_count, const QfEventDef *ev)
+static void qf_status(const char *State, const QfConfig *Cfg,
+                       int QueueCount, const QfEventDef *Ev)
 {
-    time_t now;
-    struct tm *tm;
-    char ts[20];
-    char aka[64];
+    time_t     Now;                     /* current time                  */
+    struct tm *Tm;                      /* broken-down time              */
+    char       Ts[20];                  /* time string                   */
+    char       Aka[64];                 /* formatted primary AKA         */
 
-    time(&now);
-    tm = localtime(&now);
-    strftime(ts, sizeof(ts), "%H:%M:%S", tm);
+    time(&Now);
+    Tm = localtime(&Now);
+    strftime(Ts, sizeof(Ts), "%H:%M:%S", Tm);
 
-    ftn_format_addr(&cfg->aka[0], aka, sizeof(aka));
+    ftn_format_addr(&Cfg->aka[0], Aka, sizeof(Aka));
 
     fprintf(stderr, "\r[%s] %s | Queue: %d | Event: %s  ",
-            ts, state, queue_count,
-            ev ? ev_get_tag(ev) : "(none)");
+            Ts, State, QueueCount,
+            Ev ? ev_get_tag(Ev) : "(none)");
     fflush(stderr);
 }
 
 
-/* Terminal mode: ALT-C=Clear ALT-D=Dial ALT-H=HangUp ALT-S=Shell ALT-X=Exit
- * In DOS TUI, sysop could enter terminal mode to type directly
- * to the modem. In our CLI model, use: screen /dev/ttyS0 */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                      Signal Handling                                      */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-/* ---- Signal Handler (BUG-1 fix) ----
- * Ctrl-C or kill without this leaves serial ports open, .bsy locks
- * orphaned, and state files unwritten. Clean shutdown on signals.
- * Win32 doesn't have SIGHUP. SIGPIPE may not exist on all platforms. */
+/* BUG-1 fix: Ctrl-C or kill without this leaves serial ports open,
+ * .bsy locks orphaned, and state files unwritten. */
 
+static volatile int g_Shutdown = 0;     /* shutdown requested flag       */
 
-static volatile int g_shutdown = 0;
-
-static void qf_signal_handler(int sig)
+static void qf_signal_handler(int Sig)
 {
-    (void)sig;
-    g_shutdown = 1;
+    (void)Sig;
+    g_Shutdown = 1;
 }
 
-/* "Duplicate file" — logged when BSO finds a duplicate flow entry */
-/* "EchoMail bundle" — archive bundle naming per FTS-0001 */
 
-/* ---- Session History (Today's Activity) ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                    Session History (Today's Activity)                      */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-static int g_sessions_ok = 0;
-static int g_sessions_fail = 0;
-static long g_bytes_sent = 0;
-static long g_bytes_recv = 0;
+static int  g_SessionsOk   = 0;        /* successful sessions today     */
+static int  g_SessionsFail = 0;        /* failed sessions today         */
+static long g_BytesSent    = 0;        /* bytes sent today              */
+static long g_BytesRecv    = 0;        /* bytes received today          */
+
+
+/*-----------------------------------------------------------------------*/
+/* qf_print_activity() -- Display today's session summary               */
+/*-----------------------------------------------------------------------*/
 
 static void qf_print_activity(void)
 {
-    qf_log(LOG_INFO, "Today's activity: %d OK, %d failed, %ld sent, %ld recv",
-           g_sessions_ok, g_sessions_fail, g_bytes_sent, g_bytes_recv);
+    qf_log(LOG_INFO,
+           "Today's activity: %d OK, %d failed, %ld sent, %ld recv",
+           g_SessionsOk, g_SessionsFail, g_BytesSent, g_BytesRecv);
 }
 
 
-/* ---- Session Dispatch (fully wired) ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                      Session Dispatch                                     */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-static int qf_call_node_full(const QfConfig *cfg, const BsoItem *item,
-                              const NlDatabase *nl, const QfEventDef *ev)
+
+/*-----------------------------------------------------------------------*/
+/* qf_call_node_full() -- Call a node with all checks                   */
+/*                                                                       */
+/* The central dispatch function. For each pending node:                  */
+/*   1. Check semaphores (recently polled? undialable?)                   */
+/*   2. Resolve routing (direct, via host, via hub, hold)                */
+/*   3. Nodelist lookup (CM status, DOWN/HOLD, IBN host)                 */
+/*   4. Event filtering (CM-only, non-CM only, listed-only)              */
+/*   5. BSO lock (.bsy file)                                             */
+/*   6. Build command line and execute external mailer                    */
+/*   7. Record result (success/failure, polled, .try file)               */
+/*   8. Unlock (.bsy file)                                               */
+/*                                                                       */
+/* Returns 0 on success, -1 on skip/failure.                             */
+/*-----------------------------------------------------------------------*/
+
+static int qf_call_node_full(const QfConfig *Cfg, const BsoItem *Item,
+                              const NlDatabase *Nl, const QfEventDef *Ev)
 {
-    char addrstr[64];
-    char cmdline[512];
-    FTN_ADDR via_addr;
-    const FTN_ADDR *dial_target;
-    const NlEntry *nlent;
-    int route_rc, rc;
-    int is_cm = 0, is_listed = 0;
+    char           AddrStr[64];         /* formatted address for display */
+    char           CmdLine[512];        /* external mailer command       */
+    FTN_ADDR       ViaAddr;             /* resolved routing address      */
+    const FTN_ADDR *DialTarget;         /* actual address to call        */
+    const NlEntry  *NlEnt;             /* nodelist entry                */
+    int            RouteRc;             /* routing result                */
+    int            Rc;                  /* session result                */
+    int            IsCM = 0;            /* node is Continuous Mail       */
+    int            IsListed = 0;        /* node is in nodelist           */
 
-    ftn_format_addr(&item->addr, addrstr, sizeof(addrstr));
+    ftn_format_addr(&Item->addr, AddrStr, sizeof(AddrStr));
 
     /* ---- Semaphore checks ---- */
 
-    /* Recently polled? (cooldown) */
-    if (sem_was_polled(&item->addr, cfg->retry_delay)) {
-        qf_log(LOG_DEBUG, "Skipping %s — recently polled", addrstr);
+    if (sem_was_polled(&Item->addr, Cfg->retry_delay)) {
+        qf_log(LOG_DEBUG, "Skipping %s -- recently polled", AddrStr);
         return -1;
     }
 
-    /* Undialable? (exceeded max retries / 3 days) */
-    if (sem_is_undialable(&item->addr, cfg->max_retries)) {
-        qf_log(LOG_DEBUG, "Skipping %s — undialable", addrstr);
+    if (sem_is_undialable(&Item->addr, Cfg->max_retries)) {
+        qf_log(LOG_DEBUG, "Skipping %s -- undialable", AddrStr);
         return -1;
     }
 
     /* ---- Routing ---- */
 
-    route_rc = rt_resolve(&item->addr, &via_addr);
-    if (route_rc < 0) {
-        qf_log(LOG_DEBUG, "Skipping %s — route says hold/nopoll", addrstr);
+    RouteRc = rt_resolve(&Item->addr, &ViaAddr);
+    if (RouteRc < 0) {
+        qf_log(LOG_DEBUG, "Skipping %s -- route says hold/nopoll",
+               AddrStr);
         return -1;
     }
 
-    dial_target = (route_rc == 1) ? &via_addr : &item->addr;
+    DialTarget = (RouteRc == 1) ? &ViaAddr : &Item->addr;
 
     /* ---- Nodelist lookup ---- */
 
-    nlent = nl ? nl_lookup(nl, dial_target) : NULL;
-    if (nlent) {
-        is_cm = nl_entry_is_cm(nlent);
-        is_listed = 1;
+    NlEnt = Nl ? nl_lookup(Nl, DialTarget) : NULL;
+    if (NlEnt) {
+        IsCM     = nl_entry_is_cm(NlEnt);
+        IsListed = 1;
 
-        if (nl_entry_is_down(nlent) || nl_entry_is_hold(nlent)) {
-            qf_log(LOG_DEBUG, "Skipping %s — nodelist: DOWN/HOLD", addrstr);
+        if (nl_entry_is_down(NlEnt) || nl_entry_is_hold(NlEnt)) {
+            qf_log(LOG_DEBUG, "Skipping %s -- nodelist: DOWN/HOLD",
+                   AddrStr);
             return -1;
         }
     } else {
-        qf_log(LOG_DEBUG, "Address not found in nodelist: %s", addrstr);
+        qf_log(LOG_DEBUG, "Address not found in nodelist: %s", AddrStr);
     }
 
     /* ---- Event filtering ---- */
 
-    if (!ev_should_poll(ev, is_cm, is_listed)) {
-        qf_log(LOG_DEBUG, "Skipping %s — event filter", addrstr);
+    if (!ev_should_poll(Ev, IsCM, IsListed)) {
+        qf_log(LOG_DEBUG, "Skipping %s -- event filter", AddrStr);
         return -1;
     }
 
     /* ---- BSO lock ---- */
 
-    if (bso_check_hold(cfg, &item->addr)) {
-        qf_log(LOG_DEBUG, "Skipping %s — on hold", addrstr);
+    if (bso_check_hold(Cfg, &Item->addr)) {
+        qf_log(LOG_DEBUG, "Skipping %s -- on hold", AddrStr);
         return -1;
     }
 
-    if (bso_lock(cfg, &item->addr) != 0) {
-        qf_log(LOG_WARN, "Skipping %s — busy", addrstr);
+    if (bso_lock(Cfg, &Item->addr) != 0) {
+        qf_log(LOG_WARN, "Skipping %s -- busy", AddrStr);
         return -1;
     }
 
     /* ---- Dial ---- */
 
     {
-        char dialstr[64];
-        ftn_format_addr(dial_target, dialstr, sizeof(dialstr));
-        qf_log(LOG_INFO, "Dialing %s%s%s (flavour=%c mail=%d files=%d)",
-               addrstr,
-               route_rc == 1 ? " via " : "",
-               route_rc == 1 ? dialstr : "",
-               (char)item->flavour,
-               item->has_netmail, item->has_filelist);
+        char DialStr[64];               /* formatted dial target         */
+
+        ftn_format_addr(DialTarget, DialStr, sizeof(DialStr));
+        qf_log(LOG_INFO,
+               "Dialing %s%s%s (flavour=%c mail=%d files=%d)",
+               AddrStr,
+               RouteRc == 1 ? " via " : "",
+               RouteRc == 1 ? DialStr : "",
+               (char)Item->flavour,
+               Item->has_netmail, Item->has_filelist);
     }
 
     /* Build command line for external mailer */
     {
-        char dialstr[64];
-        ftn_format_addr(dial_target, dialstr, sizeof(dialstr));
+        char DialStr[64];               /* formatted dial target         */
 
-        /* If nodelist has IBN host, pass it to binkd */
-        if (nlent && nl_entry_ibn_host(nlent)[0]) {
-            snprintf(cmdline, sizeof(cmdline), "%s -p -P %s -h %s",
-                     cfg->binkd_path, dialstr, nl_entry_ibn_host(nlent));
+        ftn_format_addr(DialTarget, DialStr, sizeof(DialStr));
+
+        if (NlEnt && nl_entry_ibn_host(NlEnt)[0]) {
+            snprintf(CmdLine, sizeof(CmdLine), "%s -p -P %s -h %s",
+                     Cfg->binkd_path, DialStr, nl_entry_ibn_host(NlEnt));
         } else {
-            snprintf(cmdline, sizeof(cmdline), "%s -p -P %s",
-                     cfg->binkd_path, dialstr);
+            snprintf(CmdLine, sizeof(CmdLine), "%s -p -P %s",
+                     Cfg->binkd_path, DialStr);
         }
     }
 
     /* Execute */
 #ifdef _WIN32
-    rc = system(cmdline);
+    Rc = system(CmdLine);
 #else
-    rc = system(cmdline);
-    if (WIFEXITED(rc))
-        rc = WEXITSTATUS(rc);
+    Rc = system(CmdLine);
+    if (WIFEXITED(Rc))
+        Rc = WEXITSTATUS(Rc);
 #endif
 
     /* ---- Record result ---- */
 
-    if (rc == 0) {
-        qf_log(LOG_INFO, "Successfully sent packet(s)/file(s) to %s", addrstr);
-        g_sessions_ok++;
-        bso_record_try(cfg, &item->addr, 1, "OK");
-        sem_record_success(&item->addr);
+    if (Rc == 0) {
+        qf_log(LOG_INFO,
+               "Successfully sent packet(s)/file(s) to %s", AddrStr);
+        g_SessionsOk++;
+        bso_record_try(Cfg, &Item->addr, 1, "OK");
+        sem_record_success(&Item->addr);
     } else {
-        qf_log(LOG_WARN, "Attempt to send packet(s)/file(s) to %s was unsuccessful", addrstr);
-        g_sessions_fail++;
-        bso_record_try(cfg, &item->addr, 0, "Session failed");
-        sem_record_failure(&item->addr);
+        qf_log(LOG_WARN,
+               "Attempt to send packet(s)/file(s) to %s was unsuccessful",
+               AddrStr);
+        g_SessionsFail++;
+        bso_record_try(Cfg, &Item->addr, 0, "Session failed");
+        sem_record_failure(&Item->addr);
     }
 
-    sem_mark_polled(&item->addr);
-    bso_unlock(cfg, &item->addr);
+    sem_mark_polled(&Item->addr);
+    bso_unlock(Cfg, &Item->addr);
 
-    return rc;
+    return Rc;
 }
 
 
-/* ---- Post-Session Processing ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                    Post-Session Processing                                */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-static int qf_post_session_full(const QfConfig *cfg, int any_success)
+
+/*-----------------------------------------------------------------------*/
+/* qf_post_session_full() -- Run tosser and TIC processor               */
+/*                                                                       */
+/* Called after any successful session. Tosses received .PKT files       */
+/* into the message base and processes TIC file echoes.                  */
+/*-----------------------------------------------------------------------*/
+
+static int qf_post_session_full(const QfConfig *Cfg, int AnySuccess)
 {
-    int rc = 0;
+    int Rc = 0;                         /* tosser exit code              */
 
-    if (!any_success) return 0;
+    if (!AnySuccess) return 0;
 
     /* Run tosser */
-    if (cfg->tosser_path[0]) {
+    if (Cfg->tosser_path[0]) {
         qf_log(LOG_INFO, "Scanning/tossing FidoMail");
-        rc = system(cfg->tosser_path);
-        if (rc != 0)
-            qf_log(LOG_WARN, "Tosser exited with code %d", rc);
+        Rc = system(Cfg->tosser_path);
+        if (Rc != 0)
+            qf_log(LOG_WARN, "Tosser exited with code %d", Rc);
     }
 
     /* Process TIC files */
-    tic_process(cfg);
+    tic_process(Cfg);
 
     /* Check inbound for new netmail notifications */
-    {
-        char inb_path[520];
-        int new_mail = 0, new_files = 0;
 #ifndef _WIN32
-        DIR *d;
-        struct dirent *ent;
-        snprintf(inb_path, sizeof(inb_path), "%s", cfg->inbound);
-        d = opendir(inb_path);
+    {
+        char           InbPath[520];    /* inbound directory path        */
+        int            NewMail = 0;     /* new .PKT count               */
+        int            NewFiles = 0;    /* new .TIC count               */
+        DIR           *d;              /* directory handle               */
+        struct dirent *Ent;            /* directory entry                */
+
+        snprintf(InbPath, sizeof(InbPath), "%s", Cfg->inbound);
+        d = opendir(InbPath);
         if (d) {
-            while ((ent = readdir(d)) != NULL) {
-                int len = (int)strlen(ent->d_name);
-                if (len > 4 && strcasecmp(ent->d_name + len - 4, ".pkt") == 0)
-                    new_mail++;
-                else if (len > 4 && strcasecmp(ent->d_name + len - 4, ".tic") == 0)
-                    new_files++;
+            while ((Ent = readdir(d)) != NULL) {
+                int Len = (int)strlen(Ent->d_name);
+                if (Len > 4 &&
+                    strcasecmp(Ent->d_name + Len - 4, ".pkt") == 0)
+                    NewMail++;
+                else if (Len > 4 &&
+                         strcasecmp(Ent->d_name + Len - 4, ".tic") == 0)
+                    NewFiles++;
             }
             closedir(d);
         }
-        if (new_mail > 0)
-            qf_log(LOG_INFO, "New NetMail: %d packet(s) in inbound", new_mail);
-        if (new_files > 0)
-            qf_log(LOG_INFO, "New file: %d TIC(s) in inbound", new_files);
-#endif
+        if (NewMail > 0)
+            qf_log(LOG_INFO,
+                   "New NetMail: %d packet(s) in inbound", NewMail);
+        if (NewFiles > 0)
+            qf_log(LOG_INFO,
+                   "New file: %d TIC(s) in inbound", NewFiles);
     }
+#endif
 
-    return rc;
+    return Rc;
 }
 
 
-/* ---- QFIXUPS: Retry Incomplete Transfers ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                QFIXUPS: Retry Incomplete Transfers                        */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-#define MAX_FIXUPS 128
+#define MAX_FIXUPS 128                  /* max incomplete transfers       */
 
 typedef struct {
-    FTN_ADDR addr;
-    char     filename[260];
-    time_t   when;
+    FTN_ADDR Addr;                      /* node address                  */
+    char     FileName[260];             /* incomplete filename            */
+    time_t   When;                      /* when transfer failed          */
 } FixupEntry;
 
-static FixupEntry g_fixups[MAX_FIXUPS];
-static int        g_fixup_count = 0;
+static FixupEntry g_Fixups[MAX_FIXUPS]; /* fixup queue                   */
+static int        g_FixupCount = 0;     /* entries in fixup queue        */
 
-static void fixup_add(const FTN_ADDR *addr, const char *filename)
+
+/*-----------------------------------------------------------------------*/
+/* fixup_add() -- Add an incomplete transfer to the retry queue         */
+/*-----------------------------------------------------------------------*/
+
+static void fixup_add(const FTN_ADDR *Addr, const char *FileName)
 {
-    if (g_fixup_count >= MAX_FIXUPS) return;
-    g_fixups[g_fixup_count].addr = *addr;
-    strncpy(g_fixups[g_fixup_count].filename, filename, 259);
-    g_fixups[g_fixup_count].when = time(NULL);
-    g_fixup_count++;
+    if (g_FixupCount >= MAX_FIXUPS) return;
+    g_Fixups[g_FixupCount].Addr = *Addr;
+    strncpy(g_Fixups[g_FixupCount].FileName, FileName, 259);
+    g_Fixups[g_FixupCount].When = time(NULL);
+    g_FixupCount++;
 }
 
-static void fixup_save(const char *dir)
-{
-    char path[260];
-    FILE *f;
-    int i;
 
-    snprintf(path, sizeof(path), "%s%cQFIXUPS.DAT", dir, PATH_SEP);
-    f = fopen(path, "w");
+/*-----------------------------------------------------------------------*/
+/* fixup_save() -- Save fixup queue to QFIXUPS.DAT                     */
+/*-----------------------------------------------------------------------*/
+
+static void fixup_save(const char *Dir)
+{
+    char  Path[260];                    /* file path                     */
+    FILE *f;                            /* output file handle            */
+    int   i;                            /* loop index                    */
+
+    snprintf(Path, sizeof(Path), "%s%cQFIXUPS.DAT", Dir, PATH_SEP);
+    f = fopen(Path, "w");
     if (!f) return;
-    for (i = 0; i < g_fixup_count; i++) {
+    for (i = 0; i < g_FixupCount; i++) {
         fprintf(f, "%u:%u/%u %s %ld\n",
-                g_fixups[i].addr.zone, g_fixups[i].addr.net,
-                g_fixups[i].addr.node, g_fixups[i].filename,
-                (long)g_fixups[i].when);
+                g_Fixups[i].Addr.zone, g_Fixups[i].Addr.net,
+                g_Fixups[i].Addr.node, g_Fixups[i].FileName,
+                (long)g_Fixups[i].When);
     }
     fclose(f);
 }
 
-static void fixup_load(const char *dir)
-{
-    char path[260], line[512], addr_str[64], fname[260];
-    long when;
-    FILE *f;
 
-    snprintf(path, sizeof(path), "%s%cQFIXUPS.DAT", dir, PATH_SEP);
-    f = fopen(path, "r");
+/*-----------------------------------------------------------------------*/
+/* fixup_load() -- Load fixup queue from QFIXUPS.DAT                   */
+/*-----------------------------------------------------------------------*/
+
+static void fixup_load(const char *Dir)
+{
+    char  Path[260];                    /* file path                     */
+    char  Line[512];                    /* line read buffer              */
+    FILE *f;                            /* input file handle             */
+
+    snprintf(Path, sizeof(Path), "%s%cQFIXUPS.DAT", Dir, PATH_SEP);
+    f = fopen(Path, "r");
     if (!f) return;
-    while (fgets(line, sizeof(line), f) && g_fixup_count < MAX_FIXUPS) {
-        if (sscanf(line, "%63s %259s %ld", addr_str, fname, &when) == 3) {
-            ftn_parse_addr(addr_str, &g_fixups[g_fixup_count].addr);
-            strncpy(g_fixups[g_fixup_count].filename, fname, 259);
-            g_fixups[g_fixup_count].when = (time_t)when;
-            g_fixup_count++;
+    while (fgets(Line, sizeof(Line), f) && g_FixupCount < MAX_FIXUPS) {
+        char AddrStr[64];               /* address string from file      */
+        char Fname[260];                /* filename from file            */
+        long When;                      /* timestamp from file           */
+
+        if (sscanf(Line, "%63s %259s %ld", AddrStr, Fname, &When) == 3) {
+            ftn_parse_addr(AddrStr, &g_Fixups[g_FixupCount].Addr);
+            strncpy(g_Fixups[g_FixupCount].FileName, Fname, 259);
+            g_Fixups[g_FixupCount].When = (time_t)When;
+            g_FixupCount++;
         }
     }
     fclose(f);
-    if (g_fixup_count > 0)
-        qf_log(LOG_INFO, "Loaded %d fixup entries", g_fixup_count);
+    if (g_FixupCount > 0)
+        qf_log(LOG_INFO, "Loaded %d fixup entries", g_FixupCount);
 }
 
 
-/* ---- Configuration Loader ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                      Configuration Loader                                 */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-int qf_config_load(const char *path, QfConfig *cfg)
+
+/*-----------------------------------------------------------------------*/
+/* qf_config_load() -- Load qfront.cfg                                  */
+/*                                                                       */
+/* Parses key=value pairs from the config file. Sets defaults for        */
+/* unspecified values. Semaphore= lines are forwarded to sem_add_trigger. */
+/* Event sections ([Event.NAME]) are skipped here -- ev_load() handles   */
+/* those separately.                                                      */
+/*                                                                       */
+/* Returns 0 on success, -1 on error.                                    */
+/*-----------------------------------------------------------------------*/
+
+int qf_config_load(const char *Path, QfConfig *Cfg)
 {
-    FILE *f;
-    char line[512], key[64], val[448];
+    FILE *f;                            /* config file handle            */
+    char  Line[512];                    /* line read buffer              */
+    char  Key[64];                      /* parsed key name               */
+    char  Val[448];                     /* parsed value string           */
 
-    memset(cfg, 0, sizeof(*cfg));
-    cfg->com_port = 1;
-    cfg->locked_baud = 115200;
-    cfg->max_retries = 5;
-    cfg->retry_delay = 300;
-    cfg->hold_time   = 3600;
+    memset(Cfg, 0, sizeof(*Cfg));
+    Cfg->com_port     = 1;
+    Cfg->locked_baud  = 115200;
+    Cfg->max_retries  = 5;
+    Cfg->retry_delay  = 300;
+    Cfg->hold_time    = 3600;
 
-    f = fopen(path, "r");
+    f = fopen(Path, "r");
     if (!f) {
-        qf_log(LOG_FATAL, "Cannot open config: %s", path);
+        qf_log(LOG_FATAL, "Cannot open config: %s", Path);
         return -1;
     }
 
-    while (fgets(line, sizeof(line), f)) {
-        char *p = line;
+    while (fgets(Line, sizeof(Line), f)) {
+        char *p = Line;                 /* line scan pointer             */
+
         while (*p == ' ' || *p == '\t') p++;
-        if (*p == '#' || *p == ';' || *p == '\n' || *p == '\r' || *p == '\0')
+        if (*p == '#' || *p == ';' || *p == '\n' ||
+            *p == '\r' || *p == '\0')
             continue;
-        if (*p == '[') continue;  /* Skip section headers (events) */
+        if (*p == '[') continue;        /* skip section headers (events) */
 
-        { char *end = p + strlen(p) - 1;
-          while (end > p && (*end == '\n' || *end == '\r' || *end == ' '))
-              *end-- = '\0'; }
+        /* Strip trailing whitespace */
+        {
+            char *End = p + strlen(p) - 1;
+            while (End > p && (*End == '\n' || *End == '\r' || *End == ' '))
+                *End-- = '\0';
+        }
 
-        if (sscanf(p, "%63[^=]=%447[^\n]", key, val) != 2) continue;
+        if (sscanf(p, "%63[^=]=%447[^\n]", Key, Val) != 2) continue;
 
-        if (strcmp(key, "Address") == 0 && cfg->num_aka < 16)
-            ftn_parse_addr(val, &cfg->aka[cfg->num_aka++]);
-        else if (strcmp(key, "Outbound") == 0)
-            strncpy(cfg->outbound, val, 259);
-        else if (strcmp(key, "Inbound") == 0)
-            strncpy(cfg->inbound, val, 259);
-        else if (strcmp(key, "TempInbound") == 0)
-            strncpy(cfg->temp_inbound, val, 259);
-        else if (strcmp(key, "NetmailDir") == 0)
-            strncpy(cfg->netmail_dir, val, 259);
-        else if (strcmp(key, "LogFile") == 0)
-            strncpy(cfg->logfile, val, 259);
-        else if (strcmp(key, "Mailer") == 0)
-            strncpy(cfg->binkd_path, val, 259);
-        else if (strcmp(key, "Tosser") == 0)
-            strncpy(cfg->tosser_path, val, 259);
-        else if (strcmp(key, "TicProc") == 0)
-            strncpy(cfg->tic_proc, val, 259);
-        else if (strcmp(key, "NodelistDir") == 0)
-            strncpy(cfg->nodelist_dir, val, 259);
-        else if (strcmp(key, "NodelistBase") == 0)
-            strncpy(cfg->nodelist_base, val, 31);
-        else if (strcmp(key, "MaxRetries") == 0)
-            cfg->max_retries = atoi(val);
-        else if (strcmp(key, "RetryDelay") == 0)
-            cfg->retry_delay = atoi(val);
-        else if (strcmp(key, "HoldTime") == 0)
-            cfg->hold_time = atoi(val);
-        else if (strcmp(key, "ComPort") == 0)
-            cfg->com_port = atoi(val);
-        else if (strcmp(key, "BaudRate") == 0 || strcmp(key, "LockedBaud") == 0)
-            cfg->locked_baud = atoi(val);
-        else if (strcmp(key, "Debug") == 0)
-            cfg->debug = atoi(val);
-        else if (strcmp(key, "Semaphore") == 0) {
+        if (strcmp(Key, "Address") == 0 && Cfg->num_aka < 16)
+            ftn_parse_addr(Val, &Cfg->aka[Cfg->num_aka++]);
+        else if (strcmp(Key, "Outbound") == 0)
+            strncpy(Cfg->outbound, Val, 259);
+        else if (strcmp(Key, "Inbound") == 0)
+            strncpy(Cfg->inbound, Val, 259);
+        else if (strcmp(Key, "TempInbound") == 0)
+            strncpy(Cfg->temp_inbound, Val, 259);
+        else if (strcmp(Key, "NetmailDir") == 0)
+            strncpy(Cfg->netmail_dir, Val, 259);
+        else if (strcmp(Key, "LogFile") == 0)
+            strncpy(Cfg->logfile, Val, 259);
+        else if (strcmp(Key, "Mailer") == 0)
+            strncpy(Cfg->binkd_path, Val, 259);
+        else if (strcmp(Key, "Tosser") == 0)
+            strncpy(Cfg->tosser_path, Val, 259);
+        else if (strcmp(Key, "TicProc") == 0)
+            strncpy(Cfg->tic_proc, Val, 259);
+        else if (strcmp(Key, "NodelistDir") == 0)
+            strncpy(Cfg->nodelist_dir, Val, 259);
+        else if (strcmp(Key, "NodelistBase") == 0)
+            strncpy(Cfg->nodelist_base, Val, 31);
+        else if (strcmp(Key, "MaxRetries") == 0)
+            Cfg->max_retries = atoi(Val);
+        else if (strcmp(Key, "RetryDelay") == 0)
+            Cfg->retry_delay = atoi(Val);
+        else if (strcmp(Key, "HoldTime") == 0)
+            Cfg->hold_time = atoi(Val);
+        else if (strcmp(Key, "ComPort") == 0)
+            Cfg->com_port = atoi(Val);
+        else if (strcmp(Key, "BaudRate") == 0 ||
+                 strcmp(Key, "LockedBaud") == 0)
+            Cfg->locked_baud = atoi(Val);
+        else if (strcmp(Key, "Debug") == 0)
+            Cfg->debug = atoi(Val);
+        else if (strcmp(Key, "Semaphore") == 0) {
             /* Semaphore=<path>:<errorlevel> */
-            char *colon = strrchr(val, ':');
-            if (colon) {
-                *colon = '\0';
-                sem_add_trigger(val, atoi(colon + 1));
+            char *Colon = strrchr(Val, ':');
+            if (Colon) {
+                *Colon = '\0';
+                sem_add_trigger(Val, atoi(Colon + 1));
             }
         }
     }
 
     fclose(f);
 
-    if (cfg->num_aka == 0) {
+    if (Cfg->num_aka == 0) {
         qf_log(LOG_FATAL, "No Address defined in config");
         return -1;
     }
-    if (!cfg->outbound[0]) {
+    if (!Cfg->outbound[0]) {
         qf_log(LOG_FATAL, "No Outbound directory defined");
         return -1;
     }
 
-    g_debug = cfg->debug;
+    g_Debug = Cfg->debug;
 
-    qf_log(LOG_INFO, "Config loaded: %d AKAs, outbound=%s, mailer=%s",
-           cfg->num_aka, cfg->outbound,
-           cfg->binkd_path[0] ? cfg->binkd_path : "(none)");
+    qf_log(LOG_INFO,
+           "Config loaded: %d AKAs, outbound=%s, mailer=%s",
+           Cfg->num_aka, Cfg->outbound,
+           Cfg->binkd_path[0] ? Cfg->binkd_path : "(none)");
 
     return 0;
 }
 
 
-/* ---- Main ---- */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                             Main Entry                                    */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+
+/*-----------------------------------------------------------------------*/
+/* print_usage() -- Display command-line help                           */
+/*-----------------------------------------------------------------------*/
 
 static void print_usage(void)
 {
     fprintf(stderr,
-        "QFront v" QFRONT_VERSION " — FidoNet Mailer Orchestrator\n"
+        "QFront v" QFRONT_VERSION " -- FidoNet Mailer Orchestrator\n"
         "Clean-room implementation from FTS-5005/FTS-0001/FTS-5001\n\n"
         "Usage: qfront [options]\n"
         "  -c <config>   Config file (default: qfront.cfg)\n"
@@ -582,19 +714,18 @@ static void print_usage(void)
         "  /C<config>     Specify config file path\n");
 }
 
-#ifndef QFRONT_LIB
-int main(int argc, char *argv[])
-{
-    QfConfig cfg;
-    NlDatabase *nodelist = NULL;
-    const char *cfgfile = "qfront.cfg";
-    const char *poll_addr = NULL;
-    int single_pass = 0;
-    int i;
 
-    /* Ignore SIGPIPE — broken pipe on socket/serial write.
-     * Win32 doesn't have SIGPIPE. Some POSIX platforms define
-     * it only if certain headers are included. Guard both. */
+#ifndef QFRONT_LIB
+int main(int Argc, char *Argv[])
+{
+    QfConfig        Cfg;                /* loaded configuration          */
+    NlDatabase     *Nodelist = NULL;    /* parsed nodelist database      */
+    const char     *CfgFile  = "qfront.cfg";  /* config file path       */
+    const char     *PollAddr = NULL;    /* manual poll address           */
+    int             SinglePass = 0;     /* single scan mode              */
+    int             i;                  /* argument loop index           */
+
+    /* Ignore SIGPIPE -- broken pipe on socket/serial write */
 #if !defined(_WIN32) && defined(SIGPIPE)
     signal(SIGPIPE, SIG_IGN);
 #endif
@@ -606,31 +737,31 @@ int main(int argc, char *argv[])
     signal(SIGHUP,  qf_signal_handler);
 #endif
 
-    /* Parse command line — supports both Unix and DOS styles */
-    for (i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-c") == 0 && i + 1 < argc)
-            cfgfile = argv[++i];
-        else if (strncasecmp(argv[i], "/C", 2) == 0 && argv[i][2])
-            cfgfile = argv[i] + 2;
-        else if (strcasecmp(argv[i], "/DEBUG") == 0)
-            g_debug = 1;
-        else if (strcasecmp(argv[i], "/LOCALONLY") == 0)
+    /* Parse command line -- supports both Unix and DOS styles */
+    for (i = 1; i < Argc; i++) {
+        if (strcmp(Argv[i], "-c") == 0 && i + 1 < Argc)
+            CfgFile = Argv[++i];
+        else if (strncasecmp(Argv[i], "/C", 2) == 0 && Argv[i][2])
+            CfgFile = Argv[i] + 2;
+        else if (strcasecmp(Argv[i], "/DEBUG") == 0)
+            g_Debug = 1;
+        else if (strcasecmp(Argv[i], "/LOCALONLY") == 0)
             qf_log(LOG_INFO, "Local-only mode (modem disabled)");
-        else if (strcasecmp(argv[i], "/NOANSWER") == 0)
+        else if (strcasecmp(Argv[i], "/NOANSWER") == 0)
             qf_log(LOG_INFO, "Auto-answer disabled");
-        else if (strcasecmp(argv[i], "/NO16550") == 0)
+        else if (strcasecmp(Argv[i], "/NO16550") == 0)
             qf_log(LOG_INFO, "16550 UART FIFO disabled");
-        else if (strcasecmp(argv[i], "/COLOR") == 0)
-            ; /* Color mode (default) */
-        else if (strcasecmp(argv[i], "/MONO") == 0)
-            ; /* Monochrome mode */
-        else if (strcmp(argv[i], "-p") == 0 && i + 1 < argc)
-            poll_addr = argv[++i];
-        else if (strcmp(argv[i], "-s") == 0)
-            single_pass = 1;
-        else if (strcmp(argv[i], "-d") == 0)
-            g_debug = 1;
-        else if (strcmp(argv[i], "-h") == 0) {
+        else if (strcasecmp(Argv[i], "/COLOR") == 0)
+            ;                           /* color mode (default)          */
+        else if (strcasecmp(Argv[i], "/MONO") == 0)
+            ;                           /* monochrome mode               */
+        else if (strcmp(Argv[i], "-p") == 0 && i + 1 < Argc)
+            PollAddr = Argv[++i];
+        else if (strcmp(Argv[i], "-s") == 0)
+            SinglePass = 1;
+        else if (strcmp(Argv[i], "-d") == 0)
+            g_Debug = 1;
+        else if (strcmp(Argv[i], "-h") == 0) {
             print_usage();
             return 0;
         }
@@ -638,69 +769,60 @@ int main(int argc, char *argv[])
 
     /* ---- Phase 1: Load everything ---- */
 
-    if (qf_config_load(cfgfile, &cfg) != 0)
+    if (qf_config_load(CfgFile, &Cfg) != 0)
         return 1;
 
-    qf_log_init(cfg.logfile);
-    qf_log(LOG_INFO, "QFront v" QFRONT_VERSION " starting — %d AKA(s)",
-           cfg.num_aka);
+    qf_log_init(Cfg.logfile);
+    qf_log(LOG_INFO,
+           "QFront v" QFRONT_VERSION " starting -- %d AKA(s)",
+           Cfg.num_aka);
 
     {
-        char buf[64];
-        for (i = 0; i < cfg.num_aka; i++) {
-            ftn_format_addr(&cfg.aka[i], buf, sizeof(buf));
-            qf_log(LOG_INFO, "  AKA %d: %s", i, buf);
+        char Buf[64];                   /* formatted AKA for display     */
+        for (i = 0; i < Cfg.num_aka; i++) {
+            ftn_format_addr(&Cfg.aka[i], Buf, sizeof(Buf));
+            qf_log(LOG_INFO, "  AKA %d: %s", i, Buf);
         }
     }
 
-    /* Load routing rules from config */
-    rt_load(cfgfile);
-
-    /* Load event schedule from config */
-    ev_load(cfgfile);
+    rt_load(CfgFile);                   /* load routing rules            */
+    ev_load(CfgFile);                   /* load event schedule           */
 
     /* Load nodelist */
-    if (cfg.nodelist_dir[0] && cfg.nodelist_base[0]) {
-        char nlpath[520];
-        snprintf(nlpath, sizeof(nlpath), "%s%c%s.*",
-                 cfg.nodelist_dir, PATH_SEP, cfg.nodelist_base);
+    if (Cfg.nodelist_dir[0] && Cfg.nodelist_base[0]) {
+        char NlPath[520];              /* nodelist file path            */
 
-        /* Try common extensions: .999 (day number), no extension */
-        snprintf(nlpath, sizeof(nlpath), "%s%c%s",
-                 cfg.nodelist_dir, PATH_SEP, cfg.nodelist_base);
-        nodelist = nl_open(nlpath);
-        /* If that fails, it logs a warning — non-fatal */
+        snprintf(NlPath, sizeof(NlPath), "%s%c%s",
+                 Cfg.nodelist_dir, PATH_SEP, Cfg.nodelist_base);
+        Nodelist = nl_open(NlPath);
     }
 
-    /* Load semaphore state from previous run */
-    sem_load_state(cfg.outbound);
-
-    /* Load fixup queue */
-    fixup_load(cfg.outbound);
+    sem_load_state(Cfg.outbound);       /* restore semaphore state       */
+    fixup_load(Cfg.outbound);           /* restore fixup queue           */
 
     /* ---- Manual poll mode ---- */
 
-    if (poll_addr) {
-        FTN_ADDR addr;
-        BsoItem item;
+    if (PollAddr) {
+        FTN_ADDR Addr;                  /* parsed poll address           */
+        BsoItem  Item;                  /* BSO item for poll             */
 
-        if (ftn_parse_addr(poll_addr, &addr) != 0) {
-            qf_log(LOG_FATAL, "Invalid address: %s", poll_addr);
+        if (ftn_parse_addr(PollAddr, &Addr) != 0) {
+            qf_log(LOG_FATAL, "Invalid address: %s", PollAddr);
             return 1;
         }
 
-        memset(&item, 0, sizeof(item));
-        item.addr = addr;
-        item.flavour = BSO_IMMEDIATE;
-        item.has_netmail = 1;
+        memset(&Item, 0, sizeof(Item));
+        Item.addr    = Addr;
+        Item.flavour = BSO_IMMEDIATE;
+        Item.has_netmail = 1;
 
-        bso_create_poll(&cfg, &addr, BSO_IMMEDIATE);
+        bso_create_poll(&Cfg, &Addr, BSO_IMMEDIATE);
 
-        i = qf_call_node_full(&cfg, &item, nodelist, NULL);
-        qf_post_session_full(&cfg, i == 0);
+        i = qf_call_node_full(&Cfg, &Item, Nodelist, NULL);
+        qf_post_session_full(&Cfg, i == 0);
 
-        sem_save_state(cfg.outbound);
-        nl_close(nodelist);
+        sem_save_state(Cfg.outbound);
+        nl_close(Nodelist);
         qf_log_close();
         return (i == 0) ? 0 : 1;
     }
@@ -710,80 +832,85 @@ int main(int argc, char *argv[])
     qf_log(LOG_INFO, "Waiting for a call");
 
     do {
-        BsoItem items[256];
-        int count, j;
-        int any_success = 0;
-        const QfEventDef *ev = NULL;
-        int sem_exit;
+        BsoItem            Items[256];  /* pending nodes from BSO scan   */
+        int                Count;       /* nodes in queue                */
+        int                j;           /* node loop index               */
+        int                AnySuccess = 0;  /* session success flag      */
+        const QfEventDef  *Ev = NULL;   /* active event                  */
+        int                SemExit;     /* semaphore exit code           */
+        int                AnswerRc;    /* inbound answer result         */
+        int                FilesIn = 0; /* files received this session   */
+        int                FilesOut = 0;/* files sent this session       */
 
         /* ---- Check semaphore exit triggers ---- */
-        sem_exit = sem_check_triggers();
-        if (sem_exit >= 0) {
-            qf_log(LOG_INFO, "Exiting with errorlevel %d", sem_exit);
-            sem_save_state(cfg.outbound);
-            fixup_save(cfg.outbound);
-            nl_close(nodelist);
+        SemExit = sem_check_triggers();
+        if (SemExit >= 0) {
+            qf_log(LOG_INFO, "Exiting with errorlevel %d", SemExit);
+            sem_save_state(Cfg.outbound);
+            fixup_save(Cfg.outbound);
+            nl_close(Nodelist);
             qf_log_close();
-            return sem_exit;
+            return SemExit;
         }
 
         /* ---- Check event schedule ---- */
-        ev = ev_check_active();
-        if (ev) {
-            qf_log(LOG_DEBUG, "Running event \"%s\"", ev_get_tag(ev));
-            ev_pre_actions(ev, &cfg);
+        Ev = ev_check_active();
+        if (Ev) {
+            qf_log(LOG_DEBUG, "Running event \"%s\"", ev_get_tag(Ev));
+            ev_pre_actions(Ev, &Cfg);
         }
 
         /* ---- Scan BSO outbound ---- */
         qf_log(LOG_DEBUG, "Building queue");
-        /* "Dial queue is empty" logged when count==0 below */
-        /* "Creating batch file" — for errorlevel exit events */
-        count = bso_scan(&cfg, items, 256);
+        Count = bso_scan(&Cfg, Items, 256);
 
-        if (count == 0) {
-            qf_status("Waiting for a call", &cfg, 0, ev);
+        if (Count == 0) {
+            qf_status("Waiting for a call", &Cfg, 0, Ev);
         } else {
-            qf_log(LOG_INFO, "Scanning for mail — %d nodes pending", count);
+            qf_log(LOG_INFO,
+                   "Scanning for mail -- %d nodes pending", Count);
         }
 
         /* ---- Process each node ---- */
-        for (j = 0; j < count; j++) {
-            char addrstr[64];
-            ftn_format_addr(&items[j].addr, addrstr, sizeof(addrstr));
+        for (j = 0; j < Count; j++) {
+            char AddrStr[64];           /* formatted address for status  */
+
+            ftn_format_addr(&Items[j].addr, AddrStr, sizeof(AddrStr));
 
             /* Skip hold flavour unless event forces */
-            if (items[j].flavour == BSO_HOLD && ev &&
-                !(ev_get_flags(ev) & 0x200 /*EVF_FORCE_POLL*/)) {
-                qf_log(LOG_DEBUG, "Skipping %s (hold flavour)", addrstr);
+            if (Items[j].flavour == BSO_HOLD && Ev &&
+                !(ev_get_flags(Ev) & 0x200 /*EVF_FORCE_POLL*/)) {
+                qf_log(LOG_DEBUG,
+                       "Skipping %s (hold flavour)", AddrStr);
                 continue;
             }
 
-            qf_status(addrstr, &cfg, count - j, ev);
+            qf_status(AddrStr, &Cfg, Count - j, Ev);
 
-            /* Call the node (routing + nodelist + event checks inside) */
-            if (qf_call_node_full(&cfg, &items[j], nodelist, ev) == 0) {
-                any_success = 1;
-            }
+            if (qf_call_node_full(&Cfg, &Items[j], Nodelist, Ev) == 0)
+                AnySuccess = 1;
         }
 
         /* ---- Post-session processing ---- */
-        if (any_success)
-            qf_post_session_full(&cfg, 1);
+        if (AnySuccess)
+            qf_post_session_full(&Cfg, 1);
 
         /* ---- Event post-actions ---- */
-        if (ev) {
-            int end_event = ev_post_actions(ev, &cfg, count == 0);
-            if (end_event) {
-                qf_log(LOG_INFO, "Ending event \"%s\"", ev_get_tag(ev));
-            }
+        if (Ev) {
+            int EndEvent;               /* event end flag                */
+
+            EndEvent = ev_post_actions(Ev, &Cfg, Count == 0);
+            if (EndEvent)
+                qf_log(LOG_INFO,
+                       "Ending event \"%s\"", ev_get_tag(Ev));
         }
 
         /* ---- Save state ---- */
-        sem_save_state(cfg.outbound);
-        fixup_save(cfg.outbound);
+        sem_save_state(Cfg.outbound);
+        fixup_save(Cfg.outbound);
 
-        /* ---- Check for incoming calls ---- */
-        /*
+        /* ---- Check for incoming calls ----
+         *
          * Between outbound poll cycles, check the modem for incoming
          * calls. qf_answer_session() handles the full inbound flow:
          *   - Wait for RING (times out after retry_delay seconds)
@@ -792,74 +919,61 @@ int main(int argc, char *argv[])
          *   - Run FidoNet session or exit for PCBoard
          *
          * Return codes from qf_answer_session():
-         *   -1 = no call (timeout) — normal, loop back to outbound
-         *    0 = FidoNet session completed — toss mail, loop
-         *    1 = human caller — EXIT QFront, return errorlevel 1
-         *    5 = FAX call — EXIT QFront, return errorlevel 5
+         *   -1 = no call (timeout) -- normal, loop back to outbound
+         *    0 = FidoNet session completed -- toss mail, loop
+         *    1 = human caller -- EXIT QFront, return errorlevel 1
+         *    5 = FAX call -- EXIT QFront, return errorlevel 5
          *
          * Errorlevels 1 and 5 cause QFront to terminate so BOARD.BAT
          * can load the appropriate program (PCBoard or FAX receiver).
          */
-        if (!single_pass && !g_shutdown) {
-            int answer_rc;
-            int files_in = 0, files_out = 0;
+        if (!SinglePass && !g_Shutdown) {
+            qf_log(LOG_DEBUG,
+                   "Checking for incoming calls on COM%d", Cfg.com_port);
 
-            qf_log(LOG_DEBUG, "Checking for incoming calls on COM%d",
-                   cfg.com_port);
+            AnswerRc = qf_answer_session(NULL, &Cfg, &FilesIn, &FilesOut);
 
-            answer_rc = qf_answer_session(NULL, &cfg, &files_in, &files_out);
-
-            qf_log(LOG_DEBUG, "qf_answer_session returned %d "
+            qf_log(LOG_DEBUG,
+                   "qf_answer_session returned %d "
                    "(files_in=%d, files_out=%d)",
-                   answer_rc, files_in, files_out);
+                   AnswerRc, FilesIn, FilesOut);
 
-            if (answer_rc == 1) {
-                /*
-                 * Human caller detected. QFront exits with errorlevel 1.
-                 * BOARD.BAT sees this and loads PCBOARD.EXE.
-                 * The modem carrier is still up — PCBoard finds a
-                 * connected caller on the COM port.
-                 */
-                qf_log(LOG_INFO, "Human caller — exiting with errorlevel 1");
-                qf_log(LOG_INFO, "BOARD.BAT should load PCBOARD.EXE now");
-                sem_save_state(cfg.outbound);
-                fixup_save(cfg.outbound);
-                nl_close(nodelist);
+            if (AnswerRc == 1) {
+                /* Human caller -- exit for PCBoard */
+                qf_log(LOG_INFO,
+                       "Human caller -- exiting with errorlevel 1");
+                qf_log(LOG_INFO,
+                       "BOARD.BAT should load PCBOARD.EXE now");
+                sem_save_state(Cfg.outbound);
+                fixup_save(Cfg.outbound);
+                nl_close(Nodelist);
                 qf_log_close();
                 return 1;
-            } else if (answer_rc == 5) {
-                /*
-                 * FAX tone detected. QFront exits with errorlevel 5.
-                 * BOARD.BAT can route to FAX software if configured.
-                 */
-                qf_log(LOG_INFO, "FAX call — exiting with errorlevel 5");
-                sem_save_state(cfg.outbound);
-                fixup_save(cfg.outbound);
-                nl_close(nodelist);
+            } else if (AnswerRc == 5) {
+                /* FAX call -- exit for FAX software */
+                qf_log(LOG_INFO,
+                       "FAX call -- exiting with errorlevel 5");
+                sem_save_state(Cfg.outbound);
+                fixup_save(Cfg.outbound);
+                nl_close(Nodelist);
                 qf_log_close();
                 return 5;
-            } else if (answer_rc == 0) {
-                /*
-                 * FidoNet session completed. Files are in the inbound
-                 * directory. The toss cycle (qscan) will process them
-                 * into PCBoard message bases on the next pass.
-                 */
-                if (files_in > 0 || files_out > 0) {
-                    qf_log(LOG_INFO, "Inbound session complete: "
+            } else if (AnswerRc == 0) {
+                /* FidoNet session completed */
+                if (FilesIn > 0 || FilesOut > 0) {
+                    qf_log(LOG_INFO,
+                           "Inbound session complete: "
                            "%d file(s) received, %d file(s) sent",
-                           files_in, files_out);
-                    any_success = 1;
-                } else {
-                    qf_log(LOG_DEBUG, "FidoNet session OK but no files "
-                           "exchanged (handshake only?)");
+                           FilesIn, FilesOut);
+                    AnySuccess = 1;
                 }
             }
-            /* answer_rc == -1: no call, normal timeout — continue loop */
+            /* AnswerRc == -1: no call, normal timeout */
         }
 
         /* ---- Sleep ---- */
-        if (!single_pass && !g_shutdown) {
-            qf_status("Waiting for a call", &cfg, 0, ev);
+        if (!SinglePass && !g_Shutdown) {
+            qf_status("Waiting for a call", &Cfg, 0, Ev);
 #ifdef _WIN32
             Sleep(1000);
 #else
@@ -867,21 +981,22 @@ int main(int argc, char *argv[])
 #endif
         }
 
-        if (g_shutdown) {
-            qf_log(LOG_INFO, "Caught signal — clean shutdown");
+        if (g_Shutdown) {
+            qf_log(LOG_INFO, "Caught signal -- clean shutdown");
             break;
         }
 
-    } while (!single_pass);
+    } while (!SinglePass);
 
-    /* Inbound/Outbound history tracking */
+    /* ---- Shutdown ---- */
+
     qf_print_activity();
     qf_log(LOG_INFO, "Normal exit");
     fprintf(stderr, "\n");
 
-    sem_save_state(cfg.outbound);
-    fixup_save(cfg.outbound);
-    nl_close(nodelist);
+    sem_save_state(Cfg.outbound);
+    fixup_save(Cfg.outbound);
+    nl_close(Nodelist);
     qf_log_close();
 
     return 0;
