@@ -1,0 +1,46 @@
+pcbirc repo restructure 
+Date: Thu 08/20/2026 17:01:26.57 
+ 
+OK: MAIN -
+OK: PCBSRC -
+OK: LIBS -
+        1 dir(s) moved.
+OK: LIB\H -
+        1 dir(s) moved.
+OK: LIB\SOURCE -
+        1 file(s) moved.
+OK: LIB\BUILD.BAT -
+OK: Removed empty LIB\ 
+SKIP: drivers\ already exists 
+40 File(s) copied
+OK: Copied PCBCP OS/2 source to 1541\pcbcp\ 
+        1 file(s) copied.
+OK: Copied Pcbic12.zip to 1541\ 
+ 
+=== VERIFICATION === 
+FOUND: pcb153 
+FOUND: pcb154 
+FOUND: toolkit 
+FOUND: toolkit\H 
+FOUND: toolkit\SOURCE 
+FOUND: pcbcbase 
+FOUND: 1541 
+FOUND: drivers 
+FOUND: docs 
+FOUND: todo 
+ 
+=== SUMMARY === 
+Errors: 0 
+Missing directories: 0 
+ 
+Final structure: 
+  pcb153\        15.3 source (Borland C++ 3.1) 
+  pcb154\        15.4 source (OpenWatcom 16-bit, no extender) 
+  toolkit\       Clark's shared toolkit library (H\, SOURCE\) 
+  pcbcbase\      third-party: CODEBASE + BC31 prebuilt 
+  1541\          our 15.41 work 
+  drivers\       FOSSIL etc 
+  docs\          DOCDEV 
+  reference\     archives 
+  todo\          docs to review 
+ 
