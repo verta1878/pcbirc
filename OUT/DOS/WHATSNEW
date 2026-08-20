@@ -1,0 +1,604 @@
+*============================================================================*
+|                                                                            |
+|                         PCBoard Version 15.4                               |
+|                                                                            |
+*============================================================================*
+
+We are pleased to announce the Beta release of PCBoard v15.4!  This release of
+PCBoard brings many new enhancements to you.  Here is the brief list.  Full
+descriptions follow:
+
+  PCBoard
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  - CHAT has been enhanced to support @x color codes, and action  commands.
+
+  - The new PPL compiler now produces code which is slightly smaller and
+    executes faster than previous versions.
+
+  - File flagging now allows flagging by number and viewing of full
+    descriptions when viewing short descriptions only.
+
+  - The user record now stores the user's birthday, gender, email address,
+    and personal web page.
+
+  - UUIN can now reject both email or newsgroup messages  by name to
+    avoid pesky abusers to the system.
+
+
+  PPL
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  GetBankBal()  Function (3.40)
+  GetMsgHdr()  Function (3.40)
+  MoveMsg  Statement (3.40)
+  SetBankBal  Statement (3.40)
+  SetMsgHdr()  Function (3.40)
+  ShortDesc()  Function (3.40)
+  ShortDesc  Statement (3.40)
+  U_BIRTHDATE VARIABLE (3.40)
+  U_EMAIL VARIABLE (3.40)
+  U_GENDER VARIABLE (3.40)
+  U_SHORTDESC VARIABLE (3.40)
+  U_WEB VARIABLE (3.40)
+
+  PCB/IC
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  - FTP now support MGET (multiple gets)
+
+
+Detailed Description of New Features
+==============================================================================
+
+There are a number of enhancements to the new code, including:
+
+  1.  A ListServ PPE (coming soon) which allows your users to subscribe
+      to e-mail lists over the Internet.  Along with the new PPE for
+      v15.4, there are several new PPL functions to support the new
+      code, including:
+
+        A. GetMsgHdr(conference #, message #, field #)
+           (field #'s are the same as those used for the SCANMSGHDR function.
+            This function allows you to get specific message header info.)
+
+        B. SetMsgHdr(conference #, message #, field #, string value)
+           (Five field numbers are available, including:)
+              1 = 'To' field
+              2 = 'From' field
+              3 = 'Subject' field
+              4 = 'Password' field
+              5 = 'Echo' Flag
+           (This function allows you to modify the above fields in a message)
+
+        C. MoveMsg (conf #, message #)
+           (This function moves a message from its current location in the
+            message base to the very end of that message base.)
+
+  2.  New 'Time Bank' functions have been added to the PPL compiler and
+      PCBSysMgr has been updated to support installing the new functions as a
+      PSA.  The new functions available are:
+
+        GetBankBal(field #)
+        SetBankBal(field #, value)
+
+        (There are 12 fields available as indicated below:)
+
+          Time Fields (in minutes)
+          ------------------------
+           0 = Last Deposit Date
+           1 = Last Withdrawal Date
+           2 = Last Transaction Amount (in minutes)
+           3 = Amount Saved (their time balance in their account)
+           4 = Max Withdrawal (the max a user can withdraw in a day)
+           5 = Max Stored Amount (Maximum time allowed to be stored)
+
+          Byte Fields (in K bytes)
+          ------------------------
+           6 = Last Deposit Date
+           7 = Last Withdrawal Date
+           8 = Last Transaction Amount (in K bytes)
+           9 = Amount Saved (their K byte balance in their account)
+          10 = Max Withdrawal (the max a user can withdraw in a day)
+          11 = Max Stored Amount (Maximum K bytes allowed to be stored)
+
+      By using these new functions, you can easily write a time bank PPE for
+      your system where your users can be charged for functions used, or they
+      can add to their account balance based on their activity.
+
+  3.  PCBoard's CHAT has been enhanced to support @x color codes, and action
+      commands.  The SysOp can now define their own set of action commands to
+      implement on their system -- tailoring them to the needs of their users.
+
+      Users in chat can now also include @x color codes in their text to
+      enhance the look of the text they are sending others in group chat.  A
+      new command has been added for color support.
+
+      COLOR  Change foreground color.  The color command allows a user
+      to change the color of the text he types.  The color command can accept
+      the following options:
+
+         B (blue)
+         G (green)
+         C (cyan)
+         R (red)
+         M (magenta)
+         Y (yellow)
+         W (white)
+         + (brighten)
+         - (darken)
+
+      "W+" would give a bright white.  Likewise, "R-" would produce a
+      dark red. A '+' (plus) or a '-' (minus) by itself will brighten or
+      darken the current color, it also will set the default intensity
+      to bright or dark.
+
+  4.  PCBIC has been enhanced to now supports the standard ftp command "MGET".
+      This will allow users to use wildcards when retrieving files from a ftp
+      site.
+
+  5.  The new PPL compiler now produces code which is slightly smaller and
+      executes faster than previous versions. Additionally, all 15.4 compiled
+      PPE's use a new enhanced security algorithm to help thwart PPE busters.
+
+  6.  Our FLAG PPE now supports flagging by file screen display number rather
+      than just by name.  This makes it easier for callers to select the file
+      they wish to flag for download.
+
+  7.  A new PPL function is available for getting the short filename
+      description status.
+
+  8.  A new PCBModem program is available which now supports many more modem
+      configurations.
+
+  9.  Additional user information is now able to be stored using a 15.4 PSA.
+      The additional info includes the users Birthday, Gender, E-Mail Address
+      and Personal Web Address (if they have their own personal Web site.)
+
+ 10.  UUIN reject by name.  It is common for a business or BBS to want to be
+      able to filter out unwanted mail.  For example, if mail was comming from
+      annoying@bad.stor then these messages could be bounced or disregarded.
+      To setup a address to reject, a file named REJECTS must be created and
+      stored in the UUCP base path.  The format of the file is ASCII text.
+      On each line is the incoming from name to reject followed by a comma,
+      and then if a percent sign is the first charactor in the second field
+      the message will be bounced otherwise it will be disregarded. NOTE: only
+      email can be bounced news articles can only be disregarded.
+
+      Example rejects file:
+
+        annoying@bad.stor, % (this message will be bounced)
+        dah@news.bad,        (this message will be disregarded)
+
+      NOTE:  THe maximum number of entries that can be in this file is 16.
+
+
+NEW PPL FUNCTIONS AND VARIABLES
+==============================================================================
+
+GETBANKBAL()  Function (3.40)
+
+   Function
+   ~~~~~~~~~~~~~~~~
+      Returns the value of a specified field.
+
+   Syntax
+   ~~~~~~~~~~~~~~~~
+      GETBANKBAL(field)
+      	field			An interger expression stating the field to get.
+
+   Fields
+   ~~~~~~~~~~~~~~~~
+
+        Time Fields (in minutes)
+        ------------------------
+         0 = Last Deposit Date
+         1 = Last Withdrawal Date
+         2 = Last Transaction Amount (in minutes)
+         3 = Amount Saved (their time balance in their account)
+         4 = Max Withdrawal (the max a user can withdraw in a day)
+         5 = Max Stored Amount (Maximum time allowed to be stored)
+
+        Byte Fields (in K bytes)
+        ------------------------
+         6 = Last Deposit Date
+         7 = Last Withdrawal Date
+         8 = Last Transaction Amount (in K bytes)
+         9 = Amount Saved (their K byte balance in their account)
+         10 = Max Withdrawal (the max a user can withdraw in a day)
+         11 = Max Stored Amount (Maximum K bytes allowed to be stored)
+
+   Returns
+   ~~~~~~~~~~~~~~~~
+      STRING   Returns the value of the specified field.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+      INTEGER amt_saved
+      amt_saved=GetBankBal(3)
+      PRINTLN "The user has the following amount of time saved: ", amt_saved
+
+   See Also
+   ~~~~~~~~~~~~~~~~
+      SetBankBal()  Function (3.40)
+
+--------------------------------------------------------------------------
+GETMSGHDR()  Function (3.40)
+
+   Function
+   ~~~~~~~~~~~~~~~~
+      Returns the value of the specified header field.
+
+   Syntax
+   ~~~~~~~~~~~~~~~~
+      GETMSGHDR(conf, message, field)
+      	conf		An interger expression stating the conference number of the
+         			message base.
+         message  A double expression stating the message number of the message
+         			to get the message header value.
+         field		An integer expression between 0 and 15 representing the field
+         			to get. The fields are defined under SCANMSGHDR().
+
+   Returns
+   ~~~~~~~~~~~~~~~~
+      STRING   Returns the value of the specified field.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+		STRING MsgToName        'STRING CONTAINING THE TO: FIELD OF A MESSAGE
+   	msgToName = GETMSGHDR(0, HIMSGNUM(), HDR_TO)
+      PRINTLN "The last message is addressed to ", msgToName
+
+   See Also
+   ~~~~~~~~~~~~~~~~
+      SCANMSGHDR() Function (3.00)
+		SetMsgHdr()  Function (3.40)
+		MoveMsg  Statement (3.40)
+
+--------------------------------------------------------------------------
+MOVEMSG  Statement (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Moves the message from its current location to the end of the message
+      base.
+
+	Syntax
+   ~~~~~~~~~~~~~~~~
+      MOVEMSG conf, message, movetype
+      	conf			An interger expression stating the conference number of
+         				the message base.
+         message  	A double expression stating the message number of the
+         				message to get the message header value.
+         movetype    A Boolean expression stating where the message should be
+                     move or not.  TRUE if it will be moved, FALSE if the
+                     message is to be copied.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+      INTEGER LowMessage
+      LowMessage=LOMSGNUM()
+      MoveMsg 0, LowMessage, FALSE
+
+   See Also
+   ~~~~~~~~~~~~~~~~
+      SCANMSGHDR() Function (3.00)
+		SetMsgHdr()  Function (3.40)
+		GetMsgHdr()  Function (3.40)
+
+--------------------------------------------------------------------------
+SETBANKBAL  Statement (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Sets the value of a specified field.
+
+	Syntax
+   ~~~~~~~~~~~~~~~~
+      SETBANKBAL field, value
+      	field	 	An interger expression stating the field to get.
+      	value	 	An interger expression stating the value that the specifeid
+         			field is to set to.
+
+   Fields
+   ~~~~~~~~~~~~~~~~
+
+        Time Fields (in minutes)
+        ------------------------
+         0 = Last Deposit Date
+         1 = Last Withdrawal Date
+         2 = Last Transaction Amount (in minutes)
+         3 = Amount Saved (their time balance in their account)
+         4 = Max Withdrawal (the max a user can withdraw in a day)
+         5 = Max Stored Amount (Maximum time allowed to be stored)
+
+        Byte Fields (in K bytes)
+        ------------------------
+         6 = Last Deposit Date
+         7 = Last Withdrawal Date
+         8 = Last Transaction Amount (in K bytes)
+         9 = Amount Saved (their K byte balance in their account)
+         10 = Max Withdrawal (the max a user can withdraw in a day)
+         11 = Max Stored Amount (Maximum K bytes allowed to be stored)
+
+   Example
+   ~~~~~~~~~~~~~~~~
+      SetBankBal
+      INTEGER amt_saved
+      SetBankBal 10,10
+      amt_saved=GetBankBal(10)
+      PRINTLN "The user now can download the following (MAX): ", amt_saved
+
+   See Also
+   ~~~~~~~~~~~~~~~~
+      GetBankBal()  Function (3.40)
+
+--------------------------------------------------------------------------
+SETMSGHDR()  Function (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Set the specified message header to a specified value of a specified
+      message.
+
+	Syntax
+   ~~~~~~~~~~~~~~~~
+      SETMSGHDR(conf, message, field, fieldinfo)
+      	conf			An interger expression stating the conference number of
+         				the message base.
+         message  	A double expression stating the message number of the
+         				message to get the message header value.
+         field			An integer expression between 0 and 15 representing the
+         				field	to get.
+         fieldinfo   A string expression containing the data to insert into the
+         				specified field.
+
+   Fields
+   ~~~~~~~~~~~~~~~~
+              1 = 'To' field
+              2 = 'From' field
+              3 = 'Subject' field
+              4 = 'Password' field
+              5 = 'Echo' Flag
+
+   Returns
+   ~~~~~~~~~~~~~~~~
+      INTEGER  Returns the value of the message number.  If the message will
+      			fit in the same place as the original then it will be the same.
+      			If modefied header change will not fit in the original message
+               header then it will insert the message to the end of the message
+               base.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+
+		STRING MsgToName        'STRING CONTAINING THE TO: FIELD OF A MESSAGE
+      INTEGER HighMessage
+      INTEGER NewMessage
+      HighMessage = HIMSGNUM()
+   	NewMessage = SETMSGHDR(0, HighMessage, 1, "SYSOP")
+   	msgToName = GETMSGHDR(0,NewMessage , HDR_TO)
+      PRINTLN "The high message is now addressed to ", msgToName
+
+   See Also
+   ~~~~~~~~~~~~~~~~
+      SCANMSGHDR() Function (3.00)
+		SetMsgHdr()  Function (3.40)
+		MoveMsg  Statement (3.40)
+
+--------------------------------------------------------------------------
+SHORTDESC()  Function (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Returns the status of the file description setting.
+
+	Syntax
+   ~~~~~~~~~~~~~~~~
+      SHORTDESC()
+
+   Returns
+   ~~~~~~~~~~~~~~~~
+      BOOLEAN  Returns TRUE if the user has short file descriptions set to on
+               else it returns FALSE.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+
+      if (ShortDesc())
+	      PRINTLN "The user will only see the short description of the file"
+      else
+	      PRINTLN "The user will can see the long description of the file"
+
+	See Also
+   ~~~~~~~~~~~~~~~~
+      ShortDesc  Statement (3.40)
+		U_SHORTDESC VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+SHORTDESC  Statement (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+     Sets the current user's status for viewing short (one line) or full
+     file descriptions.
+
+	Syntax
+   ~~~~~~~~~~~~~~~~
+      SHORTDESC value
+      	value		A boolean expression stating if the short description set on
+                  (TRUE) or off (FALSE).
+
+   Example
+   ~~~~~~~~~~~~~~~~
+      ShortDesc TRUE
+      if (ShortDesc())
+	      PRINTLN "The current user will see the short description of the file"
+
+   See Also
+   ~~~~~~~~~~~~~~~~
+      ShortDesc  Function (3.40)
+		U_SHORTDESC VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+U_BIRTHDATE VARIABLE (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Allow reading and writing of the current users birthdate.
+
+	Type & Value
+   ~~~~~~~~~~~~~~~~
+      DATE  The current users birthdate.
+
+	Remarks
+   ~~~~~~~~~~~~~~~~
+      For this array to have meaningful information, the notes PSA must be
+      installed. The existence of the notes PSA may be checked with the PSA()
+      function.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+   	GETUSER
+		U_BIRTHDATE="02-13-77"
+		PUTUSER()
+
+	See Also
+   ~~~~~~~~~~~~~~~~
+      GETUSER STATEMENT (1.00)
+      GETALTUSER STATEMENT (2.00)
+      U_EMAIL VARIABLE (3.40)
+		U_GENDER VARIABLE (3.40)
+		U_WEB VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+U_EMAIL VARIABLE (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Allow reading and writing of the current users email address.
+
+   Type & Value
+   ~~~~~~~~~~~~~~~~
+      STRING  The current users email address.
+
+   Remarks
+   ~~~~~~~~~~~~~~~~
+      For this array to have meaningful information, the notes PSA must be
+      installed. The existence of the notes PSA may be checked with the PSA()
+      function.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+   	GETUSER
+      U_EMAIL="user@yourdomain.com"
+      PUTUSER()
+
+	See Also
+   ~~~~~~~~~~~~~~~~
+      GETUSER STATEMENT (1.00)
+      GETALTUSER STATEMENT (2.00)
+      U_BIRTHDATE VARIABLE (3.40)
+		U_GENDER VARIABLE (3.40)
+		U_WEB VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+U_GENDER VARIABLE (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Allow reading and writing of the current users gender information.
+
+   Type & Value
+   ~~~~~~~~~~~~~~~~
+      STRING  The current users gender.
+
+   Remarks
+   ~~~~~~~~~~~~~~~~
+      For this array to have meaningful information, the notes PSA must be
+      installed. The existence of the notes PSA may be checked with the PSA()
+      function.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+	  	GETUSER
+		PRINTLN "Your gender is ", U_GENDER
+
+	See Also
+   ~~~~~~~~~~~~~~~~
+      GETUSER STATEMENT (1.00)
+      GETALTUSER STATEMENT (2.00)
+   	U_BIRTHDATE VARIABLE (3.40)
+		U_EMAIL VARIABLE (3.40)
+		U_WEB VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+U_SHORTDESC VARIABLE (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Allow reading and writing of the current users short file description
+      status.
+
+	Type & Value
+   ~~~~~~~~~~~~~~~~~
+      BOOLEAN  The status of the user's short description flag.  TRUE if
+               viewing descriptions in one-line mode, FALSE if defaulting
+               to full description viewing.
+
+	Remarks
+   ~~~~~~~~~~~~~~~~~
+      For this array to have meaningful information, the notes PSA must be
+      installed. The existence of the notes PSA may be checked with the PSA()
+      function.
+
+   Example
+   ~~~~~~~~~~~~~~~~~
+   	GETUSER
+      if (U_SHORTDESC)
+			PRINTLN "Your short desciption option is set on."
+		else
+			PRINTLN "Your short desciption option is set off."
+
+	See Also
+   ~~~~~~~~~~~~~~~~
+      ShortDesc  Statement (3.40)
+		U_SHORTDESC VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+U_WEB VARIABLE (3.40)
+
+	Function
+   ~~~~~~~~~~~~~~~~
+      Allow reading and writing of the current users personal web address.
+
+   Type & Value
+   ~~~~~~~~~~~~~~~~
+      STRING  The current users personal web address.
+
+   Remarks
+   ~~~~~~~~~~~~~~~~
+      For this array to have meaningful information, the notes PSA must be
+      installed. The existence of the notes PSA may be checked with the PSA()
+      function.
+
+   Example
+   ~~~~~~~~~~~~~~~~
+      GETUSER
+      PRINTLN "Your personal web address is ", U_WEB
+
+	See Also
+   ~~~~~~~~~~~~~~~~
+      GETUSER STATEMENT (1.00)
+      GETALTUSER STATEMENT (2.00)
+   	U_BIRTHDATE VARIABLE (3.40)
+		U_EMAIL VARIABLE (3.40)
+		U_GENDER VARIABLE (3.40)
+
+--------------------------------------------------------------------------
+
+All customers whose download support is current on the Salt Air
+system is welcome to download the new code.  Please note that the
+new PCBIC code is now only available from inside the PCBoard DOOR.
+
+If your support has expired, now is the time to renew!  Give us a
+call at 800.356.1686 or 801.261.1686 to renew.  You can also do
+so on-line using our order DOOR.  Just type 'ORDER' at the main
+command line prompt to place your order.

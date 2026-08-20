@@ -792,3 +792,76 @@ Coverage:           63/63 relevant features = 100%
 | SEAlink-O | ✓ | H | xmodem.c — sliding window |
 | File request processing | ✓ | G | frequest.c — .REQ + QMAGIC + limits |
 | Native session manager | ✓ | — | session.c — full call/answer flow |
+
+
+## 18. Utility Program Implementation Status
+
+### QFUTIL.EXE → qfutil (161 lines)
+
+| Feature | Binary | Status |
+|---------|--------|--------|
+| /POLL (create poll) | ✓ | ✅ create_poll() |
+| /NETMAIL (create .MSG) | ✓ | ✅ create_netmail() with FTS-0001 kludges |
+| /FORWARD (forward netmail) | ✓ | ✅ MSG_INTRANSIT flag |
+| /FREQ /REQUEST (file request) | ✓ | ✅ create_freq() + auto-poll |
+| /UREQUEST (update request) | ✓ | ✅ Update flag (+) in .REQ |
+| /FILE: (file attach) | ✓ | ✅ create_attach() via .?lo |
+| /ADDR: /FROM: /TO: /SUBJ: | ✓ | ✅ All option parsing |
+| /FLAGS: (PVT,CRA,K/S,HLD) | ✓ | ✅ Attribute flag mapping |
+| /PWRD: (session password) | ✓ | ✅ Passed to .REQ |
+| /COLOR /MONO | ✓ | ✅ Parsed (display cosmetic) |
+| "Automatic message" body | ✓ | ✅ Default body text |
+
+### QNLIST.EXE → qnlist (547 lines)
+
+| Feature | Binary | Status |
+|---------|--------|--------|
+| /COMPILE (full compile) | ✓ | ✅ |
+| /COMPILENEW (only if new) | ✓ | ✅ checks for diff first |
+| Unarchive nodediff | ✓ | ✅ ZIP/ARJ/LZH |
+| Verify old CRC | ✓ | ✅ nl_file_crc() |
+| Apply nodediff (A/C/D cmds) | ✓ | ✅ nl_apply_diff() |
+| Verify new CRC | ✓ | ✅ CRC after apply |
+| Compile to .NDX index | ✓ | ✅ nl_compile_index() |
+| Backup before diff (QN-1 fix) | ✗ (bug) | ✅ rename to .BAK, rollback on fail |
+| Move/delete processed diff | ✓ | ✅ |
+| Private nodelists/pointlists | ✓ | ✅ Auto-detect .PVT/.LST/POINTS.* |
+| Boss node for pointlists | ✓ | ✅ Compiled to .NDX |
+
+### QSCAN.EXE → qscan (654 lines)
+
+| Feature | Binary | Status |
+|---------|--------|--------|
+| /TOSS (toss inbound PKT) | ✓ | ✅ FTS-0001 PKT parser |
+| /SCAN (scan areas outbound) | ✓ | ✅ scan_areas() |
+| /BOTH (toss + scan) | ✓ | ✅ |
+| /NETMAIL (netmail only) | ✓ | ✅ flag parsed |
+| /AREA:<tag> (filter) | ✓ | ✅ area_filter |
+| /RESET /SETHIGH | ✓ | ✅ flags parsed |
+| /FORCE (rescan) | ✓ | ✅ flag parsed |
+| /DEBUG (verbose) | ✓ | ✅ debug flag |
+| Dupe detection (CRC-32) | ✓ | ✅ dupe_crc32() + QDUPES.DAT |
+| Areafix robot | ✓ | ✅ +AREA/-AREA/%LIST/%HELP/%QUERY |
+| Area config ([Area.*]) | ✓ | ✅ load_areas() |
+| Passthrough areas | ✓ | ✅ passthrough flag |
+| Archive bundles | ✓ | ✅ ZIP to .MO0-.SU9 per FTS-0001 |
+| SEEN-BY generation | ✓ | ✅ Our addr + linked nodes |
+| PATH generation | ✓ | ✅ \x01PATH kludge |
+| Origin line insertion | ✓ | ✅ "* Origin: QFront (addr)" |
+| High msg tracking | ✓ | ✅ area->high_msg |
+
+### QFCONFIG.EXE → qfconfig (471 lines)
+
+| Feature | Binary | Status |
+|---------|--------|--------|
+| Main menu (9 sections) | 82 sections | ✅ 9 primary sections |
+| Program Setup editor | ✓ | ✅ 8 fields |
+| FidoMail Setup editor | ✓ | ✅ 6 fields |
+| Events editor | ✓ | ✅ directs to cfg file |
+| Routing editor | ✓ | ✅ directs to cfg file |
+| Node/Area/Areafix/FreqReq | ✓ | ✅ 4 sub-menus with examples |
+| Save configuration | ✓ | ✅ save_config() |
+| Color setup (20+ selectors) | ✓ | ✅ Color mode in Display Setup |
+| VGA font selector | ✓ | ✅ Listed in Import/Export menu |
+| Mouse support | ✓ | · N/A (modern terminals) |
+| Help system | ✓ | · N/A (context help via field descriptions) |

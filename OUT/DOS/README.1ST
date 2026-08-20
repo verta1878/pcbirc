@@ -1,0 +1,65 @@
+Welcome to the PCBoard v15.4 beta!
+
+
+A few important steps to follow to get the beta up and running:
+
+1) You must first have PCBoard v15.x (any release) already installed and
+   running.
+
+2) Back up your system!  We try very hard to ensure that no beta ever gets
+   posted which can cause your system to be unstable.  But just remember, it
+   *is*, after all, a beta release.
+
+3) Unzip the BETA.ZIP and copy the *.EXE and *.HLP files to your \PCB
+   directory.  (if you received any .ZIP files in BETA.ZIP file then unzip
+   those files as well and copy their contents to your \PCB directory)
+
+4) If this is your first time using the v15.4 beta, you *must* upgrade all of
+   your PCBTEXT.* files.  To do this, change to the directory that contains
+   your PCBTEXT files and type:   "MKPCBTXT filename" (filename = pcbtext file
+   to be updated)
+
+5) Study the WHATSNEW file to become familiar with what changes have been
+   made and how to utilize any new features.  NOTE:  The PCBUUCP.ZIP file
+   has its own WHATSNEW.UU file which describes the UUCP changes.
+
+6) Keep in mind that you should download new beta releases AT LEAST once per
+   month, preferrably once every 1-2 weeks.  And when you receive the beta,
+   take a close look at the HISTORY file for any updates that have been made
+   as well as instructions that may pertain to the beta just downloaded.
+
+7) To submit beta reports, include the information requested inside of
+   REPORT.TXT and post your message directly in conference #5 on Salt Air.
+
+   NOTE:  We do *not* accept beta reports from the various 'echo mail'
+   conferences.  If you wish to participate in the beta, the reports must be
+   posted in conference 5 on Salt Air.  If you're concerned about saving
+   money, you can telnet into our system at bbs.pcboard.com.
+
+That seems like a lot of rules, but generally beta cycles are a lot of fun.
+We appreciate your interest and participation and thank you for helping make
+PCBoard the best BBS software around.
+
+ =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+COMPATIBILITY ISSUES
+====================
+PCBoard's USERS.SYS file format is dynamic, in that the header at the top of
+the file indicates the structure to be used by software that reads the rest of
+the file.  Properly written software will read a USERS.SYS file from any
+version of PCBoard from v14.5 on up to today's v15.4.
+
+Some third party software, such as Cam-Mail and others, are hard coded for a
+specific style of USERS.SYS file (instead of reading the header to determine
+the contents of the file).
+
+PCBoard takes great pains to ensure compatibility with previous third party
+software.  To allow Cam-Mail to run with v15.3, for instance, you need to go
+into PCBSetup and edit the DOORS.LST file.  In the column for USERS.SYS,
+instead of specifying a 'Y' response, type in the number 3.  This tells
+PCBoard to create the v15.2 style USERS.SYS file and allows Cam-Mail to work
+correctly with v15.4.
+
+A better solution is for all authors to properly read the USERS.SYS header,
+but while you are beta testing PCBoard, you should be aware of that some
+programs require that the USERS.SYS setting in DOORS.LST be modified.

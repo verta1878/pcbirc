@@ -1,0 +1,65 @@
+                             PCBoard v15.4 HISTORY
+                             =====================
+
+04/22/97  17:16   PCBOARD.EXE
+=============================
+- Fixed the 'L' command.  Wasn't locating any filespec by using wildcards.
+  Example:  BBS*.* or BBS
+- The 'W' command prompt for WEB address was display the EMAIL prompt.  Fixed.
+- Spacing of the field length guides '( )' was displaying incorrect for the
+  EMAIL and WEB address prompts for NEWUSER logins and the 'W' command.
+  Fixed.
+- Fixed a bug in PCBoard to crash which exists since v15.3.  The following
+  commands in PPL when used the following combination:
+     USELMRS FALSE
+     GETALTUSER 1
+     ADDUSER "USERNAME", TRUE
+
+
+04/22/97  11:22   PCBSM.EXE
+===========================
+- If a PCBoard PSA wasn't installed, you were still allowed to edit the
+  information for the PSA.  Fixed.
+
+
+04/22/97  16:48   PPLC.EXE
+==========================
+- Fixed a bug which caused PCBoard to crash with the following combination
+  of PPL commands.
+      USELMRS FALSE
+      GETALTUSER 1
+      ADDUSER "USERNAME", TRUE
+
+
+04/22/97  12:04   UUIN.EXE
+==========================
+- Now supports 'multipart/alternative' MIME encoding.
+
+
+
+04/18/97  10:10   PCBOARD.EXE
+=============================
+- Fixed the default 'M' for Gender to be empty until the user specifies
+  either 'M' or 'F'.
+- Chat Actions starting with the same first two letters or more common
+  letters would always use the first one instead of waiting until a unique
+  key was identified.
+- After using a chat action, you had to press ENTER before using another one.
+  Fixed.
+- Fixed some small problems with the chat color support.
+- Cleaned up some miscellaneous code to help reduces memory requirements a
+  little.
+
+
+04/18/97  11:10   PCBSM.EXE
+===========================
+- Fixed the default 'M' for Gender to be empty until the user specifies
+  either 'M' or 'F'.
+
+
+
+
+04/15/97  10:00
+===============
+- This is the first beta release of PCBoard v15.4.
+

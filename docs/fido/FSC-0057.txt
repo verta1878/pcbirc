@@ -1,0 +1,35 @@
+FSC-0057 — A Basic FidoNet Compatible Areafix
+==============================================
+Status:  FSC (FidoNet Standards Committee proposal)
+Author:  Jan Vroonhof
+Date:    1992
+
+Summary
+-------
+Defines the standard Areafix protocol for FidoNet echomail area
+management. Areafix is a netmail robot that processes commands
+from remote sysops to subscribe/unsubscribe from echomail areas.
+
+Standard Commands
+-----------------
+  +AREANAME        Subscribe to echomail area
+  -AREANAME        Unsubscribe from echomail area
+  %LIST            List available areas
+  %QUERY           List currently subscribed areas
+  %HELP            Help text
+  %PAUSE           Pause feed (stop sending, keep subscribed)
+  %RESUME          Resume paused feed
+  %RESCAN          Resend recent messages for an area
+  %RULES           Request area rules file
+
+Message Format
+--------------
+  To:       AREAFIX (or AREAFIX at node address)
+  From:     Requesting sysop
+  Subject:  Session password
+  Body:     One command per line
+
+QFront Note
+-----------
+QFront delegates areafix processing to external tools (hpt areafix,
+allfix, sqafix). This spec is included for reference only.

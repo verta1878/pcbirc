@@ -1,0 +1,32 @@
+While filing PCBoard beta reports, you must submit them directly on the Salt
+Air BBS in conference #5 (beta reports).
+
+No beta reports are accepted in any of the echo mail conferences.  If you are
+trying to save money, we suggest telnetting into Salt Air at bbs.pcboard.com
+or you may want to sit out the beta cycle and wait for release.
+
+When reporting problems, please include the following information:
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+1) DATE & TIME of the executable being tested.  Do *not* simply say that you
+   are running the 'latest' because what you consider to be the latest and
+   what we think is the latest may not be the same.  To avoid assumptions, take
+   the time to look at the date/time on your executable and report it.
+
+2) A description of the actions that are being performed by you (or your
+   callers or your system, if automated).
+
+3) A description of the results (i.e. the problem) of the action described
+   above.  (a capture file, if possible, can be worth a thousand words)
+
+The very best way to get a problem fixed is to duplicate it.  That is what our
+task is here whenever we receive a report.  Therefore, the better and more
+detailed your report is, the more likely we will be able to act on it.  To
+that end, we highly recommend that you first try to duplicate the problem on
+your own system before reporting it.  The reason is that this gives you the
+opportunity to discover which details are important for the report and
+increases the likelyhood that we'll be able to use your report.
+
+
+

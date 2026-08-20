@@ -623,11 +623,314 @@ Phase B (DONE):        500 lines  — Nodelist, routing
 Phase C (DONE):        400 lines  — Events, semaphores
 Phase D (DONE):        200 lines  — TIC integration
 Phase E (DONE):        350 lines  — Logging, status, inbound scan
-Phase F (TODO):        800 lines  — Modem + serial port
-Phase G (TODO):        900 lines  — EMSI + WaZOO + file requests
-Phase H (TODO):      1,200 lines  — Zmodem + Xmodem
+Phase F (DONE):        800 lines  — Modem + serial port
+Phase G (DONE):        900 lines  — EMSI + WaZOO + file requests
+Phase H (DONE):      1,200 lines  — Zmodem + Xmodem
                    ─────────────
 Current:             2,796 lines  (Phase A-E complete)
 Remaining:           2,900 lines  (Phase F-H)
 Total:               5,696 lines  (full QFront replacement)
+```
+
+
+---
+
+## Phase 2: QFront Suite — Remaining 4 Programs
+
+### Estimated Scope
+
+| Program | Original | Est. Lines | Priority |
+|---------|----------|------------|----------|
+| QFUTIL | 63 KB | ~400 | 1 (smallest, CLI only) |
+| QNLIST | 255 KB | ~1,200 | 2 (nodelist compiler) |
+| QSCAN | 139+83 KB | ~2,500 | 3 (tosser — core mail processing) |
+| QFCONFIG | 249+242 KB | ~4,000 | 4 (TUI config editor — 50+ screens) |
+| **Total** | **1,302 KB** | **~8,100** | |
+
+### All compile with OpenWatcom only. No GCC.
+
+---
+
+## QFUTIL — CLI Queue/NetMail Utility (~400 lines)
+
+### Commands (from binary)
+```
+QFUTIL /ADDR:<zone:net/node> <options>
+
+Queue operations:
+  /POLL              Create manual poll (.ilo touch)
+  /REQUEST           File request (create .REQ)
+  /UREQUEST          Update request (newer files only)
+  /FORWARD           File forward
+  /FILE:<files>      Comma-separated file list
+  /FLAGS:<flags>     IMM,HOLD,ABSHOLD,CRASH,DIR,KFS
+  /PWRD:<password>   Request password
+  /FREQ:<days>       Repeat request every N days
+
+NetMail operations:
+  /NETMAIL:<file>    Convert text file → .MSG netmail
+  /FROM:<name>       Sender name (use _ for spaces)
+  /TO:<name>         Recipient name
+  /SUBJ:<subject>    Subject line
+
+Display:
+  /COLOR             Force color output
+  /MONO              Force monochrome
+  /HELP              Show usage
+```
+
+---
+
+## QNLIST — Nodelist Compiler (~1,200 lines)
+
+### Operations (from binary)
+```
+QNLIST /COMPILE       Compile primary + private nodelists
+QNLIST /COMPILENEW    Compile only if new diffs found
+QNLIST /COLOR         Color mode
+QNLIST /MONO          Mono mode
+```
+
+### Process flow
+```
+1. Check for new nodediff archives in inbound
+2. Unarchive nodediff
+3. Check CRC of old nodelist
+4. Apply nodediff to nodelist
+5. Check CRC of new nodelist
+6. Process private nodelists/pointlists
+7. Sort by node number
+8. Sort by sysop name
+9. Build compiled index (V7/V7+ format)
+10. Clean up temp files
+```
+
+### Data files
+```
+NODELIST.???     Raw FTS-5001 nodelist (day number extension)
+NODEDIFF.???     Nodelist difference file
+*.PNT            Point lists
+V7 index:        NODEX.NDX, SYSOP.NDX, NODEX.DAT
+```
+
+---
+
+## QSCAN — EchoMail Tosser/Scanner (~2,500 lines)
+
+### CLI Options (from binary)
+```
+QSCAN /TOSS          Toss inbound packets → message base
+QSCAN /SCAN          Scan message base → outbound packets
+QSCAN /BOTH          Toss + Scan
+QSCAN /NETMAIL       Process NetMail only
+QSCAN /AREA:<name>   Process specific area only
+QSCAN /FORCE         Force rescan
+QSCAN /RESET         Reset high-water marks
+QSCAN /SETHIGH       Set high pointers
+QSCAN /DEBUG         Debug output
+QSCAN /COLOR         Color mode
+QSCAN /MONO          Mono mode
+```
+
+### Toss operations
+```
+1. Open inbound .PKT files
+2. Parse FTS-0001 packet header
+3. Extract messages from packet
+4. Route each message to correct echomail area
+5. Check for duplicates (DUPES.DAT)
+6. Insert into Wildcat!/PCBoard message base
+7. Update SEEN-BY and PATH lines
+8. Handle areafix commands
+9. Move processed packets to BAD/ on error
+10. Archive outbound bundles
+```
+
+### Scan operations
+```
+1. Read high-water marks per area
+2. Scan message base for new messages above mark
+3. Build outbound .PKT files (FTS-0001 format)
+4. Add SEEN-BY and PATH lines
+5. Route to downlinks per echomail config
+6. Archive into bundles per schedule
+7. Update high-water marks
+```
+
+---
+
+## QFCONFIG — TUI Configuration Editor (~4,000 lines)
+
+### 50+ Menu Screens (from binary)
+```
+Main menus:
+  [ GENERAL ]              System paths, addresses, passwords
+  [ FIDOMAIL SETUP ]       Mail processing options
+  [ MODEM/DIALOUT ]        Modem init, dial, speed
+  [ DISPLAY SETUP ]        Screen mode, fonts
+  [ PROGRAM SETUP ]        Shell, swap, keyboard
+  [ NETMAIL ]              NetMail conference setup
+  [ NETMAIL ROUTING ]      Route rules
+  [ MAIL SCANNER ]         Scan/toss options
+  [ NODELISTS ]            Nodelist paths, private lists
+  [ FILE REQUEST SETUP ]   Magic names, limits, paths
+  [ EVENTS ]               Event scheduler
+  [ COLOR SETUP ]          TUI color customization
+
+List editors (ALT-D delete, ALT-I insert):
+  [ ADDRESSES ]            AKA list
+  [ ALIASES ]              Address aliases
+  [ ARCHIVERS ]            ZIP/LZH/ARJ/RAR config
+  [ AREA MANAGER ]         EchoMail area list
+  [ AREAFIX SETUP ]        Areafix configuration
+  [ AREAFIX UPLINKS ]      Uplink list
+  [ AUTOMATIC POLLS ]      Auto-poll list
+  [ DIALOUT FIXUPS ]       Phone number fixups
+  [ EXTERNAL MAIL STRINGS ] BBS integration
+  [ FUNCTION KEYS ]        F1-F12 hotkeys
+  [ MAGIC FILENAMES ]      File request aliases
+  [ NODE MANAGER ]         Per-node settings
+  [ ORIGIN LINES ]         Origin line list
+  [ PRIVATE NODELISTS ]    Private nodelist paths
+  [ QUICK LOOKUP NAMES ]   Address book
+  [ SEMAPHORE FILES ]      Exit triggers
+  [ TRANSLATION/COSTING ]  Phone translations
+  [ TRASHCAN USERS ]       Blocked users
+  [ USER NETMAIL FLAG OVERRIDES ] Per-user flags
+  [ USERNAMES TO IGNORE ]  Scan filter
+```
+
+### TUI Framework needed
+```
+- Text-mode windowed UI (80x25 or 80x50)
+- Menu bar with hotkeys
+- Scrollable list views with ALT-D/ALT-I/SPACEBAR
+- Field editor with TAB navigation
+- Help system (F1 = context help)
+- Color scheme support (COLOR/MONO)
+- VGA font loading
+- Mouse support (optional)
+- Save/load NODE1.CFG binary format
+```
+
+
+---
+
+## Phase I: QFUTIL — Utility Commands [~400 lines]
+
+CLI tool replacing QFUTIL.EXE. From binary:
+
+```
+Commands:
+  /POLL              Create .ilo poll file for a node
+  /NETMAIL           Create netmail .MSG from command line
+  /FORWARD           Forward netmail to another node
+  /FREQ              File request (create .REQ)
+  /REQUEST           Same as /FREQ
+  /UREQUEST          Update request (only newer files)
+  /HELP              Show usage
+
+Options:
+  /ADDR:<zone:net/node>   Target address
+  /FROM:<name>            Sender name
+  /TO:<name>              Recipient name
+  /SUBJ:<text>            Subject line
+  /FILE:<path>            Attach file
+  /FLAGS:<flags>          Netmail flags (PVT, K/S, etc.)
+  /PWRD:<password>        Session password
+  /COLOR                  Color output
+  /MONO                   Monochrome output
+```
+
+### qfutil.c (~400 lines)
+
+## Phase J: QNLIST — Nodelist Compiler [~600 lines]
+
+CLI tool replacing QNLIST.EXE. From binary:
+
+```
+Commands:
+  /COMPILE           Compile primary + private nodelists
+  /COMPILENEW        Compile only if new diffs found
+  /COLOR             Color output
+  /MONO              Monochrome output
+
+Operations:
+  1. Unarchive nodediff (ARJ/ZIP/LZH)
+  2. Verify old nodelist CRC
+  3. Apply nodediff to nodelist
+  4. Verify new nodelist CRC
+  5. Compile to binary index
+  6. Process private nodelists/pointlists
+  7. Move/archive processed files
+```
+
+### qnlist.c (~600 lines)
+
+## Phase K: QSCAN — EchoMail Tosser/Scanner [~1,500 lines]
+
+CLI tool replacing QSCAN.EXE. From binary:
+
+```
+Commands:
+  /TOSS              Toss inbound packets to message base
+  /SCAN              Scan outbound from message base
+  /BOTH              Toss + scan
+  /NETMAIL           Process netmail only
+  /AREA:<name>       Process specific area only
+  /RESET             Reset high message pointers
+  /SETHIGH           Set high pointers to current
+  /FORCE             Force rescan
+  /DEBUG             Verbose logging
+
+Operations:
+  Toss: .PKT → message base (with dupe detection)
+  Scan: message base → .PKT (with seen-by/path)
+  Pack: .PKT → archive bundles (.MO0-.SU9)
+  Areafix: subscribe/unsubscribe/list/query/help
+  Route: netmail routing per config rules
+```
+
+### qscan.c (~1,500 lines)
+
+## Phase L: QFCONFIG — Configuration Editor TUI [~2,000 lines]
+
+TUI tool replacing QFCONFIG.EXE. From binary:
+
+```
+46 menu sections including:
+  Program Setup      — directories, filenames, paths
+  FidoMail Setup     — addresses, nodelist, routing
+  Display Setup      — colors, fonts, screen mode
+  Modem/Dialout      — init strings, speeds, ports
+  Events             — scheduling, actions, errorlevels
+  Node Manager       — per-node config, passwords
+  Area Manager       — echomail areas, conferences
+  Areafix Setup      — uplinks, forwarding
+  File Request Setup — magic names, paths, limits
+  Archivers          — ZIP/ARJ/LZH/RAR commands
+  Origin Lines       — echomail origin strings
+  Netmail Routing    — route rules editor
+  Translation/Cost   — phone prefix translations
+  Function Keys      — F1-F12 hotkey bindings
+  Semaphore Files    — trigger files
+  Color Setup        — 20+ color selectors
+```
+
+### qfconfig.c (~2,000 lines) — ncurses/conio TUI
+
+---
+
+## Updated Line Estimates
+
+```
+Phase A-H (DONE):    6,620 lines  — Mailer + protocols
+Phase I (DONE):        162 lines  — QFUTIL utility
+Phase J (DONE):        616 lines  — QNLIST nodelist compiler
+Phase K (DONE):        833 lines  — QSCAN tosser/scanner
+Phase L (DONE):        717 lines  — QFCONFIG TUI editor
+                   ─────────────
+Current:             6,620 lines  (Phase A-H complete)
+Phase I-L:           2,328 lines  (DONE)
+Total:               8,950 lines  (full QFront suite — COMPLETE)
 ```
