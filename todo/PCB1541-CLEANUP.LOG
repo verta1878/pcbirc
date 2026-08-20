@@ -1,0 +1,72 @@
+pcb1541 cleanup 
+Date: Thu 08/20/2026 17:29:39.24 
+ 
+OK: Deleted ELF binary pcbfido_linux 
+OK: Deleted ELF binary pcbtic 
+OK: Deleted ELF binary upgrade1541 
+OK: Deleted pcbdrawbak\ 
+OK: Deleted upgrade1541.c (duplicate, kept upd1541.c
+SKIP: upgrade1541.c not found 
+OK: Deleted root PCBKIT_L.LIB duplicate 
+OK: Deleted pcb154\PCBKIT_L.LIB duplicate 
+        1 file(s) moved.
+OK: pcbfido.c -
+        1 file(s) moved.
+OK: pcbfcfg.c -
+        1 file(s) moved.
+OK: pcbtic.c -
+        1 file(s) moved.
+OK: upd1541.c -
+        1 file(s) moved.
+OK: bso_clark_style.c -
+        1 file(s) moved.
+OK: utrayit.c -
+        1 file(s) moved.
+OK: utrayit.h -
+        1 file(s) moved.
+OK: pcbis_nodedata.pas -
+        1 file(s) moved.
+OK: QFRONT.zip -
+        1 file(s) moved.
+OK: UUPC.zip -
+        1 file(s) moved.
+OK: btxe-source.zip -
+        1 file(s) moved.
+OK: portal-of-power-src.zip -
+        1 file(s) moved.
+OK: README.TXT -
+        1 file(s) moved.
+OK: CLEANIT.BAT -
+        1 file(s) moved.
+OK: pcb153src0014.zip -
+SKIP: No .err files at root 
+OK: 1541 -
+ 
+=== VERIFICATION === 
+FOUND: pcb1541 
+FOUND: pcb1541\pcbfido 
+FOUND: pcb1541\pcbtic 
+FOUND: pcb1541\upd1541 
+FOUND: pcb1541\pcbdraw 
+FOUND: pcb1541\pcbbinkp 
+FOUND: pcb1541\pcbis 
+FOUND: pcb1541\pcbmail 
+FOUND: pcb1541\pcbcp 
+FOUND: pcb1541\qfront 
+FOUND: pcb1541\wip 
+ 
+=== SHOULD NOT EXIST === 
+GONE: 1541 
+GONE: pcb1541\pcbdrawbak 
+GONE: pcb1541\pcbfido_linux 
+GONE: pcb1541\upgrade1541.c 
+GONE: pcb1541\pcbfido.c 
+GONE: pcb1541\pcbtic.c 
+GONE: pcb1541\upd1541.c 
+GONE: pcb1541\bso_clark_style.c 
+GONE: pcb1541\utrayit.c 
+GONE: pcb1541\pcbis_nodedata.pas 
+GONE: PCBKIT_L.LIB 
+ 
+=== SUMMARY === 
+Errors: 0 

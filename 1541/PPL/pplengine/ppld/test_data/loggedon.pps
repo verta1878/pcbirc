@@ -1,1 +1,0 @@
-IF (LOGGEDON()) PRINT "Hello"

@@ -1,0 +1,128 @@
+
+                    ╔══════════════════════════════════════╗
+                    ║       PCBoard BBS 15.4 Revival       ║
+                    ║                                      ║
+                    ║     The Board That Wouldn't Die       ║
+                    ╚══════════════════════════════════════╝
+
+    Welcome to PCBoard 15.4 Revival — the community continuation of
+    Clark Development Company's PCBoard BBS software.
+
+    This release includes everything you need to run a PCBoard BBS
+    in the modern era: all 12 original binaries rebuilt from source,
+    plus pcbis.exe (PCBoard Internet Services) for telnet, BinkP,
+    FTP, and HTTP access.
+
+
+    WHAT'S IN THE BOX
+    ─────────────────
+
+    Disk 1 of 4 — Installation Disk
+        INSTALL.EXE      PCBoard installer
+        INSTALL.TXT      Step-by-step installation guide
+        README.1ST       This file
+
+    Disk 2 of 4 — Program Disk
+        PCB154.ZIP       Main PCBoard executables (12 binaries)
+        PCBSETUP.ZIP     Setup utility
+        PCBSM.ZIP        System manager
+        PPLC.ZIP         PPL 3.40 compiler
+
+    Disk 3 of 4 — Documentation Disk
+        FEATURES.TXT     What's new in 15.4 Revival
+        UPGRADE.TXT      Upgrade guide from 15.2/15.3
+        WHATSNEW.TXT     Detailed change log
+        SYSGUIDE.ZIP     Sysop's reference guide
+        CALGUIDE.ZIP     Caller's guide
+
+    Disk 4 of 4 — Internet Server
+        PCBIS.EXE        PCBoard Internet Services daemon
+        PCBIS.CFG        Sample configuration
+        PCBIS.TXT        Internet Services administrator guide
+        INDEX.HTM        Default BBS web page
+
+
+    QUICK START
+    ───────────
+
+    New Installation:
+        1. Run INSTALL.EXE from Disk 1
+        2. Insert Disk 2 when prompted (or point to disk2/ directory)
+        3. Run PCBSETUP to configure your board
+        4. Run PCBIS to accept telnet connections (see Disk 4)
+        5. Read FEATURES.TXT on Disk 3 for what's new
+
+    Upgrade from 15.2 or 15.3:
+        1. BACK UP YOUR EXISTING INSTALLATION
+        2. Read UPGRADE.TXT on Disk 3
+        3. Run INSTALL.EXE and choose Upgrade
+        4. Review WHATSNEW.TXT for changes that affect your setup
+
+    Running with Internet Access:
+        1. Copy PCBIS.EXE and PCBIS.CFG from Disk 4
+        2. Edit PCBIS.CFG with your settings (ports, paths, addresses)
+        3. Run PCBIS — it handles telnet, FTP, HTTP, and BinkP
+        4. No FOSSIL driver needed — pcbis bridges TCP directly
+
+
+    SYSTEM REQUIREMENTS
+    ───────────────────
+
+    DOS PCBoard:
+        386 or higher processor
+        4MB RAM minimum (8MB recommended)
+        DOS 5.0 or higher, or OS/2 2.1+
+        Hard disk with 10MB free space
+
+    pcbis Internet Services:
+        Linux x86 or x86_64 (recommended for server use)
+        OR DOS/OS/2 with TCP/IP stack
+        Network connection
+        Open ports: 2323 (telnet), 24554 (BinkP), 21 (FTP), 8080 (HTTP)
+
+
+    PROVENANCE
+    ──────────
+
+    PCBoard was created by Fred Clark and Clark Development Company,
+    Inc. of Murray, Utah. Over 50,000 licenses were sold between
+    1983 and 1997.
+
+    The 15.3 source code was preserved by PWA (Pirates With Attitude)
+    from the only source license known to have been sold, purchased
+    by Corey Blake. Without this preservation, no PCBoard source
+    code would exist today.
+
+    15.4 Revival applies all features and fixes from Clark's
+    unreleased 15.4b beta, rebuilds every binary from source using
+    open toolchains (OpenWatcom, no Borland dependency), and adds
+    internet services for the modern era.
+
+    Source code: https://github.com/verta1878/pcbrevival
+
+
+    CREDITS
+    ───────
+
+    Original PCBoard:     Fred Clark, Clark Development Company
+    Source preservation:   PWA, Corey Blake
+    15.4 Revival project: verta1878 and the pcbrevival crew
+    Compiler toolchain:   openwatcomirc (OpenWatcom 2.0 fork)
+    Internet services:    pcbis.exe by sysop/0
+
+
+    LICENSE
+    ───────
+
+    See LICENSE.md in the source repository for full terms.
+    CodeBase 4.x library is LGPL v3.0.
+    OpenWatcom is Sybase Open Watcom Public License.
+
+
+                    The software outlives the hardware.
+                    The toolchain outlives the software.
+                    Keep the compilers building,
+                    the code keeps running.
+
+                                                    o7
+

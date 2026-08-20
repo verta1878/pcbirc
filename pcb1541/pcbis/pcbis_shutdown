@@ -1,0 +1,37 @@
+#!/bin/bash
+# pcbis_shutdown — Stop PCBoard BBS + netmodem2irc
+# Part of pcbrevival (GPL v3.0)
+
+PCBIS_ROOT="${PCBIS_ROOT:-$HOME/pcboard}"
+PCBIS_LOG="$PCBIS_ROOT/logs/pcbis.log"
+
+log() { echo "$(date '+%Y-%m-%d %H:%M:%S') $1" | tee -a "$PCBIS_LOG"; }
+
+log "pcbis_shutdown: beginning"
+
+# Stop DOSBox
+if [ -f "$PCBIS_ROOT/logs/dosbox.pid" ]; then
+    pid=$(cat "$PCBIS_ROOT/logs/dosbox.pid")
+    if kill -0 "$pid" 2>/dev/null; then
+        kill "$pid"
+        log "DOSBox stopped (PID $pid)"
+    fi
+    rm -f "$PCBIS_ROOT/logs/dosbox.pid"
+fi
+
+# Stop netmodem2irc
+if [ -f "$PCBIS_ROOT/logs/netmodem.pid" ]; then
+    pid=$(cat "$PCBIS_ROOT/logs/netmodem.pid")
+    if kill -0 "$pid" 2>/dev/null; then
+        kill "$pid"
+        log "netmodem2irc stopped (PID $pid)"
+    fi
+    rm -f "$PCBIS_ROOT/logs/netmodem.pid"
+fi
+
+# Kill any stray processes
+pkill -f "dosbox.*pcboard" 2>/dev/null || true
+pkill -f "NMServer" 2>/dev/null || true
+
+log "pcbis_shutdown: complete"
+echo "PCBoard stopped."

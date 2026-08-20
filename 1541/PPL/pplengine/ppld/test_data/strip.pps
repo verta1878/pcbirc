@@ -1,2 +1,0 @@
-STRING STR001
-STR001=STRIP("evlevl", "e")

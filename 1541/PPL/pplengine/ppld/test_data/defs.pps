@@ -1,2 +1,0 @@
-STRING STR001
-INPUTSTR "Run program now", STR001, 123, 1, "YyNn", DEFS

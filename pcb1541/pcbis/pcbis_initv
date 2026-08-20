@@ -1,0 +1,113 @@
+#!/bin/bash
+# pcbis_initv — PCBoard Installation System: First-time setup
+# Part of pcbrevival (GPL v3.0)
+
+set -e
+
+PCBIS_ROOT="${PCBIS_ROOT:-$HOME/pcboard}"
+PCBIS_PORT="${PCBIS_PORT:-23}"
+PCBIS_NODES="${PCBIS_NODES:-1}"
+
+echo "╔══════════════════════════════════════════════════╗"
+echo "║  PCBoard 15.4 Installation System (pcbis)       ║"
+echo "║  Part of pcbrevival                              ║"
+echo "╚══════════════════════════════════════════════════╝"
+echo ""
+echo "Installing to: $PCBIS_ROOT"
+echo "Telnet port:   $PCBIS_PORT"
+echo "Nodes:         $PCBIS_NODES"
+echo ""
+
+# Create directory structure
+mkdir -p "$PCBIS_ROOT"/{bin,data,fossil,work,logs,nodes}
+mkdir -p "$PCBIS_ROOT"/data/{help,main/index,main/clr,gen,cmd,pcbtext}
+
+echo "[1/6] Directory structure created"
+
+# Find pcbrevival binaries
+PCBREV_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")"
+if [ -d "$PCBREV_DIR/OUT/DOS" ]; then
+    cp "$PCBREV_DIR"/OUT/DOS/*.EXE "$PCBIS_ROOT/bin/" 2>/dev/null || true
+    echo "[2/6] PCBoard binaries copied from $PCBREV_DIR/OUT/DOS/"
+else
+    echo "[2/6] WARNING: PCBoard binaries not found at $PCBREV_DIR/OUT/DOS/"
+    echo "       Copy PCBOARD.EXE, LOCAL.EXE, PCBSETUP.EXE etc to $PCBIS_ROOT/bin/"
+fi
+
+# Install default data files
+if [ -d "$PCBREV_DIR/DATA/default" ]; then
+    cp -rn "$PCBREV_DIR"/DATA/default/* "$PCBIS_ROOT/data/" 2>/dev/null || true
+    echo "[3/6] Default data files installed"
+else
+    echo "[3/6] Creating minimal data files..."
+    # Create minimal WELCOME screen
+    cat > "$PCBIS_ROOT/data/gen/WELCOME" << 'WELCOME'
+@CLS@@POFF@
+@X0FPCBOARD 15.4 BBS@X07
+@X0Bpowered by pcbrevival@X07
+
+Welcome to PCBoard!
+Type your name at the login prompt, or NEW if you're a new user.
+
+@PON@
+WELCOME
+    echo "WELCOME screen created"
+fi
+
+# Generate DOSBox config
+cat > "$PCBIS_ROOT/dosbox.conf" << DOSBOXCFG
+[sdl]
+output=surface
+fullscreen=false
+
+[cpu]
+cycles=max
+
+[serial]
+serial1=nullmodem server:localhost port:$((PCBIS_PORT + 100))
+
+[autoexec]
+@echo off
+mount C "$PCBIS_ROOT"
+C:
+cd bin
+REM Load FOSSIL driver
+REM LH C:\fossil\ADF.COM COM1 3F8 4 115200 8192 8192 8
+PCBOARD.EXE /N:1
+exit
+DOSBOXCFG
+echo "[4/6] DOSBox config generated"
+
+# Create node directories
+for i in $(seq 1 "$PCBIS_NODES"); do
+    mkdir -p "$PCBIS_ROOT/nodes/node$i"
+    echo "[5/6] Node $i directory created"
+done
+
+# Create netmodem2irc config placeholder
+cat > "$PCBIS_ROOT/pcbis.cfg" << NMCFG
+# pcbis.cfg — PCBoard Installation System configuration
+# Edit this file or run: pcbis -cfg
+
+listen_port=$PCBIS_PORT
+forward_port=$((PCBIS_PORT + 100))
+fossil_mode=true
+baud_rate=115200
+nodes=$PCBIS_NODES
+log_file=$PCBIS_ROOT/logs/pcbis-netmodem.log
+NMCFG
+echo "[6/6] netmodem2irc config created"
+
+echo ""
+echo "Installation complete!"
+echo ""
+echo "Next steps:"
+echo "  1. Copy PCBoard binaries to $PCBIS_ROOT/bin/"
+echo "  2. Copy your PCBOARD.DAT to $PCBIS_ROOT/data/"
+echo "  3. Install netmodem2irc from verta1878's repo"
+echo "  4. Run: pcbis -cfg    (to configure)"
+echo "  5. Run: pcbis_startup (to start the BBS)"
+echo ""
+echo "For testing without netmodem2irc:"
+echo "  dosbox -conf $PCBIS_ROOT/dosbox.conf"
+echo "  (runs LOCAL.EXE for local testing)"
