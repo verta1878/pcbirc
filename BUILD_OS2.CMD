@@ -6,7 +6,7 @@ rem
 rem  TWO BUILD PATHS:
 rem
 rem  Option A: Borland C++ 2.0 for OS/2 (BCOS2) -- native OS/2 compiler
-rem    Requires: OS/2 Warp 3+, BCOS2 at \BCOS2, CodeBase at \LIBS\CODEBASE
+rem    Requires: OS/2 Warp 3+, BCOS2 at \BCOS2, CodeBase at \THIRDPARTY\CODEBASE
 rem    Run this script ON OS/2.
 rem
 rem  Option B: OpenWatcom cross-compile -- from DOS/Windows/Linux

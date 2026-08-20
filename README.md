@@ -20,6 +20,32 @@ This repo takes that 15.3 source, applies every feature and change
 from Clark's unreleased 15.4b beta, and ports the entire codebase
 to OpenWatcom 2.0 for cross-compilation on modern Linux.
 
+## Directory Map
+
+```
+pcb153/        15.3 source (Borland C++ 3.1) — Corey Blake / PWA archive
+pcb154/        15.4 source (OpenWatcom 2.0) — 15.3 + Clark's 15.4b delta applied
+pcblibs/       Clark's shared toolkit library — both versions link it
+pcbcbase/      third-party: CODEBASE (LGPL) + BC31 prebuilt binaries
+1541/          our 15.41 work — new programs, ports, scaffolds
+  wip/         kiddo's Pascal from mysticbbsirc, being ported to C
+  pcbcp/       Clark's OS/2 PM control program (1996, found in reference/)
+  qfront/      QFront mailer (Phase 15, style-audited)
+  pcbmail/     PCBoard Mail scaffold (Phase 27)
+  install/     INSTALL.EXE scaffold (Phase 27)
+  pcbic/       PCBIC scaffold (Phase 27)
+  pcbcomm/     unified serial layer design
+  binkd/       BinkD FidoNet mailer
+  pcbdraw/     ANSI editor
+  PPL/         PPL engine
+toolkit/       code to recreate — missing Clark binaries
+drivers/       netfosdl (wrench's DOS FOSSIL, GPLv3, verified working)
+docs/          DOCDEV (MSGS.TXT, HEADERS.TXT, etc)
+reference/     Corey Blake's archive, mpoli, roysac, PPE collections
+patches/       15.3 v0.014 patch source
+todo/          docs to review and merge
+```
+
 ## Build Status
 
 | Metric | Count |

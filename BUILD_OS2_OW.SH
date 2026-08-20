@@ -37,8 +37,8 @@ export WATCOM
 export PATH=$WATCOM/binl64:$PATH
 export INCLUDE="$WATCOM/h:$WATCOM/h/os2"
 
-SRCDIR="PCBSRC/MAIN/SOURCE"
-LIBH="PCBSRC/LIB/H"
+SRCDIR="pcb154/pcb153/SOURCE"
+LIBH="pcb154/toolkit-src/H"
 SRCH="$SRCDIR/H"
 OUTDIR="OUT/OS2"
 OBJDIR="OBJ/OS2"
@@ -68,7 +68,7 @@ echo ""
 # Compile would go here — each source file needs individual attention
 # for Borland→Watcom compatibility fixes.
 echo "TODO: Compile 100+ source files with Watcom compatibility"
-echo "      Start with: wcc386 $CFLAGS PCBSRC/MAIN/SOURCE/MAIN/PCBOARD.C"
+echo "      Start with: wcc386 $CFLAGS pcb154/pcb153/SOURCE/pcb153/PCBOARD.C"
 echo ""
 echo "The OpenWatcom path is VIABLE but requires file-by-file porting."
 echo "See WATCOMPAT.H for the bridge macros."
