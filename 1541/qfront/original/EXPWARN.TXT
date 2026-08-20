@@ -1,6 +1,0 @@
-Dear Sysop,
-  This is a warning to let you know that your EchoMail expiration date is
-approaching, and will expire on @DATE@.  Please contact the Sysop in
-order to extend your expiration date.
-  Thanks for your cooperation.
-
