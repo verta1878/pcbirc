@@ -1,1 +1,0 @@
-#define COMPILE_DATE 35287U
