@@ -1,3 +1,0 @@
-uart/uart.c(124): Warning! W131: No prototype found for function 'outp'
-uart/uart.c(125): Warning! W131: No prototype found for function 'io_delay'
-uart/uart.c(126): Warning! W131: No prototype found for function 'inp'
