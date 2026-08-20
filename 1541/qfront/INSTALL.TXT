@@ -1,4 +1,4 @@
-QFront v1.0.0 — Installation Guide for PCBoard 15.3/15.4
+QFront v1.20b — Installation Guide for PCBoard 15.3/15.4
 =========================================================
 
 pcbirc crew 2026 — evga/hexadecimal
