@@ -1,0 +1,115 @@
+MAKE Version 3.6  Copyright (c) 1992 Borland International
+
+Available memory 15346160 bytes
+
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res bgetkey.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+bgetkey.c:
+
+	Available memory 4168240
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res curskeys.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+curskeys.c:
+
+	Available memory 4119308
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res error.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+error.c:
+
+	Available memory 4143316
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res formdate.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+formdate.c:
+
+	Available memory 4151492
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res genscrn.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+genscrn.c:
+
+	Available memory 4138312
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res getkey.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+getkey.c:
+
+	Available memory 4104756
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res getkeyfl.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+getkeyfl.c:
+
+	Available memory 4144596
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res help.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+help.c:
+
+	Available memory 4073988
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res initscrn.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+initscrn.c:
+
+	Available memory 4038432
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res inputall.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+inputall.c:
+
+	Available memory 4053968
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res inputext.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+inputext.c:
+
+	Available memory 4125900
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res inputln.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+inputln.c:
+
+	Available memory 4125900
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res inputnum.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+inputnum.c:
+
+	Available memory 4053592
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res inputstr.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+inputstr.c:
+
+	Available memory 4125388
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res mallochk.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+mallochk.c:
+
+	Available memory 4138876
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res menu.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+menu.c:
+Warning menu.c 430: Unreachable code in function pascal bigmenusel(int,int,int,void (pascal *)(),int (pascal *)(unsigned int,unsigned int *),char)
+Warning menu.c 504: Unreachable code in function pascal bigmenusel(int,int,int,void (pascal *)(),int (pascal *)(unsigned int,unsigned int *),char)
+
+	Available memory 4069780
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res message.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+message.c:
+
+	Available memory 4102184
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res scale.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+scale.c:
+
+	Available memory 4121532
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res scrninpt.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+scrninpt.c:
+
+	Available memory 4052348
+	bcc +..\..\cfg\bc31\pcboard.cfg -n..\..\bcdos\bc31\scrnio\large.386 @..\..\cfg\bc31\all.res timedkey.c
+Borland C++  Version 3.1 Copyright (c) 1992 Borland International
+timedkey.c:
+Warning timedkey.c 67: Unreachable code in function pascal timedinkey(char *,int)
+
+	Available memory 4137232
+	del ..\..\bcdos\bc31\scrnio_l.lib
+Unable to delete: ..\..\bcdos\bc31\scrnio_l.lib.
+	tlib ..\..\bcdos\bc31\scrnio_l + ..\..\bcdos\bc31\scrnio\large.386getkey
+TLIB 3.02 Copyright (c) 1992 Borland International
+
+Error: unexpected char '' in command line
+
+** error 1 ** deleting lib

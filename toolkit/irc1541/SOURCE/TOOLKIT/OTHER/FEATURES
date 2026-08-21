@@ -1,0 +1,88 @@
+The PCBoard DOOR Developer's Toolkit provides programmers with an easy to use
+library for building DOORS specifically for the PCBoard environment.  DOORS
+created with the Toolkit automatically inherit much of PCBoard's look, feel
+and most importantly, functionality.  It allows even inexperienced C
+programmers to create high quality DOORS with very little effort by allowing
+the programmer to concentrate on the application itself, leaving most of the
+details of programming for an online environment up to the library.
+
+- The Toolkit includes 52 high-level, easy to use, functions for implementing
+  door applications:
+
+  - Initializing the door, reading configuration files, setting up the comm
+    port, etc., is virtually effortless.  A single function call does it all.
+
+  - TPA information in the USERS.INF file is updated automatically and without
+    any effort on the programmer's part.
+
+  - High level, and very powerful, functions are provided for getting input
+    from the caller.  A single function call can:  display the question on
+    the screen, place ( ) guides around the field of input, convert input to
+    uppercase, mask unwanted characters, allow high-ascii if desired, echo
+    dots on input, perform word wrap, convert input to desired format,
+    automatically provide online help, sound a bell, send line feeds before
+    and/or after the input and more.
+
+  - Display functions include automatic ANSI support, @-code support (including
+    @X color codes), virtual screen buffer support for multitaskers and more.
+
+  - Includes a display file function which automatically picks graphics,
+    security specific and language specific versions of files in a manner
+    compatible with PCBoard's display functions.
+
+- Includes another 100 low-level functions for greater programmer control
+  of application specifics:
+
+  - File I/O functions include automatic error handling which requires no
+    effort on the programmer's part to implement.
+
+  - Includes Stream I/O functions (fread(), fwrite(), etc.) which are anywhere
+    from 52% to 758% faster than those from either Borland or Microsoft.
+
+  - Includes functions for converting Microsoft Binary Format real numbers to
+    and from long integers.
+
+  - Memory allocation functions that help alleviate run-time errors in C code.
+
+  - Useful string and bit manipulation functions.
+
+  - Date and Time calculation functions.
+
+- Effortlessly provides features similar to PCBoard including:  a status line
+  on the screen with ALT-H rotation, function key controls (log off, lock out,
+  shell to DOS, toggle screen display), Sysop chat mode, and more.
+
+- Access to much of the PCBoard environment, including configuration files,
+  information about the user online, etc., is provided by simply accessing
+  variables already in memory.  There is no need to write routines to read or
+  write most of the files that PCBoard, and the DOOR application, utilize.
+
+- Programs written using the Toolkit are automatically multi-tasker aware for
+  environments such as: DESQview, Windows, OS/2, OmniView, PC-Mos, DoubleDOS.
+
+- Compatible with most networks and multi-taskers for writing multi-node /
+  multi-user applications.
+
+- Asynch routines with 16550A FIFO support for up to 115K bps.  Supports
+  non-standard IRQ and ADDRESS settings.  Includes automatic carrier loss
+  detection and more.
+
+- Automatic session limit enforcement and keyboard timeout detection.
+
+- And perhaps most important of all:  The Toolkit, having been written by
+  Clark Development Company in conjunction with PCBoard, makes use of much of
+  the same source code that is used in PCBoard.  What this means is that as
+  PCBoard continues to improve so will the Toolkit.  In many cases a simple
+  recompilation or relinking process will be all that will be necessary to
+  support new and advanced features of PCBoard.  For instance, as support for
+  Digiboard (and other multi-port cards) is added, the Toolkit will be updated
+  with the same capabilities requiring little or no effort on the DOOR
+  developer's part to continue to run in a PCBoard environment.
+
+- The Toolkit supports Turbo C 2.0, Borland C/C++ 3.x and Microsoft C/C++ 7.0.
+  The small, medium, compact and large model libraries are all provided on
+  both 3.5" and 5.25" diskettes in the same package.  A 350 page, well indexed,
+  and easy to read manual is provided as well as a quick reference card.
+
+- Cost is $180 plus shipping.
+
