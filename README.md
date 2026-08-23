@@ -124,7 +124,7 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 | Driver | Lead | Description |
 |---|---|---|
 | SIO v1/2K | evga | OS/2 serial I/O, 26 bugs fixed, clean-room |
-| FOSSIL | sysop/0 + kiddo | Cross-platform FOSSIL socket layer |
+| FOSSIL | sysop/0 + kiddo + wrench | Cross-platform FOSSIL socket layer |
 
 ## Libraries Written for Phase 0
 
@@ -150,7 +150,6 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 ## The Crew/Team
 | Handle | Role |
 |---|---|
-| Handle | Role
 
 | verta1878 | Project lead
 | sysop/0 | Compiler engineer, FPC + OW2IRC maintainer, Tang Console, USB
