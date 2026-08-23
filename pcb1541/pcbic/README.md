@@ -12,4 +12,4 @@ The zip contains: Pcbic.exe, Pcbic2.exe, PCBICCFG.EXE, PCBICEVT.EXE,
 TESTIC.EXE, RUNINET.PPE/.PPS, Win95/OS2 dial-up scripts, data files
 (menus, FTP/Gopher/Telnet screens), PCBIC.PDF, PCBIC.DOC.
 
-Password is wasnt PCB153 (works on all other Clark zips).
+Password it wasnt PCB153 (works on all other Clark zips).
