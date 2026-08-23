@@ -1,0 +1,174 @@
+
+                    ╔══════════════════════════════════════╗
+                    ║ PCBoard Internet Services (pcbis)    ║
+                    ║ Administrator Guide                  ║
+                    ╚══════════════════════════════════════╝
+
+
+    OVERVIEW
+    ════════
+
+    pcbis.exe is the internet gateway for PCBoard 15.4 Revival.
+    It replaces modem pools, FOSSIL drivers, and dial-up networking
+    with TCP/IP services. One daemon handles six protocols:
+
+    Telnet (port 2323)   — callers connect via telnet client
+    BinkP  (port 24554)  — FidoNet mail exchange over internet
+    FTP    (port 21)     — file area browsing and download
+    HTTP   (port 8080)   — BBS web page and status
+    SMTP   (outbound)    — validation email delivery
+    Events               — timed batch file execution
+
+
+    CONFIGURATION
+    ═════════════
+
+    All settings are in pcbis.cfg. Edit with any text editor.
+
+    [general]
+    pcbdir = C:\PCB          Path to your PCBoard installation
+    logdir = C:\PCB\LOGS     Where log files are written
+    max_connections = 32     Maximum simultaneous connections
+
+    [telnet]
+    port = 2323              Telnet listening port
+    max_nodes = 4            Maximum telnet callers
+    node_start = 1           First PCBoard node number for telnet
+    idle_timeout = 300       Seconds before idle disconnect
+
+    [binkp]
+    port = 24554             BinkP listening port
+    address = 1:123/456.0    Your FidoNet address
+    inbound = C:\PCB\INBOUND Where received files go
+    outbound = C:\PCB\OUTBOUND Where outbound files wait
+
+    [ftp]
+    port = 21                FTP listening port
+    anonymous = yes          Allow anonymous FTP access
+    pasv_min = 10000         Passive mode port range start
+    pasv_max = 10100         Passive mode port range end
+
+    [http]
+    port = 8080              HTTP listening port
+    docroot = C:\PCB\WWW     Where INDEX.HTM lives
+
+    [smtp]
+    relay = smtp.isp.com     SMTP relay server
+    relay_port = 587         SMTP relay port
+    from = sysop@bbs.com     From address for validation emails
+
+    [events]
+    event1_time = 02:00      When to run (24-hour format)
+    event1_batch = MAINT.BAT Batch file to execute
+    event1_days = MTWTFSS    Which days (dash = skip)
+
+    [security]
+    max_failed_logins = 3    Login attempts before block
+    block_duration = 300     Seconds to block after failures
+
+
+    RUNNING pcbis
+    ═════════════
+
+    Foreground (console):    PCBIS
+    Background (daemon):     PCBIS -d
+    Custom config:           PCBIS -c MYCONFIG.CFG
+    Test config:             PCBIS -t
+    Version:                 PCBIS -v
+
+    The WFC (Waiting For Caller) screen shows:
+    - Active connections per protocol
+    - Protocol statistics (port, max, active, total)
+    - Scrolling server status log
+    - TAB switches between protocol views
+    - ESC shuts down cleanly
+
+    Signals (Linux):
+    - SIGHUP  = reload configuration
+    - SIGTERM = graceful shutdown
+
+
+    TELNET SERVICE
+    ══════════════
+
+    pcbis replaces your modem pool. Each telnet connection is
+    bridged to a PCBoard node via the FOSSIL interface (pcbfoss).
+
+    PCBoard sees telnet callers exactly like modem callers:
+    - Shows in Who's Online (PCBOARD.SYS written per node)
+    - Shows in Last Callers (CALLERS log appended)
+    - Node chat works (same node files)
+    - DTR drop from PCBoard closes the telnet socket
+
+    The FOSSIL driver reports:
+    - Signature: $1954 (standard FOSSIL)
+    - Baud rate: 115200 (TCP is always "fast")
+    - DCD = socket connected
+    - All 27 INT 14h functions supported (FSC-0015 Rev 5)
+
+
+    FTP SERVICE
+    ═══════════
+
+    Callers can browse and download from your file areas using
+    any FTP client. pcbis maps PCBoard file areas to FTP directories.
+
+    Security:
+    - User authentication against PCBoard USERS file
+    - Anonymous access (configurable, read-only, low security)
+    - Download limits from user's security level
+    - Upload/download ratio enforcement
+    - Per-area access level checking
+
+    QWK via FTP:
+    - RETR PCBREV.QWK — generates QWK packet on-the-fly
+    - STOR PCBREV.REP — imports REP packet into message bases
+    - No separate QWK door needed
+
+
+    HTTP SERVICE
+    ════════════
+
+    A simple web server for your BBS web presence.
+
+    Static pages: put HTML files in the docroot directory.
+    INDEX.HTM is served for the root URL.
+
+    Dynamic pages (built-in):
+    /status   — server status (ports, connections, uptime)
+    /online   — who's online right now
+    /callers  — last 20 callers
+
+    No CGI, no PHP, no scripting. Just clean, fast HTML.
+
+
+    LOGGING
+    ═══════
+
+    pcbis writes separate log files per protocol:
+
+    pcbis.log      Main server events
+    telnet.log     Telnet connections and activity
+    binkp.log      BinkP sessions and transfers
+    ftp.log        FTP logins, downloads, uploads
+    http.log       HTTP access (Apache common format)
+    smtp.log       Email delivery attempts
+    event.log      Timed event execution
+    security.log   Failed logins, blocked IPs
+
+    Logs rotate daily. Old logs get a date suffix.
+
+
+    PCBOARD FILE INTEGRATION
+    ════════════════════════
+
+    pcbis writes standard PCBoard system files so telnet callers
+    appear native. File formats from Clark Development specs:
+
+    PCBOARD.SYS  — 128-byte per-node status (PCBSYS.DOC format)
+    CALLERS      — 64-byte random access caller log
+    USERS        — 400-byte user records (read for FTP auth)
+
+    These are the same files PCBoard reads internally.
+    No conversion or bridging needed.
+
