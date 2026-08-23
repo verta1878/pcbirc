@@ -147,16 +147,20 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 | docs/REFERENCE_CATALOG.md | Reference materials catalog |
 | docs/hexadecimal-phase-update.md | Phase 1 roadmap from sysop/0 |
 
-## The Crew
-
+## The Crew/Team
 | Handle | Role |
 |---|---|
-| hexadecimal | PCBoard 15.4 port, Phase 0 utilities, WATCOMPAT.H |
-| verta1878 | Project lead, netmodem2irc, OpenOLMS |
-| wrench | FOSSIL driver, netmodem2irc engine, pcbmailer |
-| sysop/0 | fpc264irc, openwatcomirc, pcbis, VMAVL, tools |
-| kiddo | Protocols, serial IRQ, RIP OOP engine |
-| evga | SIO driver, Mystic monitor, RIPView engine |
+Handle	Role
+
+| verta1878 | Project lead
+| sysop/0 | Compiler engineer, FPC + OW2IRC maintainer, Tang Console, USB
+| bob | Compiler engineer, wcc64 backend, Glide builds
+| evga | Display, Mystic, SIO, Cyclade
+| kiddo | Protocols, RIPscrip
+| wrench | Transport, FOSSIL, DVI/HDMI
+| hexadecimal | PCBoards
+| byte | Program recovery
+| dotmatrix | Documentation recovery
 
 ## Acknowledgments
 
@@ -174,10 +178,10 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 Our additions: GPLv3
 Clark Development source: proprietary (licensed)
 CodeBase library: LGPL v3.0
-SIO OS/2 driver: GPLv3 (evga, clean-room)
 
 ## Links
 
 - GitHub: https://github.com/verta1878/pcbrevival
 - FPC 2.6.4irc: https://github.com/verta1878/fpc264irc
 - Mystic BBS fork: https://github.com/verta1878/mystic-bbs-irc
+- OpenOLMS — Open Offline Mail System: https://github.com/verta1878/OpenOLMS
