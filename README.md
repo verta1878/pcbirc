@@ -150,7 +150,7 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 ## The Crew/Team
 | Handle | Role |
 |---|---|
-Handle	Role
+| Handle | Role
 
 | verta1878 | Project lead
 | sysop/0 | Compiler engineer, FPC + OW2IRC maintainer, Tang Console, USB
