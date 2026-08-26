@@ -114,3 +114,22 @@ costs nothing on a single-modem board.
   Multiport backends (Digi, Arnet, Boca)         evga
   PCBDraw TCP teleconference                     sysop/0
   SDK packaging, memory-model matrix, docs       hexadecimal
+
+
+## Roadmap / status
+
+**Next up: remake pcbcomm (right after the IC reconstruction).** This is
+the unified serial/comm layer that everything else leans on — the point
+where a caller's connection (UART, telnet/FOSSIL, or now SSH) is bridged
+into PCBoard's input/output. Both the IC work and the new SSH front end
+(pcb1541/dropbear/) hand their sessions through this layer, so remaking
+pcbcomm cleanly unblocks both:
+
+- UART 16550 — native serial (serial.c)
+- FOSSIL — via netfosdl (drivers/)
+- telnet — via netmodem2irc
+- SSH — via Dropbear (pcb1541/dropbear/), terminating the encrypted
+  session and bridging it in exactly like the telnet path
+
+The remake should present one backend-agnostic session interface so
+adding SSH beside telnet is a backend, not a special case.

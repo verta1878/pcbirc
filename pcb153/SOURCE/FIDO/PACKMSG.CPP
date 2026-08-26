@@ -12,8 +12,6 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#include <pcbtools.h>
-#include <stdio.h>
 #include <structs.h>
 
 DIRECTORIES        dirs;
@@ -23,8 +21,6 @@ char               msgdir[66];
       unsigned int filever = 0;
 const unsigned int curver = 3;
 
-extern pcbdattype PcbData;
-void packmsg_init(void) {
 sprintf(cfgfilename,"%sPCBFIDO.CFG",PcbData.FidoLoc);
 
 if(fileexist(cfgfilename) != 255 && dosfopen(cfgfilename,OPEN_READ | OPEN_DENYNONE,&dirfile) == 0)
@@ -33,9 +29,13 @@ if(fileexist(cfgfilename) != 255 && dosfopen(cfgfilename,OPEN_READ | OPEN_DENYNO
   if(filever == curver)
   {
       dosfread(&dirs,sizeof(dirs),&dirfile);
-      maxstrcpy(msgdir,dirs.outgoing_msg,sizeof(msgdir));
+      maxstrcpy(msgdir,dirs.outgoing_msg);
   }
   //else                 report error
   dosfclose(&dirfile);
 }
-}
+
+
+
+
+

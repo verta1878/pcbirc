@@ -76,7 +76,7 @@ const   int  NODESTR    = 0x02;
 #define         ABORT_STRING           ""
 #define         LINE_LEN                79
 #define         HDR_SIZE                9
-#define         MNU_TOPX                22          // For FIDO display menus
+#define         MNU_TOPX                22  /* For FIDO display menus */
 #define         MNU_TOPY                5
 #define         MNU_BOTX                57
 #define         MNU_BOTY                19
@@ -107,11 +107,11 @@ const   int  NODESTR    = 0x02;
 #define     CONFIG_FILE         PcbData.FidoConfig
 #define     WORK_DIR            directory_info.work_directory
 #define     IN_DIR              directory_info.incoming_packets
-//#define     QUEUE_FILE          "FIDOQUE.DAT"       /* Name of the Queue    */
-//#define     MASTER_QUEUE_FILE   "MASTER.DAT"
+/*#define     QUEUE_FILE          "FIDOQUE.DAT"       /* Name of the Queue    */ */
+/*#define     MASTER_QUEUE_FILE   "MASTER.DAT" */
 #define     LOGFILE             "FIDOLOG.IN"        /* log file             */
 #define     INCOMING_MASK       "*.PKT"             /* Packet files         */
-//#define     QUEUE_FILE          "FIDOQUE.DAT"
+/*#define     QUEUE_FILE          "FIDOQUE.DAT" */
 #define     OUTBOUND_FILE       "PCBDSZ.LST"
 #define     ZM_SEND             "ZMSEND.EXE"
 #define     ZM_RECV             "ZMRECV.EXE"
@@ -305,8 +305,8 @@ const   int  NODESTR    = 0x02;
 #define AFIXRESPONSE 6
 #define AFIXFORWARD  7
 
-// Maximum file.directory length
-#define MAXFLEN      66           // 66 from the DOS version of Borland MAXDIR
+/* Maximum file.directory length */
+#define MAXFLEN      66  /* 66 from the DOS version of Borland MAXDIR */
 
 #define SEENBYS      1
 #define PRESENT      2

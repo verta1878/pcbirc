@@ -30,7 +30,7 @@
 #define PacketType sint
 
 
-// For capabilities flags.
+/* For capabilities flags. */
 typedef struct
 {
     bool ZAP;
@@ -58,9 +58,9 @@ typedef struct
   char  crc_mode;
   char  fill[86];
   uint  crc;
-//  char  crc1;
-//  char  crc2;
-  //char  checksum;
+/*  char  crc1; */
+/*  char  crc2; */
+/*char  checksum; */
 }TELINK_BLOCK;
 
 typedef struct
@@ -412,7 +412,7 @@ typedef struct
 } THIS_ADDRESS;
 #pragma pack()
 
-// New this_address used with new configuration modules
+/* New this_address used with new configuration modules */
 #pragma pack(1)
 typedef struct
 {
@@ -443,7 +443,7 @@ typedef struct
 } NODE_T;
 #pragma pack()
 
-// New node_t struct for new configuration files
+/* New node_t struct for new configuration files */
 #pragma, pack(1)
 typedef struct
 {
@@ -471,7 +471,7 @@ typedef struct
 {
   uint          PCB_Conference;         /* PCBoard conference number    */
   char          Area_Name[AREA_SIZE];          /* name of area                 */
-  //char          Messages[MAXFLEN];       /* name of file for messages    */
+/*char          Messages[MAXFLEN];       /* name of file for messages    */ */
   char          Mreserved[MAXFLEN];       /* name of file for messages    */
   char          default_aka[25];        /* Address to use for Export    */
   char          origin[70];             /* Origin line to use           */
@@ -480,7 +480,7 @@ typedef struct
 } AREA_STRUCT;
 #pragma pack()
 
- //New areastruct for new config modules
+/*New areastruct for new config modules */
 #pragma pack(1)
 typedef struct
 {
@@ -612,7 +612,7 @@ typedef struct
 } FREQ_MAGIC;
 #pragma pack()
 
-// New freq_magic for new config modules
+/* New freq_magic for new config modules */
 #pragma pack(1)
 typedef struct
 {

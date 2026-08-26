@@ -773,13 +773,7 @@ int LIBENTRY cSCRIPT::execute(char * af)
 					if (TempRead != NULL)
 						tempuserdealloc();
 
-				 // v15.4:  force LMR allocation on ADDUSER, regardless of the
-				 // last USELMRS setting.  ppladduser() -> adduserrecord() does
-				 // fmemset(MsgPtr,0,MsgPtrLen) without a NULL check, so calling
-				 // it with TempMsgPtr==NULL (as happens after USELMRS FALSE +
-				 // GETALTUSER) crashes PCBoard.  A temp allocation of the LMR
-				 // buffer is cheap and only lives for the duration of ADDUSER.
-				 if(tempuseralloc(TRUE) == 0)
+				 if(tempuseralloc(altUserLMRFlag) == 0)
 				 {
 				   newusernum = ppladduser(tmpString.values.vSTRING);
 
@@ -1243,68 +1237,6 @@ int LIBENTRY cSCRIPT::execute(char * af)
 
 				if(ptrULMR) ptrULMR[u1] = l1;
 
-				break;
-
-			/*----------------------------------------------------------
-			 * 15.4 statement additions (see NEWSCR.HPP TOK_MOVEMSG,
-			 * TOK_SETBANKVAL, TOK_SHORTDESCSTMT).  Sematics inferred
-			 * from name + argcount + the recovered PCBOARDM.EXE 15.4b
-			 * MOVEMSG error strings ("Conference does not exist
-			 * (MOVEMSG)", "Message number does not exist (MOVEMSG)",
-			 * "Unable to read message body (MOVEMSG)", "Unable to
-			 * read message header (MOVEMSG)").
-			 *---------------------------------------------------------*/
-
-			case TOK_MOVEMSG:	// ... TOK_MOVEMSG EXPR EXPR EXPR ...
-				/* MOVEMSG conf, message, movetype  (per WHATSNEW 15.4).
-				 * arg1 = conference number (INTEGER)
-				 * arg2 = message number (DREAL — msgnums are 32-bit)
-				 * arg3 = movetype BOOLEAN (TRUE=move, FALSE=copy)
-				 *
-				 * Moves (or copies) the given message from the
-				 * specified conference base to the end of the
-				 * message base.  Errors printed at runtime match
-				 * the strings recovered from PCBOARDM.EXE 15.4b:
-				 *   "Conference does not exist (MOVEMSG)"
-				 *   "Message number does not exist (MOVEMSG)"
-				 *   "Unable to read message body (MOVEMSG)"
-				 *   "Unable to read message header (MOVEMSG)"
-				 *
-				 * Delegates to pplmovemsg() in the message-base I/O
-				 * layer.  For a PPL script the return code is
-				 * silently swallowed (the caller can check via a
-				 * subsequent read).
-				 */
-				EVAL(tmpInteger,r,nullErrBreak);
-				u1 = (unsigned) tmpInteger.values.vINTEGER; /* conf     */
-				EVAL(tmpInteger,r,nullErrBreak);
-				/* msgnum is DREAL — pass as long, truncating any fractional */
-				l1 = (long) tmpInteger.values.vDREAL;          /* msg num  */
-				EVAL(tmpInteger,r,nullErrBreak);
-				/* movetype: nonzero = move (delete source), 0 = copy */
-				pplmovemsg(u1, l1, (int)tmpInteger.values.vINTEGER); /*lint !e534 */
-				break;
-
-			case TOK_SETBANKVAL:  // ... TOK_SETBANKVAL EXPR EXPR ...
-				/* SETBANKVAL idx value — write Time Bank PSA field 0-11. */
-				EVAL(tmpInteger,r,nullErrBreak);
-				l1 = (long) tmpInteger.values.vINTEGER;   /* idx 0-11 */
-				EVAL(tmpInteger,r,nullErrBreak);
-				if (BankSupport && l1 >= 0 && l1 < 12) {
-				    long *bp = (long *) &Bank;
-				    bp[l1] = (long) tmpInteger.values.vDREAL;
-				}
-				break;
-
-			case TOK_SHORTDESCSTMT:  // ... TOK_SHORTDESCSTMT EXPR ...
-				/* arg1 = new value for the current user's
-				 *        ShortDesc byte.  Set at runtime; will
-				 *        be persisted next time the user's URead
-				 *        gets written (log off or explicit save).
-				 */
-				EVAL(tmpInteger,r,nullErrBreak);
-				if (ptrURead != NULL)
-				    ptrURead->ShortDesc = (char) tmpInteger.values.vINTEGER;
 				break;
 
 			case TOK_END:		 // ... TOK_END ...
@@ -2323,25 +2255,25 @@ int LIBENTRY cSCRIPT::execute(char * af)
 				i1 = int(tmpInteger.values.vINTEGER & 0x000000FF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.ax = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.ax = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.bx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.bx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.cx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.cx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.dx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.dx = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.si = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.si = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.di = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.di = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
-				intrREGS.w.cflag = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
+				intrREGS.x.flags = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
 
 				EVAL(tmpInteger,r,nullErrBreak);
 				intrSEGS.ds = unsigned(tmpInteger.values.vINTEGER & 0x0000FFFF);
@@ -2510,9 +2442,9 @@ int LIBENTRY cSCRIPT::execute(char * af)
 				err = unsupported("WRUSYSDOOR statement");
 #elif !defined(LIB)
 				EVAL(tmpString,r,nullErrBreak);
-				{ cVARVAL _s1(vtSTRING,"b "); tmpString = tmpString.strip(_s1); }
-				{ cVARVAL _s2(vtINTEGER,8); tmpString = tmpString.left(_s2); }
-				{ cVARVAL _s3(vtSTRING," "); tmpString = tmpString.trim(_s3); }
+				tmpString = tmpString.strip(cVARVAL(vtSTRING,"b "));
+				tmpString = tmpString.left(cVARVAL(vtINTEGER,8));
+				tmpString = tmpString.trim(cVARVAL(vtSTRING," "));
 				strcpy(Status.DoorName,nul2mty(tmpString));
 #endif
 
@@ -3040,9 +2972,9 @@ void LIBENTRY cSCRIPT::execTPA(int token, int & err)
 	checkstack();
 	// Evaluate the keyword and store it in str1
 	EVAL(tmpString,r,nullErrReturn);
-	{ cVARVAL _t1(vtSTRING," "); tmpString = tmpString.strip(_t1); }
-	{ cVARVAL _t2(vtINTEGER,8); tmpString = tmpString.left(_t2); }
-	{ cVARVAL _t3(vtSTRING," "); tmpString = tmpString.trim(_t3); }
+	tmpString = tmpString.strip(cVARVAL(vtSTRING," "));
+	tmpString = tmpString.left(cVARVAL(vtINTEGER,8));
+	tmpString = tmpString.trim(cVARVAL(vtSTRING," "));
 	strcpy(keyword,nul2mty(tmpString));
 
 	// Get either the variable or expression

@@ -26,9 +26,6 @@
 
 #include "model.h"
 
-
-
-
 #ifdef LIB
   #define fbmalloc  farmalloc
   #define fbfree    farfree

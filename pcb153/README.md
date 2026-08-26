@@ -1,100 +1,59 @@
-# PCBoard 15.3 Source — PWA Archive
+# PCBoard 15.3 Source — PWA
 
-Clark Development Company's PCBoard BBS source code, preserved by
-PWA (Pirates with Attitude) from Corey Blake's licensed copy.
+Clark Development Company's PCBoard 15.3 source, preserved by PWA
+(Pirates with Attitude) from Corey Blake's licensed copy.
+
+## This is the PWA 15.3 base — no 15.4 features
+
+Restored from `reference/pcb153src0014.zip` (password PCB153).
+Contains zero 15.4 features. This is the foundation.
+
+The 15.4 upgrades were released as binary upgrades on top of 15.3.
+The 15.4 features reverse-engineered from those binaries live in
+`pcb153/upd154/ (reconstructed 15.4 source)`. The active 15.4 Delta work
+is in `pcb154/`.
+
+**Delta = the diff between this 15.3 base and the completed 15.4.**
+We cannot generate that diff yet because the 15.4 code isn't complete.
 
 ## Origin
 
-Corey Blake purchased what may be the only PCBoard source code license
-ever sold by Clark Development Company. Cost: over $2,000. The package
-arrived on CD-ROMs but was missing two OBJ files (serial number control
-and node license count). Clark was closed by the bank two days later.
+Corey Blake purchased what may be the only PCBoard source license
+Clark ever sold (~$2,000). The package was missing two OBJ files
+(serial number control, node license count). Clark closed two days
+later. A programmer patched the missing pieces so it compiled; PWA
+preserved and distributed the archive.
 
-A programmer later fixed the missing OBJs, and the source compiled.
-PWA preserved and distributed the archive. Without them, this project
-would not exist.
+## Build
 
-Original archive: `reference/pcb153src0014.zip` (password: PCB153)
+Borland C++ 3.1. Flags:
+`-c -P -ml -Od -V -Vmp -Vmd -ff -DPCB152 -DCOMM -DSTATS -DMP -D386 -DDBASE -DFIDO`
+Include paths: BC31\INCLUDE, BC31\INCLUDE\SYS, toolkit/pwa153/H
 
-## Versions
+Builds: PCBOARD.EXE, PCBOARD2.EXE, PPLC.EXE.
 
-| Version | What | Directory |
-|---|---|---|
-| **15.3 PWA** | Corey Blake's source, patched to compile | `pcb153/` (this directory) |
-| **15.4 Delta** | 15.3 + Clark's unreleased 15.4b changes applied | `pcb154/` |
-| **15.41 IRC** | 15.4 + crew additions (FidoNet, TCP, RIP, etc) | `1541/` |
+## Toolkit
+
+`toolkit/pwa153/` — the 15.3 toolkit (283 C files).
+244/262 compile clean; remaining need minor build-path fixes
+(hardcoded dev paths, asm files needing TASM, stubs referencing main
+headers). These are "patched to compile" fixes, not features.
 
 ## Compiler
 
-Borland C++ 3.1 (1992). Build tools in `PCB153BT.ZIP` at repo root.
+Build tools in `PCB153BT.ZIP` at repo root (BC31 + TASM).
 
-Run under DOSBox-X with `DOSBOX.CFG`:
+## VIRTUAL.C / VIRTUAL1.C Merge
 
-```
-cd pcb153
-call bcdos.bat
-compile.bat
-```
+VIRTUAL.C and VIRTUAL1.C were merged into a single VIRTUAL.C, and
+VIRTUAL.H / VIRTUAL1.H into a single VIRTUAL.H. A compile-time switch
+selects the implementation:
 
-Output: `obj\bc31\PCBOARDM.EXE`
+- `#define VIRTUAL_HUGE` — huge pointers + disk caching (>64KB datasets)
+- default — near pointers, memory-only (the old VIRTUAL1 behavior)
 
-## Source Tree
+Both modes verified compiling under Borland BC31. Programs that need
+the huge/cached version define VIRTUAL_HUGE at build time.
 
-```
-pcb153/
-  SOURCE/
-    MAIN/       PCBoard main — PCBOARD.C, CALLWAIT.C, INKEY.C, etc
-    DISPLAY/    screen output, XLATE.C (@-code translator)
-    MODEM/      serial I/O — MODEMFOS.C (FOSSIL), MODEMDRV.C (COMM-DRV)
-    PPL/        PPL 3.40 compiler and executor
-    UTIL/       PCBSM, PCBSETUP, PCBTEXT, MKPCBTXT
-    MISC/       USERNET, MD5, ZMODEM
-    MKPCBSRC/   source code builder
-    H/          headers — PROJECT.H, PCBOARD.H, TYPES.HPP
-  153/          build config — PCBOARD.MAK, PCBOARD.CFG, IDEINIT.CFG
-  OBJ/          compiled objects
-  BCDOS.BAT     sets up Borland C++ 3.1 environment
-  COMPILE.BAT   runs MAKE with correct defines
-```
-
-## Shared Libraries
-
-Both 15.3 and 15.4 link against the same toolkit library source:
-
-| Directory | What |
-|---|---|
-| `toolkit/` | Clark's shared toolkit — H/, SOURCE/ (273 files across MISC, DOS, SCREEN, PCB, TOOLKIT, SYSTEM, COUNTRY, SCRNIO) |
-| `pcbcbase/` | Third-party: CODEBASE (dBase, LGPL) + prebuilt BC31 .LIB files |
-
-The toolkit compiles into `PCBKIT_L.LIB` (large model). Prebuilt copy
-at `pcbcbase/PREBUILT/BC31/PCBKIT_L.LIB` (236 KB, Borland C++ 3.1).
-
-## Build Defines
-
-From `COMPILE.BAT`:
-
-| Define | What |
-|---|---|
-| `-DCOMM` | serial communication enabled |
-| `-DSTATS` | statistics tracking |
-| `-DMP` | multiport support |
-| `-D386` | 386 optimizations |
-| `-DDBASE` | dBase/CODEBASE file access |
-| `-DFIDO` | FidoNet support |
-
-Optional: `-DCOMMDRV` (WCSC COMM-DRV instead of FOSSIL), `-DDEBUG`, `-DTD`
-
-## Compile Status
-
-sysop/0 reports 138/295 files compiling (47%) as of 2026-08-05.
-Remaining 157 failures categorized in `todo/hexadecimal-phase-update.md`:
-
-- constream.h stubs needed
-- YESNO/DOSFILE header clashes
-- per-binary include paths
-- Linux case-sensitivity (fixed with normalize_case.sh)
-
-## License
-
-Clark Development Company proprietary (licensed copy).
-Our additions: GPLv3.
+(delta154 and irc1541 toolkits still have the two-file setup; they'll
+get the same merge when their turn comes.)

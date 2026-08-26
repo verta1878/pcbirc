@@ -338,7 +338,7 @@ top:
     for (PcbTextBuffer = p, Num = 1; Num <= TXT_NUMPROMPTS; Num++) {
       PcbText[Num] = (pcbtexttype *) p;
       if (isset(UseText,Num) != 0)
-        p = strchr(p+1,0) + 1;   //lint !e613 skip over color byte, search for NULL terminator, point to next character
+        p = strchr(p+1,0) + 1;  /*lint !e613 skip over color byte, search for NULL terminator, point to next character */
     }
   }
 
@@ -579,11 +579,11 @@ bool LIBENTRY displaypcbtext(int PcbTextNum, DISPLAYTYPE DispCtrl) {
         println("");
       }
 
-      // if we're about to run a PPE or an MNU, then we need to restore
-      // the online status in case further interaction with the caller will
-      // be required by the PPE or MNU
+/* if we're about to run a PPE or an MNU, then we need to restore */
+/* the online status in case further interaction with the caller will */
+/* be required by the PPE or MNU */
       if ((*p == '!' && *(p+1) != '|') || *p == '$') {
-        Asy.Online = SaveOnline;  // restore true online status
+        Asy.Online = SaveOnline;  /* restore true online status */
         redisplaystatusline();
       }
     }

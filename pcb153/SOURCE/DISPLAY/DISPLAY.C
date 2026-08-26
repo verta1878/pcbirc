@@ -158,8 +158,8 @@ static void THREADFUNC activitythread(void * Ignore) {
 
   setdefaultpriority();
 
-  // create the semaphore the first time thru, but since we'll never close it,
-  // don't bother creating it again by checking to see if it is opened.
+/* create the semaphore the first time thru, but since we'll never close it, */
+/* don't bother creating it again by checking to see if it is opened. */
   if (! ActSemaphore.opened()) {
     if (! ActSemaphore.createunique("ACT")) {
       ThreadState = TH_EXITED;
@@ -230,7 +230,7 @@ void LIBENTRY showactivity(acttype Type) {
 
   switch (Type) {
     case ACTSHOW :
-                   #ifndef __OS2__  // the OS/2 uses the activity thread
+                   #ifndef __OS2__  /* the OS/2 uses the activity thread */
                      #ifdef PCBCOMM
                        if (Status.TerseMode) {
                          /* don't display dots in terse mode, just get out */
@@ -696,7 +696,7 @@ void LIBENTRY newline(void) {
   /* but under OS/2 it will create a lot of overhead!  A new way needs to be */
   /* discovered for temporarily stopping the keyboard timer.                 */
 
-  #ifndef __OS2__  // I think this has been coded elsewhere now....
+  #ifndef __OS2__  /* I think this has been coded elsewhere now.... */
     renewkbdtimer();
   #endif
 }
@@ -975,7 +975,7 @@ void LIBENTRY checkforrip(void)  {
 
   #ifdef COMM
     if (! SkipRipDetect) {
-//    printcom("\r[!\r   \r");
+/*    printcom("\r[!\r   \r"); */
       printcom("[!   ");
 
       /* watching for RIPSCRIPxxyyvs */
@@ -1014,8 +1014,8 @@ void LIBENTRY checkforrip(void)  {
           }
         }
 
-        // if we may have received a portion of the RIP sequence, then extend
-        // the timer to wait for the rest of it to come in
+/* if we may have received a portion of the RIP sequence, then extend */
+/* the timer to wait for the rest of it to come in */
         if (NeedToExtend && strchr(Buffer,'R') != NULL) {
           NeedToExtend = FALSE;
           settimer(8,TWOSECONDS);

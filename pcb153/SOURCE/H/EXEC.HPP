@@ -32,11 +32,11 @@
 /******************************************************************************/
 
 
-// Defined Macros
+/* Defined Macros */
 
 #ifdef ERRBRK
 
-//#define EVAL(a,b,c)            {b = evalarg(); c(b); a = *b;}
+/*#define EVAL(a,b,c)            {b = evalarg(); c(b); a = *b;} */
 #define EVAL(a,b,c)         { (a = *evalArg()); }
 
 #define nullErrReturn(a)  if (a == NULL) { /*err = TRUE;*/ return; }
@@ -73,7 +73,7 @@
 #define MAX_COLS			80
 #define MAX_ROWS			(Scrn_BottomRow+1)
 
-// Macro to ensure that v is in the range l through h inclusive
+/* Macro to ensure that v is in the range l through h inclusive */
 #define inRange(v,l,h) if (v < l) v = l; else if (v > h) v = h
 
 #define HIWORD(L) ((unsigned int)(((unsigned long)(L) >> 16) & 0xFFFF))

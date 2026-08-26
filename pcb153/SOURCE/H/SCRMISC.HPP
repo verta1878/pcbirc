@@ -37,17 +37,17 @@
 
 /******************************************************************************/
 
-// Pragmas
+/* Pragmas */
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include    "newscr.hpp"
 
 /******************************************************************************/
 
-// Defined Macros
+/* Defined Macros */
 
 #if defined(___COMP___)
 
@@ -134,15 +134,15 @@
 
 /******************************************************************************/
 
-// Types
+/* Types */
 
 /******************************************************************************/
 
-// Constants
+/* Constants */
 
 /******************************************************************************/
 
-// Variables
+/* Variables */
 
 extern char    * errText[];
 
@@ -150,7 +150,7 @@ extern cSCRIPT * scriptPtr;
 
 /******************************************************************************/
 
-// Function Prototypes
+/* Function Prototypes */
 
 char * LIBENTRY formattedLine (char * line);
 void   LIBENTRY dispPcbText   (int prompt, char * optext);
@@ -159,14 +159,14 @@ int    LIBENTRY unsupported             (char * token);
 long            standardizeTicks        (long ticks);
 
 
-// extern "C" {
+/* extern "C" { */
 int    LIBENTRY doScript      (char * filename, char * ansfile, int numtoks);
 void   LIBENTRY cleanupScript (void);
-// }
+/* } */
 
 /******************************************************************************/
 
-// Inline Functions
+/* Inline Functions */
 
 /******************************************************************************/
 

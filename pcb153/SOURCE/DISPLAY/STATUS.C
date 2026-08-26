@@ -41,20 +41,20 @@ extern countrytype SystemCountry;
 #define STATUS_COLOR    BLACK + (LIGHTGRAY << 4)
 
 #ifdef __OS2__
-  // under OS/2, we don't have memory values on the status line so push the
-  // max file handle number to the right 4 spaces
+/* under OS/2, we don't have memory values on the status line so push the */
+/* max file handle number to the right 4 spaces */
   const int Column = 64;
 #else
   const int Column = 60;
 #endif
 
 #ifdef PCB153
-// this function is used to limit the size of the comma delimited string to
-// just 12 characters, so even if the number is greater than 12 digits
-// including the characters) it can still be represented on screen using either
-// a 'K' or an 'M' (for i.e. 1K or 1M) as an abbreviation.
-//          10        20
-// 1,345,789,123,567,901
+/* this function is used to limit the size of the comma delimited string to */
+/* just 12 characters, so even if the number is greater than 12 digits */
+/* including the characters) it can still be represented on screen using either */
+/* a 'K' or an 'M' (for i.e. 1K or 1M) as an abbreviation. */
+/*          10        20 */
+/* 1,345,789,123,567,901 */
 static char * _NEAR_ LIBENTRY dlimcomma(char *Str, double Num) {
   int  Len;
   char Temp[20];
@@ -198,7 +198,7 @@ void LIBENTRY showstatusline(void) {
                          sprintf(Str,"(%s) %s - %s",Tmp1,Status.DisplayName,usercity());
                          fastprint(Loc,Status.StatusLine1,Str,STATUS_COLOR);
                          #ifndef LIB
-//                         fastprint(54,Status.StatusLine1,"ALT-H=Help",STATUS_COLOR);
+/*                         fastprint(54,Status.StatusLine1,"ALT-H=Help",STATUS_COLOR); */
                            fastprint(59,Status.StatusLine1,"ALT-H=Help",STATUS_COLOR);
                          #else
                            fastprint(64-strlen(DoorName),Status.StatusLine1,DoorName,STATUS_COLOR);

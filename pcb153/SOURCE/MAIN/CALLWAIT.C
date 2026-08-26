@@ -1457,7 +1457,7 @@ top:
               if (strstr(ComBuffer,"FAX") != NULL || strstr(ComBuffer,"+FCO") != NULL) {
                 getconnectstr(ComBuffer);
                 maxstrcpy(Status.DisplayText,Asy.ConnectString,sizeof(Status.DisplayText));
-                logsystext(TXT_MODEM,SPACERIGHTAT);
+                logsystext(TXT_MODEM,SPACERIGHT);
                 writelog(LogDivider,LEFTJUSTIFY);
                 Status.ErrorLevel = EXIT_FAX;
                 Status.Logoff     = RUNFAX;

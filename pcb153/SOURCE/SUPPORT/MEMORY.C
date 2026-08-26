@@ -16,7 +16,7 @@
 #include "project.h"
 #pragma hdrstop
 
-// #include <search.h>
+/* #include <search.h> */
 
 #if defined(_MSC_VER) || defined(__WATCOMC__)
   #include <malloc.h>

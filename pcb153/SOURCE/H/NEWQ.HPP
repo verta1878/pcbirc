@@ -44,17 +44,17 @@ public:
           bool  create             (void);
 
           void  view               (void);
-//          bool  isOpen             (void){return (Qfile.handle != 0);}
+/*          bool  isOpen             (void){return (Qfile.handle != 0);} */
           int   getOutboundCount   (void);
 
 protected:
 
 private:
 
-static    cDOSFILE Qfile;           // The QUEUE file object
-static    int instance;        // How many objects are active
-          char    QfileName[50];    // Name of QUEUE file
-          int     slotSize;         // Size of queue file record entry (including header)
+static    cDOSFILE Qfile;  /* The QUEUE file object */
+static    int instance;  /* How many objects are active */
+          char    QfileName[50];  /* Name of QUEUE file */
+          int     slotSize;  /* Size of queue file record entry (including header) */
           int     QSize;
           int     fileOpen;
 static    QUEUE_HEADER   h;

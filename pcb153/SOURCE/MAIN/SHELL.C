@@ -15,8 +15,8 @@
 #include "project.h"
 #pragma hdrstop
 
-// if compiling for the toolkit and INCL_SWAP is defined, then define
-// "SWAP", otherwise define "NOSWAP".  If not compiling for the toolkit
+/* if compiling for the toolkit and INCL_SWAP is defined, then define */
+/* "SWAP", otherwise define "NOSWAP".  If not compiling for the toolkit */
 #ifdef __OS2__
   #define NOSWAP
 #else
@@ -41,7 +41,7 @@
 /*  #define setdisk _chdrive */
 /*  #define chdir   _chdir */
 #else
-//#include <dir.h>
+/*#include <dir.h> */
   #ifndef __OS2__
     #include <alloc.h>
   #endif
@@ -62,11 +62,7 @@
 #ifndef __OS2__
   #include <process.h>
 
-  #if defined(_MSC_VER)
-    typedef void (__cdecl __interrupt __far * __cdecl intfunctype)();
-  #elif defined(__WATCOMC__)
-    typedef void (__interrupt * intfunctype)();
-  #elif 0
+  #ifdef _MSC_VER
     typedef void (__cdecl __interrupt __far * __cdecl intfunctype)();
   #else
     #ifdef __cplusplus
@@ -116,13 +112,13 @@ void LIBENTRY restorepath(void) {
 }
 
 #ifdef LIB
-// When a door is executed, the CURRENT DIRECTORY may be changed to a location
-// other than where PCBoard was running.  Because of this, the PCBDOS.BAT
-// file may no longer be found simply by looking in the current directory!
-//
-// So for Toolkit applications, the PCBDOS.BAT file must be executed by
-// pre-pending the proper drive and path to get to PCBDOS.BAT.  The PcbDir
-// variable is created by the PCBINIT.C module which is executed at startup.
+/* When a door is executed, the CURRENT DIRECTORY may be changed to a location */
+/* other than where PCBoard was running.  Because of this, the PCBDOS.BAT */
+/* file may no longer be found simply by looking in the current directory! */
+ /* */
+/* So for Toolkit applications, the PCBDOS.BAT file must be executed by */
+/* pre-pending the proper drive and path to get to PCBDOS.BAT.  The PcbDir */
+/* variable is created by the PCBINIT.C module which is executed at startup. */
 extern char PcbDir[];
 static void LIBENTRY makecommand(char *RealCommand, char *Command) {
   buildstr(RealCommand,PcbDir,"PCBDOS ",Command,NULL);
@@ -151,47 +147,47 @@ char LIBENTRY spawndos(char *Command, char *Params, shelltype ShellType, int Pri
     char *p;
     char *SettingsFile = NULL;
 
-    // default ProgType to an invalid value
+/* default ProgType to an invalid value */
     ULONG ProgType = 0xFFFFFFFF;
-    // default CmdProc to poing to CMD.EXE
+/* default CmdProc to poing to CMD.EXE */
     char *CmdProc = ComSpec;
 
-    // RealCommand will be what we "really" run (which may change down below
-    // if this is a DOS program).  But on the screen we will only show the
-    // contents of the "unchanged" Command variable so that sysops won't see
-    // the "PCBDOS.BAT" appear on the screen.
+/* RealCommand will be what we "really" run (which may change down below */
+/* if this is a DOS program).  But on the screen we will only show the */
+/* contents of the "unchanged" Command variable so that sysops won't see */
+/* the "PCBDOS.BAT" appear on the screen. */
     strcpy(RealCommand,Command);
 
-    // The contents of Command *may* be more than just the name of the
-    // program to run (separated by spaces of course).  So truncate the
-    // command at the first space and assume that everything from the
-    // start is the real name of the program.  Do this so that the
-    // strstr() function can properly determine if this is a .BAT file and/or
-    // the DosQueryAppType() function can determine the application type
+/* The contents of Command *may* be more than just the name of the */
+/* program to run (separated by spaces of course).  So truncate the */
+/* command at the first space and assume that everything from the */
+/* start is the real name of the program.  Do this so that the */
+/* strstr() function can properly determine if this is a .BAT file and/or */
+/* the DosQueryAppType() function can determine the application type */
     strcpy(ProgName,Command);
     if ((p = strchr(ProgName,' ')) != NULL)
       *p = 0;
 
-    // if the command has .BAT in it, then assume a DOS batch file
+/* if the command has .BAT in it, then assume a DOS batch file */
     if (strstr(ProgName,".BAT") != NULL) {
       ProgType = FAPPTYP_DOS;
     }
 
-    // if we've already assumed a DOS batch file, or if the query to determine
-    // the application type is successful, then check for a DOS app and
-    // override how it is run to use command.com instead of cmd.exe
+/* if we've already assumed a DOS batch file, or if the query to determine */
+/* the application type is successful, then check for a DOS app and */
+/* override how it is run to use command.com instead of cmd.exe */
     if (ProgType == FAPPTYP_DOS || DosQueryAppType(ProgName,&ProgType) == 0) {
-      // check to see if it's a DOS application
+/* check to see if it's a DOS application */
       if (ProgType == FAPPTYP_DOS) {
-        // if so, override it and cause it to run via COMMAND.COM
+/* if so, override it and cause it to run via COMMAND.COM */
         ShellType = SHELLVIACOMMAND;
         CmdProc = DosComSpec;
 
-        // Then have it run PCBDOS.BAT and pass the command and its parameters
-        // to PCBDOS.BAT and let PCBDOS.BAT run the real command.  This is done
-        // so that PCBDOS.BAT can set the PCBoard environment variables.
-        // NOTE:  Using "PCBDOS" instead of "PCBDOS.BAT" to shave 4 characters
-        // off the length of the string due to DOS's 128 character limit
+/* Then have it run PCBDOS.BAT and pass the command and its parameters */
+/* to PCBDOS.BAT and let PCBDOS.BAT run the real command.  This is done */
+/* so that PCBDOS.BAT can set the PCBoard environment variables. */
+/* NOTE:  Using "PCBDOS" instead of "PCBDOS.BAT" to shave 4 characters */
+/* off the length of the string due to DOS's 128 character limit */
         #ifdef LIB
           makecommand(RealCommand,Command);
         #else
@@ -199,18 +195,18 @@ char LIBENTRY spawndos(char *Command, char *Params, shelltype ShellType, int Pri
         #endif
 
         #ifndef LIB
-          // is it a door that we're shelling out to?
+/* is it a door that we're shelling out to? */
           if (Status.DoorName[0] != 0 && strcmp(ProgName,"DOOR.BAT") == 0) {
-            // yes, so let's use the configuration file associated with the
-            // door *not* the one associated with door.bat
+/* yes, so let's use the configuration file associated with the */
+/* door *not* the one associated with door.bat */
             strcpy(ProgName,Status.DoorPath);
           }
         #endif
 
-        // check to see if a customized settings file exists for this program
+/* check to see if a customized settings file exists for this program */
         if ((p = strrchr(ProgName,'.')) != NULL) {
-          // the name of the file is the program name with the extension
-          // changed to .OS2 (i.e. MYPROG.EXE is changed to MYPROG.OS2)
+/* the name of the file is the program name with the extension */
+/* changed to .OS2 (i.e. MYPROG.EXE is changed to MYPROG.OS2) */
           strcpy(p,".OS2");
         } else
           strcat(ProgName,".OS2");
@@ -218,8 +214,8 @@ char LIBENTRY spawndos(char *Command, char *Params, shelltype ShellType, int Pri
         if (fileexist(ProgName) != 255)
           SettingsFile = ProgName;
 
-        // if there isn't a customized settings file, then use the default
-        // settings file (if there is one)
+/* if there isn't a customized settings file, then use the default */
+/* settings file (if there is one) */
         if (SettingsFile == NULL && DosSettingsFile[0] != 0 && fileexist(DosSettingsFile) != 255)
           SettingsFile = DosSettingsFile;
       }
@@ -400,7 +396,7 @@ char LIBENTRY swapdos(char *Command, char *Params, shelltype ShellType, char *Re
                           SwapErrClass  = ExtendedClass;
                           SwapErrAction = ExtendedAction;
                           SwapErrLocus  = ExtendedLocus;
-//                        doswrite(0,"\r\nBACK FROM SWAP...",19);
+/*                        doswrite(0,"\r\nBACK FROM SWAP...",19); */
                           break;
     case SHELLDIRECT    : SwapRetVal = swapenv(Command,Params,RetVal,PcbData.SwapPath);
                           /* save the swap error status */
@@ -408,7 +404,7 @@ char LIBENTRY swapdos(char *Command, char *Params, shelltype ShellType, char *Re
                           SwapErrClass  = ExtendedClass;
                           SwapErrAction = ExtendedAction;
                           SwapErrLocus  = ExtendedLocus;
-//                        doswrite(0,"\r\nBACK FROM SWAP...",19);
+/*                        doswrite(0,"\r\nBACK FROM SWAP...",19); */
                           break;
 
     default             : SwapRetVal = 0;
@@ -600,17 +596,17 @@ static int _NEAR_ LIBENTRY shelltocommand(char *Command, char *Params, shelltype
   #endif
 
   #ifdef COMM
-    // record whether or not the modem was opened
+/* record whether or not the modem was opened */
     ModemWasOpened = ModemOpened;
 
     if (ModemWasOpened) {
-      // if the modem was opened, and we're using the "A"sync mode, then we
-      // have a live interrupt handler installed so we need to close the modem
-      // no matter what because we may be swapping out.
+/* if the modem was opened, and we're using the "A"sync mode, then we */
+/* have a live interrupt handler installed so we need to close the modem */
+/* no matter what because we may be swapping out. */
       if (ModemFixupsDone == 'A')
         CloseModem = TRUE;
 
-      // if the modem is to be closed, then close it now but leave DTR up
+/* if the modem is to be closed, then close it now but leave DTR up */
       if (CloseModem)
         closemodem(FALSE);
     }
@@ -625,7 +621,7 @@ static int _NEAR_ LIBENTRY shelltocommand(char *Command, char *Params, shelltype
     Status.ForceScreenOff = TRUE;  /* turndisplayon() set it to FALSE */
   }
 
-//setkbdtimer(Asy.Online != OFFLINE ? Control.KbdTimer : THREEMINUTES);
+/*setkbdtimer(Asy.Online != OFFLINE ? Control.KbdTimer : THREEMINUTES); */
   renewkbdtimer();
   memrestorescreen(Saved,FREESCREEN);
   agotoxy(OldX,OldY);
@@ -647,14 +643,14 @@ static int _NEAR_ LIBENTRY shelltocommand(char *Command, char *Params, shelltype
   #endif
 
   #ifdef COMM
-    // was the modem previously open?
+/* was the modem previously open? */
     if (ModemWasOpened) {
-      // yes, it was open, so did we close it?
+/* yes, it was open, so did we close it? */
       if (CloseModem) {
-        // yes, it was closed so now reopen it
+/* yes, it was closed so now reopen it */
         reopenport();
       }
-      // now check to see if we are still online
+/* now check to see if we are still online */
       if (Asy.Online == REMOTE) {
         online();                   /*lint !e534 this just sets the state */
         if (cdstillup() == 0) {
@@ -744,7 +740,7 @@ void LIBENTRY shelltodos(void) {
   writeusernetstatus(OUTINDOS,NULL);
   #endif
 
-  #ifndef __OS2__ // don't use environment size for OS/2 shells
+  #ifndef __OS2__  /* don't use environment size for OS/2 shells */
   if (PcbData.EnvSize != 0)
     sprintf(Str,"/e:%d",PcbData.EnvSize);
   else
@@ -845,7 +841,7 @@ static void _NEAR_ LIBENTRY runbatchfile(char *File, bool Logon) {
           unlink("USERS.SYS");
         }
       }
-      readpcboardsys();  // in case time left was changed, read in pcboard.sys
+      readpcboardsys();  /* in case time left was changed, read in pcboard.sys */
     }
   }
 }
@@ -995,39 +991,39 @@ int LIBENTRY performfileview(char *FullPath, char *Name) {
   char Str[80];
 
   sprintf(Command,"%s %d",FullPath,Asy.ComPortNumber);
-//maxstrcpy(Command,FullPath,sizeof(Command));
-//addchar(Command,' ');
-//addchar(Command,(char) (Asy.ComPortNumber+'0'));
+/*maxstrcpy(Command,FullPath,sizeof(Command)); */
+/*addchar(Command,' '); */
+/*addchar(Command,(char) (Asy.ComPortNumber+'0')); */
 
   strcpy(BatPath,PcbData.ViewBatch);
   if (srchpath(BatPath) == -1) {
     maxstrcpy(Status.DisplayText,PcbData.ViewBatch,sizeof(Status.DisplayText));
     displaypcbtext(TXT_NOTFOUNDONDISK,NEWLINE|LFBEFORE|LOGIT|BELL);
-    return(0);  // force it to exit
+    return(0);  /* force it to exit */
   }
 
   sprintf(Str,"F V %s",Name);
   writeusernetstatus(FILEVIEW,Str);
   displaycmdfile("PREVIEW");
 
-  // set FILEVIEWSHELL so that updateuserrecord() will work correctly
+/* set FILEVIEWSHELL so that updateuserrecord() will work correctly */
   Status.Logoff = FILEVIEWSHELL;
-  updateuserrecord();  // save the user information (so that on return from the shell it won't lose any updates)
-  makepcboardsys();    // make the pcboard.sys file
-  makeusersys();       // make the users.sys file
+  updateuserrecord();  /* save the user information (so that on return from the shell it won't lose any updates) */
+  makepcboardsys();  /* make the pcboard.sys file */
+  makeusersys();  /* make the users.sys file */
   Status.Logoff = LOGON;
 
   if (shelltocommand(BatPath,Command,SHELLVIACOMMAND,NOINFORM,CLOSEUSERSFILE,PcbData.PriorityShells,PcbData.MinimizeFileView & 1,PcbData.MinimizeFileView & 2,TRUE) == -1 || fileexist("PCBVIEW.TXT") == 255) {
-    Status.CreditMinutes = 0; // reset to 0 since pcboard.sys will have current credits
-    readpcboardsys();         // read the pcboard.sys and users.sys files
+    Status.CreditMinutes = 0;  /* reset to 0 since pcboard.sys will have current credits */
+    readpcboardsys();  /* read the pcboard.sys and users.sys files */
     usernetavailable();
     maxstrcpy(Status.DisplayText,Name,sizeof(Status.DisplayText));
     displaypcbtext(TXT_ERRORVIEWINGFILE,NEWLINE|LFAFTER|LOGIT);
-    return(-1);  // force it to retry the operation
+    return(-1);  /* force it to retry the operation */
   }
 
-  Status.CreditMinutes = 0; // reset to 0 since pcboard.sys will have current credits
-  readpcboardsys();         // read the pcboard.sys and users.sys files
+  Status.CreditMinutes = 0;  /* reset to 0 since pcboard.sys will have current credits */
+  readpcboardsys();  /* read the pcboard.sys and users.sys files */
   startdisplay(NOCHANGE);
   displayfile("PCBVIEW.TXT",NOALTERNATE|DISABLESUBFILES);
   maxstrcpy(Status.DisplayText,Name,sizeof(Status.DisplayText));

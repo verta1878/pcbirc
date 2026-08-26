@@ -158,7 +158,7 @@ typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,N
 /* their parameter types using the typedef'd name of the enum values.  I     */
 /* like this, but Watcom does not.  These following lines of code help solve */
 /* this problem and keep the compiler happy.                                 */
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(__WATCOMC__)
   #define SCANDLTYPE      int
   #define DISPLAYTYPE     int
   #define DISPLAYFILETYPE int
@@ -974,7 +974,7 @@ void LIBENTRY bell(void);
 
 
 /*
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(__WATCOMC__)
 extern "C" {
 #endif
 */
@@ -1447,7 +1447,7 @@ void LIBENTRY setpcbtext(int TextNum, pcbtextcb *Func);
 
 
 /*
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(__WATCOMC__)
 }
 #endif
 */

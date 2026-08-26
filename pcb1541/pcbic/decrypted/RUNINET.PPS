@@ -1,0 +1,121 @@
+*****************************************************************************
+* RUNINET.PPE - This program is used to launch a user into the SLIP or PPP  *
+* door if they selected the corresponding language.  FYI, the SLP language  *
+* is associated with the SLIP door and the PPP language with the PPP door.  *
+*****************************************************************************
+
+DECLARE FUNCTION FileInPath(STRING environVar, STRING filename)
+
+BOOLEAN foundCMD, SLIPSelected, PPPSelected
+STRING  LogonBatch
+INT     returnCode
+
+' For simplicity in the code, evaluate the language extension and store the
+' results in the appropriate Boolean variable.
+
+SLIPSelected = LANGEXT()=".SLP"
+PPPSelected  = LANGEXT()=".PPP"
+
+' Print a banner to the local screen to notify the SysOp that a PPE is
+' running to automatically put the user into the SLIP or PPP door.
+
+SPRINTLN "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿"
+SPRINTLN "³RUNINET.PPE - Detecting SLIP/PPP Language Selection.            ³"
+SPRINTLN "³ Installed at: ", LEFT(PPEPATH()+PPENAME(),49), "³"
+SPRINTLN "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+DELAY 9
+
+' Check to see if the user has selected the PPP or SLIP language.  Also
+' see if the user is on locally.  If so, Skip the PPE.
+
+IF ((!SLIPSelected & !PPPSelected) | ONLOCAL()) THEN
+  IF (DBGLEVEL() > 0)
+     LOG PPENAME()+": User did not select PPP or SLIP or was local", FALSE
+  END
+ENDIF
+
+; Check the command line to see if the /LOGON command line parameter is
+; specified.  If so, we need to run the $$LOGON.BAT or $$LOGON.CMD as
+; as appropriate.  The main reason for duplicating this PCBoard effort is
+; so that those running mission critical applicaitons in this batch file
+; can still have them active for their SLIP/PPP callers.
+
+IF (UPPER(TOKENSTR()) = "/LOGON") THEN
+
+   IF (DBGLEVEL() > 0) LOG PPENAME()+": Simulated $$LOGON processing", FALSE
+
+   ' Create the USERS.SYS for use with PCBIC.
+
+   WRUSYS
+
+   foundCMD = FileInPath("PATH", "$$LOGON.CMD")
+
+   ' Check to see if the OS/2 version of PCBoard is running.  With the OS/2
+   ' version running, we need to search for $$LOGON.CMD first.  If it exists,
+   ' run it.   Otherwise attempt to run $$LOGON.BAT.
+   
+   IF (OS()=2) THEN
+     IF (foundCMD) THEN
+       SHELL TRUE, returnCode, "$$LOGON.CMD", ""
+     ELSE
+       SHELL TRUE, returnCode, "$$LOGON.BAT", ""
+    ENDIF
+   ELSE
+       SHELL TRUE, returnCode, "$$LOGON.BAT", ""
+   ENDIF
+ENDIF
+
+; Check the language to determine if we need to run the door or not.
+;
+;   1.  If the user selected the SLIP language (as defined in PCBML.DAT), open
+;       the door named SLIP.
+;
+;   2.  When users select the PPP language, open the door named PPP.
+
+IF (SLIPSelected) THEN
+  COMMAND FALSE, "OPEN SLIP"
+ELSE IF (PPPSelected)
+  COMMAND FALSE, "OPEN PPP"
+ENDIF
+
+' Print a logoff message to the user.  A normal SLIP or PPP user will not
+' see this message, but anyone who do not have appropriate access will.
+
+LOG PPENAME()+": User logged off for no internet access.", FALSE
+PRINTLN 
+PRINTLN "If you see this message, you do not have Internet Access.  We are now"
+PRINTLN "disconnecting you so that you can pick another language."
+HANGUP
+
+***************************** Functions **************************************
+
+FUNCTION FileInPath(STRING environ, STRING filename) INTEGER
+
+  STRING curPath, OSPath
+  INT returnCode
+  BOOLEAN foundFile 
+
+  foundFile = FALSE
+
+  ' Check the current path first.
+
+  IF (EXIST(".\"+filename)) THEN
+     foundFile = TRUE
+  ELSE
+
+    ' Check the PATH to see if the filename exists in any of those directories.
+    ' If found, execute it.
+
+    OSPath = GETENV(environ)
+    TOKENIZE OSPath
+    curPath = GETTOKEN()
+
+    WHILE (curPath != "") DO
+      IF (EXIST(curPath+"\"+filename)) foundFile = TRUE
+      curPath = GETTOKEN()
+    ENDWHILE
+  ENDIF
+
+  FileInPath = foundFile
+
+ENDFUNC

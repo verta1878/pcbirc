@@ -200,7 +200,7 @@ int LIBENTRY version (int x, int y) {
   #define _USERENTRY_ _Cdecl
 #endif
 
-static void __watcall explain(void) {
+static void _USERENTRY_ explain(void) {
   int   Date1;
   int   Date2;
   char *p;
@@ -250,7 +250,7 @@ static char _FARDATA_ CorruptStr[] = {
   0xD9, 0x41, 0x3F, 0x41
 };
 
-static void _INTERRUPT_ corrupted() {
+static void _INTERRUPT_ corrupted(...) {
   decrypt(CorruptStr,43);
   atexit(explain);
   errorexittodos(CorruptStr);
@@ -263,7 +263,7 @@ static char _FARDATA_ MissingStr[] = {
   0x1E, 0x5B, 0x77, 0x35, 0x56, 0x52, 0x56
 };
 
-static void _INTERRUPT_ missing() {
+static void _INTERRUPT_ missing(...) {
   decrypt(MissingStr,33);
   errorexittodos(MissingStr);
 }
@@ -276,7 +276,7 @@ static char _FARDATA_ WrongOSStr[] = {
   0xA0, 0xE2, 0x6C, 0xF6, 0x64, 0x72, 0xE2, 0x84, 0xF4, 0xC8, 0x7A, 0xC8
 };
 
-static void _INTERRUPT_ wrongos() {
+static void _INTERRUPT_ wrongos(...) {
   decrypt(WrongOSStr,36);
   atexit(explain);
   errorexittodos(WrongOSStr);
@@ -291,7 +291,7 @@ static char _FARDATA_ MismatchStr[] = {
   0xA8, 0xBB, 0xA5, 0x7F, 0x79, 0xAD, 0x2B, 0xAA, 0x85, 0xC6, 0x05, 0xCD
 };
 
-static void _INTERRUPT_ mismatch() {
+static void _INTERRUPT_ mismatch(...) {
   decrypt(MismatchStr,64);
   atexit(explain);
   errorexittodos(MismatchStr);
@@ -661,21 +661,8 @@ static void _NEAR_ LIBENTRY initializecontrols(void) {
   } else // else, not set up for network, set node numbers to 0
     PcbData.NodeNum = NodeNum = 0;
 
-  sprintf(Status.Version,"PCBoard (R) v15.4/M %d",PcbData.NodeNum);   /* 15.4: bumped from v15.3/M */
+  sprintf(Status.Version,"PCBoard (R) v15.3/M 25");
   sprintf(Status.NodeStr," - Node %d",PcbData.NodeNum);
-
-  /* 15.4 Beta release marker — identifies this as the 15.4 source port.
-   * Clark's original had a 60-day timer that nagged sysops to update.
-   * Our version logs the build date/time for traceability instead.
-   */
-  {
-    static char BetaVersion[] = "15.4";
-    static char BetaFlag[]    = "Beta";
-    static char BetaMsg[]     = "This Beta Released on " __DATE__ " " __TIME__ "!";
-    (void) BetaVersion;  /* ensure string is in binary for comparison */
-    (void) BetaFlag;
-    (void) BetaMsg;
-  }
 
   #ifndef PCB_DEMO
     Status.FoundCrc = 0;
@@ -942,11 +929,7 @@ static void _NEAR_ LIBENTRY runppe(char *Str) {
 #ifdef __OS2__
   void (LIBENTRY *serialcheck)(void);
 #else
-  #ifdef __WATCOMC__
-  typedef void (__interrupt *intfunctype)();
-  #else
   typedef void interrupt (far * _CType intfunctype)(...);
-  #endif
   intfunctype int3;
 #endif
 

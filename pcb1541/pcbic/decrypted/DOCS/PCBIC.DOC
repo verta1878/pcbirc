@@ -1,0 +1,2513 @@
+旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴커
+쿙OTE:  This is the ASCII version of the Electronic Manual in PDF format.    �
+쿍ecause this document is produced in ASCII format, graphical items such     �
+쿪s screen shots of the program are not included.  This document is designed �
+쿯or quick reference.  Should you need to understand a concept better, please�
+퀁efer to the Adobe Acrobat formatted file so that you can take advantage    �
+쿽f the screen captures and additional learning aids.                        �
+읕컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸
+
+
+
+
+
+
+
+
+
+
+
+       PCBoard(R)
+       Internet Collection Manual
+       Version 1.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Copyright 1996 (C) Clark Development Co., Inc.
+
+
+      This software product is copyrighted and all rights are reserved by
+      Clark Development Co., Inc.  No part of the contents of this manual may
+      be reproduced or transmitted in any form or by any means without the
+      written permission of the publisher.
+
+      Clark Development Company, Inc. does not assume any liability arising
+      out of the application or use of any products described herein.  Clark
+      Development Co., Inc. further reserves the right to make changes in any
+      products described herein without notice. This document is subject to
+      change without notice.
+
+      PCBoard is a registered trademark of Clark Development.  All other
+      brand and product names mentioned in this manual are trademarks or
+      registered trademarks of their respective companies.
+
+      Information in this document is subject to change without notice and
+      does not reflect a commitment on the part of Clark Development Company
+      (CDC).
+
+      CDC provides this document as is, without warranty of any kind, either
+      expressed or implied, including, but not limited to, the particular
+      purpose.  CDC may make improvements and/or changes in this manual or in
+      the product(s) and/or the program described in this manual at any time.
+
+      This product could include technical inaccuracies or typographical
+      errors.  Changes are periodically made to the information herein; these
+      changes may be incorporated in new editions of the publication.
+
+
+                       Clark Development Company, Inc.
+                             3950 S. 700 E. #303
+                              Murray, UT  84107
+                                 801.261.1686
+
+
+
+1
+##############################################################################
+                                                                Introduction
+
+
+
+What Is The PCBoard Internet Collection?
+===============================================================================
+
+      The Internet has broadened our horizons.  Not only has it helped us
+      connect with other sites around the world in a matter of a few seconds,
+      but it has also shown us how that can be done at a low cost.
+
+      The bulk of Internet services are provided by Internet Service
+      Providers (ISPs).  While they can connect you to the Internet, they
+      cannot provide the sense of community provided on a PCBoard Bulletin
+      Board System.
+
+  The Best Of Both Worlds
+  -----------------------
+
+      It makes perfect sense to combine the global outreach of the Internet
+      with the sense of community and personal service provided by a BBS.
+      That is why the PCBoard Internet Collection (PCB/IC) was created.  With
+      this software package popular Internet features such as World Wide Web,
+      FTP, and Telnet are all available directly from your system.
+
+      Furthermore, your system still provides all of the features that made
+      it popular in the first place: conferences, doors, local message bases.
+      That is how both worlds can be merged to both your benefit and that of
+      your callers.
+
+Requirements
+===============================================================================
+
+      The PCBoard Internet Collection has requirements that must be adhered
+      to in order to operate properly.  The following details the
+      requirements:
+
+  Dedicated Internet Connection
+  -----------------------------
+
+      The Internet Collection requires you to have a permanent or dedicated
+      connection to the Internet.  There are a number of ways to get this
+      type of connection such as T1, fractional T1, ISDN, and dial-up.  These
+      terms may not mean anything to you on first inspection, but your local
+      Internet provider can explain the cost of each option and which is best
+      for your situation.
+
+      Fractional T1 may be a good starting point if you do not already have a
+      connection.  The reason this is a good investment is that the hardware
+      is basically the same for a full-T1 as a fractional.  Therefore, as
+      your system and needs grow, another investment is not required in
+      hardware.  However, smaller systems may want to start with a dial-up
+      connection.  Call the providers in your area for pricing and technical
+      details.
+
+      Once the Internet connection is installed, the signal must be put onto
+      your network.  Typically this is done in combination with a router.
+      For specific requirements, contact your Internet provider.
+
+  TCP/IP
+
+      If you have any experience with the Internet, chances are that you have
+      heard this term before.  The term is an acronym that stands for
+      Transmission Control Protocol/Internet Protocol or TCP/IP.  This term
+      refers to the "language of the Internet" or the way that machines
+      communicate with one another.
+
+      When TCP/IP is enabled on your network, a protocol or TCP/IP stack is
+      maintained that allows the network and software run on the network to
+      communicate with your hardware.  In this case, the software is the
+      PCBoard Internet Collection.  More information on TCP/IP and how to add
+      it to your system is discussed in the First Time Setup chapter.
+
+      The way that the TCP/IP stack is accessed varies between operating
+      systems.  PCB/IC works with DOS and OS/2 based TCP/IP stacks.  From a
+      DOS level, the PACKET DRIVER method is used.  For OS/2, the API is
+      accessed directly.
+
+  PCBoard
+
+      The PCBoard Internet Collection is compatible with v14.5 or greater of
+      PCBoard.  However, several Internet related features have been added to
+      more recent PCBoard upgrades.  This is something to keep in mind as you
+      evaluate the requirements.
+
+  Memory
+
+      PCB/IC only requires about 400k of memory to operate properly.  Since
+      this memory requirement is less than PCBoard requires, there will be no
+      difficulty making it work.
+
+Goals Of The Manual
+===============================================================================
+
+      Understanding the design goals of this manual and how the information
+      is organized is designed to help you get the most out of this manual.
+      When you know where and how to find information, this manual becomes a
+      very valuable resource.
+
+      First, we make sure you understand the requirements of PCB/IC so that
+      you know what you are getting into.  This is an essential part of any
+      undertaking because it helps you manage the expectations of the
+      project.  We've already gone over the requirements which means by now
+      you  can meet them and are prepared to move on.
+
+      Second, we talk about how to install the software for the first time.
+      This is more than just copying files, but also how to customize the
+      software to meet your needs and also how to secure the features so only
+      desired users may access them.
+
+      In the next few chapters we cover topics that relate to the
+      configuration and maintenance of PCB/IC.  Topics covered include
+      customization of the look and feel of the program, security and access
+      considerations, etc.
+
+      The last part of the manual is dedicated mostly to reference material
+      including descriptions of the programs in the collection and appendix
+      chapters to cover any additional pertinent material.
+
+
+2
+##############################################################################
+                                                              First Time Setup
+
+
+Establish A Feed
+===============================================================================
+
+      Some work must be done before you can put PCB/IC on-line.  The two
+      fundamental things that must be taken care of is to get a compatible
+      TCP/IP stack installed and make sure it provides a permanent IP
+      address.
+
+  TCP/IP Stacks
+  -------------
+
+      An effort to stress compatible TCP/IP stacks has been mentioned and
+      this may make you wonder if your stack is compatible.  TCP/IP is
+      TCP/IP, right?  Yes, it is, but how you access that protocol varies
+      from operating system to operating system.  For example, a different
+      API is used to access TCP/IP under Windows NT and under OS/2.
+      Currently, any DOS packet-driver or OS/2 based TCP/IP stack works fine
+      with PCB/IC.
+
+  Permanent IP Addresses
+  ----------------------
+
+      Some connections to the Internet, such as PPP and SLIP, do not always
+      have a guaranteed IP address.  Instead, you get whatever IP address the
+      provider wants to assign to your machine.  This is a problem in
+      relation to PCB/IC because anytime you provide Internet access to other
+      callers,  a permanent IP address is required.
+
+Put The Feed On The Network
+===============================================================================
+
+      Just because you have a feed, it does not mean that you are ready to
+      go, yet.  Steps must be taken to get that feed to be broadcast into
+      your network.  Typically this involves broadcasting multiple packet
+      types.  This means your network needs to be capable of supporting
+      multiple protocols.
+
+      For DOS users, your network must support the PACKET DRIVER
+      specification.  If your network supports either NDIS or ODI (which most
+      do), simply install the appropriate packet driver.  This process is
+      sometimes referred to as a shim.
+
+      Most OS/2 users will be using the TCP/IP product directly from IBM or
+      utilize the built-in TCP/IP (Warp Connect / Warp Server).  Some work
+      may be required in making that product work with your existing network.
+      Once that part is setup, however, the Collection talks directly to the
+      TCP/IP API.
+
+      The next sections talk about some possible solutions with the most
+      popular DOS based networks: LANtastic, NetWare, and Windows For
+      Workgroups.
+
+  LANtastic for DOS
+  -----------------
+
+      Artisoft provides NDIS drivers for their products.  Once these NDIS
+      drivers are installed, you can load NDIS packet-driver to complete the
+      TCP/IP connection.
+
+      NDIS drivers ship with their current product.  If you do not have them,
+      they can be obtained from Artisoft's BBS (520-884-8648) and FTP site
+      (ftp.artisoft.com)
+
+  Netware
+
+      Using the ODI implementation of NetWare, you can use an ODIPKT driver
+      that is freely available on many Internet sites.  You may also need
+      additional packet drivers for your card.  The Crynwr packet driver
+      collection provides a good place to find packet drivers for most cards.
+      This collection is obtainable from most FTP sites under the filename
+      DRIVERS.ZIP.
+
+  OS/2
+
+      The OS/2 version of PCB/IC talks directly to the OS/2 TCP/IP API.
+      There is nothing special you have to do other than to verify that your
+      network under OS/2 does have TCP/IP enabled.
+
+  Windows For Workgroups
+  ----------------------
+
+      PCB/IC does not directly interact with the Windows For Workgroup's
+      interface.  As a result, Windows NT is not a viable platform for using
+      PCB/IC.  However, Windows 3.1 and later can be used because you can
+      still load DOS TCP/IP drivers in your CONFIG.SYS and AUTOEXEC.BAT files
+      with another network operating system (e.g., LANtastic, NetWare, etc.)
+
+The IP Environment Variable
+===============================================================================
+
+      PCB/IC uses a configuration file called TCPIP.DAT that keeps track of
+      many things such as IP addresses, security levels and so forth.  The
+      only node dependent field in the entire file is the IP address.
+
+      Because so much of the data is common between nodes, you can share one
+      TCPIP.DAT for all machines by setting an environment variable named IP
+      to have the IP address for the current node.  For example, to set the
+      IP address to be 198.42.22.16, use the following line:
+
+        SET IP=198.42.22.16
+
+      This setting needs to be in the batch file that runs each node (e.g.,
+      BOARD.BAT or NODEx.BAT) as it is used to differentiate which nodes get
+      which incoming packets.  If all nodes use the same IP address, PCB/IC
+      will not operate properly.
+
+      In the case where one batch file is used to launch all of your nodes,
+      use several statements to set the variables.  Each statement checks a
+      preset node environment variable to set the IP address.  Example:
+
+        IF %PCBNODE%==1 SET IP=198.42.22.16
+        IF %PCBNODE%==2 SET IP=198.42.22.17
+        IF %PCBNODE%==3 SET IP=198.42.22.18
+        IF %PCBNODE%==4 SET IP=198.42.22.19
+
+      By setting the IP address for each machine via environment variables,
+      you can share one TCPIP.DAT.  If you choose not to use one data file,
+      you must maintain a separate copy of TCPIP.DAT for each machine on your
+      network.
+
+      With the data file location set in place, you are ready to begin the
+      configuration process.  First you must set the IP addresses for your
+      machine and for other machines you access.
+
+  A Note About IP Addresses
+  -------------------------
+
+      In order to use an IP address, you have to be authoritative for it.
+      That means that an Internet provider somewhere along the line has
+      assigned you a set range of IP addresses to use.  Using addresses
+      outside of that range will result in the program not being able to
+      successfully  send or receive information around the Internet.
+
+      One other area to be concerned about when assigning IP addresses to
+      your nodes is to make sure that the following are true:
+
+        1. The IP address is assigned a host name in the domain name server
+        (DNS) registered to your domain.  For example, people could contact
+        the computer with this IP address by the name computer1.site.com.
+        The name of the computer gets resolved to the actual IP address.
+
+        2. A lot of sites do what is called a reverse DNS lookup when your
+        users contact them.  If they cannot resolve your IP address into a
+        name such as computer3.site.com, they will reject the connection.
+        Make sure that the DNS entries for your IP addresses are in the
+        reverse name look-up table.  Contact the party responsible for your
+        DNS if you are unsure.
+
+The Ethernet Card Address
+===============================================================================
+
+      OS/2 users need to set one additional environment variable in order to
+      use PPP and SLIP.  This variable, named ETHADDR, defines the physical
+      address of the ethernet card in the machine.
+
+      In your CONFIG.SYS, add a line which reads:
+
+        SET ETHADDR=nn:nn:nn:nn:nn:nn
+
+      In this example nn is a two digit pair of numbers from the 12-digit
+      address.  The following steps show you how to get the ethernet address
+      configured:
+
+        1. Run NETSTAT -n.  Write down the 12 digit physical address listed
+        (e.g., 00006e24beb0).
+
+        2. Break the number into two digit pairs.  This address would be
+        listed as 00 00 6e 24 be b0.
+
+        3. Now just put the  results into the ETHADDR variable by adding a
+        line to CONFIG.SYS that reads SET ETHADDR=00:00:6e:24:be:b0.
+
+      Remember, the ethernet address varies from machine to machine, so the
+      netstat program must be used to guarantee accuracy.
+
+Configuring IP Addresses
+===============================================================================
+
+      Sites on the Internet are referenced by name or by what is called an IP
+      address.  The address is a series of 4 numbers separated by periods
+      such as 205.128.64.32.  There are a few addresses you need to set up
+      that allows PCB/IC to operate properly.
+
+      These addresses are configured by loading PCBICCFG.EXE.  Once PCBICCFG
+      is loaded, select IP Addresses.  Here you will find 7 IP addresses that
+      must be entered in order to use all of PCB/IC's features.
+
+      IP Address:  First is the IP address for the current machine.  This
+      address is set via the IP environment variable as outlined in the
+      previous section.  To change this value, the node batch file must be
+      changed as appropriate.
+
+      Net Mask:  This is not an address but rather a mask to the address.
+      The number you enter here is used in conjunction with any other IP
+      addresses that are used to communicate with other sites on the network.
+      The mask is used to determine if the machine is part of your subnet or
+      not.  If you have only one IP address (such as a SLIP or P3 connection)
+      the mask typically used is 255.255.255.255.  Class C sites that have
+      access to the last 255 numbers use a mask of 255.255.255.0. The best
+      person to talk to about your mask is your Internet provider as they
+      know the exact mask to use.
+
+      Gateway:  With the mask, we determine if a packet or datagram is
+      destined for our subnet or group of computers.  Packets that are not
+      for us need to be sent somewhere.  Where do these packets get sent?
+      The answer to that question is an address referred to as the gateway.
+      Typically, this is a router on your network that forwards packets based
+      on its routing table.
+
+      Name Servers:  There is room to enter IP addresses for 3 name server
+      (DNS) machines.  Most likely your provider has their own name server
+      which they are more than happy to provide the address of.  Additional
+      servers can be obtained with the information obtained by the WHOIS
+      application.
+
+      Domain Name:  This is an optional field that you can fill in to contain
+      the domain name for your system.  For example, if I have registered
+      site.com, I enter that value in this field.  The domain typically ends
+      with .COM, .GOV, or .EDU.
+
+<Caption>A sample internet address with domain name and host name clearly labeled.
+
+      Host Name:  The name you enter in this field is typically the name for
+      the machine.  Many sites or domains have numerous hosts.  That is, they
+      have a www host, ftp host, etc.  Realize that this name in conjunction
+      with the domain name makes up your entire Internet name.  Also keep in
+      mind that this is an optional entry.
+
+      Nic Server:  With the vastness of the Internet, someone has to keep
+      track of all the addresses and who is assigned to what.  This
+      information is only used in the WHOIS application of the collection.  A
+      handful of sites around the world track this information.  The default
+      IP address for this field is 198.41.0.5 which is the address for
+      InterNIC.
+
+      Gopher Server:  This field has a default gopher server to use.  You may
+      change it to any server you desire.
+
+Test The Connection
+===============================================================================
+
+      With the IP addresses all entered, you are ready to begin testing the
+      connection.  First of all, make sure you have exited PCBICCFG and saved
+      changes on the way out.  The next step is to use the TESTIC.EXE
+      application (TESTIC2.EXE for OS/2 users).  This program tests multiple
+      aspects of your Internet connection including pinging another site.
+
+      You are first asked to Enter Site Name.  What you enter here must be a
+      valid named address like sitename.com, not an actual IP address.  Once
+      this information is entered, the test proceeds.
+
+      If the tests are successful, a message stating further instructions is
+      printed at the bottom of the screen.  In the event that the tests were
+      not successful, you need to narrow down the problem.
+
+  Troubleshooting
+  ---------------
+
+      There are 4 major areas to look at when troubleshooting why the test
+      program failed: 1) is the proper packet driver installed?, 2) your IP
+      address, 3) the gateway address, and 4) name server addresses.
+
+    Packet Drivers
+    ~~~~~~~~~~~~~~
+
+      If the message NO PACKET DRIVER FOUND is displayed, you do not have a
+      compatible DOS packet driver installed.  Focus your efforts on the
+      network drivers.  Remember, you need to have NDIS or compatible
+      installed and then run a packet-driver on top of that.
+
+    Your IP Address
+    ~~~~~~~~~~~~~~~
+
+      If your IP address is not correct for the configuration, you may
+      receive a Could Not Resolve message.  An incorrect IP address would be
+      something that is not within your assigned IP range.  For example, if
+      your provider has given you IP addresses 198.100.10.1 through
+      198.100.10.10, and you enter 198.100.15.10 for your IP address, the
+      test will fail.
+
+    The Gateway Address
+    ~~~~~~~~~~~~~~~~~~~
+
+      The gateway is what allows packets that are not for your subnet to get
+      off your network and to be routed to their proper location.  When an
+      invalid or incorrect number is entered for the gateway address, the
+      packets cannot get off of your network and you will receive a Could Not
+      Resolve message.
+
+    Name Servers
+
+      The first test pings an actual IP address while the second test  tries
+      to ping the name you enter.  The purpose of the second test is to see
+      if your name server is able to resolve a name into an IP address.  If
+      not, the message Could Not Resolve is printed.  Check to make sure your
+      gateway address is correct and that your name server addresses are
+      valid as well.
+
+Adding PCB/IC To PCBoard
+===============================================================================
+
+      The PCBoard Internet Collection is accessed as a door application from
+      the PCBoard system.  It also requires your user file to be updated with
+      a new allocation unit to store information about which applications a
+      user can access, etc.  In this section, we guide you through updating
+      the user records and provide some ways you can add PCB/IC as a door
+      application to your system.
+
+  User Records
+  ------------
+
+      In modifying the user records, a new allocation must be added to the
+      user file.
+
+    Updating User File
+    ~~~~~~~~~~~~~~~~~~
+
+      NOTE:  This step requires all nodes to be down.  If anyone has the USER
+      file open, this step cannot be accomplished.
+
+      In the directory where you installed PCB/IC is a batch file named
+      TPA.BAT.  This batch file runs PCBSM.EXE and adds the new allocation to
+      the users file.  Because this is a global change to the USER file, all
+      nodes must be down.
+
+      Change to your \PCB directory and run the TPA.BAT file.  Example:
+
+        C:\PCB> C:\PCBIC\TPA.BAT
+
+      A screen appears that details what addition is being made to the user
+      file.  Simply press PageDown to begin adding the new data.  When the
+      process is complete, you are returned back to the command prompt.  A
+      sharing violation error message while trying to update the user file
+      means that some other node or process has the USERS file open.  Rectify
+      the situation and run the TPA.BAT file again.
+
+  Adding PCB/IC As a Door
+  -----------------------
+
+      At this point, you are ready to add the collection to your system.  You
+      can use any of the three methods outlined in this section.  The first
+      method details how to set up the PCB/IC applications under one door.
+      The second method talks about setting up each application as a separate
+      door.  Finally, the last method talks about making SLIP and PPP
+      connections easier for your callers.  Based on your needs, one or more
+      methods may need to be  used.
+
+    As One Door Application
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+      The collection can be added just like any other door program in
+      PCBoard.  Recall that doors are defined in the conference configuration
+      screen from PCBSetup.  The following are sample door entries for DOS
+      and OS/2 respectively (Note that the only difference is in the Os2
+      column):
+
+                                    USER DOOR            Charges Per     Path to
+ Filename  Pwrd  Sec Login SYS  SYS  Shell Os2 Minute    Use  DOOR Files
+ ---------- ----- --- ----- ---- ---- ----- --- ------------- ------------
+ 1) PCBIC           0   N    Y    N     N    N       0      0 C:\PCBIC
+
+
+                                    USER DOOR            Charges Per     Path to
+ Filename  Pwrd  Sec Login SYS  SYS  Shell Os2 Minute    Use  DOOR Files
+ ---------- ----- --- ----- ---- ---- ----- --- ------------- ------------
+ 1) PCBIC           0   N    Y    N     N    Y       0      0 C:\PCBIC
+
+
+      Two items about this definition are worth mentioning. First, notice
+      that the USERS.SYS column is marked.  This is how PCB/IC gets the
+      extended user information it needs to operate.  Second, notice the
+      security is set to 0.  Extensive security and access control is built
+      into PCB/IC.  For more information on these features, see the security
+      chapter of this manual.
+
+      The way we have shown the configuration in this section, takes
+      advantage of the sample door batch files included when you installed
+      PCB/IC.
+
+      The PCBoard manual contains many other samples and details about
+      configuring doors on the system.  Refer to that manual if you have
+      questions about how to add a door application to the system.
+
+    Separate Door Applications
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Another way that users can access the Internet applications is one at a
+      time.  For example, by using the FTP command on your main menu, they
+      are taken directly to the desired application.
+
+      The setup for this type of scenario is identical to the setup for one
+      door entry with the following exceptions:
+
+        o One door is required for each application you make available.
+
+        o In the door batch file, you must load PCBIC.EXE with the
+          appropriate command line parameter.  This parameter specifies the
+          application to load.
+
+      We shift our focus to the line from the batch file that loads PCB/IC:
+
+        C:\PCBIC\PCBIC%2%.EXE
+
+      To load the FTP application, and only the FTP application, simply
+      use the command line parameter as shown:
+
+        C:\PCBIC\PCBIC%PCBOS%2%.EXE /FTP
+
+      The entries for the doors themselves are the same only there are more
+      of them.  Look at this example:
+
+                                    USER DOOR            Charges Per     Path to
+ Filename  Pwrd  Sec Login SYS  SYS  Shell Os2 Minute    Use  DOOR Files
+ ---------- ----- --- ----- ---- ---- ----- --- ------------- ------------
+ 1) FTP              0   N    Y    N     N    N       0      0 C:\PCBIC
+ 2) TELNET           0   N    Y    N     N    N       0      0 C:\PCBIC
+
+      The only difference between the two batch files is that the first one
+      uses the /FTP command line parameter and the second one uses the
+      /TELNET parameter.  A comprehensive list of command line parameters for
+      PCB/IC follows:
+
+        * /FTP, /FINGER, /GOPHER, /PING, /RLOGIN, /SLIP, /PPP, /TELNET,
+          /TRACE, /WHOIS
+
+      When your system is setup in this manner, users can specify the site to
+      go to right on the command line (e.g., ftp ftp.pcboard.com).
+
+  SLIP/PPP (World Wide Web Access)
+  --------------------------------
+
+      Many users of the Internet have become accustomed to the World Wide Web
+      interface.  As a result, your users may want to utilize this same
+      interface and can with PCB/IC and the SLIP or PPP application.  The
+      target of this section is to set up the system for users to get
+      SLIP/PPP access faster in the logon process thereby simplifying their
+      logon scripts.
+
+    Adding The SLIP and PPP Doors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Rather than make the user load the PCB/IC door and then select either
+      PPP or SLIP access from the main menu, capitalize on the capability to
+      load an application from a single door by passing command line
+      parameters.  Sample DOORS.LST entries may resemble the following:
+
+      <graphic>
+
+      The PPP and SLIP door batch files are already created for you and exist
+      in the directory PCB/IC was installed into.  If you are using the OS/2
+      version of PCBoard, make sure you enable the OS/2 flag in the
+      DOORS.LST.
+
+    Adding The SLIP and PPP Languages
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      To facilitate a faster logon, we need to setup separate languages for
+      SLIP and PPP access.  This way, users see the following type of
+      mini-menu when they logon:
+
+        1 - Logon To PCBoard
+        2 - SLIP Internet Connection
+        3 - PPP Internet Connection
+
+      By utilizing the multiple language feature of PCBoard, we can let the
+      user select what they want to use at logon.  During the logon process,
+      a PPE checks to see if the user selected either the SLIP or PPP
+      language.  If so, the user is launched directly into the SLIP or PPP
+      door.
+
+      Adding the language into your PCBoard setup requires the following
+      steps:
+
+        1. Using PCBSetup, make sure languages are enabled.  This is found in
+        PCBSetup | Configuration Options | System Control with the question
+        Multi-Lingual Operation.  This option must be turned on.
+
+        2. Add descriptions for the new menus by going to PCBSetup | File
+        Locations | Configuration Files.  Edit the multi-language data file.
+
+        3. Create the new PCBTEXT.PPP and PCBTEXT.SLP files.  First check in
+        PCBSetup | File Locations | System Files to make sure you know what
+        subdirectories PCBTEXT files are stored.  Once you know this
+        location, exit to DOS, change to that subdirectory and then run
+        MKPCBTXT.  When prompted for the filename to open, enter PCBTEXT.PPP
+        and create the file when prompted.  Repeat this step for the
+        PCBTEXT.SLP file too.
+
+    Installing The PPE
+    ~~~~~~~~~~~~~~~~~~
+
+      The final step in simplifying the logon process for SLIP and PPP
+      callers is to install the PPE that detects if the user selected one of
+      the languages we just setup.  The name of the PPE is RUNINET.PPE and it
+      is located in the \PCBIC\SCRIPTS subdirectory.
+
+      Keeping in mind that we want the user to get to the PPP or SLIP door as
+      soon as possible, the PPE is best run at the login script
+      questionnaire.  If we do it any earlier, the user will not have logged
+      into the system and consequently we could not guard access to the door.
+      Let's get it installed.
+
+      Load PCBSetup and go into File Locations | Questionnaires.  Your screen
+      will have these fields at the top:
+
+        Name/Loc of Logon  Script Quest. :
+        Name/Loc of Logon  Script Answers:
+
+      In the first line, enter the full path and location of where the
+      RUNINET.PPE can be found.  Example:
+
+        Name/Loc of Logon  Script Quest. : C:\PCBIC\SCRIPTS\RUNINET.PPE
+        Name/Loc of Logon  Script Answers:
+
+      If you already have a PPE or display file in that field, you can still
+      run the PPE here.  The modifications that are required depends on
+      whether you are running a display file or a PPE in this field.
+
+      Display File
+
+      In this case, simply edit your display file so that at the first column
+      of the first line is an exclamation point followed by the full path and
+      filename of the PPE to run.  Example:
+
+        !C:\PCBIC\SCRIPTS\RUNINET.PPE
+
+        Welcome to the BBS, @FIRST@!
+
+        Here at ACME BBS, we have a lot of things to offer our callers
+        and look forward to serving your needs.  Please let us know
+        if there is anything we can do for you.
+
+
+
+      PPE
+
+      When a PPE is running, we simply need to take advantage of PCBoard's
+      ability to run a PPE in a display file.  Set the logon questionnaire to
+      display a file like this example shows:
+
+        Name/Loc of Logon  Script Quest. : C:\PCB\LOGON.RUN
+        Name/Loc of Logon  Script Answers:
+
+      Edit the questionnaire and put both PPEs on the first two lines of the
+      file remembering to precede each filename with the exclamation point:
+
+        !C:\PCB\PPE\EXISTING.PPE
+        !C:\PCBIC\SCRIPTS\RUNINET.PPE
+
+      NOTE:  If you need $$LOGON.BAT/CMD processing, you need to pass the
+      /LOGON parameter to this PPE on the command line.  Example:
+      C:\PCBIC\RUNINET.PPE /LOGON
+
+    Sample Script Files For Your Users
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Included in the \PCBIC\SCRIPTS subdirectory are several sample scripts
+      that you can modify and hand out to your customers.  Also included are
+      instructions for your users on how to connect up with your systems.
+
+      Because these are all sample files for Salt Air -- CDC's support
+      system, you will need to go through the files and make sure that any
+      references to our system are replaced with your system information.
+      This includes items such as phone numbers, language numbers, and BBS
+      names.
+
+      We have made an effort to support the three main operating systems for
+      the IBM-PC platform -- Windows 3.1, Windows 95, and OS/2.  The
+      following section describes what files correspond to which operating
+      systems:
+
+        Operating System      Sample Script   User Instructions
+
+        Windows 3.1           WIN31PPP.CMD    WIN31PPP.TXT
+        Windows 95            WIN95PPP.SCP    WIN95PPP.TXT
+        OS/2                  OS2SLIP.CMD     OS2SLIP.TXT
+
+
+The Maintenance Event
+===============================================================================
+
+      Maintenance?  What kind of maintenance do you need with an Internet
+      door?  There are two areas that need to be addressed: 1)  Deleting
+      files from the user holding directories, and 2) Updating the top 15
+      sites (hotpick lists).
+
+  Holding Directories
+  -------------------
+
+      Maintaining the user holding directories is only an issue if you let
+      your users put files downloaded via FTP into a holding directory.  If
+      so, a maintenance event needs to run so that it can enforce the number
+      of days files should be held in the holding directory (see PCBICCFG |
+      Profile Information | Max Hold Days).  PCBICEVT is the program that
+      does all of the work in the event.
+
+  HotpicksMaintenance
+  -------------------
+
+      Activities involved with maintaining the hotpicks database include
+      creating the top fifteen lists, trimming the size of the list.
+      Optionally, all sites can be automatically approved for usage if you
+      choose not to screen sites.  All hotpicks maintenance is done via the
+      PCBICEVT program.
+
+      When using the PCBICEVT program, it needs to be able to find the
+      TCPIP.DAT configuration file in order to operate properly.  Therefore,
+      when you run it in your event, keep in mind that it searches for the
+      file in the following manner:
+
+        1. If the /FILE:[filename] parameter is passed on the command line,
+        the filename specified is used as the TCPIP.DAT file.  This type of
+        access may be useful if you are running this program on a file server
+        that does not have a local copy of PCB/IC running. Example: PCBICEVT
+        /FILE:F:\PCBIC\TCPIP.DAT /RANK:5
+
+        2. If the TCPIP environment variable exists, the file specified by
+        this environment variable is used.  For example, if this variable
+        contains the value P:\PCBIC\TCPIP.DAT, that is the file that is used.
+
+        3. PCBICEVT searches the current directory and then every directory
+        in your PATH= statement.
+
+    Maintaining The Hotpicks Database Size
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Two command line parameters to the event program control what the size
+      of the list will be.  The first parameter /PURGE:[days] determines
+      after how many days of not being visited must elapse before the site is
+      removed from the database.  For example, if you use PCBICEVT /PURGE:30,
+      any sites that have not been accessed in 30 days are removed from the
+      hotpicks database.
+
+      Considering that the database holds a maximum of 2500 entries, make
+      sure that there is sufficient room to add any new sites.  The /KEEP
+      parameter determines how many sites to keep in the database.
+      Specifying PCBICEVT /KEEP:1000 keeps the top 1000 entries in the site.
+      Since this parameter only keeps the top number of sites you specify, it
+      must reorder the database before purging any sites.  Therefore, /KEEP
+      must be accompanied by the /RANK parameter.  See Creating The Top
+      Fifteen Lists for more information on the /RANK parameter.
+
+      The two parameters--/KEEP and /PURGE--can be used together.  Older
+      sites are purged according to the number of days specified and then if
+      the database still exceeds the number of records specified, the
+      database is packed down to the appropriate size.  Example:
+
+        PCBICEVT /PURGE:30 /KEEP:1000 /RANK:5
+
+    Creating The Top Fifteen Lists
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      The top sites for your system is updated when you run the PCBICEVT
+      program with the /RANK:[scale] parameter.  Rather than sort on the
+      number of accesses the site has had, a sliding scale is used.  This
+      prevents a situation where a site is red-hot in popularity for a while
+      and then dies off.  How does this sliding scale work?
+
+      What you have to consider in the sliding scale is the number of sites
+      in your database and the number specified after the /RANK parameter.
+      For example, if you have 600 entries in the hotpicks database and use
+      the /RANK:5 parameter, popularity for your database would be as
+      follows:
+
+        #1 Site         3000 popularity points (600*5)
+        #2 Site         2995 popularity points (599*5)
+        #3 Site         2990 popularity points (598*5)
+        #600 Site       5 popularity points (1*5)
+
+      Notice that the gap between the #1 and #2 sites is whatever you specify
+      with the /RANK parameter.  The larger the value you specify (1-20 is
+      valid) the harder it will be for a site to become the #1 site.
+      Conversely, the lower the number, the more volatile your top-15 list
+      will be.  Typically a value between 5 and 10 is a good starting point
+      and then you can adjust that value to get the results you desire (i.e.,
+      increase the value to stabilize the list or decrease the value to make
+      it change more often).  Example:
+
+        PCBICEVT /RANK:5 /KEEP:600 /PURGE:30
+
+      NOTE:  The top-fifteen lists are automatically created (without sorting
+      them), whenever you specify any of the hotpicks maintenance command
+      line parameters.
+
+    Automatically Approving Sites
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      By default, PCB/IC requires new sites to be approved before they are
+      considered for the top fifteen list.  To bypass site screening, add the
+      /FORCE parameter to the PCBICEVT program that is running in your event.
+      Example:
+
+        PCBICEVT /RANK:5 /KEEP:600 /PURGE:30 /FORCE
+
+  Configuring The Maintenance Event
+  ---------------------------------
+
+      The event itself is very easy to configure.  Simply add a new event in
+      the EVENT.DAT file (PCBSetup | Event Information) which looks something
+      like the following:
+
+<Caption>This figure shows a simple event definition for the PCB/IC
+maintenance event.
+
+      As for the batch file, that too is quite simple:
+
+        @echo off
+        c:
+        cd\pcbic
+        pcbicevt /rank:5
+
+      Nothing requires that you have this utility run in a separate event.
+      If you already have a maintenance event for your system that does
+      activities such as packing the message base or users file, add the
+      PCBICEVT program to that event.  The only requirement for the program
+      to run is to have access to your TCPIP.DAT file (which is why we change
+      directories in our sample event batch file.)
+
+
+3
+##############################################################################
+                                                 Restricting Access / Security
+
+
+      The Internet Collection offers an abundant set of security options that
+      give you control over who gets access to various components.  Available
+      security options can best be categorized in the following areas:  1)
+      normal PCBoard security, 2) application security, and 3) group
+      templates.  We will spend the next few sections discussing each:
+
+Normal PCBoard Security
+===============================================================================
+
+      Because the Internet Collection functions as a door from PCBoard, you
+      get all of the security benefits of running a door.  This means you can
+      control access by password or security level directly from the
+      DOORS.LST file in the configuration screen for any given conference.
+
+      With these global security options, access can be quickly enabled or
+      disabled for all users on your system.  For more specific control of
+      who has access, you'll need to explore the security options in PCB/IC.
+      The next two sections are dedicated to discussions of this area.
+
+Application Security Via Menu Options
+===============================================================================
+
+      The Internet Collection is broken down into several different
+      applications.  Access to each application is controlled by security
+      level in PCBICCFG | Alternate Menu Configuration.
+
+<Picture>
+
+      This type of security presents the easiest way to guard a particular
+      application from unauthorized access.  Simply set the minimum security
+      level required to access a particular application.
+
+      Obviously, there are other issues to contend with.  What if I want to
+      allow users to try out an application before they decide to buy access
+      to my system?  This type of security will not work in this situation.
+      That is correct and that is where you need to look at what is known as
+      group security.  Utilizing the next level of security, you can put demo
+      users and subscribers in separate groups and give them different access
+      accordingly.
+
+Application Security Via Groups
+===============================================================================
+
+  What Are Groups And Profiles?
+  -----------------------------
+
+      Groups are, as the name implies, a way to group people together and
+      give them access based on which ones they are a member of.  For
+      example, you may set up a group named DEMO.  Everyone that is a member
+      of this group has access associated with a demo user.  The DEMO group
+      most likely has less time per application and may not have access to
+      all applications.
+
+      The term profile refers to the definition of a group. What applications
+      they have access to, how long they can spend in the applications, etc.
+      We will spend more time explaining what settings are in a profile later
+      in this document.  For now, it is simply important that you understand
+      what is meant by group and profile.
+
+  Configuring Groups And Profiles
+  -------------------------------
+
+      Groups are setup by selecting the "Profile Information" option from the
+      PCBICCFG Main Menu.  When you select this menu option you see a screen
+      like the following:
+
+<Picture>
+<Caption>The initial screen when you edit profiles for the first time.
+
+      This screen shows us a composite view of what the user SYSOP has access
+      to.  Notice that, by default, this user has no access.  That is because
+      we need to grant the access we want to give the user.  This is done by
+      giving the user the access to certain groups.
+
+      Groups?  I don't have any groups.  With a new configuration, you're not
+      expected to.  However, that can be quickly remedied by pressing ALT-A
+      to add a group to the current user followed by ALT-A again to add a
+      group to the "Available" list.
+
+  Adding New Groups
+  ------------------
+
+      Adding a new group is really quite easy.  Why?  Because we describe the
+      users of your system verbally.
+
+    Naming Your Groups
+    ~~~~~~~~~~~~~~~~~~
+
+      Simply come up with a name to define a group of users.  Some examples
+      may be:
+
+        * PAYING MEMBER
+        * PUBLIC USER
+        * VISITING SYSOP
+        * SYSOP
+
+      Notice that the names are all based on nouns.  You can use them in
+      sentences like the following:
+
+        * He is a PAYING MEMBER.
+        * She is a VISITING SYSOP.
+        * He is a SYSOP.
+        * He is a PUBLIC USER.
+        * She is both a VISITING SYSOP and a PAYING MEMBER.
+
+      As you give the user classification of your system some thought, you'll
+      be able to come up with group names you want to use.  Once we have the
+      groups defined, we can begin assigning them to users.  First things
+      first, however.
+
+    Setting The Group Properties
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Remember, we had pressed ALT-A twice from the User Profile screen to
+      get to the point where you had to enter a name.  Now is the time you
+      enter the names you want to define.  Let's go through an example by
+      defining the group named  "SYSOP".  The first screen you see is as
+      follows:
+
+<Picture>
+
+    Setting Application Time Limits
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      The first thing to do is to determine how much time a user should have
+      in each application (0 = No Access).  Use the TAB key to move between
+      the fields and enter the maximum amount of time you want the user to
+      stay in each application on a DAILY basis.  To limit the user to the
+      normal PCBoard time limit, simply enter a -1 which gets translated to
+      1440 minutes (24 hours).
+
+      Since we are creating a group for the System Operator(s), set all of
+      the time limits to -1 (1440) and enable all of the Y/N options.
+
+    Setting Group Options
+    ~~~~~~~~~~~~~~~~~~~~~
+
+      On the right side of the screen is a few options relating to hotpicks
+      and holding directories for FTP files.  Once again, the TAB key will
+      move between the fields and you can set the appropriate setting.
+
+      Allow Holding: When this option is enabled, the user can store files
+      retrieved from an FTP site in a temporary holding directory.  Remember,
+      the global "Allow Holding" option must be enabled in PCBICCFG | System
+      Configuration.  Held files are stored in the location specified in the
+      same PCBICCFG screen.
+
+      Allow Attaches: Users can choose to store retrieved files as file
+      attachments in the message base when this option is enabled.  There is
+      no global option to be concerned about in regards to attachments as
+      there is with the holding directory.
+
+      Hotpicks: With this option enabled, the list of top 15 sites for a
+      particular application is available at the site name prompt by pressing
+      T followed by ENTER.  Hotpicks databases are maintained for the FTP,
+      TELNET, RLOGIN, and GOPHER applications.
+
+      Max Holding Days:  Files that are still in the user's holding directory
+      are deleted by the event utility, PCBICEVT.
+
+      Holding Limit:  Anyone that is offering their system as a storage bin
+      needs some sort of limit.  This is the case with PCBIC as you can limit
+      the user to a certain size (specified in kilobytes) for their holding
+      directory.
+
+    Saving The Group
+    ~~~~~~~~~~~~~~~~
+
+      Saving the group is really easy.  Press ESC to exit and confirm that
+      you want to save the changes.
+
+  Creating Additional Groups
+  ---------------------------
+
+      Not a lot of effort is required to get additional groups created.  It
+      is  more of a repetition process.  If you look at your user profile
+      screen, you see something like this:
+
+<Picture>
+
+      After adding all of the groups (ALT-A from this screen), your screen
+      should be more like the following:
+
+<Picture>
+
+  Adding Groups To A Security Profile
+  ------------------------------------
+
+      Rather than have to manually add groups to every user on your system,
+      you  can apply groups to all users with a given security level.  This
+      is done by going to the User Profile screen from PCBICCFG | Profile
+      Information.  Press ALT-S to edit security profiles.  The default
+      profile to enter is the security level of the current user.
+
+      In our example setup, the SYSOP has a security level of 250.  Once we
+      are done setting up the profile for security level 250, every user
+      with that security automatically becomes members of groups in the
+      security profile.  This makes system maintenance easier because now
+      you can change the access of entire security levels very quickly.
+
+      Let's create two security profiles.  One for level 250 (SysOp) and one
+      for VISITING SYSOPs who have become PAID SUBSCRIBERS.
+
+    Example:  Creating A Profile For Security 250 (SYSOP)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      From the User Profile screen, press ALT-S to select the security level
+      and enter 250 (or whatever your SysOp security is).  Notice that you
+      are now at the Security Profile screen.  Here you can add groups that
+      everyone with a security level of 250 will have.  Let's add just the
+      SYSOP group by doing the following:
+
+        1. Press ALT-A to add a group to the security profile.
+        2. Cursor down to SYSOP in the "Defined Groups" column.
+        3. Press ENTER to add the group.
+        4. Press ESC to exit and return to the security profile screen.
+        5. Notice the time limits now reflect that of the SYSOP group.
+        6. Press ESC one more time to return to the user profile screen.
+
+<Caption>The SysOp has unlimited access because he is a member of the
+SysOp group we defined.
+
+      The DEFAULT group is automatically applied to everyone.  The SYSOP
+      group, in this example, comes from the security level profile.  You can
+      add additional groups for just this user by using ALT-A from this
+      screen.  Any groups added in this manner have no effect on those with a
+      similar security level.
+
+    Example:  Creating A Visiting Sysop Member Profile (Sec. 90)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Our example for security level 90 puts a bit of a twist into the
+      picture.  Now we have a group of users who are both Visiting SysOps and
+      Paid Members.  How do we accommodate them?  The answer is easy.  Simply
+      assign the groups to that security level and let PCB/IC handle the
+      rest.
+
+        1. Go to the User Profile Screen (PCBICCFG | Profile Maintenance)
+        2. Press ALT-S to edit security profiles.
+        3. Enter 90 for the security level to edit.
+        4. Add (ALT-A) VISITING SYSOP and PAYING MEMBER to the security profile.
+        5. Exit and save.
+
+      It's that easy.  We've now just assigned security level 90 the
+      privileges of a VISITING SYSOP who is a PAYING MEMBER.  This brings up
+      an interesting point.  With more than one group, how does PCB/IC
+      resolve the differences between the two.  This is called a composite
+      profile
+
+    How To Understand Group Composite Profile
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      The rules for resolving the access when two or more groups are involved
+      is really quite simple--the user gets the most access granted to them.
+
+      If they are a member of a group that gives 10 minutes of access to
+      SLIP, and also a member of a group that gives 45 minutes, the user gets
+      45.
+
+  Summary
+
+      There is a lot of territory that we have not covered in this
+      documentation regarding groups and profiles.  Yes, we have covered the
+      essentials, but  there is a lot you can explore in the way of adding
+      and deleting groups.  Don't be shy when it comes to satisfying your
+      curiosity.
+
+
+4
+##############################################################################
+                                                                Configuration
+
+
+      PCBICCFG.EXE is the program that is used to set up and customize the
+      Internet Collection.  Obviously, you should become familiar with this
+      program and how you can use it to customize the program to meet your
+      needs.  Although you have already used PCBICCFG to setup PCB/IC, this
+      chapter's focus is to cover each option in greater depth.
+
+File Directories
+===============================================================================
+
+      There are only a small number of directories that you need to configure
+      in PCBICCFG | System Configuration.  This section talks about each of
+      those sub-directories, and what files are stored in each one.
+
+  Name/Loc of ICPROFS.DAT
+  -----------------------
+
+      This data file contains information about the group profiles you
+      define.  It is typically small and should be shared among all nodes.
+      Therefore, the best place to put this is on a shared-drive out on the
+      network.  That way, all nodes can access the same data file.  The
+      following is an example:
+
+        Name/Loc of ICPROFS.DAT  : G:\PCBIC\DATA\ICPROFS.DAT
+
+  Name/Loc of ICLEVELS.DAT
+  ------------------------
+
+      As you know by now, you can simplify your configuration by making
+      everyone at a particular security level a member of several groups.
+      That way, you do not have to manually update hundreds, or thousands of
+      users.  Information about what groups are assigned to what security
+      levels are stored in this file.  It is best to store this file on the
+      server so it is accessible to all nodes.
+
+        Name/Loc of ICLEVELS.DAT : G:\PCBIC\DATA\ICLEVELS.DAT
+
+  Location of Data Files
+  ----------------------
+
+      The subdirectory you specify in this field determines where the menu
+      data file and external text files are stored.  Remember, only the
+      subdirectory is required.  File information should be ignored.  The
+      following shows an example:
+
+        Location of Data Files   : C:\PCBIC\DATA\
+
+  Location of Holding Dir
+  -----------------------
+
+      This subdirectory serves as a starting subdirectory for holding
+      directories.  All user holding directories are stored underneath the
+      directory specified in this field.  For example, entering
+      C:\PCBIC\HOLD\ for the holding directory will yield subdirectories
+      named  something like C:\PCBIC\HOLD\0A3FQG.IC\.  The 0A3FQG.IC
+      subdirectory is unique to one individual on the system.  A user's
+      holding directory can be determined by looking at the user's profile in
+      PCBICCFG.  An example entry for this field follows:
+
+        Location of Holding Dir  : C:\PCBIC\HOLD\
+
+  Location of External Log
+  ------------------------
+
+      Logs are kept to track activity.  PCB/IC has the ability to either
+      store the information directly in your normal PCBoard caller logs, or
+      you can send them to an external log file.  External log files are
+      written to the directory specified by this field.
+
+      Each node maintains a separate log file.  The filenames for all of the
+      logs begin with TCP and are followed by the node number.  For example,
+      node 21's external file is named TCP21.  The following shows an example
+      entry:
+
+        Location of External Log : C:\PCBIC\LOG\
+
+Application Options
+===============================================================================
+
+      In PCBICCFG | System Configuration, there are a few fields that are
+      specific to just a few applications.  This section discusses those
+      options and their effect on the applications of the PCBoard Internet
+      Collection.
+
+  Email Site Name
+  ---------------
+
+      Some of the applications in the collection such as FTP need an e-mail
+      address for anonymous logins.  This field allows you to specify the
+      suffix for the e-mail address.  The first part of the address, user
+      name, is automatically generated by the program.
+
+      Whatever you enter for the suffix, it should usually begin with the
+      mandatory @ sign used in all Internet e-mail addresses followed by the
+      site the user's e-mail address is sent to.  Most often, this is the
+      domain name for your BBS.  An example entry for this field follows:
+
+        Email Site Name  : @sitename.com
+
+      With this field entry and a user named JOHN SMITH logged in, the user's
+      full Internet e-mail address is john.smith@sitename.com.
+
+  FTP
+
+    Allow Holding of Files
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+      Holding a file provides a more permanent way for users to store files
+      they have retrieved via FTP in case they do not have enough time to get
+      them from the BBS on the original call.
+
+      This option must be enabled if you want to allow any users to store
+      files in a temporary holding directory.  A setting similar to this one
+      is also in each group profile so that you can disable holding
+      capabilities for certain groups of users.  For example, if you want
+      SysOps, and only SysOps, to have access to hold files, you have to
+      enable this setting and also the setting in the SYSOP profile (if that
+      is what you named it).  If either setting is set to "N", the user will
+      not be able to store files in the holding directory.
+
+      Unlike file attachments, this option puts the file into a holding
+      directory on disk.  Since the holding directory is separate from the
+      message system, there is no overhead with one message per file, etc.
+      Files are packed out of the holding directories during a system event
+      using the PCBICEVT program.
+
+    Attach Conference Number
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+      When allowing these files to be stored as file attachments, it is
+      strongly recommended that you setup a separate conference for these
+      file attachments to be stored.  That way, PCBPACK can be used to
+      pack-out these files in a different manner than other message bases.
+
+      Suppose you specified this conference number to be a message base that
+      holds regular messages too (e.g., Main Board message base).  In this
+      scenario, there are two problems with storing the file attachments
+      here:
+
+        1. The message base could become excessively large.  This would
+        be the case if users download a lot of files since each message
+        attaches only a single file.
+
+        2. In normal conferences, you may want to leave messages online
+        for 30-60 days before packing it off the system. If you let
+        30-60 days of file attachments pile up, a good chunk of
+        disk-space is used in the process.
+
+      The answer to each of these problems is to set up a separate conference
+      that has one purpose--store file attachments. In an event, set PCBPACK
+      to run with the /DAYS switch to remove attachments that are a certain
+      age.
+
+Logging Options
+===============================================================================
+
+      Logging information proves useful in many circumstances.  By viewing
+      activity logs, you can tell whether a user accessed a particular
+      application and more.  PCB/IC has numerous options that control where
+      log files are kept and what information is stored.  These settings are
+      found in PCBICCFG | System Configuration.
+
+  Use External File
+  -----------------
+
+      Logging can be done in one of two ways--internal or external.  Internal
+      logging is where all entries are placed directly in the PCBoard caller
+      log while external logging is where all PCB/IC log entries are kept in
+      a separate file for each node.  This option only affects the location
+      of the entries themselves, not how much is tracked.  Therefore, your
+      selection here is simply based on whether you mind having larger
+      PCBoard caller log files or prefer to have PCB/IC log entries in an
+      external file.
+
+      When external logging is selected, the location for the log files is
+      defined in PCBICCFG | System Configuration.  The filenames all begin
+      with TCP followed by the node number.  For example, if this is your
+      entry for the log locations,
+
+        Location of External Log : C:\PCBIC\LOGS\
+
+      the log for node 22 is written to a file named TCP22 in the
+      C:\PCBIC\LOGS\ subdirectory.
+
+  Connect Information
+  -------------------
+
+      To get connection information about a site, enable this logging option.
+      Items that are logged include:
+
+        * Which Domain Name Server (DNS) is used to resolve an address
+
+        * Whether the connection was successful or not.  If it fails,
+          the reason is also written to the log.
+
+        * What port was used for the connection
+
+      The following is a sample snippet from an actual log:
+
+        Looking for bbs.pcboard.com
+        Using DNS: [206.173.168.40]
+        Using DNS: [206.173.168.40]
+        Looking for bbs.pcboard.com
+        Connection established on port #23
+
+  Date & Time
+  -----------
+
+      Sometimes the exact date and time that a connection was established
+      prooves useful.  When you want to know such information, this switch
+      must be enabled.  The following is a sample from an actual log:
+
+        Looking for bbs.pcboard.com
+        Using DNS: [206.173.168.40]
+        Using DNS: [206.173.168.40]
+        Looking for bbs.pcboard.com
+        Connection established on port #23 (02/27/96 17:34:14)
+
+  FTP Commands
+  ------------
+
+      The FTP application uses several different commands to do things.  For
+      example, when a user changes directory the CWD (change work directory)
+      command is sent to the FTP server.  This option records all of the FTP
+      commands sent to the server during the connection.  The following log
+      snippet illustrates:
+
+        Sending USER command
+        Sending PASS command
+        Cmd: LIST
+        Cmd: CWD pub
+
+  FTP Responses
+  -------------
+
+      In response to most commands, the FTP server or site sends responses.
+      These responses are preceded with a three digit number corresponding
+      with the type of message it is.  With this option enabled, PCB/IC
+      records the first line of each of these messages as shown in this
+      following example:
+
+        220 www Windows NT FTP Server (Version 3.5).
+        331 Anonymous access allowed, send identity (e-mail name) as
+        230 Anonymous user logged in as publicftp (guest access).
+        200 PORT command successful.
+        150 Opening ASCII mode data connection for /bin/ls.
+
+  FTP Transfers
+  -------------
+
+      A two-stage process is used to get the file from an FTP site to the
+      user.  The first stage involves bringing the file from the FTP site to
+      the node machine.  From there it can be transferred to the user.
+      PCBoard records the second transfer in the log because it is a normal
+      file transfer.  If you want to record the transfer statistics for the
+      first stage, you must enable this option.  An example log entry is as
+      follows:
+
+        File received: PCBDEMO.ZIP   CPS: 215525
+
+Timeout Options
+===============================================================================
+
+      Timeout values determine at what point the Internet application gives
+      up what it is trying to do.  Activities such as establishing a
+      connection, receiving input, and inactivity are all covered in this
+      area.
+
+      Under the DOS version of PCB/IC, you know when an application is
+      waiting because a visible cue is given.  This cue is simply the number
+      of seconds (surrounded by brackets) before the time-out occurs.  This
+      example from the FTP application provides a great example:
+
+        Negotiating login process. [295]
+
+      From this prompt, we can tell that some sort of negotiation is in
+      process.  Furthermore, we also see that if that negotiation does not
+      complete within 295 seconds, the connection will abort.  To increase
+      the time-out value temporarily, press the TAB key.
+
+  Open Connection
+  ---------------
+
+      This value determines the maximum time that PCB/IC should wait for a
+      connection response from the host computer.  The normal operating
+      procedure is to resolve the address into an IP address, send a
+      connection response and wait for some sort of connection message.
+
+      Normally, this procedure happens quite quickly.  A slow response time
+      in this area may signal that sending and receiving data may also be
+      slow and therefore not worth keeping the connection.  Therefore, a
+      value of 30 is a good default value.  If your situation demands more
+      time, by all means, increase it.
+
+  Receive Input
+  -------------
+
+      When one of the applications is expecting data from the host but is not
+      receiving it, this time-out value is enabled.  The application waits
+      until the countdown reaches zero at which time it closes the
+      connection.
+
+      There are two main reasons for a delay in receiving characters:  1)
+      there is a delay on the Internet which is usually caused by excessive
+      load, or 2) the host computer is busy processing your request.
+
+      In both cases, it is not uncommon to see a delay occur for several
+      moments.  A good value for this field is 180 seconds but may vary based
+      on your circumstances.
+
+  Transfer Inactivity
+  -------------------
+
+      This timer simply monitors if there is any data being sent or received.
+      If nothing is sent or received in the time allotted, the connection is
+      automatically closed.  Typically, you'll want this to be one of your
+      higher settings (several minutes).  Remember, all time-out values are
+      specified in seconds.  The following example sets a 5 minute (300
+      second) value:
+
+        Transfer Inactivity  : 300
+
+  Close Connection
+  ----------------
+
+      Just as there is a time-out value for opening a connection, there is
+      one for closing the connection too.  In this case, a request to close
+      the connection is made and confirmation is sent in return.  If the
+      confirmation is not received in the amount of time specified by this
+      field, the connection is forced closed.
+
+      Since closing a connection does not take long, a relatively small value
+      should be entered in this field.  A value between 30 and 45 seconds is
+      a good example.
+
+  Inactivity Delay
+  ----------------
+
+      Both the inactivity and receive input delays are quite similar.  The
+      major difference is that the inactivity delay is activated whenever the
+      application is not expecting input and is therefore simply idle.  If no
+      data is transferred during the time specified by this field, the
+      connection is closed.  Set this value to something greater than or
+      equal to your receive time-out value.
+
+  Domain Lookup Timeout
+  ---------------------
+
+      Anytime a user enters a named address, the application has to send a
+      query to the domain name server to find out what the IP or numerical
+      address is for that site.  These queries are typically answered in just
+      a matter of seconds.  It makes sense to set the value for this field to
+      something small (15 seconds or less).
+
+
+
+
+5
+##############################################################################
+                                                                Customizing
+
+
+
+      Life would be boring if everything looked the same.  That's one of the
+      reasons we had put a lot of work into allowing you to customize the
+      appearance of PCB/IC.  Not only can you change text wording, but you
+      can customize the menu appearance, and many other aspects as well.  The
+      focus of this chapter is to detail the areas that can be customized.
+
+Changing Text Displays
+===============================================================================
+
+      Because there are so many ways to convey information, it is important
+      to design systems that are easily customized.  So it is with the
+      Internet Collection.  Not only can you customize nearly any text prompt
+      that appears, but also add additional text files that enhance the
+      information presented to your callers.
+
+  Creating Application Intro/Exit Screens
+  ---------------------------------------
+
+      Although many people are familiar with the World Wide Web, many may not
+      know what Telnet or Ping is.  You are given the opportunity to explains
+      these applications in the intro screen for each program.  Likewise,
+      additional action may be required at the end of the application where
+      an exit screen can explain this in better detail.
+
+      All of these screens we refer to are located in the data file
+      subdirectory (PCBICCFG | System Configuration) and can be customized as
+      any other PCBoard display file can.  Yes, you can create security
+      specific, or even graphic specific files if desired.  About the only
+      thing you cannot do is run a PPE or launch a MNU inside one of these
+      display files.
+
+    Intro Screens
+    ~~~~~~~~~~~~~
+
+      Screens that introduce an application serve to prepare the caller for
+      what they are about to enter.  For example, if a user selects FTP but
+      does not know what it is, you can have the introduction screen give
+      appropriate background information on the purpose of FTP.  Likewise,
+      you may want to include instructions on how to exit the program in case
+      they find out this is not the application they wanted.
+
+      The following table outlines information about what intro filenames are
+      associated with which applications.  Remember, the location of each
+      display file is in the data file subdirectory as pointed to by
+      PCBICCFG.
+
+         Application   Filename        Application     Filename
+
+         Finger        FING            RLogin          RLOG
+         FTP           FTP             SLIP            SLIP
+         Gopher        GOPH            Telnet          TELN
+         Ping          PING            TraceRoute      TRACE
+         PPP           PPP             Whois           WHOIS
+
+      As an example, if the data directory is C:\PCBIC\DATA and you want to
+      make an intro screen for FTP, edit the file C:\PCBIC\DATA\FTP.
+
+    Closing Screens
+    ~~~~~~~~~~~~~~~
+
+      Some applications may require additional action by the user.  FTP
+      requires that the user download the file from the bulletin board once
+      it is obtained from the FTP server.  An excellent way to let the user
+      know what to expect next is through a display file that appears after
+      the Internet application is exited.
+
+      At the current time, only the FTP application has a closing screen
+      which consequently is named FTPC.  Like the opening screens, this file
+      must be located in the data file subdirectory pointed to by PCBICCFG.
+
+    FTP Transfer Window
+    ~~~~~~~~~~~~~~~~~~~
+
+      When a user has ANSI capabilities and when the FTPSCRN file exists,
+      they are shown a progress window similar to the following:
+
+<Caption>The layout of the sample FTPSCRN file included with the PCB/IC package
+
+      Because this is an external file, you can change the colors of the
+      window using PCBEdit or any of the text if desired.  You can even make
+      this window language specific if desired.
+
+      The placement of the various options can also be configured by
+      modifying some prompts in the TCPTEXT file.  In particular, records 125
+      to 134 are the ones to be concerned with.  The two numbers at the
+      beginning of each line represent the x and y coordinates where each
+      element is placed.  For example, to change the location of the filename
+      from column 13, row 2, simply change the numbers for this record.  If
+      you make this change, be sure to update the FTPSCRN file so there is
+      space for the filename to fit.
+
+  Individual Text Lines
+  ---------------------
+
+      Virtually everything that is displayed by the Internet Collection is
+      either contained in an external text file or as editable text records
+      in a text record file.  To get an idea of the text displayed by PCB/IC,
+      load PCBICCFG and select Edit Text Records from the Main Menu.
+
+<Caption>The initial screen you see when you edit text records.
+
+      Notice that this screen is divided into two separate windows.  The
+      first shows the language you are editing, and the bottom window
+      provides a scrollable window showing all of the text records you can
+      edit.
+
+    Selecting A Language To Edit
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      When you first enter the text record screen, your current window is the
+      language window.  Use the cursor keys to highlight the language you
+      want to edit and press TAB to edit records for that language.
+
+    Finding The Text to Modify
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+       Use the cursor keys to scroll through the list of prompts.  When you
+       find one to edit, press ENTER to modify it.  Let's go through a quick
+       exercise to make sure you understand how to make changes.
+
+        1. Select Edit Text Records from the PCBICCFG main menu.
+        2. Use the cursor keys to select the language to edit.
+        3. Press TAB to move to the text record window.
+        4. Use the cursor keys to go down to record 17 and press ENTER.
+        5. Type in the next text for the record.  Press ESC to exit and save.
+
+    Saving  Changes
+    ~~~~~~~~~~~~~~~
+
+      PCBICCFG automatically saves the changes when editing text records.
+      Therefore, you do not need to worry about saving your changes.
+
+Menu Customization
+===============================================================================
+
+      The Internet Collection combines the advantages of standard Internet
+      applications into a single easy to use interface.  At the heart of this
+      interface is the main menu.  This is the list of applications that is
+      shown when you first open the door.
+
+<Caption>The Internet Collection Main Menu which lists all applications available.
+
+      Users can then select what applications they want to access by
+      selecting a single letter or for the more advanced, they can enter the
+      application name followed by the site they want to visit (e.g., telnet
+      bbs.pcboard.com allows the user to telnet to Clark Development's BBS.)
+
+  When Does The Menu Display?
+  ---------------------------
+
+      Like PCBoard, the menu only displays for novice callers and for those
+      who explicitly request it.  Novice callers see it every time, experts
+      only see it when they issue the MENU command from the Enter Selection
+      prompt.
+
+  Editing The Default Menu
+  ------------------------
+
+      By default, the PCB/IC menu is stored in an external display file just
+      like many of the screens in your PCBoard system.  The best utility to
+      use to edit the file is PCBEdit.
+
+      The external menu file is stored in the data subdirectory (see PCBICCFG
+      | System Configuration) and utilizes the name MENU.  Because the MENU
+      file is a simple display file, you can take advantage of PCBoard's
+      display file conventions.  Language specific files can be created by
+      adding the appropriate extension to the end of the file (e.g., MENU.SPA
+      for Spanish callers).  Additionally, security specific versions of the
+      file can be created by appending the security to the end of MENU (e.g.,
+      MENU40) for security level 40 users.
+
+  Modifying The Optional Menu
+  ---------------------------
+
+      Optionally, you can have PCB/IC automatically create a main menu based
+      on what options they have enough menu security for.  The description,
+      menu options, and program name are all automatically colorized and
+      displayed on-the-fly.  In order to use this feature, you must delete or
+      rename the external menu file (MENU) located in the \PCBIC\DATA
+      subidrectory.
+
+    Changing Application Descriptions
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      If you want to change the descriptions of the various applications, you
+      can do so easily by selecting Alternate Menu Configuration from the
+      PCBICCFG main menu.  Use the TAB key to move between fields.  When you
+      are at the description field you want to change, simply enter the next
+      text.  When you exit the program, be sure to save all of the changes or
+      your menu descriptions will be lost.
+
+    Changing Menu Colors
+    ~~~~~~~~~~~~~~~~~~~~
+
+      What if you want to change the colors of the menu?  Like the
+      descriptions, this too is done by selecting Alternate Menu
+      Configuration from the PCBICCFG main menu.
+
+<Caption>The menu configuration screen in PCBICCFG.  This is where menu
+descriptions and colors can be changed.
+
+      Selecting The Item To Change
+
+      Use the TAB key to select the item you want to change the color of.
+      You can change the color of the menu letter or option, application
+      name, and application description.  The following section discusses how
+      to convert the color you want into the appropriate number.
+
+      Table Of Colors
+
+      The color code for the menu items are the same as the PCBoard color
+      codes covered in your manual only they do not have the @X in front of
+      them.  That is, the first digit represents the background color, and
+      the second digit, represents the text color.  The following tables
+      illustrate the colors you can select and their corresponding codes:
+
+              Background (1st Digit)          Foreground (2nd Digit)
+        Color       Normal  Blinking        Normal  Bright
+        Black       0       8               0       8
+        Blue        1       9               1       9
+        Green       2       A               2       A
+        Cyan        3       B               3       B
+        Red         4       C               4       C
+        Magenta     5       D               5       D
+        Yellow      6       E               6       E
+        White       7       F               7       F
+
+
+6
+##############################################################################
+                                                                HotPicks
+
+
+What Is Their Purpose?
+===============================================================================
+
+      Everywhere you turn it seems that someone is pointing out the top 100
+      or top sites of the Internet.  The purpose of Hotpicks is to allow you
+      to list the top 15 sites for a particular application on your system.
+      That way if you have new callers to the system, they can see a list of
+      frequently visited sites so they can get down to business right away.
+
+Enabling Hotpicks
+===============================================================================
+
+      To allow users to access the hot-pick lists, you must modify their
+      profile.  Using PCBICCFG, select Profile Information.  Notice on the
+      right hand side of the user profile are the following fields:
+
+
+<Picture>
+
+
+      Use ALT-A to edit one of the profiles.  If you want all users to have
+      access to hotpicks, the easiest choice is to modify the DEFAULT group
+      since everyone is a member.  Once you modify the group profile to have
+      access to hotpicks, every users that is a member inherits that access.
+
+How Are Sites Added/Tracked?
+===============================================================================
+
+      If the purpose of hotpicks is to track the most common sites, you may
+      be asking yourself "How do sites get tracked?".  Any site that has an
+      entry in the hotpicks database is automatically tracked.  As a user
+      accesses the site, the number of times the site has been visited is
+      increased.
+
+      Whenever a user who has hotpicks access enters a site not in the
+      database, they are asked if they want to add the list to the database.
+      If they answer affirmatively, a description for the site is entered and
+      the database is updated.
+
+      Just because a site is added to the database does not mean it will
+      appear for all of your callers.  Before being visible the site must be
+      approved.  This brings us to our next topic--maintaining the hotpicks
+      list.
+
+Maintaining The Hotpicks List
+===============================================================================
+
+      In maintaining the hotpicks list the primary focus is approving sites
+      for public access and modifying descriptions entered by users.  To look
+      at the lists of popular sites for each applications, load PCBICCFG and
+      select Hotpicks Maintenance.
+
+<Picture>
+<Caption>A sample screen showing the hotpicks maintenance for FTP sites.
+
+      Notice that this example screen illustrates maintenance for just FTP
+      sites.   As we have already discussed, there are lists stored for other
+      applications too.
+
+  Switching Between Application Hotpick Lists
+  -------------------------------------------
+
+      To switch between the various application hotpick databases, all you
+      need to do is press TAB or SHIFT-TAB.  As you do, notice that the
+      second line changes to show you the application you are currently
+      modifying.  It is really that simple.
+
+  Approving Sites
+  ---------------
+
+      The majority of time spent when maintaining a hotpicks database is in
+      approving sites.  This action entails getting more information about a
+      particular site, and either approving it or deleting it.
+
+    Getting More Information
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Use the up and down cursor keys to move between the sites in the
+      database.  Once you have a site that has not been approved (is missing
+      the check-mark next to the site name), press ENTER to get more
+      information about it.
+
+<Picture>
+<Caption>Information about the PCBoard FTP Site is listed by pressing ENTER.
+
+    Making A Site Available
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+      If after looking at the site information, you want to make it
+      available, simply press ALT-A.  To let you know that site is now
+      approved a check-mark appears next to the site name. Once the site is
+      approved, it is listed on the hotpicks list for your users.
+
+    Deleting Unwanted Sites
+    ~~~~~~~~~~~~~~~~~~~~~~~
+
+      When a site is deemed inappropriate, you'll most likely want to delete
+      it from your list.  This can be done by pressing ALT-D when
+      highlighting the name.  When you delete the site, it can be added again
+      should a user who has hotpicks access go to that site again.  To
+      prevent that event from occurring, leave the name in the database but
+      never approve the site.
+
+    Automatically Approving All Sites
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      If you do not want to screen sites before approving them, use the
+      /FORCE command line parameter of the PCBICEVT (event management)
+      program.  The proper syntax is:
+
+        PCBICEVT /FORCE
+
+  Modifying Descriptions
+  ----------------------
+
+      Not all descriptions entered by the users are appropriate for release.
+      For example, a description may read "Cool site!"  That does not offer
+      much to the new user who is looking for a good site to go to.
+
+      To edit a description for a site, move the highlight bar using the
+      cursor keys until the desired site is selected and press ALT-E.  Enter
+      the new description followed by ENTER to save the changes.
+
+  Determining The Most Popular Sites
+  ----------------------------------
+
+      A tool that you have at your disposal to help you find sites that need
+      to be released  is the sort function.  Pressing ALT-S while viewing a
+      hotpicks database sorts the database first by unreleased sites and then
+      by popularity of those sites.  This way, sites that are the most likely
+      candidates for release are at the top of the list.
+
+      The list of the top sites is produced by the PCBICEVT program during
+      your maintenance event.  For more information on this aspect of
+      PCBICEVT program, refer to the Maintenance Event section of chapter 2.
+
+  The Number of Records in the Database
+  -------------------------------------
+
+      Each application (Telnet, FTP, etc.) keeps track of a separate
+      database.  Each of these databases is capable of tracking up to 2500
+      sites.  To maintain the number of sites you want to track, use the
+      PCBICEVT program as discussed in chapter 2.
+
+
+7
+##############################################################################
+                                                            Program Summaries
+
+
+Finger
+===============================================================================
+
+  What It Is
+  ----------
+
+      This application provides a way for you to find information about a
+      user at a particular site.  For example, you can find out the last time
+      a user logged into the system.  Many sites have found clever uses for
+      finger requests by having them return additional information such as
+      famous birthdays and the like.
+
+      Not all sites accept finger requests.  An easy way to determine if a
+      site allows finger access is to try it.  If you get a Host refused
+      connection message, the site does not support the finger application.
+
+  A Sample Finger Site
+  --------------------
+
+      Let's try a sample finger so you have a feel of what to expect.  Begin
+      by selecting Finger from the PCBIC menu or by loading PCBIC with the
+      /FINGER command line parameter.  The first thing you see is:
+
+        Enter Name or Site:
+
+      At the site name, type cris.com and press ENTER.  For the username,
+      press ENTER again to get a list of users currently on the system..
+      After the site is queried, you should see output similar to this:
+
+       [CRIS.COM] -  Concentric Research Corporation Network
+       Home of:
+
+       Concentric Research Information Service, BBS Direct and Internet Access.
+       For subscription information, send an email message to ``INFO@CRIS.COM''
+
+      To get information about a specific user at that site, enter their name
+      at the "Enter User Name:" prompt.  Otherwise, leave it blank to get a
+      list of current users at the site.
+
+  When It Does Not Seem To Work
+  -----------------------------
+
+      If a site does not have a finger server, you will see a display similar
+      to the following:
+
+        Enter Name or Site: pcboard.com
+        Enter User Name:
+        Looking for pcboard.com
+        Attempting to open bbs.pcboard.com [206.173.168.20]
+
+      Notice that the only way you can tell there is no finger information
+      available is that nothing is returned.
+
+FTP
+
+      One of the most widely used programs to transfer files over the
+      Internet is called FTP for File Transfer Protocol.  Because these
+      programs are so standard in their interface, we will not go into a
+      discussion of how to FTP a file.  Instead, this section focuses on ways
+      that PCB/IC's implementation is different from the others.
+
+  Interface
+  ---------
+
+    Screen Management
+    ~~~~~~~~~~~~~~~~~
+
+      Most FTP programs do not pause when the screen becomes full.  FTP uses
+      the traditional PCBoard More? prompt to help you see what is on the
+      screen before it scrolls off.  When you see this prompt, press ENTER
+      alone to go to the next screen or N followed by ENTER to abort the
+      current display.
+
+    Anonymous Logons
+    ~~~~~~~~~~~~~~~~
+
+      Once connected to an FTP server, pressing ENTER at the username prompt
+      attempts to log you into the system as a user named anonymous.  When
+      you sign in anonymously, sites require your e-mail address for the
+      password.  PCB/IC automatically sends this password by taking the user
+      name and adding the e-mail address configured in PCBICCFG | System
+      Configuration.
+
+    Aborting Actions
+    ~~~~~~~~~~~~~~~~
+
+      Another feature that this application inherits from PCBoard is the
+      ability to break out of a display.  Press CTRL-K or CTRL-X to abort the
+      current display (e.g., a directory listing.)
+
+  File Transfers
+  --------------
+
+    Transferring Binary Files
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      By default, FTP begins in ASCII mode.  If you plan to transfer a binary
+      file such as a .ZIP or .EXE file, make sure you get it in binary mode.
+      Otherwise, the file may be truncated early or There are two ways you
+      can do this:
+
+        1. Enter the BIN command at the FTP command prompt.   This switches
+        all transfers to binary mode.
+
+        2. When getting a file, use BGET instead of GET.   This forces binary
+        mode to be used.
+
+    Getting Multiple Files
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+      This release of PCB/IC does not support multiple file gets.  Therefore,
+      use GET and BGET instead of MGET and MBGET.
+
+Gopher
+===============================================================================
+
+      Once connected to a gopher site, navigating it is really quite easy.
+      This is because the very essence of gopher servers is a tiered-menu
+      approach.  Once you select an option it either gives you an object of
+      some sort or continues to another menu.
+
+      Selecting menu options under PCB/IC's gopher involves entering the
+      corresponding menu letter when prompted.   Here is an example:
+
+        Cmd   Type          Description
+ ---   ----------    ----------------------------------------------------
+ A)    Menu          Information About Gopher
+ B)    Menu          Computer Information
+ C)    Search        Search Gopher Titles at the University of Minnesota
+ D)    Search        Search lots of places at the University of Minnesota
+ E)    Menu          University of Minnesota Campus Information
+
+
+ (1) Quit  Enter Selection? a
+
+      Two commands are available on nearly every menu.  Enter the number 2 to
+      go back to the previous menu (unless you are at the top menu) or enter
+      1 to quit Gopher.
+
+Ping
+
+  What It Is
+  ----------
+
+      When you need a quick and easy way to see if you are communicating
+      properly with the Net or if a site is operating, use Ping.  With Ping,
+      you are simply given statistics as to the amount of time it took to
+      receive a packet back from a site.
+
+      Applying a telephone analogy, this application is the equivalent of
+      calling a phone number, acknowledging that it rung and then hanging up.
+      When you are not connected to the Internet, their is no dial tone so to
+      speak and therefore you cannot verify if a site is operational.
+
+  Pinging A Site
+  --------------
+
+      Let's ping a popular site like internic.net to get a good idea of the
+      output the ping program produces:
+
+        Enter Site Name: internic.net
+        Enter number of pings to send (1-9): 3
+        Pinging internic.net (198.41.0.5)  3 times
+
+         sent PING # 1 , response time 162  milliseconds
+         sent PING # 2 , response time 133  milliseconds
+         sent PING # 3 , response time 132  milliseconds
+
+
+        Ping Statistics
+        Sent        : 3
+        Received    : 3
+        Success     : 100 %
+        Average RTT : 142  milliseconds
+
+      Notable in this output is the response time for each ping as it
+      provides a good performance gauge of your Internet connection.  To
+      determine an average response time, simply look at the Average RTT
+      field on the last line.
+
+RLogin / Telnet
+===============================================================================
+
+      You should be familiar with this program because it takes a great
+      liking to the popular communications programs like ProComm Plus and
+      others.  It is a simple terminal application used to access other
+      computers.
+
+      In fact, if you have ever telnetted to bbs.pcboard.com, you have
+      contacted our BBS over the Internet instead of phone lines.
+
+      The differences between RLogin and Telnet are not that major.  The
+      paramount difference is that Telnet can be 7-bit based while Rlogin is
+      guaranteed to be an 8-bit connection.
+
+      The default port is 23 for Telnet.  If you need to connect using a
+      different port it must be specified after the site address.  The proper
+      syntax is <site_address> <port>.  Notice that there is a space in
+      there.  To connect to bbs.pbcoard.com using port 24, enter
+      bbs.pcboard.com 24 as the address.
+
+      The SysOp can press ALT-F10 from the local keyboard to close the
+      current connection.  Any user may abort the current connection by
+      pressing CTRL-].
+
+PPP / SLIP
+===============================================================================
+
+      From the System Operator's perspective, this is probably the plainest
+      application because all it does is forward packets.  This simple task,
+      however is what allows users to surf the web because through these
+      applications they establish a temporary connection to the Internet.
+
+      Generally, PPP is regarded as the more robust of the two.  As such,
+      many users will want to use it.
+
+      The SysOp can press ALT-F10 from the local keyboard to close the
+      current connection.
+
+TraceRoute
+===============================================================================
+
+      A tool that will help you determine connection speeds to other sites is
+      the TraceRoute tool.  It tells you how many sites (hops) you have to go
+      through to get to another address and also a sample response time in
+      milliseconds.
+
+      Five packets are sent to each site in the connection chain.  As soon as
+      five packets are returned, the low, high, and average speed of the
+      connection is returned.
+
+        Enter Name or Site: anysite.com
+
+        Tracing from 206.173.168.20 to another.site.com (168.52.12.26)
+        Press CTRL-X, CTRL-C or CTRL-K to abort.
+
+        #) Router            low high  avg (*) name
+        --- ----------------  --- ----  --- --- ----
+        1) 206.173.168.1       2    3    2     206.173.168.1
+        2) 199.3.96.77        62   66   63     199.3.96.77
+        3) 199.3.98.42       141  324  211     199.3.98.42
+
+      Lower numbers reflect a faster connection between you and the address
+      or site listed.  If a number appears in the asterisked column, that
+      means that many packets were lost and had to be resent in order to get
+      five good responses.
+
+      When you get asterisks (*) for each of the three values as shown in
+      this example
+
+
+        #) Router            low high  avg (*) name
+        --- ----------------  --- ----  --- --- ----
+        1) 206.173.168.1       *    *    *     206.173.168.1
+
+      the site in the Router column has not returned 9 successive packets.
+      This may occur because the site is too busy to respond to a lower
+      priority request (TraceRoute request) or the site may be down.  Either
+      way, the site is not responding.
+
+WhoIs
+
+      When you want information about a particular domain, you need to use
+      the WHOIS applications to get that information.  At the "Enter Name or
+      Site:" prompt, enter the domain to get information about.  The
+      following illustrates getting information about pcboard.com:
+
+        Clark Development Co., Inc. (PCBOARD-DOM)
+        3950 so. 700 E. Suite 303
+        Murray, UT 84107
+
+        Domain Name: PCBOARD.COM
+
+        Administrative Contact:
+        Klingler, Steve  (SK79)  Steve.Klingler@SALTAIR.COM
+        (801) 261-1686
+        Technical Contact, Zone Contact:
+        Abi-Karam, Ziad  (ZA7)  ziad@CRIS.COM
+        408-342-2800
+
+        Record last updated on 02-Dec-95.
+        Record created on 05-Aug-94.
+
+        Domain servers in listed order:
+
+        NAMESERVER.CONCENTRIC.NET    199.3.12.2
+        NAMESERVER1.CONCENTRIC.NET   199.3.12.3
+
+      NOTE:  You can also get information about a particular IP address and
+      who is responsible for it by entering the IP address for the site name.
+
+
+A
+##############################################################################
+                                                     When Something Goes Wrong
+
+
+Errors When Loading
+===============================================================================
+
+      If either the Internet Collection or your network is not configured
+      properly, an error message is usually displayed before being returned
+      to PCBoard.  The purpose of this section is to help you understand the
+      error and to outline steps to remedy the situation.
+
+      NOTE:  In cases where no error message is printed, a more serious error
+      may have occurred.  For more details on solving  this scenario, refer
+      to the Utilizing Log Files section of this chapter.
+
+    NO PACKET DRIVER FOUND
+    ~~~~~~~~~~~~~~~~~~~~~~
+
+      The DOS version of PCB/IC is the only one that uses packet drivers.
+      Essentially, this error occurs when the packet driver signature is not
+      found in memory.  To fix this error, you need to verify that the packet
+      driver is loading correctly and is bound to the proper protocols.
+
+    ERROR initializing packet driver
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      The packet driver was found, but it could not be initialized.
+      Sometimes, the driver becomes busy and will fail to communicate.  In
+      this case, it is usually best to reset the machine and reload the
+      packet driver.
+
+    USERS.SYS not found
+    ~~~~~~~~~~~~~~~~~~~
+
+      PCBoard generates the USERS.SYS file so that PCB/IC can get information
+      about the current caller.  If that file cannot be found, it is not
+      possible to run the application.  This file is stored in the node
+      subdirectory.  Make sure that the entry in DOORS.LST has the USERS.SYS
+      column set to Y.
+
+    ERROR accessing packet driver
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      When this error occurs, it is representative that the packet driver was
+      either not initialized or closed properly.  It is not often that this
+      should happen so reboot the affected machine to reload the driver.
+
+    Error initializing sockets
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      The TCP/IP stack could not be initialized.  Under DOS, this typically
+      means that some sort of problem occurred with the packet driver or
+      there was not enough memory to load the driver.  Under OS/2, the TCP/IP
+      network could not be found or is not completely configured.
+
+    ERROR: Opening TCPTEXT for PCB/IC
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      The TCPTEXT file is the file that stores all of the text records that
+      you can customize via PCBICCFG.  Obviously, if the file cannot be
+      accessed, the program will not function correctly.   Using PCBICCFG,
+      make sure that the location of these files (Location of Data Files) is
+      a valid location and that the file exists.
+
+    ERROR: Reading in USER's TPA
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      Much of the information about a user (what groups they belong too, how
+      many minutes used in an application, etc.) is stored a special
+      allocation of your PCBoard user file called a TPA.  If this area has
+      not been reserved by installing the TPA, PCB/IC cannot load.  Use
+      System Manager to make sure the following TPA is setup:
+
+        Version      :     2
+        Static Size  :    50
+        Dynamic Size :     0
+        Keyword      : PCBIC
+
+    ERROR: Unable to read in MENU.DAT
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      When the MENU.DAT file cannot be loaded, PCB/IC safely exits because
+      some security/access information is stored in the file.  The location
+      of this file is determined by the Location of Data Files in PCBICCFG |
+      System Configuration.
+
+Utilizing The Log Files
+===============================================================================
+
+      One of the resources that is available to you that is often overlooked
+      is the log files.  These files often contain status or error messages
+      that are not printed on the screen.  Armed with this additional
+      information, troubleshooting can be much, much easier.
+
+  A  Sample Scenario
+  ------------------
+
+      For example, let's assume the symptoms are that the program never seems
+      to load.  We know the executable is loaded, but we are immediately
+      returned to the bulletin board.  What could possibly be the cause.
+      Looking at the log file, we see the following:
+
+        *************************************************** ***********
+         03-26-96 (16:38) (1) STEVE CATMULL  PCB/IC log file opened
+         TPA Error:  Incorrect TPA version
+         ERROR:  Initializing TPA routines
+         Error writing TPA information
+         03-26-96 (16:38) (1) STEVE CATMULL  PCB/IC log file closed
+
+      Notice that there is an obvious problem with the TPA. Looking at the
+      first error message, we see that the incorrect TPA version was found.
+      The signal there is to look into System Manager | User Info File
+      Maintenance and make sure the TPA settings are correct.
+
+  Finding The Log Files
+  ---------------------
+
+      The log files are in one of two locations.  The ultimate location
+      depends on how you answered the Use External File question in PCBICCFG
+      | System Configuration screen.
+
+      When the external file is in use, log files are created with the name
+      TCP followed by the node number (e.g., TCP1, TCP52, TCP121, etc.)
+      Internal logging stores all of the information directly in the PCBoard
+      caller log.
+
+      There is no difference in the content of the information reported in
+      the logs, simply whether the information is put in a separate external
+      log file or directly inside the PCBoard caller logs.
+
+Problems Connecting To Sites
+===============================================================================
+
+      Chances are that if you are in this section, the Internet collection
+      used to work but no longer does or maybe has never worked correctly at
+      all.  That is the program runs okay, but you just cannot connect to any
+      sites.  The purpose of this section is to help you troubleshoot the
+      situation.
+
+      In order to troubleshoot what is going on with the system, you need a
+      basic understanding of what steps take place when trying to contact a
+      site.  The following flowchart illustrates how decisions are made when
+      contacting a site.  Use it to help you determine where the problem
+      might be.
+
+<Picture>
+<Caption>This flowchart will help you diagnose what has gone wrong.
+
+      Let's work through a few sample problems so you get a better feel how
+      to troubleshoot typical scenarios.
+
+  Sample Scenario #1
+  ------------------
+
+      Symptoms:  When pinging the site bbs.pcboard.com, the message could not
+      resolve bbs.pcboard.com appears.
+
+      Solution:
+        1. This is a named site.
+
+        2. The site bbs.pcboard.com was not resolved to an address so check
+        the DNS or name server address in PCBICCFG.
+
+        3. If the DNS address is correct, check to make sure your DNS is
+        functioning.  It may either be down or inaccessible for whatever
+        reason.  A good way to test the inaccessible possibility is to go to
+        a known good IP address to see if you can access other sites.
+
+  Sample Scenario #2
+  ------------------
+
+      Symptoms:  When connecting to ftp.pcboard.com the message Host refused
+      connection.
+
+      Solution:
+        1. This is a named site.
+
+        2. We know that the site name was resolved to an IP address because
+        we see the [206.173.168.20] on the Attempting to open line.
+
+        3. Referring to the chart we make note that this site is not in our
+        domain, so we move on to the next step--checking another site.
+
+        4. We attempt to open ftp.cdrom.com and are successful.  Therefore,
+        the first site must be temporarily down.
+
+General Technical Support Tips
+===============================================================================
+
+      Most problems that you experience with computer related topics can be
+      better understood and consequently fixed faster if you adhere to three
+      principles.  In this section we outline the three founding principles
+      that will aid you in your system
+
+  Duplicate The Problem
+  ---------------------
+
+      The ability to duplicate a problem consistently is the first step to
+      finding a solution.  Only when you can reliably duplicate the problem
+      will you be able to tell if a modification has taken care of it.
+
+      When trying to duplicate an event, try to recreate the environment.
+      Use the same user record and, where possible, use the same keystrokes.
+      Consistency is the name of the game when duplicating a problem.
+
+  Simplify The Environment
+  ------------------------
+
+      Once you have duplicated the problem reliably, the next area of focus
+      needs to be in simplifying the system.  Remove any un-necessary TSRs or
+      hardware in the machine.
+
+
+
+      In your efforts to simplify the system, make sure you make only one
+      change at a time.  After each change, try to duplicate the problem.  If
+      the symptoms do not occur, the problem is most likely taken care of.
+      You'll know by performing follow-up.
+
+  Follow-Up
+  ---------
+
+      With a hypothesis of what is causing the problem, put the cause of the
+      problem back into the system.  What you are hoping to see is the
+      problem occur again.  If the problem is not exhibited, the cause of the
+      problem has been improperly identified.  Keep simplifying the system
+      and remove what you can.  This may involve running one node when you
+      have, or running just from DOS rather than from another operating
+      system.
+
+Problems Running Under DESQview
+===============================================================================
+
+      We like to use our beta test cycles to help locate any potential
+      problems with the diversity of systems that PCBoard and associated
+      utilities can run on.   It was during one of these testing cycles that
+      we were made aware of a potential problem under DESQview revolving
+      memory manager exception errors.
+
+      If you are experiencing these errors, a change must be made to the
+      performance settings under DESQview.  Using DVSETUP, configure the
+      network buffers to be 5 times the number of nodes (e.g., 20K of network
+      buffers for 4 nodes).
+
+Problems Running Under OS/2
+===============================================================================
+
+  Proxy ARP Failure
+  -----------------
+
+      This error message is only displayed during PPP and SLIP connections.
+      Although it appears on your screen, it has no effect on the connection
+      or ability to communicate.  Therefore, simply ignore the message.
+
+  PPP And SLIP Do Not Work But Other Applications Do
+  --------------------------------------------------
+
+      In this case, chances are that you have set the IP address environment
+      variable incorrectly.  Remember that each node needs to be assigned a
+      unique IP number that you really own or are authoritative for.
+      Otherwise, your users will be able to send requests, but never receive
+      them.
+
+      An additional item to be aware of is that the IP addresses you use for
+      the nodes should not be equivalent to the IP address assigned to the
+      machine.  Make sure they are unique.

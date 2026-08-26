@@ -1,0 +1,11 @@
+# VMODEM.EXE — OpenWatcom linker response file
+# 32-bit OS/2 console application
+system os2v2
+option quiet
+option map=out/vmodem.map
+name out/VMODEM.EXE
+file out/vmodem.obj
+file out/md5.obj
+library watcom/lib386/os2/clib3r.lib
+library watcom/lib386/os2/so32dll.lib
+library watcom/lib386/os2/tcp32dll.lib

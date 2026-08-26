@@ -393,14 +393,14 @@ void LIBENTRY recycle(void) {
         if (PcbData.MonitorModem) {
           if (Status.UserRecNo == 0 && UsersData.City[0] != '*') {
             logconnectstring();
-            logsystext(TXT_CARRIERLOST,SPACERIGHTAT);
+            logsystext(TXT_CARRIERLOST,SPACERIGHT);
             writelog(LogDivider,LEFTJUSTIFY);
           } else {
-            logsystext(TXT_CARRIERLOST,SPACERIGHTAT);
+            logsystext(TXT_CARRIERLOST,SPACERIGHT);
           }
         } else {
           if (Status.UserRecNo != 0 && UsersData.City[0] != '*')
-            logsystext(TXT_CARRIERLOST,SPACERIGHTAT);
+            logsystext(TXT_CARRIERLOST,SPACERIGHT);
         }
       }
       runcdlostbat();

@@ -28,14 +28,14 @@
 #define PCBTOSS_HPP
 #ifdef FIDO
 
-// Borland include files
+/* Borland include files */
 
-// Pcboard includes files
+/* Pcboard includes files */
 #include "pcboard.h"
 #include "messages.h"
 #include "dosclass.hpp"
 
-// Fido includes files
+/* Fido includes files */
 #include "structs.h"
 #include "defines.h"
 #include "data.hpp"
@@ -55,7 +55,7 @@ protected:
 
 private:
 
-// Member Functions
+/* Member Functions */
 
  bool   LIBENTRY  unarchive(char *filename,int type);
  char*  LIBENTRY  make_outbound_list(uint &len, int conf);
@@ -95,7 +95,7 @@ private:
 
 
 
-// Member Data
+/* Member Data */
     DOSFILE                      pkt_file;
     FIDO_MESSAGE_HDR             fido_msg_hdr;
     AREA_STRUCT                  this_area;

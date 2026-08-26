@@ -19,13 +19,13 @@
   #include <direct.h>
   #include <borland.h>
 #else
-//  #include <dir.h>
+/*  #include <dir.h> */
 #endif
 
 #include "wild.h"
 
 #ifndef LIB
-//  #include <account.h>
+/*  #include <account.h> */
   #include "newscr.h"
   #include "menu.h"
 #endif
@@ -63,8 +63,8 @@ static bool FoundBatch;
 
 extern struct ffblk DTA;  /* declared in exist.c */
 
-// These two functions are used to maintain compatibility with pre-15.0 code
-// where the PWRD file had FEWER FIELDS than it does now.
+/* These two functions are used to maintain compatibility with pre-15.0 code */
+/* where the PWRD file had FEWER FIELDS than it does now. */
 
 static bool _NEAR_ LIBENTRY yes(char *Str, bool Default) {
   if (Str == NULL || *Str == 0)
@@ -191,8 +191,8 @@ top:
           if (! PcbData.IgnoreDropSecLevel) {
             if (Status.ActStatus == ACT_ENFORCE && Status.Balance <= 0) {
               if (Status.CurSecLevel != UsersData.Account.DropSecLevel) {
-                // temporarily set curseclevel, processuserrecord() will
-                // reset this value again the normal way
+/* temporarily set curseclevel, processuserrecord() will */
+/* reset this value again the normal way */
                 Status.CurSecLevel = UsersData.Account.DropSecLevel;
                 Status.UseDropSecLevel = TRUE;
                 dosfseek(&File,0,SEEK_SET);
@@ -242,20 +242,20 @@ top:
 
   #ifdef PCB152
   {
-//  long ActMinLeft;
+/*  long ActMinLeft; */
 
-//  // If the caller didn't have sufficient credits to use up one minute,
-//  // he'd be logged off.  But that prevents him from using up the REST of
-//  // his credits so PCBoard couldn't give him the drop-sec-level.  The
-//  // +1 below works around this by giving him one extra minute to use
-//  // up credits and, potentially, go negative ... but at *least* it will
-//  // run the account dry so that the drop-sec-level can be used
+/*  // If the caller didn't have sufficient credits to use up one minute, */
+/*  // he'd be logged off.  But that prevents him from using up the REST of */
+/*  // his credits so PCBoard couldn't give him the drop-sec-level.  The */
+/*  // +1 below works around this by giving him one extra minute to use */
+/*  // up credits and, potentially, go negative ... but at *least* it will */
+/*  // run the account dry so that the drop-sec-level can be used */
 
-//  if (Status.ActStatus == ACT_ENFORCE && AccountRates.ChargeForTime != 0) {
-//    ActMinLeft = (long) (Status.Balance / AccountRates.ChargeForTime) + 1;
-//    if (NewTime > ActMinLeft)
-//      NewTime = (int) ActMinLeft;
-//  }
+/*  if (Status.ActStatus == ACT_ENFORCE && AccountRates.ChargeForTime != 0) { */
+/*    ActMinLeft = (long) (Status.Balance / AccountRates.ChargeForTime) + 1; */
+/*    if (NewTime > ActMinLeft) */
+/*      NewTime = (int) ActMinLeft; */
+/*  } */
   }
   #endif
 
@@ -485,8 +485,8 @@ static char * _NEAR_ LIBENTRY foundintcan(char *Name) {
     return(NULL);
 
   while (dosfgets(Buf,sizeof(Buf),&File) != -1) {
-    criteria(Buf,Criteria);         // set up a wildcard matching criteria
-    if (wildmatch(Name,Criteria)) { // does our filename match the criteria?
+    criteria(Buf,Criteria);  /* set up a wildcard matching criteria */
+    if (wildmatch(Name,Criteria)) {  /* does our filename match the criteria? */
       dosfclose(&File);
       return(Buf);
     }
@@ -609,8 +609,8 @@ int LIBENTRY fsecokay(char *FullPath, char *Name, checksectype CheckSec, char *A
     Status.FsecMultiplier = 1;
   #endif
 
-  // if someone is just uploading a file into the message editor or attaching
-  // a file then skip the UPSEC check.
+/* if someone is just uploading a file into the message editor or attaching */
+/* a file then skip the UPSEC check. */
 
   if (Status.EnteringMessage)
     return(0);
@@ -876,7 +876,7 @@ void LIBENTRY getalternatename(char *FileName, DISPLAYFILETYPE Type, int RecordS
   char   Masks[ALT_TOTAL][20];
   char   Found[ALT_TOTAL][20];
   #ifdef __OS2__
-  int DirHandle = MAKEDIRHANDLE;       //lint !e569
+  int DirHandle = MAKEDIRHANDLE;  /*lint !e569 */
   #endif
 
   stripright(FileName,' ');
@@ -987,27 +987,27 @@ void LIBENTRY getalternatename(char *FileName, DISPLAYFILETYPE Type, int RecordS
   First = ALT_TOTAL;
 
   while (1) {
-    // loop through each file that was found
+/* loop through each file that was found */
     for (Count = NumFilesFound, pblk = blk; Count > 0; Count--, pblk++) {
-      // then loop through each mask to find out which of the files we found
-      // should actually be considered for display purposes
+/* then loop through each mask to find out which of the files we found */
+/* should actually be considered for display purposes */
       for (X = 0; X < First; X++) {
-        // if the mask is non-blank then the filename that was found matches
-        // the mask, then we may want to record it
+/* if the mask is non-blank then the filename that was found matches */
+/* the mask, then we may want to record it */
         if (Masks[X][0] != 0 && stricmp(Masks[X],pblk->ff_name) == 0) {
-          // but first, check to see that the record size is okay...
-          // if no record size was requested, then it's okay, otherwise check
-          // the size of the file and make sure that the size of the file is
-          // an even multiple of the record size
+/* but first, check to see that the record size is okay... */
+/* if no record size was requested, then it's okay, otherwise check */
+/* the size of the file and make sure that the size of the file is */
+/* an even multiple of the record size */
           if (RecordSize == 0 || recordsizeokay(pblk->ff_fsize,RecordSize)) {
-            // finally, we're happy with this file that we found, so record
-            // it in our Found[] array
+/* finally, we're happy with this file that we found, so record */
+/* it in our Found[] array */
             strcpy(Found[X],pblk->ff_name);
-            // and if the array element we found is closer to the top of the
-            // array than the previous, adjust our limits so that we don't
-            // bother searching for matches that are further down the list
-            // (i.e. the more generic ones are at the bottom, the more specific
-            // ones are at the top, and we want to find the most specific)
+/* and if the array element we found is closer to the top of the */
+/* array than the previous, adjust our limits so that we don't */
+/* bother searching for matches that are further down the list */
+/* (i.e. the more generic ones are at the bottom, the more specific */
+/* ones are at the top, and we want to find the most specific) */
             if (X < First)
               First = X;
           }
@@ -1020,13 +1020,13 @@ void LIBENTRY getalternatename(char *FileName, DISPLAYFILETYPE Type, int RecordS
       break;
 
     #ifndef __OS2__
-      // the DOS version needs to keep the blk parameter in order to find
-      // the next file
+/* the DOS version needs to keep the blk parameter in order to find */
+/* the next file */
       blk[0] = blk[NumFilesFound-1];
     #endif
 
-    // just in case there are more files to be found, go back and check for
-    // more files right now and loop back up if there is more
+/* just in case there are more files to be found, go back and check for */
+/* more files right now and loop back up if there is more */
     if (dosfindnext(blk,&NumFilesFound PDIRHANDLE2) == -1)
       break;
   }
@@ -1170,7 +1170,7 @@ int LIBENTRY displayfile(char *Name, DISPLAYFILETYPE Type) {
   #endif
 
   #ifndef LIB
-    // make sure it is not one of our special files (users, users.inf, etc)
+/* make sure it is not one of our special files (users, users.inf, etc) */
     if (specialfile(FileName)) {
       char Str[80];
       writelog("Error: Attempted to display PCBoard file",SPACERIGHT);
@@ -1179,10 +1179,10 @@ int LIBENTRY displayfile(char *Name, DISPLAYFILETYPE Type) {
       return(0);
     }
 
-    // Check to see if the file is already open and, if so, avoid going
-    // recursive by getting out *now* instead of displaying the file again
-    // solves the problem of a %FILESPEC that includes itself, or of a
-    // !FILESPEC.PPE that displays the file that launched it.
+/* Check to see if the file is already open and, if so, avoid going */
+/* recursive by getting out *now* instead of displaying the file again */
+/* solves the problem of a %FILESPEC that includes itself, or of a */
+/* !FILESPEC.PPE that displays the file that launched it. */
     if (fileisopen(FileName))
       return(0);
   #endif
@@ -1217,11 +1217,11 @@ int LIBENTRY displayfile(char *Name, DISPLAYFILETYPE Type) {
 
   while ((Okay = dosfgets(Buffer,sizeof(Buffer)-1,&InFile)) != -1) {
 
-    // DISABLESUBFILES disables the display of any sub-file specifications
-    // such as %filespec to display a file, !filespec to run a PPE, $filespec
-    // to run a menu and also @hangup@
+/* DISABLESUBFILES disables the display of any sub-file specifications */
+/* such as %filespec to display a file, !filespec to run a PPE, $filespec */
+/* to run a menu and also @hangup@ */
     if ((Type & DISABLESUBFILES) != 0) {
-      // simply display the line
+/* simply display the line */
       printxlated(Buffer);
     } else {
       switch (Buffer[0]) {

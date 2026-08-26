@@ -88,9 +88,10 @@ static void _NEAR_ LIBENTRY convertfrompcbconftype(oldconftype * Old, addconftyp
 }
 
 
-void LIBENTRY putconfrecord(unsigned ConfNum, pcbconftype *Conf) {
+int LIBENTRY putconfrecord(unsigned ConfNum, pcbconftype *Conf) {
   oldconftype Old;
   addconftype Add;
+  int rc = 0;
 
   #ifdef DEBUG
     mc_register(&Old,sizeof(Old));
@@ -134,7 +135,7 @@ void LIBENTRY putconfrecord(unsigned ConfNum, pcbconftype *Conf) {
 }
 
 
-void LIBENTRY getconfrecord(unsigned ConfNum, pcbconftype *Conf) {
+int LIBENTRY getconfrecord(unsigned ConfNum, pcbconftype *Conf) {
   oldconftype Old;
   addconftype Add;
   cachetype *p;

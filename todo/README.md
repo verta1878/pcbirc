@@ -2,12 +2,18 @@
 
 For people writing doors and utilities that run under PCBoard.
 
+> **Milestone:** the toolkit has been recreated from Clark's source
+> bit-for-bit, with all original bugs intact — pwa153 (15.3) first, as
+> the base. There are now four toolkit versions (pwa153, pwa154,
+> delta154, irc1541) under `toolkit/`. See `todo/toolkit.md` for the
+> full picture and `toolkit/README.md` for the layout.
+
 ## What is in here
 
 | File | What it is |
 |---|---|
 | `PCBTOOLS.H` | The header. 198 function declarations plus the PCBOARD.DAT / PCBOARD.SYS structures. |
-| `PCBKIT_*.LIB` | The prebuilt library. Screen output, keyboard/modem input, message base access, users file, DOS helpers. |
+| `PCBTK_B.LIB` / `PCBTK_W.LIB` | The prebuilt library. Screen output, keyboard/modem input, message base access, users file, DOS helpers. |
 | `COMMDRV.OBJ`, `FOSSIL.OBJ` | Two serial implementations. Link one. |
 | `NOxxx.OBJ` | Stub objects for features you do not use. See "Making your door smaller". |
 | `DOCS` | Clark's 392 K toolkit manual. |
@@ -43,7 +49,7 @@ A door's project file looks like this:
 ```
 TESTDOOR
 COMMDRV.OBJ
-PCBKIT_S.LIB
+PCBTK_B.LIB
 ```
 
 To use a FOSSIL driver instead, change one line:
@@ -51,7 +57,7 @@ To use a FOSSIL driver instead, change one line:
 ```
 TESTDOOR
 FOSSIL.OBJ
-PCBKIT_S.LIB
+PCBTK_B.LIB
 ```
 
 To use pcbcomm, change it again:
@@ -59,7 +65,7 @@ To use pcbcomm, change it again:
 ```
 TESTDOOR
 PCBCOMM.OBJ
-PCBKIT_S.LIB
+PCBTK_B.LIB
 ```
 
 Recompile. No source changes — the function names and signatures are the
@@ -81,7 +87,7 @@ NOCHAT.OBJ
 NOSCREEN.OBJ
 NOSYS.OBJ
 PCBCOMM.OBJ
-PCBKIT_S.LIB
+PCBTK_B.LIB
 ```
 
 Available stubs:

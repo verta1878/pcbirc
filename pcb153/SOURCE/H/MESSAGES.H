@@ -262,15 +262,6 @@ int LIBENTRY getmsgbasestats(msgbasestattype *MsgStats, char *FileName);
 void LIBENTRY freehdrs(void);
 void LIBENTRY makemsgheader(msgheadertype *Header, char Status, unsigned short NumBytes, char *Date, char *Time, char *To, long RefNum, unsigned short ReadDate, char *ReadTime, char ReadStatus, char *From, char *Subject, char *Password, bool Echo);
 
-/* 15.4 v0.026: PPL bridge helpers — implementations in MSG/MSGPPL.C.
- * Field indices for get/set follow SYSOP_154.TXT section 4.4:
- *   1=From, 2=To, 3=Subject, 4=RefNum, 5=Password, 6=Status, 7=Date, 8=Time.
- * Return 0 on success; negative on error (see MSGPPL.C header comment).
- */
-int LIBENTRY pplgetmsghdr(long msgnum, int field, char *out, int outsize);
-int LIBENTRY pplsetmsghdr(long msgnum, int field, const char *value);
-int LIBENTRY pplmovemsg  (long msgnum, unsigned short destconf);
-
 /*
 #ifdef __cplusplus
 }

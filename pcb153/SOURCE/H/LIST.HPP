@@ -37,18 +37,18 @@
 
 /******************************************************************************/
 
-// Pragmas
+/* Pragmas */
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include    <stddef.h>
 #include    "types.hpp"
 
 /******************************************************************************/
 
-// Defined Macros
+/* Defined Macros */
 
 #define DD_NO       0
 #define DD_DEF      1
@@ -58,7 +58,7 @@
 
 /******************************************************************************/
 
-// Types
+/* Types */
 
 template <class T>
 class cNODE
@@ -144,23 +144,23 @@ class cILIST : public cLIST<T *>
 
 /******************************************************************************/
 
-// Constants
+/* Constants */
 
 /******************************************************************************/
 
-// Variables
+/* Variables */
 
 /******************************************************************************/
 
-// Function Prototypes
+/* Function Prototypes */
 
 /******************************************************************************/
 
-// Inline Functions
+/* Inline Functions */
 
 /******************************************************************************/
 
-// Template Functions
+/* Template Functions */
 
 template <class T>
 cLIST<T>::cLIST(void) : head(NULL)
@@ -228,28 +228,28 @@ T * LIBENTRY cLIST<T>::firstThat(int LIBENTRY (* match)(const T & obj, const voi
 {
     cNODE<T> * node;
 
-//    for (int X = 0; X < CACHESIZE; X++)
-//        if (match(Cache[X]->data,data))
-//            return(&(Cache[X]->data));
+/*    for (int X = 0; X < CACHESIZE; X++) */
+/*        if (match(Cache[X]->data,data)) */
+/*            return(&(Cache[X]->data)); */
 
     for (node = head; node != NULL; node = node->next)
-//    {
+/*    { */
         if (match(node->data,data))
-//        {
-//            for (X = CACHESIZE-1; X > 0; X--)
-//                Cache[X] = Cache[X-1];
-//            Cache[0] = node;
+/*        { */
+/*            for (X = CACHESIZE-1; X > 0; X--) */
+/*                Cache[X] = Cache[X-1]; */
+/*            Cache[0] = node; */
             return(&(node->data));
-//        }
-//    }
+/*        } */
+/*    } */
 
     return(NULL);
 
-//    for (node = head; node != NULL; node = node->next)
-//        if (match(node->data,data))
-//            return(&(node->data));
-//
-//    return(NULL);
+/*    for (node = head; node != NULL; node = node->next) */
+/*        if (match(node->data,data)) */
+/*            return(&(node->data)); */
+ /* */
+/*    return(NULL); */
 }
 
     /*--------------------------------------------------------------------*/
@@ -370,7 +370,7 @@ void LIBENTRY cILIST<T>::forEach(void LIBENTRY (* func)(T & obj))
 
 /******************************************************************************/
 
-// Test Code
+/* Test Code */
 
 #ifdef    ___TEST___
 

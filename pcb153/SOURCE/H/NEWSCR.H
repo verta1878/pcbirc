@@ -69,16 +69,16 @@ cleanupScript accepts no parameters and returns no parameters
 
 /* Function Prototypes */
 
-// #ifdef __cplusplus
-// extern "C" {
-// #endif
+/* #ifdef __cplusplus */
+/* extern "C" { */
+/* #endif */
 
 int  LIBENTRY doScript      (char * scrFile, char * ansFile, int numToks);
 void LIBENTRY cleanupScript (void);
 
-// #ifdef __cplusplus
-// }
-// #endif
+/* #ifdef __cplusplus */
+/* } */
+/* #endif */
 
 /******************************************************************************/
 

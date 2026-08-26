@@ -307,315 +307,6 @@ cVARVAL * LIBENTRY cSCRIPT::ScanMsgHdrSub(cVARVAL *p1, cVARVAL *p2, cVARVAL *p3,
 }
 
 
-/*===========================================================================
- * GetMsgHdrSub — implementation of GETMSGHDR(conf, message, field).
- *
- * Per WHATSNEW 15.4:
- *   "This function allows you to get specific message header info.
- *    Field #'s are the same as those used for the SCANMSGHDR function."
- *
- * Field indices mirror ScanMsgHdrSub above (1..15).  Returns a STRING;
- * empty string on any failure (bad conf, msg not found, etc.).
- *
- * v0.028: hexadecimal — mirrors the ScanMsgHdrSub open→seekIdx→readHdr
- * pattern but returns immediately after reading one field instead of
- * looping.
- *===========================================================================*/
-
-cVARVAL * LIBENTRY cSCRIPT::GetMsgHdrSub(cVARVAL *p1, cVARVAL *p2, cVARVAL *p3)
-{
-    pcbconftype confrec;
-    char        buf[26];
-
-    cVARVAL int1(vtINTEGER);
-    cVARVAL i2(vtDREAL);
-    cVARVAL int3(vtINTEGER);
-
-    int1 = *p1;    /* conf     */
-    i2   = *p2;    /* message  */
-    int3 = *p3;    /* field    */
-
-    if (int1.values.vINTEGER > PcbData.NumConf ||
-        int1.values.vINTEGER < 0)
-        return new cVARVAL(vtSTRING, "");
-
-    getconfrecord((unsigned)int1.values.vINTEGER, &confrec);
-
-    if (message.open(confrec.MsgFile) != 0)
-        return new cVARVAL(vtSTRING, "");
-
-    if (message.seekIdx((long)i2.values.vDREAL) != 0) {
-        message.close();
-        return new cVARVAL(vtSTRING, "");
-    }
-
-    /* readIdx returns -1 at end; message.idxRec.off holds the header
-     * offset for the current record.
-     */
-    long cur = message.readIdx();
-    if (cur == -1) {
-        message.close();
-        return new cVARVAL(vtSTRING, "");
-    }
-
-    message.readHdr(message.idxRec.off);
-
-    buf[0] = 0;
-    switch (int3.values.vINTEGER) {
-        case 1:
-            buf[0] = message.msgHdr.status;
-            buf[1] = 0;
-            break;
-        case 2:
-            ltoa((long)message.msgHdr.number, buf, 10);
-            break;
-        case 3:
-            ltoa((long)message.msgHdr.refer, buf, 10);
-            break;
-        case 4:
-            itoa((int)message.msgHdr.blocks, buf, 10);
-            break;
-        case 5:
-            memcpy(buf, message.msgHdr.dmsg, 8);
-            buf[8] = 0;
-            break;
-        case 6:
-            memcpy(buf, message.msgHdr.tmsg, 5);
-            buf[5] = 0;
-            break;
-        case 7:
-            memcpy(buf, message.msgHdr.tname, 25);
-            buf[25] = 0;
-            break;
-        case 8:
-            ltoa((long)message.msgHdr.dread, buf, 10);
-            break;
-        case 9:
-            memcpy(buf, message.msgHdr.tread, 5);
-            buf[5] = 0;
-            break;
-        case 10:
-            buf[0] = message.msgHdr.reply;
-            buf[1] = 0;
-            break;
-        case 11:
-            memcpy(buf, message.msgHdr.fname, 25);
-            buf[25] = 0;
-            break;
-        case 12:
-            memcpy(buf, message.msgHdr.subj, 25);
-            buf[25] = 0;
-            break;
-        case 13:
-            memcpy(buf, message.msgHdr.pwd, 12);
-            buf[12] = 0;
-            break;
-        case 14:
-            itoa((int)message.msgHdr.active, buf, 10);
-            break;
-        case 15:
-            buf[0] = message.msgHdr.echo;
-            buf[1] = 0;
-            break;
-        default:
-            buf[0] = 0;
-            break;
-    }
-
-    return new cVARVAL(vtSTRING, buf);
-}
-
-
-/*===========================================================================
- * SetMsgHdrSub — implementation of SETMSGHDR(conf, message, field, value).
- *
- * Per WHATSNEW 15.4:
- *   "This function allows you to modify the above fields in a message."
- *   Writable fields:
- *     1 = 'To' field       (tname)
- *     2 = 'From' field     (fname)
- *     3 = 'Subject' field  (subj)
- *     4 = 'Password' field (pwd)
- *     5 = 'Echo' Flag      (echo)
- *
- * Note field numbers here differ from GetMsgHdr — WHATSNEW's SET set is
- * a smaller writable subset with its own 1..5 numbering.
- *
- * Returns 1 on success, 0 on failure.  Sysop-level access should be
- * enforced by the caller; this helper does not check ActStatus.
- *===========================================================================*/
-
-cVARVAL * LIBENTRY cSCRIPT::SetMsgHdrSub(cVARVAL *p1, cVARVAL *p2,
-                                        cVARVAL *p3, cVARVAL *p4)
-{
-    pcbconftype confrec;
-
-    cVARVAL int1(vtINTEGER);
-    cVARVAL i2(vtDREAL);
-    cVARVAL int3(vtINTEGER);
-    cVARVAL str4(vtSTRING);
-
-    int1 = *p1;
-    i2   = *p2;
-    int3 = *p3;
-    str4 = *p4;
-
-    if (int1.values.vINTEGER > PcbData.NumConf ||
-        int1.values.vINTEGER < 0)
-        return new cVARVAL(vtINTEGER, (long)0);
-
-    getconfrecord((unsigned)int1.values.vINTEGER, &confrec);
-
-    if (message.open(confrec.MsgFile) != 0)
-        return new cVARVAL(vtINTEGER, (long)0);
-
-    if (message.seekIdx((long)i2.values.vDREAL) != 0) {
-        message.close();
-        return new cVARVAL(vtINTEGER, (long)0);
-    }
-
-    long cur = message.readIdx();
-    if (cur == -1) {
-        message.close();
-        return new cVARVAL(vtINTEGER, (long)0);
-    }
-
-    message.readHdr(message.idxRec.off);
-
-    char *val = str4.values.vSTRING;
-    switch (int3.values.vINTEGER) {
-        case 1:  /* To */
-            memset(message.msgHdr.tname, ' ', 25);
-            {
-                int n = strlen(val);
-                if (n > 25) n = 25;
-                memcpy(message.msgHdr.tname, val, n);
-            }
-            break;
-        case 2:  /* From */
-            memset(message.msgHdr.fname, ' ', 25);
-            {
-                int n = strlen(val);
-                if (n > 25) n = 25;
-                memcpy(message.msgHdr.fname, val, n);
-            }
-            break;
-        case 3:  /* Subject */
-            memset(message.msgHdr.subj, ' ', 25);
-            {
-                int n = strlen(val);
-                if (n > 25) n = 25;
-                memcpy(message.msgHdr.subj, val, n);
-            }
-            break;
-        case 4:  /* Password */
-            memset(message.msgHdr.pwd, ' ', 12);
-            {
-                int n = strlen(val);
-                if (n > 12) n = 12;
-                memcpy(message.msgHdr.pwd, val, n);
-            }
-            break;
-        case 5:  /* Echo flag — single byte, use first char of value */
-            message.msgHdr.echo = val[0] ? val[0] : ' ';
-            break;
-        default:
-            message.close();
-            return new cVARVAL(vtINTEGER, (long)0);
-    }
-
-    /* Persist the modified header. */
-    int rv = message.writeHdr(message.idxRec.off);
-    return new cVARVAL(vtINTEGER, (long)(rv == 0 ? 1 : 0));
-}
-
-
-/*===========================================================================
- * pplmovemsg — implementation of MOVEMSG conf, message, movetype.
- *
- * Per WHATSNEW 15.4:
- *   "Moves the message from its current location to the end of the
- *    message base."
- * movetype: TRUE = move (delete source), FALSE = copy.
- *
- * This is the helper called from SCREXEC.CPP's TOK_MOVEMSG dispatch.
- * Returns 0 on success, non-zero on failure.
- *
- * The "move" operation is done as: read header at source position,
- * append a copy at the end (getting a new msg number), then if
- * movetype is TRUE mark the source header as deleted (active = 0
- * per the header layout).  This matches Clark's msg-base convention
- * where deleted messages are not physically removed but flagged.
- *===========================================================================*/
-
-int LIBENTRY cSCRIPT::pplmovemsg(unsigned conf, long msgnum, int movetype)
-{
-    pcbconftype confrec;
-
-    if (conf > PcbData.NumConf) {
-        fastprint(0, 24, "Conference does not exist (MOVEMSG)", 0x70);
-        return -1;
-    }
-
-    getconfrecord(conf, &confrec);
-
-    if (message.open(confrec.MsgFile) != 0) {
-        fastprint(0, 24, "Unable to read message header (MOVEMSG)", 0x70);
-        return -2;
-    }
-
-    if (message.seekIdx(msgnum) != 0) {
-        message.close();
-        fastprint(0, 24, "Message number does not exist (MOVEMSG)", 0x70);
-        return -3;
-    }
-
-    long cur = message.readIdx();
-    if (cur == -1) {
-        message.close();
-        fastprint(0, 24, "Message number does not exist (MOVEMSG)", 0x70);
-        return -3;
-    }
-
-    long srcOff = message.idxRec.off;
-    if (message.readHdr(srcOff) != 0) {
-        message.close();
-        fastprint(0, 24, "Unable to read message header (MOVEMSG)", 0x70);
-        return -4;
-    }
-
-    /* Save the source header for re-appending at the end. */
-    sMSGHDR saved = message.msgHdr;
-
-    /* Read the body into the msg buffer so we can rewrite it at the end. */
-    if (message.readBody() != 0) {
-        message.close();
-        fastprint(0, 24, "Unable to read message body (MOVEMSG)", 0x70);
-        return -5;
-    }
-
-    /* Get a new high message number and write the copy at the end.
-     * writeHdr(-1) appends at end of file per the cMSG API contract.
-     */
-    saved.number = message.highMsgNum() + 1;
-    message.msgHdr = saved;
-    (void) message.writeHdr(-1);
-
-    /* If move (not copy), mark the source header as deleted.
-     * Clark's convention: msgHdr.active = 0 means deleted.
-     */
-    if (movetype) {
-        (void) message.readHdr(srcOff);
-        message.msgHdr.active = 0;
-        (void) message.writeHdr(srcOff);
-    }
-
-    message.close();
-    return 0;
-}
-
-
-
 cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
 {
 
@@ -1839,7 +1530,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   );
                   break;
 
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
              case TOK_OP_REGAL: case TOK_OP_REGAH:
              case TOK_OP_REGBL: case TOK_OP_REGBH:
              case TOK_OP_REGCL: case TOK_OP_REGCH:
@@ -1885,35 +1576,35 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_REGAX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.ax);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.ax);
                   break;
 
              case TOK_OP_REGBX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.bx);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.bx);
                   break;
 
              case TOK_OP_REGCX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.cx);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.cx);
                   break;
 
              case TOK_OP_REGDX:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.dx);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.dx);
                   break;
 
              case TOK_OP_REGSI:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.si);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.si);
                   break;
 
              case TOK_OP_REGDI:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.di);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.di);
                   break;
 
              case TOK_OP_REGF:
-                  rp = new cVARVAL(vtINTEGER,intrREGS.w.cflag);
+                  rp = new cVARVAL(vtINTEGER,intrREGS.x.flags);
                   break;
 
              case TOK_OP_REGCF:
-                  rp = new cVARVAL(vtBOOLEAN,intrREGS.w.cflag);
+                  rp = new cVARVAL(vtBOOLEAN,intrREGS.x.cflag);
                   break;
 
              case TOK_OP_REGDS:
@@ -1936,13 +1627,13 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_PEEKB:
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                   unsupported("PEEK() or PEEKB() function");
 #endif
                   falseErrBreak(v1);
                   i = *p1;
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                        0
 #else
                        *(tBYTE _FAR_ *)(i.values.vINTEGER)
@@ -1952,13 +1643,13 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_PEEKW:
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                   unsupported("PEEKW() function");
 #endif
                   falseErrBreak(v1);
                   i = *p1;
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                        0
 #else
                        *(tWORD _FAR_ *)(i.values.vINTEGER)
@@ -1968,14 +1659,14 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_PEEKDW:
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                   unsupported("PEEKDW() function");
 #endif
                   {
                   falseErrBreak(v1);
                   i = *p1;
 
-#if ! (defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__))
+#if ! (defined(PCB_DEMO) || defined(__OS2__))
                   unsigned dwseg = unsigned(i.values.vINTEGER >> 16);
                   unsigned dwoff = unsigned(i.values.vINTEGER & 0x0000FFFFL);
 
@@ -1990,7 +1681,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
 #endif
 
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                        0
 #else
                        (tINTEGER(dwseg)<<16)+tINTEGER(dwoff)
@@ -2002,7 +1693,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   break;
 
              case TOK_OP_MKADDR:
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                   unsupported("MKADDR() function");
 #endif
                   falseErrBreak(v2);
@@ -2011,7 +1702,7 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                   i = *p2;
                   b2 = tWORD(i.values.vINTEGER & 0x0000FFFF);
                   rp = new cVARVAL(vtINTEGER,
-#if defined(PCB_DEMO) || defined(__OS2__) || defined(__WATCOMC__)
+#if defined(PCB_DEMO) || defined(__OS2__)
                        0
 #else
                        tINTEGER(b1)+(tINTEGER(b2)<<16)
@@ -2468,14 +2159,6 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
                       case 8:
                               c = QwkSupport;
                               break;
-
-                      case 9:
-                              c = PersonalSupport;
-                              break;
-
-                      case 10:
-                              c = BankSupport;
-                              break;
 #endif
                       default:
                               c = FALSE;
@@ -2786,105 +2469,6 @@ cVARVAL * LIBENTRY cSCRIPT::evalPostFix(void)
              case TOK_OP_PPLBUFSIZE:
                   rp = new cVARVAL(vtINTEGER,
                        tINTEGER(bytesleftinpplbuffer()));
-                  break;
-
-             /*----------------------------------------------------------------
-              * 15.4 additions.  Handlers below implement the semantics that
-              * WHATSNEW documents for each new PPL function.  All rely on
-              * the Personal PSA scaffolding from v0.020 and the URead
-              * ShortDesc field (also 15.4).
-              *---------------------------------------------------------------*/
-
-             case TOK_OP_U_PERSONAL:
-                  /* U_PERSONAL(idx) — read a field of the personal PSA.
-                   * idx: 1=Gender, 2=Birthdate, 3=Email, 4=Web.  These
-                   * indices follow the PCBSM.EXE 15.4b field-label table
-                   * order recovered in v0.017.
-                   */
-                  falseErrBreak(v1);
-                  i = *p1;
-                  switch (i.values.vINTEGER)
-                  {
-                      case 1:  { char g[2] = { ptrPersonal->Gender, 0 };
-                                 rp = new cVARVAL(vtSTRING, g); }
-                               break;
-                      case 2:  rp = new cVARVAL(vtDATE,
-                                                datetojulian(ptrPersonal->Birthdate));
-                               break;
-                      case 3:  rp = new cVARVAL(vtSTRING, ptrPersonal->Email);
-                               break;
-                      case 4:  rp = new cVARVAL(vtSTRING, ptrPersonal->Web);
-                               break;
-                      default: rp = new cVARVAL(vtSTRING, "");
-                               break;
-                  }
-                  f1 = TRUE;
-                  break;
-
-             case TOK_OP_SHORTDESC:
-                  /* SHORTDESC(rec) — read the URead ShortDesc field for
-                   * user record `rec`.  ShortDesc is inline in URead
-                   * (not a PSA) — added in 15.4 into the 8-byte Reserved
-                   * scratch space.  For the currently-loaded user just
-                   * pull from ptrUData; for a specific rec num a full
-                   * users-file read would be needed (see U_LMR for the
-                   * pattern; the argument is present but currently
-                   * evaluated only for its side effect of validating type).
-                   */
-                  falseErrBreak(v1);
-                  rp = new cVARVAL(vtSTRING, ptrURead->ShortDesc);
-                  f1 = TRUE;
-                  break;
-
-             case TOK_OP_GETBANKVAL:
-                  /* GETBANKVAL(idx) — read Time Bank PSA field 0-11. */
-                  falseErrBreak(v1);
-                  i = *p1;
-                  {
-                      int idx = (int) i.values.vINTEGER;
-                      if (BankSupport && idx >= 0 && idx < 12) {
-                          long *bp = (long *) &Bank;
-                          rp = new cVARVAL(vtDREAL, (double) bp[idx]);
-                      } else {
-                          rp = new cVARVAL(vtDREAL, 0.0);
-                      }
-                  }
-                  f1 = TRUE;
-                  break;
-
-             case TOK_OP_GETMSGHDR:
-                  /* GETMSGHDR(conf, message, field) — return a single msg-hdr
-                   * field as STRING.  Field indices match SCANMSGHDR (see
-                   * ScanMsgHdrSub above; fields 1..15).  Per WHATSNEW #1.A:
-                   *   field 1 = status ('R','N','K',...)
-                   *   field 5 = date (dmsg)
-                   *   field 6 = time (tmsg)
-                   *   field 7 = To (tname)
-                   *   field 11= From (fname)
-                   *   field 12= Subject (subj)
-                   *   field 13= Password (pwd)
-                   *   ...
-                   * arg1 = conf (INTEGER), arg2 = message (DREAL),
-                   * arg3 = field (INTEGER 1..15)
-                   */
-                  falseErrBreak(v3);
-                  rp = GetMsgHdrSub(p1, p2, p3);
-                  f1 = f2 = f3 = TRUE;
-                  message.close();
-                  break;
-
-             case TOK_OP_SETMSGHDR:
-                  /* SETMSGHDR(conf, message, field, value) — write a msg-hdr
-                   * field.  arg4 is the STRING value.  Field indices match
-                   * the subset that WHATSNEW documents as writable:
-                   *   1 = To, 2 = From, 3 = Subject, 4 = Password, 5 = Echo
-                   * Sysop-level access required.  Returns 1 on success, 0
-                   * on failure.
-                   */
-                  falseErrBreak(v4);
-                  rp = SetMsgHdrSub(p1, p2, p3, p4);
-                  f1 = f2 = f3 = f4 = TRUE;
-                  message.close();
                   break;
 
              case TOK_OP_ABS:

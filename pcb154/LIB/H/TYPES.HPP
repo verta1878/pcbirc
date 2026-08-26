@@ -134,12 +134,20 @@ typedef unsigned cdcLONG  int  ulong;  /* Unsigned 32-bit integer */
 
 // Borland C 5.0 and Watcom C++ define the 'bool' type internally
 #if !defined(__WATCOMC__) && (!defined(__BORLANDC__) || __BORLANDC__ < 0x500)
-#ifndef __cplusplus
 typedef ubyte bool;
-#endif
 #endif
 
 /*--------------------------------------------------------------------*/
+
+#ifndef _FARDATA_
+  #ifdef __WATCOMC__
+    #define _FARDATA_
+  #elif defined(__BORLANDC__)
+    #define _FARDATA_ far
+  #else
+    #define _FARDATA_
+  #endif
+#endif
 
 #if defined(__OS2__)
 

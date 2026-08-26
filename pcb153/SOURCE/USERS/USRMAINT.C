@@ -449,7 +449,7 @@ static void _NEAR_ LIBENTRY askcommonquestions(UData *pud, bool AskAll) {
   getnewpassword(pud,FALSE);
 
   if (AskAll) {
-    Ctrl = (displaytype)(MixedCase ? HIGHASCII : HIGHASCII|UPCASE);
+    Ctrl = (MixedCase ? HIGHASCII : HIGHASCII|UPCASE);
     getfield(TXT_CITYSTATE         ,pud->City          ,sizeof(pud->City)          ,Ctrl            ,mask_alphanum);
     getfield(TXT_BUSDATAPHONE      ,pud->BusDataPhone  ,sizeof(pud->BusDataPhone)  ,HIGHASCII|UPCASE,(PcbData.DisableEdits ? mask_alphanum : (ModifySelf ? mask_phone1 : mask_phone2)));
     getfield(TXT_HOMEVOICEPHONE    ,pud->HomeVoicePhone,sizeof(pud->HomeVoicePhone),HIGHASCII|UPCASE,(PcbData.DisableEdits ? mask_alphanum : (ModifySelf ? mask_phone1 : mask_phone2)));

@@ -37,13 +37,13 @@
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include    "misc.h"
 
 /******************************************************************************/
 
-// Types
+/* Types */
 
 class cBSREAL
 {
@@ -99,18 +99,18 @@ class cPREAL
 
 /******************************************************************************/
 
-// Notes
+/* Notes */
 
-// The following are unused prototypes from MISC.H:
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// double LIBENTRY bassngltodouble(bassngl OldNum);
-// double LIBENTRY basdbletodouble(basdble OldNum);
-// void   LIBENTRY doubletobasdble(basdble *New, double Old);
-// void   LIBENTRY doubletobassngl(bassngl *New, double Old);
-// long   LIBENTRY doubletolong(void *Num);
-// void   LIBENTRY doubletopasreal(pasreal *New, double Old);
-// void   LIBENTRY longtodouble(char *F, long Num);
-// double LIBENTRY pasrealtodouble(pasreal OldNum);
+/* The following are unused prototypes from MISC.H: */
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+/* double LIBENTRY bassngltodouble(bassngl OldNum); */
+/* double LIBENTRY basdbletodouble(basdble OldNum); */
+/* void   LIBENTRY doubletobasdble(basdble *New, double Old); */
+/* void   LIBENTRY doubletobassngl(bassngl *New, double Old); */
+/* long   LIBENTRY doubletolong(void *Num); */
+/* void   LIBENTRY doubletopasreal(pasreal *New, double Old); */
+/* void   LIBENTRY longtodouble(char *F, long Num); */
+/* double LIBENTRY pasrealtodouble(pasreal OldNum); */
 
 /******************************************************************************/
 

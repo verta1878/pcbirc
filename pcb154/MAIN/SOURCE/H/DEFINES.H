@@ -19,7 +19,7 @@
 /* Version Numbers                                                          */
 
 #define         VERSION_MAJOR   "15"
-#define         VERSION_MINOR   "3"
+#define         VERSION_MINOR   "4"
 #define         CONFIG_VERSION   2
 
 /****************************************************************************/

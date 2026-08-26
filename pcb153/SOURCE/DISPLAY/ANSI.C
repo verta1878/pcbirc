@@ -138,7 +138,6 @@ void LIBENTRY toggleon(char _FAR_ *ScrnBuf) {
 }
 
 
-#undef changeupdateinterval
 void LIBENTRY changeupdateinterval(int Interval) {
   if (Hidden)
     return;

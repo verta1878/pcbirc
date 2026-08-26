@@ -17,7 +17,7 @@
 
 /* need to pull in TYPES.HPP */
 
-#include <types.hpp>
+#include "types.hpp"
 
 /* #define bool  char */
 /* #define TRUE  1    */
@@ -136,7 +136,7 @@ enum {NOHELP,HLP_MORE};
 typedef enum {WATCHKBD=1, WATCHSESSION=2, READUSERSYS=4, SHOWSTATUSLINE=8, LMRS=16, CONFFLAGS=32, TPA=64, NOCLS=128} openstatus;
 typedef enum {NONE, BLANKLINE, HELP, NAME, CONFREG, COMMENT, MODEMSTATS } statlinetype;
 typedef enum {OFFLINE, LOCAL, REMOTE } onlinetype;
-#ifdef H_SCRNIO // used by steve morris to handle pcbmodem which uses both scrnio and the toolkit
+#ifdef H_SCRNIO  /* used by steve morris to handle pcbmodem which uses both scrnio and the toolkit */
 typedef enum {DEFAULT=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024} displaytype;
 #else
 typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,YESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768U} displaytype;
@@ -763,7 +763,7 @@ typedef struct {
   char           Reserved[13];
 } qwkconfigtype;
 #pragma pack()
-#endif //#ifdef EXTENDED_USER_INFO
+#endif  /*#ifdef EXTENDED_USER_INFO */
 
 #pragma pack(1)
 typedef struct {
@@ -1268,7 +1268,7 @@ int LIBENTRY copyfile(char *Srce, char *Dest, bool CheckForEOF);
 
 /****************************************************************************/
 
-// Semaphore classes and definitions for OS/2 threads
+/* Semaphore classes and definitions for OS/2 threads */
 #ifdef __OS2__
 const int SEM_WAIT_NOTIMEOUT = -1;
 const int SEM_TIMEDOUT       =  0;
@@ -1376,7 +1376,7 @@ void LIBENTRY setscreenupdateinterval(int Interval);
 
 /****************************************************************************/
 
-// these definitions/function are used only in the REPTXT.OBJ module
+/* these definitions/function are used only in the REPTXT.OBJ module */
 
 #pragma pack(1)
 typedef struct {

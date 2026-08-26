@@ -13,7 +13,6 @@
 
 
 #include "project.h"
-#include "md5.h"          /* 15.4: ReceivedMd5String for MD5LOGIN env var */
 #pragma hdrstop
 
 #if defined(_MSC_VER) || defined(__WATCOMC__)
@@ -36,7 +35,6 @@ static char _FARDATA_ PCBDRIVE[12];    /* the putenv() function will only work i
 static char _FARDATA_ PCBDIR[66];      /* parameters passed to it are global static   */
 static char _FARDATA_ PCBDAT[66];      /* values.                                     */
 static char _FARDATA_ PCBNODE[12];
-static char _FARDATA_ MD5LOGIN[80];    /* 15.4: pass caller's MD5 auth hash to doors  */
 #ifdef __OS2__
 static char PCBDSZPORT[128]; /* under OS/2 we need the PCB= for DOS windows */
 static char PCBDSZLOG[128];  /* under OS/2 we need the PCB= for DOS windows */
@@ -136,19 +134,6 @@ void LIBENTRY setpcbenv(DOSFILE *Out, bool PlaceInEnv) {
     sprintf(PCBNODE,"PCBNODE=%d",PcbData.NodeNum);
     setvariable(Out,PCBNODE,PlaceInEnv);
   }
-
-  /* 15.4: expose the caller's MD5 login hash to doors via env var.  If
-   * the terminal didn't send an MD5 string (or the WATCHFORMD5 code
-   * timed out), ReceivedMd5String is empty and the env var is skipped —
-   * matching the behavior of PCBoard 15.4b where doors only see
-   * MD5LOGIN when a valid handshake occurred.
-   */
-  #if defined(CPU386) && defined(MULTIPORT)
-    if (ReceivedMd5String[0] != 0) {
-      sprintf(MD5LOGIN,"MD5LOGIN=%s",ReceivedMd5String);
-      setvariable(Out,MD5LOGIN,PlaceInEnv);
-    }
-  #endif
 
   #ifdef __OS2__
     strcpy(PCBOS2,"PCBOS2=Y");

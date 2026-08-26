@@ -18,7 +18,7 @@
 #include "system.h"
 #include <ctype.h>
 
-#if defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)  /* 15.4: enabled */
+#if 0 && defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)
   #include "md5.h"
 #endif
 
@@ -33,7 +33,7 @@
 #endif
 
 #ifdef FIDO
-//#include <messages.h>
+/*#include <messages.h> */
   #include "defines.h"
   #include "structs.h"
   #include "prototyp.h"
@@ -56,9 +56,9 @@
 #endif
 
 #ifdef __OS2__
-  static long LastKbdTime;     // last time a key was pressed (in 100ths of second)
-  static long KbdTimeOutTime;  // time when kbd timeout was noticed
-//static bool ForceLogoff;     // checktime() sets this, waitforkey() resets it
+  static long LastKbdTime;  /* last time a key was pressed (in 100ths of second) */
+  static long KbdTimeOutTime;  /* time when kbd timeout was noticed */
+/*static bool ForceLogoff;     // checktime() sets this, waitforkey() resets it */
 #endif
 
 #ifndef __OS2__
@@ -278,7 +278,7 @@ DOSFILE static StuffFile;
 static int  NumSavedBytes;
 static int  SavedBytes[MAXSAVEDBYTES];
 
-#if defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)  /* 15.4: enabled */
+#if 0 && defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)
 enum {MD5INIT, MD5ABORT, MD5DONE};
 static char Md5Stage;
 #endif
@@ -311,7 +311,7 @@ static int _NEAR_ LIBENTRY removesavedbyte(void) {
 static void _NEAR_ LIBENTRY clearsavedbytes(void) {
   memset(SavedBytes,0,MAXSAVEDBYTES);
   NumSavedBytes = 0;
-  #if defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)  /* 15.4: enabled */
+  #if 0 && defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)
     Md5Stage = MD5INIT;
   #endif
 }
@@ -509,7 +509,7 @@ void LIBENTRY checktime(void) {
         #endif
         Status.SessionTimedOut = TRUE;
         #ifdef __OS2__
-//        ForceLogoff = TRUE;
+/*        ForceLogoff = TRUE; */
         #else
           Display.ShowOnScreen  = TRUE;
           Display.AbortPrintout = FALSE;
@@ -901,8 +901,8 @@ int LIBENTRY callwaitinkey(char *ComBuffer) {
     return(-1);
 
   #ifdef __OS2__
-    // we have to check here, before we get stuck waiting for an event, to
-    // see if there is anything already in the buffer to be processed
+/* we have to check here, before we get stuck waiting for an event, to */
+/* see if there is anything already in the buffer to be processed */
     if ((CommKey = comminkey()) != -1) {
       addchar(ComBuffer,CommKey);
       Status.Kbd = FALSE;
@@ -912,13 +912,13 @@ int LIBENTRY callwaitinkey(char *ComBuffer) {
     if (KbdBufCount != 0 || kbdcount() != 0)
       return(1);
 
-    // there was nothing already waiting for us, so NOW we can plant ourselves
-    // in the waitforevent() function and sit here for awhile
+/* there was nothing already waiting for us, so NOW we can plant ourselves */
+/* in the waitforevent() function and sit here for awhile */
     WaitKeySem.waitforevent(SEM_WAIT_NOTIMEOUT);
     WaitKeySem.reset();
 
-    // now that the event has triggered, we need to check to see if it was
-    // because of keyboard or comm port data
+/* now that the event has triggered, we need to check to see if it was */
+/* because of keyboard or comm port data */
     if ((CommKey = comminkey()) != -1) {
       addchar(ComBuffer,CommKey);
       Status.Kbd = FALSE;
@@ -928,8 +928,8 @@ int LIBENTRY callwaitinkey(char *ComBuffer) {
     if (KbdBufCount != 0 || kbdcount() != 0)
       return(1);
 
-    // there was nothing really waiting, so maybe an event was posted to
-    // force us to cycle through the call waiting processing
+/* there was nothing really waiting, so maybe an event was posted to */
+/* force us to cycle through the call waiting processing */
     return(0);
   #else
     settimer(2,ONESECOND);
@@ -1642,7 +1642,7 @@ retry:
                 case '[': QueryEnable = TRUE;    /* ESC[[<255> */
                           break;
                 case '3': if (QueryEnable)       /* ESC[3<255> */
-                            printcom("þ");
+                            printcom("Ã¾");
                           break;
               }
               return(0);
@@ -1673,15 +1673,7 @@ retry:
 }
 
 
-/*
- * 15.4 change: this block was previously disabled with `#if 0 && ...`.
- * The MD5 challenge-response handshake was complete in the 15.3 source
- * but held back for the 15.4 release.  Enabling it here activates the
- * <XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX> parser during modem sync, matching
- * PCBOARDM.EXE 15.4b's runtime behavior where the strings "Watching for
- * MD5 String" and "MD5 String Received!" appear during connect.
- */
-#if defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)
+#if 0 && defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)
 static bool _NEAR_ LIBENTRY ismd5string(void) {
   int      Key;
   int      X;
@@ -1778,7 +1770,7 @@ static int _NEAR_ LIBENTRY checkforEMSI(void) {
     return('*');          /* return the original '*' character back now */
   }
 
-  for (p = "EMSI_INQC816"; TRUE; p++) {     //lint !e506
+  for (p = "EMSI_INQC816"; TRUE; p++) {  /*lint !e506 */
     Key.W = comminkey();
     addsavedbyte(Key.W);  /* save the byte in case it's not valid */
     if (Key.W != *p)
@@ -1899,7 +1891,7 @@ int LIBENTRY commportinkey(void) {
                    return(0);                       /* waiting for a NULL/Scan Code pair, just return the 0.           */
                  }
                #endif
-               // fall thru
+/* fall thru */
 
     case 0xE0: while (1) {
                  if (! gotabyte(36))
@@ -1916,14 +1908,14 @@ int LIBENTRY commportinkey(void) {
     LastKey = Key.W;
   #endif
 
-  #if defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)          /* 15.4: enabled */
+  #if 0 && defined(CPU386) && defined(MULTIPORT) && ! defined(LIB)
     if ((Status.LoggingIn & WATCHFORMD5) && Md5Stage == MD5INIT) {
       if (Key.W == '<') {
         if (ismd5string())
           return(0);
         else
           return(Key.W);
-      } else if (Key.W == '\r')  // if we get a CR then abort the MD5 watch
+      } else if (Key.W == '\r')  /* if we get a CR then abort the MD5 watch */
         Md5Stage = MD5ABORT;
     }
   #endif
@@ -2045,7 +2037,7 @@ static int _NEAR_ LIBENTRY systemoverhead(int Key, bool Stuffed) {
     if (! Status.FileXfer) {
       if (getkbdstatus() & SCROLL) {
         viewscrollback();
-//      setkbdstatus(getkbdstatus() & ~SCROLL);
+/*      setkbdstatus(getkbdstatus() & ~SCROLL); */
         return(0);
       }
     }
@@ -2058,9 +2050,9 @@ static int _NEAR_ LIBENTRY systemoverhead(int Key, bool Stuffed) {
   /* normally we wouldn't need to call giveup() under the OS/2 version, but */
   /* the #ifdef is commented out to test to see how well this solves the    */
   /* problem that occurs when PPEs poll the keyboard.                       */
-//#ifndef __OS2__
+/*#ifndef __OS2__ */
     giveup();
-//#endif
+/*#endif */
   return(0);   /* indicate that we have nothing to do */
 }
 
@@ -2189,7 +2181,7 @@ static void THREADFUNC heartbeatthread(void * Ignore) {
 
   setdefaultpriority();
 
-  // make sure LastKbdTime gets initialized
+/* make sure LastKbdTime gets initialized */
   LastKbdTime = dosgetlongtime();
 
   while (ThreadState != TH_MUSTEXIT) {
@@ -2199,22 +2191,22 @@ static void THREADFUNC heartbeatthread(void * Ignore) {
     if (Control.WatchKbdClock) {
       ElapsedTime = doselapsedtime(LastKbdTime);
 
-      // check to see if we've gone past the keyboard timer warning point
+/* check to see if we've gone past the keyboard timer warning point */
       if ((unsigned) ElapsedTime >= Control.KbdTimer) {
-        // yes, we're either in the last 60 seconds, or it has expired
-        // check to see if the keyboard timer is completely expired
+/* yes, we're either in the last 60 seconds, or it has expired */
+/* check to see if the keyboard timer is completely expired */
         if (ElapsedTime >= Control.KbdTimer + (ONEMINUTE/10)) {
-          // if we haven't recorded a keyboard timeout yet, do so now and
-          // also record WHEN it occurred so that we can act on it again
-          // if it appears that nothing is happening
+/* if we haven't recorded a keyboard timeout yet, do so now and */
+/* also record WHEN it occurred so that we can act on it again */
+/* if it appears that nothing is happening */
           if (! Status.KbdTimedOut) {
             KbdTimeOutTime = dosgetlongtime();
             Status.KbdTimedOut = TRUE;
           }
-          // the keyboard has timed out and we need to cause a recycle
+/* the keyboard has timed out and we need to cause a recycle */
           releasekbdblock(0);
         } else {
-          // otherwise, just ring the bell to indicate a 10 second mark
+/* otherwise, just ring the bell to indicate a 10 second mark */
           bell();
         }
       }
@@ -2227,12 +2219,12 @@ static void THREADFUNC heartbeatthread(void * Ignore) {
       }
     }
 
-    // if the keyboard timed out, then try once again unblocking the thread
+/* if the keyboard timed out, then try once again unblocking the thread */
     if (Status.KbdTimedOut) {
       releasekbdblock(0);
-      // if the system appears to be "hung" with the keyboard timeout, as
-      // determined by the keyboard timeout having occured ten minutes ago,
-      // then force a recycle to occur by exiting to DOS.
+/* if the system appears to be "hung" with the keyboard timeout, as */
+/* determined by the keyboard timeout having occured ten minutes ago, */
+/* then force a recycle to occur by exiting to DOS. */
       if (doselapsedtime(KbdTimeOutTime) >= (10 * 60 * 100)) {
         writelog("ERROR: Kbd Timed Out - Forced Recycle",SPACERIGHT);
         exit(99);
@@ -2240,12 +2232,12 @@ static void THREADFUNC heartbeatthread(void * Ignore) {
     }
 
     #ifndef LIB
-      // if we're not currently viewing the scrollback buffer and timer #2 has
-      // expired then refresh the status line now
+/* if we're not currently viewing the scrollback buffer and timer #2 has */
+/* expired then refresh the status line now */
       if ((! Status.InScrollBack) && timerexpired(2))
         showstatusline();
     #else
-      // if timer #2 has expired then refresh the status line now
+/* if timer #2 has expired then refresh the status line now */
       if (timerexpired(2))
         showstatusline();
     #endif
@@ -2290,9 +2282,9 @@ int LIBENTRY waitforkey(void) {
   }
 
 /*
-  // the heartbeat thread watches for the time to run out and, when it
-  // does, it sets the ForceLogoff variable.  We should watch for this
-  // and when it occurs, reset the variable first, then log the user off
+/* the heartbeat thread watches for the time to run out and, when it */
+/* does, it sets the ForceLogoff variable.  We should watch for this */
+/* and when it occurs, reset the variable first, then log the user off */
   if (ForceLogoff) {
     ForceLogoff = FALSE;
     loguseroff(ALOGOFF);
@@ -2325,7 +2317,7 @@ void LIBENTRY releasekbdblock(int TimeToWait) {
   if (TimeToWait == 0)
     WaitKeySem.postevent();
   else {
-//  WaitKeySem.stoptimer();
+/*  WaitKeySem.stoptimer(); */
     WaitKeySem.settimer(TimeToWait);
   }
 }

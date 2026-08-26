@@ -241,11 +241,11 @@ void LIBENTRY makepcboardsys(void) {
     #else
       if (Status.CurConf.AllowAliases && UsersData.Alias[0] != 0 && Status.AllowAlias && Status.UseAlias) {
         Sys.Reserve.AliasInUse = TRUE;
-        // don't put the alias name into pcboard.sys
+/* don't put the alias name into pcboard.sys */
         Status.UseAlias = FALSE;
         getdisplaynames();
         memcpy(Sys.FirstName,Status.FirstName,min(15,strlen(Status.FirstName)));
-        // now put things back the way we found them!
+/* now put things back the way we found them! */
         Status.UseAlias = TRUE;
         getdisplaynames();
       } else {
@@ -358,16 +358,16 @@ void LIBENTRY readpcboardsys(void) {
   RecNo = Sys.UserRecNo;
   #ifdef BIGNDX
     if (Sys.UserRecNo == 65535U) {
-      // seek past systype, past bit flags, and past node number
+/* seek past systype, past bit flags, and past node number */
       dosfseek(&File,sizeof(systype)+(ExtConfLen*2L)+sizeof(short),SEEK_SET);
-      // then read the user record number in long integer format
+/* then read the user record number in long integer format */
 
       #ifdef DEBUG
         mc_check_buffers();
       #endif
 
       if (dosfread(&RecNo,sizeof(long),&File) != sizeof(long))
-        RecNo = Sys.UserRecNo;  // an error occured, set it back to the original record number
+        RecNo = Sys.UserRecNo;  /* an error occured, set it back to the original record number */
     }
   #endif
 
@@ -402,9 +402,9 @@ void LIBENTRY readpcboardsys(void) {
     #ifndef LIB
       if (RecNo <= 0 || RecNo > numrecs(UsersFile,sizeof(UsersRead))) {
         if (Status.UserRecNo == 0 && RecNo == 0 && UsersData.Name[0] != 0) {
-          // this must be an UNREGISTERED user, he's online without a user
-          // record, don't worry about the record number being 0, just skip
-          // over this part check and read the rest of the pcboard.sys file
+/* this must be an UNREGISTERED user, he's online without a user */
+/* record, don't worry about the record number being 0, just skip */
+/* over this part check and read the rest of the pcboard.sys file */
         } else {
           displaypcbtext(TXT_USERRECNUMISBAD,NEWLINE|LFBEFORE|LOGIT);
           dosfclose(&File);

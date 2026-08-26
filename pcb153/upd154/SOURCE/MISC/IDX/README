@@ -1,0 +1,111 @@
+The program MAKEIDX.EXE is used to create index files that PCBoard can utilize
+to quickly locate files for downloading.  The following information explains
+how to utilize MAKEIDX.EXE and what changes can or should be made to your
+PCBoard configuration.
+
+
+Usage
+=====
+Type:  MAKEIDX pathlist[.PTH] indexname[.IDX]
+
+Where pathlist is an ASCII file (CR/LF delimited) listing paths that
+are to be scanned for files (including any subdirectories of the paths
+that are specified.
+
+And the indexname is the name of the index file to be created based
+on the files found in the paths specified by the pathlist file.
+
+
+
+Creating a list of paths for MAKEIDX to use
+===========================================
+The program takes an ASCII file that is very similar to your DLPATH.LST
+file as input.  Example:
+
+    SUPPORT.PTH
+    -----------
+    C:\PCB\GEN\
+    C:\PCB\HELP\
+    C:\PCB\TIPS\
+    C:\PCB\145\
+    H:\145TEXT\
+    H:\DOOR12\
+    H:\DOOR14\
+    H:\UTIL12\
+    H:\UTIL14\
+    H:\NET12\
+    H:\NET14\
+    H:\ZDL03\
+
+The above list of PATHES specify where MAKEIDX is to search for files on your
+system.  It should be noted that MAKEIDX, unlike PCBoard, takes the path that
+is specified and searches ALL SUBDIRECTORIES underneath that path as well.
+Therefore a path such as "C:\" would pick up every file in every subdirectory
+on all of drive C:.
+
+You may place any valid DOS drive and subdirectory in the list.  This includes
+network drives, CD-ROM drives, even standard hard disks.  NOTE: the path must
+be terminated with a backslash denoting the fact that it is a subdirectory.
+
+MAKEIDX will then create a file with the indexname specified that has a list
+of all files found in the subdirectories you have specified.
+
+
+Modifying your DLPATH.LST file
+==============================
+PCBoard continues to support the standard DLPATH.LST file.  In other words,
+you need not change a thing.  To take advantage of the indexing capability
+you must edit the DLPATH.LST file to specify the names of any index file(s)
+you wish to have searched.  Example:
+
+    DLPATH.LST
+    ----------
+    %C:\PCB\LST\SUPPORT.IDX
+    %C:\PCB\LST\MAIN.IDX
+    H:\DUP\
+    H:\LUP\
+    H:\UUP\
+    H:\NUP\
+    H:\TEMP\
+
+The above specifies that two index files are to be used.  The percent sign
+is used to indicate their existence as index files instead of subdirectories
+on the hard disk.
+
+Note that you can specify as many index files as you wish.  The fewer you
+specify, of course, the faster your files may be found.  However, it may make
+sense, depending on your configuration, to group files into specific index
+files.  For example, the above might indicate that all of the Main Board files
+are grouped into MAIN.IDX while all Support Conferences files are grouped into
+SUPPORT.IDX.  The advantage to this method would be that you could then modify
+the contains of MAIN.IDX and automatically have all conferences utilizing this
+index become updated immediately and without further action.
+
+NOTE:  The above example specifies that all UPLOAD DIRECTORIES be listed
+normally within the DLPATH.LST file.  The reason for this is that these
+index files are STATIC, not dynamic, and therefore are not and cannot be
+updated by PCBoard.  Therefore, in order for new uploads to be available for
+immediate downloading you must include your upload subdirectory as a standard
+location for PCBoard to search for files.
+
+ALSO:  it would not be wise to include your upload directories in the index
+(although it would work) because in the case of wildcard download commands
+such as "D FILE*.*" PCBoard will locate the same file twice - once in the
+index and once in the upload directory.
+
+ALSO:  for the same reasons you would want to avoid listing even regular paths
+both in the index and in the DLPATH.LST to avoid causing PCBoard to find the
+same file twice.
+
+Because the index files are static my recommendation is that you update them
+whenever you run PCBFILER to move files into or out of your download paths.
+Here's an example batch file you could use:
+
+    REFRESH.BAT
+    -----------
+    makeidx main main
+    makeidx support support
+
+The above two lines would scan the files MAIN.PTH and SUPPORT.PTH for paths
+and create the files MAIN.IDX and SUPPORT.IDX respectively.
+

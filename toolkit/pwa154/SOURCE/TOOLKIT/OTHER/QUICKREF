@@ -1,0 +1,271 @@
+DOOR Routines
+=============
+  Starting and Stopping
+  ---------------------
+  void pascal atclosing(void);
+  void pascal closedoor(bool UpdateUserSys);
+  int pascal initdoor(char *Name, int SessionLimit, int KbdTimeout, openstatus OpenStatus);
+
+    OpenStatus values:
+      WATCHKBD  WATCHSESSION  READUSERSYS  SHOWSTATUSLINE  LMRS  CONFFLAGS  TPA
+      NOCLS
+
+  void pascal goodbye(bool UpdateUserSys);
+
+
+  Display Functions
+  -----------------
+  void pascal backup(int NumColumns);
+  void pascal backupcleareol(int NumColumns);
+  void pascal bell(void);
+  void pascal checkdisplaystatus(void);
+  void pascal checkstatus(void);
+  void pascal cleareol(void);
+  void pascal displayfile(char *Name, displayfiletype Type);
+
+    Type values:
+      NOALTERNATE  GRAPHICS  SECURITY  LANGUAGE
+
+  void pascal displayhelpfile(int HelpNum);
+  void pascal displaypcbtext(int PcbTextNum, displaytype Display);
+
+    Display values:
+      DEFAULTS  NEWLINE  LFBEFORE  LFAFTER  BELL  LOGIT  LOGITLEFT
+
+  void pascal forward(int NumColumns);
+  void pascal freshline(void);
+  void pascal moreprompt(moretype Type);
+
+    Type values:
+      MOREPROMPT  PRESSENTER
+
+  void pascal movecursor(int X, int Y);
+  void pascal newline(void);
+  void pascal print(char *Str);
+  void pascal printcls(void);
+  void pascal printcolor(int ColorNum);
+  void pascal printdefcolor(void);
+  void pascal println(char *Str);
+  void pascal printxlated(char *Str);
+  void pascal restscrnbuffer(void);
+  int pascal savescrnbuffer(void);
+  void pascal startdisplay(startdisplaytype Action);
+
+    Action values:
+      NOCHANGE  FORCENONSTOP  FORCECOUNTLINES
+
+    Low Level Display Functions
+    ---------------------------
+    void pascal agotoxy(void);
+    void pascal ansi(char *Str);
+    void pascal asetcolor(char NewColor);
+    void pascal awherex(void);
+    void pascal awherey(void);
+    void pascal clearoutbuf(void);
+    void pascal curcolor(void);
+    void pascal redisplaystatusline(void);
+    void pascal sendbyte(char Byte);
+    void pascal sendstr(char *Str, int StrLen);
+    void pascal turndisplayoff(bool WriteToDisk);
+    void pascal turndisplayon(bool WriteToDisk);
+    void pascal turnonxmit(void);
+    void pascal waitforempty(int Seconds);
+
+  Input Functions
+  ---------------
+  void pascal inputfield(char *Buffer, int PcbTextNum, int MaxLen, displaytype Display, int HelpNum, char *Mask);
+  int pascal inputfieldint(int Default, char *Prompt, int Color, int MaxLen, displaytype Display, int HelpNum);
+  long pascal inputfieldlong(long Default, char *Prompt, int Color, int MaxLen, displaytype Display, int HelpNum);
+  void pascal inputfieldreqstr(char *Buffer, char *Prompt, int Color, int MaxLen, int MinLen, displaytype Display, int HelpNum, char *Mask);
+  void pascal inputfieldstr(char *Buffer, char *Prompt, int Color, int MaxLen, displaytype Display, int HelpNum, char *Mask);
+
+    Display values:
+      DEFAULTS  ECHODOTS  FIELDLEN  GUIDE  UPCASE  STACKED  ERASELINE  NEWLINE
+      LFBEFORE  LFAFTER  WORDWRAP  NOCLEAR  BELL  HIGHASCII  AUTO
+
+    Mask format:
+      char mask_atoz[] = {3,0,'A','z'};
+
+
+    Low Level Input Functions
+    -------------------------
+    int pascal cinkey(void);
+    void pascal clearinbuf(void);
+    void pascal clearkbdbuffer(void);
+    int pascal comminkey(void);
+    int pascal commportinkey(void);
+    int pascal kbdinkey(void);
+
+  Modem Functions
+  ---------------
+  int pascal modemcommand(char *Command, modemverifytype Verify);
+  int pascal showmodem(char *InBuf, int BufSize, modemverifytype Verify);
+  void pascal slowsendtomodem(char *Str);
+
+    Low Level Modem Functions
+    -------------------------
+    int  pascal cdstillup(void);
+    int  pascal online(void);
+    void pascal turnoffdtr(void);
+    void pascal turnoffrts(void);
+    void pascal turnondtr(void);
+    void pascal turnonrts(void);
+    void pascal turnonfifo(char TriggerLevel);
+
+      TriggerLevel values
+         TRIGGER1  TRIGGER4  TRIGGER8  TRIGGER14
+
+
+  Time Functions
+  --------------
+  void pascal addtime(long Seconds, timereasontype Reason);
+
+    Reason values:
+      NEWTIME  CONFTIME  CREDTIME
+
+  int  pascal minutesleft(void);
+  void pascal subtime(long Seconds, timereasontype Reason);
+
+  Timer Functions
+  ---------------
+  long pascal gettimer(int Which);
+  int pascal giveup(void);
+  void pascal mydelay(int Hundredths);
+  void pascal settimer(int Which, long Ticks);
+
+    Available timers:  4, 7, 8
+    Ticks = number of 1/18th second intervals
+
+  void pascal tickdelay(int Ticks);
+
+  CNAMES Functions
+  ----------------
+  void pascal closecnames(void);
+  int  pascal getconfrecord(unsigned ConfNum, pcbconftype *ConfRecord);
+  int  pascal opencnames(void);
+
+
+  DOS Shell Functions
+  -------------------
+  int pascal performshell(char *Command, char *Params, shelltype ShellType);
+
+    ShellType values:
+      SHELLDIRECT  SHELLVIACOMMAND
+
+  void pascal shelltodos(void);
+
+  Miscellaneous Door Functions
+  ----------------------------
+  long pascal finduser(char *SrchName);
+  void pascal pcbinit(void);
+  void pascal sysopchat(void);
+  void pascal turnkbdtimeron(void);
+  void pascal writelog(char *Str, padtype Pad);
+
+  Pad values:
+    LEFTJUSTIFY  SPACERIGHT
+
+Memory Functions
+----------------
+void * pascal bmalloc(int Size);
+void pascal bfree(void *ptr);
+void pascal bfreeall(void);
+void far * pascal fbmalloc(long Size);
+void pascal fbfree(void far *ptr);
+void pascal fbfreeall(void);
+
+DOS Functions
+-------------
+int pascal dosappend(char *FileName, int OpenFlags);
+
+  OpenFlags values:
+    OPEN_READ  OPEN_WRIT  OPEN_RDWR
+    OPEN_DENYNONE  OPEN_DENYREAD  OPEN_DENYWRIT  OPEN_DENYRDWR
+
+  Attributes:
+    OPEN_NORMAL  OPEN_RDONLY  OPEN_HIDDEN  OPEN_SYSTEM  OPEN_VOLUME
+
+int pascal dosappendcheck(char *FileName, int OpenFlags);
+int pascal dosclose(Handle);
+int pascal doscommit(Handle);
+int pascal doscreate(char *FileName, int OpenFlags, int Attributes);
+int pascal doscreatecheck(char *FileName, int OpenFlags, int Attributes);
+int pascal dosdup(OldHandle);
+int pascal dosfclose(DOSFILE *File);
+int pascal dosfgets(char *Str, unsigned  MaxChars, DOSFILE *File);
+int pascal dosflush(DOSFILE *File);
+int pascal dosfopen(char *FileName, int OpenFlags, DOSFILE *File);
+int pascal dosfputs(char *Str, DOSFILE *File);
+int pascal dosfread(char *Buffer, unsigned NumChars, DOSFILE *File);
+long pascal dosfseek(DOSFILE *File, long distance, char method);
+int pascal dosfwrite(char *Buffer, unsigned NumChars, DOSFILE *File);
+void pascal dosinit(void);
+int pascal doslockcheck(int Handle, long offset, long length);
+long pascal doslseek(int Handle, long distance, char method);
+int pascal dosopen(char *FileName, int OpenFlags);
+int pascal dosopencheck(char *FileName, int OpenFlags);
+int pascal dosread(int Handle, void *Buf, unsigned Len);
+void pascal dosrewind(DOSFILE *File);
+void pascal dossetbuf(DOSFILE *File, unsigned BufSize);
+int pascal doswrite(int Handle, void *Buf, unsigned Len);
+char pascal fileexist(char *FileName);
+int pascal readcheck(int Handle, void *Buf, unsigned Len);
+int pascal writecheck(int Handle, void *Buf, unsigned Len);
+
+
+
+String Functions
+----------------
+void pascal addbackslash(char *Str, int MaxLen);
+void pascal addchar(char *Str, char Ch);
+void pascal ascii(char *Str, int Num);
+void pascal asciispace(char *Str, int Num);
+void buildstr(char *Dest, char *Srce, ..., NULL);
+void pascal change(char *Str, char Old, char New);
+void pascal fmemcpy(void far *dest, void far *src, unsigned Len);
+void pascal fmemset(void far *dest, char c, unsigned   len);
+char * pascal getnexttoken(void);
+int  pascal isset(void far *BitStream, int BitNum);
+void pascal lascii(char *Str, long Num);
+void pascal maxstrcpy(char *Dest, char *Srce, int Max);
+void pascal padstr(char *Str, char C, int MaxLen);
+void pascal setbit(void far *BitStream, int BitNum);
+void pascal stripleft(char *Str, char Ch);
+void pascal stripright(char *Str, char Ch);
+char * pascal strnchr(char *Str, char C, int Len);
+bool pascal substitute(char *Str, char *Search, char *Replace, int MaxLen);
+int  pascal tokenize(char *Command);
+void pascal unsetbit(void far *BitStream, int BitNum);
+
+Conversion Functions
+--------------------
+long pascal basdbletolong(bassngl Num);
+long pascal bassngltolong(bassngl Num);
+void pascal longtobasdble(basdble New, long Num);
+void pascal longtobassngl(bassngl New, long Num);
+
+
+Date and Time Functions
+-----------------------
+char * pascal datestr(char *DateStr);
+unsigned pascal datetojulian(char *DateStr);
+unsigned pascal getjuliandate(void);
+char * pascal juliantodate(unsigned int JulianDate);
+char * pascal timestr1(char *TimeStr);
+char * pascal timestr2(char *TimeStr);
+
+Screen Functions
+----------------
+void pascal cls(void);
+void pascal fastprint(int X,int Y,char *Str,char Attr);
+void pascal fastputc(int Loc, char C);
+void pascal fastputch(int Loc, char C, char Color);
+int pascal getcursor(void);
+void pascal setcursor(int CursorType);
+
+  CursorType values:
+    CUR_BLANK  CUR_NORMAL  CUR_BLOCK  CUR_INSERT
+
+int pascal xyvalue(int X, int Y);
+
+

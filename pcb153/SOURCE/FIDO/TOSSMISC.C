@@ -1240,7 +1240,6 @@ NODE_REC				  nrec;
   char	   attchfilename[200];
   maxstrcpy(attchfilename,directory_info.outgoing_packets,sizeof(attchfilename));
   strcat(attchfilename,afixresfile);
-    extern char *mktemp(char *);
   mktemp(attchfilename);
   char * t = strrchr(attchfilename,'\\');
   if(t != NULL) maxstrcpy(afixresfile,t,sizeof(afixresfile)); // Now copy just the unique file name back into it's buffer complete with mangled name

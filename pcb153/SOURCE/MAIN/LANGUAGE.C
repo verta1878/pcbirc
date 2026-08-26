@@ -211,7 +211,7 @@ void LIBENTRY getlanguage(int NumTokens) {
   char    Str[15];
   DOSFILE File;
 
-//Status.Language = 0;
+/*Status.Language = 0; */
   if (! PcbData.MultiLingual || openlanguagefile(&File,USERSELECT) == -1)
     return;
 
@@ -267,7 +267,7 @@ void LIBENTRY getlanguage(int NumTokens) {
       Status.Language = (char) Picked;
       Status.CmdLst[0] = 0;
       if (Status.LoggingIn == NOTNOW)
-        loadcmds();  // while online, force it to re-load the CMD.LST file
+        loadcmds();  /* while online, force it to re-load the CMD.LST file */
       break;
     }
   }

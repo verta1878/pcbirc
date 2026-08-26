@@ -39,15 +39,15 @@ entire Last Date Run field.
 #ifndef EVENT_H
 #define EVENT_H
 
-#define MAX_EVENTS      64            // This is _THE_ maximum number of events
-                                      // MaxEvents is a variable which is used
-                                      // instead of MAX_EVENTS when reading in
-                                      // the file because it might not be 64
+#define MAX_EVENTS      64  /* This is _THE_ maximum number of events */
+/* MaxEvents is a variable which is used */
+/* instead of MAX_EVENTS when reading in */
+/* the file because it might not be 64 */
 
-#ifdef  PCB_MAXNODES                  // test to see if compiling PCBoard
-#define MAXNODES        PCB_MAXNODES  // MAXNODES is a constant
-#else                                 // nope, compiling PCBSetup instead
-#define MAXNODES        MaxNodes      // MAXNODES is a variable in PCBSetup
+#ifdef  PCB_MAXNODES  /* test to see if compiling PCBoard */
+#define MAXNODES        PCB_MAXNODES  /* MAXNODES is a constant */
+#else  /* nope, compiling PCBSetup instead */
+#define MAXNODES        MaxNodes  /* MAXNODES is a variable in PCBSetup */
 #endif
 
 
@@ -64,29 +64,29 @@ entire Last Date Run field.
 #define TOTALEVENTSIZE       (LASTDATEOFFSET + LASTDATESIZE)
 
 
-// This is the offset of the Last Date Record ... When accessing an Array of
-// Last Date values, use it directly.  When accessing the disk, it needs to be
-// multiplied by the size of the Last Date record which is sizeof(unsigned)
-//
-// NOTE:  EventNum is a 0-based number (i.e. the first event is #0)
-//        However, Node Number is a 1-based number (i.e. node #1 is 1)
+/* This is the offset of the Last Date Record ... When accessing an Array of */
+/* Last Date values, use it directly.  When accessing the disk, it needs to be */
+/* multiplied by the size of the Last Date record which is sizeof(unsigned) */
+ /* */
+/* NOTE:  EventNum is a 0-based number (i.e. the first event is #0) */
+/*        However, Node Number is a 1-based number (i.e. node #1 is 1) */
 
 #define LASTDATERECPOS(EventNum,NodeNum)  (((EventNum) * (long) MAXNODES) + ((long) (NodeNum) - 1))
 
 
-// This is the offset of the Event Record on disk.
-//
-// NOTE: EventNum is a 0-based number (i.e. the first event is #0)
+/* This is the offset of the Event Record on disk. */
+ /* */
+/* NOTE: EventNum is a 0-based number (i.e. the first event is #0) */
 
 #define EVENTRECPOS(EventNum)   ((long) (EventNum) * sizeof(EventType))
 
 
-// This macro calculates the EXACT date by multiplying a julian date value
-// by the number of minutes in a day and then adding the hour and minute values
-// to it.
-//
-// NOTE:  For some reason Louis subtracted one from the julian date, I don't
-//        no why, but I've copied it into the macro verbatim
+/* This macro calculates the EXACT date by multiplying a julian date value */
+/* by the number of minutes in a day and then adding the hour and minute values */
+/* to it. */
+ /* */
+/* NOTE:  For some reason Louis subtracted one from the julian date, I don't */
+/*        no why, but I've copied it into the macro verbatim */
 
 #define MINUTESPERHOUR    60
 #define HOURSPERDAY       24

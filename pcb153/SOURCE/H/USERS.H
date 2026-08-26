@@ -33,10 +33,7 @@ typedef enum {CHECKDIRTY, IGNOREDIRTY } dirtytype;
 typedef struct {
   unsigned short UserRec;
   char     UserName[25];    /* padded with spaces and no terminating NULL */
-#ifndef _INDEXTYPE_DEFINED
-#define _INDEXTYPE_DEFINED
 } IndexType;
-#endif
 #pragma pack()
 
 #pragma pack(1)
@@ -178,46 +175,6 @@ typedef struct {
 } accounttype;
 #pragma pack()
 
-/*---------------------------------------------------------------------------
- * personal_psa_t -- new in 15.4.  Layout recovered from PCBSM.EXE 15.4b field
- * label table at data offset 0x26b21 (see v0.017 CHANGES entry).  Stored in
- * USERS.INF as an app with keyword "PCBPERSONAL"; exposed to PPL via the
- * U_PERSONAL(idx) accessor added in v0.021.
- */
-#pragma pack(1)
-typedef struct {
-  char Gender;               /* ' ', 'M', or 'F' -- 15.4 default is ' ' */
-  char Birthdate[6];         /* MMDDYY packed date */
-  char Email[60];            /* Internet email, null-terminated */
-  char Web[60];              /* Personal WEB URL, null-terminated */
-} personal_psa_t;
-
-/* 15.4: timebank_psa_t -- Time/Byte Bank PSA.  12 fields per WHATSNEW.
- * Fields 0-5 cover time (minutes), fields 6-11 cover bytes (KB).
- * Each field is a long -- dates stored as Julian day numbers,
- * amounts as signed quantities.
- *   0/6 = Last Deposit Date      1/7 = Last Withdrawal Date
- *   2/8 = Last Transaction Amt   3/9 = Amount Saved (balance)
- *   4/10= Max Withdrawal/day     5/11= Max Stored Amount
- */
-#pragma pack(1)
-typedef struct {
-    long TimeLastDeposit;       /* 0  */
-    long TimeLastWithdraw;      /* 1  */
-    long TimeLastTxnAmt;        /* 2  */
-    long TimeBalance;           /* 3  */
-    long TimeMaxWithdraw;       /* 4  */
-    long TimeMaxStored;         /* 5  */
-    long ByteLastDeposit;       /* 6  */
-    long ByteLastWithdraw;      /* 7  */
-    long ByteLastTxnAmt;        /* 8  */
-    long ByteBalance;           /* 9  */
-    long ByteMaxWithdraw;       /* 10 */
-    long ByteMaxStored;         /* 11 */
-} timebank_psa_t;              /* 48 bytes */
-#pragma pack()
-#pragma pack()
-
 #pragma pack(1)
 typedef struct {
   unsigned short MaxMsgs;
@@ -266,12 +223,7 @@ typedef struct {
   unsigned char LastMsgRead[40][4]; /* 225-384 */ /* changed 14.0 was LastMsgRead[10] */
   long RecNum;                      /* 385-388 */ /* added in v14.5 to point to USERS.INF */
   reservedbyte2 Flags;              /* 389-389 */ /* reserved in v14.5a */
-  /* 15.4: consumed one byte of the 8-byte Reserved for the ShortDesc mode flag.
-   * The remaining 7 bytes stay Reserved for future compat.  On-disk layout is
-   * unchanged (bytes 390-397 still 8 bytes total).
-   */
-  char ShortDesc;                   /* 390-390 */ /* new 15.4: 1=short display, 0=long */
-  char Reserved[7];                 /* 391-397 */ /* was Reserved[8] pre-15.4 */
+  char Reserved[8];                 /* 390-397 */ /* reduced in v14.5 from 15 to 9, in v15.0 from 9 to 8 */
   unsigned short LastConf2;         /* 398-399 */ /* added in v14.5 for high conferences */
 } URead;
 #pragma pack()
@@ -425,16 +377,6 @@ extern long           AccountOffset;
 
 extern bool           QwkSupport;
 extern long           QwkOffset;
-
-/* 15.4: Personal PSA (Gender/Birthdate/Email/Web) */
-extern bool             PersonalSupport;
-extern long             PersonalOffset;
-extern personal_psa_t   _FARDATA_ Personal;
-
-/* 15.4: Time/Byte Bank PSA */
-extern bool             BankSupport;
-extern long             BankOffset;
-extern timebank_psa_t   _FARDATA_ Bank;
 
 extern long _FAR_ *MsgReadPtr;
 extern long _FAR_ *MsgReadPtrBackup;

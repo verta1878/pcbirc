@@ -15,7 +15,6 @@
 #ifdef COMM
 
 #include "project.h"
-#include <ctype.h>
 #pragma hdrstop
 
 #ifndef LIB
@@ -91,9 +90,6 @@ static void _NEAR_ LIBENTRY chat(void) {
     memset(&Xlat[251],0,253-251+1);
   }
 
-  static char ColorCmd[] = "COLOR";  /* 15.4: WHATSNEW #3 */
-  static unsigned char chatUserColor = PCB_WHITE;  /* 15.4 */
-
   Len = awherex();
   memset(Buf,' ',Len);
   Buf[Len] = 0;
@@ -105,10 +101,7 @@ static void _NEAR_ LIBENTRY chat(void) {
   #endif
 
   while (1) {
-    static char ColorCmd[] = "COLOR";  /* 15.4: WHATSNEW #3 */
-  static unsigned char chatUserColor = PCB_WHITE;  /* 15.4 */
-
-  Len = awherex();
+    Len = awherex();
 
     /* NOTE:  because the sysop COULD press F10 as the caller was logging */
     /* off - and during the display of the LOGOFF file - there's a chance */
@@ -146,24 +139,7 @@ static void _NEAR_ LIBENTRY chat(void) {
                      Buf[Len-1] = 0;
                    }
                    continue;
-      case CTRL_M: /* 15.4: check for COLOR command before clearing */
-                   if (memicmp(Buf,ColorCmd,6) == 0) {
-                     /* COLOR B/G/C/R/M/Y/W/+/- per WHATSNEW #3 */
-                     char *cp = Buf + 6;
-                     while (*cp == ' ') cp++;
-                     switch (toupper(*cp)) {
-                       case 'B': chatUserColor = PCB_BLUE;    break;
-                       case 'G': chatUserColor = PCB_GREEN;   break;
-                       case 'C': chatUserColor = PCB_CYAN;    break;
-                       case 'R': chatUserColor = PCB_RED;     break;
-                       case 'M': chatUserColor = PCB_MAGENTA; break;
-                       case 'Y': chatUserColor = PCB_YELLOW;  break;
-                       case 'W': chatUserColor = PCB_WHITE;   break;
-                       case '+': chatUserColor |= 0x08; break;  /* brighten */
-                       case '-': chatUserColor &= ~0x08; break; /* darken */
-                     }
-                   }
-                   print("\r\n");
+      case CTRL_M: print("\r\n");
                    Buf[0] = 0;
                    continue;
       case K_ESC : if (Status.Kbd) {
@@ -180,10 +156,8 @@ static void _NEAR_ LIBENTRY chat(void) {
 
     if (Status.Kbd)
       printcolor(PCB_GREEN);
-    else {
-      /* 15.4: use caller's chosen chat color instead of default */
-      printcolor(chatUserColor);
-    }
+    else
+      printdefcolor();
 
     if (Len >= 78) {
       if (Key == ' ') {
@@ -192,11 +166,11 @@ static void _NEAR_ LIBENTRY chat(void) {
         continue;
       }
 
-      // find the last space on the line
+/* find the last space on the line */
       if ((Space = strrchr(Buf,' ')) != NULL) {
         int BufLen = strlen(Buf);
         int LenToSpace = (int) (Space - Buf);
-        // back up the number of spaces from the right side to the last space
+/* back up the number of spaces from the right side to the last space */
         backupcleareol(BufLen - LenToSpace);
         print("\r\n");
         strcpy(Buf,Space+1);

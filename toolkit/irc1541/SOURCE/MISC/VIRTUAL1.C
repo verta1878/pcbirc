@@ -26,14 +26,17 @@
 #include <screen.h>
 #include <scrnio.h>
 #include <scrnio.ext>
-#include "virtual.h"
+/* FIX: was "virtual.h" — changed to "virtual1.h" to match non-huge pointer
+   signatures in this file. virtual.h declares huge*, virtual1.h declares *.
+   The mismatch caused type errors on Watcom and BC31 C++ mode. */
+#include "virtual1.h"
 #ifdef DEBUG
 #include <memcheck.h>
 #endif
 
 #define  BLOCKSIZE  64       /* NOTE: this MUST be a power of 2 */
 
-struct {
+static struct {
   VirType  *LastRecAdr;
   unsigned  LastRecNum;
   int       File;

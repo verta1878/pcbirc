@@ -20,9 +20,9 @@
 
 
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+/*#ifdef __cplusplus */
+/*extern "C" { */
+/*#endif */
 
 /* Stolen prototypes from CONIO.H */
 
@@ -114,8 +114,8 @@ bool get_node(unsigned int zone, unsigned int net, unsigned int node, NODE_REC *
 bool LIBENTRY outboundRec(void);
 void LIBENTRY scanQueue(void);
 
-//#ifdef __cplusplus
-//}
-//#endif
+/*#ifdef __cplusplus */
+/*} */
+/*#endif */
 
 #endif

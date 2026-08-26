@@ -162,7 +162,7 @@ typedef struct {
   char           Reserved[13];
 } qwkconfigtype;
 #pragma pack()
-#endif //#ifdef EXTENDED_USER_INFO
+#endif  /*#ifdef EXTENDED_USER_INFO */
 
 #pragma pack(1)
 typedef struct {

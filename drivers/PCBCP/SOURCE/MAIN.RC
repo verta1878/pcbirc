@@ -1,0 +1,408 @@
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* The source code in this module is proprietary software belonging to       */
+/* Clark Development Company and is part of the PCBoard source code library. */
+/* You are granted the right to use this source code for the building of any */
+/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
+/* without prior written consent from Clark Development Company, Inc.        */
+/*                                                                           */
+/* Be sure to read the source code license agreement before utilizing any    */
+/* of the source code found herein.                                          */
+/*                                                                           */
+/* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+#ifndef WORKSHOP_INVOKED
+#include <os2.h>
+#endif
+#include "main.h"
+#include "dlg.h"
+
+ICON IDR_MAIN "main.ico"
+
+MENU IDR_MAIN
+BEGIN
+  SUBMENU "~File", IDM_FILE
+    BEGIN
+      MENUITEM "~Open Usernet...", IDM_FILEOPEN, MIS_TEXT
+      MENUITEM SEPARATOR
+      MENUITEM "Node ~Limits...", IDM_FILELIMIT, MIS_TEXT, MIA_DISABLED
+      MENUITEM "Node ~Settings...", IDM_FILENODE, MIS_TEXT, MIA_DISABLED
+      MENUITEM SEPARATOR
+      MENUITEM "E~xit\tAlt+X", IDM_FILEEXIT, MIS_TEXT
+    END
+
+  MENUITEM "~Edit",IDM_EDITRECORD,MIS_TEXT, MIA_DISABLED
+
+  SUBMENU "~Actions", IDM_ACTION, MIS_TEXT, MIA_DISABLED
+    BEGIN
+      SUBMENU "~Nodes on Screen...", IDM_ACTSCRN, MIS_TEXT
+        BEGIN
+          MENUITEM "Drop to DOS ~Now", IDM_ACTSCRNDROPDOSNOW, MIS_TEXT
+          MENUITEM "~Drop to DOS at Logoff", IDM_ACTSCRNDROPDOS, MIS_TEXT
+          MENUITEM "~Log User Off", IDM_ACTSCRNLOGOFF, MIS_TEXT
+          MENUITEM "~Recycle Node", IDM_ACTSCRNRECYCLE, MIS_TEXT
+          MENUITEM "~Clear Node", IDM_ACTSCRNCLEAR, MIS_TEXT
+        END
+      SUBMENU "~All Nodes...", IDM_ACTALL, MIS_TEXT
+        BEGIN
+          MENUITEM "Drop to DOS ~Now", IDM_ACTALLDROPDOSNOW, MIS_TEXT
+          MENUITEM "~Drop to DOS at Logoff", IDM_ACTALLDROPDOS, MIS_TEXT
+          MENUITEM "~Log User Off", IDM_ACTALLLOGOFF, MIS_TEXT
+          MENUITEM "~Recycle Node", IDM_ACTALLRECYCLE, MIS_TEXT
+          MENUITEM "~Clear Node", IDM_ACTALLCLEAR, MIS_TEXT
+        END
+      MENUITEM "~Run/Switch-to Nodes", IDM_ACTRUNNODES, MIS_TEXT
+      MENUITEM "Restart ~Inactive Nodes", IDM_ACTRESTARTNODES, MIS_TEXT
+      MENUITEM "~Hide Active Nodes", IDM_ACTHIDENODES, MIS_TEXT
+      MENUITEM "~Show Active Nodes", IDM_ACTSHOWNODES, MIS_TEXT
+      MENUITEM "Arrange ~Visible Nodes", IDM_ACTARRANGENODES, MIS_TEXT
+    END
+
+  SUBMENU "~Update", IDM_UPDATE, MIS_TEXT, MIA_DISABLED
+    BEGIN
+      MENUITEM "~Now\tSpace", IDM_UPDATENOW, MIS_TEXT
+      MENUITEM "Set ~Interval...\tCtrl+I", IDM_UPDATEINTERVAL, MIS_TEXT
+    END
+
+  SUBMENU "~Options", IDM_OPTIONS, MIS_TEXT
+    BEGIN
+      MENUITEM "~Font...\tCtrl+F", IDM_OPTIONSFONT, MIS_TEXT
+      MENUITEM "~Display...\tCtrl+D", IDM_OPTIONSDISPLAY, MIS_TEXT
+      MENUITEM "~Warnings...\tCtrl+W", IDM_OPTIONSWARNINGS, MIS_TEXT
+      MENUITEM "Start~Up...\tCtrl+U",IDM_OPTIONSSTARTUP, MIS_TEXT
+      MENUITEM "~Mouse...",IDM_OPTIONSMOUSE, MIS_TEXT
+      MENUITEM SEPARATOR
+      MENUITEM "~Save Settings\tCtrl+S", IDM_OPTIONSSAVE, MIS_TEXT
+    END
+
+  SUBMENU "Help", IDM_HELP, MIS_TEXT
+    BEGIN
+      MENUITEM "Help ~index", IDM_HELPINDEX, MIS_TEXT
+      MENUITEM "~General help", IDM_HELPGENERAL, MIS_TEXT
+      MENUITEM "~Using help", IDM_HELPUSINGHELP, MIS_TEXT
+      MENUITEM "~Tutorial", IDM_HELPTUTORIAL, MIS_TEXT
+      MENUITEM SEPARATOR
+      MENUITEM "~Product information", IDM_HELPPRODUCTINFO, MIS_TEXT
+    END
+END
+
+
+MENU IDR_POPUPMENU
+BEGIN
+  MENUITEM "Drop to DOS Now", IDM_DROPDOSNOW
+  MENUITEM "Drop to DOS at Logoff", IDM_DROPDOS
+  MENUITEM "Log User Off", IDM_LOGOFF
+  MENUITEM "Force Recycle", IDM_RECYCLE
+  MENUITEM SEPARATOR
+  MENUITEM "Do Nothing",IDM_DONOTHING
+  MENUITEM SEPARATOR
+  MENUITEM "Edit Node Status", IDM_POPUPEDIT
+  MENUITEM "Edit Node Settings", IDM_NOTEBOOK
+  MENUITEM "Run/Switch-to Nodes", IDM_RUNNODES, MIS_TEXT
+  MENUITEM "Clear Node", IDM_CLEAR
+END
+
+
+ACCELTABLE IDR_MAIN
+{
+   "x", IDM_FILEEXIT,        CHAR, ALT
+   "f", IDM_OPTIONSFONT,     CHAR, CONTROL
+   "d", IDM_OPTIONSDISPLAY,  CHAR, CONTROL
+   "w", IDM_OPTIONSWARNINGS, CHAR, CONTROL
+   "u", IDM_OPTIONSSTARTUP,  CHAR, CONTROL
+   "s", IDM_OPTIONSSAVE,     CHAR, CONTROL
+   "i", IDM_UPDATEINTERVAL,  CHAR, CONTROL
+   " ", IDM_UPDATENOW     ,  CHAR
+}
+
+
+STRINGTABLE
+{
+    IDS_APPNAME                 "PCBoard Control Panel"
+    IDS_FILEOPENEXT             "*.XXX"
+    IDS_HELPLIBRARYNAME         "PCBCP.HLP"
+    IDS_OPEN                    "Open"
+    IDS_HELPWINDOWTITLE         "PCBoard Control Panel Help"
+    IDS_SAVE                    "Save"
+    IDS_OBJECTCLASS             "Object Class"
+    IDS_FONTDLGTITLE            "Font"
+    IDS_STATUSCHANGETITLE       "Status Change Verification"
+    IDS_STATUSCHANGEMSG         "Apply Status Change to Node"
+    IDS_EDITNODESTATUS          "Edit Node Status - Node %d - Pid %X"
+    IDS_SAMPLETEXT              "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZA"
+    IDS_PREVIEWTEXT             "Transferring a File"
+    IDS_SETTINGSTEXT            "Settings for Node %d (Page %d of 2)"
+    IDS_LAUNCHING               "Launching Nodes (%d)"
+}
+
+MESSAGETABLE
+{
+    IDMSG_INITFAILED            "Initialization failed."
+    IDMSG_MAINWINCREATEFAILED   "Failed to create main window."
+    IDMSG_CANNOTOPENUSERNETFILE "Cannot open usernet file."
+    IDMSG_WRONGVERSION          "Wrong version usernet file."
+    IDMSG_CANNOTRUNCOLOR        "Cannot run Color dialog."
+    IDMSG_CANNOTGETHPS          "Cannot get HPS for window."
+    IDMSG_HELPLOADERROR         "Failed to load help manager."
+    IDMSG_CANNOTLOADSTRING      "Failed to load string."
+    IDMSG_HELPDISPLAYERROR      "Failed to display help panel."
+    IDMSG_CANNOTLOADEXITLIST    "Cannot load Exit List processor."
+    IDMSG_CANNOTGETFILEINFO     "Error getting file information."
+    IDMSG_CANNOTALLOCATEMEMORY  "Not enough memory."
+    IDMSG_CANNOTREADFILE        "Error reading file."
+    IDMSG_CANNOTWRITETOFILE     "Error writing file."
+    IDMSG_CANNOTLOADFONTS       "Cannot load fonts."
+    IDMSG_NODESWILLCLOSE        "All open nodes will be closed.\rAre you sure you want to exit?"
+    IDMSG_CONFIRMEXIT           "Exit Confirmation"
+    IDMSG_FIRSTNODELESS         "First Node must be less than\rthe Last Node!"
+    IDMSG_LIMITSERROR           "Limits Error"
+    IDMSG_COPYRANGEERROR        "Copy Range Error"
+    IDMSG_SAVECONFIGCHANGES     "Save Configuration Changes?"
+    IDMSG_CHANGESMADE           "Changes Made"
+}
+
+/* include dialog templates created by dialog editor */
+
+rcinclude pcbcp.dlg
+rcinclude help.rc
+DLGTEMPLATE IDD_FONTSETTINGS
+BEGIN
+        DIALOG "Set Display Options", 100, 5, 11, 292, 114, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+        BEGIN
+                CONTROL "Font Characteristics", ID_FONTCHAR, 11, 27, 264, 51, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | WS_VISIBLE
+                AUTORADIOBUTTON "Scalable Font (Fixed Number of Lines)", ID_FONTSCALE, 15, 49, 179, 10, WS_GROUP
+                AUTORADIOBUTTON "Fixed Font (Scalable Number of Lines)", ID_FONTFIXED, 15, 34, 185, 10
+                DEFPUSHBUTTON "OK", DID_OK, 6, 5, 51, 14, BS_PUSHBUTTON | BS_DEFAULT | WS_VISIBLE | WS_GROUP | WS_TABSTOP
+                PUSHBUTTON "Cancel", DID_CANCEL, 60, 5, 51, 14, BS_PUSHBUTTON | WS_VISIBLE | NOT WS_TABSTOP
+                PUSHBUTTON "Help", 998, 114, 5, 51, 14, BS_PUSHBUTTON | BS_HELP | WS_VISIBLE | NOT WS_TABSTOP
+                CONTROL "", ID_NUMLINES, 199, 48, 64, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_READONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN
+                CONTROL "Number of Lines", 105, 190, 62, 74, 8, WC_STATIC, SS_TEXT | DT_CENTER | DT_VCENTER | DT_MNEMONIC | WS_VISIBLE
+                CONTROL "Startup Default", 101, 11, 80, 264, 25, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "", ID_FIRSTSHOW, 163, 84, 48, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | WS_VISIBLE | WS_GROUP | WS_TABSTOP
+                CONTROL "First Node on Screen at Startup", 103, 18, 86, 139, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+        END
+
+END
+
+
+DLGTEMPLATE IDD_UPDATE
+BEGIN
+  DIALOG "Set Update Interval", 100, 9, 24, 172, 69, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+  BEGIN
+    DEFPUSHBUTTON "OK", DID_OK, 6, 4, 51, 14
+    PUSHBUTTON "Cancel", DID_CANCEL, 60, 4, 51, 14
+    PUSHBUTTON "Help", 998, 114, 4, 51, 14, BS_HELP
+    CONTROL "Update Interval", ID_INTERVAL, 30, 38, 55, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_READONLY | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN
+    CONTROL "Update Interval", 102, 15, 26, 135, 37, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "Seconds", 103, 93, 39, 45, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+  END
+END
+
+DLGTEMPLATE IDD_EDITRECORD
+BEGIN
+  DIALOG "", 100, 7, 16, 359, 175, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+  BEGIN
+    DEFPUSHBUTTON "OK", DID_OK, 6, 6, 51, 14
+    PUSHBUTTON "Cancel", DID_CANCEL, 60, 6, 51, 14
+    PUSHBUTTON "Help", 998, 114, 6, 51, 14, BS_HELP
+    CONTROL "Name", 101, 10, 153, 30, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_VCENTER | DT_MNEMONIC | WS_VISIBLE
+    CONTROL "City", 102, 10, 135, 30, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_VCENTER | DT_MNEMONIC | WS_VISIBLE
+    CONTROL "Operation", 103, 10, 117, 43, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_VCENTER | DT_MNEMONIC | WS_VISIBLE
+    CONTROL "Message", 104, 10, 99, 44, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_VCENTER | DT_MNEMONIC | WS_VISIBLE
+    CONTROL "Status", 105, 10, 82, 45, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_VCENTER | DT_MNEMONIC | WS_VISIBLE
+    CONTROL "", ID_USERNAME, 59, 152, 204, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_GROUP | WS_TABSTOP
+    CONTROL "", ID_USERCITY, 60, 134, 204, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_TABSTOP
+    CONTROL "", ID_OPERATION, 60, 116, 288, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_TABSTOP
+    CONTROL "", ID_MESSAGE, 60, 98, 288, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_TABSTOP
+    CONTROL "", ID_STATUS, 59, 23, 120, 68, WC_COMBOBOX, CBS_DROPDOWNLIST | ES_ANY | WS_GROUP | WS_TABSTOP
+    CONTROL "Quick Action Buttons", 106, 214, 4, 123, 88, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC
+    CONTROL "Force Logoff", DID_LOGOFF, 222, 68, 66, 14, WC_BUTTON, BS_PUSHBUTTON | WS_GROUP | WS_TABSTOP
+    CONTROL "Drop to DOS at Logoff", DID_DROPDOS, 222, 48, 100, 14, WC_BUTTON, BS_PUSHBUTTON | WS_TABSTOP
+    CONTROL "Drop to DOS - URGENT!", DID_DROPDOSNOW, 222, 28, 105, 14, WC_BUTTON, BS_PUSHBUTTON | WS_TABSTOP
+    CONTROL "Clear Node", DID_CLEARNODE, 222, 8, 52, 14, WC_BUTTON, BS_PUSHBUTTON | WS_TABSTOP
+    CONTROL "Recycle", DID_RECYCLE, 281, 8, 50, 14, WC_BUTTON, BS_PUSHBUTTON | WS_GROUP | WS_TABSTOP
+    CONTROL "Last Update", 107, 272, 132, 77, 38, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+    CONTROL "", ID_UPDTTIME, 279, 151, 62, 9, WC_ENTRYFIELD, ES_RIGHT | ES_MARGIN | ES_ANY | ES_READONLY | WS_VISIBLE
+    CONTROL "", ID_UPDTMIN, 279, 137, 62, 9, WC_ENTRYFIELD, ES_RIGHT | ES_MARGIN | ES_ANY | ES_READONLY | WS_VISIBLE
+  END
+END
+
+
+DLGTEMPLATE IDD_WARNINGS
+BEGIN
+        DIALOG "Set Warning Options", 100, 6, 6, 390, 178, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+        BEGIN
+                DEFPUSHBUTTON "OK", DID_OK, 6, 4, 51, 14
+                PUSHBUTTON "Cancel", DID_CANCEL, 60, 4, 51, 14
+                PUSHBUTTON "Help", 998, 114, 4, 51, 14, BS_HELP
+                CONTROL "Warning Options", 101, 11, 24, 200, 145, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+                CHECKBOX "Highlight Nodes On Screen", ID_WARNHIGHLIGHT, 21, 142, 165, 10, WS_GROUP
+                CHECKBOX "Sound Alarm", ID_WARNALARM, 21, 126, 100, 10, WS_GROUP
+                CHECKBOX "Monitor All Nodes (incl. unlisted nodes)", ID_WARNALL, 21, 109, 182, 10, WS_GROUP
+                CONTROL "", ID_WARNMINUTES, 22, 88, 38, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_TABSTOP
+                CONTROL "", ID_WARNEVENTS, 22, 70, 38, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_TABSTOP
+                CONTROL "", ID_WARNDOORS, 22, 52, 38, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_TABSTOP
+                CONTROL "", ID_WARNXFERS, 22, 34, 38, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_TABSTOP
+                CONTROL "Number of Minutes of Inactivity", 105, 65, 90, 140, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+                CONTROL "Number of Minutes for Events", 104, 65, 72, 140, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Number of Minutes for Doors", 106, 65, 54, 140, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Number of Minutes for Transfers", 103, 65, 36, 140, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Restart After Warning Options", 107, 219, 117, 160, 52, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CHECKBOX "Restart Hung Nodes", ID_WARNRESTART, 227, 146, 105, 10, WS_GROUP
+                CONTROL "", ID_WARNRESTARTMIN, 228, 128, 38, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_TABSTOP
+                CONTROL "Minutes After Warning", 109, 271, 130, 102, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Apply Status Warning Option", 102, 219, 76, 160, 33, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CHECKBOX "Verify Status Changes", ID_VERIFYCHANGE, 228, 84, 133, 10, WS_GROUP
+                CONTROL "PCBoard Page Alarm Options", 110, 219, 25, 160, 44, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CHECKBOX "Enable Page Alarm", ID_PAGEALARM, 228, 45, 120, 10, WS_GROUP
+                CHECKBOX "Bring Node to Foreground", ID_PAGEFOREGROUND, 228, 31, 129, 10, WS_GROUP
+        END
+
+END
+
+DLGTEMPLATE IDD_NOTEBOOK
+BEGIN
+        DIALOG "Node Configuration Notebook", 100, 0, 0, 304, 219, FS_DLGBORDER | FS_SCREENALIGN | WS_VISIBLE | WS_CLIPSIBLINGS | WS_SAVEBITS, FCF_TITLEBAR | FCF_SYSMENU
+        BEGIN
+                CONTROL "", ID_NOTEBOOKCTRL, 3, 2, 298, 215, WC_NOTEBOOK, BKS_SPIRALBIND | BKS_BACKPAGESBR | BKS_MAJORTABRIGHT | BKS_STATUSTEXTCENTER | BKS_TABTEXTCENTER
+        END
+
+END
+
+DLGTEMPLATE IDD_NODESETTINGS
+BEGIN
+        DIALOG "", 100, 14, 2, 225, 175, NOT FS_DLGBORDER
+        BEGIN
+                CONTROL "Node Settings", 104, 8, 27, 206, 136, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Path and Filename to Execute:", 101, 16, 143, 127, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Optional Program Parameters:", 102, 16, 92, 124, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Working Directory:", 103, 16, 117, 77, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Optional Port Number (PCBPORT)", 105, 16, 61, 142, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "", ID_PATHNAME, 16, 129, 181, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_GROUP | WS_TABSTOP
+                CONTROL "", ID_WORKDIR, 16, 104, 181, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_GROUP | WS_TABSTOP
+                CONTROL "", ID_PARAMETERS, 16, 79, 181, 10, WC_ENTRYFIELD, ES_LEFT | ES_AUTOSCROLL | ES_MARGIN | ES_ANY | WS_GROUP | WS_TABSTOP
+                CONTROL "", ID_PORT, 164, 59, 33, 10, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_VISIBLE | WS_GROUP | WS_TABSTOP
+                CONTROL "Copy ~From", ID_COPYFROM, 11, 7, 50, 14, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+                CONTROL "Copy ~To", ID_COPYTO, 69, 7, 44, 14, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+                CONTROL "~Undo", ID_UNDO, 123, 7, 40, 14, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+                CONTROL "Help", 998, 171, 7, 40, 14, WC_BUTTON, BS_PUSHBUTTON | BS_HELP | WS_VISIBLE | WS_TABSTOP
+                CONTROL "~Run Settings", ID_RUNSETTINGS, 15, 34, 79, 20, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+        END
+
+END
+
+DLGTEMPLATE IDD_RUNSETTINGS
+BEGIN
+        DIALOG "", 100, 14, 2, 225, 175, NOT FS_DLGBORDER
+        BEGIN
+                CONTROL "Run Settings", 104, 8, 27, 206, 136, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Session Type", 101, 20, 107, 172, 47, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                AUTORADIOBUTTON "~Windowed", ID_WINDOWED, 27, 134, 114, 10, WS_GROUP
+                AUTORADIOBUTTON "Windowed (~Minimized)", ID_MINIMIZED, 27, 122, 106, 10
+                AUTORADIOBUTTON "Full ~Screen", ID_FULLSCREEN, 27, 110, 134, 10
+                CONTROL "Auto-Run Settings", 108, 20, 58, 172, 45, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                AUTORADIOBUTTON "~Disabled", ID_DISABLED, 27, 84, 75, 10, WS_GROUP
+                AUTORADIOBUTTON "~Run at Startup", ID_AUTOSTART, 27, 72, 106, 10
+                AUTORADIOBUTTON "Run upon ~Connection (VMODEM)", ID_RUNONCONNECT, 27, 60, 156, 10
+                CONTROL "Copy ~From", ID_COPYFROM, 11, 7, 50, 14, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+                CONTROL "Copy ~To", ID_COPYTO, 69, 7, 44, 14, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+                CONTROL "~Undo", ID_UNDO, 123, 7, 40, 14, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+                CONTROL "Help", 998, 171, 7, 40, 14, WC_BUTTON, BS_PUSHBUTTON | BS_HELP | WS_VISIBLE | WS_TABSTOP
+                CONTROL "~Node Settings", ID_NODESETTINGS, 20, 33, 79, 20, WC_BUTTON, BS_PUSHBUTTON | WS_VISIBLE | WS_TABSTOP
+        END
+
+END
+
+DLGTEMPLATE IDD_NODELIMIT
+BEGIN
+        DIALOG "Node Limits", 100, 6, 52, 269, 113, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+        BEGIN
+                DEFPUSHBUTTON "OK", DID_OK, 6, 4, 51, 14
+                PUSHBUTTON "Cancel", DID_CANCEL, 60, 4, 51, 14
+                PUSHBUTTON "Help", 998, 114, 4, 51, 14, BS_HELP
+                CONTROL "Specify the first and last nodes you want to configure", 101, 12, 88, 243, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "and monitor.  The maximum is your node limit, however", 102, 12, 78, 244, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "specifying a smaller number can reduce CPU utilization.", 103, 12, 68, 243, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "Last Node to Monitor/Configure", 105, 84, 31, 168, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "First Node to Monitor/Configure", 106, 84, 47, 168, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "", 107, 5, 24, 256, 81, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+                CONTROL "", ID_FIRSTNODE, 25, 45, 48, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | WS_GROUP | WS_TABSTOP
+                CONTROL "", ID_LASTNODE, 25, 29, 48, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | WS_GROUP | WS_TABSTOP
+        END
+
+END
+
+
+DLGTEMPLATE IDD_PROGRESS
+BEGIN
+  DIALOG "Loading Information", 100, 7, 26, 237, 37, NOT FS_DLGBORDER | FS_BORDER | FS_SCREENALIGN | WS_VISIBLE | WS_CLIPSIBLINGS | WS_SAVEBITS, FCF_TITLEBAR
+  BEGIN
+    CONTROL "", ID_PROGRESSBOX, 7, 11, 222, 15, WC_STATIC, SS_FGNDFRAME | WS_VISIBLE | WS_GROUP
+    CONTROL "Loading Configuration Information, Please Wait...", 102, 15, 14, 205, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+  END
+END
+
+
+DLGTEMPLATE IDD_COPYFROM
+BEGIN
+  DIALOG "Copy From", 100, 6, 52, 195, 65, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+  BEGIN
+    DEFPUSHBUTTON "OK", DID_OK, 6, 4, 51, 14
+    PUSHBUTTON "Cancel", DID_CANCEL, 60, 4, 51, 14
+    PUSHBUTTON "Help", 998, 114, 4, 51, 14, BS_HELP
+    CONTROL "Copy node configuration from which node?", 102, 8, 50, 177, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "Node Number", 103, 90, 32, 62, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "", ID_COPYFROMNODE, 33, 30, 48, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_GROUP | WS_TABSTOP
+  END
+END
+
+DLGTEMPLATE IDD_COPYTO
+BEGIN
+  DIALOG "Copy To", 100, 6, 52, 195, 82, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+  BEGIN
+    DEFPUSHBUTTON "OK", DID_OK, 6, 4, 51, 14
+    PUSHBUTTON "Cancel", DID_CANCEL, 60, 4, 51, 14
+    PUSHBUTTON "Help", 998, 114, 4, 51, 14, BS_HELP
+    CONTROL "Copy node configuration to which nodes?", 102, 8, 67, 177, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "First Node Number", 103, 87, 49, 82, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "Last Node Number", 105, 87, 35, 77, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "", ID_COPYTOFIRST, 32, 48, 48, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_GROUP | WS_TABSTOP
+    CONTROL "", ID_COPYTOLAST, 32, 31, 48, 12, WC_SPINBUTTON, SPBS_MASTER | SPBS_NUMERICONLY | SPBS_JUSTRIGHT | SPBS_FASTSPIN | WS_GROUP | WS_TABSTOP
+  END
+END
+
+
+DLGTEMPLATE IDD_MOUSE
+BEGIN
+        DIALOG "Mouse Control", 100, 10, 19, 234, 112, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+        BEGIN
+                DEFPUSHBUTTON "OK", DID_OK, 6, 3, 51, 14
+                PUSHBUTTON "Cancel", DID_CANCEL, 60, 3, 51, 14
+                PUSHBUTTON "Help", 998, 114, 3, 51, 14, BS_HELP
+                CONTROL "Set the desired action when double-clicking", 103, 21, 88, 197, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+                CONTROL "Mouse Button 1", 104, 21, 77, 66, 8, WC_STATIC, SS_TEXT | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+                CONTROL "", 105, 8, 28, 216, 76, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE
+                AUTORADIOBUTTON "Edit Record", ID_MOUSEEDIT, 30, 53, 68, 10, WS_GROUP
+                AUTORADIOBUTTON "Run or Switch-to Node Window", ID_MOUSERUN, 30, 36, 177, 10
+        END
+
+END
+
+
+DLGTEMPLATE IDD_STARTUP
+BEGIN
+  DIALOG "Startup Settings", 100, 8, 10, 251, 115, WS_VISIBLE, FCF_SYSMENU | FCF_TITLEBAR
+  BEGIN
+    DEFPUSHBUTTON "OK", DID_OK, 6, 4, 51, 14
+    PUSHBUTTON "Cancel", DID_CANCEL, 60, 4, 51, 14
+    PUSHBUTTON "Help", 998, 114, 4, 51, 14, BS_HELP
+    CONTROL "Set behavior of nodes set to run on startup", 103, 6, 68, 236, 40, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    CONTROL "Set behavior of nodes set to run on connect", 101, 6, 23, 236, 40, WC_STATIC, SS_GROUPBOX | DT_LEFT | DT_TOP | DT_MNEMONIC | WS_VISIBLE | WS_GROUP
+    AUTORADIOBUTTON "Enable Auto-Run Nodes at Startup", ID_ENABLESTARTRUN, 20, 86, 163, 10, WS_GROUP
+    AUTORADIOBUTTON "Disable Auto-Run Nodes at Startup", ID_DISABLESTARTRUN, 20, 74, 161, 10
+    AUTORADIOBUTTON "Enable Auto-Run Nodes upon Connection", ID_ENABLECONNECTRUN, 20, 41, 187, 10, WS_GROUP
+    AUTORADIOBUTTON "Disable Auto-Run Nodes upon Connection", ID_DISABLECONNECTRUN, 20, 29, 185, 10
+  END
+END
+
+

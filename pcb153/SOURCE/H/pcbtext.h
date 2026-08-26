@@ -16,8 +16,8 @@
 #define H_PCBTEXT
 
 #ifdef PCB152
-#define TXT_NUMPROMPTS         750      /* 15.4 grew from 746 to 750 */
-#define TXT_NEWPROMPTS           4      /* Gender/Email/Web/Birthdate */
+#define TXT_NUMPROMPTS         746
+#define TXT_NEWPROMPTS           0
 #else
 #define TXT_NUMPROMPTS         713
 #define TXT_NEWPROMPTS           0
@@ -774,15 +774,5 @@ void LIBENTRY substpcbtext(int PcbTextNum, DISPLAYTYPE Display, char *Search, ch
 #define TXT_LONGINEFFECT       744
 #define TXT_SHOWLONGDESC       745
 #define TXT_USESHORTDESC       746
-
-/* 15.4 additions — prompts for the Personal PSA fields.  Text values are
- * taken verbatim from the 15.4b MKPCBTXT.EXE data section (recovered in
- * v0.016; see mkpcbtxt_15_4_new_prompts.txt).  Slot numbers 747-750 are
- * the next unused after the 15.3 baseline of 746.
- */
-#define TXT_ENTERGENDER        747      /* "Enter your gender (M/F)" */
-#define TXT_ENTEREMAILADDR     748      /* "Enter your E-mail address" */
-#define TXT_ENTERWEBADDR       749      /* "Enter your WEB address" */
-#define TXT_ENTERBIRTHDATE     750      /* "Enter your birthday (MM/DD/YY)" */
 
 #endif  /* ifndef H_PCBTEXT */

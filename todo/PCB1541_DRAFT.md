@@ -2541,3 +2541,28 @@ external tools as described above.
 | **Total** | **2,058** | |
 
 **Binaries:** PCBBINKP.EXE (47KB, OS/2) / PCBBINKP_W.EXE (62KB, NT)
+
+
+## Secure Remote Access — SSH (Dropbear)
+
+PCBoard historically took callers over modem, then telnet. Telnet is
+plaintext — credentials and session content are exposed on the wire.
+For 15.41 we add an **SSH front end** using Dropbear (vendored at
+`pcb1541/dropbear/`, MIT-style license, from mkj/dropbear).
+
+Dropbear is a good fit because:
+- It's small and self-contained — it bundles its own crypto
+  (libtomcrypt) and bignum (libtommath), so there's no OpenSSL
+  dependency to port. SMALL.md / MULTI.md upstream describe building a
+  single small multi-call binary, which suits a BBS front end.
+- It slots in beside the existing telnet path: the SSH server
+  terminates the caller connection, then hands the session to PCBoard
+  through the same comm/serial layer used for telnet/FOSSIL sessions
+  (see pcb1541/pcbcomm/). SyncTerm already speaks SSH client-side, so a
+  caller can reach the board over SSH end to end.
+
+Scope for the SSH front end: run dropbear as the listener, authenticate
+the caller, allocate the session, and bridge stdin/stdout to PCBoard's
+input/output — the same bridging netmodem2irc does for telnet, but over
+an encrypted channel. Host-key management and per-user public-key auth
+come free from Dropbear (authorized_keys, dropbearkey).

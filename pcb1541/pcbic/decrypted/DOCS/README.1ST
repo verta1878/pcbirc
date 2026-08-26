@@ -1,0 +1,215 @@
+PCBoard Internet Collection README.1ST
+======================================
+
+The information contained in this file is outlined as follows:
+
+1) TCP/IP Requirements
+2) Jump Start Installation Instructions
+3) How to read the PCB/IC Documentation
+4) Sample scripts that you can modify and distribute to your PPP users
+5) Miscellaneous Updates
+
+
+
+
+1) TCP/IP Requirements
+======================
+  The first thing you will need is a live connection to the internet, either
+  a permanent connection to your network, or a dialup connection.  You should
+  contact your local Internet Service Provider to take care of this before
+  proceeding.
+
+  PCB/IC supports both the DOS and OS/2 environments.  However, there are two
+  separate executables because the two environments have completely different
+  TCP/IP stack implementations.  The DOS version of PCB/IC *cannot* be run
+  under OS/2 and therefore, if you are using OS/2, you will need to use the
+  OS/2 version of PCBoard.
+
+  DOS Requirements:
+  -----------------
+  To get a TCP/IP stack up and running under DOS, your network will need to
+  support the "Packet Driver" specification created by FTP Software.  Most
+  networks support either NDIS (such as LANtastic) or ODI (such as Netware), so
+  your first step will be to enable either NDIS or ODI on your network.
+
+  LANtastic Users
+     If you are using the latest version of LANtastic, the NDIS drivers come
+     with the product.  If you do not have them, they can be obtained from
+     Artisoft's BBS (520-884-8648) or from their FTP site (ftp.artisoft.com).
+     Artisoft provides bulletins on their BBS, as well as FAX back support for
+     installing their NDIS drivers and getting TCP/IP working with LANtastic.
+
+  Netware Users
+     If you are using Network, you can use the ODIPKT driver that is freely
+     available on many Internet sites.  You may also need additional packet
+     drivers for your card.
+
+  Windows 3.1 and Windows for Workgroups
+     Windows can be used by loading the DOS TCP/IP drivers described up above.
+
+  Windows 95
+     Windows 95 can also be used by loading the 16-bit drivers described up
+     above, but it cannot be used with 32-bit drivers which are not compatible
+     with the "Packet Driver" specification.
+
+  Windows NT
+     Windows NT cannot be used to run PCB/IC.
+
+
+  OS/2 Requirements:
+  ------------------
+  You may use any version of OS/2 from 2.1 on up.  However, there is a newer
+  release, called WARP CONNECT, which makes the usage of PCB/IC a lot easier.
+  The setup for each is, therefore, different and the following examines the
+  differences:
+
+  WARP CONNECT
+     To run PCB/IC under OS/2, you must first install a TCP/IP stack.  This can
+     most easily be accomplished by installing WARP CONNECT which includes its
+     own TCP/IP stack and can be automatically installed at the same time that
+     the operating system is installed.  It should be noted that WARP CONNECT
+     also includes built-in PEER Networking capabilities.
+
+  OS/2 Version 2.1 thru WARP 3.0
+     Older versions of OS/2 did not include TCP/IP as part of the operating
+     system.  However, you can also use IBM's TCP/IP for OS/2 "Base Kit" to
+     provide your TCP/IP stack.  However, unlike WARP CONNECT, the "Base Kit"
+     does not include the SLIP/PPP modules which are required for PCB/IC to
+     provide your callers with SLIP or PPP services.  Luckily, you can download
+     the SLIP/PPP modules that work with the "Base Kit" via FTP from
+     ftp.cdrom.com in the os2/networking/tcpip directory.  The names of the
+     files you will need are:
+
+        ppp.zip
+        slipmsg.zip
+        slippm.zip
+
+  NOTE:  A limitation of IBM's TCP/IP stack restricts PCB/IC to only 8
+  concurrent SLIP or PPP sessions per machine.  Also, the SLIP and PPP options
+  cannot be made available to your callers if your own system is using SLIP or
+  PPP to establish *your* connection to the Internet.
+
+
+2) Jump Start Installation Instructions
+=======================================
+  The following information should help you get PCB/IC up and running as
+  quickly as possible:
+
+  1) The TCP/IP requirements documented above should be taken care of first,
+     but do not become critically important until step #4 below at which point
+     you will need to have a live internet feed.
+
+  2) Run the INSTALL program.  Doing so will install the files into their
+     proper locations and create sample DOOR program files that you can list
+     in your DOORS.LST configuration.
+
+     NOTE:  If you downloaded PCBIC.ZIP, unzip it into a temporary directory
+     and then run the INSTALL program.
+
+  3) The INSTALL program will automatically run PCBICCFG.EXE to help you
+     configure the system.  The most important part to take care of at this
+     point is the IP Information which is where you configure the IP address
+     that TCP/IP will use, the net mask for your subnet, the gateway address,
+     the DNS addresses, and your domain name.  NOTE:  There is help information
+     inside of the configuration program, you can press F1 for help on each
+     field.  If you are unable to complete the configuration at this time
+     (perhaps you need to speak with your Internet Service Provider to find
+     out the answers to the IP setup questions), it's okay to exit PCBICCFG
+     at this time and simply re-run the program again later.
+
+  4) Now run the TESTIC.EXE (or TESTIC2.EXE for OS/2) program and give it an
+     address such as bbs.pcboard.com.  If it works, you will know that PCB/IC
+     is properly installed.  If you have any difficulties at this point, it is
+     recommended that you check out the troubleshooting section of the
+     documentation.
+
+     NOTE FOR OS/2 USERS
+     ===================
+     We strongly recommend that you test your installation of IBM's TCP/IP
+     stack first by utilizing the PING.EXE program that comes with it.  Then,
+     after it is working, you may use the TESTIC2.EXE program to make sure that
+     it is working.  Once TESTIC2.EXE works, you should have no difficulty
+     getting PCB/IC for OS/2 to operate properly.
+
+
+3) How to read the PCB/IC Documentation
+=======================================
+  The PCB/IC documention is available only in electronic (PDF) form.  You can
+  print it if you prefer, but as an electronic document it can be searched,
+  and as a PDF document, it still includes pictures and other aspects which are
+  expected and normally found only in printed manuals.
+
+  You'll find the documentation (PCBIC.PDF) inside of the DOCS subdirectory
+  where you installed PCBIC (normally C:\PCBIC\DOCS).
+
+  To read the documentation, you will need to obtain a reader which interprets
+  the Adobe Acrobat format.  You can obtain copies of the DOS and Windows
+  versions of the Adobe Acrobat reader from the Salt Air BBS (conference 89),
+  or via a web browser at http://www.pcboard.com/prod/pcbic/.  The filenames on
+  the BBS are:
+
+         ACRODOS.EXE    for DOS (also runs under OS/2)
+         ACROREAD.EXE   for Windows (also runs under Win-OS/2)
+
+  After installing the Adobe Acrobat reader, you simply open the PCBIC.PDF
+  file.  You'll find the documentation fairly easy to read in this format
+  and can print it out if you prefer to read it away from the computer.
+
+     * UPDATE *
+     An OS/2 version of the Adobe Acrobat Reader is now available.  Connect
+     to http://www.adobe.com/amber/ to obtain a copy.
+
+
+4) Sample scripts that you can modify and distribute to your PPP users
+======================================================================
+  In the SCRIPTS subdirectory (e.g. C:\PCBIC\SCRIPTS) you will find a set of
+  files that can be used to access the Salt Air BBS.  These same files can be
+  modified by you and distributed to your callers to make it easier for them
+  to connect to your system.
+
+
+5) Miscellaneous Updates
+========================
+  If have you looked at the PCBIC door batch files that the INSTALL program
+  created, you might have noticed the following lines:
+
+      SET OS2=
+      if '%PCBOS2%' == 'Y' SET OS2=2
+      C:\PCBIC\PCBIC%OS2%.EXE
+      SET OS2=
+
+  In case you are scratching your head, wondering what the above is doing, it
+  is simply making it possible to share a single PCBIC batch file between both
+  the DOS and OS/2 versions.  What happens in the above is it first deletes an
+  environment called "OS2" (in case it might already exist).  Then it checks
+  to see if you are running PCBoard-for-OS/2 (by checking to see if %PCBOS2%
+  is equal to Y) and, if so, it sets the "OS2" environment variable to the
+  value of "2".  If you did a SET command at this point, you would see "OS2=2"
+  at the bottom of the list of environment variables.  Now when it comes time
+  to run the PCBIC.EXE, the operating system will automatically decide to use
+  either PCBIC.EXE or PCBIC2.EXE based on the value of the "OS2" environment
+  variable.
+
+  It's a clever trick that avoids using two separate files and even avoids
+  the complicated logic associated with goto's inside of a batch file.
+
+  One more thing you might like to know is, if you run *both* the DOS and OS/2
+  versions of PCBoard, you will want to set up PCB/IC so that it can be used
+  from both versions.  The DOORS.LST file then might look like this:
+
+                                 USER DOOR            Charges Per    Path to
+      Filename   Pwrd  Sec Login SYS  SYS  Shell Os2 Minute    Use  DOOR Files
+     ========== ====== === ===== ==== ==== ===== === ============= ===========
+    1) PCBIC             8   N    Y    N     N    Y       0      0 C:\PCBIC\
+    2) PCBIC             8   N    Y    N     N    N       0      0 C:\PCBIC\
+
+  You'll note that the only difference between the two lines above is that the
+  first one has a Y in the Os2 column, the second one has a N.
+
+  Using the above, PCBoard-for-OS/2 will automatically run door #1 if someone
+  types PCBIC, whereas PCBoard-for-DOS will ignore door #1 and instead will
+  run door #2.  Essentially, both versions of PCBoard can now use the command
+  "PCBIC" to run the appropriate version of the door.
+
+
+

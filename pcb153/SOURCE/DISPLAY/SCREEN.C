@@ -224,7 +224,7 @@ void LIBENTRY turndisplayoff(bool WriteToDisk) {
     return;
 
   #ifdef __OS2__
-    ScrnBuff = (char *) 1;     // use non-zero value to indicate screen is off
+    ScrnBuff = (char *) 1;  /* use non-zero value to indicate screen is off */
     toggleoff(NULL);
   #else
     if ((ScrnBuff = (char _FAR_ *) farmalloc(4000)) == NULL)
@@ -296,7 +296,7 @@ void LIBENTRY setripmouseregion(int Num, int X1, int Y1, int X2, int Y2, int Fon
   printcom(meganum((Y2-1) * FontY));
   printcom(Invert ? "1" : "0");
   printcom(Clear  ? "1" : "0");
-  printcom("00000");  // reserved
+  printcom("00000");  /* reserved */
   printcom(Text);
 #endif
 }

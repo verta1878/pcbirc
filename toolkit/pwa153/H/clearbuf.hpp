@@ -36,7 +36,7 @@
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include    <mem.h>
 
@@ -44,7 +44,7 @@
 
 /******************************************************************************/
 
-// Clear Buffer Functions
+/* Clear Buffer Functions */
 
 template <class T>
 inline void clearBuffer ( T & t )
@@ -59,5 +59,5 @@ inline void clearBuffer ( void * p, unsigned s )
 
 /******************************************************************************/
 
-#endif // ___CLEARBUF_HPP___
+#endif  /* ___CLEARBUF_HPP___ */
 

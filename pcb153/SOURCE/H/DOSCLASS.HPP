@@ -37,7 +37,7 @@
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include    <stdio.h>
 #include    <stdlib.h>
@@ -60,7 +60,7 @@
 
 /******************************************************************************/
 
-// Constants for End Of Line Markers
+/* Constants for End Of Line Markers */
 
 extern const char endOfLineStr  [];
 extern const char endOfULineStr [];
@@ -68,33 +68,33 @@ extern const char endOfNLineStr [];
 
 /******************************************************************************/
 
-// Pure Virtual Base File Class
+/* Pure Virtual Base File Class */
 
 class cFILEBASE
 {
 
     public:
 
-        // Constructor to make sure the name is initialized to empty
+/* Constructor to make sure the name is initialized to empty */
         cFILEBASE ( void ) { _name[0] = NUL; }
 
-        // Virtual destructor to ensure that derived destructors are called
+/* Virtual destructor to ensure that derived destructors are called */
         virtual ~cFILEBASE ( void ) { }
 
-        // SET / GET / make a TeMPorary name for the file
+/* SET / GET / make a TeMPorary name for the file */
               void   setName ( const char * name ) { close();
                                                      if (name)
                                                        strcpy(_name,name); }
         const char * getName ( void )              { return _name; }
         const char * tmpName ( const char * path );
 
-        // NOTE: tmpName hasn't been implemented yet, just stubbed in
-        //       Intended functionality is that a path (C:\PCB\) is passed
-        //       in and a random name (XXXXXXXX.XXX) is appended to the
-        //       specified path.
+/* NOTE: tmpName hasn't been implemented yet, just stubbed in */
+/*       Intended functionality is that a path (C:\PCB\) is passed */
+/*       in and a random name (XXXXXXXX.XXX) is appended to the */
+/*       specified path. */
 
-        // Functions to fully qualify a path name, make/split the name,
-        // and set/get parts of the name
+/* Functions to fully qualify a path name, make/split the name, */
+/* and set/get parts of the name */
 
         const char * fullName ( void )
             { char _tmpname [ _MAX_PATH ];
@@ -127,17 +127,17 @@ class cFILEBASE
         char * getFName ( char * p ) { getParts(0,0,p,0); return p; }
         char * getExt   ( char * p ) { getParts(0,0,0,p); return p; }
 
-        // Miscellaneous functions to unlink, rename, move, copy, seek, etc
+/* Miscellaneous functions to unlink, rename, move, copy, seek, etc */
         int unlink ( void )              { close();
                                            return ::unlink(getName()); }
         int rename ( const char * name ) { close();
                                            int rv = ::rename(getName(),name);
                                            if (rv == 0) setName(name);
                                            return rv; }
-        // move? copy?
+/* move? copy? */
 
-        // Functions to seek to a specified character, implicit SEEK_SET,
-        // seek followed by read/write, etc.
+/* Functions to seek to a specified character, implicit SEEK_SET, */
+/* seek followed by read/write, etc. */
 
         int seek ( char c );
 
@@ -153,12 +153,12 @@ class cFILEBASE
         int seekWrite ( long dist, const void * buf, unsigned size )
             { return seekWrite(dist,SEEK_SET,buf,size); }
 
-        // Quick & Dirty access to get/set the absolute file pointer position
+/* Quick & Dirty access to get/set the absolute file pointer position */
         long pos ( void )   { return seek(0,SEEK_CUR); }
         void pos ( long p ) {        seek(p,SEEK_SET); }
 
-        // Append/Create/Open a file (optionally auto error checking) using
-        // an existing file name
+/* Append/Create/Open a file (optionally auto error checking) using */
+/* an existing file name */
         int append    ( int flags ) { close();
                                       return _append(_name,flags); }
         int appendChk ( int flags ) { close();
@@ -174,7 +174,7 @@ class cFILEBASE
         int openChk   ( int flags ) { close();
                                       return _openChk(_name,flags); }
 
-        // Append/Create/Open a file (optionally auto error checking)
+/* Append/Create/Open a file (optionally auto error checking) */
         int append    ( const char * name,
                               int    flags ) { setName(name);
                                                return append(flags); }
@@ -196,13 +196,13 @@ class cFILEBASE
                               int    flags ) { setName(name);
                                                return openChk(flags); }
 
-        // Close a file if it is open
+/* Close a file if it is open */
         int close ( void ) { return (isOpen() ? _close() : 0); }
 
-        // Routine to output a single character
+/* Routine to output a single character */
         int putch ( char c ) { return writeChk(&c,sizeof(c)); }
 
-        // Functions for line oriented input/output
+/* Functions for line oriented input/output */
         virtual int getln   (       char * str, unsigned size );
         virtual int getuln  (       char * str, unsigned size );
         virtual int getnln  (       char * str, unsigned size );
@@ -221,15 +221,15 @@ class cFILEBASE
                                                               rv = putch(NUL);
                                                           return rv; }
 
-        // Functions for formatted input/output
+/* Functions for formatted input/output */
         int scanf  ( const char * fmt, ... );
         int printf ( const char * fmt, ... );
 
-        // Functions to write a given character a specified number of times
+/* Functions to write a given character a specified number of times */
         int write    ( const char c, unsigned size );
         int writeChk ( const char c, unsigned size );
 
-        // These are all pure virtual and must be defined in derived classes
+/* These are all pure virtual and must be defined in derived classes */
         virtual int  commit   (       void )                         = 0;
         virtual int  flush    (       void )                         = 0;
         virtual bool isOpen   (       void )                         = 0;
@@ -246,7 +246,7 @@ class cFILEBASE
         virtual int  write    ( const void   * buf,  unsigned size ) = 0;
         virtual int  writeChk ( const void   * buf,  unsigned size ) = 0;
 
-        // These are to maintain backward compatibility
+/* These are to maintain backward compatibility */
         int appendchk ( const char   * name,
                               int      flags ) { return appendChk(name,
                                                    flags); }
@@ -265,9 +265,9 @@ class cFILEBASE
 
     protected:
 
-        // These are all pure virtual and must be defined in derived classes
-        // They are protected because they should not be used directly, but
-        // only by members of this and derived classes
+/* These are all pure virtual and must be defined in derived classes */
+/* They are protected because they should not be used directly, but */
+/* only by members of this and derived classes */
         virtual int _append    ( const char * name, int flags )           = 0;
         virtual int _appendChk ( const char * name, int flags )           = 0;
         virtual int _close     ( void )                                   = 0;
@@ -276,18 +276,18 @@ class cFILEBASE
         virtual int _open      ( const char * name, int flags )           = 0;
         virtual int _openChk   ( const char * name, int flags )           = 0;
 
-        // Function to read a line of text using a supplied end of line marker
+/* Function to read a line of text using a supplied end of line marker */
         int _getline ( char * str, unsigned size, const char * eol );
 
     private:
 
-        char _name [ _MAX_PATH ]; // _MAX_PATH (among others) from stdlib.h
+        char _name [ _MAX_PATH ];  /* _MAX_PATH (among others) from stdlib.h */
 
 };
 
 /******************************************************************************/
 
-// Derived Classes for Handle and Stream Based File Access
+/* Derived Classes for Handle and Stream Based File Access */
 
 class cFILESTREAM;
 
@@ -403,7 +403,7 @@ class cFILESTREAM : public cFILEBASE
 
 /******************************************************************************/
 
-// Aliases to maintain backward compatibility
+/* Aliases to maintain backward compatibility */
 
 typedef cFILE       cDOS;
 typedef cFILESTREAM cDOSFILE;

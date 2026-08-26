@@ -12,12 +12,11 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-#include    <dir.h>
-#include    <stdio.h>
-#include    <string.h>
+#include    <dir.h> #include    <stdio.h> #include    <string.h>
 
-#include    <borland.h>
+#ifdef LIB
 #include    <pcbtools.h>
+#endif
 
 char * pascal makeUniqueFZipName ( char * name )
 {

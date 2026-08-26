@@ -66,10 +66,10 @@
 
 // Defined Macros
 
-#define HDR_TXT "PCBoard Programming Language Executable  3.40\x0D\x0A\x1A"  /* 15.4: bumped from 3.30 */
+#define HDR_TXT "PCBoard Programming Language Executable  3.30\x0D\x0A\x1A"
 #define HDR_SIZ 48
 
-#define CUR_PPE_VER 	 340   // 15.4: bumped from 330.  For PCB 15.23/15.3 was 3.30.
+#define CUR_PPE_VER 	 330   // For PCB 15.23 and 15.3 the ppl version is 3.30
 #define MAX_PPE_VER 	9999
 
 /******************************************************************************/
@@ -252,8 +252,6 @@ sKEYWORD cSCRIPT::kwArray[] =
 	{ "\x06""MKDIR ",      TOK_MKDIR,       1,  1, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x06""MONEY ",      TOK_MONEY,       1, 99, TRUE,  cSCRIPT::tokenVARS    },
 	{ "\x05""MORE ",       TOK_MORE,        0,  0, FALSE, cSCRIPT::tokenARGS    },
-	/* 15.4: MOVEMSG conf message movetype (movetype: TRUE=move, FALSE=copy) */
-	{ "\x08""MOVEMSG ",    TOK_MOVEMSG,     3,  3, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x09""MOUSEREG ",   TOK_MOUSEREG,   10, 10, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x07""MPRINT ",     TOK_MPRINT,      1, 99, TRUE,  cSCRIPT::tokenARGS    },
 	{ "\x09""MPRINTLN ",   TOK_MPRINTLN,    0, 99, TRUE,  cSCRIPT::tokenARGS    },
@@ -297,12 +295,8 @@ sKEYWORD cSCRIPT::kwArray[] =
 	{ "\x0A""SENDMODEM ",  TOK_SENDMODEM,   1,  1, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x07""SETENV ",     TOK_SETENV,      1,  1, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x07""SETLMR ",     TOK_SETLMR,      2,  2, FALSE, cSCRIPT::tokenARGS    },
-	/* 15.4: SETBANKVAL idx value — write a banking PSA field by index */
-	{ "\x0B""SETBANKVAL ", TOK_SETBANKVAL,  2,  2, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x06""SHELL ",      TOK_SHELL,       4,  4, FALSE, cSCRIPT::tokenEXPRVAR }, // * NO DEMO
 	{ "\x06""SHORT ",      TOK_SBYTE,       1, 99, TRUE,  cSCRIPT::tokenVARS    },
-	/* 15.4: SHORTDESC value — write the current user's short-desc mode */
-	{ "\x0A""SHORTDESC ",  TOK_SHORTDESCSTMT,1, 1, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x08""SHOWOFF ",    TOK_SHOWOFF,     0,  0, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x07""SHOWON ",     TOK_SHOWON,      0,  0, FALSE, cSCRIPT::tokenARGS    },
 	{ "\x05""SORT ",       TOK_SORT,        2,  2, FALSE, cSCRIPT::tokenSORT    },
@@ -506,11 +500,8 @@ sOPERATOR cSCRIPT::opArray[] =
 	{ "\x08""FMTREAL(",    TOK_OP_FMTREAL,    OP_PRI_UNARY,    FALSE,  3 },
 	{ "\x06""FNEXT(",      TOK_OP_FNEXT,      OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x06""FTELL(",      TOK_OP_FTELL,      OP_PRI_UNARY,    FALSE,  1 },
-	/* 15.4 additions — sorted alphabetically per convention */
-	{ "\x0B""GETBANKVAL(", TOK_OP_GETBANKVAL, OP_PRI_UNARY,    FALSE,  1 },
 	{ "\x09""GETDRIVE(",   TOK_OP_GETDRIVE,   OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x07""GETENV(",     TOK_OP_GETENV,     OP_PRI_UNARY,    FALSE,  1 },
-	{ "\x0A""GETMSGHDR(",  TOK_OP_GETMSGHDR,  OP_PRI_UNARY,    FALSE,  3 },
 	{ "\x09""GETTOKEN(",   TOK_OP_GETTOKEN,   OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x05""GETX(",       TOK_OP_GETX,       OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x05""GETY(",       TOK_OP_GETY,       OP_PRI_UNARY,    FALSE,  0 },
@@ -611,9 +602,6 @@ sOPERATOR cSCRIPT::opArray[] =
 	{ "\x08""SCRTEXT(",    TOK_OP_SCRTEXT,    OP_PRI_UNARY,    FALSE,  4 },
 	{ "\x04""SEC(",        TOK_OP_SEC,        OP_PRI_UNARY,    FALSE,  1 },
 	{ "\x09""SETDRIVE(",   TOK_OP_SETDRIVE,   OP_PRI_UNARY,    FALSE,  1 },
-	/* 15.4 addition */
-	{ "\x0A""SETMSGHDR(",  TOK_OP_SETMSGHDR,  OP_PRI_UNARY,    FALSE,  4 },
-	{ "\x0A""SHORTDESC(",  TOK_OP_SHORTDESC,  OP_PRI_UNARY,    FALSE,  1 },
 	{ "\x09""SHOWSTAT(",   TOK_OP_SHOWSTAT,   OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x07""SLPATH(",     TOK_OP_SLPATH,     OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x06""SPACE(",      TOK_OP_SPACE,      OP_PRI_UNARY,    FALSE,  1 },
@@ -678,8 +666,6 @@ sOPERATOR cSCRIPT::opArray[] =
 	{ "\x08""U_MSGRD(",    TOK_OP_U_MSGRD,    OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x08""U_MSGWR(",    TOK_OP_U_MSGWR,    OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x07""U_NAME(",     TOK_OP_U_NAME,     OP_PRI_UNARY,    FALSE,  0 },
-	/* 15.4 addition — U_PERSONAL(idx) reads the personal PSA fields */
-	{ "\x0B""U_PERSONAL(", TOK_OP_U_PERSONAL, OP_PRI_UNARY,    FALSE,  1 },
 	{ "\x0A""U_PWDHIST(",  TOK_OP_U_PWDHST,   OP_PRI_UNARY,    FALSE,  1 },
 	{ "\x08""U_PWDLC(",    TOK_OP_U_PWDLC,    OP_PRI_UNARY,    FALSE,  0 },
 	{ "\x08""U_PWDTC(",    TOK_OP_U_PWDTC,    OP_PRI_UNARY,    FALSE,  0 },

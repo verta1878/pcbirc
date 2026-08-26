@@ -34,7 +34,7 @@
 *****************************************************************************/
 
 #ifdef __OS2__
-//#define timerexpired(n) (gettimer(n) <= 0)
+/*#define timerexpired(n) (gettimer(n) <= 0) */
 #else
   #ifdef CPU386
     extern long BC386BUG;

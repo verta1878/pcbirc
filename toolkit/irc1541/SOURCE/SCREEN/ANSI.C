@@ -15,23 +15,32 @@
 //#pragma inline
 
 #include <mem.h>
+#ifdef __WATCOMC__
+#include <dos.h>
+#endif
 #include <stdio.h>
 #include <model.h>
 #include "screen.h"
 
 char ansicolors[] = "04261537";
 
-void pascal ansi_print(char *str) {
-/*  for (; *str; str++)  */
-/*    putchar(*str);     */
-
+void LIBENTRY ansi_print(char *str) {
+#ifdef __WATCOMC__
+  /* Watcom: use DOS INT 21h function 02h via intdos */
+  union REGS r;
+  for (; *str; str++) {
+    r.h.ah = 0x02;
+    r.h.dl = *str;
+    intdos(&r, &r);
+  }
+#else
+  /* Borland: original inline asm */
 #ifdef LDATA
   _asm Push Ds
   _asm Lds  Si,str
 #else
   _asm Mov  Si,str
 #endif
-
   _asm Mov  Ah,2
 Top:
   _asm Mov  Dl,[Si]
@@ -41,11 +50,11 @@ Top:
   _asm Inc  Si
   _asm Jmp  Short Top
 End:
-
 #ifdef LDATA
   _asm Pop  Ds
 #endif
-;
+  ;
+#endif
 }
 
 void pascal ansi_save(void) {

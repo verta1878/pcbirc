@@ -12,6 +12,7 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
+/* deferred — see phase notes */
 #include <io.h>
 #include <alloc.h>
 #include <stdio.h>
@@ -37,7 +38,7 @@ typedef struct {
   unsigned CacheOffset;
 } cachetype;
 
-struct {
+static struct {
   VirType   huge *LastRecAdr;
   long      LastRecNum;
   int       File;

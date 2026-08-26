@@ -14,14 +14,14 @@
 
 #ifdef COMM
 
-// Define the name below if you want to log the IOCTL calls
-// #define MODEMOS2TEST
+/* Define the name below if you want to log the IOCTL calls */
+/* #define MODEMOS2TEST */
 #ifdef MODEMOS2TEST
   #include "project.h"
   #pragma hdrstop
 #endif
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
   #define INCL_DOSDEVICES
   #include <os2.h>
 #endif
@@ -33,8 +33,8 @@
   #include <borland.h>
 #else
   #include <mem.h>
-  #if !defined(__OS2__) && !defined(__WATCOMC__)
-//  #pragma inline
+  #ifndef __OS2__
+/*  #pragma inline */
   #endif
 #endif
 
@@ -43,9 +43,9 @@
 void LIBENTRY logger(int Handle, int Category, int Function) {
   char Str[80];
 
-  // NOTE:  Because there are so many calls to check for carrier status,
-  // which is a function 0x67, this logger will IGNORE all calls for function
-  // 0x67 unless MODEMOS2TEST2 is defined.
+/* NOTE:  Because there are so many calls to check for carrier status, */
+/* which is a function 0x67, this logger will IGNORE all calls for function */
+/* 0x67 unless MODEMOS2TEST2 is defined. */
 
   #ifndef MODEMOS2TEST2
     if (Function == 0x67)
@@ -60,12 +60,12 @@ void LIBENTRY logger(int Handle, int Category, int Function) {
 #endif
 
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
 int LIBENTRY DevIOCtl(int Handle, int Cat, int Func, void _FAR_ *DataPacket,unsigned long DataLen, void _FAR_ *CmdPacket, unsigned long CmdLen) {
 #else
 int LIBENTRY DevIOCtl(int Handle, int CatFunc, void _FAR_ *DataPacket, void _FAR_ *CmdPacket) {
 #endif
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     logger(Handle,Cat,Func);
     return(DosDevIOCtl(Handle,
                        Cat,
@@ -109,12 +109,12 @@ void LIBENTRY setioctrlhandle(int Handle) {
 }
 
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
 int LIBENTRY getioctrl(int Cat, int Func, void _FAR_ *DataPacket, unsigned long DataLen) {
 #else
 int LIBENTRY getioctrl(int CatFunc, void _FAR_ *DataPacket) {
 #endif
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     unsigned long CmdLen = 0;
     logger(CommonHandle,Cat,Func);
     return(DosDevIOCtl(CommonHandle,
@@ -151,12 +151,12 @@ int LIBENTRY getioctrl(int CatFunc, void _FAR_ *DataPacket) {
 }        /*lint !e563 */
 
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
 int LIBENTRY setioctrl(int Cat, int Func, void _FAR_ *CmdPacket, unsigned long CmdLen) {
 #else
 int LIBENTRY setioctrl(int CatFunc, void _FAR_ *CmdPacket) {
 #endif
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     unsigned long DataLen = 0;
     logger(CommonHandle,Cat,Func);
     return(DosDevIOCtl(CommonHandle,
@@ -194,12 +194,12 @@ int LIBENTRY setioctrl(int CatFunc, void _FAR_ *CmdPacket) {
 }        /*lint !e563 */
 
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
 void LIBENTRY callioctrl(int Cat, int Func) {
 #else
 void LIBENTRY callioctrl(int CatFunc) {
 #endif
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     unsigned long CmdLen  = 0;
     unsigned long DataLen = 0;
     logger(CommonHandle,Cat,Func);
@@ -211,7 +211,7 @@ void LIBENTRY callioctrl(int CatFunc) {
                 &CmdLen,
                 NULL,
                 0,
-                &DataLen);     //lint !e534
+                &DataLen);  /*lint !e534 */
   #else
     asm   mov  ax, 0x440C      /* Ah=0x44 IOCTL,  Al=0x0C  Handle based call */
     asm   mov  bx, CommonHandle

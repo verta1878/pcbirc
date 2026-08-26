@@ -37,21 +37,21 @@
 
 /******************************************************************************/
 
-// Pragmas
+/* Pragmas */
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 #ifdef LIB
 
 #include    "misc.h"
 
-//#ifdef  ___EXEC___         // commented out this line and
-#ifdef LIB                          // changed to LIB on 4/26/95 DWT
+/*#ifdef  ___EXEC___         // commented out this line and */
+#ifdef LIB  /* changed to LIB on 4/26/95 DWT */
 #include    "pcbtools.h"
-//#include      "pcboard.h"
-//#include      "newdata.h"
-//#include      "users.h"
+/*#include      "pcboard.h" */
+/*#include      "newdata.h" */
+/*#include      "users.h" */
 #else
 #include    "country.h"
 #include    "dosfunc.h"
@@ -75,7 +75,7 @@
 
 /******************************************************************************/
 
-// Defined Macros
+/* Defined Macros */
 
 
 
@@ -93,8 +93,8 @@
 #define VerifySupport   UserSys.VerifySupport
 #define StatsSupport    UserSys.StatsSupport
 #define NotesSupport    UserSys.NotesSupport
-//#define AccountSupport  UserSys.AccountSupport
-//#define QwkSupport      UserSys.QwkSupport
+/*#define AccountSupport  UserSys.AccountSupport */
+/*#define QwkSupport      UserSys.QwkSupport */
 
 #define DLDRMonth()     (ptrUData->DateLastDirRead.Month)
 #define DLDRDay()       (ptrUData->DateLastDirRead.Day)
@@ -140,16 +140,16 @@
 #define clearBuf(b) memset(&b,0,sizeof(b))
 
 
-// If subdir or volume bits are set then it's not a file
+/* If subdir or volume bits are set then it's not a file */
 #define fexist(f)   ((fileexist(f) & 0x18) == 0)
 
 /******************************************************************************/
 
-// Types
+/* Types */
 
 #ifdef LIB
 
-//typedef enum { SHOW,       HIDE }        showtype;
+/*typedef enum { SHOW,       HIDE }        showtype; */
 typedef enum { NLOGOFF,    ALOGOFF }     logtype;
 typedef enum { UPLOAD,     DOWNLOAD }    xfertype;
 typedef enum { CHECKDIRTY, IGNOREDIRTY } dirtytype;
@@ -173,11 +173,11 @@ typedef struct {
   long     Offset;           /* Offset in User Record where TPA record begins    */
 } apptype;
 
-//typedef struct {
-//  long HighMsgNum;
-//  long LowMsgNum;
-//  long NumActiveMsgs;
-//} msgbasestattype;
+/*typedef struct { */
+/*  long HighMsgNum; */
+/*  long LowMsgNum; */
+/*  long NumActiveMsgs; */
+/*} msgbasestattype; */
 #endif
 
 #if defined(___COMP___) || defined(___INFO___) || defined(___SCAN___)
@@ -191,15 +191,15 @@ struct sSTATUS
 
 /******************************************************************************/
 
-// Constants
+/* Constants */
 
 /******************************************************************************/
 
-// Variables
+/* Variables */
 
 #if defined(___COMP___) || defined(___INFO___) || defined(___SCAN___)
 
-//extern sSTATUS Status;
+/*extern sSTATUS Status; */
 extern char OpenFileNames[MAXHANDLES+1][MAXNAMELEN];
 
 #endif
@@ -216,7 +216,7 @@ extern long  * TempMsgPtr;
 
 /******************************************************************************/
 
-// Function Prototypes
+/* Function Prototypes */
 
 #if defined(LIB) && defined(___EXEC___)
 
@@ -269,13 +269,13 @@ void   LIBENTRY send                    ( int NumTokens );
 
 void   LIBENTRY xlatetext               ( char * New, char * Old );
 
-//char * LIBENTRY countrydate             ( char * s );
-//char * LIBENTRY countrydate2            ( char * s );
-//char * LIBENTRY uncountrydate           ( char * s );
-//char * LIBENTRY uncountrydate2          ( char * s );
+/*char * LIBENTRY countrydate             ( char * s ); */
+/*char * LIBENTRY countrydate2            ( char * s ); */
+/*char * LIBENTRY uncountrydate           ( char * s ); */
+/*char * LIBENTRY uncountrydate2          ( char * s ); */
 
-//void   LIBENTRY openmodem               ( showtype Show );
-//void   LIBENTRY closemodem              ( bool TurnOffDTR );
+/*void   LIBENTRY openmodem               ( showtype Show ); */
+/*void   LIBENTRY closemodem              ( bool TurnOffDTR ); */
 
 void   LIBENTRY printcom                ( char * s );
 
@@ -299,10 +299,10 @@ char * LIBENTRY meganum                 ( int Num );
 void   LIBENTRY setripmouseregion       ( int Num, int X1, int Y1, int X2, int Y2, int FontX, int FontY, bool Invert, bool Clear, char * Text );
 int    LIBENTRY checkscreenforfilenames ( int StartLine, char * FileName );
 
-//bool   LIBENTRY insearch                ( void );
-//int    LIBENTRY tokenscan               ( char * Input, char * CodedInput, bool CaseSensitive );
-//bool   LIBENTRY parsersearch            ( char * Text, int TextLen, char * CodedInput, bool RetVal, int LastToken );
-//void   LIBENTRY stopsearch              ( void );
+/*bool   LIBENTRY insearch                ( void ); */
+/*int    LIBENTRY tokenscan               ( char * Input, char * CodedInput, bool CaseSensitive ); */
+/*bool   LIBENTRY parsersearch            ( char * Text, int TextLen, char * CodedInput, bool RetVal, int LastToken ); */
+/*void   LIBENTRY stopsearch              ( void ); */
 void   LIBENTRY printfoundtext          ( char * Str );
 
 int    LIBENTRY gettpaheader            ( char * KeyWord, apptype * AppHeader );

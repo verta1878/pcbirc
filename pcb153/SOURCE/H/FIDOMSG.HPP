@@ -25,8 +25,8 @@
 class cFIDOMSG
 {
 public:
-//             cFIDOMSG();
-//            ~cFIDOMSG(){message.freeMsgBuf();}
+/*             cFIDOMSG(); */
+/*            ~cFIDOMSG(){message.freeMsgBuf();} */
 bool         MsgtoFile(long msgNum);
 bool         FiletoMsg(const char * filename);
 bool         fillMSGHdr(msgheadertype & Hdr);

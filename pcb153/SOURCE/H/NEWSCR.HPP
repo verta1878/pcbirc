@@ -37,11 +37,11 @@
 
 /******************************************************************************/
 
-// Pragmas
+/* Pragmas */
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include	<dos.h>
 
@@ -52,24 +52,18 @@
 #include	"label.hpp"
 #include	"var.hpp"
 
-/* 15.4: URead now has ShortDesc field, personal_psa_t is defined for the
- * new PSA, and accounttype exists for the Account PSA.  All come in via
- * pcbmisc.hpp -> users.h (included above).  cSCRIPT class members
- * ptrURead / ptrPersonal / ptrAccount rely on those types.
- */
-
 #if defined(DBASE) && !defined(___COMP___)
 #include	"dbase.hpp"
 #endif
 
 /******************************************************************************/
 
-// Defined Macros
+/* Defined Macros */
 
 #ifdef	PCB_DEMO
 #define SCR_BUF_SIZE	(1024-1)
 #else
-#define SCR_BUF_SIZE	(65279L-1)		// 65535-256 is the magic number
+#define SCR_BUF_SIZE	(65279L-1)  /* 65535-256 is the magic number */
 #endif
 
 #define SCR_VER 		1530L
@@ -110,9 +104,9 @@
 #define MAX_FILE_CHAN	8
 
 #define MAX_DBF_CHANNELS 8
-// #define LA_NONE		   0
-// #define LA_READ		   1
-// #define LA_WRITE 	   2
+/* #define LA_NONE		   0 */
+/* #define LA_READ		   1 */
+/* #define LA_WRITE 	   2 */
 
 #define NO_USER_GOT 	-1
 #define CUR_USER_GOT	0
@@ -318,7 +312,7 @@
 #define TOK_OP_SHOWSTAT    -160
 #define TOK_OP_PAGESTAT    -161
 
-// The following were added for PPL 2.0
+/* The following were added for PPL 2.0 */
 
 #define TOK_OP_REPSTR	   -162
 #define TOK_OP_STRSTR	   -163
@@ -364,7 +358,7 @@
 #define TOK_OP_LOMSGNUM    -203
 #define TOK_OP_HIMSGNUM    -204
 
-// The following were added for PPL 2.0+1
+/* The following were added for PPL 2.0+1 */
 
 #define TOK_OP_DRIVESPACE  -205
 #define TOK_OP_OUTBYTES    -206
@@ -376,7 +370,7 @@
 #define TOK_OP_STACKLEFT   -212
 #define TOK_OP_STACKERR    -213
 
-// The following were added for PPL 3.0
+/* The following were added for PPL 3.0 */
 
 #define TOK_OP_DGETALIAS   -214
 #define TOK_OP_DBOF 	   -215
@@ -394,7 +388,7 @@
 #define TOK_OP_FNEXT	   -227
 #define TOK_OP_DNEXT	   -228
 #define TOK_OP_TODDATE	   -229
-#define TOK_OP_DCLOSEALL   -230 	//FIRST DUP
+#define TOK_OP_DCLOSEALL   -230  /*FIRST DUP */
 #define TOK_OP_DOPEN	   -231
 #define TOK_OP_DCLOSE	   -232
 #define TOK_OP_DSETALIAS   -233
@@ -453,20 +447,11 @@
 #define TOK_OP_FTELL	   -285
 #define TOK_OP_OS		   -286
 
-// 15.4 additions (per RE of PPLC.EXE 15.4b — new tokens sorted alphabetically
-// against 15.3 v0.015 baseline).  Semantics inferred from name + call-site
-// argument count observed in the compiled table.
-#define TOK_OP_GETBANKVAL  -287     /* GETBANKVAL(x)      1 arg  — read banking PSA value */
-#define TOK_OP_GETMSGHDR   -288     /* GETMSGHDR(msg,fld) 2 args — read msg header field */
-#define TOK_OP_SETMSGHDR   -289     /* SETMSGHDR(m,f,v)   3 args — write msg header field */
-#define TOK_OP_SHORTDESC   -290     /* SHORTDESC(x)       1 arg  — user's short-desc field */
-#define TOK_OP_U_PERSONAL  -291     /* U_PERSONAL(idx)    1 arg  — read personal PSA field */
 
+#define MAX_OP_TOK			286
 
-#define MAX_OP_TOK			291
-
-// CONFINF()  -> return a piece of information about the conference
-// UN_BROAD() -> return broadcast information
+/* CONFINF()  -> return a piece of information about the conference */
+/* UN_BROAD() -> return broadcast information */
 
 	/*--------------------------------------------------------------------*/
 
@@ -599,7 +584,7 @@
 #define TOK_PAGEON		110
 #define TOK_PAGEOFF 	111
 
-// The following were added for PPL 2.0
+/* The following were added for PPL 2.0 */
 
 #define TOK_FSEEK		112
 #define TOK_FFLUSH		113
@@ -652,7 +637,7 @@
 #define TOK_BRAG		160
 #define TOK_FREALTUSER	161
 
-// the following were added by Stan after 02/14/94
+/* the following were added by Stan after 02/14/94 */
 
 #define TOK_SETLMR		162
 #define TOK_SETENV		163
@@ -667,39 +652,39 @@
 #define TOK_STATIC		172
 #define TOK_STACKABORT	173
 
-// The following were added for PPL 3.0
+/* The following were added for PPL 3.0 */
 
-#define TOK_DCREATE 	174 			// dbfchan,name,exclusive, fieldinfo, taginfo
-#define TOK_DOPEN		175 			// dbfchan,name, exclusive
-#define TOK_DCLOSE		176 			// dbfchan
-#define TOK_DSETALIAS	177 			// dbfchan,name
-#define TOK_DPACK		178 			// dbfchannel
-#define TOK_DCLOSEALL	179 			//
-#define TOK_DLOCK		180 			// dbfchannel
-#define TOK_DLOCKF		180 			// dbfchannel	 dlock & dlockf do the same thing
-#define TOK_DLOCKR		181 			// dbfchannel, recno
-#define TOK_DLOCKG		182 			// dbfchannel, recnos,count
-#define TOK_DUNLOCK 	183 			// dbfchannel
-#define TOK_DNCREATE	184 			// dbfchannel,name,taginfo
-#define TOK_DNOPEN		185 			// dbfchannle, name
-#define TOK_DNCLOSE 	186 			// dbfchannel, name
-#define TOK_DNCLOSEALL	187 		   // channel
-#define TOK_DNEW		188 			// channel
-#define TOK_DADD		189 			// channel
-#define TOK_DAPPEND 	190 			// channel
-#define TOK_DTOP		191 			// channel
-#define TOK_DGO 		192 			// channel, recno
-#define TOK_DBOTTOM 	193 			// channel
-#define TOK_DSKIP		194 			// channel, number
-#define TOK_DBLANK		195 			// channel
-#define TOK_DDELETE 	196 			// channel
-#define TOK_DRECALL 	197 			// channel
-#define TOK_DTAG		198 			// channel, name
-#define TOK_DSEEK		199 			// channel, expression
-#define TOK_DFBLANK 	200 			// channel, name
-#define TOK_DGET		201 			// channel, name , var
-#define TOK_DPUT		202 			// channel, name, expression
-#define TOK_DFCOPY		203 			// channel, name, channel, name
+#define TOK_DCREATE 	174  /* dbfchan,name,exclusive, fieldinfo, taginfo */
+#define TOK_DOPEN		175  /* dbfchan,name, exclusive */
+#define TOK_DCLOSE		176  /* dbfchan */
+#define TOK_DSETALIAS	177  /* dbfchan,name */
+#define TOK_DPACK		178  /* dbfchannel */
+#define TOK_DCLOSEALL	179 /* */
+#define TOK_DLOCK		180  /* dbfchannel */
+#define TOK_DLOCKF		180  /* dbfchannel	 dlock & dlockf do the same thing */
+#define TOK_DLOCKR		181  /* dbfchannel, recno */
+#define TOK_DLOCKG		182  /* dbfchannel, recnos,count */
+#define TOK_DUNLOCK 	183  /* dbfchannel */
+#define TOK_DNCREATE	184  /* dbfchannel,name,taginfo */
+#define TOK_DNOPEN		185  /* dbfchannle, name */
+#define TOK_DNCLOSE 	186  /* dbfchannel, name */
+#define TOK_DNCLOSEALL	187  /* channel */
+#define TOK_DNEW		188  /* channel */
+#define TOK_DADD		189  /* channel */
+#define TOK_DAPPEND 	190  /* channel */
+#define TOK_DTOP		191  /* channel */
+#define TOK_DGO 		192  /* channel, recno */
+#define TOK_DBOTTOM 	193  /* channel */
+#define TOK_DSKIP		194  /* channel, number */
+#define TOK_DBLANK		195  /* channel */
+#define TOK_DDELETE 	196  /* channel */
+#define TOK_DRECALL 	197  /* channel */
+#define TOK_DTAG		198  /* channel, name */
+#define TOK_DSEEK		199  /* channel, expression */
+#define TOK_DFBLANK 	200  /* channel, name */
+#define TOK_DGET		201  /* channel, name , var */
+#define TOK_DPUT		202  /* channel, name, expression */
+#define TOK_DFCOPY		203  /* channel, name, channel, name */
 
 #define TOK_EVAL		204
 #define TOK_ACCOUNT 	205
@@ -724,30 +709,23 @@
 #define TOK_FDOQADD 	224
 #define TOK_FDOQDEL 	225
 #define TOK_SOUNDDELAY	226
-/* 15.4 additions — statement forms discovered by diffing PPLC.EXE
- * 15.4b against 15.3 v0.015 PPLC.  Argument counts read from the
- * compiled token-table layout.
- */
-#define TOK_MOVEMSG          227     /* MOVEMSG msgnum destconf         (2 args) */
-#define TOK_SETBANKVAL       228     /* SETBANKVAL idx value            (2 args) */
-#define TOK_SHORTDESCSTMT    229     /* SHORTDESC value                 (1 arg)  */
 
-#define MAX_TOK 		229
+#define MAX_TOK 		226
 
-// INPUTFMT color,var,text,mask,valid
-// color and var are as expected
-// text would be the default string with literals "(   )    -    "
-// mask would be the input mask 				  "LNNNLLNNNLNNNN"
-//	 L = literal,		A = alpha		w/force upper, a = alpha
-//	 N = numeric,		C = alnum		w/force upper, c = alnum
-//	 O = numeric+space, X = any 		w/force upper, x = any
-//						B = alpha+space w/force upper, b = alpha+space
-//						D = alnum+space w/force upper, d = alnum+space
-// valid is as expected
+/* INPUTFMT color,var,text,mask,valid */
+/* color and var are as expected */
+/* text would be the default string with literals "(   )    -    " */
+/* mask would be the input mask 				  "LNNNLLNNNLNNNN" */
+/*	 L = literal,		A = alpha		w/force upper, a = alpha */
+/*	 N = numeric,		C = alnum		w/force upper, c = alnum */
+/*	 O = numeric+space, X = any 		w/force upper, x = any */
+/*						B = alpha+space w/force upper, b = alpha+space */
+/*						D = alnum+space w/force upper, d = alnum+space */
+/* valid is as expected */
 
 /******************************************************************************/
 
-// Types
+/* Types */
 
 typedef unsigned char byte;
 
@@ -807,7 +785,7 @@ struct sFILEINFO
 
 typedef cSTACK<int> 	   tTS;
 typedef cISTACK<cVARVAL>   tVS;
-typedef struct {			  // structure to hold select case info on a nested statement
+typedef struct {  /* structure to hold select case info on a nested statement */
 	char * old;
 	int   cntr;
 } ss;
@@ -822,7 +800,7 @@ class cSCRIPT
 {
 	public:
 
-		// Script interface functions
+/* Script interface functions */
 
 		cSCRIPT  (int numToks);
 
@@ -835,7 +813,7 @@ class cSCRIPT
 
 
 
-		// Execute support data
+/* Execute support data */
 
 #ifdef	___EXEC___
 
@@ -845,7 +823,7 @@ class cSCRIPT
 
 	private:
 
-		// Compile support data
+/* Compile support data */
 
 #ifdef	___COMP___
 
@@ -885,7 +863,7 @@ class cSCRIPT
 		int 				sysLabelCount;
 
 		cSTACK<ss *>		  selectStack;
-		//cSTACK<int>		caseStack;
+/*cSTACK<int>		caseStack; */
 		bool				inCase;
 
 
@@ -893,7 +871,7 @@ class cSCRIPT
 
 #endif
 
-		// Execute support data
+/* Execute support data */
 
 #ifdef	___EXEC___
 
@@ -914,7 +892,7 @@ class cSCRIPT
 
 #endif
 
-		//cSTACK<char _FAR_ *>	retAddr;
+/*cSTACK<char _FAR_ *>	retAddr; */
 		cSTACK<long>		retAddr;
 
 		tVS *				varStack;
@@ -951,7 +929,7 @@ class cSCRIPT
 
 		nodetype			unInfo;
 
-		#ifndef __OS2__  // may need to finish (REGS and SREGS are not defined)
+		#ifndef __OS2__  /* may need to finish (REGS and SREGS are not defined) */
 		REGS				intrREGS;
 		SREGS				intrSEGS;
 		#endif
@@ -961,16 +939,6 @@ class cSCRIPT
 		UData * 			ptrUData;
 		char  * 			ptrUReg;
 		long  * 			ptrULMR;
-
-		/* 15.4 additions — pointers into the current user's PSA blocks
-		 * populated by cSCRIPT::loadUser() alongside ptrUData.
-		 * ptrURead points to the URead record (has ShortDesc field);
-		 * ptrPersonal is the personal PSA (Gender/Birthdate/Email/Web);
-		 * ptrAccount is the banking PSA (for GETBANKVAL).
-		 */
-		URead *				ptrURead;
-		personal_psa_t *		ptrPersonal;
-		accounttype *			ptrAccount;
 
 		bool				searchAvailable;
 		bool				searchInUse;
@@ -998,7 +966,7 @@ class cSCRIPT
 		bool				rled;
 #endif
 
-		// Info & Scan Support Data
+/* Info & Scan Support Data */
 
 #if defined(___INFO___) || defined(___SCAN___)
 
@@ -1011,13 +979,13 @@ class cSCRIPT
 
 #endif
 
-		// Other data
+/* Other data */
 
 		char _FAR_ *		scriptBuffer;
 		char _FAR_ *		scriptPointer;
-		uint				scriptSize; 		  // DWT: changed from long to uint
+		uint				scriptSize;  /* DWT: changed from long to uint */
 		int 				swapScriptPointer;
-		uint				swapScriptSize; 	  // DWT: changed from long to uint
+		uint				swapScriptSize;  /* DWT: changed from long to uint */
 		long				swapOffset;
 
 		sint				varCount;
@@ -1027,7 +995,7 @@ class cSCRIPT
 
 
 
-		// Compile support functions
+/* Compile support functions */
 
 #ifdef	___COMP___
 
@@ -1081,7 +1049,7 @@ class cSCRIPT
 
 		static int	  LIBENTRY tokenVARS		   (cSCRIPT & obj, sKEYWORD & inf, char * args, int line, int pass);
 
-		static int	  LIBENTRY isCall			   (cSCRIPT & obj, char * s, int line, int pass, bool procOnly, bool funcOnly,int *err); // added by stan
+		static int	  LIBENTRY isCall			   (cSCRIPT & obj, char * s, int line, int pass, bool procOnly, bool funcOnly,int *err);  /* added by stan */
 
 		static char * LIBENTRY standardizeLine	   (char * l, int & q, int & p);
 
@@ -1143,7 +1111,7 @@ class cSCRIPT
 
 #endif
 
-		// Execute support functions
+/* Execute support functions */
 
 #ifdef	___EXEC___
 
@@ -1185,10 +1153,6 @@ class cSCRIPT
         cVARVAL *     LIBENTRY AccountSub          (cVARVAL *p1);
         cVARVAL *     LIBENTRY PcbAccountSub       (cVARVAL *p1);
         cVARVAL *     LIBENTRY ScanMsgHdrSub       (cVARVAL *p1, cVARVAL *p2, cVARVAL *p3, cVARVAL *p4);
-        /* 15.4 additions (v0.028) — see EVALP.CPP for implementations. */
-        cVARVAL *     LIBENTRY GetMsgHdrSub        (cVARVAL *p1, cVARVAL *p2, cVARVAL *p3);
-        cVARVAL *     LIBENTRY SetMsgHdrSub        (cVARVAL *p1, cVARVAL *p2, cVARVAL *p3, cVARVAL *p4);
-        int           LIBENTRY pplmovemsg          (unsigned conf, long msgnum, int movetype);
 
 		int 		  LIBENTRY doForItems		   (int LIBENTRY (* itemfunc)(cSCRIPT & obj, int num));
 		static int	  LIBENTRY redimArray		   (cSCRIPT & obj, int num);
@@ -1230,7 +1194,7 @@ class cSCRIPT
 
 #endif
 
-		// Info & Scan Support Functions
+/* Info & Scan Support Functions */
 
 #if defined(___INFO___) || defined(___SCAN___)
 
@@ -1265,7 +1229,7 @@ class cSCRIPT
 		static void   LIBENTRY tokenIFWHILE 	   (cSCRIPT & obj, sKEYWORD & inf);
 		static void   LIBENTRY tokenFOR 		   (cSCRIPT & obj, sKEYWORD & inf);
 
-		static void   LIBENTRY tokenSELECT		   (cSCRIPT & obj, sKEYWORD & inf); // Added by Stan
+		static void   LIBENTRY tokenSELECT		   (cSCRIPT & obj, sKEYWORD & inf);  /* Added by Stan */
 		static void   LIBENTRY tokenCASE		   (cSCRIPT & obj, sKEYWORD & inf);
 		static void   LIBENTRY tokenDEFAULT 	   (cSCRIPT & obj, sKEYWORD & inf);
 		static void   LIBENTRY tokenSLCTEND 	   (cSCRIPT & obj, sKEYWORD & inf);
@@ -1299,30 +1263,30 @@ class cSCRIPT
 
 #endif
 
-		// Other functions
+/* Other functions */
 
 		void		  LIBENTRY initialize		   (int pass);
 
-//		  static void	LIBENTRY countVars			 (cVAR & obj);
+/*		  static void	LIBENTRY countVars			 (cVAR & obj); */
 		static void   LIBENTRY writeVars		   (cVAR & obj);
 
 };
 
 /******************************************************************************/
 
-// Constants
+/* Constants */
 
 /******************************************************************************/
 
-// Variables
+/* Variables */
 
 /******************************************************************************/
 
-// Function Prototypes
+/* Function Prototypes */
 
 /******************************************************************************/
 
-// Inline Functions
+/* Inline Functions */
 
 /******************************************************************************/
 

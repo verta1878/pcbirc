@@ -30,7 +30,7 @@
 #include    <mem.h>
 #include    <share.h>
 #include    <stdio.h>
-#include    <sys/stat.h>
+#include    <sys\stat.h>
 
 #ifdef __WATCOMC__
   #define SH_DENYNONE SH_DENYNO

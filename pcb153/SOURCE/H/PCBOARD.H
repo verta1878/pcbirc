@@ -120,26 +120,7 @@ enum {CTRL_A=1,CTRL_B,CTRL_C,CTRL_D,CTRL_E,CTRL_F,CTRL_G,CTRL_H,CTRL_I,CTRL_J,CT
 
 /* note: YESNO=2049 ... the input functions figure out that ECHODOTS and WORDWRAP would never be used together */
 /* note: NOTBLANK=32768U, same as AUTO ... the displaypcbtext() function figures out this value would never be used as AUTO */
-#ifndef _DISPLAYTYPE_DEFINED
-#define _DISPLAYTYPE_DEFINED
-#ifdef __WATCOMC__
-/* Watcom: avoid macro conflicts with enum member names */
-#pragma push_macro("DEFAULTS")
-#pragma push_macro("WORDWRAP")
-#undef DEFAULTS
-#undef WORDWRAP
-#endif
-#ifdef __WATCOMC__
-typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,_PCBYESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768,NOTBLANK=32768} displaytype;
-#define YESNO _PCBYESNO
-#else
-typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,YESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768,NOTBLANK=32768} displaytype;
-#endif
-#ifdef __WATCOMC__
-#pragma pop_macro("WORDWRAP")
-#pragma pop_macro("DEFAULTS")
-#endif
-#endif
+typedef enum {DEFAULTS=0,ECHODOTS=1,FIELDLEN=2,UPCASE=4,STACKED=8,ERASELINE=16,NEWLINE=32,LFBEFORE=64,LFAFTER=128,LOGIT=256,LOGITLEFT=512,GUIDE=1024,WORDWRAP=2048,YESNO=2049,NOCLEAR=4096,BELL=8192,HIGHASCII=16384,AUTO=32768U,NOTBLANK=32768U} displaytype;
 
 typedef enum {NOCHANGE,FORCENONSTOP,FORCECOUNTLINES} startdisplaytype;
 typedef enum {ACTSHOW, ACTBEGIN, ACTEND, ACTSUSPEND, ACTRESUME} acttype;
@@ -150,15 +131,9 @@ typedef enum {CALLWAIT_EXIT, CALLWAIT_SYSOP, CALLWAIT_LOCALUSER, CALLWAIT_CALLER
 typedef enum {USER, SYSOP } usertype;
 typedef enum {SHOW, HIDE } showtype;
 typedef enum {INPUTOKAY, INPUTREFUSEANSWER } inputtype;
-#ifdef PROGRAM
-#undef PROGRAM
-#endif
 typedef enum {PROGRAM, USERSELECT } callfromtype;
 typedef enum {LOGON, NLOGOFF, ALOGOFF, REMOTEDOS, FILEVIEWSHELL, DOOR, RUNSETUP, RUNFILER, RUNSM, RUNEVENT, RUNFAX} logtype;
-typedef enum {LEFTJUSTIFY, SPACERIGHT, SPACERIGHTAT } padtype;
-#ifdef TEXT
-#undef TEXT
-#endif
+typedef enum {LEFTJUSTIFY, SPACERIGHT } padtype;
 typedef enum {FNAM, FSIZ, FDTE, FDSC, HEAD, TEXT, DUPE, DLTD, OFLN, NEWF} ColorType;
 typedef enum {NEWTIME, CONFTIME, CREDTIME, PREVTIMEON, ACCTTIME } timereasontype;
 typedef enum {SHELLDIRECT, SHELLVIACOMMAND } shelltype;
@@ -521,11 +496,11 @@ typedef struct {
   long    Size;
   long    Seconds;
   unsigned short CPS;
-  uint    Success;     // holds values of trntype
-//trntype Success;
-//#if defined(__OS2__) && defined(__BORLANDC__)
-//  char  Filler1;
-//#endif
+  uint    Success;  /* holds values of trntype */
+/*trntype Success; */
+/*#if defined(__OS2__) && defined(__BORLANDC__) */
+/*  char  Filler1; */
+/*#endif */
   bool    HasDesc;
   bool    Checked;
   bool    Found;
@@ -536,11 +511,11 @@ typedef struct {
   bool    Failed;
   char    OldName[13];
   bool    Duplicate;
-  uint    CapType;      // holds values of captype
-//captype CapType;
-//#if defined(__OS2__) && defined(__BORLANDC__)
-//  char  Filler2;
-//#endif
+  uint    CapType;  /* holds values of captype */
+/*captype CapType; */
+/*#if defined(__OS2__) && defined(__BORLANDC__) */
+/*  char  Filler2; */
+/*#endif */
   short   Multiplier;
   bool    NoCost;
   char    Reserved[11];
@@ -826,7 +801,9 @@ int  LIBENTRY commportinkey(void);
 int  LIBENTRY kbdinkey(void);
 int  LIBENTRY cinkey(void);
 int  LIBENTRY waitforkey(void);
-int  LIBENTRY waitforkey(int TimeToWait);
+#if defined(__cplusplus)
+int  LIBENTRY waitforkey(int TimeToWait);   /* C++ overload */
+#endif
 void LIBENTRY checkstatus(void);
 void LIBENTRY watchstatuswhilesending(void);
 
@@ -1315,7 +1292,11 @@ void LIBENTRY ASYNC_disconnectmodem(void);
 
 /* BGKEY.ASM */
 #ifndef __OS2__
+  #if defined(__cplusplus)
   extern "C" short LIBENTRY bgetkey2(char Option);  /* used instead of bgetkey() from SYSTEM.LIB */
+  #else
+  short LIBENTRY bgetkey2(char Option);
+  #endif
 #endif
 
 /* NOSCROLL.ASM */

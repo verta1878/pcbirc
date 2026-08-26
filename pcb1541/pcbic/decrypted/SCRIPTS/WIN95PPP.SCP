@@ -1,0 +1,74 @@
+; Script file for Windows '95 Dial-Up Scripting Tool (DSCRIPT)
+
+; Design:  This script is designed to dial into a PCBoard system and select
+;          either the SLIP language or the PPP option.  The next step is to
+;          log the user on to the system at which point we should be ready to
+;          traverse the Internet.
+ 
+; Variables:  Since the bulk of this script is ready to go except for your
+;             information, we have put those variables at the top of the
+;             script for you to find and change quickly.
+
+proc main
+
+   integer attempts = 1
+   integer maxattempts = 4
+
+;The prompts we watch for are also set in variables in case those need to
+;be changed too.
+
+   string yeschar    = "Y"
+   string langnum    = "5"
+   string langprompt = "anguage"
+   string userprompt = "name"
+   string passprompt = "assword"
+   string grafprompt = "graphics"
+   string addrtarg   = "IP address"
+   string cityprompt = "Are you"
+ 
+; Wait for specific prompts and send the appropriate responses.   
+
+   waitfor langprompt
+   transmit langnum+"^M"
+   
+   waitfor grafprompt
+   transmit "n;q;ns^M"
+   
+   waitfor userprompt
+   transmit $USERID + " " + $PASSWORD + "^M" 
+
+   waitfor cityprompt until 5
+   if $SUCCESS then
+      transmit yeschar+"^M"
+   endif
+
+; At this point, we should be logged into the system, let's now make sure
+;  we get to the Internet door.
+
+   waitfor "Reserved." until 15
+
+   while !$SUCCESS do
+      
+      transmit "n<cr>"
+  
+      if attempts == maxattempts-1 then
+         halt
+      endif     
+   
+      attempts = attempts + 1
+   
+      waitfor "Reserved." until 5
+
+   endwhile
+
+; If SLIP (not PPP) is selected, parse the input for the address and go online.
+   
+  ;
+  ; wait for: the word "address"
+  ; then grab the IP address that follows.
+  ;
+;  waitfor
+;     addrtag then getip
+;  until 30
+endproc
+

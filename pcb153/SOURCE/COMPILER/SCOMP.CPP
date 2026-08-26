@@ -67,7 +67,7 @@
 
 extern unsigned _stklen = 16384U;
 
-void (__interrupt * orig0x24)();
+void interrupt (* orig0x24) (...);
 
 extern char warnFlag;
 extern char autoUVar;
@@ -140,19 +140,14 @@ int main(int argc)
 	getcountryspecs(1,0);
 
 	orig0x24 = getvect(0x24);
-	setvect(0x24,(void (__interrupt *)()) CEH);
+	setvect(0x24,CEH);
 
 	newline();
 	print("PPLC ");
 #ifdef PCB_DEMO
 	print("DEMO ");
 #endif
-	println("Version 3.40 - PCBoard Programming Language Compiler");  /* 15.4: bumped from 3.30 */
-	{
-	  static char PplcBetaVer[] = "15.4";
-	  static char PplcBetaFlag[] = "Beta";
-	  (void) PplcBetaVer; (void) PplcBetaFlag;
-	}
+	println("Version 3.30 - PCBoard Programming Language Compiler");
 	print("Copyright (C) 1993-95, Clark Development Company, Inc.");
 
 	if (argc < 2)

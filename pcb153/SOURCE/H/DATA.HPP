@@ -31,8 +31,8 @@
 #ifdef PCBSETUP
 #define writeFidolog(a,b)
 #endif
-// headers needed for data type in this header
-// PCBoard headers
+/* headers needed for data type in this header */
+/* PCBoard headers */
 #ifndef PCBSETUP
 #include "pcboard.h"
 #include "misc.h"
@@ -64,7 +64,7 @@ class cCONFIGBASE
 				bool		removeFile		 (void);
 				void		packFile		 (void);
 				uint		getVersion		 (void){return curver;}
-//		virtual   bool		  isDupe		 (const T & rec);
+/*		virtual   bool		  isDupe		 (const T & rec); */
 				void		open			 (void){if(!f.isOpen() && f.open(datafile,OPEN_RDWR| OPEN_DENYNONE) != 0) err = TRUE;}
 				void		close			 (void){if(f.isOpen()) f.close();}
 				bool		lockHdr 		 (void){ return( f.lockChk(0,sizeof(filever)) == 0 );}
@@ -79,14 +79,14 @@ class cCONFIGBASE
 	 cDOSFILE		 f;
 
 	private:
-	  // Data
+/* Data */
 	  char			  datafile[MAXFLEN];
 	  bool			  openedbyme,err,needtopack;
 	  uint			  filever;
 	  uint			  curver;
 	  uint			  recsize,totrecs;
 
-	  // Functions
+/* Functions */
 				bool		createFile		 (void);
 				uint		getFileVer		 (void);
 				long		seekToRec		 (unsigned int recnum);
@@ -98,21 +98,21 @@ class cCONFIGBASE
 template<class T>
 cCONFIGBASE<T>::cCONFIGBASE(const char * filename, const bool path)
 {
-	// Generic initializations
+/* Generic initializations */
 	openedbyme = needtopack = FALSE;
 	recsize = totrecs = curver = filever = err = 0;
 	memset(datafile,'Z',sizeof(datafile));
 
-	// The current file version is the same for all derived objects. This should
-	// Be updated when the file format changes
+/* The current file version is the same for all derived objects. This should */
+/* Be updated when the file format changes */
 	curver = 3;
 
-	// Record size is the size of the template object
+/* Record size is the size of the template object */
 	recsize = sizeof(T);
 
 	if(!path)
 	{
-	  // Build datafile name using filaname passed as parameter
+/* Build datafile name using filaname passed as parameter */
 	  maxstrcpy(datafile,PcbData.FidoLoc,sizeof(datafile));
 	  char * t = findstartofname(datafile);
 	  if(t) *t = '\x0';
@@ -121,7 +121,7 @@ cCONFIGBASE<T>::cCONFIGBASE(const char * filename, const bool path)
 	else
 	  maxstrcpy(datafile,(char *)filename,sizeof(datafile));
 
-	// Now attempt to open the file if it is not already open
+/* Now attempt to open the file if it is not already open */
 	if(fileexist(datafile) == 255) createFile();
 	if(!f.isOpen() && f.open(datafile,OPEN_RDWR | OPEN_DENYNONE ) == 0)
 	{
@@ -133,7 +133,7 @@ cCONFIGBASE<T>::cCONFIGBASE(const char * filename, const bool path)
 	else err = TRUE;
 
 
-	// Check the datfile's version number and compare against current version number
+/* Check the datfile's version number and compare against current version number */
 	if(!err && getFileVer() != curver)
 	{
 	char logBuf[70];
@@ -168,7 +168,7 @@ uint cCONFIGBASE<T>::getFileVer(void)
 {
 	filever = 0;
 
-	// If an error hasn't occured yet seek the file begin and read file version
+/* If an error hasn't occured yet seek the file begin and read file version */
 	if(!err)
 	{
 	  f.seek(0,SEEK_SET);
@@ -178,7 +178,7 @@ uint cCONFIGBASE<T>::getFileVer(void)
 		 err = TRUE;
 	  }
 	}
-	// Returns 0 if there was an error
+/* Returns 0 if there was an error */
 	return filever;
 }
 
@@ -189,11 +189,11 @@ bool cCONFIGBASE<T>::createFile(void)
 
 	if(f.isOpen()) f.close();
 	if(f.open(datafile,OPEN_RDWR | OPEN_CREATE | OPEN_DENYNONE)!= 0) err = TRUE;
-	//f.lockChk(0L,2L);
+/*f.lockChk(0L,2L); */
 	f.write(&curver,sizeof(curver));
-	//f.unlock(0L,2L);
+/*f.unlock(0L,2L); */
 
-	//f.close();
+/*f.close(); */
 	return err;
 }
 template< class T >
@@ -227,12 +227,12 @@ void cCONFIGBASE<T>::packFile(void)
 	memset(&mtyrec,0,sizeof(mtyrec));
 	memset(&rec,0,sizeof(rec));
 
-	// Build a temporary file to copy valid records into
+/* Build a temporary file to copy valid records into */
 	tfile.setName(f.getName());
 	tfile.setExt(".TMP");
 
 	tfile.unlink();
-	// Open temporary file and start copying valid records into it
+/* Open temporary file and start copying valid records into it */
 	if(tfile.openChk(OPEN_RDWR | OPEN_CREATE | OPEN_DENYRDWR) != 0) return;
 
 	f.close();
@@ -255,7 +255,7 @@ void cCONFIGBASE<T>::packFile(void)
 	  tfile.write(&rec,sizeof(rec));
 	}
 
-	// Now rename the temp file to the datafile
+/* Now rename the temp file to the datafile */
 	  tfile.close();
 	  f.close();
 	  if(!err)
@@ -292,11 +292,11 @@ T & cCONFIGBASE<T>::getRec(unsigned int recno)
 template< class T >
 bool cCONFIGBASE<T>::modifyRec(T & rec,unsigned int recnum)
 {
-	// Seek to the record number and write out the new record
+/* Seek to the record number and write out the new record */
 	if(err == TRUE) return FALSE;
 	seekToRec(recnum);
 	if(f.write(&rec,sizeof(rec)) != sizeof(rec)) err = TRUE;
-	return (! (err == TRUE) );		   // Return FALSE if err == TRUE
+	return (! (err == TRUE) );  /* Return FALSE if err == TRUE */
 }
 
 
@@ -310,7 +310,7 @@ bool cCONFIGBASE<T>::removeRec(unsigned int recnum)
 	if(f.write(&mtyrec,sizeof(mtyrec)) != sizeof(mtyrec)) err = TRUE;
 	f.flush();
 	if(!err) needtopack = TRUE;
-	return (! (err == TRUE) );		   // Return FALSE if err == TRUE
+	return (! (err == TRUE) );  /* Return FALSE if err == TRUE */
 }
 
 /*
@@ -343,7 +343,7 @@ bool cCONFIGBASE<T>::addRec(const T & rec)
 	f.seek(0,SEEK_END);
 	if(f.write((void *)&rec,sizeof(rec)) != sizeof(rec)) err = TRUE;
 	unlockHdr();
-	return (! (err == TRUE) );		   // Return FALSE if err == TRUE
+	return (! (err == TRUE) );  /* Return FALSE if err == TRUE */
 }
 
 class cAREAINDEX : public cCONFIGBASE<AINDEX>
@@ -359,9 +359,9 @@ class cAREAS : public cCONFIGBASE<NAREA_STRUCT>
 
   private:
 	cAREAINDEX	index;
-	AINDEX *	irecs;			// Pointer to keep conference index in memory
-	bool		irecsinmem; 	// Is the index durrently in memory
-	// bool 	   err; 	 PC-Lint reported that this hides the err defined in cCONFIGBASE
+	AINDEX *	irecs;  /* Pointer to keep conference index in memory */
+	bool		irecsinmem;  /* Is the index durrently in memory */
+/* bool 	   err; 	 PC-Lint reported that this hides the err defined in cCONFIGBASE */
   public:
 				 cAREAS 		  (void) : cCONFIGBASE<NAREA_STRUCT>("AREAS.DAT",FALSE){irecs=NULL;irecsinmem=FALSE;Err(FALSE);}
 				~cAREAS 		  (void){delete(irecs);}
@@ -456,7 +456,7 @@ class cFREQPATHS : public cCONFIGBASE<NFREQ_PATH>
 {
   public:
 				 cFREQPATHS(void) : cCONFIGBASE<NFREQ_PATH>("FREQPATH.DAT",FALSE){};
-				//~cFREQPATHS(void){};
+/*~cFREQPATHS(void){}; */
 unsigned int	 findRec(const char * path);
 
   protected:
@@ -475,7 +475,7 @@ class cMAGICNAMES : public cCONFIGBASE<NFREQ_MAGIC>
   private:
 };
 
-#endif // ifndef PCBFU
+#endif  /* ifndef PCBFU */
 
 class cFREQDENY : public cCONFIGBASE<NADDRESS>
 {
@@ -487,7 +487,7 @@ class cFREQDENY : public cCONFIGBASE<NADDRESS>
   private:
 };
 
-//#ifndef PCBSETUP
+/*#ifndef PCBSETUP */
 class cSEND : public cCONFIGBASE<FSEND>
 {
   public:
@@ -495,7 +495,7 @@ class cSEND : public cCONFIGBASE<FSEND>
 	unsigned int findRec	   (const char * entry);
 	void		 process	   (void);
 };
-//#endif
+/*#endif */
 
 class cCONFIG
 {

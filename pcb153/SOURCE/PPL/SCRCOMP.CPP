@@ -67,7 +67,7 @@
 
 #define MAX_LAB_NAME_SIZE   32
 
-#define NUM_CONST           108
+#define NUM_CONST           104
 
 
 
@@ -124,9 +124,7 @@ sCONSTINFO constInfo [NUM_CONST] =
     { "\x0D""ATTACH_LIM_P",   0x03     },
     { "\x0D""ATTACH_LIM_U",   0x02     },
     { "\x05""AUTO",           0x02000L },
-    { "\x05""BANK",           0x0A     },
     { "\x05""BELL",           0x00800L },
-    { "\x0A""BYTE_BANK",      0x0A     },
     { "\x0A""CHRG_CALL",      0x01     },
     { "\x0A""CHRG_CHAT",      0x04     },
     { "\x0F""CHRG_DOWNBYTES", 0x0B     },
@@ -204,7 +202,6 @@ sCONSTINFO constInfo [NUM_CONST] =
     { "\x05""O_WR",           0x01     },
     { "\x0C""PAY_UPBYTES",    0x0D     },
     { "\x0B""PAY_UPFILE",     0x0C     },
-    { "\x09""PERSONAL",       0x09     },
     { "\x04""SEC",            0x02     },
     { "\x09""SEC_DROP",       0x11     },
     { "\x09""SEEK_CUR",       0x01     },
@@ -218,7 +215,6 @@ sCONSTINFO constInfo [NUM_CONST] =
     { "\x05""S_DN",           0x00     },
     { "\x05""S_DR",           0x01     },
     { "\x05""S_DW",           0x02     },
-    { "\x0A""TIME_BANK",      0x0A     },
     { "\x05""TRUE",           0x01     },
     { "\x07""UPCASE",         0x00008L },
     { "\x0A""WARNLEVEL",      0x0E     },
@@ -4952,17 +4948,7 @@ int pascal cSCRIPT::compPass(int pass)
             doVariable(vtBOOLEAN,"U_SCROLL,U_LONGHDR,U_DEF79",-1,pass) ||
             doVariable(vtSTRING,"U_ALIAS,U_VER,U_ADDR(5),U_NOTES(4)",-1,pass) ||
             doVariable(vtDATE,"U_PWDEXP",-1,pass) ||
-            doVariable(vtINTEGER,"U_ACCOUNT(16)",-1,pass) ||
-
-            /* 15.4 additions per WHATSNEW.  Confirmed by PPLC 15.4b data
-             * strings at file offset 0x2f055 ("U_SHORTDESC") and 0x2f06a
-             * ("U_GENDER,U_BIRTHDATE,U_EMAIL,U_WEB").  These are the
-             * per-field aliases that give scripts direct read/write to
-             * the Personal PSA members.  U_PERSONAL(idx) from v0.021 is
-             * the indexed accessor that works alongside these.
-             */
-            doVariable(vtBOOLEAN,"U_SHORTDESC",-1,pass) ||
-            doVariable(vtSTRING,"U_GENDER,U_BIRTHDATE,U_EMAIL,U_WEB",-1,pass);
+            doVariable(vtINTEGER,"U_ACCOUNT(16)",-1,pass);
     }
 
     int curLine = 0;

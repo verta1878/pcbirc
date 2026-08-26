@@ -21,17 +21,17 @@
 #define     LIST_RECS     16
 #define     FREQ_RECS     32
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+/*#ifdef __cplusplus */
+/*extern "C" { */
+/*#endif */
 
 extern bool pascal read_fido_config(int flags);
 extern bool pascal write_fido_config(void);
 extern bool pascal make_fido_config(void);
 extern void pascal free_fido_memory(void);
 
-//#ifdef __cplusplus
-//}
-//#endif
+/*#ifdef __cplusplus */
+/*} */
+/*#endif */
 
 #endif

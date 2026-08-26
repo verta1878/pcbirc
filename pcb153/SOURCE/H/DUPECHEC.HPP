@@ -39,8 +39,8 @@ class cDUPECHECK
 {
 
   public:
-//                    LIBENTRY      cDUPECHECK        (void){}
-//                    LIBENTRY      ~cDUPECHECK       (void){}
+/*                    LIBENTRY      cDUPECHECK        (void){} */
+/*                    LIBENTRY      ~cDUPECHECK       (void){} */
 
   bool              LIBENTRY      checkPath         (const char * msg, uint orgzone);
   bool              LIBENTRY      checkID           (const char * msg,pcbconftype * conf);

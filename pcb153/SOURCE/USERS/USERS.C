@@ -83,19 +83,9 @@ accounttype    _FARDATA_ Account;
 bool           QwkSupport;
 long           QwkOffset;
 qwkconfigtype  _FARDATA_ QwkConfig;
-
-/* 15.4: Personal PSA (Gender/Birthdate/Email/Web).  Layout in USERS.H. */
-bool             PersonalSupport;
-long             PersonalOffset;
-personal_psa_t   _FARDATA_ Personal;
-
-bool             BankSupport;
-long             BankOffset;
-timebank_psa_t   _FARDATA_ Bank;
 #endif
 
-/* 15.4: PSA_PERSONAL added before PSA_END, mirroring PCBSM/USERS.C v0.020 */
-typedef enum {PSA_NONE=0,PSA_ALIAS,PSA_VERIFY,PSA_ADDRESS,PSA_PASSWORD,PSA_STATS,PSA_NOTES,PSA_ACCOUNT,PSA_QWKNET,PSA_PERSONAL,PSA_BANK,PSA_END} psatype;
+typedef enum {PSA_NONE=0,PSA_ALIAS,PSA_VERIFY,PSA_ADDRESS,PSA_PASSWORD,PSA_STATS,PSA_NOTES,PSA_ACCOUNT,PSA_QWKNET,PSA_END} psatype;
 
 typedef struct {
   psatype Type;
@@ -291,9 +281,6 @@ static void _NEAR_ LIBENTRY setpsaorder(void) {
 #ifdef PCB152
   if (AccountSupport)  storepsaelement(PSA_ACCOUNT, AccountOffset, &Account,   sizeof(accounttype));
   if (QwkSupport)      storepsaelement(PSA_QWKNET,  QwkOffset,     &QwkConfig, sizeof(qwkconfigtype));
-  /* 15.4: Personal PSA (Gender/Birthdate/Email/Web) */
-  if (PersonalSupport) storepsaelement(PSA_PERSONAL,PersonalOffset,&Personal,  sizeof(personal_psa_t));
-  if (BankSupport) storepsaelement(PSA_BANK,BankOffset,&Bank,sizeof(timebank_psa_t));
 #endif
 
   #ifdef DEBUG
@@ -1299,16 +1286,6 @@ int LIBENTRY openusersinffile(void) {
           if (strcmp(&p->Name[3],"QWKNET") == 0 && p->SizeOfRec == sizeof(qwkconfigtype)) {
             QwkSupport = TRUE;
             QwkOffset  = p->Offset;
-          }
-          /* 15.4: PCBPERSONAL - Gender/Birthdate/Email/Web fields */
-          if (strcmp(&p->Name[3],"PERSONAL") == 0 && p->SizeOfRec == sizeof(personal_psa_t)) {
-            PersonalSupport = TRUE;
-            PersonalOffset  = p->Offset;
-          }
-          /* 15.4: PCBBANK - Time/Byte Bank */
-          if (strcmp(&p->Name[3],"BANK") == 0 && p->SizeOfRec == sizeof(timebank_psa_t)) {
-            BankSupport = TRUE;
-            BankOffset  = p->Offset;
           }
 #endif
         }

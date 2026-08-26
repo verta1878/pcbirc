@@ -19,7 +19,7 @@
 #include "messages.h"
 #include "event.h"
 
-#if defined(CPU386) && defined(MULTIPORT)  /* 15.4: enabled */
+#if 0 && defined(CPU386) && defined(MULTIPORT)
 #include "md5.h"
 #endif
 
@@ -40,7 +40,7 @@ typedef struct {
 static long TempUserRecNo;
 
 
-#if defined(CPU386) && defined(MULTIPORT)  /* 15.4: enabled */
+#if 0 && defined(CPU386) && defined(MULTIPORT)
   static char SentMd5String[32];
          char ReceivedMd5String[35];
 #endif
@@ -124,7 +124,7 @@ void LIBENTRY logconnectstring(void) {
     stripright(Asy.ConnectString,' ');
     if (Asy.ConnectString[0] != 0) {
       maxstrcpy(Status.DisplayText,Asy.ConnectString,sizeof(Status.DisplayText));
-      logsystext(TXT_MODEM,SPACERIGHTAT);
+      logsystext(TXT_MODEM,SPACERIGHT);
     }
     logcalleridstring();
   }
@@ -248,7 +248,7 @@ static int _NEAR_ LIBENTRY logonnewuser(void) {
     getpcbtext(TXT_CITYSTATE,&Buf);
     if (Buf.Str[0] != 0) {
       displaytype Ctrl;
-      Ctrl = (displaytype)(MixedCase ? HIGHASCII : HIGHASCII|UPCASE);
+      Ctrl = (MixedCase ? HIGHASCII : HIGHASCII|UPCASE);
       if (inputreqfield(UsersData.City,TXT_CITYSTATE,sizeof(UsersRead.City),Ctrl,NOHELP,(PcbData.DisableEdits ? mask_message : mask_name)) == INPUTREFUSEANSWER)
         return(-1);
     } else
@@ -309,58 +309,6 @@ static int _NEAR_ LIBENTRY logonnewuser(void) {
       Answer[1] = 0;
       inputfield(Answer,TXT_USESHORTDESC,1,YESNO|UPCASE|FIELDLEN|NEWLINE,NOHELP,mask_yesno);
       UsersData.Flags.SingleLines = (Answer[0] == YesChar);
-    }
-
-    /*----------------------------------------------------------------------
-     * 15.4: prompt new users for the Personal PSA fields (Gender, Email,
-     * WEB, Birthdate).  Guarded on PersonalSupport so sysops who haven't
-     * installed the PSA see no change.  Each field is also guarded on its
-     * PCBTEXT prompt being non-empty, so sysops can disable individual
-     * prompts by blanking the record in PCBTEXT.CDC without needing a
-     * recompile.
-     *---------------------------------------------------------------------*/
-    if (PersonalSupport) {
-      /* Gender: 15.4 default is space (not 'M') per HISTORY fix. */
-      Personal.Gender = ' ';
-      getpcbtext(TXT_ENTERGENDER,&Buf);
-      if (Buf.Str[0] != 0) {
-        Answer[0] = 0;
-        inputfield(Answer,TXT_ENTERGENDER,1,UPCASE|FIELDLEN|NEWLINE,NOHELP,mask_alphanum);
-        if (Answer[0] == 'M' || Answer[0] == 'F')
-          Personal.Gender = Answer[0];
-        /* else leave as ' ' — user declined */
-      }
-
-      /* Birthdate: MMDDYY packed, same convention as other PCBoard dates. */
-      Personal.Birthdate[0] = 0;
-      getpcbtext(TXT_ENTERBIRTHDATE,&Buf);
-      if (Buf.Str[0] != 0) {
-        char dateBuf[9];
-        dateBuf[0] = 0;
-        inputfield(dateBuf,TXT_ENTERBIRTHDATE,8,FIELDLEN|NEWLINE,NOHELP,mask_message);
-        /* Store in 6-byte MMDDYY form — strip separators. */
-        int di = 0;
-        for (int si = 0; dateBuf[si] && di < 6; si++)
-          if (dateBuf[si] >= '0' && dateBuf[si] <= '9')
-            Personal.Birthdate[di++] = dateBuf[si];
-        while (di < 6) Personal.Birthdate[di++] = '0';
-      }
-
-      /* Email address: 60 bytes, standard text field. */
-      Personal.Email[0] = 0;
-      getpcbtext(TXT_ENTEREMAILADDR,&Buf);
-      if (Buf.Str[0] != 0) {
-        inputfield(Personal.Email,TXT_ENTEREMAILADDR,sizeof(Personal.Email)-1,
-                   FIELDLEN|NEWLINE|HIGHASCII,NOHELP,mask_message);
-      }
-
-      /* WEB address: 60 bytes, same treatment. */
-      Personal.Web[0] = 0;
-      getpcbtext(TXT_ENTERWEBADDR,&Buf);
-      if (Buf.Str[0] != 0) {
-        inputfield(Personal.Web,TXT_ENTERWEBADDR,sizeof(Personal.Web)-1,
-                   FIELDLEN|NEWLINE|HIGHASCII,NOHELP,mask_message);
-      }
     }
 
     convertdatatoread(&UsersData,&UsersRead);
@@ -460,7 +408,7 @@ static void _NEAR_ LIBENTRY checkbaudrate(int SecLevel) {
 #endif
 
 
-#if defined(CPU386) && defined(MULTIPORT)  /* 15.4: enabled */
+#if 0 && defined(CPU386) && defined(MULTIPORT)
 static bool _NEAR_ LIBENTRY md5match(char *Buffer) {
   int   X;
   char *p;
@@ -759,7 +707,7 @@ found:
   Status.UseAlias = (bool) (strcmp(Name,UsersData.Alias) == 0);
   getdisplaynames();
 
-  #if defined(CPU386) && defined(MULTIPORT)  /* 15.4: enabled */
+  #if 0 && defined(CPU386) && defined(MULTIPORT)
     if (Asy.Online == REMOTE && LastStr[0] == 0 && ReceivedMd5String[0] != 0) {
       char Buffer[80];
       char Md5Digest[16];
@@ -813,7 +761,7 @@ found:
   writenametolog(LOGON);
   logtriednames(NumNames,Tried);
 
-  #if defined(CPU386) && defined(MULTIPORT)                            /* 15.4: enabled */
+  #if 0 && defined(CPU386) && defined(MULTIPORT)
     if (Asy.Online == REMOTE && ReceivedMd5String[0] != 0) {
       char Md5LoginStr[80];
       sprintf(Md5LoginStr,"MD5LOGIN=%s",ReceivedMd5String);
@@ -849,18 +797,6 @@ found:
     Status.UserRecNo = TempUserRecNo;
     getuserrecord(FALSE,FALSE);
     UsersData.NumTimesOn++;
-
-    /* 15.4: display stored email/web on login (matches Clark 15.4b) */
-    if (PersonalSupport && Personal.Email[0] != 0) {
-      char emailBuf[80];
-      sprintf(emailBuf, "EMAIL: %s", Personal.Email);
-      print(emailBuf); print("\r\n");
-    }
-    if (PersonalSupport && Personal.Web[0] != 0) {
-      char webBuf[80];
-      sprintf(webBuf, "WEB: %s", Personal.Web);
-      print(webBuf); print("\r\n");
-    }
     return;
   }
 
@@ -880,18 +816,6 @@ found:
     Status.UserRecNo = TempUserRecNo;
     getuserrecord(FALSE,FALSE);
     UsersData.NumTimesOn++;
-
-    /* 15.4: display stored email/web on login (matches Clark 15.4b) */
-    if (PersonalSupport && Personal.Email[0] != 0) {
-      char emailBuf[80];
-      sprintf(emailBuf, "EMAIL: %s", Personal.Email);
-      print(emailBuf); print("\r\n");
-    }
-    if (PersonalSupport && Personal.Web[0] != 0) {
-      char webBuf[80];
-      sprintf(webBuf, "WEB: %s", Personal.Web);
-      print(webBuf); print("\r\n");
-    }
     return;
   }
 
@@ -969,18 +893,6 @@ void LIBENTRY login(void) {
       getdefaultlanguage();
     getuserrecord(FALSE,FALSE);
     UsersData.NumTimesOn++;
-
-    /* 15.4: display stored email/web on login (matches Clark 15.4b) */
-    if (PersonalSupport && Personal.Email[0] != 0) {
-      char emailBuf[80];
-      sprintf(emailBuf, "EMAIL: %s", Personal.Email);
-      print(emailBuf); print("\r\n");
-    }
-    if (PersonalSupport && Personal.Web[0] != 0) {
-      char webBuf[80];
-      sprintf(webBuf, "WEB: %s", Personal.Web);
-      print(webBuf); print("\r\n");
-    }
     Status.CallerNumber = addcaller();
     writenametolog(LOGON);
     startdisplay(NOCHANGE);
@@ -1036,7 +948,7 @@ void LIBENTRY login(void) {
       bell();
       asetcolor(Display.DefaultColor);
 
-      #if defined(CPU386) && defined(MULTIPORT)                        /* 15.4: enabled */
+      #if 0 && defined(CPU386) && defined(MULTIPORT)
         if (Asy.Online == REMOTE) {
           int Len;
 

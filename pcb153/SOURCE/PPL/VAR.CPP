@@ -3232,7 +3232,7 @@ cVARVAL LIBENTRY cVARVAL::replace(cVARVAL & sv, const cVARVAL & dv)
 
 cVARVAL LIBENTRY cVARVAL::stripstr(cVARVAL & cv)
 {
-    cVARVAL _empty(vtSTRING,""); return replacestr(cv,_empty);
+    return replacestr(cv,cVARVAL(vtSTRING,""));
     //return replace(cv,cVARVAL(vtSTRING,""));
 }
 

@@ -53,7 +53,7 @@ char * pascal h2name( unsigned psp, int h )
   regs.h.ah = 0x52;      /* set up initial SFT pointer      */
   segread( &sregs );
   intdosx( &regs, &regs, &sregs );
-  ptr = *((unsigned far * far *) MK_FP( sregs.es, regs.w.bx + 4 ));
+  ptr = *((unsigned far * far *) MK_FP( sregs.es, regs.x.bx + 4 ));
 
   switch( _osmajor )     /* switch sizes, offsets for ver   */
     { case 2: sftsize = 0x28;
@@ -75,9 +75,9 @@ char * pascal h2name( unsigned psp, int h )
 
   if (htbl[h] >= 0)           /* now if handle is valid...  */
     { sftn = htbl[h];         /* get index into SFT list    */
-      while ( ((unsigned long)(ptr) & 0xFFFF) != 0xFFFF )
+      while ( FP_OFF(ptr) != 0xFFFF )
         { if (ptr[2] > sftn)  /* then target is here        */
-            { sptr = (char *)&ptr[3];
+            { sptr = (unsigned char far *)&ptr[3];
               while (sftn--)  /* so skip down to it         */
                 sptr += sftsize;
               _fmemcpy( name, &sptr[nmofs], 11 );

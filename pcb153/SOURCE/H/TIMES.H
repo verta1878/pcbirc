@@ -17,7 +17,7 @@
 
 /*****************************************************************************/
 /* Timer values                                                              */
-// These are mapped to David Terry's platform safe macros.
+/* These are mapped to David Terry's platform safe macros. */
 
 #define         ONE_SECOND              ONESECOND
 #define         TWO_SECONDS             TWOSECONDS

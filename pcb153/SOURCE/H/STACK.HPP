@@ -37,21 +37,21 @@
 
 /****************************************************************************/
 
-// Pragmas
+/* Pragmas */
 
 /****************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #include "list.hpp"
 
 /****************************************************************************/
 
-// Defined Macros
+/* Defined Macros */
 
 /****************************************************************************/
 
-// Types
+/* Types */
 
 template <class T>
 class cSTACK : public cLIST<T>
@@ -85,23 +85,23 @@ class cISTACK : public cILIST<T>
 
 /****************************************************************************/
 
-// Constants
+/* Constants */
 
 /****************************************************************************/
 
-// Variables
+/* Variables */
 
 /****************************************************************************/
 
-// Function Prototypes
+/* Function Prototypes */
 
 /****************************************************************************/
 
-// Inline Functions
+/* Inline Functions */
 
 /****************************************************************************/
 
-// Template Functions
+/* Template Functions */
 
 template <class T>
 int LIBENTRY cSTACK<T>::push(T data)
@@ -167,15 +167,15 @@ T * LIBENTRY cISTACK<T>::top(void)
 
 /****************************************************************************/
 
-// Test Code
+/* Test Code */
 
 #ifdef    ___TEST___
 
-//typedef cSTACK<int>  tINTSTK;
-//typedef cISTACK<int> tIINTSTK;
+/*typedef cSTACK<int>  tINTSTK; */
+/*typedef cISTACK<int> tIINTSTK; */
 
-//tINTSTK  intStk;
-//tIINTSTK iIntStk(DD_DEF);
+/*tINTSTK  intStk; */
+/*tIINTSTK iIntStk(DD_DEF); */
 
 struct s
 {
@@ -190,10 +190,10 @@ struct s
 
 };
 
-//typedef cSTACK<s>  tSSTK;
+/*typedef cSTACK<s>  tSSTK; */
 typedef cISTACK<s> tISSTK;
 
-//tSSTK  sStk;
+/*tSSTK  sStk; */
 tISSTK iSStk(DD_DEF);
 
 #endif

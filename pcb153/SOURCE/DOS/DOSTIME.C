@@ -61,7 +61,7 @@ long LIBENTRY doselapsedtime(long StartTime) {
 }
 
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
 static int StartTime[13];
 static int EndTime[13];
 
@@ -101,7 +101,7 @@ bool LIBENTRY timerexpired(int WhichTimer) {
 
 this function is no longer used
 
-#if defined(__OS2__) || defined(__WATCOMC__)
+#ifdef __OS2__
   typedef union {
     long Whole;
     struct {
@@ -140,7 +140,7 @@ this function is no longer used
 
 long LIBENTRY dosdifflongtime(long t1, long t2) {
   long        Diff;
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     bool        Borrow;
     septimetype T1;
     septimetype T2;
@@ -149,7 +149,7 @@ long LIBENTRY dosdifflongtime(long t1, long t2) {
   if (t1 < t2)
     t1 += 0x18000000L;  /* add 24 hours */
 
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     T1.Whole = t1;
     T2.Whole = t2;
 
@@ -279,7 +279,7 @@ void main(void) {
   mydelay(550);
   t2 = dosgetlongtime();
   printf("t2 = %ld\nt1 = %ld\ndiff = %ld\n",t2,t1,dosdifflongtime(t2,t1));
-  #if defined(__OS2__) || defined(__WATCOMC__)
+  #ifdef __OS2__
     septimetype T1,T2;
     T1.Whole = t1;
     T2.Whole = t2;

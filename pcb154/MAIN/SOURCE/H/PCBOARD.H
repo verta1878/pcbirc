@@ -826,7 +826,9 @@ int  LIBENTRY commportinkey(void);
 int  LIBENTRY kbdinkey(void);
 int  LIBENTRY cinkey(void);
 int  LIBENTRY waitforkey(void);
+#ifdef __cplusplus
 int  LIBENTRY waitforkey(int TimeToWait);
+#endif
 void LIBENTRY checkstatus(void);
 void LIBENTRY watchstatuswhilesending(void);
 
@@ -1315,7 +1317,11 @@ void LIBENTRY ASYNC_disconnectmodem(void);
 
 /* BGKEY.ASM */
 #ifndef __OS2__
-  extern "C" short LIBENTRY bgetkey2(char Option);  /* used instead of bgetkey() from SYSTEM.LIB */
+#ifdef __cplusplus
+  extern "C" short LIBENTRY bgetkey2(char Option);
+#else
+  short LIBENTRY bgetkey2(char Option);
+#endif  /* used instead of bgetkey() from SYSTEM.LIB */
 #endif
 
 /* NOSCROLL.ASM */

@@ -180,26 +180,26 @@ static void _NEAR_ LIBENTRY inetname(char *Dest, char *Srce, int MaxLen) {
   char  SrchStr[2];
   char  RepStr[6];
 
-  // make room for the @domain characters.
+/* make room for the @domain characters. */
   MaxLen -= (strlen(PcbData.uucpDomainName)+1);
 
-  strcpy(Dest,Srce);                        // copy current name
-  strlwr(Dest);                             // change to lowercase letters
-  substitute(Dest,"#" ,"#h#",MaxLen);       // change # to #h#
-  substitute(Dest,"." ,"#d#",MaxLen);       // change . to #d#
-  substitute(Dest,"_" ,"#u#",MaxLen);       // change _ to #u#
-  substitute(Dest,"(" ,"#l#",MaxLen);       // change ( to #l#
-  substitute(Dest,")" ,"#r#",MaxLen);       // change ) to #r#
-  substitute(Dest,"," ,"#m#",MaxLen);       // change , to #m#
-  substitute(Dest,":" ,"#c#",MaxLen);       // change : to #c#
-  substitute(Dest,"\\","#b#",MaxLen);       // change \ to #b#
-  substitute(Dest,"=" ,"#e#",MaxLen);       // change = to #e#
-  substitute(Dest,"/" ,"#s#",MaxLen);       // change / to #s#
-  substitute(Dest,">" ,"#o#",MaxLen);       // change > to #o#
-  substitute(Dest,"<" ,"#p#",MaxLen);       // change < to #p#
-  substitute(Dest,"*" ,"#i#",MaxLen);       // change * to #i#
+  strcpy(Dest,Srce);  /* copy current name */
+  strlwr(Dest);  /* change to lowercase letters */
+  substitute(Dest,"#" ,"#h#",MaxLen);  /* change # to #h# */
+  substitute(Dest,"." ,"#d#",MaxLen);  /* change . to #d# */
+  substitute(Dest,"_" ,"#u#",MaxLen);  /* change _ to #u# */
+  substitute(Dest,"(" ,"#l#",MaxLen);  /* change ( to #l# */
+  substitute(Dest,")" ,"#r#",MaxLen);  /* change ) to #r# */
+  substitute(Dest,"," ,"#m#",MaxLen);  /* change , to #m# */
+  substitute(Dest,":" ,"#c#",MaxLen);  /* change : to #c# */
+  substitute(Dest,"\\","#b#",MaxLen);  /* change \ to #b# */
+  substitute(Dest,"=" ,"#e#",MaxLen);  /* change = to #e# */
+  substitute(Dest,"/" ,"#s#",MaxLen);  /* change / to #s# */
+  substitute(Dest,">" ,"#o#",MaxLen);  /* change > to #o# */
+  substitute(Dest,"<" ,"#p#",MaxLen);  /* change < to #p# */
+  substitute(Dest,"*" ,"#i#",MaxLen);  /* change * to #i# */
 
-  // substitute high ascii characters
+/* substitute high ascii characters */
   for (p = Dest, CurLen = strlen(Dest); p < &Dest[CurLen]; p++) {
     if (*p > 127) {
       SrchStr[0] = *p;
@@ -210,9 +210,9 @@ static void _NEAR_ LIBENTRY inetname(char *Dest, char *Srce, int MaxLen) {
     }
   }
 
-  change(Dest,' ',PcbData.uucpSeparator[0]); // change spaces to periods (or whatever is defined)
-  addchar(Dest,'@');                         // add @
-  strcat(Dest,PcbData.uucpDomainName);       // add domain name
+  change(Dest,' ',PcbData.uucpSeparator[0]);  /* change spaces to periods (or whatever is defined) */
+  addchar(Dest,'@');  /* add @ */
+  strcat(Dest,PcbData.uucpDomainName);  /* add domain name */
 }
 
 

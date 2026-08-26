@@ -168,15 +168,14 @@ void LIBENTRY writelog(char *Str, padtype Pad) {
   switch (Pad) {
     case LEFTJUSTIFY  : memcpy(Buffer,Str,LOGTEXTLEN);
                         break;
-    case SPACERIGHT   :
-    case SPACERIGHTAT : memset(Buffer,' ',6);
+    case SPACERIGHT : memset(Buffer,' ',6);
                         memcpy(&Buffer[6],Str,LOGTEXTLEN-6);
                         break;
   }
 
   Buffer[LOGTEXTLEN] = 0;
   padstr(Buffer,' ',LOGTEXTLEN);
-  if (Pad == SPACERIGHTAT) {
+  if (Pad == SPACERIGHT) {
     Buffer[LOGRECLEN-11] = ' ';
     timestr1(&Buffer[LOGRECLEN-10]);
   }
@@ -247,12 +246,12 @@ void LIBENTRY writenametolog(logtype Which) {
     Node[0] = 0;
 
   if (UsersData.Alias[0] != 0 && Status.UseAlias) {
-    // we don't want show the alias name in the caller log,
-    // so go get the caller's real name thru the getdisplaynames() function
+/* we don't want show the alias name in the caller log, */
+/* so go get the caller's real name thru the getdisplaynames() function */
     Status.UseAlias = FALSE;
     getdisplaynames();
     maxstrcpy(Name,Status.DisplayName,sizeof(Name));
-    // now put things back the way we found them!
+/* now put things back the way we found them! */
     Status.UseAlias = TRUE;
     getdisplaynames();
   } else

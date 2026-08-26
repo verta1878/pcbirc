@@ -1,0 +1,8 @@
+SIO v2.0.0-preview — Clean-Room Serial I/O Driver for OS/2
+Copyright (C) 2026 FPC264IRC Contributors
+
+This is a clean-room reimplementation. Zero lines from
+Ray Gwinn's original SIO shareware were used.
+
+This program is free software under the GNU General Public
+License version 3. See https://www.gnu.org/licenses/gpl-3.0

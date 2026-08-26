@@ -36,7 +36,7 @@
 
 /******************************************************************************/
 
-// Included Files
+/* Included Files */
 
 #ifdef __OS2__
   #pragma pack(1)
@@ -54,7 +54,7 @@
 
 /******************************************************************************/
 
-// Types
+/* Types */
 
 template <class T, class U>
 class cINFSTRUCT
@@ -329,7 +329,7 @@ class cDBF : public cCODEBASE
 
 /******************************************************************************/
 
-// cINFSTRUCT Template Class Member Functions
+/* cINFSTRUCT Template Class Member Functions */
 
 template <class T, class U>
 cINFSTRUCT<T,U>::cINFSTRUCT(void) :

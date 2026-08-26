@@ -400,7 +400,7 @@ static inpttype _NEAR_ LIBENTRY inputter(char *Buffer, int MaxLen, DISPLAYTYPE D
     #endif
     settimer(4,TWENTYSECONDS);
     #ifdef __OS2__
-      releasekbdblock(TWENTYSECONDS);  // release the kbd block in 20 seconds
+      releasekbdblock(TWENTYSECONDS);  /* release the kbd block in 20 seconds */
     #endif
   } else
     Auto = FALSE;
@@ -480,20 +480,20 @@ process:
                         }
                         #ifndef LIB
                           if (checkfornodechat()) {
-                            // The Scan variable is used to cause the inputter
-                            // to loop back without doing anything else, if it
-                            // is set to true it loops, if set to false it
-                            // returns back to the calling function.  In this
-                            // case, if the caller is at the command prompt and
-                            // he has mail, then we need to get back to the
-                            // command prompt so that the caller can scan for
-                            // and read his mail.
+/* The Scan variable is used to cause the inputter */
+/* to loop back without doing anything else, if it */
+/* is set to true it loops, if set to false it */
+/* returns back to the calling function.  In this */
+/* case, if the caller is at the command prompt and */
+/* he has mail, then we need to get back to the */
+/* command prompt so that the caller can scan for */
+/* and read his mail. */
                             if (Status.CmdPrompt && Status.CheckForMail)
                               Scan = FALSE;
                             else
                               Scan = TRUE;
-                            Key = CTRL_M;                    // cmd prompt, if at cmd
-                            goto process;                    // prompt re-ask quest?
+                            Key = CTRL_M;  /* cmd prompt, if at cmd */
+                            goto process;  /* prompt re-ask quest? */
                           }
                         #endif
                         if (Control.WarnMinute != 0) {
@@ -824,8 +824,8 @@ void LIBENTRY inputfield(char *Buffer, int PcbTextNum, int MaxLen, DISPLAYTYPE D
 
     #ifndef LIB
       SaveHelpNum = NOHELP;
-      if (ppltypeahead() && ! TypeAhead) { // ONLY IF: we did NOT have KBD input
-        gettypeaheadstr(Buffer,MaxLen);    // up above and we DO NOW have input
+      if (ppltypeahead() && ! TypeAhead) {  /* ONLY IF: we did NOT have KBD input */
+        gettypeaheadstr(Buffer,MaxLen);  /* up above and we DO NOW have input */
         setcapture(TRUE);
         Display.ShowOnScreen = ShowOnScreen;
         return;

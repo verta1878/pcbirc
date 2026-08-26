@@ -23,10 +23,8 @@ class qint
 
         qint ( void );
 
-#if !defined(__386__) && !defined(__FLAT__)
         qint ( int           i );
         qint ( unsigned int  u );
-#endif
         qint ( long          l );
         qint ( unsigned long u );
 
@@ -60,16 +58,13 @@ class qint
         int  operator >= ( qint & tr ) { return (!(*this < tr)); }
 #endif
 
-#if !defined(__386__) && !defined(__FLAT__)
         int  operator == ( int tr ) { return (*this == qint(tr)); }
         int  operator != ( int tr ) { return (*this != qint(tr)); }
         int  operator <  ( int tr ) { return (*this <  qint(tr)); }
         int  operator <= ( int tr ) { return (*this <= qint(tr)); }
         int  operator >  ( int tr ) { return (*this >  qint(tr)); }
         int  operator >= ( int tr ) { return (*this >= qint(tr)); }
-#endif
 
-#if !defined(__386__) && !defined(__FLAT__)
         int  operator == ( long tr ) { return (*this == qint(tr)); }
         int  operator != ( long tr ) { return (*this != qint(tr)); }
         int  operator <  ( long tr ) { return (*this <  qint(tr)); }
@@ -83,7 +78,6 @@ class qint
         int  operator <= ( unsigned long tr ) { return (*this <= qint(tr)); }
         int  operator >  ( unsigned long tr ) { return (*this >  qint(tr)); }
         int  operator >= ( unsigned long tr ) { return (*this >= qint(tr)); }
-#endif
 
         qint operator += ( qint & tr ) { *this = *this + tr; return *this; }
         qint operator -= ( qint & tr ) { *this = *this - tr; return *this; }

@@ -41,15 +41,15 @@ passthrough module for PCBOARD FIDO.
 #endif
 #include "structs.h"
 
-// Prototypes
+/* Prototypes */
 
 typedef struct
 {
-	unsigned char 	R :1; 				// R registration flag
-	unsigned char 	S :1; 				// S registration flag
-	unsigned char 	A :1; 				// Active flag. This is so I know ehn this record should be packed out
-	unsigned char  reserved : 5; //Reserved
-}REGREC;		// This structure should be one byte in length
+	unsigned char 	R :1;  /* R registration flag */
+	unsigned char 	S :1;  /* S registration flag */
+	unsigned char 	A :1;  /* Active flag. This is so I know ehn this record should be packed out */
+	unsigned char  reserved : 5;  /*Reserved */
+}REGREC;  /* This structure should be one byte in length */
 
 
 class cPTINFO
