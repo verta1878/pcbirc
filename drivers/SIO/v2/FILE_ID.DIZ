@@ -1,6 +1,0 @@
-SIO v2.0.0 — OS/2 Serial I/O Suite
-Complete clean-room rebuild. 14
-modules: SIO2K UART VX00 VSIO2K
-VMODEM ESP LOGGER MODES PCI PMLM
-VIEWPMLM. 8,117 lines. Audited.
-GPLv3. 8 crew. Released: 2026-08-21
