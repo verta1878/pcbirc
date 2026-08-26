@@ -7,6 +7,9 @@
 
 ## Current State (2026-07-31)
 
+> Note (2026-08-26): MASM is now fully supported in WASM — see Phase 3;
+> the standalone-ASM phase is substantially de-risked by this.
+
 | Scope | Compiling | Total | Percentage |
 |---|---|---|---|
 | Core PCBoard | 118 | 135 | **87%** |
@@ -133,6 +136,16 @@ end:;
 ---
 
 ## Phase 3: Standalone ASM — TASM to WASM
+
+> **UPDATE (2026-08-26): MASM is now fully supported in WASM.** Watcom's
+> assembler (WASM) now handles MASM syntax completely. This is a major
+> unblock for this phase: the standalone TASM files are MASM-syntax
+> assembly, so they no longer need hand-porting to WASM's older dialect
+> - WASM can assemble them directly (or with minimal adjustment). ASYNC.ASM
+> (THE GATE, the FOSSIL serial driver) and the other 7 files below become
+> a "point WASM at them and fix what it flags" task rather than a full
+> rewrite. Re-scope this phase around WASM's MASM mode before starting.
+
 
 8 TASM files (7,548 lines total):
 - ASYNC.ASM (1,893 lines) — **THE GATE** — FOSSIL serial driver

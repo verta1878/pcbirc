@@ -486,6 +486,16 @@ Candidates: g00r00 (Mystic BBS), crew ANSI artist, TheDraw/PabloDraw.
 
 ## 8. Extended Archiver Support
 
+> **Roadmap position:** scheduled right after the pcbcomm remake. pcbcomm
+> is the session/IO layer; archiver handling is the next self-contained
+> piece once that's clean. The built-in format detection already exists
+> in `pcb153/SOURCE/SUPPORT/DIZ.C` — magic-number sniffers for ZIP
+> (0x04034b50, with self-extractor offset scanning), ARJ (0xEA60), LZH,
+> and ARC. That detection code is the starting point; the work is
+> extending the 4 configurable slots to modern formats and moving toward
+> a data-driven table (below).
+
+
 ### PCBoard 15.4 (current)
 
 PCBoard supports 4 hardcoded archiver slots:

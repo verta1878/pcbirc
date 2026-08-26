@@ -15,3 +15,10 @@ Services:
 
 Key files: pcbis.pas (main), pcbis_binkp.pas, pcbis_ftp.pas,
 pcbis_http.pas, pcbis_net.pas, pcbfoss.pas (FOSSIL bridge).
+
+## Client/Server + Teleconference (design)
+
+A network client/server and teleconference layer for PCBoard is drafted
+in `CLIENT-SERVER-DESIGN.md`, starting from sysop/0's 386 client/server +
+teleconference (PabloDraw model). pcbis is its home; if it proves out,
+parts may later fold into PCBOARD.EXE.

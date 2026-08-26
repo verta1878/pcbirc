@@ -133,3 +133,17 @@ pcbcomm cleanly unblocks both:
 
 The remake should present one backend-agnostic session interface so
 adding SSH beside telnet is a backend, not a special case.
+
+After pcbcomm: **archivers / unarchivers** (see section 8 of
+todo/PCB1541_DRAFT.md) — extend the 4 hardcoded slots (ZIP/ARJ/
+ARC/LZH) to modern formats (RAR/7Z/TGZ/TAR), following Mystic's
+ARCHIVE.DAT data-driven model. The built-in format sniffers already
+live in pcb153/SOURCE/SUPPORT/DIZ.C (ZIP/ARJ/LZH/ARC magic-number
+detection) — a natural starting point.
+
+## Related: network client/server
+
+The PCBoard network client/server + teleconference design lives with
+pcbis (`pcb1541/pcbis/CLIENT-SERVER-DESIGN.md`). pcbcomm's role there is
+the transport layer — TCP / serial / telnet / SSH backends feeding the
+one session interface the server uses.

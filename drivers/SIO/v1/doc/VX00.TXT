@@ -1,0 +1,25 @@
+
+
+          VX00.SYS is a DOS device driver and has no parameters.  It must
+          be installed using the DOS_DEVICE setting for selected DOS tasks. 
+          If you desire VX00.SYS loaded for all DOS sessions, then load it
+          in your OS/2 CONFIG.SYS.
+
+          VX00.SYS is little more than a software interface to SIO,
+          providing FOSSIL based programs with direct access to the real
+          comm driver SIO.SYS.  This direct access allows FOSSIL based
+          programs to bypass the virtualization and the associated
+          processor time that virtualization eats up.  Your FOSSIL based
+          programs should now require far less of the processor's time.
+
+          There are no options or utilities for VX00.SYS.  DO NOT use X00's
+          XU with VX00.SYS, it will not work correctly.  VX00.SYS has no
+          buffers to make larger or smaller, it uses the same buffers that
+          SIO.SYS uses;  DOS programs or device drivers can not lock/unlock
+          the baud rate, only SIO.SYS can do that.  There should be no need
+          to turn off the FOSSIL or to uninstall it.
+
+          Try VX00.SYS before assuming that you need to do things the same
+          old way that it was done with X00 or another FOSSIL.  All of the
+          rules have changed for DOS comm when executing under OS/2.
+

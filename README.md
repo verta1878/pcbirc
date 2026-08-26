@@ -82,7 +82,15 @@ MAIN/build/scripts (or use the DOSBOXX.ZIP all-in-one bundle).
 | New tools | 8 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis, QFront, pcbfoss, pcbiso) |
 | PPE collection | 5,703 archives (incl. Roy/SAC donation) |
 
-### Clark Binaries — Main (OpenWatcom 2.0)
+### 15.4 Delta Binaries — Main (OpenWatcom 2.0)
+
+> These `_W`-suffixed EXEs are the crew's **15.4 Delta** rebuild,
+> compiled with **OpenWatcom** (pcb154/). They are NOT Clark's binaries.
+>
+> Clark built 15.4 with **Borland C++ 3.1**. His original 1996 binaries
+> (Copyright 1996 Clark Development, report v15.4) are preserved as the
+> reference at `OUT/pwa153/upd154/clark-original/`. The 15.4 PWA source
+> rebuild (also Borland) targets `OUT/pwa153/upd154/`.
 
 | Binary | Size | Description |
 |---|---|---|
@@ -184,6 +192,8 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 | sysop/0 | fpc264irc, openwatcomirc, pcbis, VMAVL, tools |
 | kiddo | Protocols, serial IRQ, RIP OOP engine |
 | evga | SIO driver, Mystic monitor, RIPView engine |
+| byte | Recovery + preservation; decrypted PCBIC 1.2 (Pcbic12.zip) |
+| dotmatrix | Crew |
 
 ## Acknowledgments
 

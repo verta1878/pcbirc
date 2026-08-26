@@ -182,7 +182,8 @@ WATCOMPAT.H bridges Borland-to-Watcom differences.
 | wrench | FOSSIL, networking |
 | kiddo | protocols, RIP engines, serial |
 | evga | SIO driver, display, multiport |
-| byte | program recovery |
+| byte | program recovery; decrypted PCBIC 1.2 (Pcbic12.zip) |
+| dotmatrix | crew |
 
 ## Documentation
 

@@ -28,6 +28,11 @@ family maps to PCBKBC/PCBKIT/PCBKMS, decompression recipe), see
 (Borland C++ 3.1 lives at root `PCB153BT.ZIP` / inside `DOSBOXX.ZIP`;
 its raw distro is not in devtools.)
 
+### DPMI host (for the MSC 7.0 DOS route)
+| Archive (here) | What it is |
+|---|---|
+| `386MAX-803.7z` | Qualitas 386MAX 8.03 (2 floppy images). The 32-bit DPMI host the MSC 7.0 DOS compiler ("3216" passes) requires. Build-time tool for PCBKMS Route A only. Proprietary (abandonware). NOT a 1541 dependency - see todo/SDK-1541-OPENSOURCE-MIGRATION.md. |
+
 ### Toolkit source
 | Archive (here) | Extracted / curated form | Notes |
 |---|---|---|

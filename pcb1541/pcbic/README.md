@@ -14,7 +14,7 @@ zips). Whoever repackaged it added the encryption after the fact; it is
 not how Clark originally distributed the IC.
 
 Getting into it was not easy. The decryption and full extraction were
-done as a separate effort, afterwards — this is recovered material, not
+done by **byte** as a separate effort, afterwards — this is recovered material, not
 something that arrived unlocked. The unlocked package now lives in
 `decrypted/` (38 files). That recovery is the reason we have anything to
 work from here at all.

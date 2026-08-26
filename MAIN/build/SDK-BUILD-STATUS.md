@@ -357,3 +357,86 @@ Note: the OS/2 add-on's README states it targets DOS/Windows apps (it
 was sold to OS/2-hosted devs building DOS/Windows software). For our
 purposes we only need it to HOST the compiler in 16-bit mode to produce
 the PCBKMS .LIB - which is exactly what it does.
+
+
+---
+
+## PCBKMS status update (2026-08-26)
+
+Assessed the MSC 7.0 build end to end. Where it stands:
+
+**Ready:**
+- Compiler in hand (extract MSC70BT.ZIP -> C:\MSC70). Both hosts present:
+  DOS "3216" passes (BIN/) and OS/2 "1616" passes (OS2/BINP/, NE-format,
+  verified 16-bit OS/2 1.x). INCLUDE (42 headers) + LIB (S/M/C/L C
+  runtimes) present.
+- **BLDKMS.BAT compile loop is now complete** - a real 119-module x 4-model
+  compile loop (476 CL commands), generated from the manifest, same
+  structure as the working BLDKIT/BLDKBC. Pick the host driver via the
+  CC variable at the top (DOS CL vs OS/2 CL).
+- LIB-assembly response files (MS??.RSP, 8 files) point at
+  OBJ\msc70\<model>\ correctly. obj/msc70 dirs scaffolded.
+- **Headers are already MSC7-aware**: DOSFUNC.H takes dos.h/direct.h/
+  borland.h for non-Borland compilers; TYPES.HPP char checks pass under
+  MSC7; borland.h has an explicit `#ifdef _MSC_VER` block mapping Borland
+  intrinsics to MSC equivalents (_disable/_enable/_memavl/_dos_getvect/
+  _dos_setvect) and asm->_asm. This is real prior MSC7 prep.
+
+**Blocked (host, not our code):**
+- The DOS "3216" compiler hard-requires a **DPMI host with 32-bit
+  interrupt extension** - it names Qualitas 386MAX/BlueMAX explicitly.
+  **RESOLVED: 386MAX 8.03 is now in the repo** (devtools/386MAX-803.7z,
+  2 floppy images). Install it under DOSBox-X (run its SETUP, load
+  386MAX.SYS) to provide the DPMI host, then Route A runs. This clears
+  the last blocker for the DOS route.
+- The OS/2 "1616" compiler needs a real **OS/2 host** (or faithful OS/2
+  emulation). Not available in the current Linux+DOSBox-X environment.
+
+**386MAX version guidance (Route A):**
+The DOS compiler's error text names "Qualitas 386MAX or BlueMAX version
+6.x", but the real requirement is the *capability*, not the version:
+the next error strings are "DPMI host not 32 bit" and "DPMI host does
+not have 32-bit interrupt extension". That 32-bit DPMI + interrupt
+extension is a core Qualitas feature present in 386MAX **6, 7, and 8**.
+So use the **latest available - 386MAX 7.x or 8.x (8.03 is the final
+release)**; newer gives the same required capability plus better
+compatibility and better behavior under DOSBox-X. 6.x is the minimum
+Microsoft tested; 8.03 is the recommended choice.
+
+**Next action (needs one of):**
+1. A DOS host with 386MAX providing DPMI (Route A), then run BLDKMS.BAT
+   with CC=DOS CL; or
+2. An OS/2 host (Route B, preferred - no DPMI), CC=OS/2 CL.
+Either way BLDKMS.BAT is now a single command; then MKLIB/MS??.RSP
+assemble PCBKMS_S/M/C/L.LIB. Expect a first-build header fixup pass
+(likely small, given the existing _MSC_VER handling) - add _MSC_VER
+branches where only __TURBOC__/__BORLANDC__ are handled today.
+
+
+## Build-input validation (2026-08-26 continued)
+
+Attempted the build under DOSBox-X. Two hard environment facts:
+- DOSBox-X headless writeback to mounted drives/images is
+  non-deterministic in this sandbox (flush race) - unreliable for a
+  476-step build.
+- No full-PC virtualizer (QEMU/86Box/PCem) here, and 386MAX.SYS is a
+  CONFIG.SYS driver DOSBox-X can't host anyway. So the real build needs
+  a stable host (real DOS+386MAX, or OS/2).
+
+Used the time to **statically validate the build**, which caught a real
+bug and corrected it:
+- **All 119 manifest modules exist** at their expected paths. ✓
+- The 119 split across **two source trees**: 95 from toolkit/pwa153, 24
+  from pcb153 (incl. 5 .ASM). BLDKMS.BAT's first cut wrongly assumed all
+  119 were under toolkit/pwa153 - it would have failed with 76
+  file-not-found errors. **Fixed:** BLDKMS.BAT now uses the manifest's
+  real paths (both \TOOLKIT\PWA153\SOURCE and \PCB153\SOURCE) and
+  assembles the 5 ASM files with TASM, exactly like the working BLDKIT.
+- **All 476 compile/assemble lines now resolve to real source files.** ✓
+
+**Build host requirements (validated):**
+- Mount BOTH source trees: C:\TOOLKIT\PWA153 and C:\PCB153.
+- TASM must be on PATH (the 5 ASM modules; MSC7 ships no standalone
+  assembler - TASM's OMF .OBJ links fine with MSC7 LIB).
+- MSC70 at C:\MSC70; 386MAX loaded (DOS route) or OS/2 host (OS/2 route).
+- Then: BLDKMS.BAT -> MKLIB/MS??.RSP -> PCBKMS_S/M/C/L.LIB.

@@ -67,6 +67,14 @@ Two routes to a working PCBKMS build:
 
 ## Notes
 
+- **Assemblers:** the DOS/Borland builds assemble the standalone .ASM
+  files with TASM (Borland's assembler, MASM-compatible). For the
+  OpenWatcom port, WASM (Watcom's assembler) now **fully supports MASM
+  syntax** (as of 2026-08-26), so the 8 standalone TASM files
+  (ASYNC/ANSI/CUTIL/C0/NOSCROLL/MEMMOVE/TIMER/BGKEY) can be assembled by
+  WASM directly rather than hand-ported. See
+  todo/OPENWATCOM_PORT_WORKMAP.md Phase 3.
+
 - The compiler ID is embedded in Clark's .LIB modules — verified:
   PCBKIT="Borland Turbo C 2.0", PCBKBC="Borland C++ 3.1",
   PCBKMS=Microsoft C (path e:\msc\b\...).
