@@ -44,3 +44,5 @@ pcb15everything.zip
 !PCBSRC/MAIN/SOURCE/UTIL/*/*.EXE
 !dist/*.exe
 !dist/*.EXE
+!dist/*.ZIP
+!dist/*.zip
