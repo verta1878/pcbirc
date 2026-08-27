@@ -95,9 +95,14 @@ toolkit difference is tiny — one enum value (SPACERIGHTAT, for @x color
 codes). Everything else Clark's 15.4 added lived in the main source.
 
 Built libraries live in `OUT/lib/pwa153/` as the SDK matrix: Clark's
-toolkit compiled by three compilers x four memory models (PCBKBC =
-Borland C++ 3.1, PCBKIT = Turbo C 2.01 - both built; PCBKMS = Microsoft
-C 7.0 - pending an OS/2 host). See `MAIN/build/SDK-BUILD-STATUS.md` and
+toolkit compiled by three compilers × four memory models. Layout is
+compiler-first (`OUT/lib/pwa153/bc31/`, `.../tc201/`, `.../msc70/`),
+with the four `.LIB` files at each compiler root and `OBJ/` +
+`loose-obj/` beside them. Status: PCBKBC (Borland) and PCBKIT (Turbo)
+built; PCBKMS (Microsoft C 7.0) pending a DPMI host — needs 386MAX
+loaded via CONFIG.SYS under a booted DOS (DOSBox-X `BOOT -l c` mode,
+QEMU, or real hardware). Run builds via `MAIN\build\scripts\BUILD.BAT`
+(`BUILD help` for targets). See `MAIN/build/SDK-BUILD-STATUS.md` and
 `devtools/COMPILERS.md`.
 
 ## Third-Party Dependencies
@@ -182,8 +187,9 @@ WATCOMPAT.H bridges Borland-to-Watcom differences.
 | wrench | FOSSIL, networking |
 | kiddo | protocols, RIP engines, serial |
 | evga | SIO driver, display, multiport |
-| byte | program recovery; decrypted PCBIC 1.2 (Pcbic12.zip) |
-| dotmatrix | crew |
+| byte | program discovery |
+| dotmatrix | documentation sourcing |
+| bob | compiler engineer (wcc64 backend, Glide builds) |
 
 ## Documentation
 

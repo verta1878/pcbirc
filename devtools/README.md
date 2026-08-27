@@ -32,6 +32,7 @@ its raw distro is not in devtools.)
 | Archive (here) | What it is |
 |---|---|
 | `386MAX-803.7z` | Qualitas 386MAX 8.03 (2 floppy images). The 32-bit DPMI host the MSC 7.0 DOS compiler ("3216" passes) requires. Build-time tool for PCBKMS Route A only. Proprietary (abandonware). NOT a 1541 dependency - see todo/SDK-1541-OPENSOURCE-MIGRATION.md. |
+| `386max.7z` | 386MAX source code from https://github.com/sudleyplace/386MAX (GPLv3). Open-source path for PCBKMS Route A. |
 
 ### Toolkit source
 | Archive (here) | Extracted / curated form | Notes |

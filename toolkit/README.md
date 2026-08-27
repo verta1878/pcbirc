@@ -58,12 +58,22 @@ devkit and develop9 revisions of DEVELOP.ZIP — the struct specs).
 
 ## Building
 
-Each toolkit compiles to a `.LIB` the PCBoard programs link against.
-Built libraries land in `OUT/lib/`:
-- `PCBTK_B.LIB` / `PCBTKL_B.LIB` — Borland (main + override stubs)
-- `PCBTK_W.LIB` — Watcom
+Each toolkit compiles into a per-compiler SDK matrix under `OUT/lib/`.
+For each compiler, four `.LIB` files (one per memory model: small,
+medium, compact, large) sit at the compiler root, next to `OBJ/` and
+`loose-obj/`:
 
-See `OUT/lib/README.md` for the library architecture and manifests.
+```
+OUT/lib/pwa153/
+  bc31/   PCBKBC{S,M,C,L}.LIB   Borland C++ 3.1
+  tc201/  PCBKIT{S,M,C,L}.LIB   Turbo C 2.01
+  msc70/  PCBKMS{S,M,C,L}.LIB   Microsoft C 7.0
+```
+
+= 3 compilers × 4 memory models = 12-library SDK matrix per toolkit
+version. See `OUT/lib/README.md` for the library architecture and
+`MAIN/build/scripts/README.md` for the full layout inside each
+compiler root.
 
 ## Relation to source and binaries
 
@@ -80,9 +90,9 @@ top-level dirs, each named by version:
 Shared developer tool archives (not per-version) are in `devtools/`.
 
 
-## Future: pwa150 (old 15.x toolkit)
+## Future: pwa1522 (old 15.x toolkit)
 
 An idea worth preserving: build the older 15.0/15.1/15.2 toolkit as
-`toolkit/pwa150` to give earlier-version users an upgrade path to 15.3.
+`toolkit/pwa1522` to give earlier-version users an upgrade path to 15.3.
 Not yet buildable (we lack pre-15.3 source). Ties into the IC work,
-since the IC is 15.2x-era. See `toolkit/PWA150-FUTURE.md`.
+since the IC is 15.2x-era. See `toolkit/PWA1522-FUTURE.md`.

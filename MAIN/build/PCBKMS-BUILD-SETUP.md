@@ -1,6 +1,6 @@
 # PCBKMS Build Setup — MSC 7.0 + 386MAX
 
-Turnkey recipe to build PCBKMS_S/M/C/L.LIB once you have a stable host.
+Turnkey recipe to build PCBKMS{S,M,C,L}.LIB once you have a stable host.
 Everything on our side is validated and ready; this is just the host
 setup.
 
@@ -15,7 +15,7 @@ setup.
 - **Both source trees mounted:**
   - `C:\TOOLKIT\PWA153`  (95 of the 119 modules)
   - `C:\PCB153`          (24 modules, incl. the 5 ASM)
-- The `OUT\LIB\PWA153\OBJ\msc70\{small,medium,compact,large}` dirs
+- The `OUT\LIB\PWA153\msc70\OBJ\{small,medium,compact,large}` dirs
   (BLDKMS.BAT creates them if missing).
 
 ## Host options
@@ -34,9 +34,9 @@ BLDKMS.BAT.
 
 1. In `BLDKMS.BAT`, set `CC` for your host (DOS CL vs OS/2 CL).
 2. Run `BLDKMS.BAT` — compiles/assembles 119 modules × 4 models (476
-   steps) into `OUT\LIB\PWA153\OBJ\msc70\<model>\`.
+   steps) into `OUT\LIB\PWA153\msc70\OBJ\<model>\`.
 3. Run `MKLIB` (or use the `MS??.RSP` response files) to assemble the
-   four libraries: `PCBKMS_S/M/C/L.LIB`.
+   four libraries: `PCBKMS{S,M,C,L}.LIB`.
 4. Drop them in `OUT/lib/pwa153/` — the 12-library SDK matrix is complete.
 
 ## Validation already done (2026-08-26)

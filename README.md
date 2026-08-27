@@ -68,11 +68,20 @@ normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 |---|---|---|
 | PCBKBC | Borland C++ 3.1 | BUILT - 4/4 models |
 | PCBKIT | Turbo C 2.01 | BUILT - 4/4 models |
-| PCBKMS | Microsoft C 7.0 | compiler in hand (DOS + OS/2), build pending an OS/2 host |
+| PCBKMS | Microsoft C 7.0 | compiler in hand (DOS + OS/2), build in progress under `PCBBLDBT.IMG` (FreeDOS + CWSDPMI); DPMI wiring being verified |
 
-Built libraries live in OUT/lib/pwa153/. Details in
-MAIN/build/SDK-BUILD-STATUS.md and devtools/COMPILERS.md. Build scripts:
-MAIN/build/scripts (or use the DOSBOXX.ZIP all-in-one bundle).
+Built libraries live in OUT/lib/pwa153/ (compiler-first layout:
+`bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its
+root, an `OBJ/` tree per memory model, `bin/` for compiled utilities,
+and `loose-obj/`). Details in MAIN/build/SDK-BUILD-STATUS.md and
+devtools/COMPILERS.md. Build scripts: MAIN/build/scripts (entry
+point: `BUILD.BAT`; run `BUILD help` for targets).
+
+The golden build image `PCBBLDBT.IMG` (bootable FreeDOS 1.3 with
+CWSDPMI + all three compilers + sources + build scripts) is the
+working environment for completing the 12-lib matrix and future
+15.22 / ow2irc integrations. See `MAIN/build/PCBBLDBT-ROADMAP.md`
+for milestone plan.
 
 
 | Metric | Count |
@@ -192,8 +201,9 @@ Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
 | sysop/0 | fpc264irc, openwatcomirc, pcbis, VMAVL, tools |
 | kiddo | Protocols, serial IRQ, RIP OOP engine |
 | evga | SIO driver, Mystic monitor, RIPView engine |
-| byte | Recovery + preservation; decrypted PCBIC 1.2 (Pcbic12.zip) |
-| dotmatrix | Crew |
+| byte | Program discovery |
+| dotmatrix | Documentation sourcing |
+| bob | Compiler engineer (wcc64 backend, Glide builds) |
 
 ## Acknowledgments
 

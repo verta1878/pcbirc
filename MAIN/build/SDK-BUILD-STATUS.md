@@ -25,12 +25,12 @@ Output: `OUT/lib/<branch>/`
 ### pwa153 — PARTIAL (PCBKBC, all 4 models) ⚠️  NOT COMPLETE
 CORRECTED to match Clark's actual SDK structure:
 - Naming: Clark's PCBKBC (Borland C++ 3.1), NOT invented PCBTK names
-- 4 memory models: PCBKBC_S/M/C/L.LIB (113 main modules each)
+- 4 memory models: PCBKBC{S,M,C,L}.LIB (113 main modules each)
 - Loose override OBJs in obj/ (ALTMODEM, NO*, PCBDAT, SMALLERR) —
   shipped alongside, linked selectively (NOT a second library)
-- PCBoard itself uses the MEDIUM model (PCBKBC_M)
+- PCBoard itself uses the MEDIUM model (PCBKBCM)
 - Output: OUT/lib/pwa153/
-- INCOMPLETE: 113/118 modules vs Clark's PCBKIT_L.LIB; missing 96
+- INCOMPLETE: 113/118 modules vs Clark's PCBKITL.LIB; missing 96
   functions (INITDOOR, OPENMODEM, ASYNC_*, etc). Manifest came from
   only 8 makefiles' lib: targets, not all 286 toolkit sources.
   See OUT/lib/pwa153/STATUS.md.
@@ -69,7 +69,7 @@ These postdate the Turbo C 2.0 era — the source was modernized over
 the years (passed through Borland C++ 3.1 and later). Turbo C 2.0 is a
 pre-ANSI C compiler (only /* */ comments, no C++).
 
-Confirmed: Clark's PCBKIT_L.LIB is almost all plain C (341 C symbols,
+Confirmed: Clark's PCBKITL.LIB is almost all plain C (341 C symbols,
 4 C++), so PCBKIT WAS a Turbo C 2.0 C-mode build.
 
 ### Decision needed
@@ -408,7 +408,7 @@ Microsoft tested; 8.03 is the recommended choice.
    with CC=DOS CL; or
 2. An OS/2 host (Route B, preferred - no DPMI), CC=OS/2 CL.
 Either way BLDKMS.BAT is now a single command; then MKLIB/MS??.RSP
-assemble PCBKMS_S/M/C/L.LIB. Expect a first-build header fixup pass
+assemble PCBKMS{S,M,C,L}.LIB. Expect a first-build header fixup pass
 (likely small, given the existing _MSC_VER handling) - add _MSC_VER
 branches where only __TURBOC__/__BORLANDC__ are handled today.
 
@@ -439,4 +439,4 @@ bug and corrected it:
 - TASM must be on PATH (the 5 ASM modules; MSC7 ships no standalone
   assembler - TASM's OMF .OBJ links fine with MSC7 LIB).
 - MSC70 at C:\MSC70; 386MAX loaded (DOS route) or OS/2 host (OS/2 route).
-- Then: BLDKMS.BAT -> MKLIB/MS??.RSP -> PCBKMS_S/M/C/L.LIB.
+- Then: BLDKMS.BAT -> MKLIB/MS??.RSP -> PCBKMS{S,M,C,L}.LIB.

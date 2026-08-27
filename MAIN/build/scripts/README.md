@@ -7,31 +7,80 @@ libraries inside DOSBox. Each build compiles all 119 modules across the
 
 ## Scripts
 
+**Entry point: `BUILD.BAT`.** Everything starts from `MAIN/`, and inside
+that from this dispatcher. Per-compiler and per-version scripts are
+called *by* `BUILD.BAT` — you rarely invoke them directly.
+
 | Script | Builds | Compiler needed |
 |--------|--------|-----------------|
-| `BLDMENU.BAT` | interactive menu (CHOICE) to pick a target | — |
-| `BLDKBC.BAT` | PCBKBC_S/M/C/L.LIB | Borland C++ 3.1 (`C:\BC31`) |
-| `BLDKIT.BAT` | PCBKIT_S/M/C/L.LIB | Turbo C 2.01 (`C:\TC201`) |
-| `BLDKMS.BAT` | PCBKMS (placeholder) | Microsoft C 7.0 (`C:\MSC70`) |
+| `BUILD.BAT` | top-level dispatcher (targets: `borland` / `turbo` / `msc` / `pwa153` / `all` / `clean` / `mrproper` / `status` / `help`, plus stubs for `pwa1522` / `pwa154` / `delta154` / `irc1541`) | — |
+| `BLDKBC.BAT` | PCBKBC{S,M,C,L}.LIB | Borland C++ 3.1 (`C:\BC31`) |
+| `BLDKIT.BAT` | PCBKIT{S,M,C,L}.LIB | Turbo C 2.01 (`C:\TC201`) |
+| `BLDKMS.BAT` | PCBKMS{S,M,C,L}.LIB (476 steps, needs 386MAX for DPMI) | Microsoft C 7.0 (`C:\MSC70`) + TASM |
 | `MKLIB.BAT` | assembles OBJ → LIB (called by the above) | BC31 TLIB |
 
 `*.RSP` are TLIB response files (one per model per compiler, ANSI-first
 ordering) consumed by `MKLIB.BAT`.
 
+`attic/` holds superseded scripts (currently `BLDMENU.BAT`, the old
+interactive CHOICE-based menu that `BUILD.BAT` replaced). See
+`attic/README.md`.
+
 ## How to run
 
-Inside DOSBox (with the repo mounted as `C:` and the compiler present):
+Inside DOSBox / real DOS (with the repo staged and the compiler present):
 
 ```
 C:
 cd \BUILD\SCRIPTS
-BLDMENU
+BUILD help          rem see all targets
+BUILD borland       rem PCBKBC only
+BUILD msc           rem PCBKMS only  (needs 386MAX loaded via CONFIG.SYS)
+BUILD pwa153        rem all three compilers, clean first
+BUILD all           rem alias for pwa153 today (only working version)
+BUILD status        rem which .LIBs are present
 ```
 
-…or run one directly, e.g. `BLDKIT` for the Turbo C build.
+Unknown target → prints help + exits 1. Every real target propagates
+errorlevel from the called script, so `BUILD` is safe to chain (the
+`pwa153` target stops on the first failing compiler).
 
-The DOSBOXX.ZIP environment sets this up for you and offers to launch
-the menu on start (see its DOSBOX.CFG autoexec).
+The DOSBOXX.ZIP environment sets the paths up for you. On the FreeDOS
+golden build image (see `MAIN/build/PCBKMS-BUILD-SETUP.md`),
+`AUTOEXEC.BAT` calls `BUILD` with whatever target the operator passes.
+
+### Target reference
+
+Per-compiler (pwa153 only today):
+
+- `borland` (aliases: `bldkbc`) → BLDKBC.BAT → PCBKBC libs
+- `turbo` (aliases: `bldkit`) → BLDKIT.BAT → PCBKIT libs
+- `msc` (aliases: `mvc`, `bldkms`) → BLDKMS.BAT → PCBKMS libs
+
+Per-version (build all applicable compilers for one version tree):
+
+- `pwa153` — the working target. clean + borland + turbo + msc.
+- `pwa1522` — **STUB**. Source for the pre-15.3 toolkit hasn't been
+  located; see `toolkit/PWA1522-FUTURE.md`.
+- `pwa154` — **STUB**. Framework in place (toolkit/pwa154 +
+  pcb153/upd154 + OUT/pwa153/upd154) but needs a build-fix pass (STATS
+  OBJ, a few header resolutions) before compile succeeds.
+- `delta154` — **STUB**. Toolkit needs updating before compile is
+  possible. When it is, output goes to `OUT/delta154/` (its own tree,
+  not shared with pwa153).
+- `irc1541` — **STUB**. OpenWatcom2irc path; built with
+  `verta1878/ow2irc`, not this dispatcher.
+
+Meta:
+
+- `all` — currently aliases `pwa153` (only working version). Will
+  expand as more versions come online.
+- `clean` — delete all OBJs under `OUT\LIB\*\OBJ\`, keep .LIB files.
+- `mrproper` — delete OBJs *and* .LIB files, keep the directory tree.
+- `status` — list .LIB files present per version.
+
+Stubs exit with errorlevel 2 and a message pointing at the doc that
+explains why they aren't buildable yet.
 
 ## Expected layout (mounted as C:)
 
@@ -55,21 +104,45 @@ C:\BUILD\SCRIPTS     these scripts
   small page-size limit).
 
 
-## Object output convention (matches Clark)
+## Object output convention (compiler-first, Clark-inspired)
 
-Objects are written to Clark's directory convention:
+Objects and libraries are grouped under each compiler at the top level
+of `OUT\LIB\PWA153\` — this matches Clark's own `bcdos\bc31\` root
+convention, just simplified for the shipped SDK (one flat model dir
+instead of per-source-subdir):
 
 ```
-OUT\LIB\PWA153\OBJ\<compiler>\<model>\
+OUT\LIB\PWA153\
+  bc31\                       Borland C++ 3.1
+    PCBKBCS.LIB              .LIB files at compiler root
+    PCBKBCM.LIB              (Clark convention)
+    PCBKBCC.LIB
+    PCBKBCL.LIB
+    OBJ\
+      small\*.OBJ
+      medium\*.OBJ
+      compact\*.OBJ
+      large\*.OBJ
+    loose-obj\*.OBJ           NODISP, PCBDAT, SMALLERR, NO* stubs
+  tc201\                      Turbo C 2.01
+    PCBKITS.LIB
+    PCBKITM.LIB
+    PCBKITC.LIB
+    PCBKITL.LIB
+    OBJ\{small,medium,compact,large}\*.OBJ
+    loose-obj\*.OBJ
+  msc70\                      Microsoft C 7.0
+    PCBKMSS.LIB
+    PCBKMSM.LIB
+    PCBKMSC.LIB
+    PCBKMSL.LIB
+    OBJ\{small,medium,compact,large}\*.OBJ
+    loose-obj\*.OBJ
 ```
 
-where `<compiler>` is `bc31` / `tc201` / `msc70` (Clark's CVER names)
-and `<model>` is `small` / `medium` / `compact` / `large` (Clark's
-model dir names, from his MODELS.BAT). So a sysop building with the
-scripts gets the same layout Clark used - nothing to change.
-
-The loose override OBJs (NODISP, PCBDAT, the NO* stubs, SMALLERR) live
-in `OUT\LIB\PWA153\loose-obj\<compiler>\`.
+Everything for one compiler lives under its own root — easy to zip,
+ship, or nuke per compiler. `MKLIB.BAT` takes `<LIBNAME> <CC> <COMPDIR>`
+so the LIBs land at `PWA153\<COMPDIR>\<LIBNAME>_?.LIB`.
 
 ## AUTOEXEC.BAT
 
