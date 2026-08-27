@@ -1,0 +1,63 @@
+; ====================================================================
+; fossil.def — WinFOSSIL DLL export definition
+; ====================================================================
+; Maps clean (undecorated) export names to the __stdcall-decorated
+; internal symbols. Without this, mingw exports commOpenPort@4, but
+; BBS software and the original WinFOSSIL API expect plain commOpenPort.
+;
+; Usage: add fossil.def to the link line:
+;   i686-w64-mingw32-gcc ... wf_dll_unified.c ... src/dll/fossil.def
+;
+; The "= _name@N" form gives the clean export name on the left and the
+; decorated internal symbol on the right (i386 __stdcall). For x64,
+; there is no @N decoration, so a separate def or --kill-at is used
+; (see BUILD.md).
+;
+; GPLv3 — FPC264IRC Contributors, 2026.
+; ====================================================================
+
+LIBRARY FOSSIL
+EXPORTS
+; ---- Core FOSSIL API ----
+    commOpenPort          = commOpenPort@4
+    commClosePort         = commClosePort@4
+    commReadCharWait      = commReadCharWait@4
+    commWriteCharWait     = commWriteCharWait@8
+    commWriteCharNoWait   = commWriteCharNoWait@8
+    commPeekRecv          = commPeekRecv@4
+    commReadBlock         = commReadBlock@12
+    commWriteBlock        = commWriteBlock@12
+    commFlushXmit         = commFlushXmit@4
+    commGetStatus         = commGetStatus@4
+    commSetParams         = commSetParams@8
+    commSetParamsEx       = commSetParamsEx@20
+    commSetDTRState       = commSetDTRState@8
+    commSetBreakState     = commSetBreakState@8
+    commSetFlowCtrl       = commSetFlowCtrl@8
+    commEtxHandler        = commEtxHandler@8
+    commSetupDCB          = commSetupDCB@8
+    commIsPortEnabled     = commIsPortEnabled@12
+    commReactivatePort    = commReactivatePort@4
+    commCleanupProcess    = commCleanupProcess@0
+
+; ---- Keyboard / screen (Fn 0Dh-0Eh, 11h-13h, 15h) ----
+    commKeyboardPeek      = commKeyboardPeek@4
+    commKeyboardRead      = commKeyboardRead@4
+    commSetCursorPos      = commSetCursorPos@12
+    commGetCursorPos      = commGetCursorPos@4
+    commWriteCharScreen   = commWriteCharScreen@8
+
+; ---- VMODEM ----
+    commVmodemEngine      = commVmodemEngine@4
+    commVmodemParseCmdStr = commVmodemParseCmdStr@4
+    commVmodemDial        = commVmodemDial@8
+    commVmodemHangup      = commVmodemHangup@4
+    commVmodemConnectMsg  = commVmodemConnectMsg@4
+    commVmodemFilter      = commVmodemFilter@12
+    commVmodemEchoChar    = commVmodemEchoChar@8
+    commVmodemSetState    = commVmodemSetState@8
+    commVmodemStuffReadQ  = commVmodemStuffReadQ@12
+    commVmodemWaitForState = commVmodemWaitForState@12
+
+; ---- Driver info ----
+    commGetPlatform       = commGetPlatform@0

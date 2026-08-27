@@ -1,0 +1,32 @@
+# License
+
+Cyclades Cyclom-Y Multiport Serial Driver
+Copyright (C) 2026 Cyclades CD1400 Open Source Project
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+## Third-Party Components
+
+- CD1400 register definitions derived from Linux kernel
+  include/linux/cyclades.h (GPL v2, Randolph Bentson / Ivan Passos)
+- Signing tools (MakeCert.exe, signtool.exe, pvk2pfx.exe) are
+  Microsoft Corporation binaries redistributed from the Windows SDK
+- Certificate tools (certutil.exe, certreq.exe) are Microsoft
+  Corporation binaries from Windows Server 2003 SP1
+
+## Contributors
+
+- evga (lead / Claude) — architecture, implementation, audits
+- hexadecimal — ISR audit, W-01 through W-04 fixes
+- wrench — D4 test design (SIO V1 project)

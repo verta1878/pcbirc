@@ -1,0 +1,146 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 13 of 71 -12 +28                                                        
+ From : rowan_crowe                         3:635/727.1     Wed 28 Feb 96 23:58 
+ To   : Tony Langdon                                                            
+ Subj : Practical problems with seamless "virtual modems"                       
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+Answering msg from Tony Langdon to rowan_crowe,
+on Tuesday February 27 1996 at 22:34
+
+ ro>> Your end is dumping data at high speed to VMODEM, and presumably
+ ro>> there is some sort of buffer. The IP datagram is therefore rather
+ ro>> large, so it's sent fragmented. That's fine, except this end gets
+ ro>> sick of waiting for data -- as the fragments are still being
+ ro>> received, the top level application has not yet been given the
+ ro>> datagram, and thinks nothing is coming in. FrontDoor seems rather
+ ro>> impatient, and exclaims "Timeout, Retry n" after only 10 seconds
+ ro>> or so.
+
+I'll be experimenting with a higher speed link within the next half hour, a bit 
+sluggish due to it going through a Trailblazer PEP modem (sends data in packets,
+slightly jerky like MNP), then into one DV window, being saved to disk, then out
+to another modem, then finally connecting to the ISP. You can probably guess
+where the DV windows and disk are. :-)
+
+Due to the sluggishness the effective CPS rate for file transfers is only about 
+700CPS; but then again at 2400 I get less than 120 CPS average. The packet
+header overhead is significant.
+
+ TL> However, you should be able to limit the datagram size at your end.
+ TL> Every piece of TCP/IP s/w (from Trumpet for Windoze to DOS based NOS
+ TL> implementations for packet radio) I've seen allow you to limit your
+ TL> MTU (IP datagram size) and MSS (TCP Maximum segment) to suit your
+ TL> link. I've always used smallish datagrams for my links (216b for
+ TL> packet to fit in a single AX.25 frame) and 512k for my Windoze based
+ TL> PPP connection. This may or may not help you (my TCP/IP theory is a
+ TL> little rusty ;-) ).
+
+Aye, this would be the first thing I would change, if I could. :-( RLFOSSIL
+comes with very little documentation, and a sample WATTCP.CFG file, which
+doesn't have anything like that in it. Hmm, I have an idea, why not view the
+EXE.
+
+RLFOSSIL.EXE contains the following:
+"MY_IP IP NETMASK GATEWAY NAMESERVER COOKIE DOMAINSLIST HOSTNAME SOCKDELAY ETHIP
+MSS BOOTP BOOTPTO DOMAINTO INACTIVE MULTIHOMES PRINT "
+
+'MSS' is probably what I want to change. :-) I'll have a play with that.
+
+ ro>> For those unfamiliar with the explanation above, a brief
+ ro>> tutorial. When you send a block of data via the internet, it's
+ ro>> known as a "datagram". The links that the datagram goes through
+ ro>> may not be able to pass the entire datagram in one piece, so the
+ ro>> IP protocol fragments it into smaller pieces. At the remote end,
+ ro>> the datagram is reassembled, and then passed to the application
+ ro>> in its entirety as a single block.
+
+ TL> As I remember, datagram size is negotiated over the whole link.  Try
+ TL> setting a smaller datagram size (MTU and MSS) at your end, and see if
+ TL> things improve.
+
+If I had been aware of how to do this earlier, I certainly would have. It's moot
+now since I have a high speed link, but in the future it will be handy to know.
+
+ ro>> And there lays the potential problem . . . if someone is sending
+ ro>> you a large datagram then your application may not be given any
+ ro>> data for a relatively long period of time. For an application
+ ro>> such as FrontDoor which normally expects to be connected via
+ ro>> modem directly to the remote system, it's not unreasonable for it
+ ro>> to start getting concerned when no data is presented to it for a
+ ro>> period of time (although IMHO it's a wee bit *too* impatient in
+ ro>> that regard).
+
+ TL> What size are you using for your MTU and MSS?  Try 512 bytes or
+ TL> smaller if you can change them.
+
+As above. :-) I wonder what the default is.
+
+ ro>> PPP.EXE
+ ro>> EtherPPP(?) "PPP Packet Driver"
+
+...
+
+ ro>> RLFOSSIL.EXE
+ ro>> "FOSSIL driver over TCP/IP rlogin/telnet protocols."
+
+ TL> Do you have these two for F'req?  I'd like to be able to put my system
+ TL> online for experimental purposes.  When our new Linux server comes
+ TL> online, the gateway machine here may become available for several
+ TL> hours per day for online use.  :-)
+
+DOS_PPP.ZIP is available for FREQ now at 3:635/727.
+
+ TL> If you have RLFOSSIL, PPP and any other s/w relevant for a DOS based
+ TL> PPP connection, can you please (pretty!) put them up for F'req, or
+ TL> file attach them to me?  Now that I have 14.4k and 1 gig free HDD
+ TL> space, there's no problems with unsolicited files here. ;-)
+
+RLFOSSIL is just an executable and config file, and I got the docs sent via
+mail. It's not really in "releasable" state which is why I'm trying to source an
+original archive. I will send it to you, along with my "parselog.com" program
+which parses the log that EtherPPP spits out, setting the following environment 
+variables: (used with Minuet, IRC etc)
+
+set ip=
+set gateway=
+set netmask=255.255.255.0
+set dns=128.102.16.10
+
+The first two vary, the second two are hard coded.
+
+It also creates wattcp.cfg:
+
+---------------------------------------------------------------------
+#
+#WARNING! This file will be overwritten; do not make changes.
+#
+
+my_ip=
+netmask=255.255.255.0
+nameserver=128.102.16.10
+gateway=
+outport=23
+handshake=2
+---------------------------------------------------------------------
+
+Of course this sort of thing is not required if you always have a constant IP
+address setup...
+
+Note the latter two lines. If these are omitted, RLFOSSIL seems to negotiate
+rlogin first, which fails (with no clues as to why) when you're connecting to a 
+system with VMODEM. (So far all of the fidonet systems I have connected to via
+the net all run OS/2 with VMODEM, and BinkleyTerm 2.59. I'm being different by
+running MS-DOS, RLFOSSIL and FD 2.12. :-) ).
+
+I'll include the MoonRock source for PARSELOG too.
+
+If anyone else is interested in RLFOSSIL (seamless telnet for any software which
+uses a FOSSIL!) then I will try to dig up an original release archive. Note it
+supports *inbound* "calls" too. :-)
+
+Cheers.
+
+---
+ * Origin: Jelly-Bean software development, Melbourne AUST. (3:635/727.1)
+
+

@@ -1,0 +1,84 @@
+; ====================================================================
+; cyyport.inf — Cyclades Cyclom-Y Port Driver (Child PDO)
+; ====================================================================
+; Installs cyport.sys as the serial port function driver for each
+; individual port on the Cyclom-Y card.
+;
+; This INF is NOT installed directly by the user. It's referenced
+; by cyclom-y.inf via CopyINF and loaded automatically by the PnP
+; manager when the bus enumerator (cyport.sys in bus role) creates
+; child PDOs with hardware ID "Cyclom-Y\Port".
+;
+; Device class: Ports (COM & LPT)
+; Hardware ID:  Cyclom-Y\Port (set by CyPdoQueryId in cypdo.c)
+;
+; The same cyport.sys binary serves as both the bus enumerator
+; (for cyclom-y.inf) and the port driver (for this INF).
+; The IsFDO flag in the device extension determines which role
+; the driver is playing for any given device object.
+; ====================================================================
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = Ports
+ClassGUID   = {4D36E978-E325-11CE-BFC1-08002BE10318}
+Provider    = %Provider%
+DriverVer   = 08/08/2026,1.0.0.0
+CatalogFile = cyport.cat
+
+[Manufacturer]
+%Cyclades% = CyclomYPorts
+
+; ---- Child PDO Matching ----
+; The bus enumerator returns "Cyclom-Y\Port" as the hardware ID
+; for each child PDO. This section matches that ID.
+
+[CyclomYPorts]
+%Port.Desc% = CyclomYPort_Install, Cyclom-Y\Port
+
+[CyclomYPort_Install]
+CopyFiles = CyclomYPort_CopyFiles
+
+; AddReg adds COM port configuration to the device's registry.
+; SERIALCOMM entries are managed by the driver via MSPORTS ComDB.
+AddReg = CyclomYPort_AddReg
+
+[CyclomYPort_CopyFiles]
+cyport.sys
+
+[CyclomYPort_AddReg]
+; Mark this device as a serial port so the Ports class installer
+; creates the COM port association in SERIALCOMM.
+HKR,,PortSubClass,1,01
+
+[CyclomYPort_Install.Services]
+AddService = cyport, 0x00000002, CyclomYPort_Service
+
+; IMPORTANT: This service name and binary MUST match cyclom-y.inf.
+; Both INFs share the same "cyport" service — one .sys, two roles.
+; See cyclom-y.inf for the authoritative service definition.
+; (Audit B7 note)
+
+[CyclomYPort_Service]
+DisplayName   = %PortService.Desc%
+ServiceType   = 1               ; SERVICE_KERNEL_DRIVER
+StartType     = 3               ; SERVICE_DEMAND_START
+ErrorControl  = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary = %12%\cyport.sys
+
+[DestinationDirs]
+DefaultDestDir          = 12
+CyclomYPort_CopyFiles   = 12
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[SourceDisksFiles]
+cyport.sys = 1
+
+[Strings]
+Provider            = "Cyclades CD1400 Open Source Project"
+Cyclades            = "Cyclades Corporation"
+Port.Desc           = "Cyclades Cyclom-Y Serial Port"
+PortService.Desc    = "Cyclades Cyclom-Y Serial Port Driver"
+DiskName            = "Cyclades Cyclom-Y Driver Disk"

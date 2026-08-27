@@ -1,0 +1,10 @@
+FOSSIL.VXD - Recovered Win98 Ring-0 Drv
+WinFOSSIL virtual FOSSIL VxD for Win
+95/98/ME. Recovered from a non-building
+state: genuine DDK VMM.INC restored,
+ported to JWasm, 3 source bugs fixed.
+Assembles 0/0, links to valid LE VxD.
+Output verified byte-equivalent to a
+genuine MASM 6.11d build. Ring-0 path;
+ring-3 DLL remains the shipping driver.
+FPC264IRC crew - 2026 - 4free

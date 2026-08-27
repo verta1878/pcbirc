@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WinFOSSIL v2.0.0 Help</title>
+<style>
+body { font-family: "Segoe UI", Tahoma, Geneva, sans-serif; margin: 40px; max-width: 800px; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { color: #003366; border-bottom: 2px solid #003366; padding-bottom: 8px; }
+h2 { color: #004488; margin-top: 32px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+h3 { color: #336699; }
+code { background: #e8e8e8; padding: 2px 6px; font-family: "Consolas", "Courier New", monospace; }
+pre { background: #2d2d2d; color: #e0e0e0; padding: 12px; overflow-x: auto; font-family: "Consolas", "Courier New", monospace; font-size: 13px; }
+table { border-collapse: collapse; margin: 12px 0; }
+th, td { border: 1px solid #ccc; padding: 6px 12px; text-align: left; }
+th { background: #e0e8f0; }
+.note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 8px 12px; margin: 12px 0; }
+.tip { background: #d4edda; border-left: 4px solid #28a745; padding: 8px 12px; margin: 12px 0; }
+a { color: #0066cc; }
+#toc { background: #f0f4f8; border: 1px solid #ccc; padding: 16px; margin-bottom: 24px; }
+#toc ul { list-style: none; padding-left: 16px; }
+#toc > ul { padding-left: 0; }
+#toc a { text-decoration: none; }
+#toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>WinFOSSIL v2.0.0</h1>
+<p>Modern FOSSIL Driver for Windows</p>
+<p>Copyright &copy; 2026 FPC264IRC Contributors (GPLv3)<br>
+Based on the original WinFOSSIL by Bryan Woodruff, Woodruff Software Systems (1996).</p>
+
+<div id="toc">
+<p><strong>Contents</strong></p>
+<ul>
+<li><a href="#overview">1. Overview</a>
+  <ul>
+  <li><a href="#introduction">1.1 Introduction</a></li>
+  <li><a href="#whats-new">1.2 What's New in v2.0.0</a></li>
+  <li><a href="#platforms">1.3 Supported Platforms</a></li>
+  </ul>
+</li>
+<li><a href="#howto">2. How To ...</a>
+  <ul>
+  <li><a href="#howto-enable">2.1 Enable WinFOSSIL for a port</a></li>
+  <li><a href="#howto-options">2.2 Configure options</a></li>
+  <li><a href="#howto-vmodem">2.3 Use VMODEM (TCP/Telnet)</a></li>
+  <li><a href="#howto-vfossil">2.4 Install VFOSSIL</a></li>
+  <li><a href="#howto-nonstd">2.5 Use non-standard IRQs and ports</a></li>
+  <li><a href="#howto-wnfosctl">2.6 Lock or unlock baud rates</a></li>
+  <li><a href="#howto-security">2.7 Configure access security</a></li>
+  <li><a href="#howto-uninstall">2.8 Uninstall WinFOSSIL</a></li>
+  </ul>
+</li>
+<li><a href="#troubleshooting">3. Troubleshooting</a>
+  <ul>
+  <li><a href="#compat">3.1 Application Compatibility</a></li>
+  <li><a href="#trouble-slow">3.2 ANSI screens displayed slowly</a></li>
+  <li><a href="#trouble-digi">3.3 Dropped carrier with DigiBoard</a></li>
+  <li><a href="#trouble-cantopen">3.4 Unable to open FOSSIL port</a></li>
+  <li><a href="#trouble-fe">3.5 Falcon's Eye issues</a></li>
+  <li><a href="#trouble-vmodem">3.6 VMODEM connection problems</a></li>
+  </ul>
+</li>
+<li><a href="#reference">4. Reference</a>
+  <ul>
+  <li><a href="#ref-fossil">4.1 FOSSIL API (INT 14h)</a></li>
+  <li><a href="#ref-at">4.2 AT Command Set</a></li>
+  <li><a href="#ref-registry">4.3 Registry Paths</a></li>
+  <li><a href="#ref-files">4.4 Files</a></li>
+  </ul>
+</li>
+<li><a href="#history">5. Revision History</a></li>
+<li><a href="#license">6. License</a></li>
+<li><a href="#contact">7. Contact &amp; Credits</a></li>
+</ul>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="overview">1. Overview</h2>
+
+<h3 id="introduction">1.1 Introduction</h3>
+<p>WinFOSSIL is a FOSSIL (Fido-Opus-SeaDog Serial Interface Layer) driver for Windows. It provides a high-performance serial interface for MS-DOS communication applications such as bulletin board systems (BBS), mailers, and terminal emulators running under Windows.</p>
+
+<p>WinFOSSIL implements the FOSSIL specification (FTS-0017) and replaces DOS-based FOSSIL drivers such as X00, BNU, and others. It provides a fast path from the application's INT 14h interface to Windows' native serial port drivers.</p>
+
+<p><strong>Who should use WinFOSSIL:</strong> If you run MS-DOS BBS software, mailers (BinkleyTerm, FrontDoor, InterMail), or other FOSSIL-aware communication applications under Windows.</p>
+
+<p><strong>Who should not use WinFOSSIL:</strong> If you do not run FOSSIL-aware DOS applications under Windows, WinFOSSIL is not for you.</p>
+
+<h3 id="whats-new">1.2 What's New in v2.0.0</h3>
+<p>Version 2.0.0 is a complete clean-room recreation of the original WinFOSSIL, released under the GPLv3 license. Major additions:</p>
+
+<table>
+<tr><th>Feature</th><th>v1.12</th><th>v2.0.0</th></tr>
+<tr><td>VMODEM (TCP/Telnet via AT commands)</td><td>No</td><td>Yes</td></tr>
+<tr><td>Native Win32/x64 DLL (no VxD/VDD needed)</td><td>No</td><td>Yes</td></tr>
+<tr><td>NT4/2000 VDD support</td><td>No</td><td>Yes</td></tr>
+<tr><td>Windows x64 support</td><td>No</td><td>Yes</td></tr>
+<tr><td>Telnet IAC filtering (SGA + BINARY)</td><td>No</td><td>Yes</td></tr>
+<tr><td>Access security (IP whitelist/blacklist)</td><td>No</td><td>Yes</td></tr>
+<tr><td>System tray application</td><td>No</td><td>Yes</td></tr>
+<tr><td>50-test automated test suite</td><td>No</td><td>Yes</td></tr>
+<tr><td>Open source (GPLv3)</td><td>No (shareware)</td><td>Yes</td></tr>
+</table>
+
+<h3 id="platforms">1.3 Supported Platforms</h3>
+<table>
+<tr><th>Release</th><th>Platform</th><th>Driver Type</th><th>File</th></tr>
+<tr><td>Win98</td><td>Windows 95/98/ME</td><td>VxD (ring-0)</td><td>FOSSIL.VXD</td></tr>
+<tr><td>NT</td><td>NT4/2000</td><td>VDD (NTVDM)</td><td>FOSSIL.DLL</td></tr>
+<tr><td>Modern i386</td><td>Win98 through Win11 (32-bit)</td><td>Native DLL</td><td>FOSSIL.DLL</td></tr>
+<tr><td>Modern x64</td><td>Win7 through Win11 (64-bit)</td><td>Native DLL</td><td>FOSSIL.DLL</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="howto">2. How To ...</h2>
+
+<h3 id="howto-enable">2.1 Enable WinFOSSIL for a Port</h3>
+<ol>
+<li>Open the WinFOSSIL Control Panel applet (WNFOSSIL.CPL), or right-click the system tray icon and select <strong>Configure</strong>.</li>
+<li>Select the port identifier (0 = COM1, 1 = COM2, etc.).</li>
+<li>Check the box marked <strong>Enable FOSSIL</strong>.</li>
+<li>Adjust settings for the port as required.</li>
+<li>Click <strong>OK</strong> to save your settings.</li>
+</ol>
+
+<div class="tip">
+<strong>Tip:</strong> WinFOSSIL supports up to 16 ports (identifiers 0 through 15). The port identifier maps to COM1 through COM16 by default. You can change any port identifier to map to a different device name (e.g., map port 3 to LPT1 for a parallel modem).
+</div>
+
+<div class="note">
+<strong>Note:</strong> WinFOSSIL is not enabled for any port by default. You must enable each port you want accessible by FOSSIL applications.
+</div>
+
+<h3 id="howto-options">2.2 Configure Options</h3>
+<p>The following per-port options are available:</p>
+
+<table>
+<tr><th>Option</th><th>Default</th><th>Description</th></tr>
+<tr><td>Don't release timeslice while carrier detected</td><td>ON</td><td>Prevents the application from releasing CPU timeslices during active connections. Some protocol engines (CE-XYZ) release timeslices during file transfers and never recover. This option forces Windows to manage timeslicing based on session inactivity instead.</td></tr>
+<tr><td>Release timeslice when no port activity</td><td>OFF</td><td>Aggressively yields CPU when the application polls for port status. Reduces overhead but may cause problems with some applications when answering calls or during file transfers.</td></tr>
+<tr><td>Enable performance statistics</td><td>OFF</td><td>Enables port activity monitoring. Statistics can be viewed with the System Monitor utility. May cause performance degradation on slower machines.</td></tr>
+<tr><td>Auto open on first access</td><td>ON</td><td>Automatically opens the FOSSIL port when an application issues a FOSSIL command without first calling Fn 04h (Initialize). Required for door programs that expect the port to be "hot" when passed from BBS software.</td></tr>
+<tr><td>Keep port open during session</td><td>OFF</td><td>Keeps the port open as long as the MS-DOS session is active. Enable this for DigiBoard drivers that drop carrier when the port is closed and reopened during program handoffs.</td></tr>
+</table>
+
+<h3 id="howto-vmodem">2.3 Use VMODEM (TCP/Telnet)</h3>
+<p>VMODEM (Virtual Modem) allows FOSSIL-aware applications to make and receive TCP/IP connections using standard AT modem commands. The BBS software thinks it is talking to a Hayes-compatible modem. WinFOSSIL translates the commands to TCP/IP connections.</p>
+
+<p>To dial a remote BBS via TCP:</p>
+<pre>ATDhostname:port
+ATD192.168.1.100:23
+ATDbbs.example.com</pre>
+
+<p>If no port is specified, port 23 (Telnet) is used by default.</p>
+
+<p>To listen for incoming connections (auto-answer):</p>
+<pre>ATS0=23       (listen on port 23)
+ATS0=2323     (listen on port 2323)
+ATS0=0        (disable auto-answer)</pre>
+
+<p>Full AT command reference: see <a href="#ref-at">Section 4.2</a>.</p>
+
+<div class="note">
+<strong>Note:</strong> VMODEM includes Telnet IAC filtering. It accepts Suppress Go-Ahead (SGA) and Binary mode options, which are required by most BBS software. All other Telnet options are refused to prevent option storms.
+</div>
+
+<h3 id="howto-vfossil">2.4 Install VFOSSIL</h3>
+<p>If you use VFOSSIL (Video FOSSIL) with your BBS software:</p>
+<ol>
+<li>Remove any VFOSSIL installation from your AUTOEXEC.BAT.</li>
+<li>Add <code>VFOS_IBM</code> (or appropriate command) to your BBS batch file before starting the mailer or BBS.</li>
+<li>Add <code>VFOS_DEL</code> before exiting to the DOS prompt for shutdown.</li>
+</ol>
+
+<div class="tip">
+<strong>Tip:</strong> WinFOSSIL installs hooks per MS-DOS session. VFOSSIL has been known to incorrectly handle simultaneous access from multiple processes. Installing VFOSSIL independently in each session avoids this problem.
+</div>
+
+<h3 id="howto-nonstd">2.5 Use Non-Standard IRQs and Ports</h3>
+<p>WinFOSSIL does not require special configuration for non-standard IRQs or port addresses. If the port is properly configured in Windows (Device Manager), simply specify the port name (e.g., COM5, COM12) in WinFOSSIL. Windows handles the hardware details.</p>
+
+<h3 id="howto-wnfosctl">2.6 Lock or Unlock Baud Rates</h3>
+<p>WNFOSCTL.EXE is a command-line utility for locking and unlocking baud rates from batch files:</p>
+<pre>WNFOSCTL &lt;port ID&gt; [command [options]]
+
+  WNFOSCTL 0 LOCK 115200    Lock COM1 to 115200
+  WNFOSCTL 1 UNLOCK         Unlock COM2
+  WNFOSCTL 2 STATUS         Show port 2 status</pre>
+
+<p>Port ID is the FOSSIL port identifier (0 = COM1, 1 = COM2, etc.).</p>
+
+<h3 id="howto-security">2.7 Configure Access Security</h3>
+<p>Version 2.0.0 adds IP-based access control for VMODEM connections:</p>
+<pre>Registry: HKLM\SOFTWARE\WinFOSSIL\Security
+
+  Whitelist    REG_MULTI_SZ    Allowed IP addresses/prefixes
+  Blacklist    REG_MULTI_SZ    Blocked IP addresses/prefixes
+  LogEnabled   REG_DWORD       1 = enable connection logging
+  LogPath      REG_SZ          Path to log file</pre>
+
+<p>If a whitelist is defined, only matching IPs can connect. If a blacklist is defined, matching IPs are rejected. The blacklist is checked first.</p>
+
+<h3 id="howto-uninstall">2.8 Uninstall WinFOSSIL</h3>
+<p>Open <strong>Add/Remove Programs</strong> (or <strong>Apps &amp; Features</strong> on Win10/11), select WinFOSSIL, and click <strong>Remove</strong>. The installer removes all files and registry entries.</p>
+
+<!-- ============================================================ -->
+<h2 id="troubleshooting">3. Troubleshooting</h2>
+
+<h3 id="compat">3.1 Application Compatibility</h3>
+<p>WinFOSSIL has been tested with the following software (original v1.12 testing by Bryan Woodruff):</p>
+<table>
+<tr><th>Application</th><th>Status</th><th>Notes</th></tr>
+<tr><td>BG FAX 1.50</td><td>Compatible</td><td></td></tr>
+<tr><td>Barren Realms Elite</td><td>Compatible</td><td></td></tr>
+<tr><td>BinkleyTerm 2.59</td><td>Compatible</td><td></td></tr>
+<tr><td>Blue Wave 3.11 (Max)</td><td>Compatible</td><td>Fixed in v1.06</td></tr>
+<tr><td>CE XYZ 1.0</td><td>Compatible</td><td>Requires "don't release timeslice" ON</td></tr>
+<tr><td>Doorway 2.30</td><td>Compatible</td><td></td></tr>
+<tr><td>Falcon's Eye</td><td>See notes</td><td><a href="#trouble-fe">Section 3.5</a></td></tr>
+<tr><td>Front Door 2.02/2.12</td><td>Compatible</td><td>Fixed in v1.04/1.05</td></tr>
+<tr><td>InterMail 2.29</td><td>Compatible</td><td>Fixed in v1.04</td></tr>
+<tr><td>LORD / LORE / BRE</td><td>Compatible</td><td>Door games</td></tr>
+<tr><td>Maximus 2.x/3.0</td><td>Compatible</td><td></td></tr>
+<tr><td>PC Board 15.22</td><td>Compatible</td><td></td></tr>
+<tr><td>ProBoard</td><td>Compatible</td><td></td></tr>
+<tr><td>Remote Access 2.02</td><td>Compatible</td><td>Fixed in v1.05</td></tr>
+<tr><td>SBBS</td><td>Compatible</td><td></td></tr>
+<tr><td>TradeWars 2002</td><td>Compatible</td><td>Non-FOSSIL app, needs VCD reflect</td></tr>
+<tr><td>Wildcat! 4</td><td>Compatible</td><td>Fixed in v1.10</td></tr>
+</table>
+
+<h3 id="trouble-slow">3.2 ANSI Screens Displayed Slowly</h3>
+<p>If ANSI screens are drawn slowly, ensure the "Don't release timeslice while carrier detected" option is ON. Some BBS software releases CPU timeslices between screen output calls, causing Windows to deprioritize the DOS session. WinFOSSIL can override this behavior when carrier is detected.</p>
+
+<h3 id="trouble-digi">3.3 Dropped Carrier with DigiBoard</h3>
+<p>DigiBoard drivers may drop DTR when the port is closed. If you experience carrier drops when the BBS hands off to a door program or mailer, enable the "Keep port open during MS-DOS session" option. This prevents WinFOSSIL from closing and reopening the port during handoffs.</p>
+
+<h3 id="trouble-cantopen">3.4 Unable to Open FOSSIL Port</h3>
+<p>If non-FOSSIL applications cannot access a port that WinFOSSIL has enabled, ensure that "Auto open on first access" is ON. When enabled, WinFOSSIL automatically opens the FOSSIL port when any application issues a FOSSIL command, even without first calling Fn 04h (Initialize).</p>
+<p>Common error codes when a port fails to open:</p>
+<table>
+<tr><th>Error</th><th>Meaning</th></tr>
+<tr><td>2 (FILE_NOT_FOUND)</td><td>Port does not exist. Check Device Manager.</td></tr>
+<tr><td>5 (ACCESS_DENIED)</td><td>Port is in use by another application.</td></tr>
+<tr><td>31 (GEN_FAILURE)</td><td>Hardware error. USB adapter may be disconnected.</td></tr>
+</table>
+
+<h3 id="trouble-fe">3.5 Falcon's Eye Issues</h3>
+<p>Falcon's Eye may drop carrier or fail to recognize the FOSSIL driver. This is typically caused by Falcon's Eye checking for specific FOSSIL driver signatures. WinFOSSIL identifies as "WinFOSSIL v2.0" in the FOSSIL info block (Fn 1Bh). If Falcon's Eye checks for a specific driver name, it may not recognize WinFOSSIL.</p>
+
+<h3 id="trouble-vmodem">3.6 VMODEM Connection Problems</h3>
+<p>If VMODEM connections fail:</p>
+<table>
+<tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+<tr><td>NO CARRIER immediately</td><td>DNS resolution failed or host unreachable</td><td>Try IP address instead of hostname</td></tr>
+<tr><td>CONNECT then immediate disconnect</td><td>Telnet option negotiation failure</td><td>WinFOSSIL accepts SGA and BINARY; the remote may require other options</td></tr>
+<tr><td>Garbled text</td><td>Telnet IAC bytes in data stream</td><td>Ensure BINARY mode is negotiated (automatic in v2.0.0)</td></tr>
+<tr><td>Connection refused</td><td>Remote port not listening</td><td>Verify the remote host and port number</td></tr>
+<tr><td>Connection blocked</td><td>IP blacklisted</td><td>Check security settings in registry</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="reference">4. Reference</h2>
+
+<h3 id="ref-fossil">4.1 FOSSIL API (INT 14h)</h3>
+<p>WinFOSSIL implements all 27 functions defined in FTS-0017:</p>
+<table>
+<tr><th>Fn</th><th>Name</th><th>Registers</th></tr>
+<tr><td>00h</td><td>Set baud rate</td><td>AL=baud code → AX=status</td></tr>
+<tr><td>01h</td><td>Send character (wait)</td><td>AL=char → AX=status</td></tr>
+<tr><td>02h</td><td>Receive character (wait)</td><td>→ AL=char, AH=status</td></tr>
+<tr><td>03h</td><td>Status request</td><td>→ AX=status word</td></tr>
+<tr><td>04h</td><td>Initialize FOSSIL</td><td>→ AX=1954h, BL=max fn, BH=rev</td></tr>
+<tr><td>05h</td><td>Deinitialize</td><td></td></tr>
+<tr><td>06h</td><td>DTR control</td><td>AL=0 lower, AL=1 raise</td></tr>
+<tr><td>07h</td><td>Timer tick</td><td>→ DX:AX=tick count</td></tr>
+<tr><td>08h</td><td>Flush output buffer</td><td></td></tr>
+<tr><td>09h</td><td>Purge output buffer</td><td></td></tr>
+<tr><td>0Ah</td><td>Purge input buffer</td><td></td></tr>
+<tr><td>0Bh</td><td>Send character (no wait)</td><td>AL=char → AX=1 if sent</td></tr>
+<tr><td>0Ch</td><td>Peek input (no wait)</td><td>→ AX=char or FFFFh</td></tr>
+<tr><td>0Dh</td><td>Keyboard peek</td><td>→ AX=key or FFFFh</td></tr>
+<tr><td>0Eh</td><td>Keyboard read (wait)</td><td>→ AX=key (AL=ASCII, AH=scan)</td></tr>
+<tr><td>0Fh</td><td>Flow control</td><td>AL=flags</td></tr>
+<tr><td>10h</td><td>Ctrl-C/K checking</td><td>AL=flags</td></tr>
+<tr><td>11h</td><td>Set cursor position</td><td>DH=row, DL=col</td></tr>
+<tr><td>12h</td><td>Get cursor position</td><td>→ DH=row, DL=col</td></tr>
+<tr><td>13h</td><td>Write char to screen (ANSI)</td><td>AL=char</td></tr>
+<tr><td>14h</td><td>Watchdog timer</td><td>AL=0 off, AL=1 on</td></tr>
+<tr><td>15h</td><td>Write char to BIOS (raw)</td><td>AL=char</td></tr>
+<tr><td>18h</td><td>Read block</td><td>CX=count, ES:DI=buf → AX=read</td></tr>
+<tr><td>19h</td><td>Write block</td><td>CX=count, ES:DI=buf → AX=written</td></tr>
+<tr><td>1Ah</td><td>Break signal</td><td>AL=0 clear, AL=1 set</td></tr>
+<tr><td>1Bh</td><td>Get driver info</td><td>CX=size, ES:DI=buf</td></tr>
+</table>
+
+<h3 id="ref-at">4.2 AT Command Set (VMODEM)</h3>
+<table>
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td>ATZ</td><td>Reset modem to default state</td></tr>
+<tr><td>ATD<em>host</em>[:<em>port</em>]</td><td>Dial (connect to TCP host, default port 23)</td></tr>
+<tr><td>ATH</td><td>Hang up (disconnect)</td></tr>
+<tr><td>ATA</td><td>Answer incoming connection</td></tr>
+<tr><td>ATE0 / ATE1</td><td>Echo off / on</td></tr>
+<tr><td>ATI</td><td>Display driver info</td></tr>
+<tr><td>ATS0=<em>n</em></td><td>Auto-answer: 0=off, 1=port 23, <em>n</em>=port <em>n</em></td></tr>
+<tr><td>AT&amp;D</td><td>DTR handling mode</td></tr>
+<tr><td>AT&amp;F</td><td>Restore factory defaults</td></tr>
+<tr><td>ATV0 / ATV1</td><td>Result codes: numeric / verbose text</td></tr>
+<tr><td>ATQ0 / ATQ1</td><td>Result codes: enabled / suppressed (quiet)</td></tr>
+<tr><td>A/</td><td>Repeat last command (no AT prefix needed)</td></tr>
+<tr><td>+++</td><td>Escape to command mode (1s guard time)</td></tr>
+</table>
+
+<p><strong>Result codes:</strong></p>
+<table>
+<tr><th>Code</th><th>Meaning</th></tr>
+<tr><td>OK</td><td>Command accepted</td></tr>
+<tr><td>CONNECT <em>speed</em></td><td>Connection established</td></tr>
+<tr><td>NO CARRIER</td><td>Connection lost or failed</td></tr>
+<tr><td>ERROR</td><td>Invalid command</td></tr>
+<tr><td>RING</td><td>Incoming connection</td></tr>
+</table>
+
+<h3 id="ref-registry">4.3 Registry Paths</h3>
+<p>WinFOSSIL automatically detects the Windows version and uses the appropriate registry path:</p>
+<table>
+<tr><th>Platform</th><th>Registry Path</th></tr>
+<tr><td>Win95/98/ME</td><td><code>HKLM\System\CurrentControlSet\Services\VxD\FOSSIL</code></td></tr>
+<tr><td>NT4/2000</td><td><code>HKLM\Software\Woodruff\WinFOSSIL</code></td></tr>
+<tr><td>XP through Win11</td><td><code>HKLM\SOFTWARE\WinFOSSIL</code></td></tr>
+<tr><td>Security</td><td><code>HKLM\SOFTWARE\WinFOSSIL\Security</code></td></tr>
+</table>
+
+<h3 id="ref-files">4.4 Files</h3>
+<table>
+<tr><th>File</th><th>Description</th></tr>
+<tr><td>FOSSIL.DLL</td><td>FOSSIL driver (DLL or VDD depending on release)</td></tr>
+<tr><td>FOSSIL.VXD</td><td>FOSSIL driver for Windows 95/98/ME</td></tr>
+<tr><td>WNFOSSIL.EXE</td><td>System tray application (Modern) or TSR loader (NT)</td></tr>
+<tr><td>WNFOSCTL.EXE</td><td>Command-line baud rate lock/unlock utility</td></tr>
+<tr><td>WNFOSSIL.CPL</td><td>Control Panel applet for port configuration</td></tr>
+<tr><td>FOSSIL.INF</td><td>Device driver installation file</td></tr>
+<tr><td>INSTALL.INF</td><td>Installer configuration</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="history">5. Revision History</h2>
+
+<h3>v2.0.0 (2026-08-18)</h3>
+<p>Complete clean-room recreation under GPLv3. Added VMODEM TCP/Telnet bridge, native Win32/x64 DLL, NT VDD, system tray app, access security, 50-test suite. 25 bugs fixed across three audit rounds. Full FOSSIL API implementation including keyboard and screen functions.</p>
+
+<h3>v1.12 FINAL (1996-07-10)</h3>
+<p>Final release by Bryan Woodruff. Fixed multi-node problems. Added "Keep port open during session" for DigiBoard compatibility. Removed ComXAutoAssign dependency.</p>
+
+<h3>v1.11</h3>
+<p>Fixed timing issues after FOSSIL-32 handoff. Fixed modem hang condition.</p>
+
+<h3>v1.10</h3>
+<p>Added 32-bit application support for port handoff. Fixed CTS timeout bug affecting Wildcat! 4 and L.O.R.D. BinkleyTerm/32 can now hand off to 16-bit BBS packages.</p>
+
+<h3>v1.09</h3>
+<p>Timeslice management control per port. Performance statistics via System Monitor.</p>
+
+<h3>v1.08</h3>
+<p>Fixed TradeWars 2002 incompatibility. Added WNFOSCTL baud rate lock/unlock utility.</p>
+
+<h3>v1.07</h3>
+<p>Performance enhancements. Hardware handshaking on by default for locked baud rates. Up to 16 ports. Fixed timeslice filtering for file transfers.</p>
+
+<h3>v1.06/a</h3>
+<p>Fixed Blue Wave 3.11 incompatibility. Fixed transmitter flush timing. Fixed SYSTEM.INI path.</p>
+
+<h3>v1.05/a</h3>
+<p>Fixed FrontDoor/RemoteAccess timeslice issues. Fixed peek character. Added VFOSSIL support. Enhanced help file.</p>
+
+<h3>v1.04</h3>
+<p>Fixed FrontDoor/InterMail deadlocks. Per-port enable control.</p>
+
+<h3>v1.03</h3>
+<p>Proper return codes on port reactivation. Timeout handling fixes.</p>
+
+<h3>v1.02</h3>
+<p>Fixed WriteCharWait (Fn 01h) timeout.</p>
+
+<!-- ============================================================ -->
+<h2 id="license">6. License</h2>
+<p>WinFOSSIL v2.0.0 is free software released under the GNU General Public License v3.0 (GPLv3). You may copy, distribute, and modify it under the terms of the GPLv3.</p>
+<p>The original WinFOSSIL (v1.12 and earlier) was shareware by Bryan Woodruff, Woodruff Software Systems. This version is a clean-room recreation and shares no code with the original.</p>
+
+<!-- ============================================================ -->
+<h2 id="contact">7. Contact &amp; Credits</h2>
+<p><strong>WinFOSSIL v2.0.0</strong> — a project of the FPC264IRC crew.</p>
+<table>
+<tr><td>evga</td><td>Core engine, all C code, binary analysis</td></tr>
+<tr><td>sysop/0</td><td>Architecture, VDD design, audit</td></tr>
+<tr><td>wrench</td><td>Maintainer, telnet filter, bug fixes, documentation</td></tr>
+<tr><td>verta1878</td><td>Project lead, upstream repos</td></tr>
+</table>
+<p>Source: <a href="https://github.com/verta1878/netmodem2irc">github.com/verta1878/netmodem2irc</a></p>
+<p>Built with <a href="https://github.com/verta1878/fpc264irc">fpc264irc</a> — the crew's compiler toolchain.</p>
+<p>The crew built it. 4free. o7</p>
+
+</body>
+</html>

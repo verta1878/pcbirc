@@ -1,0 +1,84 @@
+# EMERGENCY: Driver Removal Quick Reference
+# ==========================================
+# PRINT THIS PAGE AND KEEP IT NEAR THE MACHINE
+#
+# If the Cyclades driver causes a BSOD boot loop, use these
+# steps to remove it and restore normal boot.
+
+## STEP 1: Enter Safe Mode
+
+### Windows XP
+  Press F8 during boot → select "Safe Mode"
+
+### Windows 7
+  Press F8 during boot → select "Safe Mode"
+  
+  If F8 doesn't work (BSOD too fast):
+  Let it BSOD 3 times → "Launch Startup Repair" appears →
+  click "View advanced options" → "Command Prompt"
+
+### Windows 10/11
+  Method A: Hold SHIFT + click Power → Restart → Troubleshoot →
+            Advanced Options → Startup Settings → press 4
+  
+  Method B: Force-shutdown 3 times during boot (hold power button) →
+            Automatic Repair → Advanced Options → Startup Settings →
+            press 4
+  
+  Method C: Boot from install USB → "Repair your computer" →
+            Troubleshoot → Advanced → Command Prompt
+
+## STEP 2: Remove the Driver
+
+Open Command Prompt as Administrator, then run:
+
+  sc stop cyport
+  sc delete cyport
+  del %SystemRoot%\System32\Drivers\cyport.sys
+  reg delete HKLM\SYSTEM\CurrentControlSet\Services\cyport /f
+
+## STEP 3: Reboot Normally
+
+  shutdown /r /t 0
+
+## IF SAFE MODE ALSO CRASHES
+
+Boot from Windows install CD/DVD/USB:
+  - XP: Press R for Recovery Console
+  - Win7: "Repair your computer" → Command Prompt
+  - Win10: "Repair your computer" → Troubleshoot →
+           Advanced → Command Prompt
+
+Then find the Windows drive (may not be C: in recovery):
+
+  dir C:\Windows\System32\Drivers\cyport.sys
+  dir D:\Windows\System32\Drivers\cyport.sys
+
+Delete the driver (use the correct drive letter):
+
+  del X:\Windows\System32\Drivers\cyport.sys
+
+For registry cleanup from recovery environment:
+
+  reg load HKLM\TempSys X:\Windows\System32\config\SYSTEM
+  reg delete HKLM\TempSys\ControlSet001\Services\cyport /f
+  reg unload HKLM\TempSys
+
+## ABSOLUTE LAST RESORT
+
+  1. Shut down the PC
+  2. Open the case
+  3. Physically remove the Cyclom-Y PCI card
+  4. Boot normally
+  5. Run: cyinstall.exe /uninstall /force
+  6. Reboot
+  7. Only re-insert the card with a FIXED driver
+
+## DISABLE TEST SIGNING (if enabled)
+
+  bcdedit -set TESTSIGNING OFF
+
+## CONTACT
+
+If these steps don't work, see doc/TROUBLESHOOTING.md Section 3
+for detailed recovery procedures with screenshots and explanations.

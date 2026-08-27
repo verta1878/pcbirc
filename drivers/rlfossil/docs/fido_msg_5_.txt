@@ -1,0 +1,32 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 3 of 74 +17                                                             
+ From : rowan_crowe                         3:635/727.1     Thu 29 Feb 96 01:07 
+ To   : All                                                                     
+ Subj : RLFOSSIL                                                                
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+In a previous message I mentioned problems with transfer of inbound files using 
+RLFOSSIL.
+
+
++  1:03:21  Calling Tiara, 3:690/354, 203,8,107,247
+=  1:03:27  CONNECT 9600/TCP/IP
++  1:03:33  Tiara Information Services - Node[04], 3:690/354
+~  1:03:33  SysOp: Jason Meaden
+~  1:03:33  Using: BinkleyTerm 2.59
+:  1:03:33  Tranx: 3134FB5E / 3134D1DC
+~  1:03:33   Site: Perth, WA
+~  1:03:33  Flags: V32b,V42b,CM,XA,FAX
+~  1:03:33  Phone: 203.8.107.247
+   1:03:33  sType: EMSI
+*  1:03:41  Sent C:\FD727\PACKET\02B20162.REQ; 9b, 4 CPS
+*  1:06:49  Rcvd C:\FD727\FILE\NEWS.RC; 96288b, 529 CPS
++  1:07:05  Mail transfer completed
+$  1:07:05  To 3:690/354,  3:38, 0.
+
+
+Problem solved with high speed link! This is looking promising.
+
+---
+ * Origin: Jelly-Bean software development, Melbourne AUST. (3:635/727.1)
+
+

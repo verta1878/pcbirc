@@ -1,0 +1,10 @@
+WinFOSSIL v2.0.0 - Modern FOSSIL Driver
+Clean-room GPLv3 recreation of the classic
+Windows FOSSIL by Bryan Woodruff (1996).
+One unified source, four platforms:
+Win9x VxD/DLL, NT VDD, Win32 & x64 DLL.
+VMODEM (TCP/Telnet), 26 INT 14h fns,
+IP security, system tray, CPL applet.
+35 API exports. 50/50 tests pass.
+Serial + telnet BBS bridge. o7
+FPC264IRC crew - 2026 - 4free

@@ -1,0 +1,24 @@
+WinFOSSIL Change History
+
+v2.0.0 (2026) — Complete rewrite for modern Windows
+  - Unified source: one codebase for Win9x, NT VDD, Win32 & x64
+  - Two integration paths: ring-3 DLL (all) + ring-0 VxD (Win98)
+  - Native Win32/x64 (Win7 through Win11)
+  - System tray application
+  - Full VMODEM AT command parser
+  - All 26 FOSSIL INT 14h functions (incl. keyboard & screen)
+  - ATV verbose/numeric result codes; ATQ quiet mode
+  - Fn 07h timer tick and Fn 14h watchdog implemented
+  - Telnet IAC filter with SGA/BINARY, subneg boundary handling
+  - ATH0 hangup fixed (was missing in NT beta)
+  - Performance statistics fixed (was disabled in NT beta)
+  - Multi-node VMODEM race condition fixed
+  - Access security (IP whitelist/blacklist)
+  - USB-serial adapter support (COM ports > 4)
+  - 35 DLL exports (clean names via fossil.def)
+  - HTML help documentation (recreated from original HLP)
+  - 50/50 unit tests + 12/12 integration tests pass
+  - GPLv3 — no registration needed
+
+v1.12 (2000) — Original by Bryan Woodruff (Win95/98)
+v1.00 Beta 3 (1996) — Original by Bryan Woodruff (NT4)

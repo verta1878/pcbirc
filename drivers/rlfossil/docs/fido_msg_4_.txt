@@ -1,0 +1,57 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 15 of 72 +46                                                            
+ From : rowan_crowe                         3:635/727.1     Tue 27 Feb 96 04:17 
+ To   : Nolan Darilek                                                           
+ Subj : Tons of questions                                                       
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+Answering msg from Nolan Darilek to All,
+on Sunday February 25 1996 at 15:51
+
+ ND> I'm currently running a bbs and want to put it up on the net, I mean
+ ND> for inbound telnet and rlogin. I found a prog a few weeks ago called
+ ND> RLFossil which allows telnet/rlogin connections, it works a lot like
+ ND> Vmodem for OS/2. Does anybody use this prog, or has anybody even SEEN
+ ND> it? <G>
+
+Where did you get this prog and did it come with documentation? The copy that I 
+got was from a private FTP site, with only some sparse documentation sent by the
+person who pointed me to it. Unfortunately, I think that _is_ the documentation.
+:-(
+
+If you see my other recent message I've been playing around with it, with mixed 
+success. However I don't think it's the fault of RLFOSSIL that some of the file 
+transfers are failing.
+
+ ND> For one thing, I had a look at the EXE. I'm not totally sure, but it
+ ND> looks like it's hard-coded to use 9600 baud. Is this true? Also, is
+ ND> there a newer version available? The one I have is 1.2 (I think).
+
+That's only the "fake connect" message:
+
+  +  2:15:22  Calling COMM Port OS/2, 1:106/2000, 199,100,191,2
+  =  2:15:27  CONNECT 9600/TCP/IP
+              ^^^^^^^^^^^^^^^^^^^
+  +  2:15:31  COMM Port OS/2 VMBBS Node 5 [Internet], 1:106/2000
+  ~  2:15:31    AKA: 1:106/3000, 1:1/102
+
+The speed of the link is determined by the packet driver sitting underneath
+RLFOSSIL.
+
+ ND> Is there another way to put a board up for telnet without using Linux
+ ND> or a LAN? Also, are there any DOS boards up for telnet on the
+ ND> internet that I can check out? Thanks a lot.
+
+I'd be interested to know too . . . RLFOSSIL looks like a good candidate for
+this task though.
+
+I don't have a live link currently so I'm only using it for transient outbound
+mail. In the near future I plan to have a set time per day (say 30 mins) where
+it will stay connected to the ISP to transfer all the mail to possibly several
+other fidonet nodes connected to the net.
+
+Cheers.
+
+---
+ * Origin: Jelly-Bean software development, Melbourne AUST. (3:635/727.1)
+
+

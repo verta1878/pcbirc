@@ -1,0 +1,33 @@
+TARGETNAME=cyport
+TARGETTYPE=DRIVER
+DRIVERTYPE=WDM
+
+# Target Windows 2000 as minimum OS
+# _NT_TARGET_VERSION=0x0500 is Win2K
+# This ensures we don't accidentally use XP+ APIs
+TARGETPATH=obj
+
+# Include paths
+INCLUDES=..\inc
+
+# Source files — one per functional area
+SOURCES=\
+    cyenum.c    \
+    cypdo.c     \
+    cyisr.c     \
+    cyserial.c  \
+    cyread.c    \
+    cywrite.c   \
+    cyioctl.c   \
+    cypower.c   \
+    cylog.c
+
+# Link against Csq.lib for Win2K-compatible cancel-safe queues
+# (IoCsqInitialize/IoCsqInsertIrp/IoCsqRemoveIrp)
+TARGETLIBS=$(DDK_LIB_PATH)\csq.lib
+
+# Unicode build
+C_DEFINES=-DUNICODE -D_UNICODE
+
+# Enable all warnings
+MSC_WARNING_LEVEL=/W4

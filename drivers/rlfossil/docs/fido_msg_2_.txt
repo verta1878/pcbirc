@@ -1,0 +1,95 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 12 of 71 -11 +13                                                        
+ From : Tony Langdon                        3:635/727.18    Tue 27 Feb 96 22:34 
+ To   : rowan_crowe                                                             
+ Subj : Practical problems with seamless "virtual modems"                       
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+It's 27 Feb 96  02:35,
+We'll return to rowan_crowe and All's
+discussion of Practical problems with seamless "virtual modems"
+
+ ro> Your end is dumping data at high speed to VMODEM, and presumably there
+ ro> is some sort of buffer. The IP datagram is therefore rather large, so
+ ro> it's sent fragmented. That's fine, except this end gets sick of waiting
+ ro> for data -- as the fragments are still being received, the top level
+ ro> application has not yet been given the datagram, and thinks nothing is
+ ro> coming in. FrontDoor seems rather impatient, and exclaims "Timeout,
+ ro> Retry n" after only 10 seconds or so.
+
+However, you should be able to limit the datagram size at your end.
+Every piece of TCP/IP s/w (from Trumpet for Windoze to DOS based NOS
+implementations for packet radio) I've seen allow you to limit your MTU
+(IP datagram size) and MSS (TCP Maximum segment) to suit your link.
+I've always used smallish datagrams for my links (216b for packet to fit
+in a single AX.25 frame) and 512k for my Windoze based PPP connection.
+This may or may not help you (my TCP/IP theory is a little rusty ;-) ).
+
+ ro> The 14400 link should ease, if not (hopefully) solve the problem
+ ro> entirely.
+ ro> BTW the software I am using is RLFOSSIL.
+
+ ro> I hope you don't mind me using your system to test things out . . .
+ ro> :-)
+ ro> Cheers.
+
+ ro> =====================================================================
+
+
+ ro> For those unfamiliar with the explanation above, a brief tutorial.
+ ro> When you send a block of data via the internet, it's known as a
+ ro> "datagram". The links that the datagram goes through may not be able
+ ro> to pass the entire datagram in one piece, so the IP protocol fragments
+ ro> it into smaller pieces. At the remote end, the datagram is
+ ro> reassembled, and then passed to the application in its entirety as a
+ ro> single block.
+
+As I remember, datagram size is negotiated over the whole link.  Try
+setting a smaller datagram size (MTU and MSS) at your end, and see if
+things improve.  For example, on packet radio, we used a MTU of 216
+bytes, so the datagram plus 40 byte IP overhead could fit within a
+single AX.25 (packet link layer) frame, and avoid this fragmentation
+problem.  However, in that case, the network was homogenous (except a
+few people running Ethernet LANS at their station, and the AXIP
+'wormholes', again Ethernet links between the packet gateway and the
+Internet).
+
+ ro> And there lays the potential problem . . . if someone is sending you a
+ ro> large datagram then your application may not be given any data for a
+ ro> relatively long period of time. For an application such as FrontDoor
+ ro> which normally expects to be connected via modem directly to the
+ ro> remote system, it's not unreasonable for it to start getting concerned
+ ro> when no data is presented to it for a period of time (although IMHO
+ ro> it's a wee bit *too* impatient in that regard).
+
+What size are you using for your MTU and MSS?  Try 512 bytes or smaller
+if you can change them.
+
+ ro> Internet applications will probably be more lenient and expect long
+ ro> delays, because that's the nature of the net, and IP fragmentation.
+ ro> BTW, the setup I am using is:
+
+ ro> Modem
+ ro> |
+ ro> |
+ ro> PPP.EXE
+ ro> EtherPPP(?) "PPP Packet Driver"
+ ro> |
+ ro> |
+ ro> RLFOSSIL.EXE
+ ro> "FOSSIL driver over TCP/IP rlogin/telnet protocols."
+
+Do you have these two for F'req?  I'd like to be able to put my system
+online for experimental purposes.  When our new Linux server comes
+online, the gateway machine here may become available for several hours
+per day for online use.  :-)
+
+If you have RLFOSSIL, PPP and any other s/w relevant for a DOS based PPP
+connection, can you please (pretty!) put them up for F'req, or file
+attach them to me?  Now that I have 14.4k and 1 gig free HDD space,
+there's no problems with unsolicited files here. ;-)
+
+... QUOTE FROM A USER: "How do you UnZip a .ARJ file?"
+--- FMail/386 1.02
+ * Origin: Freeway Usenet <=> FTN gateway (3:635/727.18)
+
+

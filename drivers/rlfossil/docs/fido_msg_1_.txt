@@ -1,0 +1,110 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 11 of 71 +12                                                            
+ From : rowan_crowe                         3:635/727.1     Tue 27 Feb 96 02:35 
+ To   : All                                                                     
+ Subj : Practical problems with seamless "virtual modems"                       
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+Hi everyone,
+
+This is a message I recently sent to a sysop after experiencing some
+difficulties in transferring a file from his system via FrontDoor over telnet:
+
+
+=====================================================================
+
+(1)     Tue 27 Feb 96  2:04     Sent: Tue 27 Feb  2:12         Cost: 0
+By: Rowan Crowe
+To: Jason Meaden, Tiara (3:690/354)
+Re: Telnet problems
+St: Pvt Crash Local Sent
+------------------------------------------------------------
+G'day Jason, I think I have worked out the possible problem. (If you haven't
+yet seen my local message, this won't make much sense to you).
+
+Your end is dumping data at high speed to VMODEM, and presumably there is some
+sort of buffer. The IP datagram is therefore rather large, so it's sent
+fragmented. That's fine, except this end gets sick of waiting for data -- as
+the fragments are still being received, the top level application has not yet
+been given the datagram, and thinks nothing is coming in. FrontDoor seems
+rather impatient, and exclaims "Timeout, Retry n" after only 10 seconds or so.
+
+A simple solution would be a higher speed link to get the fragments here
+faster. I'm testing this at 2400 and it runs like a dog (when I am able to
+transfer, CPS is about 50). When I get a chance I'll have a play with a 14400
+link (I only have a TrailBlazer PEP almost exclusively for remote control of my
+system -- connects at 18,000 bps to another PEP, but only 2400 to something
+else).
+
+The 14400 link should ease, if not (hopefully) solve the problem entirely.
+
+BTW the software I am using is RLFOSSIL.
+
+I hope you don't mind me using your system to test things out . . . :-)
+
+Cheers.
+
+=====================================================================
+
+
+For those unfamiliar with the explanation above, a brief tutorial. When you send
+a block of data via the internet, it's known as a "datagram". The links that the
+datagram goes through may not be able to pass the entire datagram in one piece, 
+so the IP protocol fragments it into smaller pieces. At the remote end, the
+datagram is reassembled, and then passed to the application in its entirety as a
+single block.
+
+And there lays the potential problem . . . if someone is sending you a large
+datagram then your application may not be given any data for a relatively long
+period of time. For an application such as FrontDoor which normally expects to
+be connected via modem directly to the remote system, it's not unreasonable for 
+it to start getting concerned when no data is presented to it for a period of
+time (although IMHO it's a wee bit *too* impatient in that regard).
+
+Internet applications will probably be more lenient and expect long delays,
+because that's the nature of the net, and IP fragmentation.
+
+BTW, the setup I am using is:
+
+                        Modem
+                          |
+                          |
+                       PPP.EXE
+             EtherPPP(?) "PPP Packet Driver"
+                          |
+                          |
+                      RLFOSSIL.EXE
+     "FOSSIL driver over TCP/IP rlogin/telnet protocols."
+                          |
+                          |
+                        FD.EXE
+                    FrontDoor 2.12
+         FDNODE.CTL contains PHONE statement with
+          IP address of fidonet node as phone #
+
+
+PPP includes a dialup script. Output is captured to a log file, then a util I
+wrote analyses it to determine the local and remote IP addresses. The util then 
+sets the relevant environment variables, and creates WATTCP.CFG which is
+required by RLFOSSIL.
+
+RLFOSSIL consumes about 50k of memory, and PPP.EXE consumes a whopping 124k of
+memory. Biggest damn TSR I've ever used! Pity there's no source available.
+
+Both RLFOSSIL and PPP are available for FTP . . . ask if you would like me to
+look up where I got it from. (PPP was from SimTel, from memory).
+
+I could probably use UMSLIP.COM which is a nice small TSR (a few K versus PPP's 
+124k) but so far I've not had much luck with SLIP. At the moment I'm not too
+concerned about the amount of memory eaten by PPP.EXE and RLFOSSIL.EXE since I
+am only experimenting. (I have 630k free conventional anyways, quite a bit to
+spare. :-) ).
+
+I'd be interested to hear from other developers and seasoned netters about my
+above comments re: datagram fragmentation.
+
+Cheers.
+
+---
+ * Origin: Jelly-Bean software development, Melbourne AUST. (3:635/727.1)
+
+

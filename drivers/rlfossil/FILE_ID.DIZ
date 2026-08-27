@@ -1,0 +1,6 @@
+RLFOSSIL v1.2 — FOSSIL/TCP/IP
+FOSSIL driver over rlogin/telnet.
+4 virtual modems. WatTCP stack.
+Hayes AT commands. S-registers.
+By Sapa 1995. Code recovered 2026.
+Released: 2026-08-18

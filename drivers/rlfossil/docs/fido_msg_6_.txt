@@ -1,0 +1,21 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 10 of 75                                                                
+ From : Tony Langdon                        3:635/727.18    Thu 29 Feb 96 20:47 
+ To   : All                                                                     
+ Subj : Sucess! :-)                                                             
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+Well, looks like things are working here. :-)  Rowan kindly sent me a copy of
+RLFOSSIL, and I've succeeded in getting it up and running on the system here.
+:-)  This messagte is being written on the Linux box here via a RLogin session
+to my point's BBS. :-)  Stil have a few minor bugs to get telnet connections
+working properly, but a rlogin connection works perfectly. :-)
+ 
+Getting nice response times too.  Wonder wh! ;-) (must have something to do with
+a very lightly used Ethernet link here. ;-) ).
+ 
+Now to put the system on the _real_ Internet. :-)  Unfortunately, it'll be a few
+weeks until I can get our permanent link up and running. :-(
+--- FMail/386 1.02
+ * Origin: Freeway Usenet <=> FTN gateway (3:635/727.18)
+
+

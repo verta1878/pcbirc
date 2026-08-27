@@ -1,0 +1,160 @@
+
+
+                  FOSSIL driver over TCP/IP rlogin/telnet protocols.
+                                 Version 1.2
+
+        RLFOSSIL   is   an   implementation   of   multi-line   serial  port
+  driver corresponding to Fido/Opus/Seadog level 5 specification and  simple
+  HAYES-compatible modem emulator in one. It allow to use many  applications
+  usually worked through serial lines and modems in Internet space, or in
+  IP-based local net. RLFOSSIL provide emulation of HAYES-modem and FOSSIL
+  driver from application's direction, and rlogin/rlogind or telnet/telnetd
+  emulation (more exactly - rlogin & telnet compatible handshake ) using IP
+  services numbers 513 & 23 for IP-based net's direction. Number of emulated
+  channels (ports & modems): 4. RLFOSSIL tolerate combined work with other
+  FOSSIL drivers (X00,BNU etc.). RLFOSSIL support as incoming as outgoing
+  calls. This programm is NOT A TSR, what more easy to unload.
+
+        Possible use: for provide access of any terminal emulators to
+  IP-based net, for provide work of any mailers & communication script
+  through IP-based net, for provide access to MS-DOS based BBS-es from
+  MS-DOS and UNIX users through IP-based net (using same emulator or rlogin
+  or telnet from any TCP packet, for ex. PC/TCP, CUTCP Telbin, Kermit etc.).
+  You can use as ethernet as SLIP interface (only Class 1).
+
+  Required:
+          IBM-PC XT/AT 8086 and above
+          MS-DOS 3.3 and above
+          Packet driver class 1 (Ethernet).
+
+  *) For information. You can get Ethernet paket drivers free, using
+     anonymous ftp to:
+       oak.oakland.edu                      /SimTel/msdos/pktdrvr
+       ftp-ns.rutgers.edu                   /pub/msdos/packet-drivers
+     SLIP Class 1 driver (EtherSLIP) you can get using anonymous ftp to:
+       owl.nstn.ns.ca                       /pub/pc-stuff/packet/etherslip
+
+  Supported multitaskers:
+          TopView
+          DesqView
+          Windows 3.1, and 3.11 (for Workgroups).
+
+  Driver was test with follow communication software:
+          Terminate     1.41g
+          TeleMate      4.0
+          UUPC          5.0
+          FrontDoor     2.02
+          Remote Access 1.01
+          Maximus       2.0
+          T-Mail        2.0
+          Kermit        3.13,3.14
+
+  Usage:
+    RLFOSSIL.EXE start_portn ports progname [idname]
+
+  where: start_portn - number of first serial port what will emulated
+                       (0 - COM1:, 1 - COM2: etc).
+         ports       - number of ports what will be emulated ( 1 - 4 ).
+         progname    - programm name what will be launched after start of
+                       driver, when this programm will be terminated, driver
+                       will unload. This parameter can include arguments for
+                       launched programm. In such case it must be placed 
+                       in "".
+         idname      - your default login name for outgoing calls
+                       (if parameter missed, idname will get from WATTCP.CFG).
+
+  examples of usage:
+  Usage Telemate with 1 virtual modem on COM1:
+    RLFOSSIL.EXE 0 1 TM.EXE
+
+  Usage Telemate script file with 1 virtual modem on COM3: , and default
+  login name "guest"
+    RLFOSSIL.EXE 2 1 "TM.EXE SCRIPT.TMS" guest
+
+  Usage Maximus with 1 virtual modem on COM5:
+    RLFOSSIL.EXE 4 1 "MAX.EXE -W"
+
+  Usage multiline BBS under WINDOWS with 4 virtual modems on COM5: - COM8:
+    RLFOSSIL.EXE 4 4 WIN.COM
+  <Files BBS.BAT must be placed in STARTUP window>
+
+  Usage multiline BBS under DV with 4 virtual modems on COM5: - COM8:
+    RLFOSSIL.EXE 4 4 DV.COM
+  <Files BBS.BAT must be launched from STARTUP script>
+
+  Driver X00 or BNU for real modems must be started early and ports of
+  virtual modems must be choosed different with real modems.
+
+  commands of virtual modem:
+  ATDP 192.168.5.5
+    outgoing connection to 192.168.5.5
+  ATDP 192,168,5,5
+    the same as previous (for compatibility with phone numbers)
+  ATDP machine.my.net
+    outgoing connection to machine.my.net (nameserver must be defined in
+    wattcp.cfg).
+  ATDP guest@192.168.4.9
+    outgoing connection to 192.168.4.9 as user "guest"
+  ATDP root@xserv
+    outgoing connection to xserv (domain name will get from WATTCP.CFG) as
+    user "root"
+  ATA
+    answer on incoming calls (only after "RING")
+    all other commands beginning with AT - answer OK but do nothing.
+  ATS<reg>=<val>
+    where <reg> - number from 0 to 15 (now used only first 5).
+          <val> - decimal value (0-65535).
+    set regisrer <reg> value to <val>.
+    Registers:
+      0 - autoanswer. Non-zero value enable autoanswer, zero value disable
+          it.
+      1 - IP service port number for incoming calls. (default value for
+          rlogin - 513, for telnet - 23, 0 - allow both).
+      2 - delay between "ATA" & "CONNECT 9600/TCP/IP" in 55ms. ticks.
+      3 - delay between connection lost & "NO CARRIER" in 55ms. ticks.
+      4 - handshake mode. 0 - no handshake (simple socket to socket
+          connection), 1 - rlogin handsahke, 2 - telnet handshake,3 -
+          auto choose.
+      5 - IP service port number for outgoing calls. (default value for
+          rlogin - 513, for telnet - 23).
+  ATZ
+    re-init socket. Recommended after change of register values.
+
+  Combined strings like as "ATS1=23S4=2Z" are permitted.
+
+  virtual modem messages:
+  NO DIALTONE - cannot resolve hostname (may be wrong nameserver?)
+  NO CARRIER  - host or service not available, or no route to host,
+                (after ATDP), or connection closed by programm or
+                another host (after connection), or ATA was entered
+                not after RING.
+  CONNECT 9600/TCP/IP - connection established (after ATDP or ATA).
+  RING        - incoming connection established, but you must enter
+                ATA to confirm it.
+  OK          - Standard modem answer on most commands.
+
+  maximal transfer speed:
+    limited only by processor's power & inreface card.
+  Internal buffers, FOSSIL level:
+    1024Bytes -TX, 1024Bytes -RX
+  Internal buffers, TCP level:
+    2048Bytes -TX, 2048Bytes -RX
+  config file:
+    wattcp.cfg - see inside
+
+  History:
+  1.0 - first distributed release (after one month of testing).
+  1.1 - never was distributed.
+  1.2 - current version. Corrected some bugs. Modified algoritm of
+        virtual modem. Now it work with T-MAIL & Maximus. Added S and Z
+        commands of virtual modem. Autoanswer implemented. Change of
+        IP port number implemented. Telnet emulated now!!! Dynamic channel
+        map. Only 3Kb more than previous version.
+
+  Special thanx to: Ernest Seleznyov, Fyodor A. Evseev,Daryl Collins,
+                    Madis Kaal, Roma Kuzmin, John Fluharty, Markus Bank
+                    for his remarks.
+
+  All remark allowed to Andrew Sapozhnikov (Sapa),
+                        root@hq.icb.chel.su.
+

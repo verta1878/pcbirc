@@ -1,0 +1,6 @@
+WinFOSSIL v2.0.0 — Modern FOSSIL Driver
+Copyright (C) 2026 FPC264IRC Contributors
+Recreated from Bryan Woodruff's WinFOSSIL (1996).
+Clean-room reimplementation. No original source code used.
+This program is free software under the GNU General Public
+License version 3. See https://www.gnu.org/licenses/gpl-3.0

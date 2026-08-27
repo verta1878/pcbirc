@@ -1,0 +1,41 @@
+[version]
+signature="$Windows NT$"
+ClassGUID={00000000-0000-0000-0000-000000000000}
+[FossilInstall]
+CopyFiles = Fossil.Files.Sys, Fossil.Files.Inf, Fossil.Files.Win
+AddReg = Fossil.AddReg
+UpdateAutoBat = Fossil.AddAutoBat
+[DefaultUnInstall]
+DelFiles = Fossil.Files.Sys, Fossil.Files.Inf, Fossil.Files.Win
+DelReg = Fossil.DelReg
+UpdateAutoBat = Fossil.DelAutoBat
+[Fossil.Files.Sys]
+wnfossil.exe,,,1
+fossil.dll,,,1
+wnfossil.cpl,,,1
+[Fossil.Files.Inf]
+fossil.inf
+[Fossil.Files.Win]
+wnfosctl.exe
+[Fossil.AddReg]
+HKLM,Software\Woodruff\WinFOSSIL,Installed,1,01
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\WinFOSSIL,DisplayName,,"WinFOSSIL v1.00 for Windows NT"
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\WinFOSSIL,UninstallString,,"%11%\rundll32.exe syssetup,SetupInfObjectInstallAction DefaultUnInstall 132 %17%\fossil.inf"
+[Fossil.DelReg]
+HKLM,Software\Woodruff\WinFOSSIL
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\WinFOSSIL
+[Fossil.AddAutoBat]
+CmdAdd=%SystemRoot%\system32\wnfossil.exe
+[Fossil.DelAutoBat]
+CmdDelete=%SystemRoot%\system32\wnfossil.exe
+[SourceDisksNames]
+1="WinFOSSIL v1.00 for Windows NT","",1
+[SourceDisksFiles]
+wnfossil.exe = 1
+fossil.dll = 1
+wnfossil.cpl = 1
+wnfosctl.exe = 1
+[DestinationDirs]
+Fossil.Files.Sys = 11
+Fossil.Files.Win = 10
+Fossil.Files.Inf = 17

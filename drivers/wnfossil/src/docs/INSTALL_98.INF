@@ -1,0 +1,5 @@
+[version]
+signature="$CHICAGO$"
+[DefaultInstall]
+include = fossil.inf
+needs = FossilInstall

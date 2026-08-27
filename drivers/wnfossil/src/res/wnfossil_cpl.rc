@@ -1,0 +1,2 @@
+#include <windows.h>
+100 ICON "cpl_icon.ico"

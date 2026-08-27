@@ -1,0 +1,88 @@
+� [52] Fidonet: DOS_INTERNET (1:352/111) 컴컴컴컴컴컴컴컴컴컴컴컴 DOS_INTERNET �
+ Msg  : 3 of 73 +47                                                             
+ From : Tony Langdon                        3:635/727.18    Thu 29 Feb 96 17:10 
+ To   : rowan_crowe                                                             
+ Subj : Practical problems with seamless "virtual modems"                       
+컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
+It's 28 Feb 96  23:58,
+We'll return to rowan_crowe and Tony Langdon's
+discussion of Practical problems with seamless "virtual modems"
+
+ ro> I'll be experimenting with a higher speed link within the next half
+ ro> hour, a bit sluggish due to it going through a Trailblazer PEP modem
+ ro> (sends data in packets, slightly jerky like MNP), then into one DV
+ ro> window, being saved to disk, then out to another modem, then finally
+ ro> connecting to the ISP. You can probably guess where the DV windows and
+ ro> disk are. :-)
+
+Hmm, a long winded process. ;-)  You using your fancy serial port
+program? ;-)
+
+ ro> Due to the sluggishness the effective CPS rate for file transfers is
+ ro> only about 700CPS; but then again at 2400 I get less than 120 CPS
+ ro> average. The packet header overhead is significant.
+
+700 CPS would be what I'd expect if the Internet side is busy...
+
+ ro> Aye, this would be the first thing I would change, if I could. :-(
+ ro> RLFOSSIL comes with very little documentation, and a sample WATTCP.CFG
+ ro> file, which doesn't have anything like that in it. Hmm, I have an
+ ro> idea, why not view the EXE.
+ ro> RLFOSSIL.EXE contains the following:
+ ro> "MY_IP IP NETMASK GATEWAY NAMESERVER COOKIE DOMAINSLIST HOSTNAME
+ ro> SOCKDELAY ETHIP MSS BOOTP BOOTPTO DOMAINTO INACTIVE MULTIHOMES PRINT "
+ ro> 'MSS' is probably what I want to change. :-) I'll have a play with
+ ro> that.
+
+Yes, try changing MSS to 512 bytes or less. :-)
+
+ TL> As I remember, datagram size is negotiated over the whole link.  Try
+ TL> setting a smaller datagram size (MTU and MSS) at your end, and see if
+ TL> things improve.
+
+ ro> If I had been aware of how to do this earlier, I certainly would have.
+ ro> It's moot now since I have a high speed link, but in the future it
+ ro> will be handy to know.
+
+IMHO, it's not a moot point, because of the Internet's tendancy to send
+data in bursts.  A smaller MSS is less likely to get fragmented between
+bursts.  Ever watched a PPP connection in action at 14,4k? :-)
+
+ TL> smaller if you can change them.
+
+ ro> As above. :-) I wonder what the default is.
+
+Always best to specify it. :-)
+
+ ro> RLFOSSIL is just an executable and config file, and I got the docs
+ ro> sent via mail. It's not really in "releasable" state which is why I'm
+ ro> trying to source an original archive. I will send it to you, along
+ ro> with my "parselog.com" program which parses the log that EtherPPP
+ ro> spits out, setting the following environment variables: (used with
+ ro> Minuet, IRC etc)
+
+Thanks. :-)
+
+ ro> constant IP address setup...
+ ro> Note the latter two lines. If these are omitted, RLFOSSIL seems to
+ ro> negotiate rlogin first, which fails (with no clues as to why) when
+ ro> you're connecting to a system with VMODEM. (So far all of the fidonet
+ ro> systems I have connected to via the net all run OS/2 with VMODEM, and
+ ro> BinkleyTerm 2.59. I'm being different by running MS-DOS, RLFOSSIL and
+ ro> FD 2.12. :-) ).
+
+I'll be different again and run RLFOSSIL with Binkley 2.59. :-)
+
+ ro> I'll include the MoonRock source for PARSELOG too.
+
+ ro> If anyone else is interested in RLFOSSIL (seamless telnet for any
+ ro> software which uses a FOSSIL!) then I will try to dig up an original
+ ro> release archive. Note it supports *inbound* "calls" too. :-)
+
+Just the shot to put my BBS online with. ;-)
+
+... Do small blue hackers call CompuSmurf?
+--- FMail/386 1.02
+ * Origin: Freeway Usenet <=> FTN gateway (3:635/727.18)
+
+

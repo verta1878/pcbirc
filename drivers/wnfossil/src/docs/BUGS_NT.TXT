@@ -1,0 +1,6 @@
+Known bugs fixed (compared to original Beta 3):
+- Performance statistics now enabled
+- ATH0 hangup now implemented
+- 32-bit COM handle passing now works
+- Multi-node VMODEM race condition resolved
+- Maximus 3.01 hang fixed (state machine timeout)

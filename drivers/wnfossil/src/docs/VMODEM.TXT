@@ -1,0 +1,18 @@
+VMODEM Support in WinFOSSIL
+
+Set port name to TELNET in Control Panel to enable VMODEM.
+
+AT Commands:
+  ATZ             Reset
+  ATD <host:port> Dial (TCP connect)
+  ATDT <host>     Same as ATD
+  ATH / ATH0      Hangup
+  ATE0 / ATE1     Echo off/on
+  ATS0=0          Auto-answer off
+  ATS0=1          Auto-answer on port 23
+  ATA             Manual answer
+  ATI             Identification
+  +++             Escape to command mode
+
+Result Codes:
+  OK, CONNECT, RING, NO CARRIER, ERROR, NO DIALTONE, BUSY

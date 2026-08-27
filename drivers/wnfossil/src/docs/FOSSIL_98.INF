@@ -1,0 +1,35 @@
+[version]
+signature="$CHICAGO$"
+[FossilInstall]
+CopyFiles = Fossil.Files.Sys, Fossil.Files.Inf, Fossil.Files.Win
+AddReg = Fossil.AddReg
+RESTART
+[DefaultUnInstall]
+DelFiles = Fossil.Files.Sys, Fossil.Files.Inf, Fossil.Files.Win
+DelReg = Fossil.DelReg
+RESTART
+[Fossil.Files.Sys]
+fossil.vxd,,,1
+wnfossil.cpl,,,1
+[Fossil.Files.Inf]
+fossil.inf
+[Fossil.Files.Win]
+wnfosctl.exe
+[Fossil.AddReg]
+HKLM,System\CurrentControlSet\Services\VxD\FOSSIL,StaticVxD,,"fossil.vxd"
+HKLM,System\CurrentControlSet\Services\VxD\FOSSIL,Start,1,00
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\Fossil,DisplayName,,"WinFOSSIL v1.12 for Windows 95"
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\Fossil,UninstallString,,"%10%\rundll.exe setupx.dll,InstallHinfSection DefaultUninstall 132 %17%\fossil.inf"
+[Fossil.DelReg]
+HKLM,System\CurrentControlSet\Services\VxD\FOSSIL
+HKLM,Software\Microsoft\Windows\CurrentVersion\Uninstall\Fossil
+[SourceDisksNames]
+1="WinFOSSIL v1.12 Distribution Disk","",1
+[SourceDisksFiles]
+fossil.vxd = 1
+wnfossil.cpl = 1
+wnfosctl.exe = 1
+[DestinationDirs]
+Fossil.Files.Win = 10
+Fossil.Files.Sys = 11
+Fossil.Files.Inf = 17
