@@ -11,6 +11,14 @@
 /* INSTALL.DAT. The full INSTALL.EXE supports 250+ commands but most         */
 /* are for other Clark products.                                              */
 /*                                                                           */
+/* DEPENDENCY: .RED container extraction/creation                            */
+/*   The @BeginLib/@File/@EndLib directives unpack files from Clark's        */
+/*   .RED containers (RR magic, LH5-family compression, per-record header    */
+/*   with compressed/uncompressed sizes and CRC16). Once archivers/redx      */
+/*   and archivers/redc land (built on archivers/lha/), this installer       */
+/*   links against them instead of shelling out. See archivers/README.md     */
+/*   for the codec phase plan.                                                */
+/*                                                                           */
 /* License: GPLv3                                                            */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 

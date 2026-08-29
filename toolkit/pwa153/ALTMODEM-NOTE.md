@@ -24,7 +24,7 @@ Open question: what downstream program links ALTMODEM's object or uses
 it as a template? Candidates to check:
 - The modem/serial utilities (PCBoard's own modem init path)
 - Door examples that need a minimal modem harness
-- pcb1541/pcbcomm (our serial work)
+- pcb1541/pcbdcom (our serial work)
 
 Action: trace who (if anyone) links altmodem.obj, and whether it's a
 build helper for a specific tool. Until then: keep as source, do NOT

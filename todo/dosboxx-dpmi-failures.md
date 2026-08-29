@@ -269,3 +269,34 @@ Buildable-under-DOSBox-X SDK targets now include PCBKIT (TC 2.01)
 **and PCBKBC (BC++ 3.1)** — 8 of 12 libs achievable in the golden
 image with our configuration. PCBKMS (MSC 7.0) still to test with
 the combined DPMI setup.
+
+## DOSBox-X versions available (updated 2026-08-29)
+
+Two versions installed on host:
+
+| Binary | Version | Source | Purpose |
+|---|---|---|---|
+| `dosbox-x` (default) | 2024.03.01 | Ubuntu apt (`dosbox-x`) | Proven working with our PCBBLDBT.CONF; all prior smoke tests + PCBKMS Route A verified on this |
+| `dosbox-x-2026` | 2026.06.02 | pkgforge-dev AppImage | Newer features for specific use cases (see below); NOT the default |
+
+**When to use `dosbox-x-2026`:**
+- **386MAX Phase B experiments**: 2026.06.02 introduced `[devices]` dosbox.conf section
+  and `RUN=` for loading external DOS device drivers at startup. This *may* let us
+  load 386MAX.SYS as a guest device driver directly under DOSBox-X, eliminating
+  the need for QEMU/86Box/PCem Phase B testing. Untested; verify before committing.
+- **16-bit reverse-engineering**: 2026.08.02 (available separately) adds debugger
+  normalization for 16-bit segmented offsets, which helps analyzing commdrv-era
+  binaries and other real-mode code.
+- **FAT driver performance**: mkimage.sh iterations may benefit from the improved
+  FAT driver in 2026.06+.
+
+**When to use `dosbox-x` (2024.03.01):**
+- Everything else. Our config knobs are tuned for this version; regression risk
+  on newer versions until re-verified.
+
+**Compatibility notes:**
+- Our current PCBBLDBT.CONF works on both versions but 2026 has ~5-10s longer
+  startup, which can trip the 40s pcbbldbt-smoke.sh timeout for boot-only tests.
+  Use 60s+ timeout for 2026 boot tests.
+- No config knob renames identified between 2024.03.01 and 2026.06.02 that affect
+  our PCBBLDBT.CONF, but re-verify before committing to 2026 as default.

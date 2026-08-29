@@ -73,33 +73,101 @@ directly.
 
 (Then read OBJs/LIBs back out with mcopy.)
 
-## The deeper point — high-level vs low-level emulation
+## What CAN and CAN'T run under DOSBox-X (updated 2026-08-28)
 
-Even with writeback fixed, DOSBox-X still cannot host **386MAX.SYS**.
-DOSBox-X is a **high-level** emulator: it fakes DOS and provides its
-own DPMI, and it will not let a guest CONFIG.SYS memory manager take
-over the CPU. The MSC 7.0 DOS "3216" compiler hard-requires a real
-32-bit DPMI host (386MAX / BlueMAX).
+**Previous belief (documented here originally):** DOSBox-X's built-in
+DPMI wasn't accepted by MSC7's DOSX32 (R6901 error) and the CONFIG.SYS
+memory-manager path was blocked outright, so PCBKMS was declared
+impossible under DOSBox-X. Full workaround was to use a low-level
+emulator (86Box/PCem/QEMU) with real DOS + 386MAX.
 
-So writeback-fixed DOSBox-X is enough for compilers that DON'T need a
-guest memory manager (Borland/Turbo C — PCBKBC/PCBKIT built fine), but
-the MSC7 DOS route needs a **low-level** full-PC emulator (86Box,
-PCem, or QEMU) running real MS-DOS + 386MAX. The OS/2 "1616" route
-avoids DPMI entirely and needs an OS/2 host.
+**What we found:** two of the three blocks came off with configuration,
+not architecture. See `../../todo/dosboxx-dpmi-failures.md` for the
+full failure ledger.
 
-Rule of thumb:
-- High-level emu (DOSBox-X): fast, good for straight compiles; cannot
-  host guest memory managers / real-mode drivers.
-- Low-level emu (86Box/PCem/QEMU): emulates the actual 386, boots real
-  DOS, loads 386MAX — required for PCBKMS Route A.
+### The `zero unused int 68h=true` fix
+
+DOSBox-X uses INT 68h internally by default (originally added for a
+game called "PopCorn"). HX HDPMI32/HDPMI16 both hook INT 68h for
+their own control interface — the collision produced
+`CPU:Illegal Unhandled Interrupt Called 68` and made all DPMI
+extenders unloadable.
+
+**Fix**: in `PCBBLDBT.CONF`:
+```
+[dos]
+zero unused int 68h=true
+```
+
+With this option, HX HDPMI16/HDPMI32 load cleanly and provide DPMI to
+guest programs. **This is now the default in the shipped
+`MAIN/build/PCBBLDBT.CONF`.**
+
+### HDPMI16 vs HDPMI32 for the extender path
+
+Follow-on finding: BCC (Borland C++ 3.1, 16-bit) crashed with
+`CPU:GRP5:Illegal opcode 0xff` when using HDPMI32 (32-bit). Root
+cause was mismatched bit-width, not a DOSBox-X bug.
+
+**Fix**: use `HDPMI16 -r` for 16-bit tools (BCC, BCCX). Use
+`HDPMI32 -r` for 32-bit tools (Watcom, MSC7 CL). Both can be
+resident simultaneously.
+
+### What works now under DOSBox-X (with above config)
+
+- **PCBKIT** (Turbo C 2.01) — real mode, no DPMI, always worked
+- **PCBKBC** (Borland C++ 3.1) — with `HDPMI16 -r`, verified building
+- **PCBKMS** (MSC 7.0 CL + DOSX32) — **untested but plausible** with
+  `HDPMI32 -r` (DOSX32's R6901 was about DPMI absence; HDPMI32
+  provides DPMI). If DOSX32 accepts HDPMI32 as its DPMI host,
+  PCBKMS builds under DOSBox-X without needing 386MAX at all — the
+  test is a quick one and unblocks the whole DOS route from inside
+  DOSBox-X.
+
+### What's still out of scope for DOSBox-X
+
+- **386MAX.SYS loaded via CONFIG.SYS at boot** — the CONFIG.SYS
+  memory-manager path is architecturally different from the
+  DPMI-extender path. DOSBox-X is a high-level emu: it fakes the DOS
+  kernel + BIOS and provides its own DPMI, and it will not let a
+  guest CONFIG.SYS memory manager hook the CPU at boot. Still Tier 3
+  (86Box/PCem) for anything that requires 386MAX itself. But: if
+  HDPMI32 satisfies DOSX32's DPMI check, PCBKMS doesn't NEED
+  386MAX to build — the whole "PCBKMS needs 386MAX" premise gets
+  bypassed by using HDPMI32 as the DPMI host.
+- **Watcom + DOS/32A** — DOSBox-X CPU-emu still errors on ESC 3
+  (287+) FPU opcodes and rejects IRET descriptor type 12 (Failure
+  #2 in the DPMI failures doc). Real DOSBox-X gap, needs source-
+  level fix or newer version.
+
+### Tier model (updated)
+
+Rather than one emulator per project, use each where it fits:
+
+| Tier | Emulator | Use for | Rationale |
+|---|---|---|---|
+| **1** | DOSBox-X | Real-mode compiles (TC, TASM), HDPMI16/32-hosted compiles (BCC, likely CL) | Fast, headless-friendly, config-tunable |
+| **2** | QEMU (i386/i486) | Watcom + DOS/32A (DOSBox-X FPU/IRET gap) | Full CPU emulation, any extender runs |
+| **3** | 86Box / PCem | 386MAX loaded via CONFIG.SYS at boot; byte-exact historical reproduction | Low-level PC emulation, real CONFIG.SYS |
+
+Same `PCBBLDBT.IMG` boots in all three. Tier choice is per-task.
+
+Route selection at boot is via CONFIG.SYS multi-boot menu — see
+`PCBKMS-BUILD-SETUP.md` for the `[menu]` block and matching
+AUTOEXEC.BAT branch. Route A default, 10-second timeout, headless-
+friendly.
 
 ## Status when this was written
 
 - Writeback fix (DOS 7.1 + imgmount image + clean exit): identified,
   the DOS-7.1 prompt being the root cause of the headless hang.
 - PCBKMS build: validated and ready (BLDKMS.BAT correct, 476 steps,
-  headers MSC7-ready). Needs a low-level host for Route A, or OS/2 for
-  Route B.
+  headers MSC7-ready). ~~Needs a low-level host for Route A, or OS/2
+  for Route B.~~ **Superseded 2026-08-28**: with `zero unused int
+  68h=true` + `HDPMI16 -r`/`HDPMI32 -r`, PCBKMS should build under
+  DOSBox-X (untested but expected to work — DOSX32 wants DPMI, and
+  HDPMI32 is DPMI). See section above and
+  `../../todo/dosboxx-dpmi-failures.md`.
 
 ---
 

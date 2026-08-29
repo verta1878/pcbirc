@@ -36,9 +36,19 @@ CORRECTED to match Clark's actual SDK structure:
   See OUT/lib/pwa153/STATUS.md.
 
 Compiler families:
-- PCBKBC (Borland C++ 3.1) — DONE, all 4 models
-- PCBKIT (Turbo C 2.01) — compiler downloaded (devtools/TURBOC201.zip), build pending
-- PCBKMS (Microsoft C 7.0) — compiler downloaded (devtools/MSC70.zip), build pending
+- PCBKBC (Borland C++ 3.1) — DONE, all 4 models. **Buildable under
+  DOSBox-X** with `[dos] zero unused int 68h=true` + `HDPMI16 -r`
+  (see `todo/dosboxx-dpmi-failures.md` Failure #5).
+- PCBKIT (Turbo C 2.01) — DONE, all 4 models. Real-mode, no DPMI
+  needed.
+- PCBKMS (Microsoft C 7.0) — Route A **VERIFIED 2026-08-29**: MSC7
+  CL under DOSBox-X + HDPMI32 produces valid OMF (proof:
+  `PCBKMS-ROUTE-A-PROOF-TINY.OBJ`). First real toolkit module
+  (ADDBACKS.C) reached CL cleanly, blocked on toolkit header
+  modernization (types.hpp line 49 `sizeof(char)` inside `#if`
+  without `_MSC_VER` guard). Full 476-step BLDKMS.BAT build queued
+  once header fixups land. No 386MAX needed — the whole "PCBKMS
+  needs a low-level emu" premise is bypassed.
 
 ### pwa154 — pending
 ### delta154 — pending (needs 22 Watcom fixes ported from irc1541 first)

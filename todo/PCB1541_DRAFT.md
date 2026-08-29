@@ -2568,7 +2568,7 @@ Dropbear is a good fit because:
 - It slots in beside the existing telnet path: the SSH server
   terminates the caller connection, then hands the session to PCBoard
   through the same comm/serial layer used for telnet/FOSSIL sessions
-  (see pcb1541/pcbcomm/). SyncTerm already speaks SSH client-side, so a
+  (see pcb1541/pcbdcom/). SyncTerm already speaks SSH client-side, so a
   caller can reach the board over SSH end to end.
 
 Scope for the SSH front end: run dropbear as the listener, authenticate

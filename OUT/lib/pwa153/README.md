@@ -34,7 +34,7 @@ alongside the samples.
 
 Serial drivers (COMMDRV, FOSSIL) are a known gap — Clark shipped them
 as loose OBJs but we don't have their source; our serial work is in
-pcb1541/pcbcomm and drivers/netfosdl.
+pcb1541/pcbdcom and drivers/netfosdl.
 
 ## Other compiler families (pending)
 
