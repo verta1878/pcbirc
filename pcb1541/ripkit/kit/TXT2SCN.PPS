@@ -1,0 +1,13 @@
+STRING response
+
+DISPFILE PPEPATH()+"TXT2SCN", LANG + GRAPH + SEC
+
+INPUTSTR "_",response,@X07,79,MASK_ASCII(),HIGHASCII
+
+IF (response = "") KBDSTUFF CHR(13)
+
+PRINT CHR(2), "|*|#|#|#"
+
+KBDSTUFF response
+
+END

@@ -1,0 +1,53 @@
+STRING CmdLine
+
+
+; Get any paramters passed by the user and trim it down to the first two
+; characters.  Finally, convert it to upper-case.
+
+CmdLine = TOKENSTR()
+CmdLine = LEFT(CmdLine,1)
+CmdLine = UPPER(CmdLine)
+
+
+; If the user forces the alias on or off by passing either ON or OFF on the
+; command line, change the alias usage to the desired setting and exit.
+
+IF (LEN(CmdLine) = 0) THEN
+   IF (CmdLine = "ON") ALIAS TRUE
+   IF (CmdLine = "OF") ALIAS FALSE
+   END
+ENDIF
+
+
+; If the alias is currently being used, turn it off, and display notification
+; that the alias is turned off (Special processing is done for RIP callers).
+
+IF (ALIAS()) THEN
+   ALIAS FALSE
+   IF (GRAFMODE() = "R" & EXIST(PPEPATH()+"ALIASON.RIP")) THEN
+      CLS
+;      DISPFILE PPEPATH()+"ALIASON",GRAPH+LANG+SEC
+      DISPFILE PPEPATH()+"ALIASON.RIP",DEFS
+      DELAY 27
+   ELSE
+      PRINTLN
+      PRINTLN "@X0AYou are now using your real name."
+   ENDIF
+
+
+; The real name is being used so turn alias usage on and display notificaiton
+; that the alias is turned on (Special processing is done for RIP callers).
+
+ELSE                          
+   ALIAS TRUE
+   IF (GRAFMODE() = "R" & EXIST(PPEPATH()+"ALIASOF.RIP")) THEN
+      CLS
+;      DISPFILE PPEPATH()+"ALIASOF",GRAPH+LANG+SEC
+      DISPFILE PPEPATH()+"ALIASOF.RIP",DEFS
+      DELAY 27
+   ELSE
+      PRINTLN
+      PRINTLN "@X0AYou are now using your alias."
+   ENDIF     
+ENDIF
+

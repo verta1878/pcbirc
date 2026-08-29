@@ -1,0 +1,60 @@
+'*****************************************************************************
+'*                                                                           *
+'*                  Select Conferences For Scanning                          *
+'*                                                                           *
+'*           A PPE to setup the SELECT command for RIPscrip                  *
+'*                                                                           *
+'*****************************************************************************
+
+INT    LineNo
+INT    Region
+STRING TextToSend
+
+Region = 1
+
+; Line numbers 4 to 21 on the PCBoard screen are where the conference list
+; will be printed on the screen.  We need to setup mouse regions for each
+; conference (17 conferences on each page).
+
+FOR LineNo = 4 TO 20
+   
+   ; Read the PCBoard screen to determine what number to return if the user
+   ; clicks on a conference.
+   
+   TextToSend = LTRIM(SCRTEXT(1,LineNo,5,FALSE)," ")
+   
+   ; If there is no conference (there is not a full list of conferences on
+   ; each side), do not setup a mouse region.  No sense in letting the user
+   ; click on something of absolutely no use.
+
+   IF (LEN(TextToSend) != 0) THEN
+      
+      ; Setup the mouse region if a conference is found.
+      
+      TextToSend = TextToSend + "^M"
+      MOUSEREG Region, 1, LineNo, 79, LineNo+1, 8, 8, TRUE, FALSE, TextToSend
+      Region = Region + 1
+   ENDIF
+   
+   ; Repeat the mouse region setup for the second column of conferences.
+   
+;   TextToSend = LTRIM(SCRTEXT(41,LineNo,5,FALSE)," ")
+;   IF (LEN(TextToSend) != 0) THEN
+;      TextToSend = TextToSend + "^M"
+;      MOUSEREG Region, 41,LineNo, 80, LineNo+1, 8, 8, TRUE, FALSE, TextToSend
+;      Region = Region + 1
+;   ENDIF
+NEXT
+
+   ; Display the RIP screen which has all of the useful buttons for the
+   ; user to click on (Next Page, Quit, etc.)
+
+   DISPFILE PPEPATH() + "SLCTCNF", LANG + GRAPH
+
+GOSUB RIPCursOff
+
+END
+
+;Include source code for turning the cursor on or off in RIP mode.
+;$INCLUDE:RIPCURS.PPS
+

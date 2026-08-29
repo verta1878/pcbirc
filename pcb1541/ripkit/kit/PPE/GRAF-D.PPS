@@ -1,0 +1,172 @@
+;*****************************************************************************
+;*                                                                           *
+;*                           ANSI DETECTION V2.3                             *
+;*                                                                           *
+;*                        written by: Steve Catmull                          *
+;*                                                                           *
+;*                            started: 04-26-93                              *
+;*                                                                           *
+;*****************************************************************************
+
+BOOLEAN hasansi     ; Result of ANSI - detection test (true or false)
+BOOLEAN hasrip      ; Result of ANSI - detection test (RIP & ANSI)
+STRING  graphdef    ; Stores response to the "ask" prompt below
+STRING  ask         ; Constant that contains "want graphics" minus default resp.
+STRING  temp        ; Stores the token of what user inputed.
+STRING  default_yes ; Used to store setting from PCBOARD.DAT for the default
+STRING  esc         ; Constant used instead of chr(27)
+STRING  cr_lf       ; Constant used instead of chr(13)+chr(10)
+BOOLEAN compatible  ; Used to determine is sysop wants to use compatible mode.
+STRING  nonews      ; For parsing out what user enters
+STRING  nowelc      ; For parsing out what user enters
+STRING  ansi        ; For parsing out what user enters
+STRING  rip         ; For parsing out what user enters
+STRING  noansi      ; For parsing out what user enters
+STRING  autoansr    ; Used to skip graphics question if graphics detected
+STRING  rip_detect  ; Used to disable RIPscrip checking.  For those without RIP.
+STRING  allow_quick ; Used to enable or disable the "quick" login feature.
+STRING  RIPVer      ; IF RIPscrip, contains the version num. of term software
+STRING  RIPVen      ; If RIPscrip, contains the vender code of term software
+
+temp        = ""                        ; Initialized to non null for WHILE
+cr_lf       = chr(13)+chr(10)
+rip_detect  = true                      ; Assume RIPscrip detection.
+allow_quick = "Q"                       ; Add to the valid entry string
+esc         = chr(27)                   ; define the ESC character
+
+; Analyze Command line passed
+
+temp=gettoken()
+while (temp != "") DO
+   if (mid(upper(temp),2,3) = "NOR") then              ;Check for RIP
+      rip_detect = false
+   else if (mid(upper(temp),2,3) = "NOQ") then         ;Force Welcome screen
+      allow_quick = ""
+   else if (mid(upper(temp),2,1) = "C") then           ;Compatible mode
+      compatible = true
+   else if (mid(upper(temp),2,1) = "A") then           ;Force best answer
+      autoansr = true
+   endif
+   temp=gettoken()
+endwhile
+temp="" ; Return temp how we found it.
+
+;SPRINTLN "RipDetect: ", rip_detect
+
+; /* If the user is connected locally then default automatically to ANSI
+;    capable.
+
+   if (onlocal()) then
+      hasansi=TRUE
+   endif
+
+      if (CHECKRIP() & rip_detect) then
+         hasrip  = TRUE
+         hasansi = TRUE
+         RIPVer  = LEFT(RIPVER(),4)
+         RIPVen  = RIGHT(RIPVER(),2)
+; Removed 09/06/95 in favor of using /AUTO in the RIPkit.  This allows the
+; /AUTO parameter to work with people who want RIP but not the RIPkit.
+;         kbdstuff "R" + cr_lf
+      else
+         if (ANSION()) hasansi = TRUE
+      endif
+      
+:PostDetection
+
+; /* Assign ASK variable to prompt used for ANSI.  The default if enter is
+;    pressed is ommitted so that it may be built according to their ANSI
+;    capabilities.                                                       */
+
+ask = "Do you want graphics (Enter)="
+
+; /* Read line #257 in PCBOARD.DAT to find out what the default for the
+;    "Do you want graphics" prompt is.  Store the result in DEFAULT_YES.
+
+default_yes = READLINE(PCBDAT(),257)
+
+; /* If the default to the "Do you want graphics prompt is "Yes", then
+;    inform the sysop via a message that the system is configured improperly. */
+
+IF (default_yes) THEN
+   SPRINTLN
+   SPRINTLN "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿"
+   SPRINTLN "³ Your system is improperly configured for use with the GRAF-D.PPE  ³"
+   SPRINTLN "³ file.  You have configured it to default to Yes for the 'Do you   ³"
+   SPRINTLN "³ want graphics' prompt.  You need to change that setting to 'N' in ³"
+   SPRINTLN "³ PCBSetup | Configuration Options | Configuration Switches.        ³"
+   SPRINTLN "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+   SPRINTLN
+   PRINT "Do you want graphics (Enter)=yes"
+   END
+ENDIF
+
+; /* If the user is capable of ANSI, then default for the "want graphics"
+;    prompt will be Yes, otherwise, the default is set to "N".  The point
+;    in asking the question is to enable the user to still choose if they
+;    wish to see color or not, but if they do not know how to answer the
+;    question, then the default will give them color if they are capable
+;    of handling it.
+
+IF (hasansi) THEN
+
+    IF (hasrip) THEN
+       if (compatible) then
+          println cr_lf + esc+"[45;30m²±°"+esc+"[37;1m     RIPscrip detected and it will be the default    "+esc+"[0m"+esc+"[45;30m °±²"+esc+"[0m"
+       else
+          ask=ask+"RIPscrip"
+       endif
+    ELSE
+      if (compatible) then
+         println cr_lf + esc+"[45;30m²±°"+esc+"[37;1m     ANSI detected and it will be the default    "+esc+"[0m"+esc+"[45;30m °±²"+esc+"[0m"
+      else
+         ask=ask+"yes"
+      endif
+   ENDIF
+
+   if (compatible) ask = ask + "default"
+
+ELSE
+   if (compatible) then
+      println cr_lf + "[* No graphics capabilities detected.  This will be the default *]"
+      ask = ask + "default"
+   else
+      ask=ask+"no"
+  endif
+ENDIF
+
+if ((autoansr & ! hasansi)  | !autoansr) then         ; Skip if user has ANSI and AUTO stuff is enabled
+
+   INPUTSTR ask,graphdef,07,6,"SR"+allow_quick,LFBEFORE+LFAFTER+STACKED+UPCASE+YESNO
+   IF (graphdef="" & !hasansi) graphdef=NOCHAR()
+
+   ; /* Now that the "want graphics" prompt has been faked so that the default
+   ;    value could be controlled, it is time to stuff the users response to
+   ;    the fake prompt to the real prompt.  This inludes the "Q and NS"
+   ;    parameters.                                                           */
+
+   if (instr(graphdef,"NS")) then
+      nonews="NS"
+      graphdef=left(graphdef,instr(graphdef,"NS")-1)+right(graphdef,len(graphdef)-(instr(graphdef,"NS")+1))
+   endif
+
+   if (instr(graphdef,yeschar())) ansi = yeschar()+";"
+   if (instr(graphdef,nochar())) noansi = nochar()+";"
+   if (instr(graphdef,"Q")) nowelc = "Q;"
+   if (instr(graphdef,"R")) rip = "R;"
+
+endif
+
+   if (hasrip & noansi = "" & ansi = "") then
+      rip = "R;"
+   else if (hasansi & noansi = "" & rip = "") then
+      ansi = yeschar()+";"
+   endif
+
+   if (rip != "" & ansi != "") rip = ""
+   if (rip != "" & noansi != "") rip = ""
+   if (ansi != "" & noansi != "") ansi = ""
+
+KBDSTUFF rip+ansi+noansi+nowelc+nonews
+
+:END                                    ; end of script

@@ -1,0 +1,14 @@
+; Get input from the caller.  Once input has been received, send the RIPscrip
+; sequences to clear the screen.
+
+STRING Response
+
+INPUTSTR "_", Response, @X07, 70, MASK_ASCII(), UPCASE
+
+IF (Response = "") KBDSTUFF CHR(13)
+
+KBDSTUFF Response
+
+PRINT CHR(2) + "|*"   ' Clear the graphics and text viewports.
+
+END

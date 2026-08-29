@@ -1,0 +1,225 @@
+DECLARE FUNCTION checkDSZLog() BOOLEAN
+DECLARE FUNCTION zmodAvail() BOOLEAN
+DECLARE PROCEDURE clearPCBSys()
+DECLARE PROCEDURE createPCBSys()
+DECLARE PROCEDURE displayPrompt()
+DECLARE PROCEDURE downloadRIPTerm()
+
+string  temp
+string  Response
+string  RIPVer
+string  RIPVen
+string  LocOfPCBML
+string  Directory
+string  TermFileName
+string  PathToZMod    ; To allow swapping
+string  Prompt
+string  backspace, bs, sp
+int     counter
+int     RIPLang
+integer numticks
+boolean HasRIP
+boolean RIPDetect
+boolean FoundZMod
+
+HasRIP    = FALSE
+RIPDetect = TRUE
+FoundZMod = FALSE
+bs        = chr(8)   ; backspace character
+sp        = chr(32)  ; space character
+backspace = bs+sp+bs
+Prompt    = "Enter Language # to use (Enter)=no change"
+
+
+   ; Check the command line to see if we have disabled RIP checking.  If so,
+   ; set the "RIPDetect" variable to FALSE.
+
+   temp = UPPER(GETTOKEN())
+
+   WHILE (temp != "") DO
+      IF (MID(temp,2,3) = "NOR") RIPDetect = FALSE                      ; Skip RIPDetection
+      IF (UPPER(LEFT(temp,6)) = "/FILE:") TermFilename = MID(temp,7,LEN(temp)-6) ; Get Filename of RIPTerm
+      temp = UPPER(GETTOKEN())
+   ENDWHILE
+
+   ; If we are not supposed to do the RIP/ANSI detection, we won't (bahaha).
+
+   IF (!RIPDetect) GOTO EndOfPPE
+
+   ; If the user is local, we do not need to query for RIP/ANSI support.
+
+   IF (ONLOCAL()) GOTO EndOfPPE
+
+  ; Print the PPE name as an identifier.  This is done mainly for the benefit
+  ; of Stan (the Fido programmer) so he knows a compatible version of the
+  ; PPE is being used.
+
+    mprint PPENAME()
+
+    FOR counter = 1 to LEN(PPENAME())
+       mprint backspace
+    NEXT
+
+   ; Now let PCBoard check to see if the caller is RIP capable and set the
+   ; appropriate variables.
+
+    if (CHECKRIP()) then
+      hasrip  = TRUE
+      RIPVer  = LEFT(RIPVER(),4)
+      RIPVen  = RIGHT(RIPVER(),2)
+    else
+      hasrip  = FALSE
+    endif
+
+:EndOfPPE
+
+; If the caller has RIP, read the PCBML.DAT file (PCBSetup | File Locations |
+; Configuration Files) to see if there is a language defined with a .RIP
+; extension.  If so, use it.
+
+   Counter = 0
+   LocOfPCBML = READLINE (PCBDAT(), 49)
+   FOPEN 1, LocOfPCBML, O_RD, S_DN
+   FGET 1, temp
+   WHILE (!FERR(1)) DO
+      Counter = Counter + 1
+      IF (INSTR(temp, ".RIP")) THEN
+         RIPLang = Counter
+'         SPRINTLN "RIPLang# = ", Counter
+         IF (HasRIP) kbdstuff RIPLang
+      ENDIF
+      FGET 1, temp
+   ENDWHILE
+   FCLOSE 1
+
+; If we found a language with a RIP extension, the keyboard would have been
+; stuffed making the PPLBUFSIZE function return a non-zero value.  If nothing
+; is in the keyboard buffer, prompt for the language to select.  If the
+; RIPScrip language is selected, warn the caller they are not currently
+; capable of RIPScrip and prompt ask them if they want to download it.
+
+IF (PPLBUFSIZE() = 0) THEN
+   Response = ""
+   INPUTSTR Prompt, Response, @X07, 2, MASK_NUM(), LFBEFORE + LFAFTER
+   IF (Response = "") Response = chr(13)
+IF (Response = RIPLang) downloadRIPTerm()
+   kbdstuff Response
+ENDIF
+end
+
+PROCEDURE DownloadRIPTerm()
+
+'
+' Display File Summary
+' --------------------  
+' LANGPRMP.INT - Intro to the caller to let them know they are not RIP
+'                capable.  After this file, either LANGPRMP.NAV or 
+'                LANGPRMP.DRT is shown.
+' LANGPRMP.NAV - RIP language selected but no RIPTerm program available via
+'                the /FILE command line switch.  Default language selected
+'                instead.
+' LANGPRMP.DRT - RIPterm program avaialble.  Ask if user wants to download.
+'                Question must be asked in the file and file must end with
+'                EOF marker to prevent the prompt being moved to the next
+'                line down.
+' LANGPRMP.SUC - Displayed if the download is successful. 
+' LANGPRMP.ABT - Displayed if the download is aborted.
+'
+
+NEWLINES 2
+DISPFILE PPEPATH() + PPENAME() + ".INT", DEFS
+IF (!zmodAvail()) THEN
+   :SelectDefault
+   NEWLINES 2
+   OPTEXT RIPLang
+   DISPFILE PPEPATH() + PPENAME() + ".NAV", DEFS
+   kbdstuff CHR(13)
+   END
+ELSE
+   NEWLINES 2
+   DISPFILE PPEPATH() + PPENAME() + ".DRT", DEFS
+   Temp = YESCHAR()
+   INPUTYN "", Temp, @X0A
+
+   IF (Temp = NOCHAR()) GOTO SelectDefault
+
+   WRUNET pcbnode(), "T", "RIPDownloader", "RIPTERM DOWNLOADER", TermFilename, ""
+   ADJTIME 75
+   createPCBSys()
+   SHELL TRUE, Temp, "PCBSZ.BAT", "Null Null " + TermFilename + " /FORCE"
+   Temp=checkDSZLog()
+   NEWLINES 2
+   IF (Temp) THEN
+      DISPFILE PPEPATH() + PPENAME() + ".SUC", DEFS
+   ELSE
+      DISPFILE PPEPATH() + PPENAME() + ".ABT", DEFS
+   ENDIF
+   PRINTLN
+   DISPFILE PPEPATH() + PPENAME() + ".BYE", DEFS
+   clearPCBSys()
+   DELAY 36
+   HANGUP
+   END
+ENDIF
+
+ENDPROC
+
+
+FUNCTION zmodAvail() BOOLEAN
+  IF (EXIST(".\PCBSZ.BAT")) THEN
+     IF (EXIST(TermFileName)) THEN
+        zmodAvail=TRUE
+     ELSE
+        zmodAvail=FALSE
+        LOG PPENAME()+": PCBSZ.BAT not in current directory.", FALSE
+     ENDIF
+  ELSE
+     Temp = GETENV("PATH")
+     TOKENIZE Temp
+
+     Directory = RTRIM(GETTOKEN(), "\")
+
+     WHILE (Directory != "") DO
+        IF (EXIST(Directory + "\PCBSZ.BAT")) THEN
+           IF (EXIST(TermFileName) &! LOGGEDON()) THEN
+              zmodAvail=True
+           ELSE
+              zmodAvail=False
+           ENDIF
+           PathToZmod = Directory
+        ENDIF
+        Directory = RTRIM(GETTOKEN(), "\")
+     ENDWHILE
+  ENDIF
+
+ENDFUNC
+
+PROCEDURE createPCBSys()
+   COPY "PCBOARD.SYS","PCBSYS.$$$"
+   WRUSYS                    ; Output and delete a USERS.SYS to get the
+   DELETE "USERS.SYS"        ; PCBOARD.SYS updated (DTE/DCE speed).
+   FOPEN 2, ".\PCBOARD.SYS", O_WR, S_DN
+   FSEEK 2, 25, SEEK_SET
+   FWRITE 2, CHR(1) + CHR(0), 2
+   FWRITE 2, LEFT("RIPDownloader", 15), 15
+   FSEEK 2, 84, SEEK_SET
+   FWRITE 2, LEFT("RIPTERM DOWNLOADER", 25), 25
+   FCLOSE 2
+ENDPROC
+
+PROCEDURE clearPCBSys()
+   COPY "PCBSYS.$$$", "PCBOARD.SYS"
+ENDPROC
+
+FUNCTION checkDSZLog() BOOLEAN
+   FOPEN 1, GETENV("DSZLOG"), O_RW, S_DN
+   FGET 1, Temp
+   IF (LEFT(Temp,1) = "z") THEN
+      checkDSZLog=TRUE
+   ELSE
+      checkDSZLog=FALSE
+   ENDIF
+   FCLOSE 1
+   DELETE GETENV("DSZLOG")
+ENDFUNC
+

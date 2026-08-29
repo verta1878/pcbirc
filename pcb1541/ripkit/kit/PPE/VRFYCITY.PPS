@@ -1,0 +1,9 @@
+STRING info, filename
+
+info = SCRTEXT(1,GETY()-3,25,FALSE)
+info = RTRIM(info," ")
+info = info + " from " + SCRTEXT(1,GETY()-2,25,FALSE)
+
+optext info
+filename = GETENV("PCBRIP") + "\VRFYCITY"
+DISPFILE filename, LANG

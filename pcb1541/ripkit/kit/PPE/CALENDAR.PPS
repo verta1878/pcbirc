@@ -1,0 +1,19 @@
+*******************************************************************************
+*                                                                             *
+*                             File Calendar                                   *
+*                 Front-end code for selecting file date                      *
+*                                                                             *
+*              Copyright (C) 1994 Clark Development, Inc.                     *
+*                         All Rights Reserved                                 *  
+*                                                                             *
+*******************************************************************************
+
+getuser
+
+integer curYear, curMonth, curDay
+
+curYear = year(u_ldir())
+curMonth = month(u_ldir())
+curDay = day(u_ldir())
+
+;$INCLUDE:CALENG.PPS

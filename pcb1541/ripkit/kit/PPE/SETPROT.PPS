@@ -1,0 +1,58 @@
+INT     Count
+STRING  Line(23)
+STRING  TempText
+INT     NumProtocols
+INT     XOff, YOff
+INT     XBegin, YBegin
+
+XOff = 12
+YOff = 8
+
+; Scan the local PCBoard screen for possible protocol canidates.  A protocol
+; must begin with (x) where "x" is the protocol letter.  If a valid protocol
+; is found store the letter in the "Line" array.
+
+FOR Count = 1 TO 23 
+   TempText = SCRTEXT(4,Count,3,FALSE)
+   IF (LEFT(TempText,1) = "(" & RIGHT(TempText,1) = ")") THEN
+      NumProtocols = NumProtocols + 1
+      Line(NumProtocols) = MID(TempText,2,1)
+   ENDIF
+NEXT
+
+; Setup the mouse regions for the screen.  In other words, let the user click
+; on something.
+
+FOR Count = 1 TO NumProtocols
+   XBegin = XOff
+   YBegin = YOff + Count + 1
+;   MOUSEREG Count, XBegin, YBegin, 68, YBegin + 1, 8, 8, TRUE, FALSE, Line(Count) + "^M"
+    MOUSEREG Count, XBegin, YBegin, 68, YBegin + 1, 8, 8, TRUE, FALSE, Line(Count)
+NEXT
+
+; Turn the cursor off
+
+GOSUB RIPCursOff
+
+; Get input from the mouse regions (the protocol).
+
+TempText = ""
+WHILE (LEN(TempText) < 1) DO
+   TempText = INKEY()
+ENDWHILE
+
+; Turn the cursor back on
+
+GOSUB RIPCursOn
+
+IF (TempText = "") TempText = CHR(13)
+
+KBDSTUFF UPPER(LEFT(TempText, 1))
+
+FRESHLINE
+PRINTLN "!|*|#|#|#"
+
+END
+
+'Include source for turning RIP cursor on or off
+;$INCLUDE:RIPCURS.PPS

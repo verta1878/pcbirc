@@ -33,6 +33,7 @@ its raw distro is not in devtools.)
 |---|---|
 | `386MAX-803.7z` | Qualitas 386MAX 8.03 (2 floppy images). The 32-bit DPMI host the MSC 7.0 DOS compiler ("3216" passes) requires. Build-time tool for PCBKMS Route A only. Proprietary (abandonware). NOT a 1541 dependency - see todo/SDK-1541-OPENSOURCE-MIGRATION.md. |
 | `386max.7z` | 386MAX source code from https://github.com/sudleyplace/386MAX (GPLv3). Open-source path for PCBKMS Route A. |
+| `d32a.7z` | DOS/32A Advanced DOS Extender v9.1.2 source + prebuilt binaries (github.com/amindlost/dos32a, Adapted Apache 1.1 license). The DPMI host the crew uses for forward Watcom-based work (delta154, irc1541). Drop-in replacement for DOS/4GW. Runtime binaries staged into `PCBBLDBT.IMG` at `C:\D32A\` for immediate use; compile-from-source is a roadmap task (needs TASM 5.0 + Watcom C 11.0). |
 
 ### Toolkit source
 | Archive (here) | Extracted / curated form | Notes |

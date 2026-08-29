@@ -1,0 +1,30 @@
+------------------------------------------------------------------------------
+ RIPKit for PCBoard:  Updating from v1.11 to v1.20
+==============================================================================
+
+Only a few steps are necessary for to upgrade to v1.20 of the RIPKit from
+version 1.11.
+
+   1)  Make sure you are running v15.21 of PCBoard or higher
+
+   2)  Unzip RIPKIT.ZIP to the \PCB\RIP subdirectory using the -n switch.
+       If the RIP files are stored in C:\PCB\RIP\, perform these steps:
+
+           CD\TEMP (where you may have unzipped RIPKT120.ZIP)
+           PKUNZIP -n -o RIPKIT.ZIP C:\PCB\RIP\
+
+   3)  Unzip the CMDFILES.ZIP file to the directory where your command
+       display files are stored.  See PCBSetup | File Locations | System
+       Files if you are unsure.
+
+   4)  Copy the PCBTEXT.RIP file in the \PCB\RIP\ subdirectory to the
+       directory where the PCBTEXT files are stored for your system.
+       PCBSetup | File Locations | System Files will tell you the location
+       if you are unsure.
+
+       Once you have copied the file, make sure the size of your PCBTEXT.RIP
+       is 59,120 bytes.  That is the size of the file for use with v15.2.
+
+
+*** NOTE:  Read HISTORY.TXT if you want a detailed listing of what has been
+***        updated.

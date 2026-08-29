@@ -1,0 +1,9 @@
+BIGSTR  CmdLine
+
+CmdLine = TOKENSTR()
+
+CmdLine = REPLACESTR (CmdLine, "^M", chr(13))
+
+KBDSTRING CmdLine
+
+END

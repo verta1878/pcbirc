@@ -1,0 +1,196 @@
+------------------------------------------------------------------------------
+ RIPKit for PCBoard
+==============================================================================
+
+
+
+
+Requirements
+---------------------------------------
+
+   * PCBoard v15.2
+   * A fair amount of experience with a RIPaint type of program and PCBoard
+   * Plenty of time (you will now have more screens to update for your system).
+
+
+The Goal Of RIPKit
+---------------------------------------
+
+   The goal of RIPKit is to simply provide PCBoard SysOps with a STARTING
+   POINT (capitalized for emphasis) for "RIPping" their systems.  By no
+   means is this kit designed to be a hands-off / self-maintaining RIPscrip
+   add-in for PCBoard.
+
+   If you keep the focus of this product in mind, you'll understand the reason
+   we listed experience with a paint program and PCBoard as a requirement.
+   Without this experience, you'll quickly get lost in the complexity of a
+   heavily modified system for RIPscrip.
+
+
+Support For RIPKit
+---------------------------------------
+
+   RIPKit was put together by the technical support staff of CDC in some
+   of their free time between answering calls and messages.  As such, support
+   for the product is extremely limited.
+
+   Support for RIPkit can *only* be obtained via the Salt Air BBS.  Customers
+   asking questions via other means (e.g., fax or phone), will be referred
+   to the Salt Air BBS to ask their questions.
+
+
+Installation Instructions
+---------------------------------------
+
+1) Change to your \PCB directory.  Make a RIP directory by typing "MD RIP"
+   at the DOS prompt.  Change to the newly created RIP subdirectory and
+   unzip RIPKIT.ZIP using the following command:
+
+       PKUNZIP RIPKIT.ZIP -d
+
+   This will create the following new subdirectories:
+
+       \PCB\RIP\        - Where file replacements for PCBTEXT records are
+       \PCB\RIP\PPE\    - PPEs (and associated files) used in the RIPKit.
+       \PCB\RIP\MENUS\  - MNUs (and associated files) used in the RIPKit.
+       \PCB\RIP\DOCS\   - Documentation for RIPKit (Q&A, Common Concerns)
+
+   NOTE:  If your system involves a network, you only have to have one copy
+          of the RIPKit files.  If performance is a concern, store the RIPKit
+          files on each workstation of your network.
+
+2) Add the following line to AUTOEXEC.BAT (remember to do this to each
+   machine in your system).
+
+       SET PCBRIP=C:\PCB\RIP
+
+   If your files are not in C:\PCB\RIP\, enter the appropriate directory.
+   For example, Salt Air, stores all of the RIPKit files on the server in
+   the H:\PCB\RIP\ subdirectory.  Consequently, our line in AUTOEXEC.BAT
+   looks like this:
+
+       SET PCBRIP=H:\PCB\RIP
+
+   NOTE:  Do *NOT* add the trailing backslash to this environment variable.
+          If you do, the RIPKit stuff will not work.  Throughout the
+          PCBTEXT.RIP (and several display files), relative references
+          are made.  Example:
+
+             %%PCBRIP%\DISPLAYIT
+
+          When PCBoard substitutes the environent variable, the result is:
+
+             %C:\PCB\RIP\DISPLAYIT
+
+          Obviously, if you have the trailing backslash, the resulting
+          substutition is:
+
+             %C:\PCB\RIP\\DISPLAYIT
+
+          Since this is not a valid filename specification, it won't work.
+
+3) Move PCBTEXT.RIP from the \PCB\RIP subdirectory to your PCBTEXT
+   subdirectory.  If your system has a local copy of PCBTEXT for each node
+   or workstation, take that into consideration.
+
+4) Move WELCOME.RIP from the \PCB\RIP subdirectory to the directory where your
+   WELCOME file is.  If your system has a local copy of the WELCOME file for
+   each node/workstation, keep that in mind.
+
+   NOTE:  If you have changed the name of your WELCOME file to something else,
+          you will have to rename WELCOME.RIP to the name of your welcome file and
+          add a .RIP extension.  For example, if PCBSetup | File Locations | Display
+          Files shows:
+
+             Name/Loc of WELCOME File          : C:\PCB\GEN\WELC
+
+          Rename your WELCOME.RIP to WELC.RIP after copying it to C:\PCB\GEN\.
+
+5) The next group of files relate to conferences.  The configuration for each
+   conference specifies where the User Menu (BRDM), SysOp Menu (BRDS), and
+   NEWS file are stored.
+
+   Move/Copy BRDM.RIP and BRDS.RIP to the same location as your BRDM and BRDS
+   files.  If you have changed the names of your BRDM and BRDS files, don't
+   forget to change the names of the .RIP counterparts.  For example, if your
+   Main Board Configuration screen shows:
+
+        Name/Loc of User's Menu     : C:\PCB\GEN\USERS
+        Name/Loc of Sysop's Menu    : C:\PCB\GEN\SYSOP
+
+   Rename BRDM.RIP to USERS.RIP and BRDS.RIP to SYSOP.RIP after copying/moving
+   them to the appropriate subdirectory.
+
+   Do the same thing for the NEWS.RIP file making sure it gets copied to the
+   right directory and the name of the corresponding .RIP file is correct.
+   Once you have taken care of the placement and naming of the NEWS.RIP file,
+   edit the file with a text editor because it hard codes the name of your
+   actual NEWS file.
+
+   What happens with the RIPKit is PCBoard finds the NEWS.RIP, displays the
+   NEWS_.RIP located in the \PCB\RIP\ subdirectory (to setup the display
+   for RIP, the text window, etc.).  Finally, your normal NEWS file is
+   displayed.
+
+6) Unzip the CMDFILES.ZIP (located in \PCB\RIP) into the directory specified by
+   the following field in PCBSetup | File Locations System Files:
+
+        Location of Command Display Files : C:\PCB\CMDFILES\
+
+   Using this example, you would type:
+
+        PKUNZIP \PCB\RIP\CMDFILES.ZIP C:\PCB\CMDFILES
+
+   NOTE:  If you do not have a directory specified in PCBSetup, enter one
+          (like \PCB\CMDFILES) and create the directory if necessary.
+
+7) Update PCBML.DAT with RIP Language (Check all nodes to make sure they are
+   configured to run multiple languages, and that they all point to the same
+   PCBML.DAT.  Example PCBML.DAT:
+
+              Language             Extension  Country  CodePage  Yes  No
+        อออออออออออออออออออออออออ  อออออออออ  อออออออ  ออออออออ  อออ  ออ
+        1 - Salt Air (Customized)                                 Y    N
+        2 - Automated (Standard)      STD                         Y    N
+        3 - Sub-menus                 SUB                         Y    N
+        4 - RIPscrip                  RIP                         Y    N
+
+   NOTE:  For these language changes to have any effect, you MUST have
+          enabled multi-lingual support in PCBSetup | Configuration
+          Options | System Control. Without that option enabled, callers
+          will not be presented with the available list of languages and
+          therefore will never get a chance to go into RIPscrip.
+
+8) Unzip FLAG32R.ZIP in the \PCB\RIP subdirectory to your \PCB\FLAG
+   subdirectory (unless you've already installed FLAG.PPE).  Once this
+   is done, modify record 549 in your *PCBTEXT.RIP* to look like the
+   following:
+
+    ีออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+    ณ   Record No.:  549          Record Length:  60        Justi
+    รฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ณ(@TIMELEFT@ min left), (H)elp, (V)iew, (F)lag, More
+    ณ!C:\PCB\FLAG\FLAG.PPE
+    ิออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+   NOTE:  You may already have David Terry's FLAG.PPE installed on your
+          system.  If you do, simply update your PCBTEXT.RIP (record
+          549) with the appropriate information.
+
+9) Modify record 387 in the default PCBTEXT file.  This record is the
+   "Enter Language # to use" prompt.  You want this record to read:
+
+    ีออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+    ณ   Record No.:  387          Record Length:  56
+    รฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ณEnter Language # to use (Enter)=no change
+    ณ!%PCBRIP%\PPE\LANGPRMP.PPE
+    ิออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+    
+   The LANGPRMP.PPE auto-detects if the user has RIP capabilities.  If
+   so, it automatically picks the language number which is defined as
+   having a .RIP extension in PCBML.DAT.
+
+10) Read CONCERN.DOC included with the RIPKit.  It contains valuable
+    information regarding adding RIPKit to *YOUR* system.
+

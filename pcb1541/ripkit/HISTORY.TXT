@@ -1,0 +1,327 @@
+v1.20 (9/23/95)
+----------------
+ - Updated the underlying menu structure \PCB\RIP\MENUS to use the CMD and
+   CLST option types in place of STFQ and SQNR.  You should not notice a
+   difference operationally, but these are better option choices for the
+   menu.
+
+ - Updated the USRSRCH.RIP file to invert the "ALL" button when selected.
+
+ - Made a change to PCBTEXT.RIP (record #149) to use the /AUTO parameter
+   with GRAF-D.PPE.  This change is a result of a customer requesting the
+   use of /AUTO where they were using RIP but not the RIPKit.  As it stood,
+   the /AUTO parameter did not work with RIP detection, or more correctly it
+   stuffed an extra "R;" when it was used.  Fixed.
+
+ - Updated NOSYSCH.RIP and WELCOME_.RIP screens to invert the buttons
+   when clicked.
+
+ - Updated LMR.RIP and SPECMSG.RIP screens in the PCB\RIP\PPE subdirectories.
+   The buttons on these screens did not invert when clicked and therefore
+   made it difficult for the user to know when it was actually clicked.
+   
+ - Updated FNAME.RIP to better support both the v1.54 and v2.00 editions
+   of RIPTerm.  Prior to this change, a gap would appear when calling
+   in to v2.x terminal programs.  This is a result of a change in the
+   RIPscrip specification.
+
+ - Replaced record #598 in PCBTEXT.RIP to run a PPE instead.  This record
+   asks the caller to confirm whether their name and city information is
+   correct.  With the PPE running, we can now display the city and name
+   information that was not previously available.  The PPE that is running
+   is called VRFYCITY.PPE and is in the \PCB\RIP\PPE subdirectory.
+
+ - Updated PPEERLO_.RIP to display the error message better.  As it used to
+   be in all prior releases of RIPkit, the PPE name would cause the text to
+   exceed the limits of the box.  By reducing the font, this problem is less
+   likely to happen.
+
+ - In testing the above problem, I also found out the backslashes in a PPE
+   name will not display.  The reason this happens is that the backslash
+   character is used in the RIPscrip specification to signify the extension
+   of a command to the next line in the file.  There is not much that can be
+   done, but please be aware of it.
+
+ - Updated PREFILE_.RIP in the RIP\PPE subdirectory to save the mouse
+   fields.  This change is required for the next entry regarding FLAG.PPE.
+
+ - Made changes to FLAG.PPE that prevent a "Too many mouse fields" message
+   from appearing in RIPTerm.  Previously, FLAG made no attempts to remove
+   the mouse fields it created.  Therefore, after several pages of file
+   listings had been displayed, the maximum number of mouse fields may
+   have been reached.  The fix was to kill just the mouse fields created
+   by FLAG.PPE.
+ 
+ - Modify the FNAME.RIP, LNAME.RIP, and LPASWRD.RIP files to accomodate
+   RIPTerm v2.0.  Basically, I added some black filled rectangles to the
+   screen to display the field for entry.  This was not required in RIPTerm
+   v1.54 but is in the latest release.  Since this change does not cause
+   any problems with 1.54 users, it's worthwhile.
+
+ - DLPROMPT.PPE (the full-screen box showing files for download) was not
+   working properly.  A simple recompile of the PPE made it start working
+   again. Oddly enough this was discovered on Salt Air where the PPE had not
+   been recompiled since the 1.10 release.  Either way, this is a problem
+   only noticed on Salt Air but one that I did not want to see spread
+   around. Please let us know if you experience on your system.
+
+ - Extensive changes were made to WARNOFF.RIP due to a recently discovered
+   problem with warning at logoff.  When the system is configured to warn at
+   logoff, the Yes and No button would appear, but no text.  This problem
+   was worked around by giving the text a background in the WARNOFF.RIP
+   file.
+
+ - MORE.PPE has been updated to prevent carrier detect snafus.  Let me
+   explain.  There are areas within PCBoard where carrier detect checking
+   is turned off.  This is normal, expected, and always handled properly.
+
+   The situation gets sticky, however, when you throw a lot of PPEs into
+   the picture; in particular a PPE waiting endless for user input such
+   as MORE.PPE.  The loop checking for a keypress now also checks for
+   carrier detect.  If it's not on, it automatically answers "N" to the
+   more prompt therefore exiting the PPE and returning control back to
+   PCBoard.
+
+ - Made a change for v1.10 in regards to the LANGPRMP.PPE--the program which
+   automatically detects RIP and selects the language.  If you pass the
+   parameter /FILE:[drive]:[path][filename] pointing to where a RIP 
+   terminal program can be found, the RIPKit will send the file via
+   ZModem if caller selects the RIP language but is not capable of it. 
+
+   As I mentioned, this was in v1.10.  It was not until I went to go add
+   history for the next change that I realized I forgot to mention the
+   LANGPRMP changes.  The latest update externalizes the text displayed
+   to the caller when this event occurs.  The question asked of the caller
+   and the text displayed before and after a download are fully
+   customizable.  The following chart outlines the display files and 
+   their purpose:
+
+     Display File Summary
+     --------------------
+     LANGPRMP.INT - Intro to the caller to let them know they are not RIP
+                    capable.  After this file, either LANGPRMP.NAV or
+                    LANGPRMP.DRT is shown.
+     LANGPRMP.NAV - RIP language selected but no RIPTerm program available
+                    via the /FILE command line switch.  Default language 
+                    selected instead.
+     LANGPRMP.DRT - RIPterm program avaialble.  Ask if user wants to download.
+                    Question must be asked in the file and file must end with
+                    EOF marker to prevent the prompt being moved to the next
+                    line down.
+     LANGPRMP.SUC - Displayed if the download is successful.
+     LANGPRMP.ABT - Displayed if the download is aborted.
+
+ - The FL2VIEW.RIP file was modified to reset the screens when the Reset
+   button is clicked.
+ 
+ - Updated the CHKVIEW file to call the CLEARRIP file after the box is
+   displayed.  The graphics and text viewports will then be reset so any
+   text or programs used for viewing (PCBVIEW.BAT) will be properly
+   viewed. 
+
+ - Along with the item above, a program called GRAFMODE.EXE is included 
+   now with the archive.  It's only purpose is to set the errorlevel
+   based on the graphics mode the caller is in.  As of this writing the
+   valid modes are (CTTY, ANSI, GRAPHICS, and RIP).  A list of errorlevels
+   is printed each time the utility is run.  Using this utility in a batch 
+   file you can treat RIP callers differently than you treat others if so 
+   desired.  Source code is also included under the name GRAFMODE.CPP.
+
+   An example of how this may be used is best illustrated in a batch
+   file like PCBVIEW.BAT.  Because we are dealing with a combination
+   of graphics and text mode, it must be assured that the user sees
+   the viewed text before we return control to PCBoard.  This is done
+   by appending an @WAIT@ to the end of PCBVIEW.TXT (the file displayed
+   by PCBoard upon return of running PCBVIEW.BAT).  The following 
+   illustrates a sample modification:
+
+      :end
+      GRAPHMODE
+      if errorlevel==3 echo @WAIT@ >> PCBVIEW.TXT
+
+   What we have done is only append the @WAIT@ if the errorlevel of 
+   GRAFMODE is 3 which means the caller is in RIP mode.  It's that 
+   simple.
+ 
+ - Surprise.  Surprise.  Not everyone uses the "What brand of CPU" prompt
+   to find out what computer the user is using.  To better accomodate
+   you folks, I have included an alternate WHATCPU.RIP title appropriately
+   WHATCPU2.RIP.  This alternate file allows the user to enter any desired
+   text.  You may have to change the text in the RIP editor to better 
+   prompt the user on how to respond.
+
+ - Modified the BATUL-PR.RIP file to reset the graphics and text windows 
+   whenever the "Begin Upload" (formally "Continue") or "Goodbye After" 
+   buttons are pressed.  This way the upload drive information will be
+   displayed and it also serves to give the caller notice that the upload
+   is ready to proceed.
+ 
+ - Modified ADDTODB and THNKFIL to reset the page length counter.  This is
+   done to prevent annoying and unnecessary more prompts from displaying on
+   the screen.  For the curious, the page length counter was reset by 
+   sending an @POFF@ (turn more prompt off) followed by a successive @PON@
+   to turn the prompt back on. 
+
+ - Changed the name of FLAG.ZIP to FLAG32R.ZIP.  Prior versions of RipKit
+   were shipping with the FLAG PPE v3.2.  To operate properly in the RIP
+   environment, some small changes had to be made to the PPE.  The correct
+   version of FLAG is now included with this version and higher.
+ 
+ - Those of you who closely examined TESTFILE.RIP may have assumed you were 
+   losing characters.  Okay, it was just a case of happy fingers on my part.
+   In there the "Contine" was really supposed to be "continue".  Fixed.
+
+v1.11 (11/06/94)
+----------------
+ - In the previous release, the menu files for conferences were accidently
+   excluded.  While this had no effect on those upgrading from v1.00, it
+   did pose a problem for those installing for the first time.  Fixed.
+
+v1.10 (10/19/94)
+----------------
+ - Record #52 in PCBTEXT.RIP was not correct.  It made reference to a
+   NOSCRIP.PPE when it should have just been NOSCRIP (no extension).
+
+ - Fixed spelling mistakes in the following files:
+
+       SYSGRNT_.RIP
+       NOSYSCH.RIP
+       VCONMEM.RIP
+       PPEABRT_.RIP
+       RQRECPT.RIP
+       SYSREMV_.RIP
+       PPEEXPR_.RIP
+       RDPWSET.RIP
+       FILE.RIP        (\PCB\RIP\MENUS\ subdirectory)
+
+ - BATPRMPT.PPE had a bug in it which caused the "Edit Batch" button not
+   to work.  Fixed.
+
+ - SETPROT.PPE was not working properly if you manually entered a protocol
+   letter instead of using the mouse.  Made one small minor change to the
+   PPE which has fixed things.  When stuffing the keyboard, I make sure the
+   value is in upper-case.  Please keep an eye on this because I cannot
+   *logically* see how this fixed the problem yet every test I perform now
+   shows the problem to be fixed.
+
+ - Modified record #175 in PCBTEXT.RIP to reset the graphics and text
+   windows before printing the text.  Prior to this change, there is a
+   real good chance the user would not know you were trying to chat.
+
+ - Modified PREMSG.RIP to better ensure users will be in the 80x43 font
+   instead of the default font chosen in RIPterm.  For the curious what
+   was happening is PREMSG.RIP would set the text window size and font
+   and promptly reset the graphics and text windows.  Resetting the text
+   windows evidently restores the default set in RIPTerm.  This does not
+   cause a problem for callers who define 80x43 as their default font, but
+   does cause problems for callers who select something like 80x25 as
+   the default font.
+
+ - Record #676 in PCBTEXT.RIP was pointing to a display file called
+   CREAQWK.  The actual filename should have been CREATQWK (note the
+   missing T).  Fixed.
+
+ - VRFYCITY in the \PCB\RIP subdirectory still had a text window defined
+   where it should not.  Fixed.
+
+ - Fixed some misspellings in the PCBTEXT.RIP.  For example CREATQWK.RIP,
+   DESECONF.RIP.  These two entries in PCBTEXT.RIP were different than the
+   actual filename in DOS.
+
+ - The "Select All" and "Deselect All" buttons when selecting conferences
+   for scanning were not working properly.  Also, the DESECONF.RIP was set
+   to say "Deselecting ALL Conferences" when it should have just said
+   "Selecting ALL Conferences".
+
+ - Once the "Selecting All Conferences" screen was finally displaying,
+   it was staying on the screen making the screen look cluttered.  Remedied
+   this situation by moving the box to the bottom of the screen and also
+   converting it to be more like a pop-up box.  It will display for 3
+   seconds and then go away allowing PCBoard to display "streaming" dots
+   while conferences are being selected.
+
+   NOTE:  Because I had to make changes to the DESECONF.RIP file and it
+          was already improperly named, I took this opportunity to rename
+          it.  The new filename is SLCTALL_.RIP.  You will need to change
+          record #565 in PCBTEXT to reflect the name change and will want
+          to also delete DESECONF.RIP from your \PCB\RIP subdirectory.
+
+ - Many of the menu screens that were "out of order" if you used the TAB
+   key to select the buttons.  The buttons have been re-arranged to be in
+   a more logical order.
+
+ - Several PPEs turn the cursor off or on to enhance the display.  To help
+   centralize the PPL code and prevent duplication, I've included a source
+   file called RIPCURS.PPS.  This source file is included with the $INCLUDE
+   compiler directive in the following files: SETPROT.PPS, SLCTCNF.PPS.
+
+ - The PWCONF.RIP did not have a big enough text window to display the entire
+   password prompt properly.  Increased the size of the text window so the
+   "? (       )" could be printed properly within the space allowed.
+
+ - Fixed problems with records 51, 155, 639, 641, 646-648, 650-652, and 656.
+   Most records were lacking % signs to properly specify the PCBRIP
+   environment variable.
+
+ - Enhanced the CALDISP.RIP file in \PCB\RIP\PPE\ to give brief instructions
+   regarding how the objects on the screen are to be used.
+
+ - Fixed some more menu options which were not resetting the text windows
+   when they should.  In particular the file "View" and "Test" functions
+   in FILE.RIP were not resetting the screens.
+
+ - Modified SLCTCNF.PPS and recompiled to accomodate the changes made for
+   v15.2.  For those keeping score, v15.2 introduced the ability to support
+   long conference names and therefore the two column list of conferences
+   in the SELECT user command had to be modified to list just one column
+   on the screen.
+  
+ - Updated support for the new records in PCBTEXT (v15.2 additions).  The
+   new files are:
+
+        CREDGON      |
+        CREDGON_ RIP |___ Record #716
+        CRDOUT1      |
+        CRDOUT1_.RIP |___ Record #719
+        CRDOUT2      |
+        CRDOUT2_.RIP |___ Record #720
+        FOLOWUP  RIP      Record #737
+        POSTTO   RIP      Record #736
+        CAPCONF  RIP      Record #733
+        CAPMAX   RIP      Record #732
+        QWKATCH  RIP      Record #735
+        QWKPERS  RIP      Record #734
+
+ - Modified INVCONF_.RIP, CONFSEL_.RIP, CONFDES_.RIP, CNFJOIN_.RIP, and
+   CNFABND_.RIP to handle longer conference names.  This change was
+   necessary due to the long conference name support in v15.2.
+
+ - Also had to update the menus and rearrange the title information to
+   better accomodate long conference names.
+
+ - Added a new PPE (READATE) which takes advantage of the calendar engine
+   (CALENG.PPS).  It's simply used whenever someone requests to read from
+   a set date forward.  The separate PPE had to be used because the default
+   date is the last logon and not the last DIR scan as is the case with
+   CALENDAR.PPS.
+
+ - Updated the WELCOME.RIP file to show v15.2 instead of v15.1.  Chances
+   are you have already replaced the default screen with your own, but in
+   case you have not, you need to be aware of this change.
+
+ - Updated GRAF-D from version 2.20 to v2.31.  This new verison of
+   GRAF-D makes some changes in RIP/ANSI detection to accomodate the
+   internal Fido in v15.2+.
+
+ - The "NEW" button on the File menu was not resetting the screen on a
+   mouse click.  This was resulting in the new files list not being
+   seen.  Fixed.
+
+ - Modified the SLCTCNF.RIP file so the buttons now "invert" upon being
+   selected.  This gives the user a better sense as to if their mouse is
+   working or not.
+
+v1.00 (04/06/94)
+----------------
+ - Inital Release
+

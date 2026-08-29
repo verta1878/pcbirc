@@ -1,0 +1,15 @@
+STRING Response
+
+GETUSER
+
+DISPFILE GETENV("PCBRIP") + "\" + PPENAME(), LANG
+
+INPUTSTR "_", Response, @X0E, 12, MASK_PWD(), ECHODOTS + UPCASE
+
+IF (Response = "") Response = CHR(13)
+
+IF (U_PWD = Response) PRINT CHR(2), "|*|#|#|#"
+
+KBDSTUFF Response
+
+END

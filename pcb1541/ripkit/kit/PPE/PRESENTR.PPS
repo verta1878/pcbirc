@@ -1,0 +1,62 @@
+;*******************************************************************************
+;*                                                                             *
+;*                             PRESENTR.PPS                                    *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*   A press Enter  replacement PPE for use with the PCB-RIP kit.  A PPE is    *
+;*   necessary to save and restore the screen after a more prompt.             *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*                       Written by Steve Catmull                              *
+;*            Copyright (C) 1994 Clark Development Company, Inc.               *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*            Install in the PCBTEXT file in place of prompt #418              *
+;*                        !C:\PCB\PPL\PRESENTR.PPE                             *
+;*                                                                             *
+;*******************************************************************************
+
+;*******************************************************************************
+
+' Variable Declarations
+
+STRING rsp ' The users response
+STRING val ' The valid character mask
+
+'*******************************************************************************
+
+' Initializations
+
+LET val = " "
+
+;*******************************************************************************
+
+' Main Program
+
+IF (KBDBUFSIZE() | PPLBUFSIZE()) END
+
+' Display the "More" at the bottom of the screen in RIPscrip.
+PRINTLN "@POFF@"
+
+PRINTLN "!|10000$STW$"
+PRINTLN "!|1K|1B00000201E4030F0009080100000F07000000|w0010271610|Y02000500|1U078XHJ9N0000<>Click anywhere on this bar or press ENTER to continue.<>^M|#|#|#@PON@"
+
+' Get user response (no prompt because we are using RIP)
+INPUTSTR "_",rsp,@X0E,2,val,UPCASE+STACKED+ERASELINE+YESNO
+
+' We have the user's response so re-paste the screen 
+' the more bar.                   
+                                  
+PRINTLN                           
+PRINTLN  "!|10000$RTW$|#|#|#"
+
+' Stuff the keyboard with the user's response.
+KBDSTUFF chr(13)
+
+END
+
+;*******************************************************************************
+

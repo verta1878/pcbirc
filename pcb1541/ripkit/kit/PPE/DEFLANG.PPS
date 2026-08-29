@@ -1,0 +1,15 @@
+string  temp
+string  LocOfPCBML
+int     counter
+
+   LocOfPCBML = READLINE (PCBDAT(), 49)
+   FOPEN 1, LocOfPCBML, O_RD, S_DN
+   FGET 1, temp
+   WHILE (!FERR(1)) DO
+      Counter = Counter + 1
+      IF (MID(temp, INSTR(temp, ",")+1, 1) = ",") LANG Counter
+      FGET 1, temp
+   ENDWHILE
+   FCLOSE 1
+
+end

@@ -1,0 +1,19 @@
+*******************************************************************************
+*                                                                             *
+*                             Read Calendar                                   *
+*                 Front-end code for selecting read date                      *
+*                                                                             *
+*              Copyright (C) 1994 Clark Development, Inc.                     *
+*                         All Rights Reserved                                 *  
+*                                                                             *
+*******************************************************************************
+
+getuser
+
+integer curYear, curMonth, curDay
+
+curYear = year(u_ldate())
+curMonth = month(u_ldate())
+curDay = day(u_ldate())
+
+;$INCLUDE:CALENG.PPS

@@ -1,0 +1,198 @@
+Concerns / notes of interest of the RIPKit package
+=============================================================================
+
+There are items and situations in the RIPKit package you need to be aware of.
+First of all, you must understand that RIPScrip simply provides a graphical
+user interface over a standard text mode application.  Also keep in mind
+that RIPScrip is intentionally generic so it can be used by numerous
+different host/BBS programs.
+
+This documentation file outlines situations you may run into on your system
+and may need to modify.  It also discusses some items which could not
+easily be covered with RIPscrip.
+
+You will see items labeled as either a NOTE or a CONCERN.  A NOTE is an item
+which nothing could be done about but you should be aware of--these are NOT
+bugs.  CONCERNS are things you should be aware of in your system
+configuration and how they apply to the RIPKit.  There is only so much you
+can do with an INSTALL.BAT so read this section with great interest.
+
+******************************************************************************
+* PCBoard software is extremely flexible.  As such, we cannot cover every    *
+* concern or snag you may run into while adding the RIPKit to your system.   *
+* Our desire to keep this document up-to-date with problems and solutions    *
+* you run into.  If you want to share your experiences with us so we can     *
+* update the document file it would be greatly appreciated.  Send any        *
+* comments to SYSOP on Salt Air.                                             *
+******************************************************************************
+
+------------------------------------------------------------------------------
+CONCERN:  NEWUSER display file (PCBSetup | File Locations | Display Files)
+
+          After the NEWUSER file is displayed, PCBoard displays the
+          "Do you want to register with us" prompt.  With the RIPKit, this
+          prompt has been turned into a two button object.  This object
+          will pop-up at the bottom of the display.
+
+          The only time you will run into a problem with this is if your
+          NEWUSER file is more than 25 lines.  If your screen is longer
+          than 25 lines, the "Do you want to register" box will be printed
+          over the top of your NEWUSER screen which would impede on the
+          caller's ability to read it.
+
+          The easiest solution to this problem is to put an @WAIT@ at the
+          bottom of your NEWUSER file.  This could be undesirable though
+          because it affects your callers who do not call in using RIPmode.
+
+          If you want to only add the @WAIT@ for your RIP callers, add the
+          following line to the bottom of your NEWUSER file:
+
+              %%PCBRIP%\RIPENTER
+
+          This will display a "Press ENTER to Continue" prompt only if the
+          caller is in RIP mode.  Thanks to PCBoard's ability to display
+          language specific versions of display files, this will only
+          affect callers who select the RIP language and not your
+          regular callers
+
+-----------------------------------------------------------------------------
+CONCERN:  Potential logon problems ($$LOGON.BAT, Logon Questionnaire, Login
+          Security Files, Conference Intro Files).
+
+          Between the time the user enters his password and the time the
+          news file is displayed four activities could occur:
+
+             * A logon questionnaire could run
+             * $$LOGON.BAT (if it exists) will run
+             * A logon security file could be displayed (if found)
+             * The conference introduction file could be displayed (if found)
+
+          The first two items may or may not display noteworthy information
+          to the caller.  If so, you need to find a way to reset the graphics
+          and text windows so they can see this information.
+
+          The RIPKit has been designed to reset the screen after the user
+          enters their password.  Remember, PCBoard is flexible enough to
+          allow them to type in their login name and password all at the
+          first name prompt.  In this case, the screen would not be cleared.
+          One thing you can do to force the screen to be always reset is
+          to put the following text at the beginning of your logon
+          questionnaire:
+
+             %C:\PCB\RIP\CLEARRIP
+
+          This line will display a file called CLEARRIP.RIP located in
+          your RIPKit subdirectory.  Why did we specify CLEARRIP when
+          the filename really is CLEARRIP.RIP?  Remember, PCBoard supports
+          language specific displays when displaying files and with
+          RIPscrip, the user has selected (or had selected for them)
+          the .RIP language.  If you did not install your files to
+          C:\PCB\RIP\, do not forget to specify the right location.  For
+          those that are curious, the CLEARRIP.RIP file simply sends the
+          following RIPScrip sequence:
+
+             !|*|#|#|#
+
+          Since this is such a generic file, you can use it in other
+          areas of the system where you want to clear the screen.
+
+CONCERN:  Conference INTRO files and the screen clearing
+
+          With the RIPKit, the screen is normally cleared right after the
+          INTRO file is displayed.  Unless your callers can read *extremely*
+          quickly, they are going to have a hard time seeing your intro
+          screen.  How can you easily modify the INTRO files to pause
+          for your RIP callers but not for your other callers (because
+          their screen will not clear)?  On Salt Air, we simply added
+          the following line to all of the conference INTRO files:
+
+                %%PCBRIP%\RIPENTER
+
+          Like the LOGON questionnaire situation, we created a RIPENTER.RIP
+          file in the \PCB\RIP subdirectory.  If the caller has selected
+          the .RIP language, PCBoard will display the RIPENTER.RIP file.
+          Otherwise, nothing will be displayed to the caller.
+
+          By the way, a quick way to edit all of your INTRO files is to
+          use a utility like SST: the Supersonic Search Tool by Keith
+          Ledbetter.  Using this utility you can change to the drive
+          where you INTRO files are and type:
+
+                SST -c"edit &f" INTRO.*
+
+          This will find all of the INTRO files on the current drive and
+          edit them using the EDIT program.  We managed to update all 21
+          conference INTRO files on Salt Air in about 10 minutes using
+          this method.
+
+------------------------------------------------------------------------------
+CONCERN:  Additions to your system
+
+          Because the RIPscrip system is a face-lift of your current
+          system, you want to be keenly aware of any software or features
+          you have implemented on your system which do not come in the
+          default configuration of PCBoard.  We have tried to be as
+          thorough as possible in making the RIPKit easy to install
+          for the customers we were targeting.  There are tens of
+          thousands (if not hundreds of thousands) of way to configure
+          PCBoard and not all could be accounted for.
+
+          The best thing you can do is to call into your system  and
+          thoroughly check every feature the user can select.  This will
+          help ensure your users will be presented with a clean system
+          to work with.
+
+------------------------------------------------------------------------------
+CONCERN:  NEWASK Questionnaire
+
+          To reset the graphics and text windows at the beginning of your
+          NEWASK questionnaire, add the following line to the beginning
+          of your questionnaire:
+
+                C:\PCB\RIP\CLEARRIP
+
+          If your RIPKit directory is not in C:\PCB\RIP\, do not forget to
+          specify the appropriate directory.
+
+------------------------------------------------------------------------------
+CONCERN:  Command display files not showing when in the RIP Language
+
+
+
+
+
+------------------------------------------------------------------------------
+
+NOTE:     End of Message buttons appear on top of message being read
+
+          To effectively read messages, all user accounts must be set to
+          clear the screen between message.  If the user changes his
+          settings while in the RIPKit, a PPE automatically forces a
+          "Y" response to the question.
+
+          This does absolutely nothing for the user who has set this
+          response to "N".  These users will experience the problem listed
+          at the top of this item.
+
+------------------------------------------------------------------------------
+NOTE:     Viewing a file from the file menu
+
+          When you view a file from the file menu, PCBoard reprints the
+          "(H)elp, (1-xx), File List Command?" prompt.  I know this
+          prompt may confuse some of your callers but there is really
+          no easy solution that we see for getting rid of that prompt.
+
+          Our initial attempts hinged around stuffing the keyboard to get
+          out of that but let's just say that broke other things in the
+          system.  For now, recognize this as a limitation with RIPKit.
+
+------------------------------------------------------------------------------
+NOTE:     SysOp commands
+
+          PCB RipKit did not add any functionality for the SysOp commands
+          or functions of the BBS (Example: Using the 7 command to edit
+          user records).  That will have to be something to add manual if you
+          so desire.
+
+
+

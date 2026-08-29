@@ -31,9 +31,16 @@ hardware. Format: FAT16 hard-disk image with FreeDOS 1.3.
 ## Release naming
 
 The image ships as **`pcbbldbt.zip`** (contains `PCBBLDBT.IMG` +
-`PCBBLDBT.CONF` for DOSBox-X + a README). Version stamp goes in the
+[`PCBBLDBT.CONF`](PCBBLDBT.CONF) for DOSBox-X + a README). Version stamp goes in the
 zip name when it matters (`pcbbldbt-v2.zip`, etc.), not in the
 image filename (which stays generic across milestones).
+
+The shipped [`PCBBLDBT.CONF`](PCBBLDBT.CONF) already includes the
+DOSBox-X config knobs we've tested and validated (currently: `zero
+unused int 68h=true` under `[dos]`, which frees INT 68h for HX
+HDPMI use — see `todo/dosboxx-dpmi-failures.md` Failure #1).
+Additional config knobs get added there as they're proven, so a
+fresh clone gets the working environment automatically.
 
 ## Why not name it per toolkit version
 

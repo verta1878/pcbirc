@@ -1,0 +1,11 @@
+STRING Semaphor
+
+Semaphor = "PAUSE.NOW"
+
+; If the semaphor file exists, pop-up a "Press ENTER to Continue" prompt.
+; This way we can make sure the screen is seen before the screen is cleared.
+
+IF (EXIST(Semaphor)) THEN
+   WAIT
+   DELETE Semaphor
+ENDIF

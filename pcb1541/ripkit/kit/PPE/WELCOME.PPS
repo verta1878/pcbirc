@@ -1,0 +1,8 @@
+; The purpose of this PPE is very simple.  Get a carriage return and
+; nothing but a carriage return.
+
+STRING  Response
+
+WHILE (INKEY() != CHR(13)) 
+
+END

@@ -1,0 +1,58 @@
+
+STRING Prompt, Response, RIPFile, Param, Semaphor
+
+; Setup the constants.  Read the command line parameter and store it in a variable.
+; Finally, define the semaphore filename used for pausing.
+
+Param = UPPER(GETTOKEN())
+Semaphor = "PAUSE.NOW"
+
+; Being in RIPscrip mode it really is not that important to display the prompts
+; to the user (they will never see them).  SysOps on the other hand probably
+; want some sort of clue where they are at.  Check the command line parameters
+; passed to the PPE.  If it "BATCH", we are replacing record #550 in PCBTEXT.
+; If the value is "EDIT", we are replacing record #551.
+;
+; We also assign the Display file used to setup the RIPscreen.  This is
+; controlled by the "RIPFile" function
+
+
+; Check to see if we should pause before redisplaying the screen.
+
+CALL PPEPATH() + "CHKPAUSE.PPE"
+
+IF (Param = "BATCH") THEN
+   Prompt = "@X0A(A)bort, (E)dit, (G)oodbye, (L)ist, (P)rotocol, (Enter)=continue"
+   RIPFile = "BATDL-PR"
+ENDIF
+
+IF (Param = "EDIT")  THEN
+   Prompt = "@X0A(A)dd a File, (R)emove a File, (L)ist Batch, (Enter)=continue"
+   RIPFile = "EDITBTCH"
+ENDIF
+
+; Display the RIP file to the caller.  The file is in the subdirectory pointed
+; to by the PCBRIP environment variable so the GETENV function is extremely
+; useful here.
+
+DISPFILE GETENV("PCBRIP") + "\" + RIPFile, LANG
+
+; Get the input from the user.
+
+INPUTSTR Prompt, Response, @X0A, 1, MASK_ASCII(), LFBEFORE + UPCASE
+
+; Check the input.  If the user did not enter anything, stuff a carriage
+; return.  A response of "L" means the user wants to list files.  Since
+; there is no other way to stop the prompt from redisplaying (and clearing
+; the screen), we'll setup a semaphor file we can check at the beginning
+; of the PPE.
+
+IF (Response = "") Response = CHR(13)
+IF (Response = "L") THEN
+   FCREATE 1, Semaphor, O_RW, S_DN
+   FCLOSE 1
+ENDIF
+
+KBDSTUFF Response
+
+END

@@ -1,0 +1,114 @@
+;DECLARE PROCEDURE DispSetting()
+
+;Move the cursor 9 characters to the left
+
+CursorLeft = chr(27) + "[9D"
+
+;Turn the cursor off
+
+PRINTLN "!|10000$COFF$|#|#|#"
+
+;Display the current number (9 digits) 
+
+GOSUB DispSetting
+
+:GetObjectStatus
+
+WHILE (ObjPushed != "Z") DO
+  
+  ;Give the computer a chance to breathe.  No sense in continually polling
+  ;the keyboard when not necessary.
+
+;  DELAY 18
+
+  ;Get a character from the keyboard.  If it is one of the characters we are
+  ;looking for, we'll act on it.  Basically there is a key for entering your
+  ;own number, or you press a key to increase/decrease the value by 1, 10,
+  ;100, 1000, or even 10,000.
+  
+  ObjPushed = UPPER(INKEY())
+ 
+;  IF (LEN(ObjPushed) = 0)  THEN
+;     SPRINT "Skipping...(", ObjPushed, ") "
+;     CONTINUE   ; If no character, skip rest of the loop
+;  ENDIF
+
+  IF (ObjPushed = " ") GOTO GetValue
+
+  IF (ObjPushed = "A") LMR = LMR + 10000
+  IF (ObjPushed = "B") LMR = LMR + 1000
+  IF (ObjPushed = "C") LMR = LMR + 100
+  IF (ObjPushed = "D") LMR = LMR + 10
+  IF (ObjPushed = "E") LMR = LMR + 1  
+    
+  IF (ObjPushed = "M") LMR = LMR - 10000
+  IF (ObjPushed = "N") LMR = LMR - 1000
+  IF (ObjPushed = "O") LMR = LMR - 100
+  IF (ObjPushed = "P") LMR = LMR - 10
+  IF (ObjPushed = "Q") LMR = LMR - 1
+  
+  ;Check the value to make sure they do not exceed the limits PCBoard allows
+  ;you to enter. 
+  
+  IF (LMR > 999999999) LMR = 999999999
+  IF (LMR < 0)         LMR = 0
+
+  ;Set the message numbers to the low message number, high message number, 
+  ;or undo.
+  
+  IF (ObjPushed = "W") LMR = LOMSGNUM()    ; Low 
+  IF (ObjPushed = "X") LMR = HIMSGNUM()    ; High
+  IF (ObjPushed = "Y") LMR = OrigLMR       ; Undo
+
+  ;Display the current setting of the LMR.
+  
+  ;DispSetting()
+  GOSUB DispSetting
+  
+  ;Delay for three clock ticks so the computer has a chance to breathe.
+
+  DELAY 3
+
+ENDWHILE
+
+
+  ;Were out of the loop (no I'm not running for political office), so stuff
+  ;the keyboard with the appropriate value.
+
+KBDSTUFF LMR
+
+;Turn the cursor on but make sure we are on a blank line first.  Hence the
+;PRINTLN at the beginning.
+
+PRINTLN
+PRINTLN "!|*|10000$CON$|#|#|#"
+
+;That's all folks -- PP
+
+END
+
+******************************************************************************
+
+:DispSetting
+;PROCEDURE DispSetting()
+   PRINT "@X70" + RIGHT(LMR,9) + CursorLeft
+;ENDPROC
+RETURN
+
+:GetValue
+
+ ; User chose to enter their own value rather than clicking on buttons.  We
+ ; clear the field of any value so they have a clean field to work with and
+ ; give them an input field of 9 characters.
+ 
+ DEFCOLOR
+
+ PRINT "         "
+ BACKUP 9
+ 
+ INPUTSTR "_", LMR, 07h, 9, "0123456789", DEFS
+ 
+ BACKUP 9
+ 
+ GOTO GetObjectStatus
+ 

@@ -1,0 +1,81 @@
+;*******************************************************************************
+;*                                                                             *
+;*                                 MORE.PPS                                    *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*   A MORE? prompt replacement PPE for use with the PCB-RIP kit.  A PPE is    *
+;*   necessary to save and restore the screen after a more prompt.             *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*                       Written by Steve Catmull                              *
+;*            Copyright (C) 1993 Clark Development Company, Inc.               *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*            Install in the PCBTEXT file in place of prompt #196              *
+;*                           !C:\PCB\PPL\MORE.PPE                              *
+;*                                                                             *
+;*******************************************************************************
+
+;*******************************************************************************
+
+' Variable Declarations
+
+STRING rsp ' The users response
+STRING val ' The valid character mask
+
+'*******************************************************************************
+
+' Initializations
+
+LET val = "YNS"
+
+;*******************************************************************************
+
+' Main Program
+
+
+' Display the "More" at the bottom of the screen in RIPscrip.
+
+PRINT "@X00"
+
+PRINT CHR(2) + "|10000$SAVEALL$|W0000000000"
+
+STARTDISP FNS
+FRESHLINE
+
+DISPFILE PPEPATH() + "MORE", LANG + GRAPH
+
+STARTDISP FCL
+
+' Get user response (no prompt because we are using RIP)
+
+rsp = UPPER(INKEY())
+WHILE (rsp != "Y" & rsp != "N" & rsp != "S") DO
+   delay 2
+   rsp = UPPER(INKEY())
+   IF (!CDON()) rsp="N"
+ENDWHILE
+
+' We have the user's response so re-paste the graphics that were underneath
+' the more bar.                   
+                                  
+PRINTLN                           
+PRINT  "!|10000$RESTOREALL$|#|#|#"
+PRINTLN  "@XFF@"
+;PRINT "@CLREOL@[1A"
+
+' Stuff the keyboard with the user's response.
+
+IF (rsp = "S") THEN
+   KBDSTUFF "NS"
+ELSE
+   KBDSTUFF rsp
+ENDIF
+
+END
+
+;*******************************************************************************
+

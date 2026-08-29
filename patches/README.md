@@ -19,6 +19,39 @@ because you can't build 15.4 without it.
 - Applies 100% cleanly
 - Both endpoints build with Borland C++ 3.1
 
+## 386max-tasm.patch (planned, populated on Gate 1)
+
+An in-source equivalent of pcbirc's runtime transforms for building
+sudleyplace/386MAX 8.03 under TASM 3.1 + TLINK 5.1. See
+`todo/386max-build-downgrade.md` for context.
+
+**Default pcbirc path**: source stays byte-identical on disk;
+`MAIN/build/scripts/xform.awk` and `xform.sed` transform at build
+time. Anyone who clones sudleyplace/386MAX still gets Bob's
+original source verbatim.
+
+**Alternative for sysops who prefer in-source patching**: this
+patch, when applied to sudleyplace source, produces the same
+result — TASM+TLINK-buildable source — but as a static in-tree
+change. Useful when building outside DOSBox-X, when reviewing
+transforms as a code artifact, or when gawk/sed aren't available.
+
+Covers:
+- `.xcref` directive commented out (TASM misparses its argument list)
+- `@Version` renamed to `?VERSION` (TASM's native reserved-symbol prefix)
+- `@@:`/`@F`/`@B` anonymous labels expanded to named `LBL_N:` labels
+- Four `at`-address group definitions removed (RGROUP, AGROUP,
+  PSPGRP, CGROUP) and references renamed to their sole underlying
+  segment
+
+Apply with:
+
+    cd 386max-src/
+    patch -p1 < ../pcbirc/patches/386max-tasm.patch
+
+Populated once Gate 1 is reached (a byte-verified `386MAX.SYS`
+from the pcbirc pipeline).
+
 ### What Clark's 15.4 changed
 
 7 feature areas. Only ONE (@x color codes) touched the toolkit — it

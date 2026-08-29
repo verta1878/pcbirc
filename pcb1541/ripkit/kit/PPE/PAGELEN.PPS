@@ -1,0 +1,78 @@
+STRING  ObjPushed
+STRING  CursorLeft
+INTEGER PageLen
+INTEGER OrigLen
+
+; Move the cursor two characters to the left
+
+CursorLeft = chr(27) + "[2D"
+
+; Read user information and initialize the PPE U_ variables.
+
+GETUSER
+
+; Set the variable we use to store the user's PageLength.
+
+PageLen = U_PAGELEN
+
+; For undoing, store the user's original PageLength setting.  Alternatively,
+; the code could be modified to not do the PUTUSER if they choose not to 
+; save their changes.
+
+OrigLen = PageLen
+
+; Display the setup screen which shows the page length setting.
+
+DISPFILE PPEPATH() + "PAGELEN.RIP",0
+
+; Turn the cursor off in RIP.
+
+PRINTLN "!|10000$COFF$|#|#|#"
+
+; Display the user's current page length setting.
+
+GOSUB DispSetting
+
+; While the user has not chosen to stop ("S"), keep getting a character.
+
+WHILE (ObjPushed != "S") DO
+  
+  ; Get a character from the keyboard.  
+
+  ObjPushed = UPPER(INKEY())
+
+  ; Check the character received.  If it is valid, act on it.
+  
+  IF (ObjPushed = "=" & PageLen < 43) PageLen = PageLen + 1  
+  IF (ObjPushed = "-" & PageLen > 0)  PageLen = PageLen - 1
+  IF (ObjPushed = "D")                PageLen = OrigLen
+  IF (ObjPushed = "N")                PageLen = 0
+  
+  ; Display the current page length setting
+
+  GOSUB DispSetting
+  
+  ; Delay 4 clock ticks so we do not make too many un-necessary requests.
+  ; After all, how many times can a user click the mouse button in one second?
+
+  DELAY 4
+
+ENDWHILE
+
+; We're out of the loop, let's save the value.
+
+U_PAGELEN = PageLen
+PUTUSER
+
+; Turn the cursor on.
+
+PRINTLN
+PRINTLN "!|*|10000$CON$|#|#|#"
+
+END
+
+*******************************************************************************
+
+:DispSetting
+   PRINT "@X70" + LEFT(PageLen,2) + CursorLeft
+ RETURN

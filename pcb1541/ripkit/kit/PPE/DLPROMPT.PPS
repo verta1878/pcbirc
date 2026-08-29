@@ -1,0 +1,479 @@
+;** Wishlist
+
+; - Add option to set a minimum carrier speed required for PPE to go into
+;   full-screen mode
+
+; - See more filenames displayed on the screen if possible.
+
+; - Get ride of the @WAIT@ between each file.  Write the docs and tell users
+;   that they have to make sure their prompts (which ones?) are up-to-date.
+;   Perhaps I could even ship with some samples.
+
+; - Need to find some way to handle the "Automatic Logoff Warning" message.
+;   Keep watching the updates for PPL to see if a new tool will be introduced
+;   to help me out here.
+
+
+' Does the user have ANSI?  If not, display a standard download prompt
+' (via the DLPROMPT file) and end the execution of the PPE.
+
+GETUSER
+
+BOOLEAN ExpertSkip, SysOpSkip
+STRING  Parameter
+
+ExpertSkip = FALSE
+SysOpSkip  = FALSE
+
+Parameter = GETTOKEN()                ; Get the first command line parameter
+
+' Now that we have a command line parameter, check to see if it is a known
+' switch.  If so, set the appropriate Boolean flag.  Continue to check
+' parameters, until there are no more to process (LEN Parameter = 0).
+'
+' NOTE:  Line 8 of PCBOARD.DAT contains the minimum security level PCBoard
+'        considers to be a SysOp.
+
+WHILE (LEN(Parameter) != 0) DO
+   IF (MID(Parameter,2,2) = "SY" & CURSEC() >= READLINE(PCBDAT(),8)) SysOpSkip  = TRUE
+   IF (MID(Parameter,2,2) = "EX" & U_EXPERT) ExpertSkip = TRUE
+   Parameter = GETTOKEN()
+ENDWHILE
+
+' Test to see if the system is setup for networking / multitasking access.
+' If it is not, abort the PPE.  This is all due to problems with opening
+' the file multiple times without SHARE loaded.
+
+;IF (READLINE(PCBDAT(), 90) = "0") THEN
+;   PRINTLN "@X00@X0C"
+;   SPRINTLN "Your system must be configured for multitasking/network access"
+;   SPRINTLN "in order to use this PPE.  This option is configured in"
+;   SPRINTLN "PCBSetup | Node Information.  Aborting the PPE..."
+;   PRINTLN "@XFF"
+;   GOTO Abort
+;ENDIF
+
+' Check to see if we should display the normal prompt rather than the
+' full-screen download prompt.  Examples of why the normal prompt should
+' be displayed:
+'
+'    * User is not capable of ANSI
+'    * PPE is configured to skip for experts or SysOps.
+
+IF (! ANSION() | ExpertSkip | SysOpSkip) THEN
+:Abort
+   DISPFILE PPEPATH() + "DLPROMPT", LANG
+   END
+ENDIF
+
+' Define the rest of the variables used throughout the PPE
+
+STRING   LocOfFLIST
+STRING   TimeText
+LONG     ReadSize
+LONG     ReadSeconds
+BIGSTR   DLFileName
+STRING   Response
+INTEGER  Counter
+INTEGER  LineNo
+INTEGER  RecSize
+STRING   Filename(5)
+LONG     Size(5)
+LONG     Seconds(5)
+BOOLEAN  Free(5)
+BOOLEAN  NoTime(5)
+UNSIGNED BatchSeconds
+UNSIGNED BatchSize
+INTEGER  SizeOfFLIST
+INT      EndCounter
+BYTE     NumHours
+BYTE     NumMin
+BOOLEAN  MoreThanFiveFiles
+BOOLEAN  GMode
+STRING   Files2DL
+STRING   ESC
+STRING   Gray(1), White(1)
+
+' Define the ESC character.  We could always use CHR(27), but ESC is almost
+' always more readable at the source level.
+
+ESC        = CHR(27)
+
+' See if the user has selected ANSI but no color as their graphics option.
+' If so, the GMode environment variable will be set to TRUE.
+
+GMode = GRAFMODE()="A"
+
+' Setup the ANSI color strings used later in the Time2Text subroutine.  If
+' the user has selected mode A, we will be using the color ANSI strings
+' defined in the Gray(1) and White(1) variables to change the color.  If
+' the user has selected any other graphics mode, we will send out the
+' ANSI strings held in Gray(0) and White(0).  The reason this is possible
+' is because a FALSE Boolean value is equal to 0 and a TRUE value is
+' equal to 1.  Therefore, when we use an expression like this:
+'
+'     Gray(GMode)
+'
+' we know we are going to get either Gray(1) or Gray(0) depending on whether
+' the GMode variable is equal to TRUE or FALSE.
+'
+' Gray(0)  = ESC + "[0;37m"
+' White(0) = ESC + "[1;37m"
+' Gray(1)  = ""
+' White(1) = ""
+
+' Check for the existance of the semaphor file.  If it exists, delete it.
+
+IF (EXIST("DL"+STRING(PCBNODE())+".$$$")) THEN
+   DELETE "DL"+STRING(PCBNODE())+".$$$"
+
+   'If the cursor is at column 1 of the 22nd line, clear the screen.
+
+   IF (GETX()=1 & GETY()=22) THEN
+      CLS
+
+   'Since the cursor is not at column 1 - row 22, go to the beginning
+   'of the line, display "Press ENTER to Continue" prompt and clear the
+   'screen.
+
+   ELSE
+      ANSIPOS 1, GETY()
+      WAIT
+      CLS
+   ENDIF
+
+   ' If the semaphor file was not found, clear the screen for good
+   ' measure.
+
+ELSE
+   CLS
+ENDIF
+
+' The FLIST file is the data file PCBoard uses to keep track of which files
+' are flagged for download.  Figure out what the filename will be for the
+' FLIST file.  Single node systems use just the name "FLIST".  Multiple node
+' systems use FLIST.### where ### is the node number.
+
+IF (READLINE(PCBDAT(),90) = "-1") THEN
+   LocOfFLIST = "FLIST." + string(pcbnode())
+ELSE
+   LocOfFLIST = "FLIST."
+ENDIF
+
+' The size of each record in the FLIST file is 129 bytes.  With most files,
+' the size of the file could be determined with the FILEINF function.
+' Because the FLIST stats are never updated in the FAT, we have to be more
+' creative.  Using the FLAGCNT() function we know how many files are flagged
+' for download.  Multiplying this number by 129 will give the true size
+' of the FLIST file.
+
+RecSize    = 129
+SizeOfFLIST= 129 * FLAGCNT()
+
+' Open up the FLIST file twice.  By opening up the FLIST on two channels,
+' more efficiency is gained in the file access.
+
+IF (EXIST(LocOfFLIST)) THEN
+   FOPEN 1, LocOfFLIST, O_RW, S_DN
+   FOPEN 2, LocOfFLIST, O_RW, S_DN
+ENDIF
+
+
+' Display the infamous DLPROMPT box.  This screen can be ANSI, RIP, or just
+' plain ASCII.
+
+DISPFILE PPEPATH() + "DLBOX", GRAPH+LANG
+
+' Check to see what mode the user is in and display the file statistics
+' based on the mode (ANSI is a shorter screen than RIP).
+
+IF (GRAFMODE() = "R") THEN
+   GOSUB DisplayRIP
+ELSE
+   GOSUB DisplayANSI
+ENDIF
+
+'Close the two FLIST file channels opened.
+
+FCLOSE 1
+FCLOSE 2
+
+' That is all folks.
+
+END
+
+
+;****************************************************************************
+;****************************************************************************
+
+;                        S  U  B  R  O  U  T  I  N  E  S
+
+;****************************************************************************
+;****************************************************************************
+
+
+:DisplayANSI
+
+' Set the cursor color to white.  Why I did it in ANSI instead of @X codes,
+' I have not been able to determine yet.  :)
+
+IF (GRAFMODE() != "A") PRINT esc + "[37;1;m"
+
+' Let's read the last five files in the batch list and gather the statistics
+' on them.
+
+GOSUB ReadLastFive
+
+' Reposition the cursor to column 1, row 12.
+
+ANSIPOS 1,12
+
+' Using the PrintEntry subroutine, display the statistics for each of the
+' last five files in the batch.
+
+FOR Counter = 1 TO 5
+   PRINT ESC + "[4C"
+   PUSH Counter
+   GOSUB PrintEntry
+NEXT
+
+' Using the EstimateBatch subroutine, get the totals for the entire batch
+' transfer.
+
+GOSUB EstimateBatch
+
+' Now display those totals on the screen.
+
+ANSIPOS 12,20
+OPTEXT FLAGCNT()
+PRINT "@X0F", "@OPTEXT:4R@"
+
+PRINT ESC + "[17C"
+OPTEXT BatchSize
+PRINT "@X0F", "@OPTEXT:10@"
+
+PUSH  BatchSeconds
+GOSUB Time2Text
+
+PRINT ESC + "[19C"
+PRINT "@X0F", TimeText
+
+ANSIPOS 24,2
+
+IF (UPPER(LEFT(READLINE(PCBDAT(),94),8)) = "SALT AIR") THEN
+   PRINT "@X00@X4FTo obtain this PPE, download DLPRM101.ZIP@XFF"
+ENDIF
+
+ANSIPOS 24,3
+
+' Get the filename(s) to download.
+
+INPUTSTR "_", Files2DL, 07h, 55, MASK_FILE()+"*?", UPCASE + STACKED
+
+ANSIPOS 1,22
+
+' Stuff the filename(s) to download into the keyboard buffer and let PCBoard
+' deal with it.
+
+KBDSTUFF Files2DL + chr(13)
+
+' Create a semaphor file.  This tells us when we just asked for input.
+
+IF (LEN(LTRIM(Files2DL," ")) != 0) THEN
+   FCREATE 3, "DL"+STRING(PCBNODE())+".$$$", O_WR, S_DB
+   FCLOSE 3
+ENDIF
+
+RETURN
+
+
+;*****************************************************************************
+:DisplayRIP
+
+' See the DisplayANSI section for commenntary.  Hey, I'm no Andy Rooney.
+
+GOSUB ReadLastFive
+
+ANSIPOS 1,15
+
+FOR Counter = 1 TO 5
+   PRINT ESC + "[4C"
+   PUSH Counter
+   GOSUB PrintEntry
+NEXT
+
+GOSUB EstimateBatch
+
+ANSIPOS 12,24
+OPTEXT FLAGCNT()
+PRINT "@X0F", "@OPTEXT:4R@"
+
+PRINT ESC + "[17C"
+OPTEXT BatchSize
+PRINT "@X0F", "@OPTEXT:10@"
+
+PUSH  BatchSeconds
+GOSUB Time2Text
+
+PRINT ESC + "[19C"
+PRINT "@X0F", TimeText
+
+ANSIPOS 24,3
+
+INPUTSTR "_", Files2DL, 07h, 55, MASK_FILE()+"*?", UPCASE + STACKED
+
+KBDSTUFF Files2DL + chr(13)
+
+ANSIPOS 1,28
+
+RETURN
+
+
+;*****************************************************************************
+:Time2Text
+
+' This routine POPs the integer value (seconds) PUSHed onto the stack and
+' turns it into a text string.  If 2852 is passed to this routine, it knows
+' this value to be:
+'
+'       47 min 32 sec
+'
+' A value of 4000, would return
+'
+'       1 hrs 7 mins
+'
+' In other words, this routine is smart enough to determine if hours or
+' minutes should be used in the display to make it more readable.
+
+POP ReadSeconds
+
+IF (ReadSeconds >= 3600) THEN
+   NumHours = TOINT(ReadSeconds / 3600)
+   TimeText = RIGHT(STRING(NumHours),2) + Gray(GMode) + " hrs " + White(GMode)
+   NumMin   = TOINT((ReadSeconds - (NumHours * 3600)) / 60)
+   TimeText = TimeText + STRING(RIGHT(NumMin,2)) + Gray(GMode) + " min" + White(GMode)
+ELSE
+   NumMin   = TOINT(ReadSeconds / 60)
+   TimeText = RIGHT(STRING(NumMin),2) + Gray(GMode) + " min " + White(GMode)
+   TimeText = TimeText + STRING(RIGHT((ReadSeconds - (NumMin * 60)),2)) + Gray(GMode) + " sec" + White(GMode)
+ENDIF
+
+RETURN
+
+
+;*****************************************************************************
+:EstimateBatch
+
+' Read the FLIST file to gather statistics for the entire batch.
+
+FSEEK 2, 79, SEEK_CUR
+FOR Counter = 1 to FLAGCNT()
+   FREAD 2, ReadSize   , 4
+   FREAD 2, ReadSeconds, 4
+   FSEEK 2, RecSize-8, SEEK_CUR
+   BatchSeconds = BatchSeconds + ReadSeconds
+   BatchSize    = BatchSize    + ReadSize
+NEXT
+RETURN
+
+
+;*****************************************************************************
+
+:PrintEntry
+
+' Print a statistic line on the screen.  Rember, this handles up to five
+' display lines.
+
+POP LineNo
+
+IF (MoreThanFiveFiles) THEN
+  OPTEXT (FLAGCNT()-5) + LineNo
+ELSE
+  OPTEXT LineNo
+ENDIF
+
+PRINT "@X0B@OPTEXT:4R@"
+FORWARD 3
+
+OPTEXT Filename(LineNo)
+PRINT "@X0F@OPTEXT:15@"
+
+OPTEXT RIGHT(Size(LineNo),10)
+PRINT "@X0F@OPTEXT@"
+FORWARD 4
+
+PUSH Seconds(LineNo)
+GOSUB Time2Text
+OPTEXT TimeText
+PRINT "@OPTEXT@"
+
+PRINT "@POS:61@"
+
+IF (Free(LineNo)) THEN
+   PRINT "@X0Aþ"
+ELSE
+   PRINT "@X08ú"
+ENDIF
+
+PRINT "@POS:71@"
+
+IF (NoTime(LineNo)) THEN
+   PRINT "@X0Aþ"
+ELSE
+   PRINT "@X08ú"
+ENDIF
+
+PRINTLN
+
+RETURN
+
+
+;*****************************************************************************
+
+:ReadLastFive
+
+   IF (FLAGCNT() <= 5) THEN
+      MoreThanFiveFiles = FALSE
+      GOSUB GetLineInfo
+   ELSE
+      FSEEK 1, -(5 * RecSize), SEEK_END
+      MoreThanFiveFiles = TRUE
+      GOSUB GetLineInfo
+   ENDIF
+RETURN
+
+
+;*****************************************************************************
+
+:GetLineInfo
+
+IF (MoreThanFiveFiles) THEN
+   EndCounter = 5
+ELSE
+   EndCounter = FLAGCNT()
+ENDIF
+
+FOR Counter = 1 TO EndCounter
+   FSEEK 1, 66, SEEK_CUR
+   FREAD 1, Filename(Counter), 13
+   FREAD 1, Size(Counter), 4
+   FREAD 1, Seconds(Counter), 4
+   FSEEK 1, 8, SEEK_CUR
+   FREAD 1, Free(Counter), 1
+   FREAD 1, NoTime(Counter), 1
+   FSEEK 1, RecSize - 97, SEEK_CUR
+NEXT
+
+IF (FERR(1)) THEN
+   PRINTLN  "@X0C"
+   SPRINTLN "@X0CError reading from the FLIST file.  Make sure you have loaded SHARE.EXE"
+   SPRINTLN "in your AUTOEXEC.BAT.  In an environment such as NetWare where SHARE is not"
+   SPRINTLN "necessary, keep in mind that Sharing routines are only active when accessing"
+   SPRINTLN "data on a server.  If your 'Location of Work Files' in PCBSetup, points to a"
+   SPRINTLN "local drive, sharing routines will not be active and that is why you are"
+   SPRINTLN "seeing this message.  Change the location of work files to a server drive or"
+   SPRINTLN "load SHARE.EXE in your AUTOEXEC.BAT."
+   GOTO Abort
+ENDIF
+
+RETURN

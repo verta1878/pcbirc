@@ -1,0 +1,16 @@
+; Not knowing when the "Message protected by password" prompt may pop-up 
+; (there are a few times), this PPE saves the screen, gets the password from
+; the caller, and finally restores the screen.
+
+STRING Response
+
+PRINT chr(2) + "10000$SAVEALL$"
+
+DISPFILE PPEPATH() + "RDPWQUES", LANG
+
+INPUTSTR "_", Response, 07h, 12, MASK_ASCII(), ECHODOTS
+
+PRINT chr(2) + "10000$RESTOREALL$"
+
+END
+

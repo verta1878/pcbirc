@@ -1,0 +1,223 @@
+*******************************************************************************                                                                             *
+*                            CalEngine v1.0                                   *
+*               Engine For Selecting A Date Via RIPscrip                      *
+*                                                                             *
+*              Copyright (C) 1994 Clark Development, Inc.                     *
+*                         All Rights Reserved                                 *  
+*                                                                             *
+*           Requires INT variables: CurYear, CurMonth, CurDay                 *
+*                                                                             *
+*******************************************************************************
+
+integer i
+
+integer x,y
+
+integer xsize, ysize
+
+xsize = 4
+ysize = 3
+ 
+integer xstrt, ystrt
+
+xstrt = 2
+ystrt = 7
+
+string monthStr(12)
+monthStr( 1) = "January  "
+monthStr( 2) = "February "
+monthStr( 3) = "March    "
+monthStr( 4) = "April    "
+monthStr( 5) = "May      "
+monthStr( 6) = "June     "
+monthStr( 7) = "July     "
+monthStr( 8) = "August   "
+monthStr( 9) = "September"
+monthStr(10) = "October  "
+monthStr(11) = "November "
+monthStr(12) = "December "
+
+integer monthDays(12)
+monthDays( 1) = 31
+monthDays( 2) = 28
+monthDays( 3) = 31
+monthDays( 4) = 30
+monthDays( 5) = 31
+monthDays( 6) = 30
+monthDays( 7) = 31
+monthDays( 8) = 31
+monthDays( 9) = 30
+monthDays(10) = 31
+monthDays(11) = 30
+monthDays(12) = 31
+
+integer dow1st, monDays
+
+*******************************************************************************
+
+DISPFILE PPEPATH() + "CALDISP", 7
+
+GOSUB ReDisplay
+
+STRING ChrIn
+
+ChrIn = UPPER(INKEY())
+WHILE (ChrIn != CHR(13)) DO
+   IF (ChrIn = ">" | ChrIn = ".") GOSUB IncMonth
+   IF (ChrIn = "<" | ChrIn = ",") GOSUB DecMonth
+   IF (ChrIn = "=" | ChrIn = "+") GOSUB IncYear
+   IF (ChrIn = "-")               GOSUB DecYear
+   IF (ChrIn = "S")               GOSUB IncDay
+   IF (ChrIn = "A")               GOSUB DecDay
+   ChrIn = UPPER(INKEY())
+ENDWHILE
+
+MPRINT chr(2) + "|#|#|#"
+
+ansipos 1,23
+
+END
+
+:LeapYearCalc                                    
+   if (((curYear % 4) == 0) && (curYear != 1900) && (curMonth == 2)) inc monDays
+RETURN                                    
+
+:IncMonth
+   IF (CurMonth = 12) THEN                     
+      GOSUB IncYear
+      CurMonth = 1
+   ELSE
+      INC CurMonth
+      IF (CurDay >= monthDays(CurMonth)) CurDay = monthDays(CurMonth)
+      GOSUB LeapYearCalc
+   ENDIF
+   GOSUB ReDisplay
+RETURN
+
+:DecMonth
+   IF (CurMonth = 1) THEN
+      GOSUB DecYear
+      CurMonth = 12
+   ELSE
+      DEC CurMonth
+      IF (CurDay >= monthDays(CurMonth)) CurDay = monthDays(CurMonth)
+      GOSUB LeapYearCalc
+   ENDIF
+   GOSUB ReDisplay
+RETURN
+
+:IncDay
+   IF (CurDay = monthDays(CurMonth)) THEN
+      GOSUB IncMonth
+      CurDay = 1
+   ELSE
+      INC CurDay
+   ENDIF
+   GOSUB ReDisplay
+RETURN
+
+:DecDay
+   IF (CurDay = 1) THEN
+      GOSUB  DecMonth
+      CurDay = monthDays(CurMonth)
+   ELSE
+      DEC CurDay
+   ENDIF
+   GOSUB ReDisplay
+RETURN
+
+:IncYear
+   INC CurYear
+   GOSUB LeapYearCalc
+   GOSUB ReDisplay
+RETURN
+
+:DecYear
+   DEC CurYear
+   GOSUB LeapYearCalc
+   GOSUB ReDisplay
+RETURN
+
+
+:ReDisplay
+
+   STARTDISP FNS   
+
+   x=1
+   y=1
+
+   COLOR @X0F
+  
+     ansipos x+3,y+4 : print "SU  MO  TU  WE  TH  FR  SA"
+   
+   COLOR @X07
+
+   dow1st = dow(mkdate(curYear,curMonth,1))
+ 
+   monDays = monthDays(curMonth)
+   GOSUB LeapYearCalc
+  
+   color @X0F
+
+   ansipos x+ 3,y+2
+   print monthStr(curMonth)
+   
+   ansipos x+25,y+2
+   print curYear
+
+   color @X07
+
+   integer row, col
+   col = 0
+   row = -1
+
+   ansipos x+xstrt, y+ystrt+0*ysize
+   print space(28)
+   
+   ansipos x+xstrt, y+ystrt+4*ysize
+   print space(28)
+   
+   ansipos x+xstrt, y+ystrt+5*ysize
+   print space(10)
+
+   byte x1,y1,x2,y2
+   string retdate
+   
+   for i = 1 to monDays
+     if ((i == 1) || (dow(mkdate(curYear,curMonth,i)) == 0)) inc row
+     col = dow(mkdate(curYear, curMonth, i))
+     ansipos x+xstrt+col*xsize,y+ystrt+row*ysize
+     if (curDay == i) color @X0F
+     
+     print right(i,3)
+     
+     IF (CurMonth < 10) THEN
+        retdate = "0" + STRING(CurMonth)
+     ELSE
+        retdate = STRING(CurMonth)
+     ENDIF
+     
+     IF (CurDay   < 10) THEN
+        retdate = retdate + "0" + STRING(CurDay)
+     ELSE
+        retdate = retdate + STRING(CurDay)
+     ENDIF
+     
+     retdate = retdate + RIGHT(CurYear,2)
+
+     x1 = x+xstrt+col*xsize
+     y1 = y+ystrt+row*ysize-1
+     x2 = x1+xsize
+     y2 = y1+ysize
+
+;println "*", x1, " ", y1, " ", x2, " ", y2, "*"
+     
+     mousereg i, x1, y1, x2, y2, 8, 8, TRUE, TRUE, "^M" + retdate + "^M"
+     println
+     
+     if (curDay == i) color @X07
+   next
+
+   STARTDISP FCL
+  
+RETURN

@@ -1,0 +1,20 @@
+STRING  ObjPushed
+STRING  CursorLeft
+STRING  Conference
+STRING  LocOfMSGS
+INTEGER LMR
+INTEGER OrigLMR
+
+IF (LEFT(LASTANS(),2) = "SE") THEN
+   Conference = CURCONF()
+ELSE
+   Conference = LASTANS()
+ENDIF
+
+LMR = U_LMR(Conference)
+
+OrigLMR = LMR
+
+DISPFILE PPEPATH() + "LMR.RIP", DEFS
+
+;$INCLUDE:READNUM.PPS

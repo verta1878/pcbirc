@@ -1,0 +1,33 @@
+STRING  CmdLine
+BOOLEAN Available 
+
+; Get any paramters passed by the user and trim it down to the first two
+; characters.  Finally, convert it to upper-case.
+
+CmdLine = TOKENSTR()
+CmdLine = LEFT(CmdLine,1)
+CmdLine = UPPER(CmdLine)
+
+
+; If the user forces the alias on or off by passing either ON or OFF on the
+; command line, change the alias usage to the desired setting and exit.
+
+IF (LEN(CmdLine) != 0) THEN
+   IF (CmdLine = "A") Available = TRUE
+   IF (CmdLine = "U") Available = FALSE
+   END
+ENDIF
+
+
+; If the alias is currently being used, turn it off, and display notification
+; that the alias is turned off (Special processing is done for RIP callers).
+
+IF (Available) THEN
+   DISPFILE PPEPATH() + "CHATA", LANG+GRAPH
+ELSE
+   DISPFILE PPEPATH() + "CHATU", LANG+GRAPH
+ENDIF
+
+DELAY 27
+
+END

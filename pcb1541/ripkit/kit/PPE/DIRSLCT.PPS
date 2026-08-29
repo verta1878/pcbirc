@@ -1,0 +1,236 @@
+STRING  LocOfCNAMES
+STRING  LocOfDIRLST
+STRING  CurDIR
+STRING  Input
+STRING  Temp
+BIGSTR  DIRStatus
+BIGSTR  LeftDIR
+BIGSTR  RightDIR
+UWORD   SizeOfCNAMES
+INT     WinSize
+INT     Range
+INTEGER SizeOfDIRLST
+INTEGER LowNum
+INTEGER HiNum
+INTEGER NumDIRS
+INTEGER SelectedDIR
+INTEGER Counter
+INTEGER CountEnd
+INTEGER MarkNum
+
+SizeOfDIRLST= 96
+LocOfCNAMES = READLINE(PCBDAT(), 31) + ".@@@"
+LowNum      =1
+HiNum       =1
+WinSize     =20
+DIRStatus   ="00000000000000000000000000000000000000000000000000000000000000"
+
+FOPEN  1, LocOfCNAMES, O_RD, S_DN
+FREAD  1, SizeOfCNAMES, 2
+FSEEK  1, SizeOfCNAMES * CURCONF(), SEEK_CUR
+FSEEK  1, 482, SEEK_CUR
+FREAD  1, LocOfDIRLST, 33
+FCLOSE 1
+
+NumDIRS = FILEINF(LocOfDIRLST, 4) / 96
+
+FOPEN  1, LocOfDIRLST, O_RD, S_DN
+
+DISPFILE PPEPATH() + "DIRSLCT", LANG
+
+GOSUB SetRIPFields
+
+IF (NumDIRS < WinSize) THEN
+   CountEnd = NumDIRS
+   LowNum   = 1
+   HiNum    = NumDIRS
+ELSE
+   CountEnd = WinSize
+   LowNum   = 1
+   HiNum    = WinSize
+ENDIF
+
+GOSUB DisplayWindow
+
+Input = UPPER(INKEY())
+
+WHILE (Input != "Q" ) DO
+   IF (Input = "D") GOSUB Increase
+   IF (Input = "U") GOSUB Decrease
+   IF (Input = "A") GOTO  SelectAll
+   IF (Input = "N") GOTO  SelectNone
+   IF (Input = "P") GOTO  SelectUpload
+   IF (Input >= "!" & Input <= "4") GOSUB MarkAsSelected
+   IF (Input = "U" | Input = "D" | (Input >= "!" & Input <= "4")) GOSUB DisplayWindow
+   Input = UPPER(INKEY())
+ENDWHILE
+
+FOR Counter = 1 TO NumDIRS
+   IF (MID(DIRStatus, Counter, 1) = "1") KBDSTRING " " + STRING(Counter)
+NEXT
+
+KBDSTRING CHR(13)
+
+FCLOSE 1
+
+END
+
+******************************************************************************
+
+:Increase
+
+IF (HiNum + WinSize < NumDIRS) THEN
+   LowNum = HiNum + 1
+   HiNum = HiNum + WinSize
+ELSE
+   IF (HiNum != NumDIRS) THEN
+      LowNum = HiNum + 1
+      HiNum = NumDIRS
+   ENDIF
+ENDIF
+
+FSEEK 1, (LowNum - 1) * SizeOfDIRLST, SEEK_SET
+CountEnd = HiNum - LowNum + 1
+
+RETURN
+
+******************************************************************************
+
+:Decrease
+
+IF (LowNum = 1) THEN
+   FSEEK 1, 0, SEEK_SET
+   RETURN
+ENDIF
+
+IF (LowNum - WinSize >= 1) THEN
+   HiNum = LowNum  - 1
+   LowNum = LowNum - WinSize
+ENDIF
+
+FSEEK 1, (LowNum - 1) * SizeOfDIRLST, SEEK_SET
+CountEnd = HiNum - LowNum + 1
+
+RETURN
+
+******************************************************************************
+
+:SelectAll
+
+KBDSTRING "A" + CHR(13)
+END
+
+******************************************************************************
+
+:SelectNone
+
+KBDSTRING CHR(13) + CHR(13)
+END
+
+******************************************************************************
+
+:SelectUpload
+
+KBDSTRING "U" + CHR(13)
+END
+
+******************************************************************************
+
+:DisplayWindow
+
+' Expects CountEnd and LowNum to be set
+
+PRINTLN
+
+PRINT "@X1F"
+
+CLS
+
+;PRINTLN
+
+FOR Counter = LowNum TO HiNum
+   FSEEK 1, 60, SEEK_CUR
+   FREAD 1, CurDIR, 35
+   FSEEK 1, SizeOfDIRLST-95, SEEK_CUR
+
+;   SPRINTLN "!!!", Counter, "!!!"
+   
+   OPTEXT Counter
+
+   PRINT "@X00"
+
+   PRINT "@X1E@OPTEXT:3R@. "
+   
+;   SPRINTLN "&&&", Counter, " ", Counter - LowNum
+;   DELAY 50
+
+   IF (MID(DIRStatus, Counter, 1) = "1") THEN
+      PRINT "@X1F"
+   ELSE
+      PRINT "@X17"
+   ENDIF
+   OPTEXT   CurDIR
+   PRINTLN  "@OPTEXT:35@@XFF"
+
+NEXT
+
+Range = HiNum - LowNum + 1
+
+;   SPRINTLN "^^", MID(DIRStatus, LowNum, Range)
+
+IF (Range != WinSize) THEN
+   FOR Counter = 1 TO WinSize - Range
+      OPTEXT ""
+      PRINTLN "@X00@X10@OPTEXT:40@@XFF"
+   NEXT
+ENDIF
+
+PRINTLN "@X1F@CLREOL@@XFF"
+
+PRINT "@X1EViewing @X1B", RIGHT(LowNum,3), "@X1E to @X1B", RIGHT(HiNum,3), "@X1E out of @X1B", RIGHT(NumDIRS,3), "@CLREOL@@XFF"
+
+RETURN
+
+
+*****************************************************************************
+
+:SetRIPFields
+
+INT x1,y1,x2,y2
+
+FOR Counter = 0 TO WinSize-1
+
+   x1 = 39
+   y1 = 1 * (Counter+7)
+   x2 = 79
+   y2 = y1 + 1
+
+   MOUSEREG Counter, x1, y1, x2, y2, 8, 8, TRUE, FALSE, CHR(Counter+33)
+
+NEXT
+
+RETURN
+
+*****************************************************************************
+
+:MarkAsSelected
+
+MarkNum = LowNum + (ASC(Input)-33)         'Input ranges from 33 to 52
+
+;SPRINTLN "^^^", ASC(Input), "^^", ASC(Input)-33
+;DELAY 100
+
+LeftDIR = LEFT(DIRStatus, MarkNum-1)
+RightDIR = RIGHT(DIRStatus, LEN(DIRStatus) - MarkNum)
+
+IF (MID(DIRStatus, MarkNum, 1) = "1") THEN
+   Temp = "0"
+ELSE
+   Temp = "1"
+ENDIF
+
+DIRStatus = LeftDIR + Temp + RightDIR
+
+FSEEK 1, (LowNum - 1) * SizeOfDIRLST, SEEK_SET
+
+RETURN
