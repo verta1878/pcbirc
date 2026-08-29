@@ -12,7 +12,7 @@ build system; not shipped in releases.
 
 |------|-----------|--------------|
 
-| `PCBBLDBT.IMG` | Working DOSBox-X image, ~300 MB, corrupted late 2026-08-29 during a `SYS C:` boot-sector experiment | Reference for what a populated image looked like; not restorable via git (LFS candidate if we want it re-usable). Rebuild fresh from `MAIN/build/scripts/` when needed. |
+| `PCBBLDBT.IMG` | Working DOSBox-X image, ~95 MB, corrupted late 2026-08-29 during a `SYS C:` boot-sector experiment | Reference for what a populated image looked like; not restorable via git (LFS candidate if we want it re-usable). Rebuild fresh from `MAIN/build/scripts/` when needed. |
 
 
 

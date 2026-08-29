@@ -1,230 +1,124 @@
-# pcbrevival — PCBoard 15.4 BBS Revival
+# Patches
 
-**PCBoard 15.4 source code recovery, OpenWatcom 2.0 port, and modernization.**
+## 15.4-pwa.patch (canonical)
 
-pcbirc crew — August 2026
+Transforms clean 15.3 PWA into 15.4 PWA (Clark's) — **source AND
+toolchain together**.
 
-## What Is This
+The patch carries both:
+- The 15.4 source changes (PSA fields, PPL 3.40 functions, file
+  flagging, UUIN reject-by-name, FTP MGET, etc.)
+- The 15.4 toolchain change (the single SPACERIGHTAT enum value in the
+  toolkit's PCBTOOLS.H, needed for the @x color-code feature)
 
-PCBoard was the dominant BBS software of the dial-up era, written by
-Clark Development Company. When Clark was closed by the bank in the
-late 1990s, the source code nearly disappeared. There is almost no
-information about PCBoard 15.4 on the web — no documentation, no
-downloads, no history.
+This means: apply the patch to a clean 15.3 tree (source + toolkit) and
+you get a complete, buildable 15.4 PWA. The toolchain rides along
+because you can't build 15.4 without it.
 
-Corey Blake purchased what may be the only source license ever sold.
-PWA (Pirates with Attitude) preserved that 15.3 source archive —
-without them, this project would not exist.
+- 424 files (source + toolkit)
+- Applies 100% cleanly
+- Both endpoints build with Borland C++ 3.1
 
-This repo takes that 15.3 source, applies every feature and change
-from Clark's unreleased 15.4b beta, and ports the entire codebase
-to OpenWatcom 2.0 for cross-compilation on modern Linux.
+## 386max-tasm/ (Gate 1 complete)
 
-## Directory Map
+An in-source equivalent of pcbirc's runtime transforms for building
+sudleyplace/386MAX 8.03 under TASM 3.1 + TLINK. See
+`todo/386max-build-downgrade.md` for context.
+
+**Default pcbirc path**: source stays byte-identical on disk;
+`MAIN/build/scripts/xform.awk` and `xform.sed` transform at build
+time. Anyone who clones sudleyplace/386MAX still gets Bob's
+original source verbatim.
+
+**Alternative for sysops who prefer in-source patching**: this
+patch, when applied to sudleyplace source, captures the same
+human-readable transforms — TASM+TLINK-buildable source — as a
+static in-tree change. Useful when reviewing transforms as a
+code artifact, when building outside DOSBox-X, or when gawk/sed
+aren't available at build time.
+
+### Files
+
+| File | Purpose |
+|---|---|
+| `386max-tasm/386max-tasm.patch` | 1.2 MB, 144 files changed, 35,543 lines. Captures 12 sed rules + 6 per-file surgeries. |
+| `386max-tasm/README.md` | How to apply + build-time awk caveats. |
+
+### What the patch covers
+
+12 sed rules (from `MAIN/build/scripts/xform.sed`):
+
+1. `.xcref sym,sym,...` lines commented out (TASM misparses the argument list)
+2. `@Version` renamed to `?VERSION` (TASM's native reserved-symbol prefix)
+3. Absolute-address group definitions dropped (`RGROUP`, `AGROUP`, `PSPGRP`, `CGROUP`)
+4. Group references renamed to their sole underlying segment (`ROMSEG`, `ALLMEM`, `PSPSEG`, `CPUID_SEG`)
+5. `loop dword ptr X` → `loopd X` (TASM's mnemonic)
+6. `loop LABEL.EDD` → `loop LABEL` (strip decorative type hint)
+7. `0&&@SYM&&h` → `0&@SYM&h` (MASM 6 double-subst to TASM single)
+8. `bt`/`bts`/`btr`/`btc` `byte ptr` → `word ptr` (bt-family needs min word)
+9a. bt-family with 32-bit register second operand → `dword ptr`
+9b. bt-family with segment override + `[reg]` → `word ptr`
+10. `COMMENT<delim>` → `COMMENT <delim>` (TASM needs whitespace)
+11. `mov al, es:[bx].OPROG_PCT` in `UTIL_OPD.ASM` → forced `byte ptr` read
+12. `push DTE_DPMILDT` → `push word ptr DTE_DPMILDT` (16-bit selector push)
+
+6 per-file surgeries (from `MAXBLD1.BAT` P5):
+
+- P4: prepend `?VERSION equ 510` to `INC/MASM.INC`
+- P5a: skip `QMAX_FLX.ASM` (include-only, no `end` directive)
+- P5b: prepend `LOADHI equ 1` to `HILO.ASM` (BCF variant defaults to high-load)
+- P5c: comment out `UTIL_LOD.ASM` TOPDOS proc/endp block (conflicts with QMAX_I21)
+- P5d: add `extrn TOPDOS:near` to `UTIL_LOD.ASM` (used but commented out above)
+- P5e: skip `QMAX_DIF.ASM` (100+ catstr/textmacro incompatibilities with TASM)
+
+### What the patch does NOT cover
+
+The macro-scoped `@@:`/`@F`/`@B` label relabeling (from `xform.awk`)
+and the bt-family symbol-size annotation (from `xform-bt.awk`) happen
+at build time, not in the patch. Those transforms would explode the
+diff to unreviewable size with mechanical LBL_N injections that carry
+zero review value. If you apply just this patch, you still need to run
+the awk passes to get assemblable output — or use the full pcbirc
+pipeline (`MAXBLD1.BAT`).
+
+### Apply
 
 ```
---- source trees (one per version; each owns its source) ---
-pcb153/        15.3 PWA source (Borland C++ 3.1) - the pure base
-pcb153/upd154/     15.4 PWA - Clark's 15.4 reconstructed from binaries (source only)
-pcb154/        15.4 Delta - the crew's active work (OpenWatcom)
-pcb1541/       15.41 IRC - our new work (ports to openwatcom2irc)
-               network front-ends: syncterm, binkd, pcbcomm,
-               dropbear (SSH secure remote access), ...
-patches/       15.4-pwa.patch = the 15.3->15.4 PWA delta over pcb153
-
---- toolkit + SDK ---
-toolkit/       toolkit source per branch (pwa153, pwa154, delta154, irc1541)
-OUT/           build outputs per version (pwa153, delta154, irc1541)
-  lib/pwa153/  the SDK library matrix (PCBKBC + PCBKIT built; PCBKMS pending)
-  support/     shared PCBoard runtime files (non-version-specific)
-MAIN/          project model + build system
-  DELTA-MODEL.md   the 4-version model
-  build/           scripts, manifests, backups, SDK build status
-                   (moved here from the repo root)
-
---- compilers (build tools) ---
-MSC70BT.ZIP    Microsoft C 7.0 (retail) + OS/2 add-on - extract to
-               C:\MSC70 to build PCBKMS (not shipped unpacked)
-PCB153BT.ZIP   Borland C++ 3.1 standalone build tools (for PCBKBC)
-TC201BT.ZIP    Turbo C 2.01 standalone build tools (for PCBKIT)
-DOSBOXX.ZIP    all-in-one: compilers + dosbox-x + BUILD scripts
-devtools/      raw compiler distributions + COMPILERS.md catalog
-
---- other ---
-OS2TK/         OS/2 toolkit
-drivers/       SIO serial + netfosdl FOSSIL (GPLv3)
-docs/          shared DOCDEV manuals (MSGS.TXT, HEADERS.TXT, etc)
-pcbcbase/      third-party CODEBASE (LGPL)
-reference/     archives (excluded from release)
-todo/          docs to review and merge
-normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
+7z x devtools/386max.7z -o/tmp/386max-src
+cd /tmp/386max-src
+# KERNEL/ in the patch = 386max-src/386MAX/
+# INC/    in the patch = 386max-src/INC/
+patch -p1 < path/to/386max-tasm.patch
 ```
 
-## Build Status
+### Build status (Gate 1 complete)
 
-### SDK library matrix (Clark's toolkit: 3 compilers x 4 memory models = 12 libs)
+- Gate 1 (all assemblies succeed): ✓ 92/92, 0 fail
+- Gate 1 SYS size: 235,224 bytes (102.60% of shipped Qualitas 229,268)
+- Gate 1.5 (byte-verified): partial — layout differs due to TASM 3.1
+  vs MASM 5.10 encoding, our bt-family word-ptr widening, alignment
+- Gate 2 (loads under `DEVICE=`): pending — needs 86Box/PCem/QEMU with
+  real DOS/FreeDOS, or DOSBox-X 2026.06+ with `[devices]` section
 
-| Family | Compiler | Status |
-|---|---|---|
-| PCBKBC | Borland C++ 3.1 | BUILT - 4/4 models |
-| PCBKIT | Turbo C 2.01 | BUILT - 4/4 models |
-| PCBKMS | Microsoft C 7.0 | compiler in hand (DOS + OS/2), build in progress under `PCBBLDBT.IMG` (FreeDOS + CWSDPMI); DPMI wiring being verified |
+### What Clark's 15.4 changed
 
-Built libraries live in OUT/lib/pwa153/ (compiler-first layout:
-`bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its
-root, an `OBJ/` tree per memory model, `bin/` for compiled utilities,
-and `loose-obj/`). Details in MAIN/build/SDK-BUILD-STATUS.md and
-devtools/COMPILERS.md. Build scripts: MAIN/build/scripts (entry
-point: `BUILD.BAT`; run `BUILD help` for targets).
+7 feature areas. Only ONE (@x color codes) touched the toolkit — it
+added SPACERIGHTAT to the padtype enum. The other 6 are pure source
+changes. So the toolkit barely moved; the patch is mostly source plus
+that one enum line.
 
-The golden build image `PCBBLDBT.IMG` (bootable FreeDOS 1.3 with
-CWSDPMI + all three compilers + sources + build scripts) is the
-working environment for completing the 12-lib matrix and future
-15.22 / ow2irc integrations. See `MAIN/build/PCBBLDBT-ROADMAP.md`
-for milestone plan.
+### Apply
 
+The patch expects a combined tree layout (SOURCE/ + toolkit/):
 
-| Metric | Count |
-|---|---|
-| Programs | 36 (28 Clark + 8 new tools) |
-| Clark binaries (Watcom DOS4G) | 28 (16 main + 12 Phase 0 utilities) |
-| New tools | 8 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis, QFront, pcbfoss, pcbiso) |
-| PPE collection | 5,703 archives (incl. Roy/SAC donation) |
+```
+# from a clean 15.3 tree containing SOURCE/ and toolkit/
+patch -p1 < 15.4-pwa.patch
+```
 
-### 15.4 Delta Binaries — Main (OpenWatcom 2.0)
+Labeled "15.4 PWA" — Clark's authentic 15.4, NOT the crew's 15.4 Delta
+work (pcb154/, ongoing).
 
-> These `_W`-suffixed EXEs are the crew's **15.4 Delta** rebuild,
-> compiled with **OpenWatcom** (pcb154/). They are NOT Clark's binaries.
->
-> Clark built 15.4 with **Borland C++ 3.1**. His original 1996 binaries
-> (Copyright 1996 Clark Development, report v15.4) are preserved as the
-> reference at `OUT/pwa153/upd154/clark-original/`. The 15.4 PWA source
-> rebuild (also Borland) targets `OUT/pwa153/upd154/`.
+## attic/
 
-| Binary | Size | Description |
-|---|---|---|
-| PCBOARD_W.EXE | 1.3MB | Main BBS engine |
-| LOCAL_W.EXE | 1.3MB | Local login mode |
-| PPLC_W.EXE | 1.3MB | PPL 3.40 compiler |
-| PCBSETUP_W.EXE | 424KB | Setup utility |
-| PCBSM_W.EXE | 221KB | System Manager |
-| UUIN/UUOUT/UUUTIL/UUXFER_W | 1.4MB each | UUCP suite |
-| MKPCBTXT_W.EXE | 86KB | Text file builder |
-| PCBTEXT_W.EXE | 39KB | Text file editor |
-| MAKEIDX_W.EXE | 37KB | Index builder |
-| USERNET_W.EXE | 28KB | User network flags |
-| MAKEHELP_W.EXE | 25KB | Help file builder |
-| PCBCP_W.EXE | 77KB | OS/2 PM control panel |
-| PCBIS_W.EXE | 48KB | Config TUI |
-
-### Clark Utilities — Phase 0 (hexadecimal + sysop/0)
-
-All 12 Clark utilities that shipped with PCBoard, ported to Watcom DOS4G:
-
-| Binary | Size | Description |
-|---|---|---|
-| PCBSTATS_W.EXE | 31K | Statistics generator |
-| PCBPACK_W.EXE | 84K | Message base packer |
-| MSETUP_W.EXE | 108K | Modem database editor |
-| PCBMODEM_W.EXE | 528K | Modem config utility |
-| PCBEDIT_W.EXE | 133K | Text/config editor |
-| PCBMONI_W.EXE | 54K | Node monitor |
-| PCBDIAG_W.EXE | 552K | Diagnostics |
-| PCBFILER_W.EXE | 215K | File management |
-| PCBNLC_W.EXE | 77K | FidoNet nodelist compiler |
-| OFFLINE_W.EXE | 26K | Offline flags |
-| WAITBU_W.EXE | 25K | Wait for backup |
-| PCBTITLE_W.EXE | 15K | OS/2 console title |
-
-### New Tools (GPLv3)
-
-| Tool | Lines | Description |
-|---|---|---|
-| pcbbinkp | 2,008 | BinkP/1.1 FidoNet mailer |
-| pcbdraw | 1,826 | ANSI art viewer/editor |
-| pcbpscan | 770 | Upload file scanner |
-| pcbfido | 778 | FidoNet console (15.41) |
-| pcbiso | 969 | ISO/CD-ROM file area indexer (15.4+) |
-| pcbis.exe | 5,710 | Internet services daemon (18 Pascal units) |
-
-## pcbis — PCBoard Internet Services
-
-Disk 4 of the distribution. Multi-protocol daemon bridging PCBoard
-to the internet:
-
-- **Telnet** (2323) — FOSSIL bridge, writes PCBOARD.SYS/CALLERS
-- **BinkP** (24554) — FidoNet mailer, QFront integration
-- **FTP** (21) — PCBoard file areas with security levels
-- **HTTP** (8080) — status page, callers, who's online
-- **SMTP** — outbound validation emails
-- **NNTP** — news↔PCBoard conference gateway
-- **QWK** — offline mail networking
-- **Events** — timed batch execution
-
-Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
-
-## Drivers
-
-| Driver | Lead | Description |
-|---|---|---|
-| SIO v1/2K | evga | OS/2 serial I/O, 26 bugs fixed, clean-room |
-| FOSSIL | sysop/0 + kiddo | Cross-platform FOSSIL socket layer |
-
-## Libraries Written for Phase 0
-
-| Library | Author | Lines | Purpose |
-|---|---|---|---|
-| VMAVL | sysop/0 | 324 | AVL tree for VMDataSet (clean room, studied libavl) |
-| VMData | hexadecimal | 204 | Virtual memory dataset (v0.036) |
-| d4all.h | sysop/0 | 121 | CodeBase type shim for PCBNLC |
-| conio_compat | sysop/0 | 108 | Borland conio via BIOS INT 10h |
-
-## Documentation
-
-| Document | Description |
-|---|---|
-| docs/PHASE0_MISSING_UTILS.md | Phase 0 status — all 12 utilities |
-| docs/FEATURE_MATRIX.md | Full feature comparison 15.3→15.4→15.41 |
-| docs/PCB1541_DRAFT.md | 15.41 specification (23 sections) |
-| docs/FIDONET.md | FidoNet sysop guide |
-| docs/WHATSNEW.md | Changelog |
-| docs/REFERENCE_CATALOG.md | Reference materials catalog |
-| docs/hexadecimal-phase-update.md | Phase 1 roadmap from sysop/0 |
-
-## The Crew
-
-| Handle | Role |
-|---|---|
-| hexadecimal | PCBoard 15.4 port, Phase 0 utilities, WATCOMPAT.H |
-| verta1878 | Project lead, netmodem2irc, OpenOLMS |
-| wrench | FOSSIL driver, netmodem2irc engine, pcbmailer |
-| sysop/0 | fpc264irc, openwatcomirc, pcbis, VMAVL, tools |
-| kiddo | Protocols, serial IRQ, RIP OOP engine |
-| evga | SIO driver, Mystic monitor, RIPView engine |
-| byte | Program discovery |
-| dotmatrix | Documentation sourcing |
-| bob | Compiler engineer (wcc64 backend, Glide builds) |
-
-## Acknowledgments
-
-- **Corey Blake** — Source license purchase
-- **PWA** — 15.3 source archive preservation
-- **Roy/SAC (Carsten)** — Physical PCBoard package donation, 4,548 PPE archives,
-  box photos. License transferred via POB (German distributor), upgraded 15.21→15.22.
-- **mpoli.fi** — BBS software archive hosting
-- **CodeBase-for-DBF** — Sequiter Software, LGPL v3.0
-  (github.com/MPSystemsServices/CodeBase-for-DBF)
-- **libavl** — Buselli/Dankers, LGPL (algorithmic reference for VMAVL)
-
-## License
-
-Our additions: GPLv3
-Clark Development source: proprietary (licensed)
-CodeBase library: LGPL v3.0
-SIO OS/2 driver: GPLv3 (evga, clean-room)
-
-## Links
-
-- GitHub: https://github.com/verta1878/pcbrevival
-- FPC 2.6.4irc: https://github.com/verta1878/fpc264irc
-- Mystic BBS fork: https://github.com/verta1878/mystic-bbs-irc
+Superseded patches from earlier phases. See attic/README.md.
