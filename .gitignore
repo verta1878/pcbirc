@@ -46,3 +46,7 @@ pcb15everything.zip
 !dist/*.EXE
 !dist/*.ZIP
 !dist/*.zip
+!attic/*.exe
+!attic/*.EXE
+!attic/*.ZIP
+!attic/*.zip
