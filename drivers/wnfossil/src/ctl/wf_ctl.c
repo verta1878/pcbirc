@@ -18,8 +18,36 @@
 #include <string.h>
 #include "wf_core.h"
 
-extern void wf_compat_print_banner(void);
-extern int wf_compat_platform(void);
+extern const char *wfp_reg_base_key(void);
+
+/* Checks whether the registry base key WinFOSSIL's installer/CPL
+ * would have created actually exists. Not a live "is the driver
+ * loaded and responding right now" check the way the original's
+ * INT-based/VxD detection was — no equivalent live-detection
+ * primitive exists anywhere in registry_compat.c or comport_compat.c
+ * to build that on for every platform this build targets — but a
+ * missing base key is still a real, verifiable signal that install/
+ * setup was never run, which is the case this check (and the
+ * original's matching error message) is actually guarding against.
+ *
+ * Previously: wf_ctl.c had NO installation check at all before
+ * LOCK/UNLOCK, unlike the original (`ERROR: WinFOSSIL is not
+ * properly installed.` / `WinFOSSIL driver v%d.%02d detected.`) —
+ * and wf_compat_print_banner()/wf_compat_platform() were declared
+ * extern here but never actually called anywhere in this file. */
+static int wf_ctl_check_installed(void)
+{
+    HKEY hKey;
+    LONG rc = RegOpenKeyExA(HKEY_LOCAL_MACHINE, wfp_reg_base_key(),
+                            0, KEY_READ, &hKey);
+    if (rc != ERROR_SUCCESS) {
+        printf("ERROR: WinFOSSIL is not properly installed.\n");
+        return 0;
+    }
+    RegCloseKey(hKey);
+    printf("WinFOSSIL driver v%s detected.\n", WF_VERSION_STR);
+    return 1;
+}
 
 static void usage(void)
 {
@@ -46,6 +74,9 @@ int main(int argc, char *argv[])
 
     /* Detect platform and show version */
     printf("WinFOSSIL Control Utility v%s\n", WF_VERSION_STR);
+
+    if (!wf_ctl_check_installed())
+        return 1;
 
     port = atoi(argv[1]);
     if (port < 0 || port >= WF_MAX_PORTS) {

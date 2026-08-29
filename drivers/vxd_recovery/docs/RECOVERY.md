@@ -137,3 +137,38 @@ This does **not** block Win98 users: the shipping Win98 FOSSIL driver is
 the unified ring-3 DLL (`-DWF_TARGET_WIN98`), which builds clean and
 passes 50/50 unit + 12/12 integration tests. The VxD is the optional
 ring-0 direct-hardware path.
+
+---
+
+## 8. Stack-balance verification (2026-08)
+
+Independently verified the three source-bug fixes above against this
+exact source (NODECOUNT default, IRQ_Ready struct field, FIFO_Enabled
+jump) — all three confirmed genuinely present and correct.
+
+Also ran a full per-procedure push/pop stack-balance trace across all
+35 BeginProc/EndProc pairs in FOSSIL.ASM — the class of bug most
+likely to cause a crash at load/init time on real hardware, alongside
+the "Remaining gate" above. An aggregate mnemonic-family count
+initially flags 19 procedures, but manual tracing of representative
+cases (a simple two-exit branch, a loop with two exits, a .REPEAT
+loop with two exits) plus a structural check on the two most extreme
+cases (Int14_Proc: 1 pushad vs 70 popad; W32DeviceIoControl: 3 pushad
+vs 29 popad) confirmed every flagged case is the same benign pattern:
+one push/pushad written once in source, matched by a pop/popad
+duplicated across separate, mutually-exclusive exit paths or loop
+iterations — not a real leak anywhere.
+
+**No genuine stack-balance bug found in FOSSIL.ASM.** This doesn't
+close the "Remaining gate" above (real hardware is still the only way
+to confirm actual INT 14h hookup), but it does rule out one plausible
+cause of a load-time fault before that test happens.
+
+The analyzer used for this is included: `build/stack_check.py`. Run
+it against any BeginProc/EndProc-style VMM assembly source with:
+
+    python3 build/stack_check.py src/FOSSIL.ASM
+
+Its own header comment explains what it can and can't tell you —
+in short, treat everything it flags as "needs a human to read it,"
+not as a confirmed bug, for exactly the reason described above.

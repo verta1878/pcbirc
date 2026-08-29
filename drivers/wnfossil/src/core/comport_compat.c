@@ -83,6 +83,19 @@ static void format_port_name(char *out, int out_size, const char *name)
         if (strncmp(name, "\\\\.\\", 4) == 0) {
             /* Already formatted */
             strncpy(out, name, out_size - 1);
+            out[out_size - 1] = '\0';  /* Missing here previously — the
+                                        * WF_PLATFORM_9X branch two lines
+                                        * up NUL-terminates after its
+                                        * strncpy, this branch didn't,
+                                        * leaving `out` unterminated
+                                        * whenever `name` was >= out_size
+                                        * bytes with no NUL in that
+                                        * range. Classic strncpy footgun;
+                                        * found during WF-1 verification
+                                        * (didn't match WF-1's own
+                                        * description exactly, but is a
+                                        * real, same-class bug in the
+                                        * same file). */
         } else {
             snprintf(out, out_size, "\\\\.\\%s", name);
         }
@@ -539,10 +552,12 @@ int wf_enum_ports(char ports[][WF_PORT_NAME_LEN], int max_ports)
             if (h != INVALID_HANDLE_VALUE) {
                 CloseHandle(h);
                 strncpy(ports[count], name, WF_PORT_NAME_LEN - 1);
+                ports[count][WF_PORT_NAME_LEN - 1] = '\0';
                 count++;
             } else if (GetLastError() == ERROR_ACCESS_DENIED) {
                 /* Port exists but is in use */
                 strncpy(ports[count], name, WF_PORT_NAME_LEN - 1);
+                ports[count][WF_PORT_NAME_LEN - 1] = '\0';
                 count++;
             }
         }
@@ -554,7 +569,13 @@ int wf_enum_ports(char ports[][WF_PORT_NAME_LEN], int max_ports)
             char *p = buf;
             while (*p && count < max_ports) {
                 if (strncmp(p, "COM", 3) == 0 && p[3] >= '0' && p[3] <= '9') {
+                    /* p comes from QueryDosDeviceA's own buffer, not a
+                     * caller-controlled string like format_port_name's
+                     * `name` — practically always short — but explicit
+                     * termination costs nothing and matches the fix
+                     * applied to the other strncpy sites in this file. */
                     strncpy(ports[count], p, WF_PORT_NAME_LEN - 1);
+                    ports[count][WF_PORT_NAME_LEN - 1] = '\0';
                     count++;
                 }
                 p += strlen(p) + 1;
