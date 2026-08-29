@@ -1,0 +1,10 @@
+netfosdl v1.0 - DOS FOSSIL Driver
+GPLv3 real-mode FOSSIL for MS-DOS.
+Drop-in for X00/BNU/ADF/NetFoss doors.
+INT 14h, FSC-0015 rev 5 + FSC-0072.
+Interrupt-driven 4KB RX ring buffer,
+CTS/RTS flow control, 18 functions.
+Real 8250/16550 UART, X00 cmdline.
+TSR, proper resident sizing.
+Verified: AX=1954h round-trip DOSBox-X.
+FPC264IRC crew - 2026 - 4free

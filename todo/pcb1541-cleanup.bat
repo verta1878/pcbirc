@@ -13,10 +13,37 @@ if not exist LICENSE (
     goto :EOF
 )
 
+rem --- Idempotency check: if pcb1541\ exists AND 1541\ does not AND all the
+rem     "SHOULD NOT EXIST" markers are gone, cleanup has already run. Log
+rem     "ALREADY COMPLETE" and exit without re-running.
 if not exist 1541 (
     if exist pcb1541 (
-        echo SKIP: pcb1541 already exists, 1541 not found.
-        echo       This script may have already been run.
+        set DONE=1
+        if exist pcb1541\pcbdrawbak       set DONE=0
+        if exist pcb1541\pcbfido_linux    set DONE=0
+        if exist pcb1541\upgrade1541.c    set DONE=0
+        if exist pcb1541\pcbfido.c        set DONE=0
+        if exist pcb1541\pcbtic.c         set DONE=0
+        if exist pcb1541\upd1541.c        set DONE=0
+        if exist pcb1541\bso_clark_style.c set DONE=0
+        if exist pcb1541\utrayit.c        set DONE=0
+        if exist PCBKIT_L.LIB              set DONE=0
+        if "%DONE%"=="1" (
+            echo. >> PCB1541-CLEANUP.LOG
+            echo ============ ALREADY COMPLETE (re-run) ============ >> PCB1541-CLEANUP.LOG
+            echo Date: %DATE% %TIME% >> PCB1541-CLEANUP.LOG
+            echo. >> PCB1541-CLEANUP.LOG
+            echo pcb1541\ exists, 1541\ does not. >> PCB1541-CLEANUP.LOG
+            echo All "SHOULD NOT EXIST" markers are gone. >> PCB1541-CLEANUP.LOG
+            echo Cleanup has already been applied. Nothing to do. >> PCB1541-CLEANUP.LOG
+            echo.
+            echo  ALREADY COMPLETE -- cleanup was already applied.
+            echo  See PCB1541-CLEANUP.LOG.
+            echo.
+            goto :EOF
+        )
+        echo ERROR: pcb1541\ exists but leftover markers found -- partial run?
+        echo        Check for pcbdrawbak, pcbfido_linux, .c files at pcb1541\ root.
         pause
         goto :EOF
     )
@@ -26,7 +53,9 @@ if not exist 1541 (
 )
 
 set LOGFILE=PCB1541-CLEANUP.LOG
-echo pcb1541 cleanup > %LOGFILE%
+echo. >> %LOGFILE%
+echo ==================== RUN ==================== >> %LOGFILE%
+echo pcb1541 cleanup >> %LOGFILE%
 echo Date: %DATE% %TIME% >> %LOGFILE%
 echo. >> %LOGFILE%
 set ERRORS=0

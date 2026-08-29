@@ -15,8 +15,38 @@ if not exist LICENSE (
     goto :EOF
 )
 
+rem --- Idempotency check: if all end-state dirs exist AND no source dirs remain,
+rem     the restructure has already been done. Log "ALREADY COMPLETE" and exit
+rem     without re-running.
+set DONE=1
+if not exist pcb153   set DONE=0
+if not exist pcb154   set DONE=0
+if not exist pcbcbase set DONE=0
+if not exist toolkit\H set DONE=0
+if not exist drivers  set DONE=0
+if exist MAIN   set DONE=0
+if exist PCBSRC set DONE=0
+if exist LIBS   set DONE=0
+if exist LIB    set DONE=0
+if "%DONE%"=="1" (
+    echo. >> RESTRUCTURE.LOG
+    echo ============ ALREADY COMPLETE (re-run) ============ >> RESTRUCTURE.LOG
+    echo Date: %DATE% %TIME% >> RESTRUCTURE.LOG
+    echo. >> RESTRUCTURE.LOG
+    echo All end-state dirs present: pcb153 pcb154 pcbcbase toolkit\H drivers >> RESTRUCTURE.LOG
+    echo No source dirs remain:      MAIN PCBSRC LIBS LIB >> RESTRUCTURE.LOG
+    echo Restructure has already been applied. Nothing to do. >> RESTRUCTURE.LOG
+    echo.
+    echo  ALREADY COMPLETE -- restructure was already applied.
+    echo  See RESTRUCTURE.LOG.
+    echo.
+    goto :EOF
+)
+
 set LOGFILE=RESTRUCTURE.LOG
-echo pcbirc repo restructure > %LOGFILE%
+echo. >> %LOGFILE%
+echo ==================== RUN ==================== >> %LOGFILE%
+echo pcbirc repo restructure >> %LOGFILE%
 echo Date: %DATE% %TIME% >> %LOGFILE%
 echo. >> %LOGFILE%
 set ERRORS=0

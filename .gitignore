@@ -17,6 +17,8 @@
 *~
 *.bak
 *.BAK
+!attic/*.BAK
+!attic/*.bak
 *.tmp
 *.TMP
 *.swp
@@ -46,3 +48,7 @@ pcb15everything.zip
 !dist/*.EXE
 !dist/*.ZIP
 !dist/*.zip
+!attic/*.exe
+!attic/*.EXE
+!attic/*.ZIP
+!attic/*.zip
