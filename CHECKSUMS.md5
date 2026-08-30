@@ -4,7 +4,7 @@ c07da99c6e9343ca4acd040e26889c76  .gitignore
 7480eb0ef5c83de266c87c8fe9128551  BUILD_DOS.BAT
 e8367ab93c8d5bf6fb5ae2a5219fa045  BUILD_OS2.CMD
 0e6e62099001481e81a3bf1bd29cb086  BUILD_OS2_OW.SH
-822f776a205758b442a2fd552650616f  CHECKSUMS.txt
+221fc0ba435b927b638128d7a966a083  CHECKSUMS.txt
 9e8fa99a63bbb8087cc9b09941990282  DOSBOXX.ZIP
 96a60e568c0e0ef9fafdf9a321f5cded  FILE_ID.ANS
 198f7898da2ce18cb89a36d71a3681f8  FILE_ID.DIZ
@@ -1198,7 +1198,7 @@ cfd7cb123797810374c3d286231b0085  drivers/wnfossil/src/vxd/vmm_jwasm_segment_mac
 25f6f6c97d333f0ef16d0039d9336915  drivers/wnfossil/wnfossil-2.0.0-final.zip
 18c3240e774c3d350dbdf488fe173bd6  normalize_case.sh
 8155250a2936dc8fe6cb993a2ce4a69a  patches/15.4-pwa.patch
-be5b853405b2aa1878f159261c5636c5  patches/386max-tasm/386max-tasm.patch
+0cb7fc08f032101dac0127beaae0ece3  patches/386max-tasm/386max-tasm.patch
 b737f4f9d1c829630e3bc967ff466875  patches/386max-tasm/README.md
 2eba4e881933f4f971aa354c9c0bc1a7  patches/README.md
 91f0ef08f0296ed4009a14087308ad24  patches/attic/153_to_154.patch
