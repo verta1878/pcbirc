@@ -1,4 +1,12 @@
-# pcbcomm — unified serial layer
+# pcbdcom — PCB DOS COM (unified serial layer)
+
+> **Note:** This tree is currently duplicated at `pcb1541/pcbdcom/`
+> AND `pcb154/pcbdcom/` because both PCBoard lines ship it. **Both
+> copies must be kept in sync**. Eventual plan: move to a shared
+> top-level location (`shared/pcbdcom/` or similar) and reference
+> from both product trees, removing the duplication. Until then,
+> any change to one copy must be replicated to the other.
+
 
 Supersedes WCSC COMM-DRV. See BINARY-CATALOG.md section F.
 
@@ -147,3 +155,75 @@ The PCBoard network client/server + teleconference design lives with
 pcbis (`pcb1541/pcbis/CLIENT-SERVER-DESIGN.md`). pcbcomm's role there is
 the transport layer — TCP / serial / telnet / SSH backends feeding the
 one session interface the server uses.
+
+## Building v1
+
+```
+cd PCBDCOM
+make -f PCBDCOM.MAK CC=BC31       # Borland C++ 3.1
+make -f PCBDCOM.MAK CC=MSC70      # Microsoft C 7.0
+wmake -f PCBDCOM.MAK CC=OWC       # OpenWatcom 1.9
+```
+
+Produces `PCBDCOM.EXE` (TSR) and `PCBDCOM.SYS` (device driver) from
+the same source tree.
+
+## Sample config
+
+See `PCBDCOM.CFG.sample` for the config file format. Copy to
+`PCBDCOM.CFG` and edit for your hardware.
+
+## Status — v1 progress
+
+Fully implemented:
+- 8250/16550 UART (uart.c + uart_backend.c)
+- Boca dumb multi-port (boca_backend.c)
+- 8259 PIC + shared-IRQ dispatcher (irq.c)
+- INT 14h FOSSIL handler (int14.c)
+- PCBDCOM.CFG parser + dual-mode entry (pcbdcom.c)
+- Build system (PCBDCOM.MAK)
+
+Fully ported (v1, single-chip config):
+- Cyclades Cyclom-Y (cyclom_backend.c) — CD1400 register access,
+  channel init, cy_interrupt() SVRR walk with RX/TX/modem service
+  dispatch. Ported from Linux cyclades.c. Multi-chip wiring in
+  pcbdcom.c is v1.1 work — see TODO in cyclom_backend.c.
+
+Fully ported (v1, single-card config):
+- DigiBoard PC/Xe (digi_pcxe_backend.c) — thin probe/init over
+  shared FEP layer.
+- DigiBoard AccelePort (digi_accel_backend.c) — thin probe/init
+  over shared FEP layer; card-type check (ACCELE_ID, PCXEM_ID,
+  EISAXEM_ID, PCIXEM_ID, PCIXR_ID) + up to 64 ports.
+
+Shared implementation (both Digi cards):
+- digi_fep.c + digi_fep.h — FEP command queue (fepcmd), event queue
+  drain, board_chan struct access, per-channel init, ISR, write path.
+  Ported from Linux epca.c (2.6.32, GPLv2).
+
+Fully ported (v1, single-card config):
+- Comtrol RocketPort (rocket_backend.c) — MUDBAC controller + AIOP
+  enum, per-channel init via 18-tuple indexed-register writes
+  (rp_init_data[] from Linux RData[]), baud programming, IRQ-mode
+  ISR that walks _INT_CHAN on each AIOP to service RX/TX FIFOs.
+  Ported from Linux rocket.c (POLLED mode there → IRQ mode here).
+
+Fully ported (v1, single-card config):
+- Stallion EasyIO (easyio_backend.c) — surprise: uses CD1400 UARTs
+  (same chip family as Cyclades) but I/O-mapped instead of memory-
+  mapped. Board detect via EIO_IDBITMASK (4RS / 8DI / 8RS / 8M /
+  MK3 revision). ISR polls board status EIO_INTRPEND, then walks
+  CD1400 SVRR same as cyclom. Ported from Linux stallion.c.
+
+**pcbdcom v1.1 is code-complete.** All 7 backends fully ported AND
+multi-port wired (parse_config now uses backend->card_get() hook +
+per-port subport index). Every smart-card backend has a static card
+pool (max 4 cards per backend type) with shared card_pool_get()
+helper that groups config lines sharing a card_addr into one card
+record. Each port's subport (0..N-1 within card) selects the correct
+chip/channel.
+
+Each skeleton captures the essential card-detection registers so
+PCBDCOM.CFG validates hardware presence at load. Full ISRs get
+filled in next pass, one card at a time, with the Linux source
+open side-by-side.

@@ -1,0 +1,25 @@
+# PCBDCOM.CFG — pcbdcom v1 port configuration
+# Format: PORT CARD SUBPORT BASE IRQ CARDSEG FOSSIL
+# Card types: 8250 BOCA BOCA16 CYCLOM DIGI_PCXE DIGI_ACCEL ROCKET EASYIO
+# Base: I/O port (hex OK: 0x3F8), IRQ: 3..15, CardSeg: 0 for I/O-mapped,
+# non-zero for memory-mapped smart cards (Cyclom, Digi). FOSSIL: Y or N.
+
+# Standard COM1..COM4 —
+  1  8250   0  0x3F8  4  0  Y
+  2  8250   0  0x2F8  3  0  Y
+
+# Example Boca BB-1008 at 0x100, IRQ 5 (uncomment to use):
+#  3  BOCA   0  0x100  5  0  Y
+#  4  BOCA   1  0x108  5  0  Y
+#  5  BOCA   2  0x110  5  0  Y
+#  6  BOCA   3  0x118  5  0  Y
+#  7  BOCA   4  0x120  5  0  Y
+#  8  BOCA   5  0x128  5  0  Y
+#  9  BOCA   6  0x130  5  0  Y
+# 10  BOCA   7  0x138  5  0  Y
+
+# Example Cyclades Cyclom-4Y at CardSeg D000, IRQ 10:
+# 11  CYCLOM 0  0      10 0xD000  Y
+# 12  CYCLOM 1  0      10 0xD000  Y
+# 13  CYCLOM 2  0      10 0xD000  Y
+# 14  CYCLOM 3  0      10 0xD000  Y
