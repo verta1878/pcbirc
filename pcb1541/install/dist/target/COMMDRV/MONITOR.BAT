@@ -1,0 +1,2 @@
+commdrv -mode:monitor
+

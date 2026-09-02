@@ -31,3 +31,31 @@ serves as public documentation of what each `.RED` archive contains —
 we used it for pcbdcom Phase 1 discovery (see
 `pcb154/pcbdcom/GAP-ANALYSIS.md`).
 
+
+## `dist/` breakdown
+
+The `dist/` subtree provides two complementary views of the installer's payload:
+
+- **`dist/disk1/` ... `dist/disk5/`** — the physical floppy layout:
+  what each install disk contains (DIZ files, README.1ST, dist docs).
+  Skeleton for rebuilding the shipped disk-image set.
+
+- **`dist/target/`** — the fully-installed target directory as it would
+  appear on the user's machine (typically `C:\PCB\`) after running the
+  original `INSTALL.EXE`. All 257 files extracted from the 6 `.RED`
+  archives, mapped to their target paths via `INSTALL.DAT`'s
+  `@File ... @Out ...` directives.
+
+  See `dist/target/README.md` for the full layout, provenance chain,
+  and source-availability table (which extracted binaries have known
+  upstream source in this repo vs. archival-only).
+
+## `archivers/` — the tools that (un)pack the `.RED` disks
+
+`archivers/lha/` (vendored LHa 1.14i) and `archivers/redx/` (our own
+`.RED` reader/writer) live inside this tree because every PCBoard
+variant that ships from this installer needs them to read the disk
+payload.
+
+See `archivers/README.md` for details on the vendored LHA and the
+`redx` CLI.

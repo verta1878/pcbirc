@@ -1,0 +1,49 @@
+;***********************************************************************
+
+; PWRDWARN.PPS - A replacement for prompt 711 in the PCBTEXT file
+;                to warn the user about impending password expiration
+;                failure both on screen and via a message
+
+;***********************************************************************
+
+; Variable Declarations
+
+INTEGER conf ' The conference in which to post the message
+STRING  to   ' The user to send the message to
+STRING  from ' The user the message is from
+STRING  subj ' The subject of the message
+STRING  msec ' The security of the message
+DATE    pack ' The pack out date of the message
+BOOLEAN rr   ' Return receipt flag
+BOOLEAN echo ' Network echo flag
+STRING  file ' The file with the message text
+
+;***********************************************************************
+
+; Initializations
+
+LET conf = CURCONF()                  ' Post message in the current conf
+LET to   = ""                         ' Default to the user online
+LET from = "SYSTEM DAEMON"            ' Any 'user' may leave the message
+LET subj = "Password Expiration"      ' The subject of the message
+LET msec = "R"                        ' Receiver only message
+LET pack = DATE()+3                   ' Pack it out in 3 days
+LET rr   = FALSE                      ' No return receipt requested
+LET echo = FALSE                      ' No need to echo this message
+LET file = PPEPATH()+PPENAME()+".MSG" ' Path and file name of message
+
+;***********************************************************************
+
+; Main Program
+
+' First we need to tell the caller on screen
+PRINT "Your password will expire in @OPTEXT@ days.  "
+PRINTLN "Use the (W) command to change it."
+
+' Now let's leave the caller a message.  We do this in case he is
+' calling in an automated fashion (via script) and won't see the on
+' screen warning.  This way the user will still be notified (if he
+' downloads and reads mail) that his password will soon expire.
+MESSAGE conf,to,from,subj,msec,pack,rr,echo,file
+
+;***********************************************************************

@@ -1,0 +1,328 @@
+******************************************************************************
+*                                                                            *
+*                            PPL 3.0 Sample                                  *
+*              Accessing the Accounting DBF Tracking File                    *
+*                                                                            *
+*              Copyright (C) 1994 Clark Development, Inc.                    *
+*                                                                            *
+******************************************************************************
+
+DECLARE FUNCTION  trackingDBF() BOOLEAN
+DECLARE FUNCTION  positionToUser() BOOLEAN
+DECLARE PROCEDURE gatherStats()
+DECLARE PROCEDURE openTrackingFile()
+DECLARE PROCEDURE printReport()
+
+INT    numRecords(2)
+REAL   beginBalance, credCharged, credEarned, tempHolding
+STRING trackFileName, dateIndex, nameIndex
+
+'-----------------------------------------------------------------------------
+' Variable description list:
+'
+'    numRecords:    Two element array.  Each element contains the number of
+'                   records for charging / earning.
+'
+'    beginBalance:  A variable to simply hold the beginning accounting
+'                   balance for the user account.
+'
+'    credCharged:   Summarizes the total credits charged against the account.
+'
+'    credEarned:    Summarizes the total credits earned by the users.
+'
+'    tempHolding:   A temporary variable used to read in the initial charge.
+'                   If the charge is negative, it's an earning, or a credit
+'                   otherwise.
+'
+'    trackFileName: Stores the tracking filename stored in PCBSetup |
+'                   Accounting Configuration.
+'
+'    dateIndex:     Stores the filename used for the date index file.
+'
+'    nameIndex:     Stores the filename used for the name index file.
+'-----------------------------------------------------------------------------
+
+   ' Display the title so people know what this program does when it runs.
+   ' This is a generally good idea to do on most programs.  At the very
+   ' least some kind of title.
+
+   PRINTLN "@X00"
+   PRINTLN "@X0FAccountDBF@XFF: A PPE to read the account tracking file and"
+   PRINTLN "            generate a report of charges and earnings of the"
+   PRINTLN "            user name entered."
+   PRINTLN
+
+   ' Read line 281 in the PCBOARD.DAT to find the name of the account
+   ' tracking file.  The filename can be edited in PCBSetup | Accounting
+   ' Configuration.
+
+   trackFileName = READLINE(PCBDAT(),281)
+
+   ' Make a call to the trackingDBF function declared earlier.  This
+   ' function simply determines if the tracking file ends with a .DBF
+   ' signifying to store the tracking information in dbase format.
+   ' If not tracking in dbase format, an explantory message is displayed
+   ' and execution of the PPE will end.
+
+   IF (trackingDBF()) THEN
+      PRINTLN "This node/system is not configured to track accounting information."
+      PRINTLN "in DBF format.  The filename specified in PCBSetup | Accounting"
+      PRINTLN "information must end with a .DBF extension in order to track"
+      PRINTLN "usage in a database."
+      END
+   ENDIF
+
+   ' Call the procedure for opening the tracking file, creating the index
+   ' file(s), etc.
+
+   openTrackingFile()
+
+   ' Call the function to get the username to generate a report for and to
+   ' position the record pointer to the first record for that user in the
+   ' database.  If the seek fails to find the username in the account
+   ' tracking file, end the execution of the PPE.
+
+   IF (! positionToUser()) END
+
+   ' Call the two procedures used to gather and summarize the statistics.
+   ' Once the statistics are summarized, print the report to the screen.
+
+   gatherStats()
+   printReport()
+
+END
+
+;*****************************************************************************
+;* END OF MAIN PROGRAM.  BEGINNING OF USER-DEFINED PROCEDURES AND FUNCTIONS  *
+;*****************************************************************************
+
+PROCEDURE gatherStats()
+
+STRING  recordName, nameToReportOn, twirleyThingy(3)
+INTEGER twirleyCounter
+
+   ' Define an array to store each character making up the twirley "thingy"
+   ' you see to signify the computer is busy.
+
+   twirleyThingy(0) = "|"
+   twirleyThingy(1) = "/"
+   twirleyThingy(2) = "-"
+   twirleyThingy(3) = "\"
+
+   ' Get the user name in the current database record.  Also assign this name
+   ' to the nameToReportOn variable.
+
+   recordName = DGET(1, "NAME")
+   nameToReportOn = recordName
+
+   PRINTLN
+   PRINT "@X0FSummarizing records...@X07"
+
+   ' The nameToReportOn and recordName variables are used to determine if we
+   ' have gone past the group of records for the user.  Remember, when using
+   ' the name index, all records are ordered by the user name in ascending
+   ' order so we could have the following:
+   '
+   '    Record   Name
+   '    ------   --------------------------
+   '    1        ALAN JACKSON
+   '    2        ALAN JACKSON
+   '    3        BOB SMITH
+   '    4        BOB SMITH
+   '    5        BOB SMITH
+   '    6        TIM STRYFER
+   '
+   ' In gather records, for BOB SMITH, the goal is to read records 3 through
+   ' 5.  By DSEEKing to the first record of BOB SMITH and reading successive
+   ' records until the record name differs from the original one being
+   ' searched for, we will have search all of Bob's records.
+
+   WHILE (recordName = nameToReportOn) DO
+
+      ' Increase the twirleyCounter.  This is used to determine what
+      ' character should be printed.  The actual determination is made
+      ' by using the modulus operator.  The remainder of the integer
+      ' division is used to determine what twirley character to print.
+
+      INC twirleyCounter
+      PRINT twirleyThingy(twirleyCounter % 4)
+
+      ' Read the value charged for the current database record.
+
+      tempHolding = DGET (1, "VALUE")
+
+      ' If the value is positive, it is a charge.  A negative value signifies
+      ' an earning such as upload credit.  Once the value has been assigned
+      ' increment the appropriate numRecords element so the number of
+      ' charges or earnings is correct.
+
+      IF (tempHolding > 1) THEN
+         credEarned = credEarned + tempHolding
+         INC numRecords(1)
+      ELSE
+         credCharged  = credCharged + ABS(tempHolding)
+         INC numRecords(2)
+      ENDIF
+
+      ' Skip to the next record and retrieve the name of the user.  This
+      ' will be used in the test at the beginning of the WHILE loop.
+
+      DSKIP 1,1
+      recordName = DGET(1, "NAME")
+
+      ' Print a backspace to erase the previous twirley character.  To be
+      ' safe, the BS + SPACE + BS sequence is sent because not all terminal
+      ' programs treat a BS character as a destructive backspace.
+
+      PRINT chr(8) + chr(32) + chr(8)
+
+   ENDWHILE
+
+ENDFUNC
+
+;-----------------------------------------------------------------------------
+
+PROCEDURE printReport()
+
+   DATE beginDate, endDate
+   DDATE d
+
+   ' By using the date index for the database, determine the range of dates
+   ' stored in the log file.  The beginning date will be in the first record,
+   ' and the ending date will be determined by getting the date from the
+   ' last record.
+
+   DTAG 1, FILEINF(dateIndex,8)
+   DTOP 1
+   d = DGET(1,"DATE")
+   beginDate = d
+   DBOTTOM 1
+   d = DGET(1,"DATE")
+   endDate = d
+
+   ' Print the report to the screen.
+
+   NEWLINES 2
+   PRINTLN "@X0EAccount statistics for period: ", beginDate, " to ", endDate
+   PRINTLN
+   wait
+   PRINTLN "1@X0FStarting balance: @XFF", ACCOUNT(START_BAL)
+   PRINTLN "2@X0F Credits charged: @XFF", credCharged, " (", numRecords(2), " records)"
+   PRINTLN "3@X0F  Credits earned: @XFF", credEarned,  " (", numRecords(1), " records)"
+   wait
+ENDPROC
+
+;-----------------------------------------------------------------------------
+
+FUNCTION positionToUser() BOOLEAN
+
+STRING userName
+STRING prompt
+BOOLEAN nameNotFound
+
+   ' Assign the defaults for many variables.  userName is assigned the current
+   ' user name.
+
+   userName     = U_NAME()
+   prompt       = "Enter username to profile"
+   nameNotFound = TRUE
+
+   ' While the name has not been found in the user record, continue to ask
+   ' for a valid username.  The only way out is to enter a valid user name.
+   ' Considering this can be done (because the current user is a valid
+   ' user record), there should be no problem.
+
+   WHILE (nameNotFound) DO
+
+      ' Ask for the username to generate a report of.
+
+      INPUTSTR prompt, userName, @X0B, 25, MASK_ASCII(), LFBEFORE+LFAFTER+FIELDLEN+UPCASE
+
+      ' If the username entered is a valid username in the current user base,
+      ' let's proceed.  Otherwise, print a warning message and set the
+      ' nameNotFound variable so we can go through the WHILE loop again.
+
+      IF (U_RECNUM(userName) = -1) THEN
+         nameNotFound = TRUE
+         PRINTLN
+         PRINTLN "@X0FName not found.  @X0APlease enter a valid user name."
+      ELSE
+         nameNotFound = FALSE
+         GETALTUSER U_RECNUM(userName)
+      ENDIF
+   ENDWHILE
+
+   ' Seek the database for the username in question.  If found, return TRUE,
+   ' FALSE otherwise.
+ 
+   DSEEK 1, userName
+   IF (DCHKSTAT(1) = 0) THEN
+      positionToUser = TRUE
+   ELSE
+      positionToUser = FALSE
+   ENDIF
+
+ENDPROC
+
+;-----------------------------------------------------------------------------
+
+PROCEDURE openTrackingFile()
+
+STRING baseDBFLoc
+
+   ' Open the database filename specified in PCBSetup | Accounting
+   ' Configuration.
+
+   DOPEN 1, trackFileName, FALSE
+
+   ' If there is an error accessing the file, print a message followed
+   ' by the error message generated by CodeBase (the DBF library used in
+   ' PPL) and end execution.
+
+   IF (DERR(1)) THEN
+      PRINTLN "@X0CError opening the tracking file."
+      PRINTLN "   ", DERRMSG(DCHKSTAT(1))
+      END
+   ENDIF
+
+   ' Assign some variables.  First of all, strip the DBF extension from the
+   ' tracking filename so we can use this in generating the name index.
+   ' Also create a unique name for the date index file (ACCNTDAT.NDX).
+
+   baseDBFLoc = LEFT(trackFileName,LEN(trackFileName)-3)
+   nameIndex  = baseDBFLoc + "NDX"
+   dateIndex  = FILEINF(baseDBFLoc,6) + ":" + FILEINF(baseDBFLoc,7) + "ACCNTDAT.NDX"
+
+   ' Check to see if the index files exist.  If so, delete them.  The reason
+   ' these are deleted is that if you try to create an index when the filename
+   ' already exists, CodeBase will generate an error.
+
+   IF (EXIST(nameIndex)) DELETE nameIndex
+   IF (EXIST(dateIndex)) DELETE dateIndex
+
+   ' Generate the index files (since PCBoard does not maintain them) and
+   ' set the current index to be the name INDEX.
+
+   PRINTLN "@X0AGenerating index files.  Please wait..."
+   DNCREATE 1, dateIndex, "DATE"
+   DNCREATE 1, nameIndex, "NAME"
+   PRINTLN FILEINF(nameIndex,8)
+   DTAG 1, FILEINF(nameIndex,8)
+
+ENDPROC
+
+;-----------------------------------------------------------------------------
+
+FUNCTION trackingDBF() BOOLEAN
+
+   ' If the extension for the tracking file is .DBF, return TRUE, or FALSE
+   ' otherwise.  Without the .DBF extension, PCBoard is not tracking account
+   ' activity.
+
+   IF (RIGHT(trackFileName,4) = ".DBF") THEN
+      trackingDBF=FALSE
+   ELSE
+      trackingDBF=TRUE
+   ENDIF
+
+ENDFUNC

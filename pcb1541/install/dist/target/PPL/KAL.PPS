@@ -1,0 +1,113 @@
+;*******************************************************************************
+;*                                                                             *
+;*                                  KAL.PPS                                    *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*        A simple, colorful, constantly changing kaleidoscope program         *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*                       Written by Scott Dale Robison                         *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*                        Install in the CMD.LST file                          *
+;*                                                                             *
+;*******************************************************************************
+
+;*******************************************************************************
+
+' Variable Declarations
+
+BOOLEAN exitFlag ' User exit request flag
+
+INTEGER x        ' Screen X coordinate
+INTEGER y        ' Screen Y coordinate
+
+STRING  s        ' String of characters to use in kaleidoscope
+STRING  c        ' Character currently in use in kaleidoscope
+
+;*******************************************************************************
+
+' Initializations
+
+IF (!ANSION()) END   ' This PPE requires ANSI; if not available, exit
+
+LET exitFlag = FALSE ' We don't want to exit right off the bat
+
+'       SPACE     DEGREE    BLOCK     LILBLOCK  DOT
+LET s = CHR(020h)+CHR(0F8h)+CHR(0DBh)+CHR(0FEh)+CHR(0F9h)
+
+GOSUB initScrn       ' Initialize the display
+
+KBDCHKOFF            ' Turn off keyboard checking as it might be awhile
+
+;*******************************************************************************
+
+' Main Program Loop
+
+WHILE (!exitFlag) DO ' While we aren't ready to exit
+
+  ' Do we need to re-start? (roughly 1 in 250 chance)
+  IF (RANDOM(250) = 0) GOSUB initScrn
+
+  ' Pick a random X coordinate:  2 <= X <= 79
+  LET x = 1+(random(77)+1)
+
+  ' Pick a random Y coordinate:  1 <= Y <= 22
+  LET y =   (random(21)+1)
+
+  ' Pick a random character for display
+  LET c = mid(s,RANDOM(4)+1,1)
+
+  ' Pick a random color for display
+  COLOR RANDOM(15)
+
+  ' Display it in the selected position
+  ANSIPOS x,y
+  PRINT c
+
+  ' Display it in the X complement position
+  ANSIPOS 80-x+1,y
+  PRINT c
+
+  ' Display it in the Y complement position
+  ANSIPOS x,22-y+1
+  PRINT c
+
+  ' Display it in the X & Y complement positions
+  ANSIPOS 80-x+1,22-y+1
+  PRINT c
+
+  ' See if the user wants to abort
+  LET exitFlag = (INKEY() = " ")
+
+ENDWHILE
+
+;*******************************************************************************
+
+' Shutdown
+
+KBDCHKON ' Reenable keyboard checking
+
+DEFCOLOR ' Restore the system default color
+CLS      ' Clear the screen
+
+END
+
+;*******************************************************************************
+
+' Initialize Screen subroutine - Setup the screen for the program
+
+:initScrn
+
+DEFCOLOR
+CLS
+ANSIPOS 28,23
+PRINT "Hit the SPACE BAR to exit"
+
+RETURN
+
+;*******************************************************************************
+

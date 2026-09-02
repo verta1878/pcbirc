@@ -361,7 +361,7 @@ the compression algorithm.
 ## Path forward
 
 **Ghidra reverse of COMMDRV.EXE's decompress routine** — will yield
-the exact 0x000B algorithm. Once implemented in redx (archivers/redx/),
+the exact 0x000B algorithm. Once implemented in redx (pcb1541/install/archivers/redx/),
 we can extract every .RED file WCSC ever shipped and rebuild the
 install disk set with our own binaries substituted (or added).
 

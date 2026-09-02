@@ -1,0 +1,74 @@
+###############################################################################
+#                       COMMDRV TSR Configuration file                        #
+#                                                                             #
+#  Port      Card    Sub-    Base           Card                              #
+# Number     Type    Port   Address  IRQ   Segment  FOSSIL                    #
+# ออออออ   ออออออออ  ออออ   อออออออ  อออ   อออออออ  ออออออ                    #
+#    0     ARNET       0      100      5    D000       Y                      #
+#    1     ARNET       1      100      5    D000       Y                      #
+#    2     ARNET       2      100      5    D000       Y                      #
+#    3     ARNET       3      100      5    D000       Y                      #
+###############################################################################
+
+MAX_PORTS       5
+MAX_PORTNUM     3
+
+MAX_IRQS        1
+MAX_IRQNUM      5
+
+MAX_DRIVERS     1
+MAX_DRIVERNUM   3
+
+INT14HANDLER    ON
+
+PORT            0
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         0
+ENDPORT         0
+
+PORT            1
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         1
+ENDPORT         1
+
+PORT            2
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         2
+ENDPORT         2
+
+PORT            3
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         3
+ENDPORT         3

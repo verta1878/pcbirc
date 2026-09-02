@@ -1,0 +1,34 @@
+;***********************************************************************
+
+; NODEFILE.PPS - A PPE to be used from any display file.
+;                By default display files can have security, graphics,
+;                and language specific variants.  This PPE allows the
+;                addition of node specific variants while continuing to
+;                allow the other variations that are shared among all
+;                nodes.
+
+;***********************************************************************
+
+; Variable Declarations
+
+STRING file
+
+;***********************************************************************
+
+; Main Program
+
+' If no parameter was passed then exit
+IF (TOKCOUNT() = 0) END
+
+' The file we are looking for is tokenized from the command line and has
+' a ### extension (### is the node number)
+LET file = GETTOKEN()+"."+RIGHT("00"+STRING(PCBNODE()),3)
+
+' If the node specific news file exists, display it
+' (security/graphics/languages variants aren't allowed because we use
+' the file extension to indicate the node the file should be used for)
+IF (EXIST(file)) DISPFILE file,DEFS
+
+END ' Exit
+
+;***********************************************************************

@@ -1,0 +1,8 @@
+; HELLO6.PPS - "Hello, World!" #6
+; Center the text on the display
+CLS         ; first clear the screen and position at the upper left
+NEWLINES 11 ; Move down 11 lines to get to the center line
+FORWARD 33  ; Move right 33 spaces to get to the correct column
+PRINTLN "@X1FHello, World!"
+STRING s
+WHILE (s = "") LET s = INKEY() ; Loop until a key is pressed

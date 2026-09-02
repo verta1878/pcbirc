@@ -1,0 +1,130 @@
+###############################################################################
+#                       COMMDRV TSR Configuration file                        #
+#                                                                             #
+#  Port      Card    Sub-    Base           Card                              #
+# Number     Type    Port   Address  IRQ   Segment  FOSSIL                    #
+# ออออออ   ออออออออ  ออออ   อออออออ  อออ   อออออออ  ออออออ                    #
+#    0     ARNET       0      100      5    D000       Y                      #
+#    1     ARNET       1      100      5    D000       Y                      #
+#    2     ARNET       2      100      5    D000       Y                      #
+#    3     ARNET       3      100      5    D000       Y                      #
+#    4     ARNET       4      100      5    D000       Y                      #
+#    5     ARNET       5      100      5    D000       Y                      #
+#    6     ARNET       6      100      5    D000       Y                      #
+#    7     ARNET       7      100      5    D000       Y                      #
+###############################################################################
+
+MAX_PORTS       9
+MAX_PORTNUM     7
+
+MAX_IRQS        1
+MAX_IRQNUM      5
+
+MAX_DRIVERS     1
+MAX_DRIVERNUM   3
+
+INT14HANDLER    ON
+
+PORT            0
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         0
+ENDPORT         0
+
+PORT            1
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         1
+ENDPORT         1
+
+PORT            2
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         2
+ENDPORT         2
+
+PORT            3
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         3
+ENDPORT         3
+
+PORT            4
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         4
+ENDPORT         4
+
+PORT            5
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         5
+ENDPORT         5
+
+PORT            6
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         6
+ENDPORT         6
+
+PORT            7
+BASE            100
+IRQ             5
+BAUD            19200
+INBUF_LEN       2048
+OUTBUF_LEN      2048
+CARDTYPE        3
+PROTOCOL        RTSRTS
+CARDSEG         D000
+TYPE_PORT       FOSSIL
+SUBPORT         7
+ENDPORT         7

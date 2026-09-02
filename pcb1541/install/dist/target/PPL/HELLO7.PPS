@@ -1,0 +1,13 @@
+; HELLO7.PPS - "Hello, World!" #7
+; Center the text (with users name) on the display
+STRING s
+TOKENIZE U_NAME()           ; Separate the name into words (tokens)
+LET s = GETTOKEN()          ; Grab the first name (word or token)
+LET s = LEFT(s,1)+LOWER(RIGHT(s,LEN(s)-1)) ; Force it to mixed case
+LET s = "@X1FHello, "+s+"!" ; Build the complete string to display
+CLS
+NEWLINES 11
+FORWARD (80-(LEN(s)-4))/2   ; Move right to the correct column
+PRINTLN s
+LET s = ""
+WHILE (s = "") LET s = INKEY()

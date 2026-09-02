@@ -1,0 +1,97 @@
+;***********************************************************************
+
+; ORDER.PPS - A script questionnaire to order a product
+
+;***********************************************************************
+
+; Variable Declarations
+
+STRING Question ' The question to ask the user
+STRING Answer   ' The users answer
+
+;***********************************************************************
+
+; Main Program
+
+' Display the script header
+NEWLINE
+PRINTLN "@X0F-----------------------------------------------------"
+PRINTLN "We have several items available for sale.  From"
+PRINTLN "Hardware to software, we have products that fit your"
+PRINTLN "needs and wants.  If we don't have it, just ask!"
+PRINTLN "-----------------------------------------------------"
+NEWLINE
+
+' Confirm that the user wants to answer the questionnaire
+LET Answer = NOCHAR()
+PROMPTSTR 84,Answer,1,"",YESNO+UPCASE+FIELDLEN
+NEWLINE
+
+' If user answers other than affirmative then stop script
+IF (Answer <> YESCHAR()) STOP
+
+NEWLINE ' Display a blank line for spacing
+
+' List products available to the user
+PRINTLN "@X0FWe have the following products available for sale:"
+NEWLINE
+PRINTLN " 1.  Complete 80486 system with SVGA video system ($1000 US)"
+PRINTLN " 2.  Whiz-bang hard-drive ($500 Australian)"
+PRINTLN " 3.  Plain paper bag software ($5 Monopoly)"
+
+' Ask the user which product
+LET Question = "Which item would you like to order?"
+GOSUB ask
+
+' List shipping options available
+PRINTLN "@X0FYou may choose from the available shipping options:"
+NEWLINE
+PRINTLN " 1.  U.S. Mail"
+PRINTLN " 2.  United Parcel Service"
+PRINTLN " 3.  Federal Express"
+
+' Ask the user how to ship
+LET Question = "How would you like it shipped?"
+GOSUB ask
+
+' List payment options available
+PRINTLN "@X0FYou have the following payment options:"
+NEWLINE
+PRINTLN " 1.  Visa"
+PRINTLN " 2.  MasterCard"
+PRINTLN " 3.  American Express"
+PRINTLN " 4.  Discover"
+PRINTLN " 5.  COD"
+
+' Ask the user how he wants to pay
+LET Question = "How would you like to pay?"
+GOSUB ask
+
+' Confirm that the user wants to save his answers
+LET Answer = NOCHAR()
+INPUTYN "Do you want to save your answers (ENTER=no)",Answer,@X0E
+NEWLINE
+
+' If user answers other than affirmative then stop script
+IF (Answer <> YESCHAR()) STOP
+
+NEWLINE ' Display a blank line for spacing
+END     ' Exit script
+
+;***********************************************************************
+
+:ask ' Subroutine to ask questions and store answers
+
+NEWLINE                           ' A blank line for spacing
+PRINTLN "@X0E",Question           ' Display the question
+LET Answer = ""                   ' Initialize answer to empty
+INPUT "",Answer                   ' Get answer with no prompt on line
+NEWLINES 2                        ' A couple of newlines for formatting
+
+LET Question = STRIPATX(Question) ' Remove @X codes from question
+FPUTLN 0,"Q: ",Question           ' Write the question to the file
+FPUTLN 0,"A: ",Answer             ' Write the answer to the file
+
+RETURN                            ' Return to the caller
+
+;***********************************************************************

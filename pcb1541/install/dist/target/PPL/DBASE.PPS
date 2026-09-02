@@ -1,0 +1,316 @@
+;******************************************************************************
+;*                                                                            *
+;*                           Sample DBase Application                         *
+;*                              Written in PPL v3.0                           *
+;*                           Clark Development Co. 1994                       *
+;******************************************************************************
+
+
+;******************************************************************************
+;* This simple database manager will allow the user to create, open, add      *
+;* data to and search a database. It is meant to give a brief example of      *
+;* some of the DBase capabilities in PPL. Functions and Procedures are also   *
+;* illustrated.                                                               *
+;*                                                                            *
+;******************************************************************************
+
+
+;**************************************************
+;*
+;* Declare all user defined functions and procedures
+
+DECLARE PROCEDURE create()                            ; Procedure to create database
+DECLARE PROCEDURE display_menu()                      ; Procedure to display a menu
+DECLARE PROCEDURE add_data()                          ; Procedure to add data to a database
+DECLARE PROCEDURE find_record()                       ; Procedure to find a record
+DECLARE FUNCTION  getch() STRING                      ; get a single character from a user
+DECLARE PROCEDURE create_index()                      ; Create an index for a database
+DECLARE PROCEDURE search()                            ; Search for a record using the key field
+
+*USEFUNCS
+
+;******************************
+;*
+;* Declare all global variables
+
+INTEGER DBchan                               ; DataBase work area/channel
+INTEGER keyField                             ; Indexed key field
+STRING  response                             ; User response
+STRING  fname                                ; DataBase filename
+
+BEGIN
+   ; Initialize all global variables
+
+   DBchan    = DNEXT()                   ; Get next available DBase work area or channel
+   response  = " "
+   CLS
+   display_menu()                        ; Display Menu
+
+   while ( UPPER(response) != "Q" ) do   ; While the user has not entered "Q"
+
+         response = getch()              ; Get a character from the user
+
+         SELECT CASE (response)          ; React based on response
+
+                CASE "1"                 ; If it's "1", attempt to open database
+                     CLS
+                     DCLOSEALL
+                     INPUT "Enter database filename (no extension) _",fname
+                      PRINTLN
+                     if (EXIST(PPEPATH()+fname+".dbf")) then
+                       DOPEN dbChan,PPEPATH()+fname,FALSE
+                       if (!DERR(dbChan)) then
+                         PRINTLN
+                         PRINTLN "File opened"
+                         PRINTLN "creating index..."
+                         create_index()
+                       else
+                         PRINTLN
+                         PRINTLN "Error opening file"
+                       endif
+                       WAIT
+
+                     else
+                       PRINTLN
+                       PRINTLN "File does not exist"
+                       WAIT
+                     ENDIF
+
+                CASE "2"                 ; If it's "2", attempt to create the database
+                     DCLOSEALL
+                     CLS
+                     create()
+                CASE "3"                 ; If it's "3", attempt to add a record
+                     CLS
+                     add_data()
+                CASE "4"
+                     CLS
+                     find_record()
+                CASE "5"
+                     CLS
+                     search()
+                CASE "q","Q"             ; If it's a "Q" then end
+                     END
+                CASE ELSE                ; Anything else, print warning message
+                     WAIT
+
+         END SELECT
+         CLS
+         display_menu()
+   end while
+END
+
+;****************************
+;* PROCEDURE display_menu displays a menu to the user
+
+PROCEDURE display_menu()
+
+PRINTLN
+PRINTLN
+PRINTLN
+PRINTLN "            @X1AÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@XFF"
+PRINTLN "            @X1A³                                                 ³@XFF"
+PRINTLN "            @X1A³        @X1FSample Database Application@X1A              ³@XFF"
+PRINTLN "            @X1A³                                                 ³@XFF"
+PRINTLN "            @X1A³                                                 ³@XFF"
+PRINTLN "            @X1A³        @X1C1) Open a DataBase@X1A                       ³@XFF"
+PRINTLN "            @X1A³        @X1C2) Create a New DataBase@X1A                 ³@XFF"
+PRINTLN "            @X1A³        @X1C3) Add Records to DataBase@X1A               ³@XFF"
+PRINTLN "            @X1A³        @X1C4) Goto and Print a Record@X1A               ³@XFF"
+PRINTLN "            @X1A³        @X1C5) Search for and Print a Record@X1A         ³@XFF"
+PRINTLN "            @X1A³        @X1CQ) Quit@X1A                                  ³@XFF"
+PRINTLN "            @X1A³                                                 ³@XFF"
+PRINTLN "            @X1A³                                                 ³@XFF"
+PRINTLN "            @X1AÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@XFF"
+PRINTLN "@X0F"
+
+ENDPROC
+
+
+;***************************
+;* FUNCTION getch returns a single charater input by the user
+
+FUNCTION getch() STRING
+
+         while ( getch = "" ) do
+               getch = INKEY()
+         endwhile
+
+ENDFUNC
+
+
+;***************************
+;* Procedure create attempts to create a database based on user input
+
+PROCEDURE create()
+
+INTEGER numFields,i,key
+STRING  fields(10)
+STRING  fName,fType,fLen,fDec
+STRING  filename
+STRING  inputPrompt
+
+        CLS
+
+        INPUT "What filename do wish to give this database? _",filename        ;Get database filename from user
+        PRINTLN
+        if (exist(PPEPATH()+filename)) then
+          PRINTLN "File already exists"
+          WAIT
+        endif
+
+        PRINTLN
+        INPUT "How many fields will this database have? _",numFields
+        PRINTLN
+
+        ; For this sample, only 10 fields are allowed
+        if (numFields > 10 | numFields < 1) then
+          PRINTLN "Invalid field number"
+          RETURN
+        endif
+        CLS
+        for i = 0 to numFields -1
+            CLS
+            PRINTLN "For Field number ",+(i+1)
+            INPUT "Enter field Name _",fName
+            PRINTLN
+            INPUT "Enter field Type  (C,N,F,L,M) _",fType
+            PRINTLN
+            INPUT "Enter field Length _",fLen
+            PRINTLN
+            if ( fType = "N" | fType = "F") then
+               INPUT "Enter Decimal Length _",fDec
+            else
+               fDec = "0"
+            endif
+
+            fields(i) = fName+","+fType+","+fLen+","+fDec
+         next i
+
+         DCREATE dbChan,PPEPATH()+filename,FALSE,fields               ;Create the database using the user input
+         if (DERR(dbChan)) then                                       ; Check for error
+           PRINTLN "Error creating database"
+         else
+           PRINTLN "Database created"
+           PRINTLN "Creating index..."
+           create_index()                                             ;Create index for this database
+         endif
+         WAIT
+         CLS
+
+ENDPROC
+
+
+;*****************************
+;* PROCEDURE add_data attempts to add a record to the database
+
+PROCEDURE add_data()
+
+INTEGER numFields
+INTEGER i
+BIGSTR data
+
+        DNEW dbChan                                    ;Begin a new record. Note: This record will not be attached util DADD is called
+
+        numFields = DFIELDS(dbChan)                    ; See how many fields are in this database
+        PRINTLN "@X0F"
+        for i = 1 to numFields
+
+           PRINTLN "Field "+DNAME(dbChan,i)            ; Print field name
+           INPUT "Enter Data _",data                   ; get data which is to go into this field
+           PRINTLN
+           DPUT dbChan,DNAME(dbChan,i),data            ; Put data into field
+
+        next i
+
+        DADD dbChan                                    ; Attach this record to the database. Without this statement, no record will be added!
+
+        if (!DERR(dbChan)) then                        ; Check for error
+          PRINTLN "Record added"
+        else
+          PRINTLN "Error adding record"
+        endif
+        WAIT
+
+ENDPROC
+
+PROCEDURE find_record()
+
+INTEGER recNo,i
+STRING  fieldData
+
+        CLS
+        INPUT "Enter record number to print _",recNo
+        PRINTLN
+        If (recno > DRECCOUNT(dbChan)) then            ; Make sure record exists
+          PRINTLN "record does not exist"
+          WAIT
+          RETURN
+        ENDIF
+
+        DGO dbChan,recNo                               ; Jumpt to record number
+        PRINTLN
+        for i = 1 to DFIELDS(dbChan)                   ; Loop through each field
+          DGET    dbChan,DNAME(dbChan,i),fieldData     ; Get data from field
+          PRINTLN DNAME(dbChan,i),": ", fieldData
+        next i
+        WAIT
+ENDPROC
+
+PROCEDURE create_index()
+INTEGER i
+
+       if (exist(PPEPATH()+"index.ndx")) DELETE PPEPATH()+"index.ndx"
+
+       for i = 1 to DFIELDS(dbChan)                 ; Print all fields for index selection
+          PRINTLN i,") ",DNAME(dbChan,i)
+       next i
+       PRINTLN
+       INPUT "Which field do you wish to index? _",i
+       PRINTLN
+       DNCREATE dbChan,PPEPATH()+"index.ndx",DNAME(dbChan,i)   ; Create index for field specified
+       if (DERR(dbChan)) then                                  ; Check for error
+         PRINTLN "Error creating index."
+         WAIT
+         RETURN
+       endif
+       keyField = i
+       DTAG dbChan,"index"                                     ; Make this index the default tag. This is impoprtant!
+       if (!DERR(dbChan)) then                                 ; Check for error
+           PRINTLN "Index created."
+           PRINTLN "The key field is ",DNAME(dbChan,keyField)
+       else
+           PRINTLN "Error creating index..."
+       endif
+ENDPROC
+
+PROCEDURE search()
+
+STRING  searchString,fieldData
+INTEGER i
+
+
+       PRINTLN "Search on ",DNAME(dbChan,keyField)," field."
+       INPUT "Enter search string _",searchString             ; get data to search for
+       PRINTLN
+
+       PRINTLN "Searching for ",searchString," in field ",DNAME(dbChan,keyField)," ..."
+       DSEEK dbChan,searchString                              ; Search for data using the default tag. (See DTAG)
+
+       if (DCHKSTAT(dbChan) = 0) then                         ; If DCHKSTAT is 0 then the record was found.
+
+        PRINTLN "Record Number ",DRECNO(dbCHAN)
+        for i = 1 to DFIELDS(dbChan)                          ; Print all fields in this record
+          DGET    dbChan,DNAME(dbChan,i),fieldData
+          PRINTLN DNAME(dbChan,i),": ", fieldData
+        next i
+        WAIT
+
+       else
+
+         PRINTLN
+         PRINTLN searchString," not found!"
+         WAIT
+
+       endif
+ENDPROC

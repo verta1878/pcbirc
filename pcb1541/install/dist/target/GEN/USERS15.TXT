@@ -1,0 +1,75 @@
+@X0EHow to use this system
+@X04ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+@X07
+         Access to the system is restricted to pre-registered callers only.
+         No public access is allowed.
+
+         Main Board-
+                -Private messages between callers and Sysops only.
+
+                -No file areas, scripts, bulletins are available.
+
+         Employee E-Mail-
+                -No file area, scripts, bulletins are available.
+
+                -Conference is available to all employees.
+                 Messaging may be either public or private.
+
+         Sales & Marketing-
+                -Access is restricted to members of the Sales & Marketing
+                 Department(s).
+
+                -Bulletins are available for display of information relating
+                 specifically to this area.
+
+                -Files areas are available for download of information
+                 relating specifically to this area.
+
+         MIS-
+                -Access is restricted to members of the MIS Department.
+
+                -Bulletins are available for display of information relating
+                 specifically to this area.
+
+                -Files areas are available for download of information
+                 relating specifically to this area.
+
+         Administration-
+                -Access is restricted to members of Administration.
+
+                -Bulletins are available for display of information relating
+                 specifically to this area.
+
+                -Files areas are available for download of information
+                 relating specifically to this area.
+
+         Human Resources-
+                -Access is restricted to members of the Human Resources
+                 Department.
+
+                -Bulletins are available for display of information relating
+                 specifically to this area.
+
+                -Files areas are available for download of information
+                 relating specifically to this area.
+
+         Customer Support-
+                -Access is restricted to members of the Customer Support
+                 Department.
+
+                -Bulletins are available for display of information relating
+                 specifically to this area.
+
+                -Files areas are available for download of information
+                 relating specifically to this area.
+
+         Engineering-
+                -Access is restricted to members of the Engineering
+                 Department.
+
+                -Bulletins are available for display of information relating
+                 specifically to this area.
+
+                -Files areas are available for download of information
+                 relating specifically to this area.
+

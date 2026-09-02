@@ -1,0 +1,29 @@
+;This is a sample ".OS2" file.  You'll note that every item on the left of the
+;equals sign is spelled *exactly* like you see in the DOS_Settings screen when
+;you right click on a DOS object and go into the session settings.
+
+;When you create a .OS2 file, it needs to either be called PCBDOS.OS2 (which is
+;used as a default for all of your DOS shells, unless an application-specifc
+;.OS2 file is found), or else you need to define an application-specific .OS2
+;by giving it the same name as the application (i.e. to run MYDOOR with a
+;specific .OS2 file, you would create a file called MYDOOR.OS2 and put it in
+;the same subdirectory where the MYDOOR file is stored).
+
+;This sample may not work for you unless you customize the DOS_DEVICE= lines
+;below because these lines have drive and path information in them which may
+;not correspond with your own configuration.
+
+;NOTE:  The "size=0" parameter is a method of loading a device driver high in
+;       OS/2 and works both here as well as in the DOS_Settings screen.  To
+;       use it, however, you *must* have DOS_UMB=1 (i.e. you must tell OS/2
+;       that you want to have Upper Memory Blocks in which to load the driver).
+
+DOS_FILES=20
+DOS_HIGH=1
+DOS_UMB=1
+DOS_DEVICE=size=0 E:\SIO\VX00.SYS
+DOS_DEVICE=size=0 E:\OS2\MDOS\ANSI.SYS
+EMS_MEMORY_LIMIT=1024
+IDLE_SECONDS=0
+IDLE_SENSITIVITY=30
+

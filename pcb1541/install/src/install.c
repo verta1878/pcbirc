@@ -14,9 +14,9 @@
 /* DEPENDENCY: .RED container extraction/creation                            */
 /*   The @BeginLib/@File/@EndLib directives unpack files from Clark's        */
 /*   .RED containers (RR magic, LH5-family compression, per-record header    */
-/*   with compressed/uncompressed sizes and CRC16). Once archivers/redx      */
-/*   and archivers/redc land (built on archivers/lha/), this installer       */
-/*   links against them instead of shelling out. See archivers/README.md     */
+/*   with compressed/uncompressed sizes and CRC16). Once pcb1541/install/archivers/redx      */
+/*   and pcb1541/install/archivers/redc land (built on pcb1541/install/archivers/lha/), this installer       */
+/*   links against them instead of shelling out. See pcb1541/install/archivers/README.md     */
 /*   for the codec phase plan.                                                */
 /*                                                                           */
 /* License: GPLv3                                                            */

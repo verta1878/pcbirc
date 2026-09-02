@@ -1,0 +1,81 @@
+;*******************************************************************************
+;*                                                                             *
+;*                                 MORE.PPS                                    *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*   A MORE? prompt replacement PPE to accept either a standard MORE? prompt   *
+;*         response *OR* a complete command for the next 'real' prompt         *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*                       Written by Scott Dale Robison                         *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*            Install in the PCBTEXT file in place of prompt #196              *
+;*                           !C:\PCB\PPL\MORE.PPE                              *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;* Version 1.0 - Initial Release                                               *
+;*                                                                             *
+;* Version 2.0 - Fixes a bug in handling empty responses to the MORE prompt    *
+;*               Adds support for processing CMD.LST commands                  *
+;*                                                                             *
+;*******************************************************************************
+
+;*******************************************************************************
+
+' Variable Declarations
+
+STRING rsp ' The users response
+STRING prm ' The prompt to display to the user
+STRING val ' The valid character mask
+
+'*******************************************************************************
+
+' Initializations
+
+LET prm = "(@TIMELEFT@ min left), (H)elp, More"
+
+LET val = "`~1234567890!@#$%^&*()-_=+ABCDEFGHIJKLMNOPQRSTUVWXYZ[]{}\|;:',./<>?"
+LET val = val+CHR(34)
+
+;*******************************************************************************
+
+' Main Program
+
+' Get user response
+INPUTSTR prm,rsp,@X0E,45,val,UPCASE+STACKED+ERASELINE+YESNO
+
+' Tokenize it and untokenize it
+TOKENIZE rsp
+LET rsp = TOKENSTR()
+
+' Is it only a standard MORE? prompt response or not?
+IF ((rsp <> YESCHAR()) && (rsp <> NOCHAR()) && (rsp <> "NS") && \
+  (LEN(rsp) <> 0)) THEN
+
+  ' It isn't a standard MORE? prompt response, so answer NO
+  ' Use KBDSTUFF so that it isn't echoed to the display
+  KBDSTUFF NOCHAR()+CHR(13)
+
+  ' Now we need to stuff whatever the user *did* type in.
+  ' Use KBDSTRING so that PCBoard can run a CMD.LST entry as well as internals
+  KBDSTRING rsp
+
+ELSE ' It is only a standard MORE? prompt response
+
+  ' if it was empty, then set it to a carriage return
+  IF (LEN(rsp) = 0) LET rsp = CHR(13)
+
+  ' Use KBDSTUFF so that it isn't echoed to the display
+  KBDSTUFF rsp
+
+ENDIF
+
+END
+
+;*******************************************************************************
+

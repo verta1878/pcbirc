@@ -19,7 +19,7 @@ hardware. Format: FAT16 hard-disk image with FreeDOS 1.3.
 
 Phase 0 (image rebuild) is done. Remaining phases in order:
 
-1. **`.RED` extractor / creator** (`archivers/lha/` + `archivers/redx/`)
+1. **`.RED` extractor / creator** (`pcb1541/install/archivers/lha/` + `pcb1541/install/archivers/redx/`)
    — the PCB installer wraps files in a Clark-proprietary `.RED`
    container (RR magic + LH5-family compression). Vendored LHA 1.14i
    source provides the LH5 decoder; the crew's thin wrapper handles
@@ -49,7 +49,7 @@ Phase 0 (image rebuild) is done. Remaining phases in order:
    istallion.c) per `LINUX_BSD_HUNT.md`. Single `PCBDCOM.DRV`
    output. Ships as native crew asset with pcb1541.
 5. **PCB installer recreation** — own the whole PCBoard install
-   experience. Uses `archivers/redx` + `archivers/redc` from
+   experience. Uses `pcb1541/install/archivers/redx` + `pcb1541/install/archivers/redc` from
    phase 1 for the container operations; DOS + OS/2 stub for
    target platforms. Lets us distribute PCBoard end-to-end on
    our own installer.

@@ -1,0 +1,359 @@
+           How to program a database using PPL DBase support
+                  (C) 1994 Copyright Clark Development
+
+        This document is provided to give PPL programmers a brief
+ description of how to program a database using PPL. It is in no way
+ complete nor extensive. It is meant to give a brief introduction on how
+ to use PPL to do basic database programming. It is beyond the scope of
+ this document to teach advanced database design and programming
+ techniques.
+
+        If you need technical support please call our support lines
+ given in the PCBoard tecnical reference. Or leave a message on saltair
+ in conference 39.
+
+
+========================================================================
+
+
+Programming DBase III+ with PPL ver 3.0
+========================================
+
+
+Section I. Creating a database.
+-------------------------------
+PPL statements/functions used: DCREATE
+
+
+        To create a database file use the DCREATE command in PPL.
+
+        DCREATE chan,name,exclusive,fieldinfo
+
+        Where:
+
+chan      is an integer corresponding to the DBase channel you wish to
+----      use. This can be a value from 0 to 7. All work done on a
+          single database is done on a common 'channel'.
+
+name      is a string containing the name you want to give this database
+----      file An extension is not needed. It will always default to
+          .dbf.
+
+exclusive is a boolean which tells PPL if the file is to be opened in
+--------- exclusive mode. If you are working in a multi-user environment
+          this will be important.
+
+fieldinfo is an array of strings containing information about the fields
+--------- you wish to put into your database.
+          The information in this string is separated by commas. There
+          are 4 parts which need to be in each string in the array.
+          1- Field name
+          2- Field type   C=Char,N=Numeric,F=Floatingpt,D=date,L=logical,m=memo
+          3- Field width
+          4- Decimal places (numeric fields only)
+
+          Example:
+          STRING fields(4)
+          LET fields(0) = "FIRST,C,25,0"  ; This says I want a field called
+                                          ; FIRST which is a character field
+                                          ; 25 characters wide with no decimals
+          LET fields(1) = "LAST,C,30,0"
+          LET fields(2) = "PHONE,C,15,0"
+          LET fields(3) = "AGE,N,4,0"
+          LET fields(4) = "NOTES,M,0,0"
+
+          DCREATE 0,"MYFIRST",FALSE,fields ;Note. No array subscripts are
+                                           ;necessary.
+
+          END
+
+          That's it. This example will create a database called "myfirst.dbf"
+          in the following format.
+
+FIRST             LAST                 PHONE                AGE         MEMO
+---------------------------------------------------------------------------------
+[25 characters]   [30 characters]      [15 characters]      [4 digits]  [lots of chars]
+
+
+Opening an existing database.
+------------------------------
+
+          To open an existing database use the DOPEN command.
+
+             DOPEN chan,name,exclusive.
+
+where chan is the DBase channel, name is the name of the database,
+(file extension will be ignored) and exclusive is a boolean value
+telling PPL to open the file exclusively for your use.
+*Caution- Make sure you have indeed opened the file by checking DERR()
+after the call to DOPEN.
+          All databases need an index in order to seek. See the section
+on retrieving data to see how to create, select and use indexes.
+
+
+============================================================================
+
+Section II. Entering data.
+--------------------------
+PPL statements/functions used: DNEW,DPUT,DADD
+
+        To enter data into your database requires several steps.
+
+        1. Assemble your data into PPL (read input from user,file etc...)
+        2. Create a dbase  RECORD                 DNEW chan
+        3. Put PPL data into the new RECORD       DPUT chan, name, expression
+        4. Add the new record to your database.   DADD chan
+
+Step 1: Assemble data in PPL.
+
+        This is done however you want. Reading information from files, user
+        input etc...
+
+Step 2: Create a new record.
+
+        A record is a LINE in the database.
+
+FIRST             LAST                 PHONE                AGE
+---------------------------------------------------------------------
+Fred              Flintstone           555-1212             34       Record 1
+Barney            Rubble               555-2121             28       Record 2
+
+        To create a new record simply use the function
+
+           DNEW chan
+
+        where chan is the current database channel.
+
+        That's it, nothing more.
+        *Note that this record will not be added to the database until DADD is
+        used.
+
+Step 3: Put PPL data into the new record.
+
+        This is done using the DPUT chan,name,expression
+        Where
+             chan is the current database channel.
+             name is the NAME of the field you wish to put your information in.
+       expression is the information you wish to put in the field.
+
+       EXAMPLE:  Putting the data in the above table into a database.
+
+       DPUT 0,"FIRST","FRED"
+       DPUT 0,"LAST","FLINTSTONE"
+       DPUT 0,"PHONE","555-1212"
+       DPUT 0,"AGE",34
+
+       This data has been put into the new record. Now it needs to be added
+       to the database.
+
+Step 4: Add the new record to your database.
+
+         This is done with the DADD statement.
+
+              DADD 0
+
+         Now the record has been added to the database.
+
+==============================================================================
+
+Section III. Retrieving data
+----------------------------
+PPL statements/functions used: DNCREATE, DNOPEN, DTAG, DSEEK, DGET
+                               DCLOSE, DCLOSEALL, DNCLOSE, DNCLOSEALL
+
+       Retrieving data from a DBase database introduces the concept of
+   an index. An index is used to make retrieving data much faster. It's
+   much like using a reference manual. If you want to learn how to
+   install a TPA in PCBoard it would be inefficient to start at the
+   beginning and start looking for the word TPA. Most people are going to
+   look up TPA in the index, then go to the page number associated with TPA in
+   the index. It is the same with DBase indexes.
+       The first step in retrieving data is to create/open an index
+   file. Here's how to do it.
+
+   DNCREATE chan,name,taginfo
+   Where
+
+   CHAN   Is the DBase channel. This is the same channel you used with
+          DOPEN or DCREATE. All indexes are associated with the same
+          channel as the database you are indexing. For example, if you
+          open your database on channel 1 then all your indexes for that
+          database must be on channel one. You can have as many indexes
+          for a single database as you want. However, only on can be
+          active at any one time.
+
+   NAME   The name you wish to give the index. Extensions will be ignored
+          and a default extension of .NDX will be given.
+
+   TAGINFO This is a DBase expression which the index uses as a key.
+           Usually this is just the name of the field you wish to search on.
+
+       Here's an example of how to create an index for the Fred
+       Flintstone database.
+
+       DNCREATE 0,"TAG1.NDX","FIRST"
+
+       This will create an index file called tag1.ndx. It uses the FIRST
+  field as the key field. Once an index has been created, it is ready for
+  use. Note that creating or opening an index will automatically select
+  that as the default tag. If you have several index files open at once,
+  you can use the  DTAG [chan, name] PPL statement to select an index.
+
+       Here is an example of how to open several index files, then
+  select one as the default index.
+
+        DNOPEN 0,"TAG1.NDX"   ;Index for field 'FIRST'
+        DNOPEN 0,"TAG2.NDX"   ;Index for field 'LAST'
+        DNOPEN 0,"TAG3.NDX"   ;Index for field 'AGE'
+
+        DTAG   0,"TAG2"
+
+        This opens 3 index files, then selects the TAG2.NDX index as the
+  default tag. The purpose of having multiple index files is to allow
+  searching on several key fields. For instance, if you wanted to find
+  someone's LAST name in this database then you would select the LAST
+  index using DTAG. Then you can seek using the LAST field as the key
+  field. Seeking is the next step in retrieving data from a database.
+
+        Once an index has been opened/created/selected you can seek for
+  the data you are looking for. The DSEEK statement is used to find the
+  record you are looking for. You give DSEEK the data and it searches
+  the index, then places the file pointer in the database at the record
+  containing your search data. Here's an example.
+
+        The "TAG2.NDX" index is selected.
+
+        DTAG 0,"TAG2"          ; Remember TAG2 indexes the 'LAST' field
+        DSEEK 0,"Flintstone"   ; Search for a record with 'Flintstone' in the 'LAST' field
+
+        Since there is a record in the database that has the string
+  value "Flintstone" contained in the LAST field, DSEEK will place
+  you at that record in the database.
+
+        Once you have SEEKed to a record you are ready to finally
+  retrieve the data in that record. This is done with the DGET
+  statement. Here's how to use it.
+
+  STRING fname,lname, pnumber
+  INTEGER age
+
+  DTAG  ...
+  DSEEK ...
+
+  DGET 0,"FIRST",fname
+  DGET 0,"LAST",lname
+  DGET 0,"PHONE",pnumber
+  DGET 0,"AGE",age
+
+         Now you can do whatever you want with the data. Print it out, write it
+  to a file or display it to a user.
+         To close a database use the DCLOSE [chan] statement. This will close
+  all the index files associated with that database as well. If you run
+  out of file channels while opening indexes you can use DNCLOSE chan, name
+  to close an index file and still keep your database open. DNCLOSEALL will
+  close all index files in one call. DCLOSEALL will close all databases
+  with one call.
+         That's it. Now you have a functional database!
+
+
+Section IV. Removing data from a database.
+------------------------------------------
+PPL statements/functions used: DDELETE, DPACK, DFBLANK
+
+          To remove a record from a database follow the same steps as
+  seeking. When you have seeked to the record you wish to delete use the
+  DDELETE statement.
+
+          DTAG 0,"LAST"
+          DSEEK 0,"Flintstone"
+          DDELETE
+
+          You must be careful to make sure you actually seek'ed to the record
+   you wanted. If not you may delete the wrong data. The way to check the
+   success of a seek is with the DERR() and DCHKSTAT() functions. DERR() will
+   return the error condition for the last operation on that DBase channel.
+   DERR() will return 1 if an error occurred, 0 if not. This is the tricky
+   part, DSEEK will most likely not set the error condition, even if the
+   seek fails. What seek will do it either place you at the record which
+   would follow the data you SEEK'ed on if the data were actually there. Or
+   DSEEK will place you at the beginning or end of the file. The way to find
+   out exactly what happened is to use DCHKSTAT(). This function will return
+   the status of the last DBase action. In the case of DSEEK, DCHKSTAT  will
+   return 0 if the seek was successful, some other value if it was not.
+   The following table describes the values DCHKSTAT will return.
+
+   Value                     Meaning
+   ======================================================================
+   0                         Success
+   1                         Not used
+   2                         Search not successful. File placed at next record
+   3                         End of file
+   4                         Beginning of file
+   5                         Record or tag key is missing
+   10                        Tag should be in descending order
+   20                        Tag should have a unique key or an attempt to add a
+                             non unique key
+   50                        Part of a file is locked by another user
+   60                        File could not be created
+   70                        File could not be opened
+   80                        Tag could not be found
+   90                        Slave record was not located during a look-up
+
+
+
+
+Section V. The World at Your Feet
+------------------------------------------
+
+       There is so much more to programming a database. I have not covered
+ many of the things you can do with PPL's database capabilities. Here's a
+ breif description of some miscellanious DBase functionality.
+
+ DGO   - Jump to a certian record number.
+
+         IF I know the data I want is in record number 123, then I can use
+         DGO to jump to that record.
+
+ DSKIP - Relative move. Skip + or - specified number of records.
+
+ DTOP
+ DBOTTOM
+       - Jump to the first or last record.
+
+ DLOCK
+ DLOCKR
+ DLOCKG
+ DUNLOCK - In a multiuser environment, locking records or groups of records
+           may be important.
+
+ DBLANK  - Blank a record
+ DFBLANK - Blank a field
+
+ DRECALL - Undelete a record
+
+ DFCOPY  - Copy fields
+
+ DSELECT - Select alias name
+
+ DERRMSG - Print the codebase error string associated with a certian error code.
+
+ DGETALIAS - Retrieve a database's alias
+
+    There's so much more.
+
+
+
+Section VI. Wrapping it up
+------------------------------------------
+
+      The best way to learn how to program a database is to test your new ideas
+   and see how it works. Learning from books and local gurus are some other
+   great ways. PPL 3.0 gives you the power to create powerful database
+   applications. The documentation provided will get you started and shows
+   how PPL DBase works, but is in no way complete. Database design and
+   implementation techniques can fill volumes of text.
+
+      Enjoy PPL v3.0 and as always you can receive technical support by calling
+   the support lines at CDC or Saltair.
+
+

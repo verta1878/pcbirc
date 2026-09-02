@@ -1,0 +1,37 @@
+;***********************************************************************
+
+; START.PPS - A new command used to start BETA testing PCBoard
+
+;***********************************************************************
+
+; Variables
+
+INTEGER minSec ' The minimum security required to BETA test
+STRING  CR     ' A carriage return
+
+;***********************************************************************
+
+; Initializations
+
+LET minSec = 20
+LET CR     = CHR(13)
+
+;***********************************************************************
+
+; Main Program
+
+' If the user doesn't have current support
+IF (CURSEC() < minSec) THEN
+  DISPFILE PPEPATH()+"SBAD",GRAPH+SEC+LANG ' Display information file
+  END                                      ' Exit PPE
+ENDIF
+
+DISPFILE PPEPATH()+"SOK",GRAPH+SEC+LANG    ' Display information file
+
+' If the user isn't in conference 6 force them to join
+IF (CURCONF() <> 6) KBDSTUFF "J 6 NS"+CR
+
+' Force them to read messages pertaining to the start of the BETA test
+KBDSTUFF "R O 61977+"+CR
+
+;***********************************************************************

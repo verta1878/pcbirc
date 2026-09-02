@@ -1,0 +1,336 @@
+;*******************************************************************************
+;*                                                                             *
+;*                                HAMURABI.PPS                                 *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*     Simple text-mode simulation; buy & sell land, accumulate bushels of     *
+;*    grain, and attempt to keep your population growing so you can do more    *
+;*                              of the other! :)                               *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*    Original BASIC source code modified by the People's Computer Company     *
+;*                                                                             *
+;*   Ported to the PCBoard Programming Language (PPL) by Scott Dale Robison    *
+;*                                                                             *
+;*-----------------------------------------------------------------------------*
+;*                                                                             *
+;*                        Install in the CMD.LST file                          *
+;*                                                                             *
+;*******************************************************************************
+
+;*******************************************************************************
+
+' Variable Declarations
+
+INTEGER pop         ' Population of the city
+INTEGER immiLY      ' Immigrants to the city last year
+INTEGER deathLY     ' Deaths     in the city last year
+
+INTEGER bushStore   ' Bushels in the storehouse
+INTEGER bushDestroy ' Bushels destroyed last year (by rats!)
+
+INTEGER harvAcreLY  ' Harvest (in bushels) per acre last year
+INTEGER harvTotLY   ' Harvest (in bushels) total    last year
+
+INTEGER cityAcres   ' Total acres owned by the city
+INTEGER acreVal     ' Value (in bushels) of an acre of land
+
+BOOLEAN plague      ' Flag indicating whether or not a plague has occurred
+
+INTEGER acres       ' Acres involved in a transaction
+INTEGER bushels     ' Bushels involved in a transaction
+
+INTEGER i,j         ' Temporary variables used by program
+
+;*******************************************************************************
+
+' Initialization
+
+' Display information to the player
+
+CLS
+
+PRINTLN "@X0FHamurabi - Where you govern the ancient kingdom of Sumeria"
+NEWLINE
+PRINTLN "Written by Scott Dale Robison"
+NEWLINE
+PRINTLN "@X07The object is to figure out how the game works!"
+PRINTLN "(If you want to quit, sell all your land)"
+NEWLINE
+
+' Now that the player is reading the information, initialize our variables
+
+LET pop         =   100 ' Initial population of the city
+LET immiLY      =     5 ' Initial immigrants from last year
+LET deathLY     =     0 ' Initial deaths     from last year
+
+LET bushStore   =  2800 ' Initial bushels in the storehouse
+LET bushDestroy =   200 ' Initial bushels destroyed from last year
+
+LET harvAcreLY  =     3 ' Initial harvest per acre from last year
+LET harvTotLY   =  3000 ' Initial total harvest from last year
+
+LET cityAcres   =  1000 ' Initial acres owned by the city
+
+LET plague      = FALSE ' Initial plague status
+
+WAIT
+
+;*******************************************************************************
+
+' Main Program Loop
+
+WHILE (cityAcres > 0) DO
+
+  GOSUB report
+
+  PRINTLN "@X0FHamurabi . . ."
+  NEWLINES 2
+
+  GOSUB buyLand
+  GOSUB sellLand
+
+  IF (cityAcres = 0) THEN
+
+    GOSUB report
+
+  ELSE
+
+    GOSUB distFood
+    GOSUB plantLand
+
+    GOSUB maint
+
+  ENDIF
+
+ENDWHILE
+
+END
+
+;*******************************************************************************
+
+' Report subroutine - Tell the user what happened last year
+
+:report
+
+CLS
+
+NEWLINE
+PRINTLN "@X07Hamurabi, I beg to report that last year@X0F"
+NEWLINE
+PRINT   deathLY," @X07people starved and @X0F",immiLY
+PRINTLN " @X07people came to the city"
+
+IF ((cityAcres > 0) & plague) GOSUB plagueEffects
+
+PRINTLN "@X07The population is now @X0F",pop
+NEWLINE
+PRINT   "@X07We harvested @X0F",harvTotLY," @X07bushels at @X0F",harvAcreLY
+PRINTLN " @X07bushels per acre"
+PRINT   "Rats destroyed @X0F",bushDestroy," @X07bushels leaving @X0F",bushStore
+PRINTLN " @X07bushels in the storehouses"
+
+IF (cityAcres > 0) THEN
+
+  NEWLINE
+  PRINTLN "The city owns @X0F",cityAcres," @X07acres of land"
+
+  LET acreVal = 17 + random(5) ' Calculate value per acre
+
+  PRINTLN "Land is worth @X0F",acreVal," @X07bushels per acre"
+
+ENDIF
+
+NEWLINES 2
+
+RETURN
+
+;*******************************************************************************
+
+' Plague Effects subroutine - Process the plague and inform user
+
+:plagueEffects
+
+LET pop = pop - pop/2 ' Kill off half the population (favoring the player)
+
+PRINTLN "@X87The plague killed half the people"
+
+RETURN
+
+;*******************************************************************************
+
+' Buy Land subroutine - Find out how many acres to buy and do it
+
+:buyLand
+
+LET acres = -1 ' Initialize acres to an impossible value
+
+WHILE (acres < 0) DO ' Loop while we have an impossible value
+
+  LET acres = 0
+  INPUTINT "Buy how many acres",acres,@X0E
+  NEWLINE
+
+  LET acres = ABS(acres) ' Make sure acres is greater or equal to 0
+
+  LET bushels = acres * acreVal
+
+  IF (bushels > bushStore) THEN
+
+    GOSUB errSub
+    LET acres = -1
+
+  ENDIF
+
+ENDWHILE
+
+LET bushStore = bushStore - bushels
+LET cityAcres = cityAcres + acres
+
+RETURN
+
+;*******************************************************************************
+
+' Sell Land subroutine - Find out how many acres to sell and do it
+
+:sellLand
+
+LET acres = -1 ' Initialize acres to an impossible value
+
+WHILE (acres < 0) DO ' Loop while we have an impossible value
+
+  LET acres = 0
+  INPUTINT "Sell how many acres",acres,@X0E
+  NEWLINE
+
+  LET acres = ABS(acres) ' Make sure acres is greater or equal to 0
+
+  LET bushels = acres * acreVal
+
+  IF (acres > cityAcres) THEN
+
+    GOSUB errSub
+    LET acres = -1
+
+  ENDIF
+
+ENDWHILE
+
+LET bushStore = bushStore + bushels
+LET cityAcres = cityAcres - acres
+
+RETURN
+
+;*******************************************************************************
+
+' Distrib Food subroutine - Find out how many bushels to distribute and do it
+
+:distFood
+
+LET bushels = -1 ' Initialize bushels to an impossible value
+
+WHILE (bushels < 0) DO ' Loop while we have an impossible value
+
+  LET bushels = 0
+  INPUTINT "How many bushels shall we distribute as food",bushels,@X0E
+  NEWLINE
+
+  LET bushels = ABS(bushels) ' Make sure bushels is greater or equal to 0
+
+  IF (bushels > bushStore) THEN
+
+    GOSUB errSub
+    LET bushels = -1
+
+  ENDIF
+
+ENDWHILE
+
+LET bushStore = bushStore - bushels
+
+LET immiLY  = 0
+LET deathLY = pop - (bushels / 20) ' 20 bushels/person/year required
+
+IF (deathLY < 0) THEN        ' If less than 0 deaths then
+
+  LET immiLY  = -deathLY / 2 ' Half as many immigrants
+  LET deathLY = 0            ' No deaths
+
+ENDIF
+
+RETURN
+
+;*******************************************************************************
+
+' Plant Land subroutine - Find out how many acres to plant and do it
+
+:plantLand
+
+LET acres = -1 ' Initialize acres to an impossible value
+
+WHILE (acres < 0) DO ' Loop while we have an impossible value
+
+  LET acres = 0
+  INPUTINT "How many acres shall we plant",acres,@X0E
+  NEWLINE
+
+  LET acres = ABS(acres) ' Make sure acres is greater or equal to 0
+
+  LET bushels = acres / 2 ' One bushel per two acres
+
+  ' If not enough bushels *OR* not enough people
+  IF ((bushels > bushStore) | (acres > (pop*10))) THEN
+
+    GOSUB errSub
+    LET acres = -1
+
+  ENDIF
+
+ENDWHILE
+
+LET bushStore = bushStore - bushels
+
+RETURN
+
+;*******************************************************************************
+
+' Maintenance subroutine - Manage the harvest, bushels destroyed by rats,
+'                          and changes in the population
+
+:maint
+
+LET harvAcreLY  = 1 + RANDOM(4)      ' Harvest per acre:  1 <= h <= 5
+LET harvTotLY   = harvAcreLY * acres ' Acres set prior to subroutine entry
+LET bushDestroy = (bushStore+harvTotLY)/100*RANDOM(7) ' Destroy 0% to 7%
+LET bushStore   = bushStore + harvTotLY - bushDestroy
+
+LET plague = (RANDOM(9) = 0) ' A one in ten chance of a plague
+
+' The more stored bushels and the less bushels per acre, the more immigrants
+' (but always at least one) in addition to previous immigrants
+LET immiLY = immiLY + (5-harvAcreLY) * bushStore / 600 + 1
+
+IF (immiLY > 50) LET immiLY = 50 ' Never more than 50 immigrants per year
+
+LET pop = pop + immiLY - deathLY ' Adjust population
+
+RETURN
+
+;*******************************************************************************
+
+' Error subroutine - If an error is made in input let user know information
+
+:errSub
+
+NEWLINE
+PRINTLN "@X07Hamurabi, think again - you only have@X0F"
+PRINT   pop," @X07people, @X0F",cityAcres," @X07acres, and @X0F",bushStore
+PRINTLN " @X07bushels in storehouses"
+NEWLINE
+
+RETURN
+
+;*******************************************************************************
+
