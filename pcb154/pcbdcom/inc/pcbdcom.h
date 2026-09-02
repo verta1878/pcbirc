@@ -33,6 +33,15 @@ typedef struct pcbdcom_port {
     void          *backend_data;
     /* State */
     int            open;
+    /* v1.2 additions */
+    unsigned char  parity;      /* 'N','E','O','M','S' */
+    unsigned char  data_bits;   /* 5..8 */
+    unsigned char  stop_bits;   /* 1 or 2 */
+    unsigned char  flow;        /* 0=none, 1=RTS/CTS, 2=XON/XOFF */
+    void          *card_state;  /* per-card state (owned by backend) */
 } pcbdcom_port_t;
+
+#define PCBDCOM_MAX_CARDS  8
+#define PCBDCOM_BUF_SIZE   PCBDCOM_RX_RING
 
 #endif /* PCBDCOM_H */

@@ -1,5 +1,5 @@
 /* ============================================================================
- * pcbdcom.c — main entry point, config parser, backend registry
+ * pcbdcom.c — main entry point (TSR install), config parser, backend registry
  *
  * Dual-mode loader:
  *   - CONFIG.SYS DEVICE=PCBDCOM.SYS  → device_entry() called by DOS
@@ -44,6 +44,8 @@ static const pcbdcom_backend_t *find_backend(const char *name)
     if (!strcmp(name, "DIGI_ACCEL")) return &pcbdcom_digi_accel_backend;
     if (!strcmp(name, "ROCKET"))     return &pcbdcom_rocket_backend;
     if (!strcmp(name, "EASYIO"))     return &pcbdcom_easyio_backend;
+    if (!strcmp(name, "ARNETSPP"))   return &pcbdcom_arnet_backend;
+    if (!strcmp(name, "ARNET"))      return &pcbdcom_arnet_backend;
     return NULL;
 }
 
@@ -160,12 +162,19 @@ static const char *find_cfg_arg(int argc, char **argv)
 }
 
 /* ----- .EXE / TSR entry ----- */
+/* Symbol at end of BSS — linker-supplied. Used to compute resident size.
+ * All compilers we target expose _end or __end (BC31: _end; OpenWatcom: end;
+ * MSC: _end). Fall back to a conservative constant if unavailable. */
+extern char _end[];
+
 int main(int argc, char **argv)
 {
     const char *cfg;
     int n;
+    unsigned int resident_paragraphs;
+    unsigned int psp_seg;
 
-    printf("pcbdcom v1.0 — PCB DOS COM (WCSC COMM-DRV replacement)\n");
+    printf("pcbdcom v1.2 — PCB DOS COM (WCSC COMM-DRV replacement)\n");
     printf("the crew 4free — GPLv3\n\n");
 
     cfg = find_cfg_arg(argc, argv);
@@ -180,44 +189,45 @@ int main(int argc, char **argv)
         return 2;
     }
 
-    /* TSR — keep in memory. Size in paragraphs computed by DOS from PSP.
-     * Real code would use dos_keep_tsr(psp_size / 16, 0). For v1
-     * we just exit — CONFIG.SYS DEVICE path is the primary target. */
-    printf("pcbdcom: use CONFIG.SYS DEVICE= line for full TSR install.\n");
+    printf("pcbdcom: %d port(s) online, installing TSR...\n", n);
+
+    /* TSR install: compute resident size = end-of-BSS - PSP + safety margin.
+     * PSP is 256 bytes below the loaded image on DOS EXE (CS = PSP + 0x10).
+     * _end gives us the top of BSS relative to DS. Convert to paragraphs. */
+    {
+        unsigned long end_off = (unsigned long)(unsigned int)_end;
+        /* Add PSP (256 bytes) + safety stack (256 bytes) */
+        resident_paragraphs = (unsigned int)((end_off + 256 + 256 + 15) >> 4);
+    }
+
+    /* Get PSP segment for _dos_keep. OpenWatcom/BC/MSC all have this. */
+    psp_seg = 0;
+#if defined(__WATCOMC__)
+    /* OpenWatcom: _psp declared in stdlib.h */
+    psp_seg = _psp;
+    _dos_keep(0, resident_paragraphs);
+#elif defined(__BORLANDC__) || defined(__TURBOC__)
+    /* BC31: keep() function */
+    keep(0, resident_paragraphs);
+#elif defined(_MSC_VER)
+    /* MSC: _dos_keep — same as OpenWatcom */
+    _dos_keep(0, resident_paragraphs);
+#else
+#  error "Unknown compiler — add TSR-install path"
+#endif
+
+    /* Not reached */
+    (void)psp_seg;
     return 0;
 }
 
-/* ----- .SYS / DEVICE entry ----- *
- * Request-header dispatch per DOS device driver spec. Only INIT (0)
- * is meaningful for a character-mode driver like pcbdcom — after
- * INIT returns, DOS never calls us again; we live via INT 14h hook. */
-struct device_request {
-    unsigned char length;
-    unsigned char unit;
-    unsigned char command;
-    unsigned int  status;
-    unsigned char reserved[8];
-    /* INIT-specific: */
-    unsigned char n_units;
-    void __far   *break_addr;
-    char __far   *cmdline;
-};
-
-void __far device_entry(struct device_request __far *req)
-{
-    if (req->command != 0x00) {         /* INIT only */
-        req->status = 0x8003;           /* error, unknown command */
-        return;
-    }
-
-    /* INIT: parse config, install. cmdline points at args after
-     * DEVICE=PCBDCOM.SYS in CONFIG.SYS. */
-    (void)parse_config("PCBDCOM.CFG");
-    (void)pcbdcom_install();
-
-    /* Report resident break address (end of driver code + BSS) —
-     * everything from break_addr onward is released back to DOS. */
-    req->status = 0x0100;               /* done */
-    req->n_units = 0;                   /* character device */
-    /* break_addr set by linker/startup code */
-}
+/* ----- .SYS / DEVICE entry -----
+ *
+ * DROPPED in v1.2 for WCSC parity: original COMM-DRV shipped ONLY as
+ * COMMTSR.EXE (a TSR), never as a .SYS device driver. Sysops load us
+ * from AUTOEXEC.BAT with `PCBDTSR.EXE /F=PCBDCOM.CFG` — same as they
+ * used to load COMMTSR.EXE.
+ *
+ * If .SYS-mode is needed later, resurrect device_entry() with correct
+ * CONFIG.SYS request-header dispatch. Old skeleton in commit history.
+ */

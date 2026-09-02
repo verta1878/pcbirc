@@ -80,7 +80,7 @@ purpose, only the COMM/DRV prefix swaps to PCB/PCBD.
 
 | WCSC file    | Our file      | Purpose                             |
 |--------------|---------------|-------------------------------------|
-| COMMTSR.EXE  | PCBTSR.EXE    | Resident TSR (INT 14h + IRQ hooks) |
+| COMMTSR.EXE  | PCBDTSR.EXE    | Resident TSR (INT 14h + IRQ hooks) |
 | COMMDRV.EXE  | PCBDCOM.EXE   | Main control utility                |
 | DRVSETUP.EXE | PCBDSET.EXE   | Setup editor (visual config)        |
 | TEST.EXE     | PCBDTEST.EXE  | Hardware tester                     |
@@ -109,12 +109,12 @@ of only the card drivers the sysop's PCBDCOM.CFG references. Sysop
 with just a Boca 8-port pays ~1 KB resident, not ~15 KB for all
 7 backends.
 
-v1.x (now): monolithic PCBTSR.EXE with all backends compiled in.
+v1.x (now): monolithic PCBDTSR.EXE with all backends compiled in.
   Ship this first — it works, sysops can use it, gets pcbdcom in
   people's hands.
 
 v2 (later): split each backend into loadable PCBDV00-08.DRV files.
-  PCBTSR.EXE becomes a small skeleton that reads PCBDCOM.CFG, EXECs
+  PCBDTSR.EXE becomes a small skeleton that reads PCBDCOM.CFG, EXECs
   or overlay-loads only the .DRV files needed, dispatches ISR + INT
   14h calls to loaded drivers. Same source, different link target.
 
@@ -126,7 +126,7 @@ v2 (later): split each backend into loadable PCBDV00-08.DRV files.
 ## Concrete deliverables
 
 v1.2 (next work): 7 files
-  PCBTSR.EXE       ← renamed from PCBDCOM.EXE (main TSR)
+  PCBDTSR.EXE       ← renamed from PCBDCOM.EXE (main TSR)
   PCBDCOM.EXE      ← control utility (new)
   PCBDSET.EXE      ← setup editor (new)
   PCBDTEST.EXE     ← hardware tester (new)
@@ -171,7 +171,7 @@ been waiting for a third, source-available, free option ever since.
     examples/
       simple.c           open port, send string, read reply
       multiport.c        use all 8 sub-ports of a Boca card
-      tsrless.c          run without PCBTSR — call init at startup
+      tsrless.c          run without PCBDTSR — call init at startup
 
 ## Constraints (per pcbcomm README, now enforced)
 
@@ -303,7 +303,7 @@ Files to create:
                              XACOOK.BIN, XACOMX.BIN, BOCA1610.BIN
   pcb154/pcbdcom/PCBDCOM.MAK — new targets: PCBDCOM.OBJ, PCBDSET.EXE,
                                 PCBDTEST.EXE. Rename output PCBDCOM.EXE
-                                → PCBTSR.EXE.
+                                → PCBDTSR.EXE.
   toolkit/pwa154/pcbdcom/
     src/                   — copy of pcb154/pcbdcom/src
     lib/                   — 13 built PCBDCOM_*_*.OBJ variants
@@ -320,7 +320,7 @@ identify the 9th card if any, read ARNETSP4/8.DAT for register maps.
 
 ## v2 — modular loadable drivers
 
-Split monolithic PCBTSR.EXE into small skeleton + 9 loadable
+Split monolithic PCBDTSR.EXE into small skeleton + 9 loadable
 PCBDV00-08.DRV files loaded on-demand from PCBDCOM.CFG. Sysop
 with just a Boca 8-port pays ~1 KB resident instead of ~15 KB.
 
@@ -339,3 +339,44 @@ More invasive than v1.2 — do it last.
 
 If v2 refactor doesn't finish, ship v1.2 + document v2 as next
 session pickup.
+
+
+# Full PCB DOS install requires .RED compression crack
+
+Not just for pcbdcom — the ENTIRE PCBoard install disk set uses
+the same 0x000B compression method:
+
+    COMMDRV.RED    22 records — pcbdcom's target
+    PCBOARD.RED    448 records — PCBoard main
+    PCBOARD2.RED   ? records — PCBoard extras
+    PCBMAIL.RED    ? records — PCBMail
+    PCBCFGS.RED    ? records — Config templates
+    PPLC.RED       ? records — PPL compiler
+
+Container format is fully reversed (see pcb154/pcbdcom/GAP-ANALYSIS.md
+Phase 1 Step 2 section). Records enumerable in all .RED files. The
+BLOCKER for a self-hosted PCBoard install from original disks is
+the compression algorithm.
+
+## Path forward
+
+**Ghidra reverse of COMMDRV.EXE's decompress routine** — will yield
+the exact 0x000B algorithm. Once implemented in redx (archivers/redx/),
+we can extract every .RED file WCSC ever shipped and rebuild the
+install disk set with our own binaries substituted (or added).
+
+That unlocks:
+- Full pcbirc-native PCBoard install from the original disks
+- Ability to ship UPDATED install disks with pcbdcom.OBJ replacing
+  COMMDRV.OBJ in the toolkit .RED
+- Ability to ship a modern install path that uses our pcbirc
+  installer instead of WCSC's INSTALL.EXE (via re-packing .RED)
+
+Priority: not v1.2 blocker (v1.2 code paths use public sources
+only). But required BEFORE we can ship a complete pcbirc PCBoard
+install package.
+
+Suggested target session: after pcbdcom v1.2 lands and stabilizes.
+Ghidra 11.1.2 is already installed at /opt/ghidra/ (per prior
+private notes). Reverse effort estimate: 4-8 hours for a competent
+reader focused on the decompress routine.

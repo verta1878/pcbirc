@@ -34,6 +34,7 @@ extern const pcbdcom_backend_t pcbdcom_digi_pcxe_backend;  /* DigiBoard PC/Xe   
 extern const pcbdcom_backend_t pcbdcom_digi_accel_backend; /* DigiBoard Accel   */
 extern const pcbdcom_backend_t pcbdcom_rocket_backend;     /* Comtrol RocketPrt */
 extern const pcbdcom_backend_t pcbdcom_easyio_backend;     /* Stallion EasyIO   */
-/* Deferred: ARNET_SPP (proprietary firmware), TCP_SOCKET (15.41 only) */
+extern const pcbdcom_backend_t pcbdcom_arnet_backend;      /* Arnet SmartPort   */
+/* Deferred: TCP_SOCKET (15.41 only) */
 
 #endif /* PCBDCOM_BACKEND_H */

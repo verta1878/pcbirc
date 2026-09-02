@@ -18,6 +18,7 @@
 #include <dos.h>
 #include <string.h>
 #include "pcbdcom.h"
+#include "compat.h"
 #include "backend.h"
 
 /* External port table — defined in pcbdcom.c */
@@ -25,7 +26,7 @@ extern pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
 extern int            g_n_ports;
 
 /* Saved original INT 14h vector (installed BIOS/prior driver) */
-static void (__interrupt __far *g_old_int14)();
+static pcbdcom_isr_t g_old_int14;
 
 /* FOSSIL signature: after Init(00h), returns 0x1954 in AX (magic). */
 #define FOSSIL_SIG_LO  0x54
@@ -59,17 +60,11 @@ static unsigned int status_word(pcbdcom_port_t *p)
 }
 
 /* Main dispatcher. Called via INT 14h vector. */
-void __interrupt __far pcbdcom_int14(unsigned _es, unsigned _ds,
-                                     unsigned _di, unsigned _si,
-                                     unsigned _bp, unsigned _sp,
-                                     unsigned _bx, unsigned _dx,
-                                     unsigned _cx, unsigned _ax,
-                                     unsigned _ip, unsigned _cs,
-                                     unsigned _flags)
+PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
 {
-    unsigned char func = (_ax >> 8) & 0xFF;
-    unsigned char ch   = _ax & 0xFF;
-    pcbdcom_port_t *p  = port_lookup(_dx);
+    unsigned char func = (PCBDCOM_AX >> 8) & 0xFF;
+    unsigned char ch   = PCBDCOM_AX & 0xFF;
+    pcbdcom_port_t *p  = port_lookup(PCBDCOM_DX);
     unsigned int rc    = 0;
     unsigned char buf[1];
 
@@ -77,7 +72,7 @@ void __interrupt __far pcbdcom_int14(unsigned _es, unsigned _ds,
         /* Unknown port — pass through to old handler (may be BIOS INT 14h
          * serving COM1..4 for callers who don't know about pcbdcom).
          * Simplest: return "not ready" so caller falls back. */
-        _ax = 0x0080;   /* AH=timeout, AL=0 */
+        PCBDCOM_AX = 0x0080;   /* AH=timeout, AL=0 */
         return;
     }
 
@@ -113,7 +108,7 @@ void __interrupt __far pcbdcom_int14(unsigned _es, unsigned _ds,
         case 0x04: /* FOSSIL Init — returns 0x1954 magic + port count */
             rc = (FOSSIL_SIG_HI << 8) | FOSSIL_SIG_LO;
             /* BL = maximum port number, BH = revision (5) */
-            _bx = (5 << 8) | (g_n_ports - 1);
+            PCBDCOM_BX = (5 << 8) | (g_n_ports - 1);
             break;
 
         case 0x05: /* FOSSIL Deinit */
@@ -148,17 +143,58 @@ void __interrupt __far pcbdcom_int14(unsigned _es, unsigned _ds,
             rc = status_word(p);
             break;
 
+        /* ---- COMM-DRV extensions (AH >= 0x10) ---- *
+         * These non-standard functions are used by PCBoard and other
+         * COMM-DRV-aware software. Not part of FOSSIL. */
+
+        case 0x10: /* commgo — flush TX queue / start transmit */
+            /* Kick the backend to drain TX buffer */
+            if (p->backend && p->backend->write)
+                (void)p->backend->write(p, NULL, 0);
+            rc = status_word(p);
+            break;
+
+        case 0x11: /* Query port count — return in AL */
+            rc = (unsigned int)g_n_ports;
+            break;
+
+        case 0x12: /* commstop — stop any pending TX, flush RX */
+            p->rx_head = p->rx_tail = 0;
+            
+            rc = status_word(p);
+            break;
+
+        case 0x13: /* Query backend name — CX/DX = base I/O for verification */
+            if (p->backend) {
+                /* Return backend signature-word via BX (first 2 chars) */
+                PCBDCOM_BX = ((unsigned int)p->backend->name[0] << 8) |
+                             (unsigned char)(p->backend->name[1] ? p->backend->name[1] : 0);
+            }
+            rc = status_word(p);
+            break;
+
+        case 0x14: /* Set/get baud rate directly — AL=action, CX=baud */
+            if ((ch & 1) == 0) {
+                /* Get */
+                PCBDCOM_CX = p->baud;
+            } else {
+                /* Set */
+                p->baud = PCBDCOM_CX;
+                if (p->backend && p->backend->init)
+                    (void)p->backend->init(p);
+            }
+            rc = status_word(p);
+            break;
+
         default:
-            /* Unimplemented function — chain to old handler? For safety
-             * just return "OK" with status word. */
+            /* Unimplemented function — return status word (safe no-op). */
             rc = status_word(p);
             break;
     }
 
-    _ax = rc;
+    PCBDCOM_AX = rc;
     /* Preserve other regs by not writing them */
-    (void)_bp; (void)_si; (void)_di; (void)_es; (void)_ds;
-    (void)_cx; (void)_sp; (void)_ip; (void)_cs; (void)_flags;
+    PCBDCOM_UNUSED_REGS;
 }
 
 /* Install / uninstall INT 14h vector */

@@ -1,0 +1,28 @@
+pcbirc — move 15.4-pwa.patch to historical/
+==============================================
+HEAD: a818fff07724defcf740abec199ddb40ca4b8e43
+
+I got the location wrong twice. Now correct: the snapshot lives in
+historical/ (a new directory), NOT at repo root.
+
+APPLY (GitHub Desktop):
+  1. Delete 15.4-pwa.patch from repo root (if still there from
+     last fixup)
+  2. Extract this zip
+  3. Copy historical/ folder to repo root
+  4. Copy CHECKSUMS trio to repo root (overwrite)
+  5. Commit + push
+
+Final layout:
+  pcbirc/
+  ├── historical/
+  │   ├── 15.4-pwa.patch    ← snapshot (byte-identical to canonical)
+  │   └── README.md         ← explains the layout
+  ├── patches/
+  │   └── 15.4-pwa.patch    ← canonical build reference
+  ├── LICENSE
+  ├── TOMORROW.md
+  └── ...
+
+Both copies stay in sync automatically since they're just two
+committed snapshots of the same content.
