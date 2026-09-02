@@ -1,0 +1,70 @@
+pcbirc v1.6.6 — CRLF corruption fix
+====================================
+HEAD: 9c7a895a7671d9d09e823a28ae0c85085b2635ab
+Date: 2026-09-02 22:29 UTC
+
+WHAT HAPPENED
+
+The v1.6.5 push to GitHub (commit 734e201) went through Windows Git
+with autocrlf, which stripped CR bytes from 273 binary-content files
+under pcb1541/install/dist/target/ that didn't have file extensions
+git recognized as binary (.DAT files, files with no extension like
+BLT/PUBLIC/PRIVATE/NEWS/BRDM/DIR1-3, etc.).
+
+Another 54 files were missing entirely on GitHub after the push —
+48 .LST files got dropped and 5 CNAMES files with trailing dots
+got renamed by Windows to trailing underscores (Windows cannot
+store filenames ending in a period).
+
+WHAT THIS RELEASE FIXES
+
+  325 files total:
+  * .gitattributes (updated to prevent recurrence)
+  * CHECKSUMS.md5, .sha256, .txt (regenerated for 10388 entries)
+  * 274 target/ files restored from authoritative content
+  * 48 .LST files restored
+  * 5 CNAMES.* trailing-dot files consolidated as trailing-underscore
+
+APPLY
+
+  1. Extract this zip INTO your repo root (overwriting existing files):
+       Windows:  right-click zip -> Extract Here (same folder)
+       Linux:    cd /path/to/pcbirc && unzip -o pcbirc-v166-crlf-fix.zip
+
+  2. IMPORTANT — the .gitattributes update must take effect BEFORE
+     committing, or Windows will re-CRLF the files again.
+     
+     After extracting, run:
+       git rm --cached -r pcb1541/install/dist/target
+       git add pcb1541/install/dist/target
+       git add .gitattributes CHECKSUMS.md5 CHECKSUMS.sha256 CHECKSUMS.txt
+
+     This re-adds all target/ files with the new binary attribute.
+
+  3. Commit + push:
+       git commit -m "v1.6.6 fix: restore 327 target/ files corrupted by CRLF"
+       git push
+
+  4. Verify:
+       md5sum -c CHECKSUMS.md5
+       # Should report: 10388 OK / 0 FAILED / 0 NOT FOUND
+
+WHAT ABOUT THE OLD trailing-dot files on Windows?
+
+  Your Windows repo already dropped them at v1.6.5 push (Windows can't
+  save 'CNAMES.'). The underscore versions (CNAMES_ etc.) are now the
+  canonical names and hold the correct content.
+
+VERIFICATION IN THE SANDBOX
+
+  * 10388 tracked files after this fix
+  * 10388/10388 files pass md5sum -c against updated CHECKSUMS.md5
+  * 0 corrupted, 0 missing
+  * .gitattributes now marks pcb1541/install/dist/target/** as binary
+
+FILES CHANGED
+
+  325 total.
+  See file list in the zip.
+
+--hexadecimal & crew, 2026-09-02
