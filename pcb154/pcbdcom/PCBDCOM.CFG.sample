@@ -23,3 +23,67 @@
 # 12  CYCLOM 1  0      10 0xD000  Y
 # 13  CYCLOM 2  0      10 0xD000  Y
 # 14  CYCLOM 3  0      10 0xD000  Y
+# Example Intel HUB-6 8-port at base 0x100, IRQ 5:
+# 15  HUB6   0  0x100  5  0  Y
+# 16  HUB6   1  0x108  5  0  Y
+# 17  HUB6   2  0x110  5  0  Y
+# 18  HUB6   3  0x118  5  0  Y
+# 19  HUB6   4  0x120  5  0  Y
+# 20  HUB6   5  0x128  5  0  Y
+# 21  HUB6   6  0x130  5  0  Y
+# 22  HUB6   7  0x138  5  0  Y
+
+# Also accepted alias:
+# 15  IBM8   0  0x100  5  0  Y   ; IBM 8-Port Async Adapter (same layout)
+
+
+# Example Digi COM/Xi 8 at CardSeg D000, IRQ 5:
+# 23  DIGI_COMXI 0  0      5   0xD000  Y
+# 24  DIGI_COMXI 1  0      5   0xD000  Y
+# 25  DIGI_COMXI 2  0      5   0xD000  Y
+# 26  DIGI_COMXI 3  0      5   0xD000  Y
+# 27  DIGI_COMXI 4  0      5   0xD000  Y
+# 28  DIGI_COMXI 5  0      5   0xD000  Y
+# 29  DIGI_COMXI 6  0      5   0xD000  Y
+# 30  DIGI_COMXI 7  0      5   0xD000  Y
+
+# Example GTEK BBS-550 8-port at base 0x180, IRQ 10:
+# 31  GTEK   0  0x180  10 0  Y
+# 32  GTEK   1  0x1A0  10 0  Y
+# 33  GTEK   2  0x1C0  10 0  Y
+# 34  GTEK   3  0x1E0  10 0  Y
+# 35  GTEK   4  0x200  10 0  Y
+# 36  GTEK   5  0x220  10 0  Y
+# 37  GTEK   6  0x240  10 0  Y
+# 38  GTEK   7  0x260  10 0  Y
+
+# Example Stallion Brumby/8 at CardSeg D000, IRQ 5:
+# 39  STALLION_BRUMBY 0  0  5  0xD000  Y
+# 40  STALLION_BRUMBY 1  0  5  0xD000  Y
+# ... (through subport 7)
+
+# Example Equinox SST-16 at CardSeg D000, IRQ 5:
+# 47  EQUINOX_SST 0  0  5  0xD000  Y
+# 48  EQUINOX_SST 1  0  5  0xD000  Y
+# ... (through subport 15)
+# NOTE: Equinox SST backend is scaffolded but UNTESTED on real hardware.
+# See src/equinox_sst_backend.c file header for bring-up guidance.
+
+# ============================================================================
+# 15.41-ONLY BACKENDS (require build with TARGET=15.41)
+# ============================================================================
+
+# Example Stallion Brumby-8 at CardSeg D000, IRQ 5:
+# 39  STALLION_BRUMBY 0  0  5  0xD000  Y
+# 40  STALLION_BRUMBY 1  0  5  0xD000  Y
+# ...
+
+# Example Chase IOLAN-8 at CardSeg D400, IRQ 10:
+# 47  CHASE_IOLAN 0  0  10 0xD400  Y
+# 48  CHASE_IOLAN 1  0  10 0xD400  Y
+# ...
+
+# Example Equinox SST-16 at CardSeg D800, IRQ 11:
+# 55  EQUINOX_SST 0  0  11 0xD800  Y
+# 56  EQUINOX_SST 1  0  11 0xD800  Y
+# ...

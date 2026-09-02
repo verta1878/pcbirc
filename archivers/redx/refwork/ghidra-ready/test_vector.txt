@@ -1,0 +1,24 @@
+Test vector for the fix
+========================
+
+Both files already in archivers/redx/refwork/pairs/ :
+
+  COMMDRV.EXE.payload   45807 bytes  (from COMMDRV.RED extraction)
+  COMMDRV.EXE.oracle    90827 bytes  (from CSBACKUP.ARJ)
+
+Reproduce failure:
+  cd archivers/redx
+  gcc -O2 -Wall -DREDX_STANDALONE_TEST -o red_test red_decompress.c
+  ./red_test refwork/pairs/COMMDRV.EXE.payload \
+             refwork/pairs/COMMDRV.EXE.oracle
+  # -> "decompress error: -4" (currently)
+
+Success criterion after fix:
+  ./red_test refwork/pairs/COMMDRV.EXE.payload \
+             refwork/pairs/COMMDRV.EXE.oracle
+  # -> "OK: 90827 bytes byte-perfect match"
+
+Round-trip criterion (using new .RED repacker):
+  ./redx extract COMMDRV.RED     # gets 10/10 records now
+  ./redx pack --lha=../lha/src/lha rebuild.RED extracted/*
+  ./redx list rebuild.RED        # sizes match original

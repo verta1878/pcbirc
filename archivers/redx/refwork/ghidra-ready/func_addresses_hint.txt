@@ -1,0 +1,40 @@
+Function-location hints for interactive Ghidra
+================================================
+
+Debug strings found in install_unpacked.exe:
+  file offset 0x32ae0  "kick_char\0"
+  file offset 0x32aea  "f_ram 1\0"
+  file offset 0x32af2  "Internal error in flushram\0"
+  file offset 0x32b0d  "f_ram 2\0"
+  file offset 0x32b15  "flushram\0"
+  file offset 0x32b20  "Decompressing: %s\0"
+
+Segment map (from prior RE, verta1878 2026-09-01):
+  0x0100   image base
+  0x1089   LHA library segment (~180 functions)
+  0x1f91   C runtime segment
+  0x2d91   data segment (DGROUP)
+  0x2e71   aux strings segment
+
+Real decompress driver: 0x100:0xf42c
+  file offset = 0x100*16 + 0xf42c + 32 = 0x1044c
+
+The dispatch table for "huf N" callbacks:
+  0x1089:0x25c2   huf 2
+  0x1089:0x268c   huf 3
+  0x1089:0x277e   huf 4/5
+
+Headless-search failure notes (2026-09-03):
+  Tried to locate flushram() entry via xref to "Internal error in
+  flushram" string. Computed string offset for DS bases 0x2d91
+  (offset 0x51c2) and 0x2e71 (offset 0x43c2). Searched for
+  `push imm16` and `mov ax, imm16` with those offsets. Zero hits.
+
+  Possible reasons Ghidra will resolve but headless didn't:
+    - Segment override prefix (2Eh/26h/etc.) before the push
+    - Compiler used LEA + segment register load
+    - String accessed via BX+disp8 with BX preloaded elsewhere
+    - Segment layout different from assumed (e.g. DS set at runtime)
+
+  Ghidra's auto-analyzer + reference-tracking should handle any of
+  these transparently. The GUI xref pane is the shortcut.

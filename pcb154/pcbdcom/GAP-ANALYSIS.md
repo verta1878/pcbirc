@@ -5,6 +5,37 @@ containing `@BeginLib COMMDRV.RED` block. Plain-text WCSC installer
 script. No decompilation required — this is a public manifest of
 what the installer copies from the .RED archive to `COMMDRV\` on disk.
 
+
+
+## Driver name identification — 2026-09-02 (session 4 morning)
+
+All 9 COMMDV*.DRV files opened and their embedded "family 1.00" version
+strings extracted. Complete mapping:
+
+| File          | Embedded name string    | pcbdcom backend             |
+|---------------|--------------------------|-----------------------------|
+| COMMDV00.DRV  | `GENERIC     1.01`      | uart_backend.c        ✓     |
+| COMMDV01.DRV  | `INTEL HUB6  1.00`      | hub6_backend.c        ✓ NEW |
+| COMMDV02.DRV  | `DIGI-COMXI  1.00`      | digi_comxi_backend.c  ✓ NEW |
+| COMMDV03.DRV  | `ARNET-SPORT 1.00`      | arnet_backend.c       ✓     |
+| COMMDV04.DRV  | `BOCA(1610)  1.00`      | boca_backend.c        ✓     |
+| COMMDV05.DRV  | `DIGI-PCX*   1.00`      | digi_pcxe_backend.c   ✓     |
+| COMMDV06.DRV  | `GTEK(8Fx)   1.00`      | gtek_backend.c        ✓ NEW |
+| COMMDV07.DRV  | `INT14H   1.00`         | int14.c               ✓     |
+| COMMDV08.DRV  | `COMMDRV VxD 1.00`      | N/A (Windows-only, skip)    |
+
+**Coverage as of v1.3:**
+- All 8 DOS drivers supported (100% WCSC-DOS parity)
+- 1 not applicable (Windows VxD — COMMDV08)
+
+WCSC-original card lineup for DOS is now feature-complete.
+
+**pcbdcom coverage beyond WCSC:**
+- cyclom_backend.c (Cyclades Cyclom-Y)
+- digi_accel_backend.c (Digi AccelePort — post-WCSC card)
+- rocket_backend.c (Comtrol RocketPort — post-WCSC)
+- easyio_backend.c (Comtrol EasyIO — post-WCSC)
+
 ## Card driver modules (9 files, per-family design)
 
 | File          | Size (bytes) | Likely card family (from name pattern) |
@@ -1009,3 +1040,37 @@ Load install_unpacked.exe interactively in Ghidra:
 7. Round-trip test on COMMDV00.DRV (target: 1130 bytes byte-perfect)
 8. Extend to remaining 9 non-STORED records in COMMDRV.RED
 9. Port to C in archivers/redx/red_decompress.c
+
+
+## v1.4 extended backends — PCB1541-only (2026-09-03)
+
+Three post-WCSC intelligent multiport cards added as `#if defined(PCB1541)`-
+gated backends. They ship only in 15.41 builds; 15.4 builds stay at
+WCSC-parity (10 core backends).
+
+| Card                    | File                          | Status                |
+|-------------------------|--------------------------------|-----------------------|
+| Stallion Brumby/ONboard | stallion_brumby_backend.c     | Full impl (untested)  |
+| Chase Research IOLAN    | chase_iolan_backend.c         | Full impl (untested)  |
+| Equinox SST-8/16/32/64  | equinox_sst_backend.c         | Full impl (untested)  |
+
+**Untested** here means: written from public datasheets + Linux driver
+references (Stallion `istallion.c`, Chase BSDI history, Equinox docs).
+No physical card in the pcbirc lab for validation. Sysops with these
+cards are encouraged to test and file issues.
+
+**Why gated instead of always-on:**
+- Keeps 15.4 lean and byte-identical to WCSC feature parity
+- Isolates post-WCSC / untested-on-hardware code to the extended line
+- Follows same pattern as planned TCP_SOCKET backend (also 15.41-only)
+
+**Build for 15.41:**
+    wmake -f PCBDCOM.MAK CC=OWC TARGET=15.41
+
+**Build for 15.4 (default):**
+    wmake -f PCBDCOM.MAK CC=OWC
+    (or TARGET=15.4 explicitly)
+
+When PCB1541 is not defined, the extended backends compile to empty
+translation units (verified: 0 errors, 0 warnings under gcc without
+`-DPCB1541`). No code, no data, no symbols leak into 15.4 binaries.

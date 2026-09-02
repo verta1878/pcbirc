@@ -35,6 +35,17 @@ extern const pcbdcom_backend_t pcbdcom_digi_accel_backend; /* DigiBoard Accel   
 extern const pcbdcom_backend_t pcbdcom_rocket_backend;     /* Comtrol RocketPrt */
 extern const pcbdcom_backend_t pcbdcom_easyio_backend;     /* Stallion EasyIO   */
 extern const pcbdcom_backend_t pcbdcom_arnet_backend;      /* Arnet SmartPort   */
+extern const pcbdcom_backend_t pcbdcom_hub6_backend;       /* Intel HUB-6       */
+extern const pcbdcom_backend_t pcbdcom_digi_comxi_backend; /* Digi COM/Xi 80186 */
+extern const pcbdcom_backend_t pcbdcom_gtek_backend;       /* GTEK BBS-550/8Fx  */
+#if defined(PCB1541)
+/* ----- v1.4 extended backends — PCB1541-only ----- *
+ * Written from public documentation without hardware validation in the
+ * pcbirc lab. Sysops with these cards should test + report issues. */
+extern const pcbdcom_backend_t pcbdcom_stallion_brumby_backend; /* Stallion Brumby/ONboard */
+extern const pcbdcom_backend_t pcbdcom_chase_iolan_backend;     /* Chase Research IOLAN    */
+extern const pcbdcom_backend_t pcbdcom_equinox_sst_backend;     /* Equinox SST (untested)  */
+#endif /* PCB1541 */
 /* Deferred: TCP_SOCKET (15.41 only) */
 
 #endif /* PCBDCOM_BACKEND_H */

@@ -1,47 +1,73 @@
-# redx — RED archive extractor
+# redx — WCSC .RED archive tools
 
-Extracts files from WCSC's proprietary `.RED` archive format used
-by PCBoard's `INSTALL.EXE`.
-
-## Status
-
-Scaffold. `redx_test.c` proves the approach with the first record of
-`COMMDRV.RED` (`COMMDV00.DRV`, 1130 bytes). Uses vendored LHA LH5
-decoder (bitio + huf + shuf + dhuf + slide + larc + maketbl + maketree)
-plus `redx_glue.c` providing the globals `lharc.c` normally owns.
-
-Current issue: LH5 `make_table()` returns "Bad table (case b)" —
-Clark's `.RED` framing wraps LH5 payload in a proprietary header
-that we need to strip or byte-align differently before feeding
-LHA's decoder. Detailed analysis of `.RED` byte layout lives in
-Phase 1 private notes (`/tmp/commdrv-work/ANALYSIS.md` on the
-build workstation, not committed to public repo per Phase 1 rules).
-
-## Files
-
-- `redx_glue.c` — LHA library glue (globals + xmalloc/xfopen stubs)
-- `redx_test.c` — proof-of-concept single-record extractor
-- `config.h` — feature flags for the vendored LHA sources
-- `redx_test` — compiled binary (rebuild with the gcc line in
-  `redx_test.c`'s header comment)
+Read + write PCBoard install-disk archives (`COMMDRV.RED`, `PCBOARD.RED`,
+`PPLC.RED`, etc.).
 
 ## Build
 
 ```
-gcc -o redx_test redx_test.c redx_glue.c \
-    lha/src/{bitio,huf,shuf,dhuf,slide,larc,maketbl,maketree}.c \
-    -I lha/src -DHAVE_CONFIG_H=0
+gcc -O2 -Wall -o redx redx.c red_decompress.c red_pack.c
 ```
 
-Requires an `lha/src/` tree with the LHA reference implementation.
-Vendored copy expected at `archivers/lha/src/` (not committed here
-since LHA has its own license; download from tukaani.org or similar).
+## Commands
 
-## Roadmap
+### `redx list <archive.RED>`
 
-- [x] Format identification (Phase 1)
-- [x] Header byte layout mapped (Phase 1)
-- [ ] Fix LH5 framing so single record extracts (`redx_test`)
-- [ ] Multi-record extraction (walk the full manifest)
-- [ ] CLI: `redx list foo.RED`, `redx extract foo.RED [file...]`
-- [ ] Integration: `INSTALL.zip → COMMDRV.RED → 22 files → firmware/`
+Show all records with filename, method, compressed size, uncompressed size,
+and CRC16.
+
+### `redx extract <archive.RED> [name]`
+
+Extract all records (or just one named record) into the current directory.
+
+Supports:
+- Method 0x0001 (STORED) — byte-perfect always
+- Method 0x000B (LHA -lh5- + WCSC prefix) — byte-perfect on 9/10 test vectors.
+  The 10th (`COMMDRV.EXE`-shape files with WCSC chunking) fails at ~7398 bytes;
+  see `refwork/decompress_v1.0.py` APPENDIX for details.
+
+### `redx pack [--stored | --lha=<path>] <out.RED> <file>...`   *(NEW v1.4)*
+
+Build a new `.RED` archive from the listed files.
+
+- **Default**: `--stored` — no compression, always works, larger output
+- **`--lha=<path>`**: use LHA compression via external `lha` binary (Yoshi's
+  1.14i from `archivers/lha/src/lha` — build with `autoreconf -i && ./configure && make`)
+- Falls back to STORED silently if `lha` fails or compression doesn't help
+- Files are stored under their basename; full paths are stripped
+
+## Round-trip guarantee
+
+Any `.RED` written by `redx pack` can be read back by `redx extract`.
+Verified 9/9 byte-perfect on the driver test set.
+
+For the full COMMDRV.RED archive (both directions):
+
+```
+mkdir extracted && cd extracted
+redx extract ../COMMDRV.RED           # 9/10 succeed (COMMDRV.EXE fails)
+redx pack --lha=/path/to/lha ../repacked.RED *
+diff <(redx list ../COMMDRV.RED) <(redx list ../repacked.RED)  # sizes match
+```
+
+## Files
+
+| File                        | Purpose                                    |
+|-----------------------------|--------------------------------------------|
+| `redx.c`                    | CLI entry (list / extract / pack)          |
+| `red_decompress.c`          | LHA-lh5 + WCSC prefix decoder              |
+| `red_pack.c`                | STORED + LHA archive writer                |
+| `red_test.c` / `redx_test.c`| unit / integration tests                   |
+| `refwork/`                  | reverse-engineering work + test vectors    |
+
+## License
+
+GPLv3. Yoshi LHA source (in `../lha/`) is referenced as public domain.
+
+## Known limits
+
+- Method 0x000B `COMMDRV.EXE` decompression fails at 7398 bytes (WCSC chunking
+  layer not reverse-engineered — needs interactive Ghidra time on
+  `kick_char` / `f_ram` / `flushram` functions).
+- Only STORED and LHA methods implemented. `.RED` archives with other methods
+  will list-only (unknown method reported).

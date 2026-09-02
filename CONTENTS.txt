@@ -1,28 +1,19 @@
-pcbirc — move 15.4-pwa.patch to historical/
-==============================================
-HEAD: a818fff07724defcf740abec199ddb40ca4b8e43
+pcbirc — full source release v1.5
+==================================
+HEAD:  20ae6377293d8564b93ef9c7d07b6b435b6d5198
+Files: 9964 git-tracked
+Size:  833 MB uncompressed
 
-I got the location wrong twice. Now correct: the snapshot lives in
-historical/ (a new directory), NOT at repo root.
+MILESTONE: 10/10 .RED decoder byte-perfect against WCSC INSTALL.EXE oracles.
+WCSC's [0x76]!=0 CRC mode cracked — 2 CRC-CCITT bytes (poly 0x1021)
+embedded every 4094 stream bytes.
+See archivers/redx/refwork/ghidra-ready/CHUNK_FORMAT_FINDINGS.md
 
-APPLY (GitHub Desktop):
-  1. Delete 15.4-pwa.patch from repo root (if still there from
-     last fixup)
-  2. Extract this zip
-  3. Copy historical/ folder to repo root
-  4. Copy CHECKSUMS trio to repo root (overwrite)
-  5. Commit + push
+APPLY
 
-Final layout:
-  pcbirc/
-  ├── historical/
-  │   ├── 15.4-pwa.patch    ← snapshot (byte-identical to canonical)
-  │   └── README.md         ← explains the layout
-  ├── patches/
-  │   └── 15.4-pwa.patch    ← canonical build reference
-  ├── LICENSE
-  ├── TOMORROW.md
-  └── ...
+  1. Extract part 1 zip -> creates most of the tree
+  2. Extract part 2 zip on top -> adds reference/ tree
+  3. md5sum -c CHECKSUMS.md5   (covers all 9964 files)
 
-Both copies stay in sync automatically since they're just two
-committed snapshots of the same content.
+PART 1: everything except reference/
+PART 2: reference/ tree + CHECKSUMS trio

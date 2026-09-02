@@ -14,6 +14,17 @@
 # ---- Common ----
 INC    = -Iinc
 DEFS   = -DPCBDCOM_V1
+# TARGET selects which PCBoard line to build for:
+#   TARGET=15.4  (default) — WCSC-parity backends only (lean)
+#   TARGET=15.41           — adds Stallion/Chase/Equinox extended backends
+!if "$(TARGET)" == "15.41"
+DEFS = $(DEFS) -DPCB1541
+EXTRA_OBJS = obj\stallion_brumby_backend.obj \
+             obj\chase_iolan_backend.obj \
+             obj\equinox_sst_backend.obj
+!else
+EXTRA_OBJS =
+!endif
 
 OBJS   = obj\pcbdcom.obj      \
          obj\uart.obj         \
@@ -26,6 +37,13 @@ OBJS   = obj\pcbdcom.obj      \
          obj\digi_accel_backend.obj \
          obj\rocket_backend.obj \
          obj\easyio_backend.obj \
+         obj\arnet_backend.obj \
+         obj\hub6_backend.obj \
+         obj\digi_comxi_backend.obj \
+         obj\gtek_backend.obj \
+         obj\stallion_brumby_backend.obj \
+         obj\equinox_sst_backend.obj \
+         obj\ser_rs232_shim.obj \
          obj\irq.obj          \
          obj\int14.obj
 
@@ -42,10 +60,10 @@ all: PCBDCOM.EXE PCBDCOM.SYS
 	$(BCC) $(CFLAGS) -oobj\$&.obj $<
 
 PCBDCOM.EXE: $(OBJS)
-	$(BCC) $(LFLAGS) -ePCBDCOM.EXE $(OBJS)
+	$(BCC) $(LFLAGS) -ePCBDCOM.EXE $(OBJS) $(EXTRA_OBJS)
 
 PCBDCOM.SYS: $(OBJS)
-	$(BCC) $(LFLAGS) -tD -ePCBDCOM.SYS $(OBJS)
+	$(BCC) $(LFLAGS) -tD -ePCBDCOM.SYS $(OBJS) $(EXTRA_OBJS)
 
 !endif
 
@@ -62,10 +80,10 @@ all: PCBDCOM.EXE PCBDCOM.SYS
 	$(MSC) $(CFLAGS) /Foobj\$&.obj $<
 
 PCBDCOM.EXE: $(OBJS)
-	link $(LFLAGS) $(OBJS), PCBDCOM.EXE;
+	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBDCOM.EXE;
 
 PCBDCOM.SYS: $(OBJS)
-	link $(LFLAGS) $(OBJS), PCBDCOM.SYS,, /NOD;
+	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBDCOM.SYS,, /NOD;
 
 !endif
 

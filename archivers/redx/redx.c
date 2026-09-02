@@ -23,6 +23,10 @@
 int red_decompress(const uint8_t *cmp, size_t cmp_len,
                    uint8_t *out, size_t out_len);
 
+/* Prototypes from red_pack.c */
+int red_pack_file(FILE *out, const char *disk_path, const char *store_name,
+                  int prefer_lha, const char *lha_path);
+
 typedef struct {
     uint32_t cmp_size;
     uint32_t unc_size;
@@ -144,18 +148,70 @@ static void cmd_extract(const char *path, const char *filter) {
     free(data);
 }
 
+
+static void cmd_pack(int argc, char **argv) {
+    /* argv[0] = out.RED, then flags and files */
+    const char *out_path = NULL;
+    const char *lha_path = NULL;
+    int prefer_lha = 0;
+    int i, first_file = -1;
+    FILE *out;
+    int count = 0;
+
+    for (i = 0; i < argc; i++) {
+        if (!strncmp(argv[i], "--lha=", 6)) {
+            prefer_lha = 1;
+            lha_path = argv[i] + 6;
+        } else if (!strcmp(argv[i], "--stored")) {
+            prefer_lha = 0;
+        } else if (!out_path) {
+            out_path = argv[i];
+        } else {
+            if (first_file < 0) first_file = i;
+        }
+    }
+
+    if (!out_path || first_file < 0) {
+        fprintf(stderr,
+            "usage: redx pack [--stored|--lha=<path>] <out.RED> <file>...\n");
+        return;
+    }
+
+    out = fopen(out_path, "wb");
+    if (!out) {
+        fprintf(stderr, "cannot create %s\n", out_path);
+        return;
+    }
+
+    for (i = first_file; i < argc; i++) {
+        const char *base = strrchr(argv[i], '/');
+        base = base ? base + 1 : argv[i];
+        if (red_pack_file(out, argv[i], base, prefer_lha, lha_path) < 0) {
+            fclose(out);
+            return;
+        }
+        printf("  added: %s\n", base);
+        count++;
+    }
+    fclose(out);
+    printf("wrote %s (%d records)\n", out_path, count);
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
         fprintf(stderr,
                 "usage:\n"
                 "  redx list <archive.RED>\n"
-                "  redx extract <archive.RED> [name]\n");
+                "  redx extract <archive.RED> [name]\n"
+                "  redx pack [--stored|--lha=<path>] <out.RED> <file>...\n");
         return 1;
     }
     if (!strcmp(argv[1], "list"))
         cmd_list(argv[2]);
     else if (!strcmp(argv[1], "extract"))
         cmd_extract(argv[2], argc > 3 ? argv[3] : NULL);
+    else if (!strcmp(argv[1], "pack"))
+        cmd_pack(argc - 2, argv + 2);
     else {
         fprintf(stderr, "unknown command: %s\n", argv[1]);
         return 1;

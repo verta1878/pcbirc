@@ -234,7 +234,49 @@ helper that groups config lines sharing a card_addr into one card
 record. Each port's subport (0..N-1 within card) selects the correct
 chip/channel.
 
+
 Each skeleton captures the essential card-detection registers so
 PCBDCOM.CFG validates hardware presence at load. Full ISRs get
 filled in next pass, one card at a time, with the Linux source
 open side-by-side.
+
+**pcbdcom v1.2 SHIPPED 2026-09-01.** All 5 planned features landed:
+Arnet backend (8th card), ser_rs232 shim (13-fn COMMDRV.OBJ
+replacement), INT 14h AH>=0x10 extensions, `_dos_keep()` TSR install
+fix, and full SDK packaging in `toolkit/pwa154/pcbdcom/`. Total:
+3,829 lines GPLv3, 15 .c + 6 .h files, 8 backends. OpenWatcom
+verified clean build; PCBDTSR.EXE = 37,800 bytes.
+
+**pcbdcom v1.4 SHIPPED 2026-09-03 (refined).** Three post-WCSC
+intelligent multiport backends, all `#if defined(PCB1541)`-gated —
+they ship only in 15.41 builds. 15.4 stays lean at WCSC-parity.
+
+  Stallion Brumby/ONboard  -> stallion_brumby_backend.c  (15.41 only)
+  Chase Research IOLAN     -> chase_iolan_backend.c      (15.41 only)
+  Equinox SST-8/16/32/64   -> equinox_sst_backend.c      (15.41 only)
+
+**Build for 15.41 (extended):**  `wmake -f PCBDCOM.MAK CC=OWC TARGET=15.41`
+**Build for 15.4 (default):**    `wmake -f PCBDCOM.MAK CC=OWC`
+
+These backends are written from public documentation without hardware
+in the pcbirc lab for validation. Sysops with matching hardware should
+test and report. Header comments in each backend cite the public
+references used. When PCB1541 is not defined, they compile to empty
+translation units — no symbols leak into 15.4.
+
+**pcbdcom v1.3 SHIPPED 2026-09-03.** Full WCSC-DOS card parity
+reached. All 8 DOS card families in WCSC's COMMDRV.RED now have a
+matching pcbdcom backend:
+
+  COMMDV00  GENERIC     -> uart_backend.c
+  COMMDV01  INTEL HUB6  -> hub6_backend.c        (v1.3 session A)
+  COMMDV02  DIGI-COMXI  -> digi_comxi_backend.c  (v1.3 session B)
+  COMMDV03  ARNET-SPORT -> arnet_backend.c       (v1.2)
+  COMMDV04  BOCA(1610)  -> boca_backend.c        (v1.1)
+  COMMDV05  DIGI-PCX*   -> digi_pcxe_backend.c   (v1.1)
+  COMMDV06  GTEK(8Fx)   -> gtek_backend.c        (v1.3 session B)
+  COMMDV07  INT14H      -> int14.c               (v1.1)
+
+Plus 4 backends for post-WCSC cards (Cyclades Cyclom-Y, Digi
+AccelePort, Comtrol RocketPort, Comtrol EasyIO). Total: 10 card
+backends, 4,275 lines GPLv3.

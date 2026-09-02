@@ -46,6 +46,22 @@ static const pcbdcom_backend_t *find_backend(const char *name)
     if (!strcmp(name, "EASYIO"))     return &pcbdcom_easyio_backend;
     if (!strcmp(name, "ARNETSPP"))   return &pcbdcom_arnet_backend;
     if (!strcmp(name, "ARNET"))      return &pcbdcom_arnet_backend;
+    if (!strcmp(name, "HUB6"))       return &pcbdcom_hub6_backend;
+    if (!strcmp(name, "IBM8"))       return &pcbdcom_hub6_backend;
+    if (!strcmp(name, "DIGI_COMXI")) return &pcbdcom_digi_comxi_backend;
+    if (!strcmp(name, "COMXI"))      return &pcbdcom_digi_comxi_backend;
+    if (!strcmp(name, "GTEK"))       return &pcbdcom_gtek_backend;
+    if (!strcmp(name, "GTEK8"))      return &pcbdcom_gtek_backend;
+#if defined(PCB1541)
+    /* ----- v1.4 extended card families (15.41-only) ----- */
+    if (!strcmp(name, "STALLION_BRUMBY")) return &pcbdcom_stallion_brumby_backend;
+    if (!strcmp(name, "BRUMBY"))          return &pcbdcom_stallion_brumby_backend;
+    if (!strcmp(name, "ONBOARD"))         return &pcbdcom_stallion_brumby_backend;
+    if (!strcmp(name, "CHASE_IOLAN"))     return &pcbdcom_chase_iolan_backend;
+    if (!strcmp(name, "IOLAN"))           return &pcbdcom_chase_iolan_backend;
+    if (!strcmp(name, "EQUINOX_SST"))     return &pcbdcom_equinox_sst_backend;
+    if (!strcmp(name, "SST"))             return &pcbdcom_equinox_sst_backend;
+#endif /* PCB1541 */
     return NULL;
 }
 

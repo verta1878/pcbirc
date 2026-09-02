@@ -1,0 +1,37 @@
+COMMDRV.EXE divergence — exact state at failure
+================================================
+
+Payload:  archivers/redx/refwork/pairs/COMMDRV.EXE.payload  (45807 B)
+Oracle:   archivers/redx/refwork/pairs/COMMDRV.EXE.oracle   (90827 B)
+
+Both our red_decompress.c AND Yoshi's own /tmp/pcbirc/archivers/lha/src/lha
+fail identically at this point:
+
+  Output byte:      7398          (first byte where decoded != oracle)
+  Compressed byte:  4096          (bio.pos when the wrong code is read)
+  Bit position:     32761         (bit offset in stream)
+  Blocksize left:   6350          (block 1 blocksize was 9832, so this is
+                                   mid-block, not at block boundary)
+  Code decoded:     256           (min copy, count=3)
+                                  Oracle wants literal 0x26
+
+  ring_pos:         7398
+  offset for copy:  52 back  →  src=7345
+  Expected literal at oracle[7398]: 0x26 ('&')
+
+Yoshi's lha post-divergence (via instrumented rebuild):
+  Continues decoding garbage until it fails read_pt_len with
+    "make_table(): Bad table (case b)" at compsize=33553
+    (12251 compressed bytes consumed, 16384 output bytes written)
+
+  Debug output at failure:
+    nchar=19 tablebits=8 total=0x12a0
+    bitlen=2,4,4,0,0,0,2,1,7,6,9,11,6,5,3,2,2,3,3
+
+  Kraft sum of those lengths = 2.07 (should be ≤ 1.0), confirming
+  bit stream is misaligned starting somewhere between byte 4096 and
+  the eventual read_pt_len failure.
+
+The 4096-byte input boundary is the smoking gun. WCSC's I/O layer
+(kick_char / f_ram / flushram) is doing something at every 4KB of
+compressed data that stock LHA doesn't do.
