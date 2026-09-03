@@ -1,1 +1,39 @@
-..\GEN\DIR1                   ..\DL01\                      Files For All Callers              
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3FMessage Security                                                     @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+@X0F
+   Message Security Types
+@X03
+      @X0BD               Pack-out Date. @X03 If you have sufficient security, you can
+                      assign a date when the message you are entering will be
+                      automatically deleted.  All messages of this type are
+                      Public.
+
+      @X0BN               None. @X03 The message will be open for all to read.
+
+      @X0BG               Group Password. @X03 Allows assigning a password to the
+                      message which only other callers who know the common
+                      password will be allowed to read the message.
+
+      @X0BR               Receiver Only.@X03  Makes the message private to all except
+                      you - the person leaving it - and the person to whom it
+                      is addressed.
+
+      @X0BS               Sender Password.@X03  Allows you to assign a password to
+                      the message so that only you can kill it later.  This
+                      prevents the other person to whom the message is
+                      addressed from killing it.
+
+@X0F
+   Description
+@X03
+      When leaving a message to another person various security levels are
+      available to allow "protecting" of your message to insure only those
+      who you want to read it can.
+
+      Note that you can NOT assign (R)eceiver protection to a message which
+      has been addressed to ALL.
+@XFF
+

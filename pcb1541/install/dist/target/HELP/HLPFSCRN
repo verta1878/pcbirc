@@ -1,2 +1,89 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3FFull Screen Editor : Keyboard Help                                   @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X03
+
+      To use PCBoard's full screen editor you need to familiarize yourself
+      with the functions listed below utilizing the PC's keyboard (or control
+      sequences in case your system does not support the PC's specialized
+      keyboard):
+
+@X0F   Cursor Movement             PC Keyboard       Control Keys   ANSI codes
+@X0F   ---------------------       -----------       ------------   ----------
+@X0B   Move Left a Character       @X0ELeft Arrow        Ctrl-S         ESC[D
+@X0B   Move Right a Character      @X0ERight Arrow       Ctrl-D         ESC[C
+@X0B   Move Left to Previous Word  @X0ECtrl-Left Arrow   Ctrl-A
+@X0B   Move Right to Next Word     @X0ECtrl-Right Arrow  Ctrl-F
+@X0B   Move To Next Tab Stop       @X0ETab Key           Ctrl-I
+@X0B   Move To Start of Line       @X0EHome Key          Ctrl-W         ESC[H
+@X0B   Move To End of Line         @X0EEnd Key           Ctrl-P         ESC[K
+@X0B   Move Up a Line              @X0EUp Arrow          Ctrl-E         ESC[A
+@X0B   Move Down a Line            @X0EDown Arrow        Ctrl-X         ESC[B
+@X0B   Move Up a Page              @X0EPgUp Key          Ctrl-R
+@X0B   Move Down a Page            @X0EPgDn Key          Ctrl-C
+
+@X0F   Edit Function               PC Keyboard       Control Keys
+@X0F   ---------------------       -----------       ------------
+@X0B   Toggle Insert Mode          @X0EIns Key           Ctrl-V
+@X0B   Reformat Paragraph          @X0ECtrl-B            Ctrl-B
+@X0B   Join a Line                 @X0ECtrl-J            Ctrl-J
+@X0B   Insert a Line               @X0ECtrl-N            Ctrl-N
+@X0B   Delete a Line               @X0ECtrl-Y            Ctrl-Y
+@X0B   Delete to End of Line       @X0ECtrl-End          Ctrl-K
+@X0B   Delete Char                 @X0EDel Key           Ctrl-G
+@X0B   Delete Char to the Left     @X0EBackspace         Ctrl-H
+@X0B   Delete Word to the Right    @X0ECtrl-T            Ctrl-T
+
+@X0F   Special Functions           PC Keyboard       Control Keys
+@X0F   ---------------------       -----------       ------------
+@X0B   Exit Full Screen Editor     @X0EESC               Ctrl-U
+@X0B   Redisplay Screen            @X0ECtrl-L            Ctrl-L
+@X0B   Quote or List Original      @X0ECtrl-O            Ctrl-O or Ctrl-Q
+
+@X0F
+   Using the above keystrokes
+@X03
+      All systems should be able to use the Control Key method of performing
+      the above functions (press and hold the CTRL key while typing the
+      letter key that follows it in the above table).
+
+      The more familiar PC Keyboard keys, such as the arrow keys, will work
+      while on locally.  They will also work if your communications program
+      is capable of either sending the actual keystroke (keyboard scan code)
+      or an ANSI escape code equivalent through to the host system.
+
+      An example would be calling in from remote using Telix to connect to
+      PCBoard and utilitizing either the 'Doorway Mode' so that keystrokes
+      are passed directly on to PCBoard.
+
+      The ANSI escape codes are an alternate means of telling PCBoard to move
+      the cursor around on the screen.  Some comm programs have a "Keyboard
+      Emulation" feature makes use of these ANSI codes without the need for
+      Doorway Mode.  Other comm packages may be able to program the ANSI
+      escape codes into function keys.
+@X0F
+Insert Mode
+@X03
+      While in 'Insert Mode' it should be noted that characters to the right
+      of the cursor will be pushed one character to the right as each letter
+      is typed.
+
+      Additionally, pressing the (Enter) key while in Insert Mode will cause
+      a new line to be inserted.
+@X0F
+NON-PC KEYBOARD USERS PLEASE NOTE!
+@X03
+      Some modems and packet switch environments will filter out CTRL-S
+      keystrokes and interpret them to mean "stop sending data".  In these
+      environments pressing CTRL-S will not move the cursor as expected - in
+      fact it will appear to do nothing.  You will need to press CTRL-Q to
+      get going again.
+
+      You can work around this by using CTRL-A which means move left to
+      previous WORD rather than moving a character to the left.
+
+      Those of you who can send either an ESC[D or the PC scan code for the
+      Left Arrow will not encounter this problem and will never have to worry
+      about it.
+@XFF
+

@@ -1,2 +1,9 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@CLS@@X0DDROP NODE TO DOS
+
+@X0E[node#]  NODE NUMBER - The node number you want to drop to DOS.
+
+This will drop any active node to DOS.  You are asked if you want to drop the
+node after the caller logs off or immediately.  A wait will still occur if a
+node is in a door or file transfer using an external protocol.
+@X07
+

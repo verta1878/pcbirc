@@ -1,5 +1,67 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³@X1F             Running PCBoard version 15.2 by Clark Development              @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(CHAT) Group Chat                                                    @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command allows you to chat interactively with one or more users
+      that are currently on the bulletin board system.
+@X0F
+   Subcommands
+
+      @X0BA               Available for chat.  @X03By default, you are available for
+                      chat when you log into the bulletin board system.  If
+                      you have made yourself unavailable for chat, you may
+                      make yourself available for chat again by using this
+                      subcommand.  When you logoff, your chat status will be
+                      used on your next call as well.
+
+      @X0BG               Enter group chat.  @X03Use this subcommand to begin
+                      chatting with other users on the system.
+
+      @X0BU               Unavailable for chat.  @X03When you use this subcommand,
+                      you make yourself unavailable for chat.  This means
+                      that other callers will not be able to call you into
+                      group chat.  When you logoff, your chat status will be
+                      used on your next call as well.
+@X0F
+   Description
+@X03
+      Node chat allows 2 or more people to communicate with each other across
+      separate nodes of the BBS.  When you are in chat, you may select any of
+      the available 255 channels to chat with other users.  If another user
+      is available for chat you may request that they chat with you.
+@X0F
+   Entering Chat Mode
+@X03
+      When you execute the CHAT command and then select G for group chat you
+      will be put into group chat mode.
+
+      You will then be asked what channel you would like to chat on.  If you
+      compare this to a CB, you can pick any of 255 channels to chat on.
+      Each channel could be talking about different subjects.  To get a list
+      of the currently active channels, you can press L at this prompt.  If
+      you were called into chat, PCBoard will automatically default to the
+      correct chat channel.
+
+      Next, depending on system configuration, PCBoard may begin by asking
+      you for the handle you would like to go by while you are in chat.  This
+      will default to your first name, but you can change this to any name
+      you wish.  When text is displayed by you, it will have a banner showing
+      what node number you are on and your handle.  If handles are disabled,
+      PCBoard will use your first name.
+
+      Finally, you will be at a Chat Command prompt.  Press (H) or (?) at the
+      Chat Command prompt for help on Chat Commands.
+
+      If you press the ENTER key you will enter into Chat Mode with the other
+      callers on the system.  Pressing (ESC) will bring back the Chat Command
+      prompt.
+@X0F
+   Chatting With Other Users
+@X03
+      Once you are in a channel you may begin typing.  Anyone else in that
+      channel will see what you type as you type it.
+
+      See the help at the Chat Command prompt for further information.
+@XFF
 

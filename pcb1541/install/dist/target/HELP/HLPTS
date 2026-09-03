@@ -1,17 +1,32 @@
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(TS) Text Search                                                     @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+@X0F
+   Subcommands
+@X03
+      @X0B(Text)          Text to search for.@X03  This subcommand is required for
+                      use with the TS command.  This is the text you wish to
+                      scan for in the message base.  This may be a single
+                      word or it may be a complex Boolean search string.
 
-@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X07
-@X38³ @X3FRules Of @BOARDNAME:40@@POS:75@@X3B³@X07
-@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+      NOTE:  You may also specify any subcommands of the Read a Message
+             command (R):
 
-@X0F1)  @X0EBesides being against the law, no uploads of commercial copyrighted
-    software are allowed to this sytem.  Any uploads which are found to be
-    commercial will be deleted immediately.  If you find a commercial file
-    available for the download, notify the SysOp immediately so it can be
-    removed promptly.
-
-@X0F2)  @X0EWhile we do automatically test files uploaded to the system, our
-    automated test cannot find all harmful viri and trojans.  Therefore,
-    you should always check your software before running it on your
-    system.  If you see anything suspicious, do not run the software on
-    your system.  An ounce of prevention is worth a pound of cure.
+                      Selection Subcommands
+                      Capture Subcommands
+@X0F
+   Description
+@X03
+      Every once in a while you may have a need to search through all or a
+      portion of messages on a particular system.  You might be experiencing
+      a problem that you need help with or you may have a particular question
+      in mind.  The TS command is very similar to the R command.  The major
+      difference is that only the messages that contain the search text that
+      you specify are displayed. Giving you the ability to scan messages and
+      message headers to locate a specified text in a message makes it easier
+      for you to display only those messages that interest you.  By using
+      conditional text searches you can further limit the messages that are
+      displayed to you.
+@XFF
 

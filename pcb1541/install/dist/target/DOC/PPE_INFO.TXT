@@ -1,5 +1,150 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³ @X1F           Running PCBoard version 15.2 by Clark Development               @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
-
+     PCBoard versions 15.0 and later now support the new, powerful,
+     PCBoard Programming Language (or PPL for short).  With PPL you can
+     add new (or modify or replace existing) commands, create intelligent
+     script questionnaires, create intelligent menus, replace display
+     prompts, and even launch PPE applications from display files!  All
+     this and more is already built in to PCBoard and you can install these
+     PPE files without anything extra.
+
+     Included in your installation are a set of sample PPS (PCBoard Program
+     Source code) and PPE (PCBoard Program Executable code) files that you
+     may find useful, or at least interesting.  The PPS files are used to
+     create PPE files with the PPL Compiler (PPLC).  The PPE files can be
+     installed (according to the following instructions) in PCBoard if you
+     desire.  If you'd like to see how simple it is to write PPL
+     applications, take a look at the PPS files.
+
+     ----------------------------------------------------------------------
+
+     HAMURABI.PPE
+
+          Simple text-mode simulation; buy & sell land, accumulate bushels
+          of grain, and attempt to keep your population growing so you can
+          buy & sell *MORE* land, accumulate *MORE* bushels of grain, and
+          attempt to keep your population growing!
+
+          To install, simply add it to your CMD.LST file with the following
+          information (changed as appropriate for your system):
+
+               Command  - Sec - PPE File
+               ========================================
+               HAMURABI -   0 - C:\PCB\PPL\HAMURABI.PPE
+
+     ----------------------------------------------------------------------
+
+     KAL.PPE
+
+          A simple, colorful, constantly changing kaleidoscope program.
+
+          To install, simply add it to your CMD.LST file with the following
+          information (changed as appropriate for your system):
+
+               Command  - Sec - PPE File
+               ========================================
+               KAL      -   0 - C:\PCB\PPL\KAL.PPE
+
+     ----------------------------------------------------------------------
+
+     LANGUAGE.PPE
+
+          A replacement for prompt 387 in the PCBTEXT file, used to prompt
+          for the desired language with a 20 second timeout if the user
+          doesn't respond (just in case the user is automated we don't want
+          to break their script).
+
+          To install, replace prompt 387 from PCBTEXT (using MKPCBTXT) with
+          the following string:
+
+               !C:\PCB\PPL\LANGUAGE.PPE
+
+     ----------------------------------------------------------------------
+
+     MORE.PPE
+
+          A MORE? prompt replacement PPE to accept either a standard MORE?
+          prompt response (Y/N/NS) *OR* a complete command for the next
+          'real' prompt.
+
+          To install, replace prompt 196 from PCBTEXT (using MKPCBTXT) with
+          the following string:
+
+               !C:\PCB\PPL\MORE.PPE
+
+     ----------------------------------------------------------------------
+
+     NODEFILE.PPE
+
+          A PPE to be used from any display file.  By default display files
+          can have security, graphics, and language specific variants.
+          This PPE allows the addition of node specific variants while
+          continuing to allow the other variations that are shared among
+          all nodes.
+
+          To use, add a line to the desired display file using the
+          following format:
+
+               !C:\PCB\PPL\NODEFILE.PPE FILE
+
+     ----------------------------------------------------------------------
+
+     OPPAGE.PPE
+
+          A PPE to replace the built in operator page (O) command.  It is
+          basically the same as the default one, with just a few
+          differences.  One, it allows paging by anyone during the
+          established hours defined in PCBSetup *OR* by people with SysOp
+          (or higher) access at any time.  Two, it will not allow a user to
+          page again if he has already paged and not been answered.  Three,
+          it uses a unique page sound.
+
+          To install, simply add it to your CMD.LST file with the following
+          information (changed as appropriate for your system):
+
+               Command  - Sec - PPE File
+               ========================================
+               O        -   0 - C:\PCB\PPL\OPPAGE.PPE
+
+     ----------------------------------------------------------------------
+
+     PWRDWARN.PPE
+
+          PCBoard 15.0 adds enhanced password support, including the
+          ability to have expiration dates for passwords.  A specified
+          number of days prior to a users password expiration, PCBoard will
+          display a message to the user whenever he logs on, notifying him
+          of the impending expiration, giving him a chance to change it
+          before it expires.  But, if the caller is logging in via a
+          script, it is likely that the one line prompt won't be seen.  So,
+          this PPE does two things.  One, it displays the original message
+          as PCBoard normally would (required since it replaces the prompt
+          in the PCBTEXT file).  Two, it sends the user a message, letting
+          him know that his password is about to expire.  This is done in
+          hopes that, if on an automated call, the user may download a QWK
+          packet with the message.
+
+          To install, replace prompt 711 from PCBTEXT (using MKPCBTXT) with
+          the following string:
+
+               !C:\PCB\PPL\PWRDWARN.PPE
+
+     ----------------------------------------------------------------------
+
+     WELFIRST.PPE
+
+          A PPE to be used in a WELCOMEG file.  Because of the time
+          required to display ANSI animation to low speed callers (2400 bps
+          or slower) it is usually avoided.  However, this PPL allows you
+          to send a long ANSI animation file in pieces while waiting for
+          the user to enter his first name.  WARNING!  Do not use in a
+          WELCOME file, only WELCOMEG or WELCOMER, as it assumes ANSI
+          graphics are available.  Note that the file specified on the
+          command line must be saved with a line length of less than 256
+          characters.  The smaller the line length the more often the
+          keyboard will be checked; the larger the line length the smoother
+          the display of the ANSI file.
+
+          To use, add a line to the desired WELCOME?.* file using the
+          following format:
+
+               !C:\PCB\PPL\WELFIRST.PPE C:\PATH\FILE.EXT
+

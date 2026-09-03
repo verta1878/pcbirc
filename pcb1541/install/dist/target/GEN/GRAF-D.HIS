@@ -1,13 +1,71 @@
-@X0A@BOARDNAME:79C@
-@INCONF:79C@
-                              Bulletin Listings
 
-        @X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
-        @X17³                                                           ³@X07
-        @X17³                                                           ³@X07
-        @X17³   @X1E1. - @X1FHow to use this system                             @X17³@X07
-        @X17³                                                           ³@X07
-        @X17³   @X1E2. - @X1FSystem Guidelines and Policies                     @X17³@X07
-        @X17³                                                           ³@X07
-        @X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
-
+HISTORY of GRAF-D.PPE
+=========================================================================
+
+v2.00  05/07/93    * Initial release of the rewrite.  GRAF-D used to be
+                     known as ANSI-D before RIPscrip came along.  It
+                     would not be fair to RIP if I kept the name the
+                     same.  :-)
+                   
+v2.10  05/27/93    * Added a new parameter for the PPE -- /AUTO.  If you 
+                     want to force your users to make user of ANSI or 
+                     RIPscript (if detected) then you'll want to use 
+                     this switch.
+                   
+                   * Reworked the way that the PPE makes you aware that 
+                     you have configured your system improperly.  More 
+                     precisely, if you have told PCBoard to default to 
+                     graphics mode it will cause GRAF-D to malfunction.
+                     
+                     In previous versions, the PPE would attempt to 
+                     leave a message to the SysOp.  However, a lot of 
+                     the SysOps were getting "No room for text" 
+                     messages.  Now a simple box is printed to the 
+                     screen (not the modem).  This should make it better 
+                     for all.
+
+v2.11  05/27/93    * Looks like I optimized the code just a *bit* <no pun
+                     intended> too much.  :-)  If you pressed enter when
+                     ANSI is detected it would set you to non-graphics
+                     mode.  Fixed.
+                     
+v2.20  09/10/93    * Added a new parameter -- /NORIP.  If you want GRAF-D
+                     to skip sending the RIPscrip auto-detection sequence,
+                     use this parameter.  Because the sequence is not sent,
+                     RIP capabilities will not be automatically sensed by
+                     GRAF-D.
+                     
+                   * Added a new parameter -- /NOQUICK.  This parameter
+                     will disable the user's ability to skip the welcome
+                     screen using the "Q" subcommand.
+                     
+                   * Added the /DEBUG and /DELAY command line parameters.
+                     Refer to GRAF-D.DOC for additional details.
+                     
+v2.30  08/31/94    * Stripped out the graphics detection routines because
+                     they are no longer necessary.  With v15.2, PCBoard now
+                     detects ANSI and RIP just after the connection is made.
+                     Therefore, the CHECKRIP() and ANSION() functions can be
+                     used to save an awful lot of code.
+
+                   * Removed the FIELDLEN parameter from the INPUTSTR
+                     statement.  It really never served a useful purpose
+                     because it requires ANSI to be detected.  In the past,
+                     it was not a problem and would be ignored. However,
+                     with v15.2 of PCBoard checking for ANSI and RIPscrip at
+                     login, it would put parentheses around the answer field
+                     thereby breaking some scripts.
+
+                   * Removed the /WAIT, /DELAY, and /DEBUG command line
+                     parameters since all detection is done by PCBoard now.
+
+                   * Renamed the history file from HISTORY.TXT to GRAF-D.HIS.
+                     Then again, you knew that already if you're reading this.
+                     <grin>
+
+v2.31  11/07/94    * Okay, I got a little axe-happy.  In my efforts to gut
+                     my own detection routines and replace them with PPL's,
+                     I removed the ESC = CHR(27) line.  This would cause
+                     problems for anyone using the /COMPATIBLE mode because
+                     the ANSI escape coudes would not be sent out properly.
+                     Fixed.

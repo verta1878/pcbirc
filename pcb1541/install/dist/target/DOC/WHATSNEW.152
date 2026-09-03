@@ -1,17 +1,1955 @@
-@X0A@BOARDNAME:79C@
-@INCONF:79C@
-                              Bulletin Listings
 
-        @X17ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ@X07
-        @X17ณ                                                           ณ@X07
-        @X17ณ                                                           ณ@X07
-        @X17ณ   @X1E1. - @X1FTechnical Notes for Product 1                      @X17ณ@X07
-        @X17ณ                                                           ณ@X07
-        @X17ณ   @X1E2. - @X1FRecent Changes made to Product 1                   @X17ณ@X07
-        @X17ณ                                                           ณ@X07
-        @X17ณ   @X1E3. - @X1FHow to use this system                             @X17ณ@X07
-        @X17ณ                                                           ณ@X07
-        @X17ณ   @X1E4. - @X1FTechnical Support Policies                         @X17ณ@X07
-        @X17ณ                                                           ณ@X07
-        @X17ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู@X07
-
+                   What's New in PCBoard version 15.2
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ PCBOARD.EXE
+ -----------
+ - Added new accounting features (also see what's new in PCBSM and PCBSETUP
+   for further information on accounting features).
+
+   After installing the Accounting Support PSA via PCBSM, and after editing
+   the PWRD file (via PCBSetup) to enable accounting features, PCBoard then
+   begins tracking your caller's activities using a system of credits.
+
+   You deposit the credits into a user's "bank account", for example, then,
+   as the caller performs various online activities, PCBoard will deduct
+   credits from his account.
+
+   The cost of each activity is completely configurable.  You can define a
+   cost for each minute online, each minute in group chat, each minute in a
+   door, each minute in a PPE or menu (via CMD.LST).  You can define costs for
+   each message written, each private message, each echoed message, or you
+   can set the costs according to what conference the caller is in.  You can
+   defined the cost for reading messages, or capturing them (QWK or c/d/z).
+   You can define costs for each file downloaded, or each byte downloaded, or
+   even uploads could have a cost associated with them.
+
+   Similarly, you can define a reward for each of the above.  So if you want
+   to reward the caller with credits for reading messages, or for uploading
+   files or bytes, you can do so.
+
+   In this manner, you can sell the caller a X number of credits and then
+   define the costs for each activity on *your* system.  Your caller then gets
+   to spend his credits any way he chooses.
+
+   An example dealing with nothing but time online would be:  Suppose you
+   normally sell access of "30 minutes per day for a month".  The trouble with
+   this approach is that the caller invariably runs into the 30 minute limit
+   and has to disconnect and wait until tomorrow to pick up the rest of the
+   files or messages he wanted.  If you instead sold him 900 minutes worth of
+   access (30 minutes x 30 days), he could then use those minutes as quickly
+   or as slowly as he wishes.  But no matter how quickly he uses them, once
+   they are gone, he would need to purchase another block of credits.  The
+   caller could, for example, stay online 3 hours a day, for 5 days, and then
+   be out of credits and need to repurchase the credits.
+
+   Another aspect would be to give callers either unlimited or nearly
+   unlimited download bytes per day.  Then, by charging per byte or per file
+   in the credit system, you can control how many bytes or files the caller
+   can download before he would have to repurchase credits.
+
+   By rewarding the caller for messages left or files uploaded, you could
+   encourage activity on your system.  But if you have a netmail conference,
+   where it costs *you* money to send and receive messages, then you could
+   charge the caller for messages that he reads or writes in that conference.
+
+   Taken all together, this new credit based system gives you tremendous
+   flexibility for charging and rewarding your customers according to their
+   activities.
+
+   Please see the PCBSetup and PCBSM sections in this file for further
+   information on setup and usage of the credit system.
+
+   Once the accounting system installed and configured, you will then notice
+   the following differences in PCBoard behavior:
+
+   - New users can be given X amount of credits or money upon signing up.
+
+   - These credits (or money) can be spent on various activities on your
+     system from downloading files, to reading messages, to spending time
+     online, to executing commands.
+
+   - You can require prepayment of credits, or you can track the usage and then
+     bill the user later.
+
+   - The charges can be levied as a total charge (i.e.  X credits for time plus
+     Y credits for downloads equals a charge of X + Y) or they can be levied as
+     concurrent charges (i.e.  charge the caller X number of credits to spend
+     on Y minutes online or Z files downloaded, whichever comes first).
+
+   - The activities of the caller are recorded in a log which, at the sysop's
+     choosing, can be either an ascii text file or a DBF file.  The log records
+     the Date and Time of the activity, the Caller's Name, the Node he was
+     on, the Conference he was in, the Activity performed, a Per Unit Cost for
+     that activity, the Number of Units spent, and the Total Charge for that
+     activity.  This log can the be used for billing purposes, or it can be
+     used to show the caller a record of his activities to breakdown the costs
+     that have been levied.  This log, whether in text or DBF format, can also
+     be accessed via PPL for the purposes of analyzing the log.  Also, the
+     DBF log could be analyzed using any of the many dBase compatible programs
+     that are out on the market.
+
+   - As a user logs in, an Account INFO file will be displayed, if it is
+     defined in PCBSetup.  This file can make use of macros, or it can call
+     a PPE to tell the user about his current access.
+
+   - If you require prepayment for the services you offer, then at login, if a
+     user's current balance is below the warning level you have defined, then
+     an Account WARNING file will be displayed, if defined in PCBSetup.
+
+   - If you require prepayment for the services you offer, and if the user
+     lacks sufficient credits to perform an action, PCBoard will inform the
+     user and will disallow the action.
+
+     If you require prepayment for the services you offer, and if the user
+     manages to empty or overdraw on his account (for instance, if you are
+     charging for time, and a user performed a file transfer which ran over
+     time due to line noise), then the caller will automatically be dropped
+     down to the level you have defined in his user record for an empty
+     credit account.
+
+     If you require prepayment for the services you offer, and if the user
+     logs into the system with an empty credit account, he will automatically
+     receive the security you have defined for an empty credit account.  This
+     security level could be used to allow the caller to remain online for the
+     purposes of re-purchasing credits, etc, while restricting the caller from
+     those activities which would otherwise cost credits.
+
+   - At logoff, just before a logoff script questionnaire is executed (or if
+     one is not defined, it is just before it would have been executed), an
+     Account LOGOFF file will be displayed, if it is defined in PCBSetup.  This
+     file can be similar to the Account INFO file, updating the user with
+     information about his account.
+
+   - Also at logoff, just before PCBoard displays the "minutes used" line
+     (which is the last line PCBoard displays) it will now display two lines
+     of information to indicate the amount of credits spent this session, and
+     the number of credits left.  The values shown are either credit values or
+     money values depending on your configuration.  If you do not require
+     prepayment for your services, then the "number of credits left" line is
+     not displayed.
+
+ - Added four new @-macros which are used in conjunction with the accounting
+   system.
+
+     @CREDLEFT@     = Calculated balance of credits left
+     @CREDNOW@      = Number of credits used so far this session
+     @CREDSTART@    = Starting credit balance (before any charges or credits)
+     @CREDUSED@     = Total credits used so far
+
+   As a relationship, you should see CREDSTART minus CREDUSED equals CREDLEFT.
+
+   The display of these macros reflects either a credit value or a value
+   represented in the currency of the host system.  For example, if you give
+   a caller 500,000 credits, then the @CREDSTART@ macro will either show
+   500,000, or a value such as $20.00, depending on your configuration.
+
+   See the Accounting Configuration screen in PCBSetup for the option to
+   display money or credits.
+
+   NOTE:  If you do not require prepayment for your services, then the
+   @CREDSTART@ and @CREDLEFT@ macros are meaningless and a value of "Unlimited"
+   will be shown instead.
+
+ - Added two new macros to control the interpreation of @X codes, primarily
+   when displaying the "body" portion of messages.  The two new codes are:
+
+     @XOFF@   - Turns off @X macro interpretation
+     @XON@    - Turns on @X macro interpretation
+
+    NOTE: At the end of the message, @X codes will be re-enabled automatically,
+    whether an @XON@ is included in the message or not.
+
+ - Modified the display of messages posted inside of conferences where long TO:
+   names are allowed.  Such conferences are expected to be carrying internet
+   e-mail and newsgroups and, as such, the messages could contain UUENCODED
+   information.  This information sometimes, by chance, includes valid @X codes
+   which, when displayed, causes unexpected coloration to occur and also makes
+   it impossible to decode the message.  Because of this, PCBoard will now
+   automatically disable the display of @X color codes in all messages posted
+   inside of internet conferences.
+
+   NOTE:  However, if colorized messages are desired, the command @xon@ may be
+   issued within an individual messages to re-enable @X code interpretation.
+
+ - Added a new QWK/Net Support PSA into PCBoard and PCBSM.  This PSA adds a
+   couple of features, useful for both NetMail and Personal QWK Packets,
+   such as Net Status, Message Limits, and File Attachments.  The items below
+   detail the changes/additions that are available after you install the
+   QWK/Net PSA:
+
+   - You may set "Net Status" for a user either online, via PCBoard's F6
+     function key, or via Sysop Function 7, or offline by using PCBSM.  When
+     using either one, the Conference Flags Field which formerly held only R,
+     X, S, L and C settings now holds an additional setting.  By adding "N" to
+     the conference flags, you are granting the caller Net Status for that
+     conference.
+
+   - Net Status allows a caller to download a QWK packet which contains a
+     NETFLAGS.DAT file which is filled in with the flags that indicate in which
+     conferences the caller has Net Status.  A QWK packet with Net Status
+     flags in it can be imported into another message base for the purposes of
+     creating a "netmail system".  Products such as QNET and RNET can be used
+     to import the messages from the QWK packet.
+
+   - If the caller uses the command "QWK D NET" instead of just "QWK D",
+     PCBoard will pick up ONLY those messages which are flagged for echoing.
+     In addition, PCBoard will scan ONLY those conferences which the caller has
+     SELECTed *and* in which the caller has NET STATUS.  Conferences in which
+     the caller does not have NET STATUS will be skipped.  The caller will not
+     receive any private messages unless those messages are addressed directly
+     to him.  Net Status in PCBoard does not grant access to any messages that
+     the caller would not have otherwise been able to read or download already.
+     The NETFLAGS.DAT file will not be created unless the "NET" command is used
+     (i.e.  QWK D will download a "personal" packet while QWK D NET will skip
+     the creation of NDX files but will include a NETFLAGS.DAT file).
+
+     NOTE:  To pick up both personal and netmail, a caller might want to issue
+     two QWK commands in this order:   QWK D NET    to pick up netmail
+                                       QWK D        to pick up the rest
+
+   - When issuing the QWK D NET command, PCBoard will display "(Net)" to the
+     right of each conference name, as it is scanned, to indicate which
+     conferences have net status enabled.  This "visual clue" can be used as
+     confirmation that the conferences being downloaded have Net Status
+     enabled.
+
+   - In addition, when using the SELECT command, PCBoard will display an
+     asterisk (*) in between the conference number and conference name of
+     those conferences where Net Status is available.
+
+   - The QWK U command normally does not allow you to upload messages that are
+     not FROM your name.  When the QWK/Net PSA is installed, and only in
+     conferences where the caller has Net Status, a REP packet with other FROM
+     names will be accepted and posted in the message base.  Net Status then
+     allows messages to be exported from another BBS and uploaded into your
+     system.  Products which export Net Status messages into a REP packet are
+     QNET and RNET.
+
+   - Also, once the QWK/Net PSA is installed, callers may now set their own
+     limits for "Total Messages" and "Messages Per Conference".   This is done
+     via the (W)rite User Info command.
+
+     If either of these personal limits are set to 0, PCBoard will use the
+     global defaults which you have established in PCBSetup.  If the caller
+     selects a non-zero value, then PCBoard will examine the value selected and
+     only give the caller the MINIMUM of the two values.  In other words, if
+     the global settings is for a maximum of 1000 messages, and the caller asks
+     for 2000, then PCBoard will only give the caller 1000 messages.  However,
+     the caller only wants 500, he can set that limit and thus limit himself to
+     downloading fewer messages than the limit you have established.
+
+   - In addition to setting message capture limits, PCBoard also lets the user
+     specify two separate automatic file attachment inclusion limits.
+
+     These limits have to do with the maximum size that a file attachment can
+     be in order to be included automatically within the QWK packet.  The
+     reason for these limits is to avoid the problem where a user calls long
+     distance to pick up his packets in an automated fashion and someone has
+     posted a 1M file as an attachment.  By setting limits, the user can decide
+     for himself what he is willing to download.
+
+     The reason for two different limits is that the user may be more
+     interested in personal attachments (those which come by way of messages
+     addressed directly to him) than he is in attachments found on public
+     messages.  He could, therefore, set a higher limit for attachments on
+     personal messages and a lower limit, or maybe even 0 for public messages
+     (a limit of 0 effectively disables automatically inclusion of file
+     attachments)
+
+     These limits are set by the user when issuing the (W)rite User Info
+     command.
+
+  - Typing the command "QWK U LMR" will cause PCBoard to set the LMR pointers
+    as the messages are being posted.  This can be used to skip over your own
+    replies the next time you use the QWK D command.
+
+    IMPORTANT:  It is recommended that you perform the QWK D and QWK U commands
+    in this order:
+
+        1) Download mail first, via QWK D or via QWK D NET
+        2) Then upload your mail via QWK U LMR
+
+    If you reverse these two and upload first, then you'll not receive any mail
+    when you download from the conferences into which you just uploaded.
+
+ - Modified the QWK U command so that it now accepts File Attachments from
+   inside of a .REP packet.  This change does NOT require the installation of
+   the QWK/Net Support PSA.  If an uploaded message contains a PCBoard-style
+   extended header indicating that a file is attached to the message, and if
+   that file is contained within the .REP packet, then PCBoard will
+   automatically move the attached file out of the work directory and into the
+   file attachment directory, ensuring that the stored-filename is unique so
+   that it does not interfere with any other existing file attachments.
+
+   For this to work, authors of .REP packet creation software should create a
+   .REP packet containing the files that are to be attached, using their "real"
+   names, and then the individual message should contain an @ATTACH header
+   with the real name of the file.  The size and stored name values (2nd and
+   3rd parameters in the @ATTACH header) are not necessary.
+
+ - Modified the QWK U command so that it now checks the subject line of a
+   message before posting in an echoed conference and, if the subject begins
+   with "NE:", PCBoard will avoid setting the Echo Flag on.
+
+ - Added a FORWARD message sub-command.  When reading a message, at the End Of
+   Message Command prompt, you can type "FORWARD" or type "FORWARD xxx" and
+   press enter.  The "xxx" would be the conference number.  If you leave out
+   the conference number, you will be prompted for the conference number.
+
+   PCBoard will prompt you for the name of the user to whom the forwarded
+   message should be addressed.
+
+   The forwarded message will be a copy of the original (the original will
+   remain intact), but will be addressed to the new name you and the message
+   read flag will be updated indicating that it has not yet been read.
+
+   The forwarded message will be made private and/or will be set to be
+   echoed according to the private and echo flags that correspond to the
+   conference into which the message is being forwarded.  NOTE:  The MOVE and
+   COPY commands have been modified to be consistent with the FORWARD command.
+   In the past MOVE and COPY did not modify the message header, now they too
+   will set the private flag if the message is moved to a conference where
+   mail is forced private.
+
+   When reading a message which has been forwarded, you will see two extra
+   lines of information.  These two lines will come immediately after the
+   message header, and just before the message body.  They will look something
+   like this:
+
+         Forwarded From: Support (1) Conference
+         Forwarded By  : SCOTT CARPENTER
+
+   NOTE:  The following rules apply to forwarding messages.  The basic intent
+   is that regular users (non-sysops) cannot forward a message where they
+   otherwise would not have been able to enter a message.  And they cannot
+   forward non-personal messages without sufficient security to do so.
+
+   1) If the user does not have sufficient security to enter a message, then he
+      will not be able to use the FORWARD command.
+
+   2) If the conference is marked as Read-Only, then he will not be able to use
+      the FORWARD command.
+
+   3) If the message is not a personal message (addressed to him) and he does
+      not have sufficient security to use the MOVE command, then he will not be
+      able to use the FORWARD command.  (i.e. non-sysops can only forward
+      personal messages)
+
+   4) If the user has the ability to use the FORWARD command, but does not have
+      sufficient security to use the MOVE command, then he will only be able to
+      forward the message within the current conference, he will not be
+      prompted to move the message to another conference.
+
+ - Modified the "Prompt for Route" option, which previously only prompted for
+   routing information if the message was private, setting it so that it will
+   also prompt for routing information on public messages inside of internet
+   conferences where the "Netmail Conference Type" is set to 3 or 4.  In
+   addition, inside of internet conferences, the default routing information
+   will be that which was entered in the "News Distribution" field of the
+   UUCP configuration screen in PCBSetup.
+
+ - Added a prompt for destination newsgroup and another prompt for follow-up
+   newsgroup.  These prompts are used in conferences defined as either public
+   or moderated usenet newsgroups, and only if the message being entered is a
+   public message.  The destination newsgroup defaults to the current newsgroup
+   unless it is a reply to a message which had a follow-up extended header in
+   it requesting that the reply go to another newsgroup.  Multiple newsgroups
+   can be entered in this prompt in order to send a single message to multiple
+   newsgroups.  The follow-up prompt allows you to instruct the system that
+   any replies should come back to a different newsgroup.
+
+ - Modified the scanning conference line, for mail captures, so that if the
+   conference has no messages that are picked up, the scanning conference line
+   will be erased to avoid scrolling the screen up.
+
+ - Modified the files display process so that the screen will be cleared
+   first and then again after each "more?" prompt.  This allows the user to
+   quickly scan from the top of the screen each time, rather than having to
+   look up and down the screen to determine where he left off.  This also
+   speeds screen refreshes inside of windowed environments such as OS/2,
+   Windows and DESQview/X.
+
+   NOTE:  The screen is only cleared if the user has requested that the screen
+   be cleared in between each message.  Since the concepts for the two are
+   nearly the same, and the reasons for wanting or not wanting the screen clear
+   are the same, it was decided that it would be easier to use this single
+   setting to control both.
+
+ - Added two new command line parameters, /PPE: and /RUNPPE:, which can be
+   used to execute a PPE from the DOS prompt.  The only difference between the
+   two is that /RUNPPE: loads user information into memory so that a PPE which
+   operates on user information can be executed.  The /PPE: switch simply runs
+   the PPE without loading any user information.
+
+   Here are two sample TESTPPE.BAT files that you could use to run PCBoard and
+   launch a PPE at the same time:
+
+        pcboard /runppe;first;last;PWRD:password;PPE:%1;%2;%3;%4;%5
+   or
+        pcboard /ppe:%1;%2;%3;%4;%5
+
+   After creating the TESTPPE.BAT, substituting your name and password in the
+   appropriate locations if you use the first example, you can then execute a
+   PPE like this:
+
+      TESTPPE c:\pcb\ppe\test.ppe param1 param2 param3
+
+   The ".PPE" extension on the filename is optional and is implied if you
+   leave it out.  The example above passes three command line parameters to
+   the PPE itself.
+
+   This could be used simply to test a PPE or, more importantly, it could be
+   used to run a PPE during an event or otherwise outside of PCBoard's normal
+   execution environment.  Developers could even use it, or the new internal
+   PPE command, as a method of installing PPEs, by supplying the end-user with
+   an INSTALL.PPE of some sort.
+
+   NOTE:  Command line parameters for the PPE must either be separated by
+   semicolons or spaces.  If you use spaces, you must enclose the entire
+   switch inside of quotes.  Examples using quotes and spaces (see examples
+   above for using semicolons):
+
+        pcboard "/runppe;first;last;PWRD:password;PPE:%1 %2 %3 %4 %5"
+   or
+        pcboard "/ppe:%1 %2 %3 %4 %5"
+
+ - Added a "PPE" command for sysops.  A sysop (or user with sufficient security
+   to use sysop function 10) can run any PPE by giving PCBoard the full name
+   of the PPE.  For example, you might execute it like this:
+
+         Main Board Command?  PPE C:\PCB\PPE\TEST.PPE
+
+   This allows you to quickly test PPEs without having to install them into
+   CMD.LST or other locations in PCBoard's configuration.  Additionally,
+   developers could use it as a method of running some kind of INSTALL.PPE.
+
+ - In order to maintain PPL execution speed, while avoiding some potential
+   memory problems, PCBoard has changed the way it recycles after a caller
+   logs off.
+
+   PCBoard will now perform an external recycle (exit to DOS and let BOARD.BAT
+   recycle it back up) any time a PPE is currently executing and control is
+   yanked away for reasons such as Carrier Loss, Keyboard Timeout, Session
+   Timeout, etc.  If a PPE was not being executed, PCBoard will just perform
+   the normal internal recycle.
+
+   The errorlevel that is associated with the external recycle is 10.
+
+ - Modified the user information display (sysop function 7) so that it only
+   displays the password information if the person that is reading the list has
+   a security level greater than or equal to the security level that the
+   sysop has.
+
+ - If you did a Sysop Function 7 and viewed another user, after doing so, the
+   status bar would show the wrong date for your own last date on.  Fixed.
+
+ - Modified the "QWK U" command so that if a .REP packet has a message
+   addressed to @user@, and the caller does not have sufficient security to use
+   @-macros, it will be readdressed to "ALL" before being imported into the
+   message base.
+
+ - Modified the "RE" command so that if you are replying to a message that is
+   from you, which has a longer-than-60 character TO: name, the newly created
+   reply will have the full TO: name.  Previously it was being limited to just
+   60 characters.
+
+ - Carbon List names (@LIST@) were limited to 25 characters.  In an internet
+   conference, this may be a bit restrictive.  Expanded to 50 characters
+   with internal coding changes without resorting to changing the extended
+   header specification for Carbon List messages.
+
+ - Modified free disk space calculations to utilize an unsigned long integer
+   instead of a signed long integer.
+
+ - The PCB= environment "/BASE:xxx" switch was only being properly interpreted
+   if it were the last switch on the SET PCB= line.  Fixed.
+
+ - Modified Group Chat - removing the ability to view keystrokes from other
+   callers "as they type" and instead made the system line oriented.  PCBoard
+   will now buffer up what you type until you hit ENTER at which point it will
+   transmit the information to the chat file.  Understandably, this works well
+   for chat systems with many users in chat simultaneously, while the v15.0
+   method of displaying characters *as* they were typed was preferable for
+   small systems.  For now, PCBoard will support the buffered approach while
+   we re-evaluate other methods.
+
+ - If PCBoard were loaded in a very tight memory environment, where there is
+   just barely enough memory to make it part way into Group Chat, but not
+   enough to completely enter Group Chat, several blank lines would be
+   displayed on the screen.  Fixed.
+
+ - Updated the USERNET.XXX file handling to allow a new 'H' status which
+   signifies "handling mail".
+
+ - If a caller used the Z command to search for a file and then later executed
+   a PPE which tried to display a bulletin, that bulletin would not display
+   because the search criteria from the Z command was not being cleared out.
+   If the bulletin were displayed thru normal means (using built-in commands)
+   it would be okay.  Fixed by zeroing the search criteria after the Z command.
+
+ - Modified Script Questionnaire processing to allow %FILESPEC include files to
+   make use of environment variables (e.g. %%PCBRIP%\CLEARRIP).
+
+ - If a "QWK D BYE" command failed to find any messages to download, it would
+   ignore the BYE portion of the command and leave the caller at the command
+   prompt.  Changed so that PCBoard will go into auto-logoff mode even if no
+   messages are found or transferred.
+
+ - Added a time-stamp to the COMMENT field, when entering a comment to sysop.
+   The time-stamp, while redundant (because the message already has a time
+   stamp in the header), serves to separate message threads.
+
+ - If a caller:  1) deselected the main board, 2) joined a conference (not the
+   main board), and 3) then did a QWK D command, the QWK packet created would
+   show the messages from the CURRENT conference as if they had been posted in
+   the main board.  Fixed.
+
+ - If a caller were in NOVICE mode and in a conference where aliases are NOT
+   allowed, and the ALIAS command were issued, PCBoard would not redisplay
+   the menu afterwards.  Fixed.
+
+ - If the DIR.LST file had more than 683 entries in it, PCBoard would give an
+   error message about "file not found" when it tried to access those entries
+   beyond #683.  Fixed.
+
+ - Increased the maximum number of DIRs to 2048 (up from 1024).  This limit
+   pertains mostly to how many directories can be "searched" at once, such as
+   in an "N A S" command (A = ALL).
+
+ - Added new FSEC settings.  One is new, the other two are synomyms:
+
+     FREEFILE      =  Do not charge file or bytes on download
+                      Synonym for old "FREE" setting
+
+     FREETIME      =  do not charge time on download
+                      This one is new
+
+     FREETIMEFILE  =  Do not charge time nor file/bytes on download
+                      Synonym for old "NOTIME" setting
+
+   NOTE:  To make a file "free" under the Accounting System, you would set the
+   multiplier to 0.  When displayed to the caller, the file is shown as being
+   "NO COST".
+
+ - Added two new sub-commands to the (Y)our Mail Scan command.
+
+      W  = Scan only conferences where your Mail Waiting Flag is set.
+           Y;W is equivalent to Y;A;S;W;Z
+
+      Z  = Skip over conferences that have zero messages.
+
+ - Even if a caller did not have sufficient security to use the (B)ulletin
+   command, PCBoard was still scanning for new bulletins and informing the
+   caller of new bulletins.  Fixed.
+
+ - The FGET command (PPL Runtime) was able to read up to 2K but would truncate
+   it to 256 bytes per line.  Fixed.
+
+ - The READLINE command (PPL Runtime), when accessing text lines longer than
+   2048 bytes, would fail intermittently.  Fixed.
+
+ - Added:  If a message is posted via a PPL program, it will now indicate this
+   by adding "via PPL" to the caller log.  Example:
+
+        Message Left: Main Board # 100 via PPL
+
+ - The MESSAGE command (PPL Runtime) would not set the mail waiting flags if
+   the TO name was lower or mixed case (all uppercase worked fine).  Fixed.
+
+ - If the Password PSA is installed, the PUTALTUSER command in PPL would cause
+   the password history information to be updated, showing a new expiration
+   date and last change date, even if no change was made to the password.
+   Fixed.
+
+ - If a PPE was attached to PCBTEXT prompt #192, which is displayed *after*
+   PCBoard has already updated the USERS file, and if the PPE *also* updates
+   the USERS file, it could undo the "elapsed time on" accounting performed
+   prior to prompt #192 being displayed.  Fixed by saving the time used in a
+   separate location prior to displaying prompt #192.
+
+ - Some OS/2 drivers default to enabling "DSR Handshaking", some do not.  If
+   the driver had DSR Handshaking enabled, then some modems, which do not use
+   DSR for handshaking, would appear not to work.  Fixed by overriding the
+   default by purposely defaulting to DSR Handshaking disabled.
+
+ - If someone is searching (using Z, TS, etc) and the text being searched is
+   already displayed in a black-on-white color, PCBoard's highlight (which uses
+   black-on-white) would not appear any different.  Fixed by checking the
+   background color and, if white, PCBoard highlights using white-on-black
+   instead.
+
+ - Modified the UPSEC check (security verification on uploads) so that it will
+   now check *both* the private and public upload paths against the path
+   specified in UPSEC prior to allowing a file to be uploaded.
+
+ - Added limited support for EMSI_INQ detection for FIDO. (more coming later)
+
+ - Modified the message entry routines which strip out PCBoard @-macros from
+   messages (if the caller lacks sufficient security to use them) and made it
+   simply turn them into lowercase macros.  This allows others to see what the
+   caller intended to type, when the intention is that of "talking about" the
+   macros rather than attempting to "use" the macros.
+
+ - When displaying a message that has a TO: name that is longer than 60
+   characters, but shorter than (about) 73 characters, PCBoard would try to
+   display it on two lines and would show garbage on the second line (it should
+   have only been on one line).  Fixed.
+
+ - Modified the login process so that if a caller attempts to use an alias name
+   with an incorrect password, PCBoard will use the alias name when informing
+   the caller of the incorrect password.
+
+ - Modified the login process so that if a caller is online with an alias,
+   another user cannot attempt to log on using the callers real name.
+
+ - When executing an "R A" command, upon completion, the current conference
+   CMD.LST file is not re-loaded (in the case where conference-specific CMD.LST
+   files were encountered *during* the "R A" scan).  Fixed.
+
+ - Identified a FOSSIL driver which was returning a value (for number of bytes
+   free in the buffer) that made it appear that there was always a byte waiting
+   in the buffer to be transmitted.  This caused PCBoard to wait for long
+   periods of time whenever it needed to wait for all bytes to be emptied from
+   the buffer before continuing.  Worked around.
+
+ - Modified the COMM-DRV support to use a different method for accessing
+   update information.  It is slightly more CPU-intensive, but for some cards,
+   it can result in more efficient I/O through the card.
+
+ - Sysop Function 7 was using a SIGNED long integer display for the total bytes
+   uploaded and total bytes downloaded so it would show up negative when the
+   caller exceeded 2.2 billion bytes transferred.  The actual value was okay,
+   only the display was in error.  Fixed by changing to an unsigned display.
+
+ - If the "real name" of a message file attachment did not have an extension on
+   it, for example a file called "TESTFILE", then the FSEC security check would
+   fail due to a parsing error which was being made based on the PHYSICAL file
+   name instead of the real filename.
+
+   In other words, a setting in the FSEC file such as this:
+
+       F:\ATTACH\      *.*      0     NOTIME
+                       *.*     20
+
+   Would fail make a match on the first line, even though it is properly
+   specified.  Fixed.
+
+ - If you had a language defined in PCBML.DAT, but the PCBTEXT file did not
+   exist, then, when logging in, you attempted to select that language TWICE,
+   it would fail the first time and appear succeed the second.  In actuality,
+   the language extension was being recorded on the first attempt in such a
+   way that the second attempt did not really try to load the file.  The
+   result was using the current PCBTEXT (no harm done here) but later, upon
+   returning from a door for example, the PCBTEXT specified would not be
+   available and could cause a problem reloading.  Fixed.
+
+ - If a user is online with his alias enabled, and if the system is configured
+   to show aliases in the WHO display, then another person could log into the
+   system using the first user's "real name" without getting a "Name already
+   in use" error message.  Fixed by scanning for both real and alias names at
+   login.
+
+ - Added support for modems which use a "CONNECT 14.4" style of connect
+   message.
+
+ - Modified the message entry system so that, if long TO: names are allowed,
+   PCBoard will NOT abort message entry if you enter a blank subject.  This has
+   been done to allow for UUCP file requests and such where a subject line
+   could confuse the automated processing of the service provider.
+
+ - Added long conference name support to PCBoard and PCBSetup.  The long
+   conference names allow you to define names up to 60 characters in length.
+
+ - Added an index to the conference names.  PCBoard will now use an indexed
+   search when using the "J" and "J S" commands.  Typing "J confname" will jump
+   immediately to the requested conference by using a binary search through the
+   index.  Typing "J S" will scan the index and list all potential matches in
+   alphabetical order.
+
+ - If you were prompted to read mail and you stopped (aborted) the reading
+   process after having answered yes to read the mail, you would be left in a
+   conference other than the one you started from.  While this could be argued
+   as a feature, the one place where it can cause problems is on AUTO REJOIN
+   when first logging into the system.  So with this release, it will now
+   remember what conference you were in at the time you were prompted to read
+   mail and, upon finishing (reading the mail) you will be returned to the
+   conference you were last in.
+
+ - PCBTEXT has been updated with new entries.  Plus some old information, which
+   used to be hardcoded in PCBoard, has been moved out of PCBoard and into the
+   PCBTEXT file in order to facilitate translation of those text strings.  The
+   following outlines the changes which were made as a result of moving strings
+   out of PCBoard:
+
+   - Externalized "RETURN RECEIPT" so that it can be translated.  The text
+     "RETURN RECEIPT" is still stored in the message base header, but upon
+     reading a return receipt message, the text "RETURN RECEIPT" can be
+     translated to another language vi PCBTEXT record #722.
+
+   - Externalized the word "COMMENT" so that it can be translated.  The word
+     "COMMENT" is still stored in the message base header, but upon reading a
+     message with a subject of "COMMENT", PCBoard will translate that text to
+     whatever you define in the PCBTEXT file for record #723.
+
+   - Externalized the words "Error in FROM name: " (into PCBTEXT record #724)
+     which is used when a QWK packet is imported and the FROM name in the QWK
+     packet does not match the name of the user that is online.
+
+   - Both Sysop Function 5 and the (Q)uick Scan command have long shared the
+     same PCBTEXT entry, making it difficult to customize them.  These have now
+     been separated.  Sysop Function 5 continues to use PCBTEXT #158.  The
+     (Q)uick Scan header now uses PCBTEXT #725.
+
+   - Externalized the "FILE FAILED VERIFICATION CHECK" text so that it can be
+     translated.  This text is recorded in an uploaded file description when a
+     file fails the process you have defined in PCBTEST.BAT.  The new PCBTEXT
+     record number is 726.
+
+   - Externalized the "Uploaded by" text so that it can now be translated.
+     This text is recorded at the bottom of the description of a file that has
+     just been uploaded.  The PCBTEXT record number for this text is #727.
+
+   - For years, the "Filename to download" prompt has served two purposes, 1)
+     it was used for single file downloads and 2) it was used for batch
+     downloads but with the addition of "(#)" in front of it to indicate the
+     number of the file, in the batch, that is being downloaded.  This, and
+     the corresponding "Filename to upload" prompt have been copied down to
+     PCBTEXT records 728 and 729 respectively.  The two new prompts have a
+     macro in front of them "(@fnum@)" which accomplishes the same display as
+     the old prompts, but now you are free to modify the two different types
+     of prompts (batch and non-batch) to make them look different if you wish.
+
+   - When performing a USERS command a PCBTEXT header was displayed and, right
+     below it, was a separator line ("----") which was hardcoded into PCBoard.
+     This separator line has now been externalized to PCBTEXT prompt #730.
+
+   - Modified the message header display, splitting up the tie that connected
+     the top line (date/message number) with the bottom two lines (read status
+     and conference name) so that the bottom two lines can have different
+     positions.  More specifically, you can now edit PCBTEXT records 484-489
+     and increase the space available after "Conf:" so that more of the
+     conference name can appear on the line.  Also, modified the conference
+     name field so that it shows the last of the conference name if the entire
+     name cannot fit in the space provided.  For instance, on Salt Air we
+     inserted 9 new spaces in between the conf:  and read type:  fields.
+
+ - Modified the keyboard handling so that the UP ARROW is no longer used to
+   activate the scrollback buffer.  You should instead use the SCROLL LOCK
+   key to activate the scrollback buffer.
+
+   The UP ARROW was originally used back in the v14.x series and the SCROLL
+   LOCK was later added when version 14.5 was released which included the Full
+   Screen Editor where the UP ARROW took on a new meaning.  With the recent
+   additions of PPEs which could make good use of the UP ARROW (if it were
+   available to be used), it was decided that support for the UP ARROW should
+   finally be dropped.
+
+ - Modified the user soundex search so that it will no longer find the name of
+   a user if the user is not registered in the conference in which it is
+   being used.  Also, if the conference allows alias names, then the soundex
+   search will refuse to locate any non-alias names in that conference.
+
+ - Similar to the flashing "p" on the status line, indicating that the caller
+   has paged the sysop during the current session, the status line will now
+   indicate, via a flashing "g" in the same position, if the caller has elected
+   to logoff at the end of the current file transfer.
+
+ - Modified the ALT-T command so that, if PCBoard detects that it is being used
+   under OS/2, it will simply close and reopen the printer port rather than
+   sending a FORM FEED into the print queue.  The effect is the same, OS/2 will
+   print what has been queue thus far and form-feed to the next page in the
+   printer.
+
+ - Modified the Mail Waiting Flag handling so that if you read messages to the
+   VERY END of a message base (whether via R;S or R;Y;S or even via "read your
+   personal mail now") the Mail Waiting Flag will be turned off.  This includes
+   reading to the end without seeing all of the messages (i.e. even though the
+   R;Y;S command skips over other messages, arriving at the end of the
+   message base indicates that you have seen all of your own messages so the
+   mail waiting flag is turned off).  This occurs regardless of whether you are
+   in read-only mode or not.  Just trying to cut down on the complaints from
+   callers about re-reading personal mail...
+
+   ALSO NOTE:  v15.0 introduced a new method of setting the mail waiting
+   flags automatically regardless of how the message was posted.  What v15.0
+   did was, any time you did a Y-scan for mail, if any personal messages were
+   found, it would set the mail waiting flag on.  This way, even if a third
+   party product posted the message the mail waiting flag would be turned on.
+
+   This functionality has also been disabled since, with it on, every time
+   you re-scanned your mail it would reset the mail waiting flag so that you
+   would end up seeing the mail again the next time you logged on.  (of course,
+   the real cure would be to read the mail in non-read-only mode, but callers
+   don't seem to understand that, so this is an attempt to keep them happy)
+
+  - Modified the "Time adjusted for event" display so that it is shown *before*
+    the caller is asked if he wants to read his mail now.
+
+  - Added detection of a CDLOST.BAT file.  If the caller loses carrier, and a
+    CDLOST.BAT file exists, then PCBoard will shell to it immediately after
+    displaying the "carrier lost..." message on screen, and before the rest of
+    the logoff processing is performed.
+
+  - Modified 16550 UART routines to include support for 16650 UARTs with their
+    32-byte FIFOs and auto CTS/RTS flow control.
+
+    NOTE:  Due to other uarts and emulators, a reliable method of detecting the
+    16650 has not been found.  If you are using a 16650, then you should add
+    the "/16650" to your "SET PCB=" line in BOARD.BAT.  PCBoard will still
+    try to verify that it really is a 16650, but without that line, PCBoard
+    won't even attempt to use the 16650 as anything other than a 16550.
+
+| - Added a /MIXED environment setting (i.e. SET PCB=/MIXED) which tells
+|   PCBoard to allow mixed case in the CITY field.
+|
+|- Modified message display so that any line that exceeds 79 characters which
+|  does not contain an ESC character (as in ANSI codes) or an @ character (as
+|  in pcb macros) will be chopped off at 79 columns to avoid display problems.
+
+ PCBFILER.EXE
+ ------------
+ - Incorporated new virtual memory management routines, taking advantage of
+   both EMS and XMS memory, in addition to using the hard disk, resulting in
+   the following changes:
+
+   - Added the ability to load/edit/save unlimited DIR.LST files
+   - Added the ability to load/edit/save/sort unlimited DIR files
+   - Added the ability to perform duplicate/missing analysis on unlimited files
+   - Added the ability to sort DIR files in-memory (while in the editor)
+
+ - In addition to making the duplicate/missing analysis work on an unlimited
+   number of files, the algorythms used to perform the analysis have been
+   rewritten to tremendously speed up the operation, especially if EMS memory
+   is available.
+
+ - Added a new capability in the Scan for Duplicate/Missing Files section.  In
+   addition to the 4 existing reports (dupes on disk, dupes in DIRs, missing on
+   disk, and missing in DIRs), the new report is based on a scan of the DIRs
+   to locate "similar" filenames.  These filenames have the same "base"
+   filename, with differences usually, but not always, indicating a version
+   number change.  Here are some examples:
+
+   ACCNET42.ZIP    24652  03-14-94  Main Board     DIR: 15
+   ACCNET43.ZIP    12443  05-16-94  Main Board     DIR: 16
+
+   !RR252U.ZIP    366732  04-23-94  Main Board     DIR: 8
+   !RR250U.ZIP    370792  03-24-94  Main Board     DIR: 14
+   !RR200.ZIP     302688  02-19-93  Main Board     DIR: 13
+
+   In the above examples, the files really were changes in version numbers.
+   The next example illustrates how this report will not always be accurate:
+
+   !RR170B.ZIP    224736  07-27-92  Main Board     DIR: 13
+   !RR170D.ZIP    203153  07-26-92  Main Board     DIR: 13
+   !RR170A.ZIP    194368  07-27-92  Main Board     DIR: 13
+   !RR170C.ZIP     34049  07-27-92  Main Board     DIR: 13
+
+   In the above example, the files *could* have been version number changes
+   (perhaps 1.70a, then 1.70b, then 1.70c, etc), but upon reading the file
+   descriptions via PCBFiler, we discover that these four files actually make
+   up a 4-part set of files (Parts A, B, C and D).
+
+ - Added the ability to toggle between viewing all lines versus viewing only
+   the primary lines (ALT-Y) in the DIR File Editor.
+
+ - Added the ability to toggle between 25-line and 50-line modes (ALT-5).
+
+ - Expanded the number of lines of help information at the bottom of the
+   screen while at the same time, modified the ALT-X (expert mode toggle) so
+   that, in expert mode, the help lines do not appear.  Combining the effects
+   of Expert Mode and/or 50-line mode and/or Primary-Only mode, you can set
+   your own preferences for how many lines are viewable on-screen.  These
+   settings can be saved in Defaults Page 1.
+
+ -  Added two new settings to Defaults Page 2:
+
+     Default Rules File
+     Default Moves File
+
+   You can set your preference for the location of these files in that screen.
+   However, since pressing ALT-G prompts you for the name of the rules file,
+   you can still interactively change it to another location, plus your most
+   recent change will be remembered right up until you exit PCBFiler.
+
+ - Added in a new ALT-R (Repeat Line) capability hich can copy, not only a
+   single line at a time, but if you point to a primary line which has
+   secondaries attached, pressing ALT-R on the primary line will duplicate the
+   entire set.
+
+  - Changed ALT-F (Free Disk Space) to ALT-N.
+
+ - Added a new ALT-F command which allows you to select any one of 9 different
+   "filters", or "shortened views" of the listing.  These are:
+
+      L - Locate by Filename or by Wildcard
+      Z - Locate by Description
+      M - Locate Files Marked For Moving or Copying
+      D - Locate Files Marked For Deleting
+      U - Locate Un-Marked Files
+      S - Display Selected Files
+      N - Display non-Selected Files
+      R - Display Files Found in DIR but Missing from Disk
+      S - Display Files Found on Disk but Missing Description
+
+   NOTES:
+   1) Press ESC to cancel a filter.
+   2) The L and Z filters are equivalent to the ALT-L and ALT-Z commands.
+   3) The "Found in DIR" and "Found on Disk" filters require that you have
+      answered "Y" to the "Verify File Existence" question prior to entering
+      the DIR File Editor.
+
+ - The ALT-L and ALT-Z commands have been modified so that now, instead of
+   searching for one file at a time, PCBFiler finds all matches at once and
+   presents the sysop with a filtered "view" of only those files that match
+   the search criteria.
+
+ - Lengthened the ALT-Z search criteria input and changed it over to the method
+   of searching used by PCBoard which allows multiple criteria and boolean
+   logic to be used.
+
+ - Added the ability to then select all files (or all files in the filtered
+   view) using ALT-A and then copy or move them all at once.
+
+ - Added the ability to de-select all previous (ALT-S) selections by pressing
+   ESC.  This also serves as a warning that you still have un-moved selections
+   prior to exiting the DIR File Editor.
+
+ - Added a Join Line (ALT-J) command which will join the contents of the next
+   line into the current line (or as much of the next line as will fit).
+
+ - Added a point-and-shoot interface for selecting a DIR file to edit, as well
+   as when selecting a target DIR file for moving files.
+
+ - Added the ability to track the cursor movement across lines in the file
+   description instead of returning to the first position each time the cursor
+   is moved up or down (i.e. more like a word processor).
+
+ - Added the ability to word wrap down to the next line when entering a file
+   description, automatically inserting a secondary description line.  This
+   includes wrapping not only what is being typed, but if in insert mode,
+   wrapping text as it is pushed off the right edge of the screen.
+
+ - Added the ability to read in a FILE_ID.DIZ file by pressing ALT-U.  PCBFiler
+   supports the same set of archives (ZIP, ARC, PAK, LHA) that are supported by
+   PCBDescribe.  And like PCBDescribe, PCBFiler must shell out to the
+   un-archiver to extract the description.
+
+ - Modified the "Set FILE DATE when moving files" setting so that now there are
+   five possible settings:
+
+          N = No, don't change the file date
+          A = Ask just before processing
+          T = Today's Date  (was "Y")
+          R = Most Recent Date in Archive  (new)
+          O = Oldest Date in Archive       (new)
+
+   The "in-archive" settings can be used to re-date a file, as it is being
+   moved out of the upload directory, to a date which is read out of the
+   archive.  This is done by examining the contents of the archive to determine
+   which is the oldest or newest file within the archive.
+
+   This default for this setting is found in Defaults Page 1.  It should be
+   noted that if a default of T, R or O is specified, it will be used when
+   PCBFiler performs its automatic movement of files via the /MOVE command
+   line parameter.
+
+ - Two additional new settings, on Defaults Page 1, which affect files as they
+   are moved are the following:
+
+     Remove `Uploaded By:' lines when files are moved?
+     Remove `Files:/Oldest:/Newest:' lines when files are moved?
+
+   If set to yes, then the corresponding line will be stripped from a file
+   description as the file is being moved.  So, for instance, if you are
+   moving files out of the upload directory, you could strip those two lines
+   prior to storing the file description in one of your download directories.
+
+   NOTE:  The above settings do NOT apply when moving a file INTO an upload
+   directory.  In other words, you can move a file out of the private upload
+   directory into the public upload directory without losing the Uploaded By
+   and Files: lines.  It is only when files are moved out to the download
+   directories that those lines are removed.
+
+ - Added the ability to specify that files that are being moved should be
+   moved at a later time ("Days" are specified as the number of "days after
+   the file was uploaded").  This is seen in the ALT-M (move file) entry window
+   when editing a DIR file, and is also seen in the rules definitions
+   described below.
+
+   If you edit a DIR file and save it, and the only changes are requests that
+   files be moved on a later date, then those requests will be recorded and
+   PCBFiler will ask you if you still want to "process" the DIR file you are
+   saving.  Unless you specifically wanted to sort the file, the default of
+   NOT updating the DIR file should be taken.  This will allow you to perform
+   file maintainence while the BBS is up without experiencing any sharing
+   violations.  The files you've requested to be moved can be moved later,
+   perhaps when the system is done running an event, or early in the morning
+   when fewer people are online.  Regardless, by taking advantage of scheduled
+   moves, you can get yourself out of the loop and avoid waiting for files to
+   be moved!
+
+ - Added the ability to define a set of rules that can be used to automatically
+   flag files for movement to other conferences or directories.  The rule
+   definition screen may look something like this:
+
+     Target         File Name   File Name
+    Cnf  Dir Days w/ Wildcards   Inside     Boolean Search Criteria
+   ออออ ออออ ออออ ออออออออออออ ออออออออออออ อออออออออออออออออออออออออออออออออออ
+      0    0    0 *.*                       FILE FAILED VERIFICATION
+      0   27   30 *.*                       (" PPE " | .PPE) & (UTIL | ADD-ON)
+      0   28   30 *.GIF
+      0    0    0 *.*          *.PPE        PPS | PPE
+
+   NOTE:  When the cursor enters the Boolean Search Criteria field, PCBFiler
+   adjust the view of that field to make more of the field viewable.  At the
+   same time, that field is scrollable.  In other words, up to 1024 characters
+   can be entered into that field and it will, if necessary, scroll the field,
+   on screen, as you move the cursor left or right.
+
+   The above rules can be understood in the following manner:
+
+   1) Any file (*.*) found with "FILE FAILED VERIFICATION" in the description
+      should be moved immediately (0 days) to the private upload directory in
+      the main board.
+
+      NOTE: PCBFiler purposely does not provide a mechanism for automatically
+      identifying which files should be deleted.  It is our feeling that
+      automating such a task could result in files being deleted which perhaps
+      should not have been deleted.  In other words, you can always move a
+      mis-moved file to another directory, but if a badly written rule were to
+      match a file and cause it to be deleted, the information could be
+      unrecoverable.
+
+      It is our recommendation, therefore, that you instead utilize a "holding"
+      directory (or "junk" directory).  You could have PCBFiler move all of
+      the files that you expect may need to be deleted out to the private
+      upload directory.  Then, if you so desire, you could delete all of the
+      files.  But you at least have the opportunity to see the files first,
+      before they get deleted.
+
+   2) Any file (*.*) found with either " PPE " or .PPE in the description (the
+      quotes are being used to require spaces around the word PPE) and *also*
+      either the word UTIL or the word ADD-ON in the description, should be
+      moved to directory #26 of the main board 30 days after it was uploaded.
+
+      NOTE:  The search criteria extends across the entire description of the
+      file, including the filename, size, date and, of course, both the
+      primary and secondary lines of the description.
+
+   3) All GIF files (*.GIF) should be moved to directory #28 of the main board
+      30 days after it was uploaded.  Note here that the search criteria is
+      blank.  If something like 320x400 were included in the search criteria,
+      then PCBFiler would move only *.GIF files that had 320x400 in their
+      description.
+
+   4) Any file which PCBFiler is able to detect is an archive (see archive
+      formats supported for FILE_ID.DIZ processing) can be examined to see if,
+      inside the archive, it has a file matching a specified wildcard or
+      filename.  In this case, PCBFiler will check to see if a *.PPE file is
+      inside the archive, but it will only perform this check if the
+      description for the file contains either the word PPS or the word PPE.
+
+   Tips for creating rules:
+
+   a) To ensure that certain files are found, put the most important, or most
+      restrictive rules at the top.  In the example shown above, we don't want
+      to *ever* allow a file which failed verification to be moved out to a
+      download directory.  So instead, the above rule quickly flags that entry
+      and tells PCBFiler to move it out of the way, out to the private upload
+      directory where the sysop can then examine the file and discard it as
+      necessary.
+
+      PCBFiler operates on a first-found basis.  As soon as a rule is matched,
+      the file is flagged and will not be considered for other rules.
+      Therefore, more "global" rules should be down near the bottom, with the
+      more restrictive rules up near the top.  For example:
+
+           Target    File Name
+          Cnf  Dir w/ Wildcards Boolean Search Criteria
+         ออออ ออออ ออออออออออออ อออออออออออออออออออออออออออออออออออ
+            0   21 *.GIF        SCENERY | NATURE | CANYON | MOUNTAIN
+            0   22 *.GIF        320x400
+            0   23 *.GIF        640x480
+            0   24 *.GIF
+
+      The above examples would categories specific types of GIF files first,
+      then, as a last resort, *any* *.GIF file will be moved to directory #24.
+
+   b) Selecting something other than *.* for a filename allows PCBFiler to
+      quickly skip over undesired formats before spending time gathering up the
+      file description and comparing it against boolean search criteria.  For
+      performance reasons, use something other than *.* when possible.
+
+   c) The slowest operation is the in-archive examination.  Don't put anything
+      in the "File Name Inside" column unless it's really necessary for the
+      classification process.  Still, as slow as PCBFiler's rule application
+      may be, it will be hundreds of times faster than you could ever do it
+      manually, so don't leave out rules simply out of fear of slowing down
+      the rule application process.
+
+   d) A blank field is identical to *.* in both filename columns.
+
+   NOTE:  If you enter a rule which contains imbalanced parentheses or
+   quotation marks, PCBFiler will stop and display a message to inform you
+   that you need to correct the rule.  An example of imbalanced parentheses
+   would be if you took the rule below and removed one of the existing
+   parenthesis:
+
+         GAME & (EGA | VGA) & (ACTION | SHOOT | ARCADE)
+
+ - Added a /MOVE command line parameter which will move all scheduled files to
+   their respective directories when it is appropriate to move them (i.e. the
+   number of days after upload specified has been reached).  Usage:
+
+        PCBFILER /MOVE
+
+ - Added a /AUTO command line parameter which will automate the process of
+   loading a DIR file, applying the rules to the directory (ALT-R in the
+   editor) and then exiting and saving the requests.  Example:
+
+        PCBFILER /AUTO:0:20:C:\PCB\RULES\MAINUPLD.RLS
+        PCBFILER /AUTO:1:1:C:\PCB\RULES\SUPPORT.RLS
+        PCBFILER /MOVE
+
+   The above commands would apply the MAINUPLD.RLS file (a file containing a
+   set of rules, in this case, for the main uploads) to the files found in
+   directory #20 of the main board.  Then it would apply the SUPPORT.RLS file
+   (a different file containing rules specific to the support conference) to
+   directory #1 of conference #1.
+
+   NOTE:  Any files that require immediate processing in the directory that is
+   specified will be moved by virtue of issuing the /AUTO command.  The above
+   example included the PCBFILER /MOVE command as the last line to instruct
+   PCBFiler to move any *remaining* files (those not found in 0:20 or in 1:1
+   which are still, as of today's date, scheduled to be moved).
+
+
+ PCBSETUP.EXE
+ ------------
+ - Added an Accounting Configuration screen.  To activate the accounting
+   feature in PCBoard, you must perform the following steps:
+
+   1) Install the Acounting Support PSA by running PCBSM.
+   2) Then, in PCBSetup, enable the accounting features via the Accounting
+      Configuration screen.
+   3) And finally, in the PWRD file, enter either a "Y" or a "T" in the
+      "Enable Accounting" column.
+
+   The Accounting Configuration screen looks like this:
+
+     Enable Accounting Features       : Y
+     Display Money instead of Credits : Y
+     Concurrent Tracking of Charges   : N
+     Peak Usage Start Time            : 08:00
+     Peak Usage End Time              : 17:00
+     Peak Days of Week                : NYYYYYN  (SMTWRFS)
+
+     Name/Loc of Peak Holidays List File    : C:\PCB\MAIN\HOLIDAYS.CFG
+     Name/Loc of Account Configuration File : C:\PCB\MAIN\ACCOUNT.CFG
+     Name/Loc of Account Tracking File      : C:\PCB\MAIN\TRACKING.DBF
+     Name/Loc of Account INFO File          : C:\PCB\GEN\ACTINFO
+     Name/Loc of Account WARNING File       : C:\PCB\GEN\ACTWARN
+     Name/Loc of Account LOGOFF File        : C:\PCB\GEN\ACTBYE
+
+   The options shown above are described in detail below:
+
+   "Enable Accounting Features" - this is like a master control switch.  If
+   this is set to N then the accounting features are disabled.
+
+   "Display Money instead of Credits" - when set to "Y", the macros that
+   PCBoard has for credit related information will be formated for money
+   values (for example, $10.00 instead of 10 credits).  Internationalization
+   of the money values is automatic (money symbols and number format), however,
+   in this case, the internationalization is strictly for the host system.  To
+   illustrate, if you were to charge "$2,000.00", you would not want the caller
+   to see "Cr$ 2.000,00" because the two monetary values are not equivalent.
+
+   "Concurrent Tracking of Charges" - This setting is used to create an
+   environment where you can sell the caller a "package deal" such as "100
+   minutes or 10M, whichever comes first".
+
+   In the normal setup ("Concurrent" set to "N"), PCBoard tracks the user's
+   balance by taking his beginning balance and then subtracting all debits
+   and adding all credits.  In the "concurrent" setup, PCBoard only tracks the
+   largest debit.  Below is an illustration showing the difference:
+
+                             Normal       Concurrent
+                             ======       ==========
+       Starting Balance        $20            $20
+
+       Charge for Time     -    $5         -   $5  \  The largest of the two
+       Charge for Bytes    -   $10         -  $10  /  is $10, ignore the rest
+                              ----           ----
+       Balance                  $5            $10
+
+   In the normal configuration, the user is charged for every activity he
+   performs.  If he spends $5 worth of online time, and he downloads $10 worth
+   of bytes, then his total expenditure is $15.  This gives him a remaining
+   balance of $5 out of his original $20 purchase.
+
+   In the concurrent operation, a package deal such as "100 minutes or 5M,
+   whichever comes first" becomes possible because now the user's balance does
+   not run out until one or the other of the two charges reaches $20.  So he
+   can either get $20 worth of time, or $20 worth of bytes.
+
+   Credits, on the other hand, are handled slightly different.  While PCBoard
+   subtracts only the largest of the debits from the balance it, instead,
+   adds each of the credits.  So if the caller has spent $5 on time, $10 on
+   bytes, and has received a credit of $4 on files and $7 on bytes uploaded,
+   then the balance would be $20 - $10 (max debit) + $4 + $7 = $21.
+
+   "Peak Usage Time" - These two fields allow you to define a period of time
+   which is considered "peak usage" for your system.  You would only need to
+   do this if you want to charge extra for "online time" during the peak
+   usage hours.
+
+   "Peak Days of Week" - This is a 7-character field which allows you to
+   enter yes or no characters for each day of the week.  If a day does not have
+   a yes character on it, then PCBoard will not enforce the peak times that
+   day.
+
+   "Peak Holidays List FIle" - This is a file that, if it exists, is used to
+   determine if today is a holiday or not and, if so, avoid charging the
+   "Per Minute Onine Peak Time" rate.  The contents of the file look like this:
+
+           Disable Peak
+              Dates
+           ออออออออออออ
+        1)   02/14/XX
+        2)   12/25/XX
+
+   You can put an exact date in, or you can enter X's as a wildcard which,
+   using the examples above, means that PCBoard will consider it a holiday on
+   every February 14th and December 25th, no matter what year it is.
+
+   "Account Configuration File" - Pressing F2 on this file allows you to edit
+   the charges and paybacks for various activies on your system.  A few
+   examples are shown below.  NOTE:  These are not the ONLY possibilities,
+   these examples are merely meant to spark the creative juices and allow you
+   to personalize your system to meet your own requirements,
+
+
+     Example #1:
+     BYTE ORIENTED SYSTEM WITH REWARDS FOR UPLOADS AND PENALTY DURING PEAK
+     =====================================================================
+     New User Starting Balance        :         20
+     Balance Warning Level            :          5
+
+     Charges:
+     Per Logon                        :          0
+     Per Minute Online                :          0
+     Per Minute Online Peak Time      :       0.15
+     Per Minute in Group Chat (Added) :          0
+     Per Message Read                 :          0
+     Per Message Captured (QWK/c/d/z) :          0
+     Per Message Written              :          0
+     Per Message Written (Echoed)     :          0
+     Per Message Written (Private)    :          0
+     Per File Downloaded              :          0
+     Per 1K-Bytes Downloaded          :       0.04
+
+     Pay Back:
+     Per File Uploaded                :          0
+     Per 1K-Bytes Uploaded            :       0.06
+
+     In the example above, a brand new user automatically receives $20 worth of
+     credits to start out.  He can purchase more if he wishes.  But with the
+     starting point of $20, he has the ability to download as much as 500K
+     worth of files.  This is determined by dividing the $20 initial balance by
+     the cost per 1K of $0.04 (i.e. 20/.04 = 500).
+
+     If he tries to download those files during peak time and uses a 2400 bps
+     modem getting 220 cps, then he will get fewer bytes downloaded because
+     it would take approximately 39 minutes to perform the download.  At
+     a cost of 15 cents per minute, this would use up almost $6 of his credit,
+     leaving him with that much less that can be spent on the bytes that are
+     being downloaded.
+
+     However, in this configuration, he can earn back some of those credits
+     by uploading files.  Here we are crediting him with 6 cents for every
+     1K uploaded in order to give him some incentive to share files.
+
+     If he logs onto the system and his balance is greater than 0, but less
+     than $5, he will be displayed the ACTWARN file to warn him that he is
+     about to run out of credit.
+
+     When his account runs out, he will be unable to log in at his current
+     security level during peak hours because there would be no credit left to
+     pay for the peak usage.  In this case, it would be wise to give the caller
+     a different security level when the account runs out, perhaps a level
+     which would let the caller online for a few minutes but with restricted
+     access to the system.
+
+
+     Example #2:
+     CONCURRENT TIME AND BYTES WITH HIGHER COST DURING PEAK HOURS
+     ============================================================
+     Concurrent Tracking of Charges   : Y
+
+     Per Minute Online                :       0.05
+     Per Minute Online Peak Time      :       0.10
+     Per 1K-Bytes Downloaded          :       0.01
+
+     In this scenario, we could create a package deal for customers and
+     charge them $20 for 400 minutes worth of access OR for 2M, whichever
+     came first.  However, if the user spends all of his time online during
+     peak usage hours, it would effectively cut his potential online time to
+     200 minutes.  By going with a concurrent setting, however, the usage of
+     time and the downloading of bytes do not get added together when
+     subtracting the credit from the caller's account.  Instead, it is an
+     either/or situation.
+
+
+     Example #3:
+     POST/CALL RATIOS
+     ================
+     Display Money instead of Credits : N
+     Per Logon                        :         10
+     Per Message Written              :         15
+
+     The above example is a simple post/call ratio which is based not on
+     money, but on credits.  In this configuration, we are not concerned with
+     charging the caller, we just want to encourage message writing activities.
+     The above would give the caller 15 credits for every message written, but
+     would charge 10 credits for every logon made.  In effect, the caller would
+     be required to write at least two messages every three calls.
+
+
+     Example #4:
+     UPLOAD/DOWNLOAD RATIOS
+     ======================
+     Display Money instead of Credits : N
+     Per 1K-Bytes Downloaded          :          1
+     Per 1K-Bytes Uploaded            :        2.5
+
+     The above example shows yet another method of implementing ratios in a
+     PCBoard system.  There are now three, one in PCBSM, one via the PWRD file,
+     and now one via the Accounting System.  The above example gives 2.5
+     credits for every byte uploaded to the system, but charges 1 credit for
+     every byte downloaded.  Once the caller runs out of credits he must then
+     upload to earn more credits.  Again, this example is not concerned with
+     charging the caller, so the values shown are displayed in credits rather
+     than shown as money values.
+
+
+     Example #5:
+     BILLING CLIENTS FOR SYSTEM USAGE
+     ================================
+     Enable Account (setting in PWRD) :          T
+
+     Per Minute Online                :       0.05
+     Per Minute Online Peak Time      :       0.15
+     Per Message Read                 :      0.001
+     Per Message Captured (QWK/c/d/z) :      0.001
+     Per Message Written              :       0.10
+     Per Message Written (Echoed)     :       0.15
+     Per Message Written (Private)    :       0.10
+     Per 1K-Bytes Downloaded          :       0.05
+
+     The above example assumes that you never want to deny the client access
+     to your system.  You want to let the client use your system as *much* as
+     desired, and you will then send a bill for the usage later.  To do this,
+     the first step is to select "T" (tracking only) as the option in the
+     PWRD file under the "Enable Account" column.  With this option set,
+     PCBoard ignores the user's account balance completely, and instead just
+     records every activity performed in the account tracking file.  The next
+     thing we did was to define costs per minute, costs per minute during
+     peak time, costs for reading messages (1000 messages for $1), costs for
+     writing messages, and costs for downloading files.  What's left is more
+     up to how you want to handle it.  PCBoard can write the tracking
+     information to a DBF or TXT file, you configure this by the extension you
+     give on the account tracking file.   The best choice, if you have access
+     to dBase, Clipper, FoxPro or any other DBF-compatible program, would be
+     to select DBF.  This would then allow you to scan the DBF file and create
+     a custom billing report for your clients.
+
+
+   "Account Tracking File" - This file is used to track the user's activities
+   on your system and the charges (and reimbursements) that are made.  When
+   you define the name for this file you are also instructing PCBoard as to
+   how it should create the file.  For instance, if you name it TRACKING.DBF
+   then PCBoard will write to it in DBF format.  Any file extension other than
+   .DBF will be treated as an ASCII text file.
+
+   NOTE:  The Account Tracking File can be SHARED among all of your nodes by
+   pointing to the same physical file in all of your node configurations.
+   PCBoard will properly append each new record to the end of that file.
+   However, due to the frequency of the updates, you may want to have each node
+   post to its own file just to make the updates quicker.  Either way works
+   fine, the latter approach, however, may create a little extra work for you
+   in having to analyze and/or combine the files when billing your customers.
+
+   As a dBase file, the following fields are defined:
+
+      Field Name  Type  Len  Dec  Description
+      ==========  ====  ===  ===  ===========
+      Date        'D'     8       Date when the activity occured
+      Time        'C'     5       Time when the activity occured
+      Name        'C'    25       The name of the user performing the activity
+      NodeNumber  'N'     5   0   The node number on which the activity worked
+      ConfNumber  'N'     5   0   The conference the caller was in at the time
+      Activity    'C'    15       Text abbreviation of the activity
+      SubAct      'C'    25       Filenames, etc.  See below.
+      UnitCost    'N'    14   4   Per-Unit cost (per minute, per byte, etc)
+      Quantity    'N'     9   0   Number of units (minutes, bytes, etc)
+      Value       'N'    14   4   Total cost or payback (UnitCost * Quantity)
+
+   The Activity values, used by PCBoard, are as follows:
+
+      Activity        Sub-Activity          Explanation of Value
+      ==============  ====================  ==================================
+      CMD USAGE       Name of the Command   Cost for this usage of the command
+      CMD USAGE MIN   Name of the Command   Cost for the minutes it was used
+      DOOR USAGE      Name of the DOOR      Cost for this usage of the door
+      DOOR USAGE MIN  Name of the DOOR      Cost for the minutes it was used
+      MSG READ                              Cost to read messages
+      MSG READ CAP                          Cost to download captured messages
+      MSG READ CAP    "CREDIT"              Credits on an aborted capture D/L
+      MSG WRITE       TO: name              Cost to write public message
+      MSG WRITE PRIV  TO: name              Cost to write private message
+      MSG WRITE ECHO  TO: name              Cost to write echoed message
+      DNLD FILE       File name downloaded  Cost to download the file
+      DNLD BYTES      File name downloaded  Cost to download the file
+      UPLD FILE       File name uploaded    Cost/reward to upload the file
+      UPLD BYTES      File name uploaded    Cost/reward to upload the file
+      UPLD FILE FAIL  File name uploaded    Backing out charge/reward for upld
+      UPLD BYTES FAIL File name uploaded    Backing out charge/reward for upld
+      CHAT TIME                             Cost for min spent in Group Chat
+      CONF TIME                             Cost for min spent in conference
+      TIME ONLINE                           Cost for minutes spent online
+      TIME ONLINE     PEAK                  Cost for time spent during peak
+      LOGON           LOCAL or BPS rate     Cost for logging onto the system
+
+   All values are positive if they are to be subtracted from the balance,
+   negative if they are to be added into the balance.  In other words, if you
+   reward your callers for uploads, then they will show up as negative values
+   in the account tracking file.
+
+   NOTE: Additional activities, subactivities, and charges may be posted via
+   programs written in PPL.
+
+   The ASCII text version of the account tracking file is identical to the
+   above as far as content is concerned.  The layout is one record per line,
+   with all fields, except the last one, padded to their full length.  The
+   format, then, looks like this:
+
+     Date       8 characters, left justified
+                1 character - separator
+     Time       5 characters, left justified
+                1 character - separator
+     Name      25 characters, left justified
+                1 character - separator
+     NodeNum    5 characters, right justified, padded on left with spaces
+                1 character - separator
+     ConfNum    5 characters, right justified, padded on left with spaces
+                1 character - separator
+     Activity  15 characters, left justified
+                1 character - separator
+     SubAct    25 characters, left justified
+                1 character - separator
+     UnitCost  14 characters, right justified with 4 decimal places
+                1 character - separator
+     Quantity   9 characters, right justified
+                1 character - separator
+     Value     14 characters, right justified, with 4 decimal places
+                2 characters - CR/LF
+
+
+   "Account INFO File" - This file, if it is defined, is displayed to the user
+   as he logs into the system.
+
+   "Account WARNING File" - This file, if it is defined, is displayed to the
+   user as he logs into the system, but only if his current balance is at, or
+   below, the level you have identified as the "warning level".
+
+   "Account LOGOFF File" - This file, if it is definied, is displayed to the
+   user as he logs off of the system.  NOTE:  There are also two PCBTEXT
+   entries which are shown to the caller at logoff.
+
+   Each of these display files are free-form text files which can make use of
+   PCBoard macros, or can be used to run a PPE.  For example, in addition to
+   informing the caller of a low credit account, a PPE could "take an order" at
+   the same time to add credits to the account.  Of course, none of the files
+   are displayed to callers whose security levels do not have a "Y" in the
+   "Enable Account" column of the PWRD file.
+
+
+   Additional information on Accounting Configuration:
+
+   Using the Accounting Configuration screen in PCBSetup, you could configure
+   your system to charge a caller for writing an echoed message (realizing that
+   it costs you money to send the message).  You could also charge for reading
+   messages, either online or via QWK download.  NOTE:  See the conference
+   configuration screen for additional message reading and writing charges
+   which are conference-specific.
+
+   The Online Charge is levied for each minute spent online.  See the
+   conference configuration screen for an online time charge which can be
+   levied in addition to this setting.  Also, each DOOR and each command (run
+   via CMD.LST) can include an online charge.
+
+   CAUTION!  If you require prepayment, and you decide to charge per minute,
+   then PCBoard will log the caller off when he runs out of credits and won't
+   let him back on.  Obviously, you don't want to tell a customer to "go away
+   and never come back".  Therefore, it is highly recommended that, in the
+   customer record, you specify a security level that PCBoard can change to
+   that will give the caller time online but with, perhaps, restricted access.
+   This will then allow him to purchase more credits and return back to full
+   online status.
+
+ - After you have installed the Accounting Support PSA (via PCBSM) and
+   configured the various charges and paybacks for the credit system, you must
+   then instruct PCBoard as to which of your callers will be affected by this
+   system.  You can affect all of them, or just some of them, at your own
+   discretion.  You select which users are affected by the accounting system
+   by editing the PWRD file.  To do this, go to PCBSetup | File Locations |
+   Configurations Files.  Then press F2 on the PWRD file.  You will then see
+   a screen similar to the one below:
+
+                               Daily   Base  Batch File  Byte   File    KByte
+       Password    Sec  Time  K Bytes  Baud  Limit Ratio Ratio  Limit   Limit
+     ออออออออออออ อออออ อออออ อออออออ ออออออ อออออ อออออ อออออ อออออออ อออออออ
+                    10   300   32767       0   300     0     0       0       0
+
+
+   Once you are in the PWRD File Editor, press the F2 function key *again* and
+   you will see a screen similar to the one below:
+
+
+                         File  K-Byte   Enforce  Allow  Force    Demo  Enable
+       Password    Sec  Credit Credit Time Limit Alias Read Mail Acct. Account
+     ออออออออออออ อออออ ออออออ ออออออ ออออออออออ อออออ อออออออออ อออออ อออออออ
+                    10       0      0     N        N       N       N      Y
+
+   Three things to point out here:
+
+   1) You must place a "Y" in the Enable Account column in order to turn the
+      accounting features on.  In the examples above, we have enabled the
+      accounting features for users having a security level of 10.
+
+      Putting a "T" in the Enable Account column enables "tracking" of the
+      activities WITHOUT requiring an existing balance.  In other words, a
+      user would not need a positive balance of any kind in order to download
+      a file that will cost $1 to download.  Instead, PCBoard will write it
+      out to the account tracking file which you can later analyze and then
+      send the customer a bill for those services which he has used.
+
+   2) Note that the Daily K-Bytes limit has been set to 32767, which is a
+      special number to PCBoard, indicating "unlimited" K-Byte downloads per
+      day.  Or, in other words, PCBoard is not going to restrict the caller
+      from downloading based on the criteria of "number of bytes downloaded in
+      a single day".  This is not going to create a "free for all" situation,
+      as the caller will still encounter time and credit limits.
+
+   3) Note also that the File Ratio, Byte Ratio, File Limit and Byte Limit
+      values are all set to zero.  Again, we'll be using credit limits which
+      reduces the importance of these other limits.  Although you *could* use
+      them in conjunction with the credit system, doing so could become
+      confusing both for you and the caller.
+
+   4) Finally, note that the "Enforce Time Limit" switch is set to N!  In this
+      example, you might decide to charge the caller a specified number of
+      credits for each minute online.  For example, if we gave the caller 900
+      credits, and then charged him one credit per minute, we would be giving
+      him the equivalent of 30 minutes a day for 30 days.  However, in this
+      scenario, we give the caller the freedom to spend his 900 credits in as
+      little as 3 phone calls.  It would require at least three calls because
+      the above limit of 300 minutes per session has been applied.  But by
+      not enforcing the daily time limit, he could make all three calls on the
+      same day!  Of course, once he has used up all of his credits, he will
+      need to purchase more credits from you in order to regain access to your
+      system.
+
+ - It is important to note that File Debits will NOT be charged, nor will any
+   File Credits be given, if the Debit or Credit Multiplier is set to ZERO.
+   Please examine the FSEC screen below:
+
+                                                         Debit
+                 Drive \ Path            File Name  Sec Multiply   Password
+        ออออออออออออออออออออออออออออออ ออออออออออออ อออ ออออออออ ออออออออออออ
+     1) H:\GIF\                        *.*           20        2
+     2)                                ORDER.ZIP      0        0
+     3)                                *.*           20        1
+
+   Note the new DEBIT MULTIPLY column up above.  This is a MULTIPLIER column
+   for the File and Byte charges in the accounting system.  For example, if you
+   are charging 5000 credits per file downloaded, the above settings would
+   charge DOUBLE that amount (10000 credits) for every file downloaded out of
+   the H:\GIF directory.  Meanwhile, ORDER.ZIP is "free" (i.e. "NO COST")
+   because the multiplier is 0, and all other files will be charged the normal
+   5000 credits per file.
+
+   This multiplier has the same effect on bytes.  If you charge 1 credit per
+   byte downloaded, then files out of H:\GIF will be charged at the rate of 2
+   credits per byte downloaded.  ORDER.ZIP will remain a free download, and
+   all other files will be charged at the normal rate of 1 credit per byte.
+
+   IMPORTANT:  It is therefore imperative to file and byte charging systems
+   that you examine your FSEC file and set the multiplier appropriately.
+
+   If your system is set to charge for either files or bytes, and you have a
+   multiplier value of 0 in the FSEC file, then PCBoard will display "NO COST"
+   next to the file when flagging or listing the files for download.
+
+   Now take a look at the following UPSEC screen:
+
+                                                         Credit
+                 Drive \ Path            File Name  Sec Multiply   Password
+        ออออออออออออออออออออออออออออออ ออออออออออออ อออ ออออออออ ออออออออออออ
+     1)                                *.GIF          0        0
+     3)                                *.MOD          0        2
+     2)                                *.*            0        1
+
+   In these examples, we will NOT be giving any credits for .GIF uploads.  The
+   reason?  The Credit MULTIPLIER is set to 0.  Likewise, any .MOD files
+   uploaded will receive file or byte credits at a rate that is double that
+   which is specified in the Accounting Configuration screen.  This was done
+   merely to encourage uploads of MOD files.  Since we may already be giving
+   more credits per upload than we charge for download, this setting is, in
+   effect, doubling those credits to give greater encouragement for uploads of
+   these types of files.
+
+   Finally, as a catch-all, the *.* entry indicates that any other file will
+   receive the file and byte credits that we have defined in the Accounting
+   Configuration screen.
+
+ - The CMD.LST file has two new columns:  Charges Per Minute and Charges Per
+   Use.  These two columns allow you to define charges (or paybacks if
+   negative) for the use of any PPE, MNU or Keystroke Replacement.
+
+                           Charges Per
+            Command    Sec  Min.   Use PPE/MNU File -or- Keystroke Replacement
+        ออออออออออออออ อออ อออออออออออ อออออออออออออออออออออออออออออออออออออออ
+     1) GEEWHIZ          0     0   100 C:\PCB\PPE\GEEWHIZ.PPE
+     2) SHAZAAM          0    10     0 C:\PCB\PPE\SHAZAAM.PPE
+
+   In the first example, shown above, a caller will be charged 100 credits
+   every time he uses the GEEWHIZ command.  On the other hand, SHAZAAM is an
+   interactive type of program in which callers might spend quite a bit of
+   time, so we will charge 10 credits per minute during the time that is spent
+   using the SHAZAAM command.
+
+ - Similar to the new columns in CMD.LST, the DOORS.LST has the same two
+   additions, plus a minor modification to the "Path to DOOR Files" column.
+
+                                      USER DOOR       Charges Per    Path to
+       Filename   Password  Sec Login SYS  SYS  Shell  Min.   Use  DOOR Files
+      ออออออออออ ออออออออออ อออ อออออ ออออ ออออ อออออ อออออออออออ ออออออออออออ
+     1) QMAIL                 0   N    Y    N     Y       0   100 E:\TC\TESTDO
+     1) SANTA                 0   N    Y    N     Y       5     0 E:\TC\TESTDO
+
+   In the first example, we will be charging callers 100 credits each time they
+   use the QMAIL door.  Meanwhile, anyone using the SANTA door will be charged
+   5 credits per minute spent inside of that door.
+
+   WARNING:  Some doors have a (G)oodbye Command in them.  Of these kinds of
+   doors, many of them perform the "logoff processing" themselves, rather than
+   simply hanging up the caller and then returning back to PCBoard to perform
+   the logoff processing.  With these types of doors, an online charge will
+   have NO EFFECT if the caller is logged off by the door.  It is therefore
+   recommended that per minute charges only be used for doors which do not
+   perform logoff processing themselves.
+
+   NOTE:  The "Path to DOOR Files" field may appear to have be "shortened" or
+   "cut off" compared to what you are used to seeing.  This is okay!  This
+   field has been made into a scrollable field.  In fact, while it used to
+   be limited to 25 characters, it is now limited to 40 characters for the
+   path.  As you move your cursor to the right edge of the screen, the field
+   will scroll to the left, allowing you to enter the complete path desired.
+
+ - Three new Conference-Specific settings have been added for the purposes of
+   customizing your Accounting Configuration to suit your specific needs.
+   These charges can be found by going to the conference setup screen and,
+   once there, pressing the PGDN key to move to the next screen.  An the bottom
+   of the right hand column, you will then see the following three settings:
+
+      Charge Per Minute          :       10
+      Charge Per Message Read    :        5
+      Charge Per Message Written :      100
+
+   For systems participating in the Internet, RIME, ILink or any of the many
+   other netmail systems out there, the cost to carry the mail is often the
+   burden of the sysop with little support from the callers.  By implementing
+   conference-specific charges, you can charge the caller for participation in
+   a netmail conference, while avoiding those charges in local (non-echoed)
+   message bases.
+
+   For example, you can levy an addition per-minute charge for the time that
+   the caller spends online while *in* a particular conference.  This charge
+   can be set regardless of the Per Minute charge you have specified in the
+   Accounting Configuration screen.  The charge is an additional charge.  For
+   example, if you charge 0 credits per minute in the the Accounting
+   Configuration screen, but charge 10 credits per minute in a conference then,
+   for the duration of the caller's stay in that conference, the caller will
+   be charged 10 credits per minute.  If you were charging 10 credits already,
+   in the Accounting Configuration screen, then the charge would be 20 credits
+   per minute.  Of course, you could make a particular conference free by
+   charging -10 credits (to negate the +10 credits in the Accounting
+   Configuration screen).
+
+   In addition to the charges for reading and writing messages, established
+   in the Accounting Configuration screen, the above settings allow you to set
+   conference-specific settings.  Again, these charges are "in addition" to
+   those that you may have already set.
+
+   In this manner, you can charge those callers who make use of your netmail
+   connections, while those who do not use the message base do not have to pay
+   for those services.
+
+ - When going from v14.5 to v15.0, the size of the users.sys file changed and
+   some programs were not properly written and were not prepared for it.  At
+   that time, a special entry was necessary in DOORS.LST so that the old v14.5
+   standard users.sys file could be created.  Now, with v15.2, the file has
+   grown again and, again, some programs were not prepared.  The problem is
+   that the programmer is hardcoding offsets instead of reading them out of
+   the header the way the documentation descriptions.
+
+   So now a new setting has been added to the DOORS.LST editor.  The four
+   possible values for Make USERS.SYS are now:
+
+          'Y'    Make users.sys in default format
+          '1'    Make users.sys in v14.5 format
+          '2'    Make users.sys in v15.0 format
+          'N'    Do not make a users.sys file
+
+ - Incorporated new virtual memory management routines, and utilized C++ object
+   oriented programming, resulting in the following changes being made possible
+   to the internal editors (BLT.LST, DIR.LST, DOOR.LST, DLPATH.LST, SCRIPT.LST,
+   PWRD, FSEC, UPSEC, TCAN, PCBPROT.DAT, PCBML.DAT, CMD.LST, ALLFILES.LST,
+   FILETCAN, plus the 4 FIDO editors):
+
+   a) They are no longer restricted to a 64K limit
+   b) They all have an ALT-R (repeat line) command (previously only some did)
+   c) They show more on screen, plus a 50-line mode (ALT-5) is available
+
+ - Modified the QWK name field so that an extension cannot be placed in the
+   name definition.
+
+ - Added the ability to create a CNAMES.IDX file, which is an index of the
+   conference names.  This file is created if:  a) you do a full save, or b)
+   you do a quick save after having changed one of your conference names.
+   PCBoard can then make use of this index for "J name" and "J S" commands.
+
+ - Modified the Modem Configuration screen to allow for a second modem init
+   string to be defined.  (if both are defined, then both are sent)  Also added
+   a Modem Answer string so that you can change the default of "ATA" to answer
+   the modem.
+
+   NOTE:  If the answer string needs to be disabled completely, then set the
+   answer string to "~" which creates a short pause without actually sending
+   anything to the modem.
+
+|- Added a /DEFAULT: command line parameter which allows PCBSetup to create a
+|  default (new) configuration without prompting for the location.
+|
+|- Modified the directory validation on exit routine to offer a 4th choice when
+|  a directory does not exist (Y,N and ESC were already there, 'A=auto' has
+|  been added).  If you select 'A' it will auto-create any paths that are
+|  missing and not otherwise invalid directories.
+
+
+ PCB Zmodem (send and receive)
+ -----------------------------
+ - Added the ability to scan the DLPATH.LST or ALLFILES.LST files, including
+   any %FILESPEC.IDX files included within, to determine if a file exists
+   prior to allowing it to be uploaded - similar to the way internal batch
+   upload protocols work in PCBoard. (ZMRECV.EXE)
+
+ - Modified the CPS calculations to make them more accurate, especially under
+   OS/2.
+
+ - Also, when a local connection is encountered, ZMSEND and ZMRECV will display
+   a message on the screen indicating "local connection" as the receive for it
+   exiting back to DOS.
+
+ - Added a /FORCE command line parameter to both ZMSEND and ZMRECV which will
+   allow them to be used without a filled-in pcboard.sys file.
+
+ - Added the ability to update the USERNET.XXX file during the file transfer
+   so that sysops can tell which files are being transferred and how long they
+   will take.
+
+
+ PCBPACK.EXE
+ -----------
+ - Added two errorlevel return values to PCBPack:
+
+   Errorlevel 1    -  Used to indicate that packing was aborted
+   Errorlevel 100  -  Used to indicate that ESC was pressed to abort the pack
+
+
+
+ PCBSM.EXE
+ ---------
+ - Added a new Accounting Support PSA (PCBoard Supported Allocation) into
+   both PCBoard and PCBSM.  Installing the Accounting Support PSA enables the
+   accounting features in your system.  Complete installation requires three
+   steps:
+
+   1) Select "PCBSM | User Info File Maintenance | Add PCBoard Supported
+      Allocation | Accounting Support" to add the PSA into your USERS.INF file.
+
+   2) Then configure the charges and paybacks in PCBSetup.  See the notes in
+      the PCBSETUP.EXE section of this file for further details.
+
+   3) Finally, you must instruct PCBoard as to which callers will be affected
+      by the accounting system by placing either a "Y" or a "T" in the "Enable
+      Account" column  of the PWRD file.
+
+   Once those three steps have been taken, your next step will probably be to
+   give your callers credits.  This can be done by selecting PCBSM | Users
+   File Maintenance | Adjust Account Balances.  After selecting this option,
+   you will be presented with a screen similar to the one below:
+
+     Modification to Account Starting Balance            :   500000
+
+     Add Value to Existing Starting Balance              : N
+     Zero Accumulator Values at the Same Time            : Y
+     Set the Security Level Applied on an Empty Account  : Y
+
+     Adjust users with security greater than or equal to :  10
+                               and less than or equal to :  80
+
+     Security Level Given to Users on an Empty Account   : 20
+
+   From this screen, you can start users with a new starting balance, or you
+   can add credits into their existing balance.  The example above would start
+   with a fresh balance of 500,000 credits and would zero out any accumulated
+   charges at the same time.  This change would be applied to all users having
+   a security level between 10 and 80.  And, at the same time, it would set the
+   security level that is given to the user when their account runs out to 20.
+
+   Similarly, from the User Record Editor, you can adjust each user record
+   individually as well as each field in the accounting records individually.
+
+   After selecting PCBSM | Users File Maintenance | Edit Users File, you would
+   then press the F2 function key several times until you arrive at the
+   "Account Form" screen.  This screen will look something like the one below:
+
+      Name        : JOHN SMITH
+
+      Beginning Balance       :         20
+      Calculated Balance      :       4.66
+      Security (When Empty)   :  19
+
+      Accumulated Charges                   Accumulated Earnings
+      Calls Made              :          0  Uploading Files       :         10
+      Spending Time Online    :       5.34  Uploading Bytes       :          0
+      Reading Messages        :          0  Other Earnings        :          0
+      Capturing Messages      :          0
+      Writing Messages        :        -10
+      Writing Echoed Messages :          0  ALT-C: Clear Accumulated Values
+      Writing Priv. Messages  :          0
+      Downloading Files       :         30
+      Downloading Bytes       :          0
+      Using Group Chat        :          0
+      Using 3rd Party App     :          0
+      Other Charges           :          0
+
+
+   From this screen, we can see that John Smith started out with a $20 balance.
+   He has spent $30 on downloading files and was charged an additional $5.34
+   for the time he spent online.
+
+   He has also uploaded files and received a $10 credit for those files plus
+   an additional $10 credit for messages he has written.
+
+   At this point, John Smith has a remaining balance of $4.66.  All of the
+   fields on the screen *except* the Calculated Balance can be modified
+   directly.  Any change which you make to the starting balance, or to the
+   accumulated charges or earnines, will have an immediate impact on the
+   calculated balance shown on the screen.  In other words, if you add 100 to
+   the Other Charges field, the calculated balance will drop by 100.  If you
+   add that value to the Other Earnings field, the calculated balance will go
+   up 100 credits.
+
+   Charges are subtracted from the balance while earnings are added to the
+   balance.  However, negative values in either column *are* acceptable!  A
+   negative value for writing messages, for instance, might be a REWARD for
+   participating in the message base, rather than a "cost" for having written
+   a message.
+
+   The Security Level field on this screen is very important.  PCBoard will
+   change the caller to this security level when the caller runs out of
+   credits.  This could be take place for the simple reason of making it easier
+   to display a security specific logon message or you could have an elaborate
+   setup where, after running out of credits, the caller returns to a
+   configuration where file ratios and byte limits are imposed.
+
+   However, there is an even more important reason for the existence of the
+   Security Level screen here.  If you are charging the caller for online time,
+   then PCBoard is forced to log the caller off when he runs out of credits.
+   This could, in effect, lock the caller out since, without being able to log
+   on, there would be no way for him to earn credits or repurchase them.
+
+   It is therefore recommended that you set the security level here such that,
+   when the runs out of credits, he will be set to a security level that either
+   does not use the credit system, or at least, one which does not charge per
+   minute.  This will allow the caller to get back online but with, perhaps,
+   restricted access to the system.  The advantage, however, is that now the
+   caller is once again able to request, earn or purchase more credits so that
+   he can return to full online status.
+
+ - Added a new QWK/Net Support PSA (PCBoard Supported Allocation) into
+   both PCBoard and PCBSM.  Installing the QWK/Net Support PSA enables the
+   features outlined in the PCBoard section of this document for QWK/Net.
+   Installation of the QWK/Net Support PSA requires only one step:
+
+      Select "PCBSM | User Info File Maintenance | Add PCBoard Supported
+      Allocation | QWK/Net Support" to add the PSA into your USERS.INF file.
+
+   However, to fully utilize this new PSA, your callers may want to issue the
+   (W)rite User Info command in order to set their desired limits for QWK
+   message downloads and File Attachments.
+
+   Also, don't forget to set the Net Status flag for those uses that you wish
+   to allow to exchange "net mail" with your system.  You can do this by using
+   the Conference Flags screen in PCBSM, or by using Sysop Function 7 and
+   answering "Y" at the "Select Conferences" prompt.  By placing the letter "N"
+   in the conference flags, you can give a user Net Status in a specific
+   conference.
+
+   Once the QWK/Net PSA is installed, you may also use the Insert/Remove Group
+   Conference selections to either set or unset the Net Status flag across a
+   entire range of users (based on security) and/or conferences (based on a
+   range of conference numbers).
+
+ - Enhanced both PCBoard and PCBSM to allow for large user index files.  These
+   index files allow the total number of users to go beyond 65,535, which was
+   the limit for PCBoard previously.  Also, added new virtual memory management
+   routines to PCBSM which allow PCBSM to handle larger files (sorting and
+   indexing) much faster by making use of available resources (ems, xms, disk).
+
+   In both programs, the large index files are *only* used when an environment
+   setting is used:    SET PCB=/BIGNDX
+
+   Otherwise, the normal index files are used.
+
+   WARNING!!!  If you add (or remove) the /BIGNDX option, you *must* re-index
+   your users file.  You can do so easily by typing PCBSM /INDEX.  If you
+   do not, PCBoard will be unable to locate your users and will treat all of
+   them as if they were *new* users on your system.
+
+   NOTE:  Our recommendation is to *only* use the /BIGNDX setting if you
+   expect to have more than 65,535 users in your users file.  If you have less
+   than that, you are not only wasting disk space, you are also introducing
+   the possibility of incompatibilities where some non-CDC-authored programs
+   may not yet be prepared to read or write the new index format.  There is
+   only a minuscule number of these types of programs, but they do exist, so
+   it would be easier to simply not use /BIGNDX unless your system requires it
+   by virtue of the number of users you have or expect to have.
+
+ - If the USERS and USERS.INF files were on two different drives (or the drive
+   letters were different) then PCBSM would exit without running certain
+   processes, such as a security level range modification.
+
+ - Added an error message which is displayed if the USERS.INF file is not
+   complete (not all of the expected records are in the file).
+
+ - Modified the Users File Editor to allow for mixed-case in the City field as
+   well as Comments 1 and 2.
+
+ - Modified the "List Installed TPA/PSAs" display so that, if you have more
+   than a screenful, it will pause and wait for a keypress before continuing.
+

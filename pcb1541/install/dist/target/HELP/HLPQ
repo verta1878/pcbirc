@@ -1,10 +1,214 @@
-..\GEN\
-..\HELP\
-..\FILES\UPLOAD\
-..\FILES\DL01\
-..\FILES\DL02\
-..\FILES\DL03\
-..\FILES\DL04\
-..\FILES\DL05\
-..\FILES\DL06\
-..\FILES\DL07\
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(Q)uick Message Scan                                                 @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command will list message header information.  The information
+      pertaining to a message is listed on one line for easy viewing.
+@X0F
+   Display Subcommands
+@X0B
+      +               Scan in forward direction.
+      -               Scan in reverse direction.
+      L               Begin with last message in message base.
+      NS              Display in nonstop mode.
+@X0F
+   Message Selection Subcommands
+@X0B
+      [beg. msg.  #]  Beginning message number.
+      A               Scan selected conferences.
+      ALL             Scan all conferences.
+      F               Messages from you.
+      FROM            Read messages from a user.
+      N               New Messages by date.
+      S               Messages that you have not read yet.
+      TO              Read messages to a user.
+      WAIT            Scan messages in conferences where you have mail waiting.
+      TS              Messages that contain particular text.
+      U               All unread messages.
+      USER            Messages from a particular user.
+      Y               Messages addressed to you.
+@X0F
+   Subcommands: Alphabetial Listing
+
+      @X0B[beg. msg.  #]  Beginning message number. @X03 This is the message number
+                      that you wish to begin the scan with.  The default scan
+                      direction is in the forward direction.  If you wish to
+                      go in the reverse direction, use the - subcommand.
+
+      @X0B+               Scan in forward direction. @X03 When appended to the
+                      beginning message number you can set the direction in
+                      which PCBoard scans the message base.  For example if
+                      you enter 762+, PCBoard will begin scanning at message
+                      number 762 in the forward direction.
+
+      @X0B-               Scan in reverse direction. @X03 When appended to the
+                      beginning message number you can set the direction in
+                      which PCBoard scans the message base.  For example if
+                      you enter 3569-, PCBoard will begin scanning at message
+                      number 3569 in the reverse direction.
+
+                      NOTE:  PCBoard defaults to searching in the forward
+                      direction.
+
+      @X0BA               Scan selected conferences.@X03  Scans not only the current
+                      conference but also those conference which you have set
+                      for scanning via the SELECT command or the S conference
+                      flag in the users record.
+
+      @X0BALL             Scan all conferences.@X03  Scans all conferences you are
+                      registered in even if you have not marked the
+                      conference for scanning.
+
+      @X0BF               Message from you. @X03 Only messages that are from you, the
+                      user currently online, will be displayed.
+
+      @X0BFROM            Read messages from a user. @X03 If you wish to read mail
+                      that is from a particular user, use this subcommand.
+                      When you use this subcommand, PCBoard will prompt you
+                      for the user you wish to read mail from.
+
+      @X0BL               Begin with last message in message base. @X03 Sets the
+                      beginning message number to the last message in the
+                      message base.  When you use this subcommand you may
+                      omit the beginning message number.
+
+      @X0BN               New messages by date.@X03  The first message that is read
+                      is the one that matches the date that you specify.
+                      This enables you to read only messages that were left
+                      after a certain date.
+
+      @X0BNS              Display in non-stop mode. @X03 The listing of messages will
+                      be displayed in non-stop mode.  This means that there
+                      will be no more? prompts to pause each time the screen
+                      becomes full.
+
+      @X0BS               Messages that you have not read yet.@X03  Searches only
+                      those messages that you have not read yet.
+
+      @X0BTO              Read messages to a user.@X03  If you wish to read mail that
+                      is addressed to a particular user, use this subcommand.
+                      When you use this subcommand, you will be prompted for
+                      the username that you wish to read mail from.
+
+      @X0BTS              Messages that contain particular text.@X03  This subcommand
+                      enables you to search for text in the message body, the
+                      TO: field, and the FROM: field.  You can search for a
+                      word/phrase or you can use any Boolean search.  For
+                      more information on searching for text please access the
+                      online help at the @X0EEnter the Text to Scan for prompt@X03.
+
+      @X0BU               All unread messages.@X03  If a message has not yet been
+                      read then it will be displayed.
+
+                      NOTE:  A message that is addressed to ALL will always
+                      show up in such a search because the read status is not
+                      maintained on a message addressed to all users on the
+                      system.
+
+      @X0BUSER            Messages from a particular user. @X03 You may search the
+                      message header for a particular user.  When PCBoard
+                      searches for a particular user it will search both the
+                      TO: and FROM: fields in the message header.  You must
+                      enter a full user name.  Partial matches cannot be made
+                      with this command.
+
+      @X0BWAIT            Scan messages in conferences where you have mail
+                      waiting.@X03  Messages are read from only conferences that
+                      you currently have personal mail waiting to be read.
+                      For example, if you login and see that you have mail
+                      waiting in conferences 2,3, and 25 you could read all
+                      new messages in only those conferences by entering
+                      R;WAIT at the conference command prompt.
+
+      @X0BY               Messages addressed to you.@X03  Only messages that are
+                      addressed to you will be listed.
+@X0F
+   Description
+@X03
+      You may analyze a brief list of messages that may be read by you if you
+      use the Q user command.  When executed, PCBoard will display the
+      following information about each message:
+@X0E
+          Message number
+          Reference number
+          Sender
+          Addressee
+          Subject
+          Read Status
+@X03
+      The reference number indicates the previous message to which a reply
+      was entered to.  This command can be used to quickly search message
+      headers for information.
+@X0F
+   Format of the list
+@X03
+
+          @X0FScanning Chatter (1) Conference
+          Msg#    Ref#    To              From            Subject
+@X0B          *124248         LYLE MAY        DALE KIRKMAN    Software
+          ~124247         SYSOP           STEVE WILLIAMS  COMMENT (6)
+@X03
+      The list that is produced by the format contains the following information:
+
+      @X0BMsg #. @X03 The actual message number in the message base.  Just before the
+      message number is a status code that shows if the message has been
+      read, etc. For a list of status codes please see the section titled
+      Status Codes.
+
+      @X0BRef #. @X03 If the message is a reply, this field will contain the message
+      number which was replied to.
+
+      @X0BTo. @X03 Displays who the message is addressed to.  Only the first 16
+      characters of who a message is address to is displayed in this list.
+
+      @X0BFrom. @X03 Displays who the message is from.  The first 16 characters of
+      who the message(s) are from will be displayed.
+
+      @X0BSubject. @X03 Displays the subject of the message.  Even though a subject
+      may be quite long, only the first 25 characters of the subject is
+      displayed with this command.
+@X0F
+   Status Codes
+@X03
+      Next to each message number is a status code.  You can use these status
+      codes to determine if the message has been read, if it has replies, etc.
+      The following is a list of all valid message status codes:
+
+          @X0B[blank]@X03     A message which can be read by anyone.
+          @X0B*@X03           A private message to a specific person which has not
+                      been read by the person it was addressed to.
+          @X0B+@X03           A private message which has been read by the person it
+                      was addressed to.
+          @X0B-@X03           A message to a specific person, which was readable by
+                      anyone, which has been read by the person it was
+                      addressed to.
+          @X0B~@X03           A comment to the SysOp which has not been read by the
+                      person defined as SysOp record #1.
+          @X0B`@X03           A comment to the SysOp which has been read by the person
+                      defined as SysOp record #1.
+          @X0B%@X03           A message protected by sender password which has not
+                      been read.
+          @X0B^@X03           A message protected by sender password which has been
+                      read.
+          @X0B!@X03           A message protected by group password which has not been
+                      read.
+          @X0B#@X03           A message protected by group password which has been
+                      read.
+          @X0B$@X03           A message protected by group password which is addressed
+                      to ALL.
+@X0F
+   Examples
+@X03
+      To display the header information for all messages in the current message
+      base in reverse order you would issue the following at the command prompt:
+@X0E
+          Q L
+@X03
+      To search for all messages (beginning with the first message in
+      the message base) either to or from a user named Wally Peterson
+      you would issue the following at the command prompt:
+@X0E
+          Q USER WALLY PETERSON 1+
+@XFF
+

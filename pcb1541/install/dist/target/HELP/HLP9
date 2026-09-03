@@ -1,13 +1,10 @@
-@X0A@BOARDNAME:79C@
-@INCONF:79C@
-                              Bulletin Listings
+@CLS@@X0DREMOTE DROP TO DOS
 
-        @X17зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©@X07
-        @X17Ё                                                           Ё@X07
-        @X17Ё                                                           Ё@X07
-        @X17Ё   @X1E1. - @X1FHow to use this system                             @X17Ё@X07
-        @X17Ё                                                           Ё@X07
-        @X17Ё   @X1E2. - @X1FSystem Guidelines and Policies                     @X17Ё@X07
-        @X17Ё                                                           Ё@X07
-        @X17юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды@X07
+@X0ESUBCOMMAND:
+
+@X0D<@X0EY@X0D>@X0E  YES.  Normally you are asked upon entering the "9" command if you wish to
+     exit to DOS.  This can be bypassed by entering 9 y.
+
+SEE MANUAL FOR ADDITIONAL INFORMATION ON DOORWAY.EXE and REMOTE.SYS
+@X07
 

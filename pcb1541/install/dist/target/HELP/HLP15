@@ -1,2 +1,8 @@
-..\HMNRSRC\FILES1\
-..\HMNRSRC\UPLOAD\
+@CLS@@X0DRECYCLE A NODE
+
+@X0EThis will allow you to recycle a node that you specify.  It will also allow you
+to run a batch file that you specify in BOARD.BAT.
+
+SEE MANUAL FOR ADDITIONAL DETAILS ON BATCH FILES WITHIN BOARD.BAT.
+@X07
+

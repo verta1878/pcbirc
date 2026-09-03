@@ -1,4 +1,247 @@
-..\GEN\
-..\HELP\
-..\UPLOAD\
-..\DL01\
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3FSearching For Text                                                   @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X03
+
+      There are numerous places where PCBoard will ask you for some kind
+      of search criteria for the text you want to scan.  In those areas
+      you can simply type in a word or phrase or you may create much
+      more complex searches by using boolean logic symbols in your
+      request.
+
+      The rules below apply at any prompt given where PCBoard wants you
+      to tell it what to scan for so the following rules can be used
+      whether you are scanning through the message base, the download
+      directories, the users file or the caller logs.
+
+      The prompt that you will usually see will resemble the follwoing:
+@X0E
+          Enter the Text to Scan for (Enter)=none?
+@X03
+      To begin with, you will be shown how to do some simple searches.
+      From there, you will be shown how to do some more complex searches
+      that involve Boolean operands.
+@X0F
+   Simple Searches : Single Word
+@X03
+      The simplest search that you can perform is the single word
+      search.  You enter the word to search for and PCBoard will search
+      the criteria you have specified for that word.  For example, if
+      you are using the Z command then the file directories will be
+      searched.  If you are using the TS command then the message base
+      will be searched.
+
+      For example, you may wish to search all messages in the current
+      conference for the word monitor.  You would then type the
+      following at a conference command prompt:
+@X07
+          TS
+@X0E
+          Enter the Text to Scan for (Enter)=none? @X07monitor
+@X0A          Msg # to Begin Search from (1052-3904)?@X07 1
+@X03
+      At this point, you would see that the search begins for the word
+      monitor.  PCBoard will display any message that has the word
+      monitor in it.  While searching, PCBoard does not pay attention to
+      the case of the word so it can be either upper or lower case and
+      it will still be found.
+@X0F
+   Simple Seaches : Phrase
+@X03
+      Taking the single word approach one step further, you can search
+      for a phrase that consists of one or more words.  If you found
+      that searching for monitor was pulling up to many matches and
+      consequently was not being effective, you may decide to search for
+      something more specific like vga monitor instead.  This may help
+      reduce the number of matches and help you find the messages you
+      are after.  This time you would type the following at the
+      conference command prompt:
+@X07
+          TS
+@X0E
+          Enter the Text to Scan for (Enter)=none? @X07VGA monitor
+@X0A          Msg # to Begin Search from (1052-3904)? @X071
+@X03
+      At this point the search will begin again.  However, this time,
+      only messages which have the word VGA immediately followed by the
+      word monitor will be displayed.  When the message is displayed to
+      you, PCBoard will highlight the match if your graphics mode allows
+      so that you can see where the match occurs.
+@X0F
+Complex (Boolean) Searches
+@X03
+      Boolean operands allow you to perform more complex searches than
+      you would be able to perform searching for a word or phrase. With
+      Boolean operators you can tell PCBoard to display a match only if
+      it meets certain conditions that you specify.
+
+      An expression is made up of an operator which acts on one or more
+      operands.  With text searches, your operators are the Boolean
+      operators.  The operands are the word or phrases you are searching
+      for.  Do not over-burden yourself trying to remember the
+      difference between operands and operators as you will find that
+      the examples will help you better understand the concept of
+      Boolean text searching.  The following discusses each of the
+      Boolean operators.
+@X0F
+   & - The And Operator
+@X03
+      The Boolean And operator enables you to search in disjointed mode.
+      In other words, both operands must exist in the target (message,
+      file description, etc.) but they do not have to be in consecutive
+      order.  To help illustrate this let's say that you attempt to
+      search for text editors that may exist on the system.
+
+      Because you have no idea what the filename is, you decide to use
+      the Z user command to search for text in the file directories.
+      When prompted for the text to search for, you enter @X07text editor@X03
+      because that is what you are looking for.  From there you begin
+      the search, and you pull up a few programs that may interest you.
+
+      The problem with this type of search is that you may have missed
+      some files because you told PCBoard to find anything that had the
+      text editor phrase in the description.  What you discovered later
+      when viewing file directories is the following file description:
+
+  @X0BTXED100.ZIP    @X0E168046  @X0A12-28-93  @X0BTexEdit v1.00 -- Utility you can use to
+@X07                                   edit any text file.  Supports VGA text
+                                   mode.  Includes mouse support.
+@X03
+      Obviously, this looks like a file that you would be interested in.
+      Why did this description not show in your previous search? Quite
+      simply, nowhere in the description is the phrase text editor
+      contained.  Definitely your search is not catching all of the
+      files you want to catch.
+
+      This is not only where the Boolean And operator becomes useful but
+      also where it makes sense.  If you had to sum up what you were
+      looking for, you may say any file that can @X0Bedit text@X03.  The
+      highlighted words are the key.  You want to find any description
+      which has both the word text and the word edit somewhere in the
+      description.  You do not know if the description will say
+      something like "A utility to edit text" or if it will say "a
+      wonderful text editor".  Therefore you could enter the following
+      expression to search for:
+@X0E
+          TEXT & EDIT
+@X03
+      The & in the search string represents the Boolean And operator. If
+      your translate the & into the actual word and it makes even more
+      sense.  That would mean that you are searching for text and edit
+      to be in the same description.  It does not matter in what order,
+      just simply that they occur in the description to become a match.
+
+      You can have as many Boolean operands as you wish in your search
+      string.  For example, you could search for the following:
+@X0E
+          DISK & FORMAT & FLOPPY
+@X03
+      This would mean that the words DISK, FORMAT, and FLOPPY must all
+      occur in order for a record to match.
+@X0F
+   | - The Or Operator
+@X03
+      Like the Boolean And operator, this operator enables you to search
+      in disjointed mode.  With this operator only one of words or
+      phrases need to be in the target (message, file description, etc.)
+      to be considered a match.
+
+      As an example, you may wish to search the message bases using the
+      TS user command for any message that talks about hard drives.  You
+      remember that some people call them hard drives and other may call
+      them hard disks.  In a case like this, you would use the Or
+      operator to find any message that matches either phrase.  You
+      would type the following at the Enter the Text to Scan for
+      (Enter)=none prompt:
+@X0E
+          HARD DISK | HARD DRIVE
+@X03
+      Any message that contains either the phrase hard disk or the
+      phrase hard drive would be displayed to you.
+@X0F
+   ! - The Not Operator
+@X03
+      Sometimes you may not want to display all matching records.
+      Instead, you may want to search all records which do not match the
+      text you enter to search for.  This is precisely the user of the
+      Boolean not operator.
+
+      For example, you may want to search a directory that contains a
+      bunch of GIF graphic images.  All of the descriptions in this
+      directory contain the resolution of the file.  You decide that you
+      do not wish to see the description of any pictures which are
+      320x200.  If this was the case, you would type the following at
+      the Enter the Text to Scan for prompt:
+@X0E
+          ! 320x200
+@X03
+      Any description which contained the phrase 320x200 would not be
+      displayed to you because of the Boolean Not Operator ( ! ).
+      Continuing on with the GIF examples, let's assume that you want to
+      see all pictures on the system that have a resolution of 1024x768
+      but you do not want to see any files that have swim in the
+      description.  You could enter the following:
+@X0E
+          1024x768 &! SWIM
+@X03
+      If you read that out in English it says 1024x768 and not SWIM.
+      This would display all file descriptions that have a 1024x768 in
+      the description (denoting the resolution of the picture) and that
+      do not have the word SWIM anywhere in the description.
+@X0F
+Using Parentheses To Group
+@X03
+      Remember in mathematics how you used parentheses in your searches
+      to not only make your searches clearer and easier to understand
+      but more importantly to control the order of operations to suit
+      your need?  With Boolean operators you can do the exact same
+      thing.  If you take the example that illustrates using the And
+      Boolean operator one step further you can easily see how
+      parentheses help group things together.
+
+      If you recall, you were using the And operator to search for any
+      description that contained both the words TEXT and EDIT.  What
+      happens if someone chooses to use the word ASCII instead of TEXT
+      when they enter their description?  To help you find this
+      description, you could use parentheses to group items together.
+      This may result in the following search string.
+@X0E
+          EDIT & (TEXT | ASCII)
+@X03
+      This will tell PCBoard to find any description that contains the
+      word edit, and either the word text or the word ASCII.  If you
+      did not use the parentheses then PCBoard would evaluate from the
+      left to the right.  This means that it would only display files
+      that contained both the words EDIT and TEXT or the word ASCII.
+
+      While it appears to be a very subtle difference, it could make or
+      break your search.  Remember the easiest way to do Boolean
+      searching is to read out the search in English.  If you look at
+      the previous example which uses parentheses you could read it as
+      follows:
+@X0E
+          EDIT and either Text or ASCII.
+@X0F
+   Including The Boolean Characters In Your Search
+@X03
+      If you need to include any of the following characters in your
+      search then you will need to use quote marks to use them properly:
+@X0B
+          &
+          |
+          !
+          (
+          )
+          [space]
+@X03
+      Obviously these characters all have special meanings when involved
+      in a search so you need some way of specifying them. For example,
+      you may want to search for the phrase SMITH & JONES.  If you type
+      that in as-is, the search would turn up anything with the word
+      SMITH and the word JONES.  What you would do in this case is to
+      simply surround then entire search phrase with quote marks as
+      illustrated in the following:
+@X0E
+          "SMITH & JONES"
+@XFF
+

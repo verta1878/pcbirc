@@ -1,2 +1,50 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(BR)oadcast Another Node                                             @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      Enables you to send a brief message to any node number.  You can use 
+      this command to notify users that you are about to shut down the system 
+      or just to say hello.
+@X0F
+   Subcommands
+@X03
+      (node #)        Node number.  This can be any active node number. You 
+                      may also type ALL in place of the node number to 
+                      broadcast the message to all active nodes.
+
+      (message)       Message to send to another node.  Any text up to 48 
+                      characters in length.  Text is displayed in all capital 
+                      letters and punctuation is omitted.
+@X0F
+   Description
+@X03
+      Allows any user with SysOp security to display a message to any or all 
+      active nodes.  This command is useful to notify users that the system 
+      may be going down, or if you wish to have all users log off of the 
+      system.
+
+      When the message is displayed to the user it will also send a beep to 
+      help get the user's attention.
+
+      NOTE:  All subcommands must be placed on the command line.  If you type 
+      BR and press enter then you will be returned back to the command prompt 
+      and no action will have taken place.
+
+      If a user is not in PCBoard (e.g., the user is currently in a DOOR) 
+      then the user will not see the message because they were not in PCBoard 
+      at the time the broadcast message was sent.
+@X0F
+Examples
+@X03
+      To broadcast a message to node 1 which says PLEASE LOG OFF AS SOON AS 
+      POSSIBLE you would type:
+@X0E
+          BR 1 PLEASE LOG OFF AS SOON AS POSSIBLE
+@X03
+      To broadcast a message to all active nodes which notifies the users 
+      that you would like them to log off of the system you would type the 
+      following at the command prompt:
+@X0E
+          BR ALL PLEASE LOG OFF AS SOON AS POSSIBLE
+@XFF

@@ -1,330 +1,63 @@
-Main Board
--1
-0
-0
-0
-0
-0
-0
-4
-..\MAIN\MSGS
-..\GEN\BRDM
-..\GEN\BRDS
-..\GEN\NEWS
-2
+@CLS@@X0DLIST MESSAGE HEADERS
 
+@X0E[beg. msgs #]  Being the scan with this number message.  Default is forward,
+               for reverse see the @X0D<@X0E-@X0D>@X0E command.
 
-2
-
-
--1
-..\GEN\DOORS
-..\GEN\DOORS.LST
-0
-..\GEN\BLT
-..\GEN\BLT.LST
-
-..\GEN\SCRIPT
-..\GEN\SCRIPT.LST
-
-
-
-
-
-Employee E-Mail
--1
-0
-0
-0
-0
-0
-0
-4
-..\EMPLOYEE\MSGS
-..\EMPLOYEE\BRDM
-..\GEN\BRDS
-..\EMPLOYEE\NEWS
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-Sales & Marketing
--1
-0
-0
-0
-0
-0
-0
-4
-..\SLSMKTNG\MSGS
-..\SLSMKTNG\BRDM
-..\GEN\BRDS
-..\SLSMKTNG\NEWS
-2
-..\SLSMKTNG\PUBLIC
-..\SLSMKTNG\UPLOAD\
-2
-..\SLSMKTNG\PRIVATE
-..\SLSMKTNG\PRIVUPLD\
-0
-..\SLSMKTNG\DOORS
-..\SLSMKTNG\DOORS.LST
-0
-..\SLSMKTNG\BLT
-..\SLSMKTNG\BLT.LST
-
-..\SLSMKTNG\SCRIPT
-..\SLSMKTNG\SCRIPT.LST
-
-..\GEN\DIR
-..\SLSMKTNG\DIR.LST
-
-..\SLSMKTNG\DLPATH.LST
-MIS
--1
-0
-0
-0
-0
-0
-0
-4
-..\MIS\MSGS
-..\MIS\BRDM
-..\GEN\BRDS
-..\MIS\NEWS
-2
-..\MIS\PUBLIC
-..\MIS\UPLOAD\
-2
-..\MIS\PRIVATE
-..\MIS\PRIVUPLD\
-0
-..\MIS\DOORS
-..\MIS\DOORS.LST
-0
-..\MIS\BLT
-..\MIS\BLT.LST
-
-..\MIS\SCRIPT
-..\MIS\SCRIPT.LST
-
-..\GEN\DIR
-..\MIS\DIR.LST
-
-..\MIS\DLPATH.LST
-Administration
--1
-0
-0
-0
-0
-0
-0
-4
-..\ADMIN\MSGS
-..\ADMIN\BRDM
-..\GEN\BRDS
-..\ADMIN\NEWS
-2
-..\ADMIN\PUBLIC
-..\ADMIN\UPLOAD\
-2
-..\ADMIN\PRIVATE
-..\ADMIN\PRIVUPLD\
-0
-..\ADMIN\DOORS
-..\ADMIN\DOORS.LST
-0
-..\ADMIN\BLT
-..\ADMIN\BLT.LST
-
-..\ADMIN\SCRIPT
-..\ADMIN\SCRIPT.LST
-
-..\GEN\DIR
-..\ADMIN\DIR.LST
-
-..\ADMIN\DLPATH.LST
-Human Resources
--1
-0
-0
-0
-0
-0
-0
-4
-..\HMNRSRC\MSGS
-..\HMNRSRC\BRDM
-..\GEN\BRDS
-..\HMNRSRC\NEWS
-2
-..\HMNRSRC\PUBLIC
-..\HMNRSRC\UPLOAD\
-2
-..\HMNRSRC\PRIVATE
-..\HMNRSRC\PRIVUPLD\
-0
-..\HMNRSRC\DOORS
-..\HMNRSRC\DOORS.LST
-0
-..\HMNRSRC\BLT
-..\HMNRSRC\BLT.LST
-
-..\HMNRSRC\SCRIPT
-..\HMNRSRC\SCRIPT.LST
-
-..\GEN\DIR
-..\HMNRSRC\DIR.LST
-
-..\HMNRSRC\DLPATH.LST
-Customer Support Services
--1
-0
-0
-0
-0
-0
-0
-4
-..\CUSTSRVC\MSGS
-..\CUSTSRVC\BRDM
-..\GEN\BRDS
-..\CUSTSRVC\NEWS
-2
-..\CUSTSRVC\PUBLIC
-..\CUSTSRVC\UPLOAD\
-2
-..\CUSTSRVC\PRIVATE
-..\CUSTSRVC\PRIVUPLD\
-0
-..\CUSTSRVC\DOORS
-..\CUSTSRVC\DOORS.LST
-0
-..\CUSTSRVC\BLT
-..\CUSTSRVC\BLT.LST
-
-..\CUSTSRVC\SCRIPT
-..\CUSTSRVC\SCRIPT.LST
-
-..\GEN\DIR
-..\CUSTSRVC\DIR.LST
-
-..\CUSTSRVC\DLPATH.LST
-Engineering
--1
-0
-0
-0
-0
-0
-0
-4
-..\ENGINRNG\MSGS
-..\ENGINRNG\BRDM
-..\GEN\BRDS
-..\ENGINRNG\NEWS
-2
-..\ENGINRNG\PUBLIC
-..\ENGINRNG\UPLOAD\
-2
-..\ENGINRNG\PRIVATE
-..\ENGINRNG\PRIVUPLD\
-0
-..\ENGINRNG\DOORS
-..\ENGINRNG\DOORS.LST
-0
-..\ENGINRNG\BLT
-..\ENGINRNG\BLT.LST
-
-..\ENGINRNG\SCRIPT
-..\ENGINRNG\SCRIPT.LST
-
-..\GEN\DIR
-..\ENGINRNG\DIR.LST
-
-..\ENGINRNG\DLPATH.LST
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
+@X0D<@X0E+@X0D>@X0E  SCAN IN A FORWARD DIRECTION - Append to the beginning message number as
+     in 762+.   You will begin scanning at 762 and go forward.
 
+@X0D<@X0E-@X0D>@X0E  SCAN IN A REVERSE DIRECTION - append to the beginning message number as
+     in 762-.  You will begin scanning at 762 and go backwards.
 
+@X0D<@X0EA@X0D>@X0E  SCAN ALL SELECTED CONFERENCES - This will scanb all conferences that you
+     have selected using the "SELECT" command or the "S" flag in the users
+     record.
 
+@X0D<@X0EALL@X0D>@X0E  SCAN ALL CONFERENCES - Scans all the conferences you are registered in
+       whether you "SELECT"ed them or not.
 
+@X0D<@X0EF@X0D>@X0E  MESSAGES FROM YOU - Only messages from you, the current user, will be
+     displayed.
 
+@X0D
 
+<@X0EL@X0D>@X0E  BEGIN WITH THE LAST MESSAGE IN THE MESSAGE BASE - Sets the beginning
+     message number to the last message in the base and goes backwards.
 
+@X0D<@X0ENS@X0D>@X0E DISPLAY IN NON-STOP MODE - No "MORE" prompt.  Screen will scroll.
 
+@X0D<@X0ES@X0D>@X0E  MESSAGES THAT HAVE NOT BEEN READ YET - Searches out only those messages
+     you have not read yet.
 
+@X0D<@X0ETS@X0D>@X0E MESSAGES THAT CONTAIN A PARTICULAR TEXT - You can specify message body
+     text, TO, and FROM.  Use any word, phrase, or use Boolean search.
 
+@X0D<@X0EUSER@X0D>@X0E  MESSAGES TO OR FROM A PARTICULAR USER - You must enter full user name
+        as partial matches will not be recognized.
+
+@X0D
+
+
+
+
+
+
+
+
+STATUS CODES
+
+@X0ENext to each message number is a status code.
+
+[blank]  A public message such as ALL
+*  A private msg not yet read by the addressee
++  A private msg read by the addressee
+-  A public msg addressed to a specific person and read by that person
+~  A "comment" to the sysop not yet read by the person in record #1
+`  A "comment" to the sysop that has been read by the person in record #1
+%  A msg protected by sender password that has not been read
+^  A msg protected by sender password which has been read
+!  A msg protected by group password which has not been read
+#  A msg protected by group password which has been read
+$  A message protected by group password that is addressed to ALL
+@X07
+

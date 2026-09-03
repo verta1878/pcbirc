@@ -1,13 +1,314 @@
-@X0A@BOARDNAME:79C@
-@INCONF:79C@
-                              Bulletin Listings
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(E)nter A Message                                                    @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
 
-        @X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
-        @X17³                                                           ³@X07
-        @X17³                                                           ³@X07
-        @X17³   @X1E1. - @X1FHow to use this system                             @X17³@X07
-        @X17³                                                           ³@X07
-        @X17³   @X1E2. - @X1FSystem Guidelines and Policies                     @X17³@X07
-        @X17³                                                           ³@X07
-        @X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+      Messages are like letters which you send through the post office.
+      Entering a message allows you to communicate, electronically, with other
+      callers on the BBS without the delays associated with cards and letters.
+@X0F
+   Subcommands
+
+      @X0B(user name)     @X03The user name or user id that the message will be
+                      addressed to.  When PCBoard prompts for a user, this
+                      value will be the default addressee.
+@X0F
+   Addressing a Message
+@X03
+      To enter a message you must address the message to a person or a group
+      of people.  PCBoard will ask you who the message should be addressed
+      to.  At the TO:  prompt type in a valid username.  In conferences that
+      are not set to echo mail, PCBoard will check the message base to make
+      sure that the user actually exists.
+
+      If you address a message to @LIST@, you will be prompted for names that
+      you would like to address the message to.  The actual limit for the
+      number that can be entered is specified on a per-conference basis.
+      After entering your message, you will notice that the list of names
+      that you addressed the message to is stored at the bottom of the
+      message.  This list keeps track of whether each user has read the
+      message or not and if so, when they read the message.
+@X0F
+   The Subject Of The Message
+@X03
+      You are allowed to enter up to 53 characters to describe the content of
+      the message.  If you do not enter a subject for the message, the
+      message you are entering will be aborted.  You will usually want to sum
+      up your message in the subject of the message.
+@X0F
+    Assigning Message Security
+@X03
+      Unless the current conference is configured to make all messages
+      private, you will be asked what type of message security to use.
+      You may choose to make the message public so that other users on the
+      system may read it, or you may choose to make the message private so
+      that the message is viewable by a limited number of people.
+
+      To make things easier, you will be asked to enter a letter that
+      corresponds with the type of security to use for the message.  If you
+      press ENTER, the message will be made public for others to read.  The
+      message security options and their corresponding letters are:
+
+         @X0BD            Pack-out date.  @X03This option gives you the ability to
+                      set a date at which the message will be deleted or
+                      packed-out if it is still active.  As long as the
+                      message is not killed first, the message will then
+                      remain active until the date specified is reached.
+
+                      The message that is to be entered will be a public
+                      message.  This makes it useful for letting your users
+                      know about special announcements and such.  If you need
+                      to change the message security, you may do so by
+                      editing the message header or by using either the U or
+                      P subcommand at the End of Message Command prompt.
+
+                      Only those who have security clearance to set the
+                      pack-out date may enter messages of this type.
+                      Furthermore, those having sufficient security will be
+                      shown the pack-out date at the bottom of the message.
+
+         @X0BG            Group password.  @X03When this message security is
+                      selected, you will be asked for a password to protect
+                      the message with.  In order for anyone to read the
+                      contents of the message they must know the password.
+
+         @X0BN            None.  @X03Choosing this message security enables anyone
+                      that can read messages in the conference that the
+                      message was left in to read the message.  This message
+                      security may be used to make general announcements or
+                      to get input or replies from a wide group of users.
+
+         @X0BR            Receiver only.  @X03Only the person to whom the message is
+                      addressed and the sender of the message may read a
+                      message that has been marked as receiver only.  This is
+                      the most common way to send private messages.
+
+         @X0BS            Sender password.  @X03This message security also asks for a
+                      password.  The password is used Anyone may read this
+                      message but only the person who entered the message may
+                      kill the message.  Normally the receiver and the sender
+                      can kill the message.
+@X0F
+    Requesting A Return Receipt
+@X03
+      If you are entering a RECEIVER ONLY message and have sufficient
+      security as specified in the second conference configuration screen of
+      PCBSetup, you will be asked if you would like a return receipt.  When
+      the recipient reads the message, a return receipt will be generated
+      which will notify you that they have read the message.
+
+      The return receipt that you receive will display the message number
+      that it was generated from and who it was addressed to.  Also included
+      in the return receipt message is the date and time that the message was
+      read.
+@X0F
+    Echoing A Message
+@X03
+      Some bulletin board systems participate in an activity called
+      echo-mail.  This allows messages to be shared between several different
+      bulletin board systems.  By sharing messages across a network, users
+      can get a wider variety of responses and usually will have more mail to
+      read.
+
+      If you are entering a message in a conference that is designated as an
+      echo-mail conference, you will be asked if the want the message to be
+      echoed.  If so, the message will go to the rest of the bulletin board
+      systems that are echoing the conference.  Otherwise, the message will
+      remain on the current bulletin board only.
+@X0F
+    Routing A Message
+@X03
+      If you have a conference which is set to echo mail you can ask the user
+      to provide routing information for any receiver only message.  The
+      routing information will only be asked for if the message being left is
+      a RECEIVER ONLY message.  Each mail network may have a different method
+      of routing mail or may not support the routing of messages.
+
+      If the user responds to a message which has origin information they
+      will not be asked to enter routing information as that will come from
+      the origin information.
+@X0F
+    Choosing A Message Editor
+@X03
+      If you choose, PCBoard will ask if you wish to use the full-screen
+      message editor each time you enter a message.  If you find that you
+      always use the full-screen editor or you always use the line-editor,
+      use the W user command to change your answer to the Use Full Screen
+      Editor question.  If you select A, you will be given the following
+      options each time you enter a message:
+
+         @X0BY            Yes.  @X03If you select this option you will use the
+                      full-screen editor to enter your message.
+
+         @X0BN            No.  @X03If you choose this option you will use the
+                      line-editor instead of the full-screen editor to enter
+                      the message.
+
+         @X0BU            Upload mode.  @X03This is identical to selecting any
+                      message editor and then selecting the U command
+                      available from within Commands Available While in a
+                      Message Editor.
+@X0F
+    Commands Available While In A Message Editor
+@X03
+      There are certain commands that are available in both message editors.
+      We will call these commands message entry commands.  These commands
+      enable you to save a message, quote a message, and more.  To access
+      these commands in the full-screen editor, press ESC or CTRL-U.  To
+      access these commands in the line-editor, the user must press ENTER on
+      a blank line.
+
+         @X0BA            Abort message. @X03 Aborts the current message entry and
+                      returns to the command prompt.
+
+         @X0BC            Continue message using line-editor. @X03 Continue the
+                      message using the line-editor.
+
+         @X0BD             Delete a line. @X03 Enables you to delete any line by line
+                      number.  If you are using the full-screen editor, you
+                      can use CTRL-Y to delete the current line.
+
+         @X0BE            Edit a line. @X03 Enables you to edit any line in the
+                      message.  Once the line number to edit has been
+                      entered, you are asked for the text to replace followed
+                      by a semicolon, and finally the replacement text.  For
+                      example, if you want to replace the word halp with the
+                      word help, you would type halp;help.  Editing text in
+                      the full-screen editor is even easier because you can
+                      move the cursor around and toggle insert/overwrite
+                      mode.
+
+         @X0BF            Edit message using full-screen editor.@X03  Continue
+                      editing the message using the full-screen editor.
+
+         @X0BH            Help. @X03 Enables you to access on-line help for entering
+                      a message.
+
+         @X0BI            Insert a line. @X03 Enables you to insert lines after the
+                      line number specified.  Each line is inserted one at a
+                      time.  The insertion stops when you press R on a blank
+                      line.  In the full-screen editor, you may use C-N to
+                      insert a new line in the message.
+
+         @X0BL            List current message. @X03 If you are using the line
+                      editor, you can list the current message showing all
+                      line numbers and the contents of the message by using
+                      this command.  This command allows you to preview the
+                      message and to obtain line numbers that you may want to
+                      modify.
+
+         @X0BQ            Quote message. @X03 When replying to a message you can
+                      quote from the original message to make the reply
+                      clearer.  You may quote as many lines as desired.  When
+                      prompted, enter the beginning and ending line number
+                      that you wish to quote.  These lines are then brought
+                      into the message with each line being preceded by a ->
+                      to show it is a quote.  This command only works when
+                      the current message is a reply.
+
+                      NOTE:  Local users may also quote a message by using
+                      PCBoard's scroll back feature.  For more information
+                      about using PCBoard's scroll-back to quote message see
+                      the REPLY user command later in this chapter.
+
+         @X0BS            Save message. @X03 Once the message is complete it can be
+                      saved using this command.  Once the message has been
+                      saved, you are returned back to the command prompt.
+
+         @X0BSA           Save and attach a file. @X03 You can attach a file to a
+                      message.  When a file is attached to a message users
+                      that can read the message can also flag the file for
+                      download.  Using this method, two or more individuals
+                      can share a file that might be relevant to the message
+                      being entered.  When you attach a file, you will be
+                      asked for a protocol to use and also for the filename.
+                      If the transfer is successful, the file will be
+                      attached and the message will be saved.  If the upload
+                      is not successful, you will be returned to the message
+                      command prompt.
+
+         @X0BSC           Carbon copy message. @X03 If a message needs to be sent to
+                      several people, you can use this command to copy the
+                      message to other users.  When this command is executed,
+                      you are asked for the other users that the message
+                      should be addressed to.  For each new addressee, a new
+                      message is saved with the same subject, message
+                      security, and message body.
+
+         @X0BSN           Save message and goto next message. @X03 Normally when you
+                      save a reply to a message, you are returned back to the
+                      message that you replied to.  If you do not want to
+                      return to the message and would like to continue with
+                      the next message, use this command to save the message.
+
+         @X0BSK           Save message and kill original. @X03 When replying to a
+                      message, you may want to kill the original message.  If
+                      so, use this command.  If you are not able to kill the
+                      message (due to a lack of security), you will not be
+                      able to kill the message either.
+
+         @X0BU            Upload a message. @X03 To upload a prepared message into
+                      the message editor, use this command.  PCBoard will
+                      prompt you for the protocol to use to upload the
+                      prepared message.  Once a protocol has been selected,
+                      you will be informed that PCBoard is ready to begin
+                      their upload.  Upload the message as you would upload
+                      any other file to your system.  When the transfer is
+                      complete, the message will be checked for line lengths.
+                      If any line in the imported message is in excess of 79
+                      characters, PCBoard will not allow you to edit the
+                      message.  Instead, you may only save the message as it
+                      was uploaded.
+@X0F
+    Using The Message Editors
+@X03
+      After you have addressed the message and assigned the message security,
+      the message editor will be displayed.  There are two different message
+      editors -- the full screen editor and the line editor.  The full-screen
+      editor is more like a word processor where the user can move the cursor
+      around the screen while the line-editor allows you to edit or enter the
+      message one line at a time.
+@X0F
+    The Full-Screen Editor
+@X03
+      To effectively use the full-screen message editor, you should
+      familiarize yourself with the control keys and special keys that can be
+      used within the editor.  Besides the list that is provided in this
+      manual you may obtain the same help by pressing CTRL-Z while in the
+      full-screen editor.
+
+      When logged in locally, use the keys shown in the PC-Keyboard column.
+      If a user is logged in remotely, the same keystrokes may or may not
+      work depending on the communications program they are using.  Some
+      communication program have a command which will enable DOORWAY mode.
+      This mode allows you to use all of the cursor keys, and other keys from
+      remote.  If the communications program you are using does not support
+      this mode, you may have to use the Control-Key equivalents instead.
+
+      While in the Full Screen Editor, press CTRL-Z for further help on
+      keyboard assignments.
+@X0F
+    The Line-Editor
+@X03
+      The line editor commands are described in the Commands Available While
+      in a Message Editor section.  Because the full-screen editor requires
+      that the user has ANSI terminal capabilities, you may choose to use the
+      line-editor instead.  The only editing that can be done while typing in
+      a line in the line-editor is to backspace and correct typing mistakes.
+      Otherwise, all editing must be done with the commands described in the
+      Commands Available While in a Message Editor section.
+
+      In order to enter a blank line in the line-editor, press SPACE on a
+      blank line and then press ENTER.  Otherwise, pressing ENTER on a blank
+      line will display the message entry command prompt.
+@X0F
+   Entering Your Message
+@X03
+      When entering a message, continue typing without worrying about
+      formatting or pressing R at the end of lines.  PCBoard will wrap the
+      text that is written so that whole words remain on one line.  If you
+      lose carrier or are logged off for inactivity, PCBoard will save the
+      message.  This message can later be edited by using the EDIT subcommand
+      at the End of Message Command while reading the message.
+@XFF
 

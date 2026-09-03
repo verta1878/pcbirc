@@ -1,2 +1,20 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(O)perator Page                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      If the SysOp is available for chat, this command will allow you to page
+      the SysOp for chat.  If the SysOp is not available, you will be given
+      the opportunity to leave a comment.
+@X0F
+   Description
+@X03
+      This command enables you to request an immediate chat with the SysOp.
+      If the system operator is available, both your machine and the SysOp's
+      will beep for 30 seconds or until the page is answered, in which case
+      you enter SysOp chat.  If, however, the SysOp does not answer the page
+      or is unavailable at the time of your request, PCBoard will inform you
+      that the SysOp is unavailable and asks if you would like to leave a
+      comment instead.
+@XFF
+

@@ -228,3 +228,23 @@ SIO OS/2 driver: GPLv3 (evga, clean-room)
 - GitHub: https://github.com/verta1878/pcbrevival
 - FPC 2.6.4irc: https://github.com/verta1878/fpc264irc
 - Mystic BBS fork: https://github.com/verta1878/mystic-bbs-irc
+
+## Project history
+
+Full chronological work log lives in [`HISTORY.md`](HISTORY.md):
+project milestones v0.1 through v1.0 baseline (Jul–Aug 2026), followed
+by the installer arc (install v1.5 → install v1.7.2, Sep 2026).
+
+Subsystem-specific work logs live inside their trees — see
+`pcb1541/install/dist/target/README.md` for the `.RED` archive /
+installer arc in full detail.
+
+The version numbering across the repo isn't uniform: project milestones,
+install-subsystem milestones, and pcbdcom-subsystem milestones each use
+their own v-numbers. `HISTORY.md` opens with a legend making this
+explicit.
+
+**Pattern**: consolidated work log in the tree (survives releases),
+per-release notes only describe the current zip's delta, tree work
+log updated in the same commit as the code change.
+

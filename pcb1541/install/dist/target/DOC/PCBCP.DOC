@@ -1,37 +1,500 @@
-@CLS@@X10ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X19¿@X07
-@X10³ @X1BDate: @X1A@SYSDATE@       @X1F         M a i n   M e n u                 @X1BTime: @X1A@SYSTIME@ @X19³@X07
-@X10³@X00@X13ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú@XFF@X19³@X07
-@X10³ @X1F(@X1CF@X1F)ile Directories      @X1F(@X1CL@X1F)ocate a filename       (@X1CT@X1F)ransfer protocol       @X19³@X07
-@X10³ @X1F(@X1CD@X1F)ownload a file       @X1F(@X1CN@X1F)ew file scan           (@X1CTEST@X1F) a file before d/l  @X19³@X07
-@X10³ @X1F(@X1CU@X1F)pload a file         (@X1CZ@X1F)ippy Text Search@POS:79@@X19³@X07
-@X10³@POS:79@@X19³@X07
-@X10³ @X1F(@X1CR@X1F)ead messages         @X1F(@X1CC@X1F)omment to SysOp        @X1F(@X1CTS@X1F) Text search msgs.    @X19³@X07
-@X10³ @X1F(@X1CE@X1F)nter a message       @X1F(@X1CQ@X1F)uick Message Scan      @X1F(@X1CQWK@X1F) Transfer QWK mail   @X19³@X07
-@X10³@POS:79@@X19³@X07
-@X10³ @X1F(@X1CJ@X1F)oin a conference     @X1F(@X1CA@X1F)bandon conference      @X1F(@X1CSELECT@X1F) confs. to scan   @X19³@X07
-@X10³@POS:79@@X19³@X07
-@X10³ @X1F(@X1CB@X1F)ulletins             (@X1CX@X1F)pert mode toggle       @X1F(@X1CO@X1F) Page SysOp            @X19³@X07
-@X10³ @X1F(@X1CS@X1F)cript Questionnaire  @X1F(@X1CG@X1F)oodbye (Logoff)        @X1F(@X1CI@X1F)nitial logon screen    @X19³@X07
-@X10³ @X1F(@X00@X1CM@XFF@X1F) Toggle color mode   (@X00@X1CW@XFF) Change your info      (@X1CP@X1F)age length setting     @X19³@X07
-@X10³ @X1F(@X1CV@X1F)iew your statistics@POS:79@@X19³@X07
-@X10³@POS:79@@X19³@X07
-@X10@X10@X10³ @X1F(@X00@X1ECHAT@XFF) with other users@POS:42@ (@X00@X1EOPEN@XFF) a door@POS:79@@X19³@X07
-@X10³ @X1F(@X00@X1ENEWS@XFF) Display system news@POS:43@(@X00@X1EUSER@XFF) List conference members@POS:79@@X19³@X07
-@X10@X10³ @X1F(@X1EALIAS@X1F) Turn alias on/off               @X1F(@X1ELANG@X1F) Change language for the BBS  @X19³@X07
-@X10³@POS:79@@X19³@X07
-@X10³            @X1BType @X1EHELP [command]@X1B for help on a command listed above           @X19³@X07
-@X10À@X19ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
-@CLS@
-@X10ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X19¿@X07
-@X10³ @X1BDate: @X1A@SYSDATE@       @X1F    S y s O p   C o m m a n d s            @X1BTime: @X1A@SYSTIME@ @X19³@X07
-@X10³@X00@X13ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú@XFF@X19³@X07
-@X10³ @X1F(@X1C1@X1F) List/Print Caller's Log           @X1F(@X1C9@X1F)  Exit to DOS from Remote          @X19³@X07
-@X10³ @X1F(@X1C2@X1F) List/Print User's Log             @X1F(@X1C10@X1F) Perform DOS Function             @X19³@X07
-@X10³ @X1F(@X1C3@X1F) Pack/Renumber Messages            @X1F(@X1C11@X1F) View Other Node Users            @X19³@X07
-@X10³ @X1F(@X1C4@X1F) Recover a Killed Message          @X1F(@X1C12@X1F) Logoff Alternate Node            @X19³@X07
-@X10³ @X1F(@X1C5@X1F) List Message Headers              @X1F(@X1C13@X1F) View Alternate Node Caller Log   @X19³@X07
-@X10³ @X1F(@X1C6@X1F) View any System File              @X1F(@X1C14@X1F) Drop Alternate Node to DOS       @X19³@X07
-@X10³ @X1F(@X1C7@X1F) User Maintenance                  @X1F(@X1C15@X1F) Recycle A Node                   @X19³@X07
-@X10³ @X1F(@X1C8@X1F) Pack the User's File                                                    @X19³@X07
-@X10À@X19ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+| Denotes changes made as of 08/04/95
 
+
+                      PCBoard (R) Control Panel for OS/2
+                      ==================================
+
+
+  What is it?  An Overview of PCBCP
+  =================================
+  The PCBoard Control Panel for OS/2 (PCBCP) is a utility for configuring,
+  launching and controlling various nodes running PCBoard for OS/2 (PCB-OS2).
+
+  At its simplest, it is a GUI version of the PCBMoni program included with the
+  DOS version of OS/2.  However, it does much more than PCBMoni.  PCBCP makes
+  it easy to set up multiple nodes under OS/2 without having to configure a
+  bunch of OS/2 "objects", which means you don't have to manage a bunch of
+  icons on your desktop or in the startup folder.  Instead, you put PCBCP in
+  your startup folder and let PCBCP start your nodes up.
+
+  In addition to being able to launch programs at startup, PCBCP can also bring
+  nodes to the foreground simply by double clicking on the node in the status
+  window.  You could, therefore, keep all of your nodes minimized at all times
+  (PCBCP can start them minimized if you like) and then just click on the node
+  if you want to see what it is doing.
+
+  Further, combined with the SIO VMODEM driver (virtual modem driver for
+  internet usage), you can configure PCBCP so that it does not start up a node
+  until a call comes in.  In other words, instead of having a PCBoard node
+  sitting at the call waiting screen waiting for a call, you can have PCBCP
+  hook into VMODEM to determine if a call is coming in and start the node to
+  handle that call.  Then when the caller logs off, the node will exit.
+  PCB-OS2 is optimized to use a minimum of CPU cycles, but this feature means
+  that you can have nodes ready to run *without* using any CPU cycles or memory
+  until the need arises.
+
+  Finally, PCBCP is able to monitor the status of your nodes and provide you
+  with both a visual as well as an audible warning if a node appears to have
+  locked up.  Both of these are configurable, as well as the amount of time you
+  want to allow PCBCP to wait before deciding that a node needs attention.  In
+  addition to warning you of a problem, PCBCP can even act as a "watchdog" and
+  automatically shutdown a node that appears to be hung and then restart that
+  node (by closing and reopening the window the node is running in).  In this
+  manner, you can keep your nodes minimized and you can even be away from your
+  system and PCBCP can call your attention to problems if/when they occur, and
+  in some cases it can even fix the problem without human intervention.
+
+
+  What is it?  A Quick List of Features
+  =====================================
+  - Native OS/2 PM application
+  - Edit a node's status (similar to PCBMoni except that as the node status
+    changes, the edit screen is updated to reflect the current status)
+  - View a node's last update time
+  - Send a message to a node
+  - Multiple methods for causing one or more nodes to recycle, drop to dos,
+    log a user off, clear a node, etc.
+  - OS/2 "notebook style" configuration of nodes
+  - Set nodes to run on startup
+  - Set nodes to run on connect
+  - Globally enable/disable the run on startup/run on connect
+  - Define the period of time before warning if a node is inactive and set it
+    to display visually and/or sound an audible alarm
+  - Automatically shut down and restart a hung node
+  - Sysop page notification (optionally bring paging window to foreground)
+  - Configure to monitor all nodes, or just the nodes in the window
+  - Select a font
+  - Treat the fonts as fixed versus scalable
+  - Set the number of lines on the screen
+  - Set the first node on the screen
+  - Set the update interval
+  - Configure mouse button 1 (MB1) to either switch to or edit a node
+  - Save settings (font, window size, update interval, etc)
+  - Accelerator keys (hot keys)
+  - Optimized screen updates for low cpu usage
+
+
+  Setting up the PCBoard Control Panel
+  ====================================
+  Setting up PCBCP itself is fairly trivial, you can create a program icon that
+  runs PCBCP.EXE and then pass the location of the USERNET.XXX file as the
+  command line parameter.  Or, if you run it from a command prompt, you would
+  run it like this:
+
+      PCBCP C:\PCB\MAIN\USERNET.XXX
+
+  PCBCP can be placed in your startup folder so that it runs whenever you boot
+  up.  But more importantly, that means that it can launch any of your
+  run-on-startup nodes at the same time so that you keep your startup folder
+  relatively clean.
+
+
+  Configuring the PCBoard Nodes
+  =============================
+  In the File | Node Settings screen, you can configure one or more PCBoard
+  nodes.  In the setup screen, you define the path and filename to execute, the
+  working directory, any optional parameters, and optionally a port number.  An
+  example setup might look like this:
+
+      Path and Filename:     C:\PCB\STARTOS2.CMD
+      Working Directory:     C:\PCB
+      Optional Parameters:
+      Optional Port Number:  2
+
+  With the above settings, PCBCP will execute STARTOS2.CMD (which may be an
+  OS/2 batch file you have created).  It will begin its execution in the C:\PCB
+  directory, and it will pass port number 2 to the program via a %PCBPORT%
+  environment variable.  The node number is always passed to the program via a
+  %PCBNODE% environment variable, but the port number is only passed if it is
+  non-zero.
+
+  An example of the STARTOS2.CMD file might look like this:
+
+      @echo off
+      rem set any common variables here such as dszlog
+      set dszlog=pcbdsz.log
+      rem set the port and node parameters to override pcboard.dat
+      set pcb=/PORT%PCBPORT% /OS /NODE:%PCBNODE%
+      rem now run board.cmd
+      board.cmd
+
+  An example of the BOARD.CMD might look like this:
+
+      @echo off
+      :top
+      c:
+      rem change to the node subdirectory (i.e. C:\PCB\1 for node 1)
+      cd\pcb\%PCBNODE%
+      if exist remote.cmd REN remote.cmd remote.sys
+      if exist endpcb     DEL endpcb
+      rem run PCBoard while sharing a single copy of pcboard.dat
+      pcboard2 /file:c:\pcb\pcboard.dat
+      if exist remote.cmd CALL remote.cmd
+      if exist event.cmd  CALL event.cmd
+      if not exist endpcb GOTO top
+      :end
+
+  NOTE:  For the above to work, the BOARD.CMD file is going to need to be in
+         your path.  For example, if BOARD.CMD is in C:\PCB, you'll want to add
+|        C:\PCB to your SET PATH= statement in the CONFIG.SYS file (under OS/2
+|        the CONFIG.SYS file holds the PATH statement for OS/2 sessions).
+
+  The combination of just these two CMD files, and the fact that PCBCP passes
+  the node and port numbers to the program it runs, means that you can set up
+  *all* of your nodes without having to create any more CMD files, and without
+  having to create any further PCBOARD.DAT files, etc.  Instead, all of your
+  nodes will share a single copy of STARTOS2.CMD, and a single copy of
+  BOARD.CMD, and a single copy of pcboard.dat.
+
+  This works because the CMD files will automatically change to the proper node
+  subdirectory on startup based on the %PCBNODE% variable.  And each node will
+  use the proper comm port based on the port you set in PCBCP.  And all of the
+  nodes will share the same PCBOARD.DAT file by using the /FILE:  command line
+  parameter on the PCBOARD2 command line.
+
+  What's left is for you to simply COPY the first node settings to each of your
+  other nodes!  Once you have one node up and running, you can set up 10 more
+  in a matter of seconds by using the COPY_TO button in the File | Node
+  Settings screen.  Using COPY_TO you copy an existing setup to a "range" of
+  other nodes and then just go to each node and set the appropriate port number
+  for each.
+
+  NOTE:  There is additional information on the topic of setting up a shared
+  pcboard.dat file found in NEWBOARD.DOC.
+
+  NOTE:  You can speed up the opening of the File | Node Settings window by
+  first going into the File | Node Limits window and setting the first and last
+  nodes to cover only the range of nodes you will be setting up and monitoring.
+
+  In the "Run Settings" screen, there are two basic settings, one for defining
+  the "Session Type", and the other for the "Auto-Run Settings".
+
+  The session type has three choices.  You can have PCBCP run the node in a
+  window.  Or you can have it run the node as a full screen session (which it
+  automatically forces to the background).  Or you can have it run the node
+  in a minimized window.  If set to run minimized, the node will "start out"
+  as a minimized window, but you can bring it to the foreground by double
+  clicking on the node status in the PCBCP window.
+
+  NOTE:  An idiosyncracy of WARP is that, if PCBoard is running in a minimized
+  window, and PCBoard exits to BOARD.CMD to run an event, and the event shells
+  out to a DOS program, the DOS program's window will become visible.  What is
+  worse is that, upon closing the DOS window, the window in which BOARD.CMD was
+  being executed suddenly becomes visible and so you've lost your minimized
+  status.  One of our alpha testers reported that, when using 4DOS/4OS2, this
+  problem does *not* occur.  So if you have problems with the window remaining
+  minimized, you may want to check into using 4DOS/4OS2.
+
+  The Auto-Run settings allow you to configure PCBCP to start a node
+  automatically when PCBCP is started, or have the node remain inactive until
+  a call comes in (on a VMODEM node).  When set to "Run on Connect", PCBCP will
+  hook into VMODEM and wait for VMODEM to tell it that there is an incoming
+  call and, when it does, PCBCP then launches a window to handle the incoming
+  call and PCBoard exits (and the window closes) when the call is terminated.
+
+  You can switch to any of the other node settings by clicking the node number
+  tab on the right side of the screen, or by clicking on the large left and
+  right arrows at the bottom of the notebook page to move backward or forward
+  in the notebook.
+
+
+  Utilizing Some of PCBCP's Features
+  ==================================
+
+  Fixed Fonts vs. Scalable Fonts
+  ------------------------------
+  In the Options | Display screen, there is a pair of radio buttons that let
+  you decide if you want to use a fixed font or a scalable font.
+
+  With fixed fonts, you size your window and either increase or reduce the
+  number of nodes that are visible in the window (as well as increase or
+  decrease the right margin of text).
+
+  With the scalable fonts, everything always "fits" on the screen, according to
+  the number of nodes you want to view, and PCBCP then adjusts the size of the
+  font accordingly, in order to make it fit.  So you can get really small text
+  or really huge text, or just right text, just by resizing your window.  You
+  never have to adjust the size of the window to get the number of nodes on the
+  screen that you want to monitor.
+
+  To use the Scalable Fonts, you must also indicate the number of lines that
+  you want to appear on screen.  This is done in the same Options | Display
+  dialog.  You can optionally set a different node number to be the "first node
+  on the screen" when PCBCP starts up.
+
+  Of the two methods, the fixed font size will always display "faster", but the
+  scalable font size may be more convenient and is definitely easier to use
+  than having to go to the Font Dialog and pick a "size" from the menu then
+  return back to see the results.
+
+  NOTE:  For the scalable font selection to work, you must be using an outline
+  font (i.e.  not a bitmap font).  It can be proportional, but does not have to
+  be.  If you have selected a bitmap font, and then go into Options | Display
+  and select scalable fonts, the PCBCP window will blank out and remain blank
+  until you either change it back to a fixed font, or go into Options | Fonts
+  and select a different font.  While the Scalable Fonts option is enabled, the
+  fonts that appear to be available in the Options | Fonts dialog will be
+  shortened to include only outline fonts to aid in determining which fonts you
+  can use.  Also, it should be noted that the SIZE field in the Options | Fonts
+  dialog is meaningless when using scalable fonts since the actual size of the
+  font is determined by scaling it to the window size.
+
+  Editing the Node Status
+  -----------------------
+  PCBCP includes an edit screen, similar to PCBMoni's edit screen, where you
+  can look at and/or modify the status of the user online.
+
+  There are several ways of getting into the Edit Node Status dialog.  One way
+  is to highlight a node by pressing mouse button 1, then select Edit off of
+  the main menu.  Another way is to highlight the node with mouse button 1,
+  then press mouse button 2 to bring up a pop-up menu and select edit from
+  there.  Finally, you can configure PCBCP in the Options | Mouse dialog so
+  that double- clicking mouse button 1 will either run a node (or switch to it
+  if already running), or you can have it jump into the Edit Node Status
+  dialog.
+
+  While in the Edit Node Status dialog, you can change the name, city,
+  operation, or message text, just by typing into the appropriate field.  If
+  you type into the message field, the Status field will automatically change
+  to Broadcast Msg so that if you click on OK the message will be sent to the
+  user.
+
+  There are also some Quick Action Buttons which let you quickly change the
+  node status without having to go thru the Status drop-down menu.  For
+  example, to log a user off, you could click on Force Logoff and then select
+  OK.  To clear all of the fields on the screen, you could simply press Clear
+  Node, etc.
+
+  Finally, there are two Last Update fields in the top right corner of the
+  window which shows first when the last update was made to the usernet file,
+  and second, how long ago it was in seconds.  The latter provides a means of
+  quickly determining how long a transfer has left (based on the time estimate
+  in the operation text and the number of seconds since last update), and also
+  gives you some idea as to whether the system is functioning properly based on
+  how long it has been since the last update.
+
+  NOTE:  See the NOTE in the next section about the difference in the node
+  updates that occur in the DOS version versus the OS/2 version of PCBoard.
+
+  NOTE:  In the title bar of the Edit Node Status dialog box, you may see
+  something that looks like this:   "Edit Node Status - Node 1 - Pid 1B"
+  The "Pid 1B" portion of the line is letting you know the process id.  This
+  information appears only if you have started a session via PCBCP.  This
+  information may be useful to you when you are using a program such as PM
+  Patrol (and others) which allow you to measure CPU usage and correlate it to
+  various process id's.
+
+  Enabling Warnings for System Inactivity
+  ---------------------------------------
+  PCBCP is able to warn you about nodes which "may" be locked up.  The Options
+  | Warnings screen allows you to set the length of inactivity (as determined
+  due to lack of updates to the usernet file), in minutes, before it decides
+  that a node is inactive.  Then you can have it warn you by highlighting, in
+  red, any nodes that appear to be inactive.  Or you can have it warn you by
+  sounding an alarm.  Or you can have it do both.  If you have it sound the
+  alarm, you should also allow it to highlight the nodes so that you don't have
+  to go hunting to find which one(s) are inactive.
+
+  There are four warning settings.  The first one, "Number of Minutes of
+  Inactivity" governs all normal online activities.  The second one, "Number of
+  Minutes for Events" defines how long to allow an event to run before warning
+  that it appears to be inactive.  The third one, "Number of Minutes in Doors"
+  defines how long a caller may remain in a door before warning that the node
+  may be inactive.  And the fourth one, "Number of Minutes for Transfers"
+  defines how long a caller can be in a file transfer before warning that the
+  node may be inactive.
+
+  The reason for the separate warning limits is that, while an event is
+  running, PCBoard is not updating the usernet file.  Likewise, while a caller
+  is out in a door the usernet file is not being updated.  So typically these
+  settings will be higher than the number of minutes you choose for "Number of
+  Minutes of Inactivity".
+
+  For performance reasons, PCBCP will normally only monitor the activity of the
+  nodes that are on the screen, since it can save CPU cycles by not having to
+  read or process information that you'll never see or care about.
+
+  However, in the Options | Warnings dialog, you can set it to "monitor all
+  nodes", not just those that are on the screen.  In this manner, you can be
+  warned of any nodes that have been inactive beyond the limit you have set.
+  The warning will initially be audible only, since the node isn't on the
+  screen, but you can scroll the nodes into view and see it highlighted in red
+  if you have that option enabled.
+
+  Even with the "monitor all nodes" option set, you can still reduce the level
+  of CPU utilization by going into the File | Node Limits screen and setting
+  the first and last nodes that you really want to monitor.  For example, if
+  you have a 250 node license, but you only have 25 nodes online (or 25 that
+  you care to monitor), you can reduce the amount of effort put into scanning
+  for inactive nodes to 1/10th what it would be if you let it default to
+  scanning all 250 nodes.
+
+  One thing to be aware of with the alarm.  PCBCP will only sound the alarm
+  when it is refreshing the screen.  So if you have set the update interval to
+  3 seconds, you will hear the alarm once every 3 seconds.  If you set the
+  update interval to 60 seconds, then you will only hear it once every 60
+  seconds.
+
+  NOTE:  The OS/2 version of PCBoard has a separate thread for handling the
+  usernet file.  Therefore, as long as PCB-OS2 is running, it doesn't matter if
+  the caller has shelled out to a door or other application, it will continue
+  to update the usernet file.  The DOS version, on the other hand, will update
+  the usernet file only when PCBoard has control.  This can be seen as both
+  good and bad...  On the one hand, it means that being out in a door for 30
+  minutes under PCB-OS2 won't give you the impression that the system is locked
+  up due to the last update having occurred 30 minutes ago, so you'll see fewer
+  false alarms amount lockups.  On the other hand, if a door manages to get
+  stuck (without actually locking up the machine), it could appear as if the
+  node is still active even though the caller has been in the door for a long
+  period of time.
+
+  Also, a slight difference in the usernet file format has been made as
+  compared to previous versions of PCBoard (both the DOS and OS/2 versions
+  released at this time share the same format, the difference is only between
+  the newer release and v15.21 and prior releases).  This difference is a
+  matter of how the "last update" information is stored in the usernet file.
+  It is still a long integer.  But it no longer reflects just the number of
+  seconds since midnight.  It is both the date of the last update, as well as
+  the number of seconds since midnight (divided by 2).  This allows PCBCP to
+  see exactly how long ago the last update occurred, even if it crosses
+  midnight one or more times.
+
+  NOTE:  Even if PCBCP is minimized, if you have any warnings enabled, it will
+  still monitor the nodes and sound the alarms.  If no warnings are enabled,
+  then when you minimize PCBCP it puts itself to sleep to reduce the cpu usage
+  down to nothing since the only thing you'd be using it for would be to
+  "watch" the status screen and, with it minimized, you can't see it anyway.
+
+  Restarting Inactive Nodes
+  -------------------------
+  In combination with the Warning Options, PCBCP can act as a "watchdog" for
+  your system and can shut down and restart nodes that appear to be inactive.
+  It *only* does this if PCBCP has the window open (i.e. the node that is to
+  be restarted is currently running and is under PCBCP's control), and only
+  after the warning time period, plus the "Minutes After Warning" have
+  elapsed.
+
+  For example, you can set the "Number of Minutes for Doors" warning time to
+  30 minutes, and then the "Minutes After Warning" to 5 minutes.  With these
+  settings in place, after 30 minutes you will begin to hear an alarm
+  indicating that there is a problem with the node.  Then, if you are not
+  around to take care of the problem within 5 minutes if the starting of the
+  alarm, PCBCP will automatically close the window and restart it.
+
+  In effect, PCBCP tries to fix a node that may be "hung" whether it is in
+  PCBoard, out in a transfer protocol, running a door, an event, etc.
+
+  NOTE:  PCBCP does *not* try to "restart a node which is NOT active".  The
+  reference to "inactive node" here can be thought of as a "hung node".  In
+  other words, the node is supposed to be up and running, but the usernet file
+  has not been updated and so it "appears to be inactive".
+
+  Put another way, PCBCP does NOT try to restart a node which you have
+  purposely caused to exit.  It only attempts to restart a node whose window
+  currently exists (under PCBCP's control) which PCBCP then has to successfully
+  shut down first, and after shutting down the window, it then attempts to
+  re-open the window.
+
+  Apply Status Warning Option
+  ---------------------------
+  When you are changing the node status, normally PCBCP will warn you with a
+  pop-up window asking you to confirm the status change.  This is to prevent
+  accidental changes, however, you can disable this warning by removing the
+  checkmark from the "Verify Status Changes" option.
+
+  PCBoard Page Alarm Options
+  --------------------------
+  When a caller is paging the sysop, normally you'd hear the page because
+  PCBoard itself makes a beeping sound during the page.  If you are at a
+  remote location (in another room, for example) but are running PCBCP to
+  monitor the system, you can enable the Page Alarm which will then sound an
+  alarm whenever someone pages the sysop.  If you are running PCBCP on the
+  same machine where the nodes are located, then it is best to leave the
+  page alarm disabled to avoid hearing both alarms at the same time.
+
+  The "Bring Node to Foreground" option is only useful if PCBCP is controlling
+  the node.  If it is, then when a caller pages you, you can have PCBCP
+  automatically bring the node to the foreground so that you can jump into
+  chat with the caller.
+
+  Controlling Nodes
+  -----------------
+  PCBCP is called a "Control Panel" ...  so what can it do besides run the
+  nodes to earn it such a name?  Lots of things and it many different ways.
+  You'll want to find which methods work best for you.
+
+  PCBCP can operate on just a single node, or it can operate on a selection of
+  nodes which you've highlighted by dragging mouse button 1, or it can operate
+  on an entire screen full of nodes, or it can operate on "all" nodes.
+
+  You can apply the various actions "Drop to DOS Now", "Drop to DOS at Logoff",
+  "Log User Off", "Recycle Node", or "Clear Node" by going to the Actions menu
+  and selection "All Nodes on Screen", or "All Nodes" and apply the action to
+  one of those two groups.  Or, you can highlight one or more nodes using mouse
+  button 1 and then press mouse button 2 for a pop-up menu to apply the action.
+
+  In this manner, you can drop all of your nodes to DOS (without booting anyone
+  off) with just 4 mouse clicks:  1) Select Actions from the main menu, 2)
+  Select All Nodes, 3) Select Drop to DOS at Logoff, 4) Confirm the action by
+  selecting OK.  Similarly, you could cause all of your nodes to recycle, etc.
+
+  Another item on the Actions menu is "Run/Switch-to Nodes".  After
+  highlighting one or more nodes with mouse button 1, this option will
+  automatically restart any of the highlighted nodes that are inactive (as long
+  as you have configured the nodes, but regardless of the "run on startup"
+  setting).  Additionally, if any those nodes are currently running, but
+  minimized, they will be brought to the desktop where you can see them.
+
+  The "Restart Inactive Nodes" option will scan for all nodes in your
+  configuration which have an inactive status which are set to "run on startup"
+  and will run them if they are inactive.
+
+  CAUTION:  One action in PCBCP which is not self-evident but inherent in the
+  way OS/2 operates, is that if PCBCP is the "owner" of the node (i.e.  PCBCP
+  was used to start a node), then upon exiting PCBCP the node will
+  automatically be closed.  This will occur even if a caller is online.  So you
+  should avoid closing the PCBCP window unless all nodes are down, or you
+  purposely want to close any open node windows.  You can, however, minimize
+  PCBCP without causing any harm.
+
+
+  Optimization Tips for PCB-OS2 and PCBCP
+  =======================================
+  - Set the update interval to a value of 10 or greater.  The higher the
+    number, the less frequently PCBCP runs out to disk to read the usernet
+    file, and the less frequently it has to update the screen.  PCBCP *is*
+    optimized so that if it reads the disk and nothing has changed (or only
+    portions of the information has changed) it will avoid updating the screen
+    except when necessary.  Of course, if you want to stay on top of things, a
+    lower update frequency will obtain quicker response times.
+
+  - Configure PCBCP to monitor only the nodes that you use.  In other words, if
+    you have a 100 node version of PCBoard, but you only have 25 nodes up and
+    running at this time, then you can optimize PCBCP's cpu and memory usage by
+    setting the first and last nodes appropriately to cover only the nodes that
+    you typically have up and running.
+
+  - Set the size of the node status window to view only the nodes you want to
+    monitor (i.e. don't monitor more nodes than necessary).
+
+  - Select a non-proportional (monospaced) font if the speed of screen redraws
+    is important.  Also, the scalable font feature will always be slower to
+    update the screen than the fixed font even if you use proportional fonts
+    with the fixed font setting.
+
+  - When considering whether or not to use the "run on connect" feature, if
+    most most of your callers connect for only a couple of minutes at a time,
+    then it may be better to set up a few nodes so that they are always up and
+    waiting for a call in order to reduce the times that the executable gets
+    reloaded.  In other words, you should use the run-on-connect feature more
+    as a means of "adding more capacity when needed" than as a means of "giving
+    away capacity that is normally needed".
+
+  - Store the pcboard2.exe file on a fairly fast local hard drive to improve
+    launching times when set to run-on-connect.
+
+  - Use a decent size cache (probably 1M or greater if your system has
+    sufficient memory - i.e.  don't starve the system needlessly, but use a
+    large cache if possible)
+
+

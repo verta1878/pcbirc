@@ -1,2 +1,78 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(N)ew File Scan                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command will locate any files that are new since the specified date
+      in the directories that you specify.
+@X0F
+   Subcommands
+@X02
+      @X0B[date]          @X03This represents the date from which PCBoard begins a
+                      search for all new files.  All files found are
+                      displayed.
+
+                      NOTE:  If you pass the date on the command line (e.g.,
+                      N;030394;A) and you want to specify only the files
+                      since your last scan then you would enter an S instead
+                      of an actual date.
+
+      @X0B[directory #]   @X03When using this command, you must specify a directory
+                      or range of directories that PCBoard should search for
+                      the desired file(s).  You may list a single directory,
+                      a range of directories in the format [#-#] or a list of
+                      directories in a [#;#;#] format.  There are two letters
+                      you may use as a directory number.  If you use A for
+                      the directory number, it tells PCBoard to search all
+                      file directories in the current conference.  Likewise,
+                      if you use U for the directory number, the upload
+                      directory of the current conference will be searched.
+
+      @X0BD               @X03All files found are queued for later download during
+                      your call.  To download the files that have been
+                      queued, execute a download using either the D or DB
+                      commands.
+
+      @X0BS               @X03PCBoard scans for files added since the date of the
+                      most recent files the caller has been shown.  PCBoard
+                      keeps track of the most recent valid file date that you
+                      have seen in the file directories.  For example, if you
+                      were to do a new scan searching all file directories on
+                      12-24-94, but the latest file date that was displayed
+                      was 12-21-94, PCBoard will remember that the latest
+                      date you have seen is 12-21-94.
+
+      @X0BNS              @X03Files are displayed in nonstop Mode (no More? prompts
+                      are displayed).
+@X0F
+   Description
+@X03
+      A system commonly has hundreds or thousands of files online. Rather
+      than viewing each of these directories and attempting to pick out the
+      new files, use this command to limit the files that are displayed by
+      date. Using the subcommands you will have control over the date to
+      begin the search and the directory or directories that you would like
+      to search for new files.
+@X0F
+    Examples
+@X03
+      One of the most common searches is to find new files in all directories
+      of the current conference.  To perform this search, you would type the
+      following at a conference command prompt:
+@X0E
+          N;S;A
+@X03
+      If you wanted to only scan the upload directory for files that have a
+      date which is equal to or greater than 07-19-93, type the following at
+      a conference command prompt:
+@X0E
+          N;071993;U
+@X03
+      A more complex search may specify only a few of the available file
+      directories in the conference.  As an example, if you want to scan for
+      new files since 05-22-94 in directories 1-4, 15, and 20-25, type the
+      following at the conference command prompt:
+@X0E
+          N;052294;1-4;15;20;25
+@XFF
+

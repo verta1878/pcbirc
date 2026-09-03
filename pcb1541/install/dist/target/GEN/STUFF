@@ -1,2 +1,21 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+rem You can stuff the keyboard with keystrokes you want to execute upon
+rem returning from a door.  For example, if you want to re-open the door menu
+rem for your callers, you can stuff the "OPEN" command.  If the PCBSTUFF.KBD
+rem file exists in the default or node subdirectory, the contents of the file
+rem will be stuffed to the keyboard as if the user typed it in.
+rem
+      echo.     >>pcbstuff.kbd
+      echo OPEN >>pcbstuff.kbd
+rem
+rem The following four lines will make sure that the door always returns to
+rem PCBoard (even if the door is configured to operate via shelling).  You
+rem can use these four lines at the end of all of your door batch files.
+
+      if "%INPCB%" == "Y" exit
+      %pcbdrive%
+      cd %pcbdir%
+      board
+rem
+rem These four statements first check to see if we shelled out to the door.
+rem If so, we exit back to PCBoard.  Otherwise, we change to the drive
+rem and subdirectory where PCBoard executed from and rerun BOARD.BAT.

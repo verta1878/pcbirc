@@ -1,2 +1,52 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(QWK) Mail Packets                                                   @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+     This command will create mail packets you can read off-line.  In
+     addition, any reply packets you may have can be uploaded.
+@X0F
+   Subcommands
+@X03
+      @X0B[protocol]      @X03If a protocol is not specified for transferring the QWK
+                      (mail) or REP (reply) packet, the default protocol will
+                      be used.  A different protocol can be used by
+                      specifying the protocol letter on the command line.
+
+      @X0BBYE             @X03When you use this subcommand, PCBoard will logoff after
+                      your transfer is complete.  Use of this subcommand is
+                      ideal for performing automated mail-runs.
+
+      @X0BU               @X03This subcommand is used to upload a REP (reply) packet.
+
+      @X0BD               @X03This subcommand is used to download a QWK packet.
+                      PCBoard scans the conferences that have been selected
+                      for scanning with the SELECT user command.
+   @X0F
+   Description
+@X03
+      To save time and money, a common practice is to transfer mail packets
+      to and from a bulletin board system.  The messages can then be read and
+      replied to off-line.  PCBoard will create a QWK mail packet when using
+      this command.  In addition, the REP file can be uploaded with this
+      command when using the U subcommand.
+
+      If you do not use any command line parameters when executing the QWK
+      command, you will be asked if you want to upload or download a mail
+      packet.  Pick the appropriate response.
+@X0F
+   Examples
+@X03
+      To download a QWK packet using the Z protocol, the following would be
+      entered:
+@X0E
+          QWK D Z
+@X03
+      If there are replies to the QWK packet they will be stored in a REP
+      file. This file needs to be uploaded for the replies to be posted on
+      the bulletin board system.  The following command would prepare PCBoard
+      to upload the REP packet:
+@X0E
+          QWK U
+@XFF
+

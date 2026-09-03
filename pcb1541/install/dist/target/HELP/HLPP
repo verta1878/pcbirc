@@ -1,2 +1,22 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(P)age Length Setting                                                @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      Allows you to change the number of lines that PCBoard should think is on
+      your display screen.
+@X0F
+   Subcommands
+@X03
+      @X0B[# of lines]    @X03This number indicates the number of lines displayed per
+                      screen.  This value may range between 0 and 99.
+@X0F
+   Description
+@X03
+      You may specify the number of lines PCBoard displays before it prompts
+      you with a (H)elp, More? line.  The most common setting is 23, but you
+      may choose any value between 0 and 99.  If you select a page length
+      setting of 0, it is like being in permanent non-stop mode (i.e., when
+      the screen fills up,  a More? prompt will not be displayed).
+@XFF
+

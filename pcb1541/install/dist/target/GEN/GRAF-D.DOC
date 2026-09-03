@@ -1,2 +1,168 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+    Program: GRAF-D v2.31  Copyright (C) 1993-1994 Clark Development Co., Inc.
+     Author: Steve Catmull
+       Date: 11/07/94
+
+
+DESCRIPTION 
+========================================================================
+
+               PPE (PCBoard Programming Executable) that you can replace
+               PCBTEXT record #149 with.  
+             
+               What this PPE offers that PCBoard does not is to do some 
+               checking for graphics capability before asking the caller 
+               if they want graphics or not.  
+              
+               By testing for graphics before the prompt is ever issued, 
+               the appropriate default value can be set for the user. If 
+               they have ANSI capabilities (as per the <esc>[6n test) 
+               then the default for the prompt will be "Yes". A test 
+               will also be made if they have RIPscrip capabilities (as 
+               per the <esc>[! test).  If neither of these are detected 
+               in the default wait period then the default will remain 
+               as no.
+
+
+INSTALLATION
+========================================================================
+             
+               Installing this PPE is very simple.  Use MKPCBTXT to load 
+               your PCBTEXT file.  Press F3 and enter 149.  You will now 
+               see the "Do you want graphics" record.  Simply change it 
+               to an ! followed by the full path and filename to the 
+               GRAF-D.PPE file. 
+               
+               In addition, make sure that you have not told PCBoard 
+               that you want to default to graphics at login.  If you
+               do, GRAF-D will warn you that your system is improperly
+               configured.
+                
+               That's all there is to it.
+
+
+COMMAND LINE PARAMETERS
+========================================================================
+
+               You can control the wait time for ANSI and RIP detection 
+               from the command line.  You may also choose to run this 
+               program in "compatible" mode via command line switches. 
+               You can specify as many command line parameters as you
+               wish.  If you specify more than one, make sure each 
+               parameter is separated with a space.  The following 
+               details the command line options that are available.
+                
+                  
+                  /COMPATIBLE
+
+                     Because this PPE will change the "Do you want" 
+                     graphics prompt based on the graphics capability 
+                     detected then there is a good chance that login 
+                     scripts might fail.
+                     
+                     In other words, a user could login and receive
+                        
+                           "Do you want graphics (Enter)=no?"
+                           
+                     but the next time they login it may say
+                        
+                           "Do you want graphics (Enter)=yes?"
+                           
+                     Obviously, if the user has a script which checks 
+                     for "(Enter)=no" then their second login attempt 
+                     will fail.
+                     
+                     This command line switch will tell GRAF-D to report 
+                     the graphics mode detected above the "Do you want 
+                     graphics" prompt and explain that it will be the 
+                     default response.  The prompt will then be modified 
+                     to always display:
+                     
+                           "Do you want graphics (Enter)=default?"
+                           
+                     It may break a few scripts initially, but once the 
+                     user has modified their end they can be assured 
+                     that they will always receive that prompt.  The 
+                     following is an example of how to specify this 
+                     parameter on the command line:
+                     
+                     
+                         C:\PCB\PPE\GRAF-D.PPE /COMPATIBLE
+                         
+                  
+                  /AUTO
+
+                     Some sysops may not want to give the user a choice 
+                     as to what graphics mode is selected.  If you are 
+                     one of these folks, then this switch is for you. 
+                     This switch will make the user use ANSI or RIP if 
+                     detected by the PPE.  If neither ANSI or RIP is 
+                     detected, then the user will be asked what graphics 
+                     mode they would like to use. 
+                     
+                     The reason that the PPE does not simply go with 
+                     non-graphics mode is because the user's 
+                     communication package may not properly handle the 
+                     ANSI auto-detection.  Example:
+                     
+                         C:\PCB\PPE\GRAF-D.PPE /AUTO
+                     
+           
+                  /NORIP
+                  
+                     Not all systems have RIPscrip screens designed.  If
+                     you do not want GRAF-D to automatically detect RIPscrip,
+                     use this command line parameter.  When this command line
+                     parameter is used, the auto-detection code for RIPscrip
+                     is not sent out.  Example:
+                     
+                         C:\PCB\PPE\GRAF-D.PPE /NORIP
+
+                         
+                  /NOQUICK
+                  
+                     Some SysOps put a hefty amount of time into producing
+                     welcome screens for their users.  Users who are familiar
+                     with PCBoard may use the Q subcommand at the "Do you want
+                     graphics" prompt to skip the welcome screen.  When this
+                     option is used, you will disable the ability for users
+                     to skip the welcome screen by using the Q subcommand.
+                     Example usage:
+                     
+                         C:\PCB\PPE\GRAF-D.PPE /NOQUICK
+                         
+                  
+ERROR RATES
+========================================================================
+               Not every user will have their graphics capabilities 
+               properly detected upon login.  If an invalid (or no 
+               response) at all is detected during the wait time then 
+               it must be assumed that the user does not have graphics 
+               capabilities.
+               
+               Some terminal programs are just plain slow in responding 
+               to ANSI or RIPscrip requests.  I have tested with the 
+               following communications software and all respond 
+               swiftly and accurately:
+               
+                   Telemate v4.x
+                   Telix v4.x
+                   Robocomm v4.x
+                   ProComm Plus v2.x
+                   Qmodem v4.31
+
+               Even if you are using one of these programs it would 
+               still be likely for a response to not be detected.  This 
+               may happen if you are using error-correcting modems and 
+               the modem happens to be experiencing line noise.  In a 
+               case such as this, there is nothing that can be done.                   
+
+                                      
+MODIFYING SOURCE
+========================================================================
+               
+               Feel free to modify the PPS (source) file as your needs 
+               dictate.  That is why the source is included.  :-)
+               If you do modify the source, please do not redistribute
+               your version.
+               
+               Last, but certainly not least.   HAVE FUN!

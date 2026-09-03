@@ -1,5 +1,113 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³@X1F             Running PCBoard version 15.2 by Clark Development              @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
-
+string comments[5]
+string choices[4]
+string enter_comment
+string msgbase
+string filearea
+string other
+integer counter
+integer maxlength
+
+;-------------------------------------------
+; Initialize variables
+;-------------------------------------------
+
+enter_comment = "Y"
+comments[0] = " "
+choices[1] = "  @X0E1. @X0FEvery call"
+choices[2] = "  @X0E2. @X0FFrequently"
+choices[3] = "  @X0E3. @X0FRarely    "
+choices[4] = "  @X0E4. @X0FNot at all"
+msgbase = 4
+filearea = 4
+other = 4
+counter = 1
+maxlength = 72
+enter_comment = yeschar()
+
+;
+; Ask about message base usage
+;
+println
+println "@X50²±° @X5F   Message Bases   @X50 °±²@X07"
+gosub PrintChoices
+inputstr "Which option best describes your use of the message bases on this system",msgbase,@X0A,1,"1234",fieldlen+lfbefore+lfafter
+msgbase = right(choices[msgbase],10)
+
+;
+; Ask about file area usage
+;
+println
+println "@X50²±° @X5F   File Areas   @X50 °±²@X07"
+gosub PrintChoices
+inputstr "Which option best describes your use of the file areas on this system",filearea,@X0A,1,"1234",fieldlen+lfbefore+lfafter
+filearea = right(choices[filearea],10)
+
+;
+; Ask about usage of other features on the system
+;
+println
+println "@X50²±°  @X5F  Other Features  @X50  °±²@X07"
+gosub PrintChoices
+inputstr "Which option best describes your use of the other features of this system",other,@X0A,1,"1234",fieldlen+lfbefore+lfafter
+other = right(choices[other],10)
+
+;
+; Ask user if they want to enter additional comments
+;
+newlines 2
+inputyn "Do you want to leave additional comments about this system", enter_comment, @X0A
+
+;
+; If user wants to leave additional comments, inform user how to enter
+; the comments andn then prompt for up to 5 lines of input.
+;
+
+if (upper(enter_comment) = yeschar()) then
+   newlines 2
+   println "@X0B@X00You may enter @X0F5@XFF lines of @X0F", maxlength, "@XFF characters for your comments."
+   println "Press ENTER on a blank line to finish entering your comments."
+   println
+
+   while (counter < 6 & comments[counter-1] != "") do
+      print "@X0E", counter, ": "
+      inputstr "_", comments[counter],@X03,maxlength,mask_ascii(),wordwrap+lfafter
+      counter=counter+1
+   endwhile
+endif
+
+;
+; Output the answers the user gave to the ANSWER file of the questionnaire.
+;
+fputln 0," "
+fputln 0,"  Usage"
+fputln 0,"  ----------------------------------------"
+fputln 0," "
+fputln 0,"    Message base  : "+msgbase
+fputln 0,"    File area     : "+filearea
+fputln 0,"    Other features: "+other
+fputln 0," "
+fputln 0,"  Comments"
+fputln 0,"  -----------------------------------------"
+fputln 0,"    "+comments[1]
+fputln 0,"    "+comments[2]
+fputln 0,"    "+comments[3]
+fputln 0,"    "+comments[4]
+fputln 0,"    "+comments[5]
+fputln 0," "
+
+end
+
+;=============================================================================
+
+;*************************************************************************
+;*     Routine: PrintChoices                                             *
+;* Description: Prints the valid choices for the multiple choice         *
+;*              questions.                                               *
+;*************************************************************************
+:PrintChoices
+   println
+   println choices[1]
+   println choices[2]
+   println choices[3]
+   println choices[4]
+return

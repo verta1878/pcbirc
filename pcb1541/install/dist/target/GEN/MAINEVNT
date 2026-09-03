@@ -1,2 +1,4 @@
-..\CUSTSRVC\FILES1\
-..\CUSTSRVC\UPLOAD\
+echo off
+dir
+board
+

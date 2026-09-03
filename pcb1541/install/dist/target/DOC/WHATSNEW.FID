@@ -1,1 +1,243 @@
-..\GEN\DIR1                   ..\FILES1\                    Demonstration Applications         ..\GEN\DIR2                   ..\FILES2\                    Sales and Information Brochures    ..\PROD1\DIR3                 ..\PROD1\FILES3\              Patches/Upgrades for Product 1     ..\PROD1\DIR4                 ..\PROD1\FILES4\              Technical Tips/Information         
+                BETA documentaion for PCBFido version 15.22
+
+Thoughout the Beta cycle, you can address all your Fido related
+questions to me, Stan Paulsen, in the appropriate conference. Please try to
+included as many details as possible, and the appropriate data file if you
+feel they are neccisary for me to duplicate the problem. I may ask you for
+more information, or some data files if your original report dosn't include
+them. At the time I am writing this document, I am not aware of any
+standard report form that will be used for this cycle.
+
+Here is a rundown of the new features, and other important details, for this
+version.
+
+*****
+IMPORTANT
+*****
+
+Virtually EVERY fido related file has changed format. Namely PCBFIDO.CFG
+and FIDOQUE.DAT. The first thing you need to do after installing your first
+Beta, is to run a packing utility to pack out any duplicates from your
+present copy pf PCBFIDO.CFG. This is in PACK.ZIP. Then run the conversion
+utility (PCBoard Fido Utility or fidoutil.EXE) from a directory containg
+PCBOARD.DAT. This will split your PCBFIDO.CFG file into several smaller files.
+Here's a list of them...
+
+PCBFIDO.CFG   Contains your directory info, EMSI profile, Archiver info
+AREAS.DAT     Contains all areatag info
+AKAS.DAT      Contains all your system address info
+ORIGINS.DAT   Contains all your conference specific origin info
+NODELIST.DAT  Contains all your nodelist info
+NODEARC.DAT   Contains all node specific archiver info
+PHONEX.DAT    Contains all phone translation info
+MAGICNAM.DAT  Contains all magic name info
+FREQPATH.DAT  Contains all file request path info
+FREQDENY.DAT  Contains all file request deny addresses
+
+Your FIDOQUE.DAT file will just change formats. No new files will be
+created, and the queue will have unlimited record ability.
+
+
+*****
+NOTE
+*****
+
+If you have been running PCBFIDO already, it would be best to get it up
+and running as it has been, before testing any of the new features. There
+have been some sweeping changes and re-writting of existing fido code, so there
+could have been some problems introduced to existing functionallity.
+
+Here are some of the new features you will be testing.
+
+- The queue file can contain an unlimited number of records.
+
+- MSGID kludge is now added to messages
+
+- EXCLUDE verb for Fido events. Anywhere a wildcard can be used, an Exclude
+  verb on the same line can exclude addresses from the wildcard spec.
+  Example:
+  Route-To    *:*/*  1:311/40 Exclude 1:311/*
+
+- Hold entries are truly HOLD. They will not be sent out unless it is an
+  inbound call.
+
+- The utility fidoutil.EXE can generate a FIDO log report. By typing
+  fidoutil /REPORT or by following the menus in FIDOUTIL, it will scan all of your
+  caller logs and compile a Fido log and place it in the same directory as your
+  caller logs. It will be named FIDOLOG. You can then view all of your FIDO
+  activity in chronological order. There are many other features in FIDOUTIL
+  and as of writing this document, I have not added any help sreens. Many
+  of the menus should be self explanatory. To get a list of command line
+  options, type FIDOUTIL ? or FIDOUTIL /?
+
+- Better support for multiple akas in a single network has been added. Before,
+  PCBoard would only put one of them in your seen-by lines. It will now put all
+  relavant akas in the seen-by lines unless you specify not to in PCBSETUP. Also
+  you can specify which AKA you wish your netmail to be From: on a message by
+  message basis. So if you are 1:311/1 and 1:311/21, and you wish to write
+  netmail as 1:311/1, you can tell PCBoard to use that aka in the following
+  way...
+  To: Stan@1:311/10 +C +D [1:311/1]
+
+- Predefined response messages for such things as areafix password failures
+  FREQ information ,denial etc... These can be customized with any text
+  editor. Take a look at the directory setting for these in PCBSETUP | FIDO
+  CONFIGURATION | FILE AND DIRECTORY INFO. There should be some default
+  message files in your BETA packet. Those files ending with MSG are complete
+  messages. There may be a small amount of text added by PCBoard. Those with
+  an extension of HDR will have a significant amount of text added by PCBoard.
+  Following is a list of predefined response files...
+
+  AFIXFAIL.MSG  Areafix failed. Added text: Why it failed. Eg password, no access
+  AFIXLST.HDR   Areas Currently received by remote site
+  AFIXAVL.HDR   Areas Availabel to remote site
+| AFIXHELP.MSG  Arefix help file
+  FREQINFO.MSG  File request information for your board.
+| FRQPFAIL.MSG  FREQ failed. Added Text: Reason for failure.
+
+- Areafix forwarding. To setup a hub to forward requests to, set the expert
+  level in the hubs user record to 'Y'. This should soon change to reflect
+  uplink status in the user record, instead of expert level during the test
+  cycle. So if a node is an uplink and you want areafix requests in that net
+  forwarded to that uplink, set their expert status to 'Y', otherwise set it
+  to 'N'.
+
+- Secure Netmail
+  This option in PCBsetup tells PCBoard to import mail only from sites with
+  a ~FIDO~ user record. All other netmail packets will be moved to a secure
+  directory for later inspection.
+
+- Autoadd areas as passthru areas. If you have areafix forwarding enabled
+  and autoaddition of areas, pcboard will setup the passthru area and register
+  the user who sent the areafix request. Otherwise, it will setup the passthru
+  area instead of tossing messages to the bad area.
+
+- There is also the auto removal of areas. PCBoard keeps track of
+  activity in an area so you can tell it to remove the area after so much
+  inactive time has passed. This is done in fidoutil. this will only remove
+  the conference name from CNAMES as well as removing the areatag from
+  AREAS.DAT. It will not remove the message file or unregister users from
+  that conference.
+
+- You can specify private messages and file attaches on a conference by
+  conference basis. **NOTE Be 100% sure that these are acceptable in your
+  private network. Introducing file attaches in a network that does not
+  support them can have severe results.
+
+
+- File Request Passwords. You can put a password on a directory or magicname.
+  Look in PCBSETUP | FIDO CONFIGURATION | FREQ PATH LIST & FREQ MAGIC NAMES.
+
+- A RESCAN command for areafix has been added. %rescan 4dos -2000 will lower
+  that ~FIDO~ users lmr in the 4dos area down 2000 messages.
+
+
+- SEND verb for fido events. You can now instruct PCBoard to send files in fido
+  events. The syntax is "SEND filespec address". Wildcards can be used
+  in the filename. This will create a tracking file in the same directory
+  as PCBFIDO.CFG.
+
+- Duplicate checking on import.
+  This can be done in one of two ways.
+  1- Checking the PATH of a message to see if your site is already in it.
+     This will catch any messages that have passed through your system
+     before. This is a very fast way of duplicate checking for those
+     receiving mail from a satelite service for example.
+  2- MSGID dupe checking. This will search backwards through the message base
+     a specified number of messages. This number can be set in pcbsetup.
+     This is much slower than path line dupe checking, but it can ensure
+     that absolutly no duplicate messages are introduced to your system.
+     Specifying a -1 as the number of message to track will cause PCBoard
+     to search the entire message base. Very slow, but you will not have
+     any dupes.
+
+
+PASSTHRU's
+----------
+If you looked around the menu interface of FIDOUTIL, you probably saw the passthru
+setup. You can setup passthru's one by one, or with an NA style file. You also
+need to add a passthru directory to PCBSETUP | FIDO CONFIGURATION | FILE &
+DIRECTORY INFORMATION. Go ahead and fill out the other new fields in the screen
+while your at it.
+
+When you setup your passthru areas, PCBoard will store the information in the
+passthru directory in a file called PTARS.DAT. Then when PCBoard receives a
+message for an area NOT in your regular conference setup, it will check this
+file to see if it is setup as a passthru. If it is, PCBoard will write the
+message to a passthru message file. On export, it checks the current user
+being exported to to see if they are in a passthur area, If so, the message
+is added to their packet.
+
+Other Misc changes/new features
+-------------------------------
+
+- In the SYSOP MENU | view modify queue pressing 'P' for previous when viewing
+  the first record will wrap around to the last record.
+
+- The queue is packed after each record is deleted, so it won't be full of
+  empty records.
+
+- Pressing ESC while importing packets will abort the import after the current
+  packet is finished.
+
+- If POSTCALL.BAT existed, PCBoard would import netmail even if import after
+  transfer was disabled. Now pcboard will only import mail, all mail, if
+  import after transfer is enabled.
+
+- If the file PREPROC.BAT exists, PCBoard will shell to this file *before*
+  importing mail after a trasnfer. So you can now run two batch files after
+  a transfer. One before and one after the import.
+
+- The OS/2 version will search for .CMD before looking for .BAT. This applies
+  to POSTCAL, PREPROC FIDOSEND and FIDORECV
+
+- Some minor changes to entries in the log dealing with import/export.
+  Namely the numbers are more accurate. The numbers displayed on the sceen
+  reflect a total running count of messages imported from all packets.
+  Other minor changes to screen output during import/export.
+
+- You can disable any of the FIDO protocols by using the PCBFIDO environment
+  variable.
+  SET PCBFIDO=/NOEMSI will disable the EMSI protocol.
+  SET PCBFIDO=/NOWAZOO will disable the FTS-0006 protocol
+  SET PCBFIDO=/NOFTS1 will disable the FTS-0001 protocol.
+  In most cases these need not be set.
+
+- You can instruct PCBoard to re-address packet headers for routed mail.
+  If a packet is routed, PCBoard will insert the address of the intermediate
+  site in the packet header. PCBoard uses a routing method that allows
+  packets to remain untouched by intermediate sites. Unfortunatly not all
+  mailers support this method. If your routed netmail must have the
+  intermediate site's address in the packet header, then this feature will
+  be useful.
+
+- You can instruct PCBoard to route echo mail packets. This only makes
+  sense in certian situations, such as routing echo mail destined for a
+  satelite service through a local hub.
+
+- You can have PCBoard change any inbound echomail addressed to SYSOP to
+  FIDO_SYSOP to avoid having the SYSOP mail waiting flags set in echo
+  areas.
+
+- Version 15.21 required that you enter a default aka and origin line for
+  each echo area. Version 15.22 allows you to specify the aka or origin
+  just once, then specify a range or ranges of conferences the data applies
+  to. pcbsetup | fido configuration | system address has a Range field.
+  Same with pcbsetup | fido configuration | origin conference range.
+  These fields can contain multiple single conferenes and/or multiple
+  conference ranges. For example, if you wanted the aka 1:311/40 to
+  apply to confrence 1 5 9 20-50 and 100-600, you could put...
+
+  1 5 9 20-50 100-60
+
+  all on the same line in the range field. To make sure these are applied
+  correctly, you must do a full save froom PCBSETUP by answering 'Y' to
+  the "save configuration files" prompt when exiting PCBSETUP.
+
+  That's it! Have fun with it and let me know of any problems. Unlike
+  that last beta test, features are absolutely, 100% frozen during this beta
+  test. Feel free to submit feature request, but please understand that
+  they cannot be implemented in this version.
+
+
+

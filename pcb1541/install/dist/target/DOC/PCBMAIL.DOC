@@ -1,19 +1,94 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
-ALLFILES.ZIP      744  02-14-94  A listing of all files available on this
-                               | bulletin board system.  Use this list for
-                               | browsing the file lists off-line.
-                               | NOTE:  This file is compressed.  You must use
-                               | PKUNZIP v2.04+ to uncompress the file.
-CALGUIDE.ZIP    59649  02-14-94  An ASCII version of the Caller's Guide for
-                               | PCBoard.  Intended to guide your callers
-                               | through PCBoard for the first time, or to
-                               | help the more knowledgeable caller refine
-                               | his skills.  Formatted ASCII format may be
-                               | imported into a word processor or printed
-                               | directly as-is.  Copyright (C) 1993
-                               | Clark Development Company, Inc.
-                               | NOTE:  This file is compressed.  You must use
-                               | PKUNZIP v2.04+ to uncompress the file.
-RULES.TXT         768  02-14-94  ASCII file listing the rules of this bulletin
-                               | board system.
+ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+                Common questions for first-time users of PCBMail:
+ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+ Q:  How do I make a PCBMail group in Windows?
+
+ A:  1. Go to the file pull down menu item and select New Group...
+                                                      ~~~~~~~~~~~~
+     2. Enter in the group name and description into the text fields.
+
+     3. Select New Item... from the file pull down menu.
+               ~~~~~~~~~~~
+     4. Enter PCBMail in the description field.
+              ~~~~~~~
+     5. Enter the path and file name of your PCBMAIL.EXE file.
+
+     6. Enter the working directory for PCBMail to use.
+        NOTE:  PCBMail needs this directory to store configuration
+               information required to run PCBMail.
+
+     Also to execute PCBMail login configuration only, you may execute
+     PCBMAIL.EXE with a -CONFIG on the command line prompt.
+
+     For example:  PCBMAIL.EXE -CONFIG
+
+     You may also override the login name and password from the command
+     line. The parameters for this is -USER[YOUR NAME] and -PASS[YOUR
+     PASSWORD] Thus you can set PCBMail up to run from only one PCB.CFG
+     file.
+
+ Q:  I keep getting a dialogue box stating that PCBMail cannot find the
+     PCBOARD.DAT filename.
+
+ A:  Most likely it is a problem with your PCBMail login configuration,
+     which is not pointing to the correct location of your PCBOARD.DAT
+     file. Make sure that in the field that asks you for the location of
+     your PCBOARD.DAT filename that you enter the entire name and location.
+
+     For example:  C:\PCB\PCBOARD.DAT
+
+
+ Q:  I want to run PCBMail with one executable on a server.
+
+ A:  You must have the read only attribute set to read only.  See the help
+     documentation for attrib in your DOS documentation. To set the read
+     only attribute for PCBMAIL.EXE use [attrib +R pcbmail.exe] This lets
+     you share copies of PCBMail over the network.
+
+
+ Q:  I am running PCBMail from one copy of the PCBOARD.DAT file how do I
+     set up PCBMail to work with this?
+
+ A:  Your node number is located in the PCBOARD.DAT filename.  PCBMail has
+     a configuration option which overloads this node number with one that
+     you specify.  This is located in the login configuration dialogue box,
+     which also lets you specify which node number you wish to use when
+     logging into PCBMail.
+
+
+ Q:  When I start PCBMail it will promptly exit without me doing anything?
+     PCBMail will work when I am not running over my Novell network on my
+     own hard drive.
+
+ A:  This occurs when running NOVELL. This is potentially a problem with
+     your BWCC.DLL file being too old. PCBMail does warn you of an outdated
+     BWCC.DLL file. What you need to do is find all the occurrences of the
+     BWCC.DLL and replace it with the one included with PCBMail.  A problem
+     that some systems have running Novell is that Novell will scan
+     backwards on your disk for a file. One way of forcing Novell to not do
+     this is to place an option on your command line when loading PCBMail.
+     An example of this is;
+
+         SMODE 2 c:\pcbmail\pcbmail.exe
+
+     What is SMODE?
+         SMODE is a command line utility when specifies the searching mode
+         in file retrieval.  SMODE causes problems because NOVELL may
+         search in other directories other then the one that is specified
+         of the current program.  The '2' in the command line tells NOVELL
+         to not search beyond the working directory of the file.
+
+     References to SMODE:
+         Novell Netware Version 3.11 Utilities Reference, pp. 383 - 390
+         Novell Netware Version 2.2  Using the Network, pp. 431 - 433
+
+
+ Q:  I want to run PCBMail from one PCB.CFG file how do I do it? I also
+     don't want to share my user name and password with other users using
+     PCBMail.
+
+ A:  You can override the login name and password from the command line.
+     The parameters for this are -USER[YOUR NAME] and -PASS[YOUR PASSWORD]
+     Thus you can set PCBMail up to run from only one PCB.CFG file.
+

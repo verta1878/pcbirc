@@ -1,2 +1,111 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(Y)our Mail Scan                                                     @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command permits you to scan for mail addressed to you to determine
+      if you have sent or received messages.
+@X0F
+   Subcommands
+
+      @X0B+               Scan forward. @X03 When added to a message number (e.g.,
+                      300+), PCBoard scans from that message forward.
+
+      @X0B-               Scan reverse. @X03 When added to a message number (e.g.,
+                      300-), PCBoard scans from that message backward.
+
+      @X0BA               Scan all selected conferences. @X03 PCBoard scans all
+                      selected conferences for messages from or to you.
+
+      @X0BALL             Scan all conferences.@X03  PCBoard scans all conferences
+                      for messages from or to you.
+
+      @X0BC               Scan current conference.@X03  Only the current message base
+                      is scanned for messages.
+
+      @X0BL               Scan in long report mode. @X03 This option shows messages
+                      in long list mode.  The message bases are scanned and
+                      the corresponding number of each message found is
+                      displayed.
+
+      @X0BNS              Display in nonstop mode.@X03  Screen displays are placed in
+                      nonstop mode (without more? prompts).
+
+      @X0BQ               Scan in quick report mode.@X03  Messages are shown in quick
+                      list mode.  The message bases are scanned, but only the
+                      number of messages and the number of messages to you
+                      are displayed and not what those message numbers are.
+
+      @X0BS               Scan unread mail. @X03 The message base is scanned from the
+                      last message read.  Only messages after this point are
+                      displayed.
+@X0F
+   Description
+@X03
+      This command allows you to display the number of messages that are
+      addressed to or from you.  You can use the subcommands to help select
+      the conferences that will be scanned and if you want to start from the
+      beginning of the message base or only messages you have not read. The
+      report format you choose determines if PCBoard only counts the number
+      of messages or if it will actually show the message numbers.
+@X0F
+   The Difference Between Short And Long Reports
+@X03
+      The Y command can report in short or long form.  When you select short
+      form, your display will resemble the following:
+
+@X0A                               Messages  Messages
+          Num    Conference     To You    Found
+@X0B          ------ ------------- --------- ---------
+@X07              0  Main Board            0         6
+              1  Hardware              0        14
+              6  Software              0         5
+              9  Chit_Chat             2         6
+@X03
+      This display tells you that there are a total of 25 messages that you
+      have not read yet in the Main Board, Hardware and Software conferences.
+      In the Chit_Chat conference, there are 6 new messages, 2 of which are
+      addressed to you.
+
+      In long form, the same scan would look like the following:
+
+@X0F          Scanning Main Board
+@X0E            Msgs For You: @X07None
+@X0E           Msgs From You: @X07None
+@X0A            # Msgs Found: @X0C6
+
+@X0F          Scanning Hardware (1) Conference
+@X0E            Msgs For You: @X07None
+@X0E           Msgs From You: @X07None
+@X0A            # Msgs Found: @X0C14
+
+@X0F          Scanning Software (6) Conference
+@X0E            Msgs For You: @X07None
+@X0E           Msgs From You: @X07None
+@X0A            # Msgs Found: @X0C5
+
+@X0F          Scanning Chit_Chat (9) Conference
+@X0E            Msgs For You: @X0710472  10475
+@X0E           Msgs From You: @X0710474+
+@X0A            # Msgs Found: @X0C6
+@X03
+      As you can see, the long mode displays not only messages to you, but
+      also from you.  In addition, it lists the message numbers and to the
+      right of each message number it displays the message status code if
+      appropriate.  For a list of message status codes, see the Q user
+      command.
+
+      The default scan mode is determined by the Default to (Q)uick on
+      Personal Mail Scan setting in PCBSetup | Configuration Options |
+      Messages.  If you answer Y to this question then PCBoard will default
+      to quick display mode. Otherwise, long display mode will be the
+      default.
+@X0F
+   Example
+@X03
+      If you want to count the new mail in the conferences that you have
+      selected for scanning, enter the following command:
+@X0E
+          Y;Q;S;A
+@XFF
+

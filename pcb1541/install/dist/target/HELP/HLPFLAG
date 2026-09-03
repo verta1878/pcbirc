@@ -1,1 +1,58 @@
-..\SLSMKTNG\DIR1              ..\SLSMKTNG\FILES1\           Sales Information                  
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(FLAG) a File for Download                                           @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command enables you to mark a file or group of files for
+      download later during your call.
+@X0F
+   Subcommand
+
+      @X0B(Filename)      The filename or filenames to flag or mark for download
+                      later@X03.  You can enter multiple filenames by using
+                      standard DOS wildcards or by typing multiple filenames
+                      separated with a SPACE or a ;.
+@X0F
+   Description
+@X03
+      Sometimes you may want to flag or mark a file for download but do not
+      want to begin the transfer right away.  By flagging a file, PCBoard
+      will remember the filename(s) until you are ready to begin the
+      download. There are several ways that you can flag a file for download:
+@X07
+          At the conference command prompt by using the FLAG command
+
+          While listing files with the F, Z, or N commands.  PCBoard adds an
+          additional prompt on each  more? prompt which enables you to flag a
+          file.
+
+          Using the FLAG subcommand of the F user command.
+@X03
+      Once the transfer has begun, all of the files that are being downloaded
+      are remembered in case the transfer is aborted.  Any files that were
+      not transferred completely will remain flagged so that you may make
+      another attempt at transferring them.  The only way to remove the
+      flagged files is to either successfully download the files or to answer
+      N to the Download Flagged Files? prompt.
+@X0F
+   Examples
+@X03
+      To flag a filename called TCRN100 type the following:
+@X0E
+          FLAG TCRN100.ZIP
+@X03
+      To flag the files DISK1.ARJ, DISK2.ARJ, and DISK3.ARJ, enter the
+      following:
+@X0E
+          FLAG DISK1.ARJ DISK2.ARJ DISK3.ARJ
+@X03
+      You could save time by using wildcards when flagging files.  In the
+      previous example, you typed each filename when flagging it.  Using
+      wildcards, you would enter:
+@X0E
+          FLAG DISK?.ARJ
+@X03
+      This would flag any filename that is 5 characters long and has DISK as
+      the first 4 letters.
+@XFF
+

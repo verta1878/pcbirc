@@ -1,5 +1,34 @@
-@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X07
-@X38³@X3F History Of @BOARDNAME:40@@POS:75@@X3B³@X07
-@X38³@X3F This system is running on PCBoard version 15.2@POS:75@³
-@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(T)ransfer Protocol                                                  @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      In order to transfer a file while connected to a bulletin board system you
+      must use a file transfer protocol.  This command allows you to select your
+      default file transfer protocol.
+@X0F
+   Subcommands
+
+      @X0B(protocol)      Protocol letter.@X03  You can change your transfer protocol
+                      to any valid transfer protocol letter.  If you do not
+                      specify a protocol letter when you execute the command,
+                      you will be given a list of available protocols from
+                      which you may choose.  Valid protocol letters are A-Z
+                      and 0-9.
+@X0F
+   Description
+@X03
+      When executed, a list is displayed that allows you to choose from among
+      several different file transfer protocols for uploading or downloading
+      files. Each is denoted by a single character, a letter or a number from
+      0 to 9.
+
+      When determining which protocol to select, it is important to remember
+      that the same protocol must be used on the bulletin board system and by
+      the communications program that you are using.  If you are unsure of
+      which protocol to select or will be changing your selected protocol,
+      select N for no default protocol.  If you select None, you will be
+      asked each time you transfer a file which protocol you would like to
+      use.
+@XFF
 

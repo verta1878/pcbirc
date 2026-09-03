@@ -1,25 +1,132 @@
-@X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
-@X17³ @X1ADate: @X1F@SYSDATE@@X1E@BOARDNAME:49C@@X1ATime: @X1F@SYSTIME@ @X17³@X07
-@X17³@X13ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú  ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú@X17³@X07
-@X17³ @X1E(@X1CF@X1E)@X1File Directories      @X1E(@X1CL@X1E)@X1Focate a filename     @X1E(@X1CT@X1E)@X1Fransfer protocol        @X17³@X07
-@X17³ @X1E(@X1CD@X1E)@X1Fownload a file       @X1E(@X1CN@X1E)@X1Few file scan         @X1E(@X1CTEST@X1E)@X1F a file before d/l   @X17³@X07
-@X17³ @X1E(@X1CU@X1E)@X1Fpload a file         @X1E(@X1CZ@X1E)@X1Fippy Text Search                                @X17³@X07
-@X17³                                                                            ³@X07
-@X17³ @X1E(@X1CR@X1E)@X1Fead messages         @X1E(@X1CC@X1E)@X1Fomment to SysOp      @X1E(@X1CTS@X1E) @X1FText search msgs.     @X17³@X07
-@X17³ @X1E(@X1CE@X1E)@X1Fnter a message       @X1E(@X1CQ@X1E)@X1Fuick Message Scan    @X1E(@X1CQWK@X1E) @X1FTransfer QWK mail    @X17³@X07
-@X17³                                                                            ³@X07
-@X17³ @X1E(@X1CJ@X1E)@X1Foin a conference     @X1E(@X1CA@X1E)@X1Fbandon conference    @X1E(@X1CSELECT@X1E) @X1Fconfs. to scan    @X17³@X07
-@X17³                                                                            ³@X07
-@X17³ @X1E(@X1CB@X1E)@X1Fulletins             @X1E(@X1CX@X1E)@X1Fpert mode toggle     @X1E(@X1CO@X1E) @X1FPage SysOp             @X17³@X07
-@X17³ @X1E(@X1CS@X1E)@X1Fcript Questionnaire  @X1E(@X1CG@X1E)@X1Foodbye (Logoff)      @X1E(@X1CI@X1E)@X1Fnitial logon screen     @X17³@X07
-@X17³ @X1E(@X1CM@X1E)@X1F Toggle color mode   @X1E(@X1CW@X1E)@X1F Change your info    @X1E(@X1CP@X1E)@X1Fage length setting      @X17³@X07
-@X17³ @X1E(@X1CV@X1E)@X1Fiew your statistics  @X17                                                   ³@X07
-@X17³  @X17                                                                          ³@X07
-@X17³ @X1E(@X1CCHAT@X1E)@X1F with other users               @X1E(@X1COPEN@X1E)@X1F a door                        @X17³@X07
-@X17³ @X1E(@X1CNEWS@X1E)@X1F Display system news            @X1E(@X1CUSER@X1E)@X1F List conference members       @X17³@X07
-@X17³ @X1E(@X1CALIAS@X1E)@X1F Turn alias on/off             @X1E(@X1CLANG@X1E)@X1F Change language for the BBS   @X17³@X07
-@X17³                                                                            ³@X07
-@X17³         @X1EType @X1CHELP [command] @X1Efor help on a command listed above             @X17³@X07
-@X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
-ÿ
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(F)ile Directories                                                   @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command enables you to list files in the current conference, and
+      to find a particular file either by filename or by text in the file
+      description.
+@X0F
+   Subcommands to Locate a File
+
+      @X03Usually you will want to filter the list of files that are seen.  You
+      may pick any of the subcommands listed in the following table to
+      control which files are displayed to them.  The L and N subcommands can
+      be combined as well as the Z and N subcommands.  The L and Z commands
+      may not be combined.  See Examples for more details.
+
+      All of the subcommands in this section may also be accessed as commands
+      right from the main menu.  Expert users will find that accessing this
+      commands directly from the main menu is the fastest way.
+
+         @X0BL            Locate filename(s).@X03
+                      Enables you to display only those files which match a
+                      particular filename.  Any valid DOS filename may be
+                      entered including those with wildcard (?  and *)
+                      characters.
+
+         @X0BN            Display files after a particular date.
+@X03                      Quite frequently you will want to scan the file
+                      directories to see what new files have been recently
+                      put online.  PCBoard uses the N subcommand to display
+                      files that were posted after the date that you enter.
+                      The default date will always be the latest date seen in
+                      the file directories.  You can specify another date by
+                      stacking the date after the N subcommand or PCBoard
+                      will prompt you for the date.  To specify the default
+                      date on the command line use S to represent the date.
+
+         @X0BZ            Search entire file listing for text.
+@X03                      You may select only those files which contain
+                      particular text.  Like other search functions in
+                      PCBoard the user may use Boolean operands for more
+                      complex searching.
+@X0F
+   File Directory Subcommands
+@X03
+      You should pick one or more of these subcommands to determine which
+      file directories to view.  If you pick more than one subcommand, each
+      must separated by a ENTER or a SEMICOLON.  See Examples for more
+      details.
+
+         @X0B(dir. #)     File directory number. @X03
+                      Specifies the file directory number(s) that you want to
+                      view.  If you want to view multiple file directories,
+                      enter each directory number separated by either a SPACE
+                      or a SEMICOLON character.
+
+         @X0BU            View public upload directory. @X03
+                      When files are uploaded they go either to the private
+                      upload directory if you force all uploads to be
+                      private--otherwise, they are stored in the public
+                      upload directory.  This subcommand enables you to view
+                      a list of files and descriptions that are in the public
+                      upload directory of the current conference.
+
+         @X0BP            View private upload directory.@X03  (sysop level only)
+@X0F
+   Miscellaneous Subcommands
+
+         @X0BD            Flag the files found for download..
+@X03                      Any files that are listed to the screen will also be
+                      flagged for download.  No warning is given if you
+                      exceed the batch file limit.  In other words, if you
+                      can batch transfer no more than 20 files then only the
+                      first 20 files that are displayed will be flagged for
+                      download.  The rest of the files will still be
+                      displayed but they will not be flagged.
+
+         @X0BFLAG         Flag a file for download by filename.
+@X03                      Enables you to flag any file by typing in the filename.
+                      A single filename may be typed or wildcard characters
+                      may be used to flag multiple files with similar
+                      filenames.
+
+@X0B         G            Disconnect from the system.
+
+@X0B         NS           Display listing in non stop mode.
+@X03                      When this subcommand is used the file listings will be
+                      displayed in nonstop mode.  This command may also enter
+                      this subcommand at any more?  prompt while displaying
+                      the file listings.
+
+@X0B         R            Re-display available file directories.
+@X03                      This subcommand will re-display the list of file
+                      directories that are available in the current
+                      conference.
+
+@X0B         V            View a file.
+@X03                      Sometimes you may want more detailed information about
+                      a particular file.  When this subcommand is used you
+                      will be asked for the filename to view.  If the
+                      filename is a valid filename PCBoard will shell out to
+                      a process that will view the contents of the file.
+@X0F
+   Description
+@X03
+      File transfers are one of the most popular attractions to bulletin
+      boards.  You may wish to view a list of files that are on the system to
+      see if there are files that they wish to download or to make sure that
+      a particular file is not already online.
+
+      When you press F to access the file directories, a list of file
+      directories that may be viewed will be listed on the screen.  After the
+      list is displayed, you are given a file command prompt where you can
+      use any of the previously listed subcommands to control what files are
+      listed/downloaded.
+@X0F
+   Examples
+@X03
+      To view all of the files that are available in file directory number 3,
+      you would enter:
+@X0E
+           F 3
+@X03
+      To view the contents of ANYFILE.TXT, you would enter:
+@X0E
+           F V ANYFILE.TXT
+@X03
+      See the help main command help more information, and examples, on the
+      FLAG, N, L and Z commands.
+@XFF
 

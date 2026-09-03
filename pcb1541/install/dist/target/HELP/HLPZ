@@ -1,330 +1,148 @@
-Main Board
--1
-0
-0
-0
-0
-0
-0
-4
-..\MAIN\MSGS
-..\GEN\BRDM
-..\GEN\BRDS
-..\GEN\NEWS
-2
-..\MAIN\PUBLIC
-..\UPLOAD\
-2
-..\MAIN\PRIVATE
-..\PRIVUPLD\
--1
-..\GEN\DOORS
-..\GEN\DOORS.LST
-0
-..\GEN\BLT
-..\GEN\BLT.LST
-
-..\GEN\SCRIPT
-..\GEN\SCRIPT.LST
-
-..\GEN\DIR
-..\GEN\DIR.LST
-
-..\GEN\DLPATH.LST
-Files
-0
-0
-0
-0
-0
-0
-0
-4
-..\FILES\MSGS
-..\FILES\BRDM
-..\GEN\BRDS
-..\FILES\NEWS
-2
-..\FILES\UPLD
-..\FILES\UPLOAD\
-2
-..\FILES\PRIVATE
-..\FILES\PRIVUPLD\
--1
-..\FILES\DOORS
-..\FILES\DOORS.LST
-0
-..\FILES\BLT
-..\FILES\BLT.LST
-
-..\FILES\SCRIPT
-..\FILES\SCRIPT.LST
-
-..\FILES\DIR
-..\FILES\DIR.LST
-
-..\FILES\DLPATH.LST
-Messages
-0
-0
-0
-0
-0
-0
-0
-4
-..\MESSAGES\MSGS
-..\MESSAGES\BRDM
-..\GEN\BRDS
-..\MESSAGES\NEWS
-2
-
-
-2
-
-
--1
-..\MESSAGES\DOORS
-..\MESSAGES\DOORS.LST
-0
-..\MESSAGES\BLT
-..\MESSAGES\BLT.LST
-
-..\MESSAGES\SCRIPT
-..\MESSAGES\SCRIPT.LST
-
-
-
-
-
-Graphics
-0
-0
-0
-0
-0
-0
-0
-4
-..\GRAPHICS\MSGS
-..\GRAPHICS\BRDM
-..\GEN\BRDS
-..\GRAPHICS\NEWS
-2
-..\GRAPHICS\UPLD
-..\GRAPHICS\UPLOAD\
-2
-..\GRAPHICS\PRIVATE
-..\GRAPHICS\PRIVUPLD\
--1
-..\GRAPHICS\DOORS
-..\GRAPHICS\DOORS.LST
-0
-..\GRAPHICS\BLT
-..\GRAPHICS\BLT.LST
-
-..\GRAPHICS\SCRIPT
-..\GRAPHICS\SCRIPT.LST
-
-..\GRAPHICS\DIR
-..\GRAPHICS\DIR.LST
-
-..\GRAPHICS\DLPATH.LST
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(Z)ippy Directory Scan                                               @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command enables you to search through the file descriptions in various
+      file directories for the text that you specify.
+@X0F
+   Subcommands
+@X03
+      @X0B[directory #]   Directory number to search.@X03  PCBoard scans for the 
+                      indicated text in this directory.  When using the Zippy 
+                      Directory Scan command, you must specify a directory or 
+                      range of directories that PCBoard should search for the 
+                      file specification.  You may list a single directory, a 
+                      range of directories in the format #-# or a list of 
+                      directories in a #;#;# format.  There are two letters 
+                      that you may use as a directory number.  If you use A 
+                      for the directory number, it tells PCBoard  to search 
+                      all file directories in the current conference. 
+                      Likewise, if you use U for the directory number, the 
+                      upload directory of the current conference will be 
+                      searched.
+
+      @X0B[search text]   Text to search for. @X03 This is the text you wish to 
+                      search for in the directory listings.  If you wish to 
+                      search for an imbedded space (e.g., "TEST "), you will 
+                      need to imbed that part of the string in quotes as 
+                      shown above.  Since you cannot enter quote characters 
+                      on the command line you would not be able to enter the 
+                      above example on the command line. This search string 
+                      may also make use of Boolean operands if you wish to 
+                      further qualify your search.
+
+                      NOTE:  The search is not case-sensitive.  This means 
+                      that if you search for the word TEXT then it is the 
+                      same as if you had searched for word Text.  In other 
+                      words, capitalization of your search text does not 
+                      matter.
+
+      @X0BD      @X03         Each file found with the specified text is flagged for 
+                      download.  The system does not immediately download the 
+                      files, but waits until the D or DB user commands.
+
+      @X0BN       @X03        This subcommand enables you to include the minimum file 
+                      date from which the scan should search for.  This is 
+                      identical to the N user command but you can use it in 
+                      conjunction with a zippy scan to help restrict the file 
+                      descriptions that you search.
+
+      @X0BNS    @X03          Screen output is displayed in nonstop or continuous 
+                      mode.                
+@X0F
+   Description
+@X03
+      This command scans the file directories to find a specified text 
+      string.  If you do not specify the text to search for on the command 
+      line, you will be prompted to enter the text you wish to search for.  
+      Possibly one of PCBoard's most powerful time-saving features, the Zippy 
+      directory scan command will locate text in both the file name field and 
+      the descriptions. Like other PCBoard searching features, the zippy 
+      directory scan command utilizes Boolean operands (AND, OR, and NOT).
+@X0F
+   How To Make Your Search More Specific
+@X03
+      Quite often you may notice that your search found too many matches.  
+      Rather than wading through all of the matches to find what you were 
+      really after, let PCBoard help you make your search more specific so 
+      that you can save some additional time.
+
+      Perhaps the easiest way to restrict your search is to use Boolean 
+      operands. As an example, let's say that you scanned all file 
+      directories in the current conference for the word DISK. After a couple 
+      of screenfulls, you realized that you did not make your search 
+      specific.  At this point, you realize what you are really after is a 
+      utility which will format a floppy disk. You could enter "Format a 
+      disk" in the text to search for. However, you are pretty sure that all 
+      of the descriptions of the utilities that format disks would not 
+      contain "Format a disk" in the description.
+
+      What you would need to use in this example is the Boolean AND operator.  
+      In the text to search for, tell PCBoard that you want to search for 
+      DISK & FORMAT.  The & character signifies to PCBoard that you want to 
+      search for both words in the description but you do not care if they 
+      are right next to each other in the description.  Instead, you just 
+      want them to be anywhere in the file description.
+
+      If you searched for DISK & FORMAT and it still turned up too many 
+      matches, you may need to restrict your search even further. You notice 
+      that some of the matches were dated back in 1989 and may not be 
+      compatible with your current system.  Therefore, you want to display 
+      only utilities that are dated 01-01-90 or older. What you could do, is 
+      use the N subcommand as described above. You would type the following 
+      for this final search:
+
+          Z N 010190 DISK & FORMAT A
+
+      You will notice that this tells PCBoard to zippy scan all file 
+      directories but only display those files that are newer than 01-01-90 
+      and that have the words DISK and FORMAT in the description.
+@X0F
+   How To Make Your Searches Less Specific
+@X03
+      Sometimes you may want to make your searches less specific.  You may be 
+      wondering why you want to make your searches less specific.  Perhaps 
+      the best way to illustrate this is with an example.
+
+      If you were searching for all hard drive utilities you may enter HARD 
+      DRIVE as your search text.  However, some people may call them hard 
+      disks instead of hard drives.  You are now faced with a small dilemma.  
+      You either have to run two searches, or you have to find a way to 
+      search for either HARD DRIVE or HARD DISK. To specify that you want to 
+      search for either phrase you use the Boolean OR operator.  You use the 
+      | character to denote the Boolean OR operator.  If you will recall, we 
+      were going to search for HARD DRIVE or HARD DISK.  If you simply 
+      replace the word or with the | character that will make the search 
+      string correct.
+
+      Now, when you search, you will be searching for HARD DRIVE or HARD DISK 
+      anywhere in the description.  You could get fancy with Boolean 
+      operators and consolidate this just a little more by searching for HARD 
+      & (DRIVE | DISK). Since you are going to be looking for HARD DRIVE or 
+      HARD DISK, you can just say search for the word HARD and either the 
+      word DISK or DRIVE.
+@X0F
+   Examples
+@X03
+      Perhaps the simplest example would be to search for a single word in 
+      all file directories in the current conference.  If you wanted to 
+      search for the word VGA then you would enter the following at the 
+      conference command prompt.
+@X0E
+          Z VGA A
+@X03
+      Obviously, this would probably turn up quite a few matches, so you may 
+      want to define your search better.  If you were only interested in 
+      games that supported VGA then you may want to modify so that you search 
+      for the words VGA and GAME.  You would enter the following at the 
+      conference command prompt:
+@X0E
+          Z VGA & GAME A
+@X03
+      Since you are searching for the words VGA and GAME, it does not matter 
+      what order you put the words in.  For example, you would perform the 
+      exact same search if you typed the following:
+@X0E
+          Z GAME & VGA A
+@XFF

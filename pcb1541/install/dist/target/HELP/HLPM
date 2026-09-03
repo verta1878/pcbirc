@@ -1,2 +1,64 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(M)ode                                                               @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command will allow you to change the graphics mode between 
+      RIPscrip, ANSI, non-ANSI, and no-color, graphics modes.
+@X0F
+   Subcommands
+   
+      @X0BCTTY            Non-ANSI mode.@X03  Everything displayed by PCBoard will be
+                      in non-graphics, non-ANSI mode.  This is the usually the
+                      safest mode for non-IBM computers like UNIX or
+                      Macintosh.
+                                                      
+      @X0BANSI            ANSI cursor positioning. @X03 Everything displayed by 
+                      PCBoard will be in non-graphics, ANSI mode.  This 
+                      allows for faster screen drawing without having to slow 
+                      down the displays with the colors.
+                                                
+      @X0BGRAPH           ANSI color and cursor positioning.@X03  Everything 
+                      displayed by PCBoard will be in graphics, ANSI mode.  
+                      This means that all prompts and text will be colorized.  
+                      This mode is commonly referred to as graphics mode.
+                                                
+      @X0BRIP             RIPscrip graphics mode. @X03 If you have made RIPscrip 
+                      versions of your display files, they will be displayed 
+                      to users who have this mode enabled.  By entering ENTER 
+                      at the Do you want graphics prompt, this mode will be 
+                      enabled.
+@X0F
+   Description
+@X03
+      Issued without subcommands, this command acts as a toggle between
+      graphics and non-graphics display modes.  If you execute this command
+      with a subcommand then you may choose which mode you want without using
+      the command to toggle back and forth.  If you do not have ANSI
+      capabilities or are unsure if you do, you should choose CTTY mode.  If
+      you accidentally choose the wrong mode and you get what seems to be
+      garbage on your screen you can enter the command again with the CTTY
+      subcommand to see if that clears up things for you.
+@X0F
+   About RIPscrip
+@X03
+      While most communications programs are capable of displaying ANSI
+      graphics, not all are capable of showing RIPscrip graphics. If you
+      choose RIPscrip and your communications program is not able to
+      interpreted the codes, it will appear that garbage characters are
+      displaying on the screen.
+@X0F
+   Examples
+@X03
+      If you are in graphics, ANSI mode and you wish to switch to non-color
+      mode, simply execute the M command.  It will change your mode.
+
+      If you want to switch to CTTY mode so that no ANSI sequences will be
+      sent you can do so by typing the following at the conference command
+      prompt:
+@X0E
+          M;CTTY
+@X03
+      NOTE:  The only way to enable CTTY mode after you log in is via the M
+      command and the CTTY subcommand.
+@XFF

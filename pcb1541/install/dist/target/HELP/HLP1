@@ -1,5 +1,19 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³@X1F             Running PCBoard version 15.2 by Clark Development              @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@CLS@@X0CManage Caller Log
+
+@X0E@X0D<@X0ED@X0D>@X0E  DELETE CALLER LOG - Deletes log for current node.
+     WARNING - ONCE DELETED PCBOARD CANNOT RECOVER THAT LOG!
+
+@X0E@X0D<@X0EP@X0D>@X0E  PRINT CALLER LOG - The log will be displayed as well as sent to the
+     printer defined in PCBsetup.
+
+@X0D<@X0ES@X0D>@X0E  SEARCH CALLER LOG FOR TEXT - Provides search capabilities to locate any
+     text within the caller log.  Simple one word or phrase searches, or
+     boolean searches using AND, OR, and NOT operators. Case is ignored.
+
+@X0D<@X0EV@X0D>@X0E  VIEW CALLER LOG - This permits viewing of the caller log.  The most
+     current caller is displayed first.
+
+Regular searches for system erros is a good idea and can be accomplished
+by typing 1 S FAIL | ERROR on the command line.
+@X07
 

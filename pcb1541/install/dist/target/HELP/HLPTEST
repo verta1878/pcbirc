@@ -1,6 +1,27 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³@X1F                                    News                                    @X18³@X07
- @X18³@X1F                        Running PCBoard version 15.2                        @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(TEST) File Integrity                                                @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+    This command allows you to test a file for download before you actually
+    download the file.  The testing procedure is determined by the SysOp so
+    it may vary from system to system.
+@X0F
+   Subcommand
+@X03
+      @X0B(filename)      Filename to test. @X03 This is the file that will be tested
+                      according to the testing procedures designated by the
+                      SysOp. You may only specify one filename at a time.
+@X0F
+   Description
+@X03
+      How many times have you downloaded a file only to find that it will not
+      uncompress due to errors?  The TEST command permits you to check files
+      for viruses and other corruptions that might exist in a particular
+      file.  When you enter the filename to test, you will be informed after
+      a short delay whether the file passed or  failed the predetermined
+      criteria.  If the filename you enter to test does not exist on the
+      system, you will be notified that the filename you entered does not
+      exist and you will be allowed to enter a new filename to test.
+@XFF
 

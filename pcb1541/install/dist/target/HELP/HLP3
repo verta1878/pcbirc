@@ -1,2 +1,30 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@CLS@@X0DPACK/RENUMBER MESSAGES
+
+@X0EPack the Message Base?
+@X0D<@X0EN@X0D>@X0E  Do not pack the message base.  Return to the conference command prompt.
+@X0D<@X0EY@X0D>@X0E  Pack the message base.  Additional questions will be asked to determine
+     the criteria you want to use. (if any)
+
+Generate ONLY a New Index File?
+@X0D<@X0EN@X0D>@X0E  If you enter this response, additional questions will be asked to
+     determine the criteria for deleting messages.
+@X0D<@X0EY@X0D>@X0E  No additional questions.  PCBPack will run and create a new message base.
+     Good idea if you think a message base may be corrupt.
+
+Purge older than?
+Enter the cutoff date for keeping messages.  Any messages older than this date
+will be deleted.   The default entry of 010180 will not delete any messages.
+
+Purge RECEIVED+PRIVATE Msgs?
+@X0D<@X0EN@X0D>@X0E  Leaves any RECEIVER ONLY messages in the data base.
+@X0D<@X0EY@X0D>@X0E  All RECEIVER ONLY messages that have been read will be deleted.
+
+
+
+Renumber during repack?
+@X0D<@X0EN@X0D>@X0E  Do not renumber the message base -- Message numbers will stay the same.
+@X0D<@X0EY@X0D>@X0E  The message base will be renumbered beginning with the number you will be
+     asked to specify.  When the message base is renumbered, the last message
+     read values will NOT be updated.
+@X07
+

@@ -1,33 +1,34 @@
-@X0EPricing and Availability Information
-@X04ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-@X07        Use this space to describe your products' pricing and
-        availability.
+@echo off
+testfile %1 arc zip pak txt
+if errorlevel == 98 goto error
+if errorlevel == 4 goto txt
+if errorlevel == 3 goto pak
+if errorlevel == 2 goto zip
+if errorlevel == 1 goto arc
+goto end
 
-        PCBoard is available in the following node sizes:
+:txt
+copy %1 pcbview.txt
+goto end
 
-            @X09ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
-            @X09³  @X0FPackage size         @X09³  @X0FPrice        @X09³@X07
-            @X09ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´@X07
-            @X09³ @X0F   /2 node@X0E          @X09  ³  @X0B$@X0F 150.00 USD@X09 ³@X07
-            @X09³ @X0F   /2 node@X0E with PPLC@X09  ³  @X0B$@X0F 200.00 USD@X09 ³@X07
-            @X09³ @X0F   /5 node@X0E          @X09  ³  @X0B$@X0F 250.00 USD@X09 ³@X07
-            @X09³ @X0F   /5 node@X0E with PPLC@X09  ³  @X0B$@X0F 300.00 USD@X09 ³@X07
-            @X09³ @X0F  /10 node@X0E          @X09  ³  @X0B$@X0F 350.00 USD@X09 ³@X07
-            @X09³ @X0F  /10 node@X0E with PPLC@X09  ³  @X0B$@X0F 400.00 USD@X09 ³@X07
-            @X09³ @X0F  /25 node@X0E with PPLC@X09  ³  @X0B$@X0F 550.00 USD@X09 ³@X07
-            @X09³ @X0F  /50 node@X0E with PPLC@X09  ³  @X0B$@X0F 750.00 USD@X09 ³@X07
-            @X09³ @X0F /100 node@X0E with PPLC@X09  ³  @X0B$@X0F 950.00 USD@X09 ³@X07
-            @X09³ @X0F /250 node@X0E with PPLC@X09  ³  @X0B$@X0F2000.00 USD@X09 ³@X07
-            @X09³ @X0F/1000 node@X0E with PPLC@X09  ³  @X0B$@X0F7000.00 USD@X09 ³@X07
-            @X09ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07@X07
+:arc
+viewarch %1
+goto end
 
-        Orders can usually be shipped the same day, and arrival is
-        within 2-3 days anywhere in the world.
+:zip
+viewzip %1
+goto end
 
-        If you wish to order PCBoard, please call voice at 801.261.1686
-        FAX at 801.261.8987 or the Salt Air BBS at 801.261.8976.  If you
-        are within the continental US or Canada you may also call toll-free
-        to 800.356.1686
+:pak
+pak v %1 > pcbview.txt
+goto end
 
-        Thank you for choosing PCBoard Professional Bulletin Board Software!
+:error
+echo. > pcbview.txt
+echo @X0CSorry, @FIRST@, this file is not viewable. >>pcbview.txt
+goto end
+
+:end
+echo. >> pcbview.txt
+echo @WAIT@ >> pcbview.txt
 

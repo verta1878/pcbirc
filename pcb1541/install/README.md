@@ -59,3 +59,15 @@ payload.
 
 See `archivers/README.md` for details on the vendored LHA and the
 `redx` CLI.
+
+
+## Work log (install v1.0 → install v1.7.2 arc)
+
+The full chronological record of how the installer subsystem came to
+be — .RED format reverse-engineering, INSTALL.DAT discovery, the
+install v1.6.3 bogus-mapping bug and its fix, PCBDISK.002/003 recovery, and
+CRLF protection — lives in
+[`dist/target/README.md`](dist/target/README.md).
+
+Consolidated there rather than in per-release notes so it survives
+across zip applies and stays discoverable in-tree.

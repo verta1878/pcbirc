@@ -1,6 +1,107 @@
-..\GEN\
-..\HELP\
-..\UPLOAD\
-..\FILES1\
-..\FILES2\
-..\UPLOAD\
+           PCBoard-for-OS/2 Design Goals and Performance Benefits
+           ======================================================
+
+Overview
+--------
+PCBoard-for-OS/2 (PCB-OS2) version 15.22 is a 32-bit native OS/2 version of the
+popular PCBoard Bulletin Board Software.  It is designed to be as compatible as
+possible with the DOS release of the software, while taking advantage of OS/2
+features such as 32-bit instructions, multiple threads, multitasking and a
+graphical user interface for the PCBoard Control Panel.
+
+Design Goals
+------------
+Some of the basic design goals in developing the OS/2 version of PCBoard
+were as follows:
+
+- Complete file compatibility.  Both the DOS and OS/2 versions may be run on
+  the same system.  This allows the system operator to utilize his or her
+  hardware and software to its best advantage.
+
+- Complete user interface compatibility from the end-user point of view.
+  This allows callers to access either version without having to be concerned
+  about differences in operation.  In most cases, the caller will not even be
+  aware of whether the DOS or OS/2 version is in use.
+
+- User interface compatibility from the sysop point of view.  While there are
+  a few differences, mostly in setup, the system will be very familiar to
+  those sysops who are already comfortable with the DOS version.
+
+- Performance improvements.  These come in two forms:  1) Being a native 32-bit
+  application improves performance in areas where CPU usage is highest, and
+  2) Being multi-threaded allows the application to free up the CPU wherever
+  possible to promote better multitasking performance.
+
+- Easier multi-node setup, control and monitoring under OS/2.  A new product,
+  called PCBoard Control Panel (PCBCP), which is loosely based on the original
+  PCBMoni for DOS, makes it easier to set up multiple nodes under OS/2 while
+  providing launching, monitoring, switching and warning controls.
+
+Implementation
+--------------
+Because both performance and user interface compatibility are prime
+considerations in designing PCB-OS2, the application runs in a VIO window-able
+session (i.e. text mode).  Performance benefits are derived from sticking with
+a text mode interface where screen display updates do not hog large portions
+of the CPU's attention.  In addition, a separate thread is dedicated to
+monitoring the virtual screen image and updating the actual physical screen
+in batches and only at intervals that do not interfere with the rest of the
+operation of the system.  Because of this, PCB-OS2 offers huge performance
+benefits over PCB-DOS for operations where large quantities of information are
+displayed on screen.
+
+Meanwhile, OS/2 users have come to expect a graphical user interface.  To help
+make PCB-OS2 fit with their expectations, while maintaining the performance
+benefits of a text-mode application, PCBoard Control Panel was born.
+
+PCBoard Control Panel is a multi-threaded native OS/2 PM application which
+provides a multi-node setup, control and monitoring interface for the PCBoard
+system.  Utilizing an OS/2-style notebook, multiple nodes can be defined
+with a limited amount of effort, generally by setting one node up and then
+quickly copying that setup to one or more nodes with just a few clicks of the
+mouse.  With a PCBMoni-style overview of the nodes on screen, you can then
+click on an individual node to start it, or if it's already running it will pop
+it into the foreground to show you what the caller is doing online.  Or you can
+control one or more nodes with a few clicks of the mouse, causing them to
+recycle, log a user off, drop to DOS, etc, or even send a message to the caller
+that is online.
+
+One of the most flexible aspects of PCBCP is that it can be set up to launch
+nodes either at startup, or at connect time.  By working directly with Ray
+Gwinn, PCBCP has a hook into the VMODEM internet driver which allows it to
+detect when a call is coming in from the internet and launch a node to handle
+the call right at that moment.  With this design philosophy, you can conserve
+both cpu cycles and memory by not even running a PCBoard node unless and until
+the need arises.  In effect, you can have PCBCP set up to launch just the
+basic number of nodes that you need to handle your average load of traffic,
+and then with the launch-on-connect on capability you can set up a number of
+nodes that can become active as the need arises to handle the overflow.  This
+way your system avoids ever given a busy signal, while at the same time
+providing the greatest level of performance possible when the traffic is low.
+
+Another advantage to PCBCP is that it can automatically warn you when a node
+appears to be hung.  And you can even set it to automatically shut down and
+restart a node that appears to be hung in case you are not around to attend to
+the warning.
+
+In designing PCBoard-for-OS/2 itself, tremendous effort was spent on setting
+up multiple threads and resources such that the system has very low cpu
+overhead.  As an example, to make our DOS version very multi-tasker friendly,
+it has to be very much aware of when it is busy and when the software has
+idle time.  By being aware of the idle time, the DOS version then makes calls
+to the operating system to give up its own time slice and allow other nodes
+on the system to utilize the cpu time.  The OS/2 version, however, is
+structured such that it rarely ever needs to make a call to the operating
+system to give up a time slice.  Instead, its threads and semaphores are
+structured such that, when the system isn't busy, the operating system simply
+doesn't give it any time.  For instance, there are threads for the keyboard
+and comm I/O which remain completely inactive until you type on the keyboard,
+or until something comes in from the comm port.  Another thread handles screen
+updates for huge performance gains, and other threads handle aspects such as
+monitoring system time, carrier, etc.
+
+In conclusion, the combination of PCBoard-for-OS/2 together with the PCBoard
+Control Panel to control and run your system, this new PCBoard package offers
+benefits in cpu and memory usage which allows you to service more users with
+better performance on an OS/2 based system.
+

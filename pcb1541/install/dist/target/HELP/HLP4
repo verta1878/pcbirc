@@ -1,2 +1,13 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@CLS@@X0DRECOVER A KILLED MESSAGE
+
+@X0EYou will be asked for a message number to recover.  If you enter an invalid
+message number you will be advised that the message does not exist.
+
+When a message is @X0D<@X0EK@X0D>@X0Eilled, it is marked for deletion only and may be
+recovered.  If the message based has been packed, then the message cannot
+be recovered.
+
+SUBCOMMAND:
+[msgs#]  From the command line type 4  [msgs#] to be deleted.
+@X07
+

@@ -1,2 +1,44 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(OPEN) a DOOR                                                        @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command allows you to open a DOOR to another application. You may
+      open a door via door number or by name.
+@X0F
+   Subcommands
+@X03
+      @X0B[door #]        @X03This represents the number of the DOOR to open.  It may
+                      either be stacked with the command at the conference
+                      command prompt (e.g., OPEN;1) or chosen after the DOOR
+                      menu is displayed.
+
+      @X0B[door name]     @X03Instead of the DOOR number, you may type the actual
+                      DOOR name.  For example, to open a door called
+                      'EXCITING' you could type OPEN;EXCITING from the
+                      conference command prompt.
+
+                      NOTE: If you use the name to open a door then you can
+                      type just the name of the door at the conference
+                      command prompt. For example if you have a door called
+                      MAIL, type MAIL at the conference command prompt to
+                      open the door.
+
+      @X0B[parameter]     @X03You may pass a parameter to the DOOR that is called.
+                      This parameter is similar to one passed at a DOS prompt
+                      to another application.  Not all DOOR programs accept
+                      parameters so unless a particular DOOR states that it
+                      will accept parameters, assume that it does not.  As an
+                      example, if you were to open a door by typing
+                      OPEN;SALES;ANYTHING, you would be opening a DOOR called
+                      SALES and ANYTHING would be passed as a parameter.
+@X0F
+   Description
+@X03
+      A DOOR can extend a BBS because a DOOR is more or less an application
+      that is independent of the bulletin board system. For example, a door
+      could be an on-line game or an on-line database.  If you do not specify
+      a door number or name to open, the door menu is displayed so that you
+      may pick a door to open.
+@XFF
+

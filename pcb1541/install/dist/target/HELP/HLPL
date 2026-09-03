@@ -1,1 +1,85 @@
-..\FILES\DIR1                 ..\FILES\DL01\                Files For All Callers              ..\FILES\DIR2                 ..\FILES\DL02\                Disk Utilities                     ..\FILES\DIR3                 ..\FILES\DL03\                Printer Utilities                  ..\FILES\DIR4                 ..\FILES\DL04\                Other Utilities                    ..\FILES\DIR5                 ..\FILES\DL05\                Networking Utilities               ..\FILES\DIR6                 ..\FILES\DL06\                Multitasking Utilities             ..\FILES\DIR7                 ..\FILES\DL07\                Database Related Files             
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(L)ocate a Filename                                                  @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command enables searching the file directories of the current
+      conference for a particular filename.  Wildcard characters are
+      permitted.
+@X0F
+   Subcommands
+
+      @X0B(Directory #)   Directory #.@X03  When using this command, you must specify
+                      a directory or range of directories that PCBoard should 
+                      search for the desired file(s).  You may list a single 
+                      directory, a range of directories in the format [#-#] 
+                      or a list of directories in a [#;#;#] format.  There 
+                      are three letters you may use to represent special file 
+                      directories.  If you use A for the directory number, 
+                      PCBoard will search all file directories in the current 
+                      conference.  Likewise, if you use U for the directory 
+                      number, the upload directory of the current conference 
+                      will be searched.  Finally, if you have sufficient 
+                      security, you may use P to specify the private upload 
+                      directory for the current conference.
+
+      @X0B(filename.ext)  Filename to search for.@X03  In order to search the file
+                      directories for a filename you must supply the filename
+                      you want PCBoard to search for.  The filename you
+                      specify can be a simple filename like READTHIS.TXT, or
+                      more frequently something that contains wildcard
+                      characters like READ*.*.  The advantage in using
+                      wildcard characters is that you are not required to
+                      know the exact filename.
+
+      @X0BD               Flag the files for download that are found in the
+                      search.@X03  If a file that matches the parameters is
+                      located, it is flagged and prepared for download later
+                      during the call.  If more than one file is found, all
+                      files will be flagged.
+
+      @X0BN               Combine the locate search with a new file scan. @X03 This
+                      subcommand will help limit your search by only
+                      searching for files equal to or after a specific date.
+                      If you use the N command you also need to include the
+                      minimum file date from which the scan should search
+                      for.  If you would like to use the date you last
+                      scanned for files you may simply add an S to the N
+                      subcommand.
+
+      @X0BNS              Display the files found in nonstop mode. @X03 Files are
+                      displayed in nonstop mode (no More? prompts will be
+                      displayed).
+@X0F
+   Description
+@X03
+      Quite often you will want to search the file directories on a BBS to
+      determine if a particular file exists on the system.  If you are
+      looking for a particular filename, you would use this command to help
+      you find that filename.  Most of the time your search will include some
+      sort of wildcard like TCRN*.* or similar.  If you attempt to search for
+      HSXM, PCBoard will automatically append an *.* making the search
+      criteria HSXM*.* to help you find the file(s) you are looking for.
+@X0F
+   Examples
+@X03
+      If you want to locate any files that begin with ABC in all file
+      directories for the current conference, type the following at the
+      conference command prompt:
+@X0E
+          L;ABC;A
+@X03
+      If you wanted to search for files that began with ABC in directories 1,
+      3, 9, and 15, type in the following command:
+@X0E
+          L;ABC;1;3;9;15
+@X03
+      If you found that two many files were showing up on your searches, you
+      may want to restrict the files you search for by date.  To do this, you
+      would use the N subcommand that was described previously.  For example,
+      to search for any filename that begins with ABC in all directories but
+      only show those that have a file date equal to or later than  10/21/93,
+      type the following at the command prompt:
+@X0E
+          L;ABC;N;102193;A
+@XFF

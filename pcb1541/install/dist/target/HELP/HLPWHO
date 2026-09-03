@@ -1,4 +1,37 @@
-..\GRAPHICS\DL01\
-..\GRAPHICS\DL02\
-..\GRAPHICS\DL03\
-..\GRAPHICS\UPLOAD\
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp:  @X3F(WHO) is Online                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0B
+@X0E
+      This command enables you to see who is currently online.  Each username
+      is displayed including the city/location and a brief synopsis of what
+      the user is currently doing online.
+@X0F
+Description
+@X03
+      Most users on multi-node systems like to know who else is currently on
+      the system.  To satisfy this curiosity you can use the WHO command.
+      When executed, PCBoard displays the status of each node on a multi-node
+      system. You can use this command to see if anyone is online that you
+      would like to chat with, who is doing what on the system, etc.  This
+      command is only available on multi-node systems.  If you try to execute
+      it on a single node system you will get a Sorry, no Network is Active
+      message.
+@X0F
+   Example
+@X03
+@X0A          (#)   Status                  User
+@X0E          ---   ---------------------   -----------------------------
+@X0B            1   Out of Code in DOOR     JIM HALBROM - MAIL
+            2   Available for CHAT      NEIL GRANGER (SANDY CREEK, MN)
+            3   Transferring a File     BILL MOWERY (CHERBOURG, TX)
+            4   Available for CHAT      TAMARA ANTHONY (ASHWOOD, NJ)
+            5   No Caller this Node
+@X03
+      From the above example display we can see that the user on node 1 is
+      currently running a door called MAIL.  The users on node 2 and 4 are
+      logged in and probably reading messages or scanning for files.  The
+      user on node 3 is transferring a file.  Nobody is currently on node 5
+      because it is waiting for a call.
+@XFF
+

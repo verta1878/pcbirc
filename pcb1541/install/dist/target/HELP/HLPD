@@ -1,2 +1,129 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(D)ownload A File -also- (DB) Download Batch                         @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      Allows you to download or transfer a file from the bulletin board
+      system to your computer system.
+@X0F
+   Subcommands
+
+      @X0B(filename)      The filename that will be transferred.  @X03For batch
+                      transfers, multiple filenames may be entered on the
+                      same line if separated by a SPACE or a SEMICOLON.  In
+                      addition, when selecting files to transfer, the DOS
+                      wildcard characters (* and ?) can be used to select
+                      groups of files.  If a user does not type in the
+                      filename extension, PCBoard will search the files
+                      online to see if there is a match.  See the examples
+                      that follow for more details.
+
+      @X0B(protocol)      @X03In order to transfer a file, you must use a file
+                      transfer protocol.  You may set any protocol as your
+                      default protocol.  If you wish to temporarily use
+                      another protocol for a particular transfer, you can
+                      pass the temporary protocol letter with the D command.
+                      To obtain a list of protocol letters, you can select
+                      the T command from the main menu.
+
+                      NOTE:  The protocol letter may also be entered when
+                      PCBoard asks for the filename to download.  The only
+                      protocol that cannot be selected in this manner is the
+                      H protocol, as it would display online help instead.
+                      In addition, for batch transfers, you may select a
+                      temporary protocol at the final prompt prior to begining
+                      the file transfer.
+
+      @X0BBYE @X03or @X0BGB       @X03This subcommand will cause you to be logged off of the
+                      bulletin board once the file transfer is complete.  You
+                      are given 10 seconds to abort the automatic logoff.
+
+@X0F
+   Description
+@X03
+      One of the most popular activities on a bulletin board is the
+      transferring of files between the caller's computer and the bulletin
+      board system.  Downloading refers to the user receiving a file from the
+      bulletin board system.  In order to transfer a file you must select a
+      protocol to transfer via the Transfer protocol command.  If you select
+      N (for no default) protocol, PCBoard will prompt for the protocol to
+      use on each file transfer.
+
+      Once the files have been selected for download, PCBoard will be ready
+      to begin the transfer.  When PCBoard notifies you that the file
+      transfer is ready to begin, you need to use you communications software
+      to begin the download.  Often this is done by pressing PGDN or ALT-R on
+      your keyboard and selecting the same protocol as the bulletin board is
+      using.  See your the manual for your communications software to determine
+      what steps are actually necessary to begin the download process.
+@X0F
+   Examples
+@X03
+      To download a file called TEXTEDIT.ZIP, you could issue the following:
+@X0E
+           D TEXTEDIT.ZIP
+@X03
+      To download NEWUTIL.ZIP and ISD320.ZIP using the G protocol letter, you
+      would enter:
+@X0E
+           D NEWUTIL.ZIP ISD320.ZIP G
+@X03
+      To download NEWUTIL.ZIP and immediately disconnect once the file
+      transfer is complete, enter:
+@X0E
+           D NEWUTIL.ZIP BYE
+
+@X0F
+   Additional Information for Batch Transfers
+@X03
+      Once all of the filenames have been entered, you have the option to
+      edit the batch of files to send.  If you decide to edit you batch you
+      will be able to add, remove, and list their batch.
+@X0F
+   Editing The List of Files to Download
+@X03
+      Once you have entered the filenames to be downloaded a screen will be
+      displayed which shows how many files are in the batch, how many total
+      bytes in the batch, and which protocol has been selected.  At this
+      point you may edit the batch transfer, abort the transfer, or begin
+      the transfer by pressing ENTER.
+
+      If the batch transfer is aborted, the files will remain flagged.  This
+      enables you to do something else on the system and then return and
+      download the files again without having to type in the filenames again.
+      When executing the D or DB commands while files are flagged for
+      download, you will be asked if you want to download the flagged files.
+      If you answer "N" to that question, the files will be un-flagged.
+
+      If you decide that you would like to edit the batch they will be able
+      to add files to the batch, remove files from the batch, or list all
+      files currently in the batch.
+@X0F
+   Edit Batch Subcommands
+
+      @X0BA               Add a file to the batch.  @X03Allows you to add one or more
+                      files to the batch.  To stop adding files to the batch,
+                      you must press ENTER at an Enter filename to Download
+                      prompt.
+
+      @X0BR               Remove a file from the batch.  @X03Allows you to remove a
+                      filename from the batch.  To remove a file you must
+                      enter the number to remove from the batch.  To get the
+                      number in the batch you should list the batch.
+
+      @X0BL               List files in the batch.  @X03Lists all filenames that are
+                      currently in the batch and their corresponding number
+                      in the batch.  If you had flagged TCRN10.ZIP and
+                      LSTR312.ZIP listing you batch would look like the
+                      following:
+@X0A
+  File Selected:  (1)   TCRN10.ZIP     32,612 bytes,  0.5 minutes (approximate)
+  File Selected:  (2)   LSTR312.ZIP   532,981 bytes, 40.1 minutes (approximate)
+
+      @X0BP               Protocol letter. @X03 To use a protocol that is different
+                      than your default protocol for this transfer, enter
+                      this letter at the prompt.  You will be shown a list of
+                      protocols that are available.  Choose the protocol that
+                      you want to use from this list.
+@XFF
+

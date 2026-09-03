@@ -1,2 +1,165 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3FGroup Chat and Commands                                              @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X03
+@X0E
+      From this prompt, you can execute several commands related with group
+      chatting.  If you wish to return to chat mode where you can communicate
+      with other users, press ENTER at the Chat Command prompt.
+
+@X0F   Command Summary
+@X0B
+      CALL            Call a user to chat.
+      CHANNEL         Change channels.
+      ECHO            Enable echo mode.
+      G @X03or @X0BBYE        Goodbye.
+      HANDLE          Change your handle.
+      IGNORE          Ignore input from one or more nodes.
+      MENU            Display menu for chat commands.
+      MONITOR         Toggle the monitoring of public channels.
+      @X0BNOECHO          Disable echo mode.
+      PRIVATE         Make discussion private.
+      PUBLIC          Make discussion public.
+      Q @X03or @X0BQUIT       Exit chat mode.
+      SEND            Send a private message.
+      SHOW            Show users currently chatting.
+      SILENT          Toggle silent mode.
+      TOPIC           Change current topic.
+      WHO             Show who is currently on-line.
+      X               Toggle expert mode.
+@X0F
+   Commands Available While In Chat
+
+      @X0ANOTE:  All commands can be abbreviated to just two letters.
+
+      @X0BCALL            Call a user to chat.@X03  This command lets you invite
+                      other users into your chat session.  These users may
+                      already be in group chat, or they may be out in the
+                      main part of the BBS.  As long as the user has not made
+                      himself unavailable and is not busy performing other
+                      tasks, you may issue a CALL command to request the
+                      caller to chat.  It should be understood that the
+                      caller may ignore your offer to chat if they so wish.
+
+      @X0BCHANNEL         Change channels.@X03  A Channel is a separate group of
+                      people or topic of conversation.  There are 255
+                      channels available.  Use the SHOW command to see what
+                      conversations, by topic, are currently taking place and
+                      who is involved in each.  The MONITOR command will let
+                      you listen in on all non-private channels to help you
+                      decide which conversations you might wish to join.
+
+      @X0BECHO            Enable echo mode.@X03  By default, echo mode is turned on.
+                      If you used the NOECHO command, then you may turn on
+                      echo mode again, by using this command.
+
+      @X0BG @X03or @X0BBYE        Goodbye. @X03 This is the same as the (G)oodbye command at
+                      the main command prompt.
+
+      @X0BHANDLE          Change your handle. @X03 A handle simply allows you to
+                      identify yourself without requiring that your entire
+                      name be used.  A handle does not hide your identity (as
+                      seen by a WHO command in PCBoard) but merely provides
+                      you the ability to be known by another name while in
+                      chat.  NOTE:  Depending on the system configuration,
+                      this command may be disabled.  If it is disabled,
+                      PCBoard will use your first name as your handle.
+
+      @X0BIGNORE          Ignore input from one or more nodes.@X03  The IGNORE
+                      command allows you to ignore the input coming from one
+                      or more nodes.  If a caller in your channel is becoming
+                      a nuisance, that caller can be ignored.  However,
+                      ultimately the better solution would be to switch to
+                      another channel and make it private.
+
+      @X0BMENU            Display menu for chat commands.@X03  You may display the
+                      menu of chat commands at any time by using this
+                      command.  It works even if you are in expert mode.
+
+      @X0BMONITOR         Toggle the monitoring of public channels.@X03  This command
+                      will allow you to toggle monitoring of public channels.
+                      If you turn monitor mode on then you will be seeing all
+                      chat that is occurring in all public channels.  If you
+                      do not want to monitor all public channels, enter the
+                      channels that you do want to monitor when prompted.
+
+      @X0BNOECHO          Disable echo mode.@X03  The NOECHO command allows you to
+                      disable the input echoing that normally occurs.  With
+                      echoing enabled, your system must be capable of
+                      handling ANSI cursor position commands and even then
+                      you are limited to ONE line of text that can be typed
+                      ahead while another caller is typing.  With echoing
+                      disabled, ANSI is no longer required and since a local
+                      split screen is used, none of the text is transmitted
+                      until you press enter so you may type more than a
+                      single line of text while others are typing.  Use the
+                      ECHO command to re-enable echoing.
+
+      @X0BPRIVATE         Make discussion private.@X03  A Private Discussion prevents
+                      others not already in the channel from monitoring or
+                      joining.  Use this command to make the channel that you
+                      are in private.  If you want to make the current
+                      channel public, you would use the PUBLIC command.
+                      Channel #1 can never be made private which leaves it
+                      open for newcomers to the chat.
+
+                      NOTE:  The CALL command is the ONLY way that someone
+                      outside of a Private Discussion can join.  Once you
+                      CALL the user, they may join the private discussion.
+
+      @X0BPUBLIC          Make discussion public.@X03  An Open Discussion is one in
+                      which others may freely join.  During the course of an
+                      open discussion you may notice other callers joining
+                      in.  An announcement of each arrival or departure is
+                      made to let you know who is in chat.  The SILENT
+                      command can be used to turn these announcements off.
+
+      @X0BQ @X03or @X0BQUIT       Exit chat mode.@X03  Exits you out of chat mode back to the
+                      main part of the bulletin board system.
+
+      @X0BSEND            Send a private message.@X03  This command can be used to
+                      privately send a one line message to another caller
+                      that is already in group chat.  You are asked for the
+                      node number that you want to send the message to.  The
+                      caller that you send the private message to needs to be
+                      in chat mode but does not have to be in the same
+                      channel as yourself.
+
+      @X0BSHOW            Show users currently chatting.@X03  This command will show
+                      you all active channels, what users are in each
+                      channel, and what the topic of discussion is.
+
+      @X0BSILENT          Toggle silent mode.@X03  If you wish to ignore the system
+                      messages which tell you which users have joined or left
+                      the channel, you would toggle silent mode on using this
+                      command.  By default, silent mode is off.
+
+      @X0BTOPIC           Change current topic.@X03  Each channel can have a topic or
+                      title.  You can change the topic of the current channel
+                      by using this command.
+
+      @X0BWHO             Show who is currently on-line.
+
+      X               Toggle expert mode.@X03  See the X user command.
+@X0F
+Description
+@X03
+      Pressing ENTER at the Chat Command prompt takes you into group chat
+      where you may begin typing.  Anyone else in that channel will see what
+      you type as you type it.  However, only one person has the focus.  The
+      focus is used so that only one person can be typing while others, if
+      they do type, do not interrupt.  However, you may type up to one line
+      ahead when you do not have the focus.  Once you have the focus, any
+      text that you have typed will be sent out and you can continue to type
+      because you have the focus.
+
+      The only way you can lose the focus once you have it is by being
+      inactive.  If you are on the first character of a line, after two
+      seconds of not typing, you will give up the focus to someone else in
+      the channel so that they may type.  Anywhere else on the screen (such
+      as the middle of the screen) you can be inactive for 10 seconds before
+      the focus will be given to someone else.
+
+      While you are chatting, you can return to the Chat Command prompt by
+      pressing the ESC key.
+

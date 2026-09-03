@@ -1,25 +1,22 @@
-@X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
-@X17³ @X1ADate: @X1F@SYSDATE@@X1E@BOARDNAME:49C@@X1ATime: @X1F@SYSTIME@ @X17³@X07
-@X17³@X13ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú  ú ú ú ú ú ú ú ú ú ú ú ú ú ú ú@X17³@X07
-@X17³ @X1E(@X1CF@X1E)@X1File Directories      @X1E(@X1CL@X1E)@X1Focate a filename     @X1E(@X1CT@X1E)@X1Fransfer protocol        @X17³@X07
-@X17³ @X1E(@X1CD@X1E)@X1Fownload a file       @X1E(@X1CN@X1E)@X1Few file scan         @X1E(@X1CTEST@X1E)@X1F a file before d/l   @X17³@X07
-@X17³ @X1E(@X1CU@X1E)@X1Fpload a file         @X1E(@X1CZ@X1E)@X1Fippy Text Search                                @X17³@X07
-@X17³                                                                            ³@X07
-@X17³ @X1E(@X1CR@X1E)@X1Fead messages         @X1E(@X1CC@X1E)@X1Fomment to SysOp      @X1E(@X1CTS@X1E) @X1FText search msgs.     @X17³@X07
-@X17³ @X1E(@X1CE@X1E)@X1Fnter a message       @X1E(@X1CQ@X1E)@X1Fuick Message Scan    @X1E(@X1CQWK@X1E) @X1FTransfer QWK mail    @X17³@X07
-@X17³                                                                            ³@X07
-@X17³ @X1E(@X1CJ@X1E)@X1Foin a conference     @X1E(@X1CA@X1E)@X1Fbandon conference    @X1E(@X1CSELECT@X1E) @X1Fconfs. to scan    @X17³@X07
-@X17³                                                                            ³@X07
-@X17³ @X1E(@X1CB@X1E)@X1Fulletins             @X1E(@X1CX@X1E)@X1Fpert mode toggle     @X1E(@X1CO@X1E) @X1FPage SysOp             @X17³@X07
-@X17³ @X1E(@X1CS@X1E)@X1Fcript Questionnaire  @X1E(@X1CG@X1E)@X1Foodbye (Logoff)      @X1E(@X1CI@X1E)@X1Fnitial logon screen     @X17³@X07
-@X17³ @X1E(@X1CM@X1E)@X1F Toggle color mode   @X1E(@X1CW@X1E)@X1F Change your info    @X1E(@X1CP@X1E)@X1Fage length setting      @X17³@X07
-@X17³ @X1E(@X1CV@X1E)@X1Fiew your statistics  @X17                                                   ³@X07
-@X17³  @X17                                                                          ³@X07
-@X17³ @X1E(@X1CCHAT@X1E)@X1F with other users               @X1E(@X1COPEN@X1E)@X1F a door                        @X17³@X07
-@X17³ @X1E(@X1CNEWS@X1E)@X1F Display system news            @X1E(@X1CUSER@X1E)@X1F List conference members       @X17³@X07
-@X17³ @X1E(@X1CALIAS@X1E)@X1F Turn alias on/off             @X1E(@X1CLANG@X1E)@X1F Change language for the BBS   @X17³@X07
-@X17³                                                                            ³@X07
-@X17³         @X1EType @X1CHELP [command] @X1Efor help on a command listed above             @X17³@X07
-@X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
-ÿ
+@CLS@@X07
+                         ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+                        ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+                       ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+                      ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+      @X50ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X5D¿@X07
+      @X50³ @X5FÜÜÜÜ   ÜÜÜ  ÜÜÜÜ                     Ü               Ü   ÜÜÜÜÜ @X5D³@X07
+      @X50³  @X5FÛ  Û Û   ß  Û  Û                    Û              ßÛ   Û     @X5D³@X07
+      @X50³  @X5FÛÜÜß Û      ÛßßÜ ÜßßÜ ÜßßÜ  ÜßßÜ ÜßßÛ       Û   Û   Û   ÛßßßÜ @X5D³@X07
+      @X50³  @X5FÛ    Û   Ü  Û  Û Û  Û Û  Û  Û    Û  Û        Û Û    Û   Ü   Û @X5D³@X07
+      @X50³ @X5Fßßß    ßßß  ßßßß   ßß   ßß ß ß     ßßßß        ß   ßßßßß  ßßß  @X5D³@X07
+      @X50À@X5DÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X08              ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+             ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+@X07            ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+           ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+          ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+
+@X0D                  @X28ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X2A¿@X07
+@X0E                  @X28³ @X2FYour SysOp is: { your name }           @X2A³@X07
+@X0E                  @X28À@X2AÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
 

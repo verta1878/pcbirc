@@ -1,5 +1,48 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³ @X1F           Running PCBoard version 15.2 by Clark Development               @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+The following table lists the country code and supported code pages for each
+country.  The first code page listed for each country is the system default
+when a CODEPAGE statement is not specified in the CONFIG.SYS file.  The
+CONFIG.SYS file does not change if the country information in the System Setup
+folder is changed.  If your country is not listed, select the most similar
+country supported.
+
+                         Country Code         Code Pages
+                         ------------         ----------
+Arabic-speaking              785               864 (Note 1), 437
+                             785               864 (Note 1), 850
+Asian English                099               437, 850
+Australia                    061               437, 850
+Belgium                      032               437, 850
+Brazil                       055               850, 437
+Canada (French-speaking)     002               863, 850
+Czechoslovakia               042               852, 850
+Denmark                      045               865, 850
+Finland                      358               437, 850
+France                       033               437, 850
+Germany                      049               437, 850
+Hebrew-speaking              972               862 (Note 1), 437
+                             972               862 (Note 1), 850
+Hungary                      036               852, 850
+Iceland                      354               850, 861
+Italy                        039               437, 850
+Japan                        081               932 (Note 2), 437, 850
+                             081               942 (Note 2), 437, 850
+Korea                        082               934 (Note 2), 437, 850
+                             082               944 (Note 2), 437, 850
+Latin America                003               437, 850
+Netherlands                  031               437, 850
+Norway                       047               865, 850
+Poland                       048               852, 850
+Portugal                     351               860, 850
+Republic of China            088               938 (Note 2), 437, 850
+                             088               948 (Note 2), 437, 850
+Spain                        034               437, 850
+Sweden                       046               437, 850
+Switzerland                  041               437, 850
+Turkey                       090               857, 850
+United Kingdom               044               437, 850
+United States                001               437, 850
+Yugoslavia                   038               852, 850
+
+Note 1   Requires specialized system software.
+Note 2   Requires specialized hardware and system software.
 

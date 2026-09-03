@@ -53,6 +53,13 @@ pcb15everything.zip
 !attic/*.ZIP
 !attic/*.zip
 
+
 # Allow extracted-installer parity binaries under target/
 !pcb1541/install/dist/target/**/*.EXE
 !pcb1541/install/dist/target/**/*.exe
+!pcb1541/install/dist/target/**/*.COM
+!pcb1541/install/dist/target/**/*.com
+!pcb1541/install/dist/target/**/*.DLL
+!pcb1541/install/dist/target/**/*.dll
+!pcb1541/install/dist/target/**/*.BIN
+!pcb1541/install/dist/target/**/*.bin

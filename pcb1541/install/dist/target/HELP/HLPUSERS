@@ -1,2 +1,51 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(USER) Listing                                                       @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command allows you to search the user file for a text string.
+      PCBoard will display the user's name, location, and the last date the
+      user logged into the system for each matching record.
+@X0F
+   Subcommand
+@X03
+      @X0B(text)          Text to search for.@X03  You may specify any text to search
+                      for. PCBoard analyzes this input, scans the USERS file,
+                      and displays the name, city/location, and last date on
+                      for all matching records.  The search string you enter
+                      could be part of a first or last name, or even part of
+                      a city name.  This search string may also be Boolean if
+                      you need to restrict your search further.
+@X0F
+   Description
+@X03
+      This command allows you to search the user file for a text string.  You
+      are responsible for inputting the text string. PCBoard provides a list
+      of users with the text string found somewhere in their records.  In the
+      list are the user's name, location, and the last date the user logged
+      into the system.
+
+      NOTE:  PCBoard does not display any sensitive or confidential
+      information with this command.  Only the name and location (City and
+      State) of each user found will be displayed.  In addition, only fields
+      which do not contain confidential information will be searched in the
+      users record (e.g., the password field is not searched).
+@X0F
+   Example
+@X03
+      If you wanted to find everyone from Evergreen, Nevada, you may want to
+      search all user records for the word evergreen.  If this was the case,
+      you would enter the following at the command line.
+@X0E
+          USER EVERGREEN
+@X03
+      At this point you will may see the following on your screen:
+
+@X0F          User Name                  Location              Last On
+@X0F          ------------------------  ------------------------  ---------------
+@X07           MARK HAMPTON              EVERGREEN, NEVADA         10-09-93 03:47
+           CYRUS NEILSON             EVERGREEN, NV             04-23-94 21:12
+           MAX SANCHEZ               EVERGREEN,NV              12-13-93 14:21
+           GERALD CARPENTER          EVERGREEN,NEVADA          05-13-91 14:04
+           ALLEN ROBERTS             EVERGREEN, AZ             06-11-93 03:31
+@XFF

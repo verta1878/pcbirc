@@ -1,2 +1,44 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(K)ill a Message                                                     @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command will mark a message for deletion making any message
+      inactive and unreadable.  The actual message is not physically removed
+      until that message base is packed.
+@X0F
+   Subcommands
+
+      @X0B[msg. num.]      The message number you wish to kill or make inactive.
+                      @X03 This subcommand is only available if you are issuing
+                       the K command from a conference command prompt.
+@X0F
+   Description
+@X03
+      Eventually messages on your system will become outdated or no longer
+      useful.  You can delete any message on your system by using this
+      command.  There are only two prompts where you may delete a message.
+      At any conference command prompt and at the read message prompt.
+
+      If a message has a security option of RECEIVER ONLY,  the recipient and
+      the sender of the message are the only ones that may kill it.  If a
+      message is marked as SENDER PASSWORD, only the author of the message
+      may kill it.  Finally, on messages that are addressed as GROUP
+      PASSWORD, only the users with the proper password may kill the message.
+      The SysOp may kill any message even if the message is protected via
+      password.
+
+@X0F
+   Examples
+@X03
+      If you are at an End of Message Command prompt, type K to make the
+      current message inactive.
+
+      Sometimes you may already know the number of the message you wish to
+      delete.  For example, if you wanted to delete message number 3292 in the
+      current conference, type the following at the conference command prompt.
+@X0E
+          K 3292
+
+@XFF
+

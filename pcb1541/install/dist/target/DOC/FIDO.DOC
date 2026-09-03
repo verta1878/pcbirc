@@ -1,33 +1,2358 @@
-@X0EPricing and Availability Information
-@X04฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿฿
-@X07        Use this space to describe your products' pricing and
-        availability.
 
-        PCBoard is available in the following node sizes:
+Introduction
+=============================================================================
 
-            @X09ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ@X07
-            @X09ณ  @X0FPackage size         @X09ณ  @X0FPrice        @X09ณ@X07
-            @X09รฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤด@X07
-            @X09ณ @X0F   /2 node@X0E          @X09  ณ  @X0B$@X0F 150.00 USD@X09 ณ@X07
-            @X09ณ @X0F   /2 node@X0E with PPLC@X09  ณ  @X0B$@X0F 200.00 USD@X09 ณ@X07
-            @X09ณ @X0F   /5 node@X0E          @X09  ณ  @X0B$@X0F 250.00 USD@X09 ณ@X07
-            @X09ณ @X0F   /5 node@X0E with PPLC@X09  ณ  @X0B$@X0F 300.00 USD@X09 ณ@X07
-            @X09ณ @X0F  /10 node@X0E          @X09  ณ  @X0B$@X0F 350.00 USD@X09 ณ@X07
-            @X09ณ @X0F  /10 node@X0E with PPLC@X09  ณ  @X0B$@X0F 400.00 USD@X09 ณ@X07
-            @X09ณ @X0F  /25 node@X0E with PPLC@X09  ณ  @X0B$@X0F 550.00 USD@X09 ณ@X07
-            @X09ณ @X0F  /50 node@X0E with PPLC@X09  ณ  @X0B$@X0F 750.00 USD@X09 ณ@X07
-            @X09ณ @X0F /100 node@X0E with PPLC@X09  ณ  @X0B$@X0F 950.00 USD@X09 ณ@X07
-            @X09ณ @X0F /250 node@X0E with PPLC@X09  ณ  @X0B$@X0F2000.00 USD@X09 ณ@X07
-            @X09ณ @X0F/1000 node@X0E with PPLC@X09  ณ  @X0B$@X0F7000.00 USD@X09 ณ@X07
-            @X09ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู@X07@X07
+  Welcome to PCBFido!  Our implementation of Fido will operate as both a
+  hub and as a site.  The Fido technology gives you the ability to exchange
+  mail from all around the world or just between a few systems in the same
+  valley.  The goal of this documentation is two fold.
 
-        Orders can usually be shipped the same day, and arrival is
-        within 2-3 days anywhere in the world.
+  First of all, for those SysOps who are already familiar with the Fido
+  technology and the world of terminology surrounding it, you'll find the
+  translation quite easy because the need for batch files to switch between
+  a mailer and a BBS are now gone.  Most of your concerns will revolve
+  around getting familiar with the options in PCBSetup.
 
-        If you wish to order PCBoard, please call voice at 801.261.1686
-        FAX at 801.261.8987 or the Salt Air BBS at 801.261.8976.  If you
-        are within the continental US or Canada you may also call toll-free
-        to 800.356.1686
+  Secondly, for those SysOps who are unfamiliar with Fido technology, this
+  document will guide you though (step-by-step) on how to get connected with
+  FidoNet.  Ah, there is that magical word--FidoNet.  What is it?
 
-        Thank you for choosing PCBoard Professional Bulletin Board Software!
-
+  The term FidoNet refers to a large number of BBSs around the world which
+  are dedicated to FidoNet activity.  This very large group of BBSs are
+  broken down by three distinct characteristics.  A ZONE basically defines
+  the continent the BBS is from (North America, South America, Europe, etc.).
+  Furthermore, the NETWORK is a smaller group of BBSs within the ZONE.  It
+  is not uncommon to have several hundred networks in a zone.  The last
+  defining characteristic is called the NODE.  This is a unique number
+  within each network.  For example, network #35 may have nodes numbered
+  1, 2, 3, and 4.
+
+  We now know all BBSs use a unique number to identify themselves.  This
+  particular number is called the node address and follows the format:
+
+        <zone>:<network>/<node>
+
+  Seeing a node address of 1:512/52, you know the address refers to node
+  52, in network 512, which is in zone 1.  As you become more familiar
+  with FidoNet, you'll soon learn that zone 1 is North America, zone 2
+  is Europe, Zone 3 is Australia, and so on.  You'll want to skip over
+  the next section which talks about converting from an existing mailer
+  and go to the next section where we will help you will be guided in
+  step-by-step fashion on how to get started in FidoNet.
+
+I'm Already Running a Mailer
+============================================================================
+
+   Welcome to the wonderful world of Fido where the words "batch file" are
+   not in our vocabulary.  Seriously, it is entirely possible to setup Fido
+   without ever having to setup or run a batch file.  We should mention
+   that optional batch files can be created to use different Zmodem modules
+   or to even handle .TIC processing.
+
+   Since you have run a mailer before, no doubt you are already familiar with
+   the Fido terminology.  Your setup tasks mainly revolve around getting
+   familiar with the configuration layout of Fido within PCBSetup's Fido
+   Configuration menu option.  Take a moment to browse this menu item and
+   look over the options.  If you know the information like your node number,
+   or FREQ information, go ahead and fill it in.  You'll be up in no time.
+
+   In the advent, you have problems in getting PCBFido properly configured,
+   feel free to step through the areas of the documentation dedicated for
+   new users.  They will point out things you may not be aware of in PCBFido
+   which is different from other mailers.  A classic example of this is in
+   assigning an area tag to a conference.  This is done from the third
+   conference configuration screen as opposed to a data file.
+
+I'm New to Fido
+=============================================================================
+
+  Fido is unlike any other net mail technology.  It is complex.  At some
+  times it may even be confusing but realize this is a widely accepted method
+  of transferring messages and files between all types of bulletin board
+  packages.
+
+  We will take you step-by-step through a set of tasks required to get you
+  up and running.  After a major task is completed (e.g., setting up
+  netmail), we will show you how to test the new feature to make sure it is
+  working properly.  Attempting to connect to FidoNet one step at a time
+  and make sure each is working properly is the best way to get you up and
+  running.  A brief rundown of concepts we will cover in getting you
+  configured follows:
+
+    * Contacting the net coordinator / Get a node number assigned to you
+    * Setting up echo areas (message bases)
+
+  Before attempting to get FidoNet configured, make sure you are familiar
+  with the concepts behind it.  A good source for this information is a
+  guide called the Big Dummy's Guide to FidoNet which is written by Michael
+  Schuyler.  This guide is available on Salt Air (the support board for
+  PCBoard and CDC products) under the filename BIGDUMMY.ZIP.  A wealth of
+  information regarding the mentality of those participating in the network
+  and also a brief rundown of terminology is included.  You won't regret the
+  extra few minutes it will take to look it over.
+
+  Once you have a basic understanding of Fido, your next step is to get in
+  contact with the net coordinator so you can have a node number assigned
+  to you.  If you do not know what a net coordinator is at this point, stop
+  and read the Big Dummy's Guide (BIGDUMMY.ZIP).  It contains this
+  information and more.
+
+Contacting the Net Coordinator
+=============================================================================
+
+  Why do you have to contact the net coordinator?  He is the one who will
+  assign your node number to you.  An obvious question at this point is
+  who is the net coordinator and how can in get in contact him.
+
+  It would be wonderful if it were just a phone number to dial and say
+  "sign me up".  Unfortunately it's not going to be that easy.  The way
+  you contact the net coordinator is by sending him Fido netmail.  When
+  the request is sent via netmail, the coordinator knows you:
+
+    * Understand Fido enough to at least send netmail
+    * Have netmail working with your current Fido Configuration
+
+  Being able to do these tasks is proof that you know what you're doing so
+  the coordinator will be more than happy to get your node number to you.
+
+  To send the netmail to the coordinator the following steps must be
+  accomplished:
+
+    1. Find a FidoNet site in your area
+    2. Obtain a nodelist (the white pages of FidoNet)
+    3. Get the address of the net coordinator
+    4. Configure PCBoard to send netmail
+    5. Manually send netmail to the coordinator
+
+  Once these have been accomplished you have almost finished setting up
+  PCBFido.  Let's go find that coordinator.
+
+  1.  Find a FidoNet Site in Your Area
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Although this is just the first step, it can be the toughest to
+    accomplish.  To help make this step much easier, you can call
+    our support BBS (see the printed manual for contact information) and
+    execute the FINDFIDO command from the menu.  This PPE uses your area
+    code or country code to generate a list of Fido sites close to you.
+
+  2.  Obtain a Nodelist
+  ~~~~~~~~~~~~~~~~~~~~~
+    Utilizing the list obtained in step #1, contact one of the BBSs and
+    request a nodelist.  The nodelist may be located for download in the
+    file directories, so look there before leaving a message to the SysOp.
+
+  3.  Get the Address of the Net Coordinator
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    To send netmail to the network coordinator we need to know the proper
+    address where netmail is to be sent.  As a general rule, the coordinator
+    is assigned node 0 of the zone and network you want to join.  For
+    example, if the zone is 1 and the network is 311, you'll most likely
+    send mail to 1:311/0.  CONFIRM this with the SysOp of the Fido system
+    the nodelist was obtained from as this is vital information.
+
+  4.  Configure PCBoard to Send netmail
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Before configuring PCBoard to send netmail, make sure you have the
+    following:
+
+      * Nodelist
+      * Fido address of the net coordinator
+
+    Fido Menu Options/Settings
+    --------------------------
+    Our next step is to configure the bare essentials of Fido so we can
+    send a message to the net coordinator.  Load PCBSetup and select
+    Fido Configuration from the Main Menu.  This screen has the following
+    menu options:
+
+        A  Fido Configuration
+        B  Node Configuration
+        C  System Address
+        D  EMSI Profile
+        E  File & Directory Configuration
+        F  Archiver Configuration
+        G  Phone Number Translation
+        H  Nodelist Configuration
+        I  FREQ Path List
+        J  FREQ Restrictions
+        K  FREQ Magic Names
+        L  FREQ Deny Nodelist
+
+    1.  Starting with "Fido Configuration", the first menu option, mark each
+        of the following fields with a "Y":
+
+          Enable Fido Processing
+          Allow Node to Process Incoming Packets
+          Allow Node to Export Mail
+          Allow Node to Dial Out
+
+    2.  Press ESC to return to the main Fido Menu and select the "System
+        Address Option".  We need to enter a temporary node address to use
+        during the application process.  The zone and net information can
+        be gathered from the address for the echo coordinator.  For example,
+        if you were told the net coordinator's address is 1:311/0, the
+        1:311 is the zone and net information.  For the node number enter
+        9999.  Using the example information the entry looks like this:
+
+             1) 1:311/9999
+
+        Press ESC and save the changes.
+
+    3.  You're back at the Fido Main Menu.  Select "EMSI Profile".  This is
+        the menu option where we fill out all of the information about the
+        BBS, who the main SysOp is and so forth.  This information is used to
+        identify the caller when calling other Fido sites.  Fill in all of
+        the fields with the exception of the one titled "Flags".  This
+        information is provided by the net coordinator at a later time.
+        When finished entering the BBS Name, City, State, and so forth,
+        press ESC to return to the Main Menu.
+
+    4.  Next, select "File & Directory Configuration" from the Menu.  We
+        need to enter valid DOS subdirectories for the all of the fields
+        on this screen.  Recommended defaults are:
+
+           Dir of Incoming Packets     : ..\FIDO\IN\
+           Dir of Outgoing Packets     : ..\FIDO\OUT\
+           Dir to store Bad Packets    : ..\FIDO\BADPKTS\
+           Dir of Nodelist Database    : ..\FIDO\NODELIST\
+           Work Directory              : ..\FIDO\WORK\
+           Dir to store *.MSG          : ..\FIDO\MSG\
+
+        If you have installed PCBoard on a different drive or subdirectory,
+        make the appropriate changes.  Also, you may want to change the
+        location of the work directory to another drive if it has more
+        free space.  Keep that in mind if appropriate.  Press ESC when
+        you are happy with what is entered.
+
+        NOTE:  The directories you specify are automatically created
+               if they do not already exist.
+
+    5.  From the Fido Main Menu, select the "Phone Number Translation" option.
+        The phone numbers stored in the nodelist database will have the extra
+        information such as area code or country code stored in each entry.
+        In most situations, the coordinator will be a local call to you so
+        we need to make the appropriate entries to strip the unwanted numbers
+        from the phone numbers.
+
+        For example, assuming you are calling from Utah (area code 801) to
+        a coordinator in your calling area.  We need to strip the 1-801-
+        information from the beginning of the phone number.  This can be
+        done with the following entry:
+
+                    Find                                  Change To
+                 อออออออออ                               อออออออออออ
+              1) 1-801-
+
+        We've told Fido to find any number containing 1-801- and replace
+        it with nothing.  In essence we've managed to strip it out and now
+        we can place the local call properly.  Press ESC and make the
+        selection to save changes when the appropriate entry is made.
+
+    6.  The last thing we need to do from the PCBSetup configuration is to
+        configure where the uncompressed nodelist obtained earlier can be
+        found.  A good recommendation is to put it in the same directory
+        specified for the nodelist database in PCBSetup | Fido Configuration |
+        File & Directory Configuration.  Typically, the filename will end
+        in a number specifying what day of the year the nodelist is for.
+
+        In the field on the screen, enter the full path and filename (do NOT
+        specify a file extension) where the uncompressed nodelist can be
+        found.  The reason an extension is not specified is because it
+        changes on a daily bases.  The following illustrates:
+
+              Nodelist Path (No Extension)                     Diff Filename
+              ออออออออออออออออออออออออออออ                     อออออออออออออ
+           1) P:\PCB\FIDO\NODELIST\NODELIST
+
+        Press ESC and save changes when finished.  You will be returned to
+        the Fido Main Menu.
+
+    Compiling the Node List
+    -----------------------
+    With each Fido site being referred to by a bunch of numbers, we need
+    some way to look up the actual information for this site.  That is how
+    we will know what number to dial.  The nodelist contains this
+    information.  Early on in the configuration for Fido, one of your tasks
+    was to obtain the nodelist.
+
+    Looking at the list, you can see it is a standard ASCII file.  To look
+    up a site in this file would take a lot of time.  That is why many Fido
+    compatible mailers, including PCBoard, will compile the node list.   In
+    compiled form, sites can be looked up quickly by referring to an index
+    file.
+
+    Compiling the list is very easy with PCBoard.  The "Nodelist
+    Configuration" and "File & Directory Configuration" options from the
+    Fido menu tell PCBoard where the source nodelist can be found and where
+    the compiled nodelist database is stored respectively.
+
+    From the PCBoard call-waiting screen, press ALT-F.  The following
+    menu will appear in the middle of the screen:
+
+                ษออออออออออออออออออออออออออออออออออป
+                บ         Sysop FIDO Menu          บ
+                บ                                  บ
+                บ   1) Poll a Node.                บ
+                บ   2) Request a file.             บ
+                บ   3) Transmit a file.            บ
+                บ   4) Force next call.            บ
+                บ   5) View/Modify Queue.          บ
+                บ   6) Scan for outbound mail.     บ
+                บ   7) Process inbound mail.       บ
+                บ   8) Compile Nodelist.           บ
+                บ   9) Send Mail to a Node.        บ
+                บ                                  บ
+                บ   Enter selection:               บ
+                ศออออออออออออออออออออออออออออออออออผ
+
+    Notice number 8 on this menu.  When you select this option PCBoard
+    shells out and compiles the nodelist.  The display you see while the
+    list is compiled resembles the following:
+
+      Status : Processing nodelist file: C:\PCB\FIDO\NODELIST\NODELIST.350
+      Message: Processing Net: 1:251
+      % Done : ÛÛÛÛÛÛÛฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐฐ
+
+    This process will take several minutes to complete.  At any time,
+    pressing ESC aborts the compilation and returns you to the call-waiting
+    screen.
+
+    Adding a User Record for the Coordinator / Host
+    -----------------------------------------------
+    PCBFido keeps track of information about other sites you exchange mail
+    with in user records.  Before netmail can be sent, we have to have a
+    user record defined for the coordinator.
+
+    To add the user record for the net coordinator follow these instructions:
+
+      1.  Select "Users File Maintenance" from the Main Menu
+
+      2.  Select "Edit Users File".  At this point you should see the
+          SysOp record (#1).
+
+      3.  Press ALT-A to add a new user record.
+
+      4.  In the "Name" field, enter "~FIDO~" followed by the address of the
+          net coordinator.  To create an account for the Fido node 1:311/0,
+          enter the following:
+
+             ~FIDO~1:311/0
+
+      5.  Press F3 to view the Fido Form of the user record.  The screen
+          resembles the following:
+
+                                   Edit User Record (Fido Form)
+
+             Name        : ~FIDO~1:311/0
+
+             Passwords
+             Session        :
+             AreaFix        :
+             Packet         :
+             Phone Override :
+             Security Level : 0
+             Delete User    : N
+
+      6.  There are three possible passwords to be concerned with when
+          sending or receiving Fido messages: Session, AreaFix, and Packet.
+          For now, leave these blank.  Once you permanently become a part of
+          the network, you will probably have a session password assigned
+
+    Creating the Netmail Conferences
+    --------------------------------
+    The final setup step for sending netmail is to setup the netmail
+    conference, where all mail is sent and received, and what is coined as
+    the "Bad Mail" conference, where unplacable mail is stored.
+
+    What follows assumes knowledge of how to create a conference in PCBoard.
+    If this topic is unfamiliar, consult the index in the printed manual
+    for additional information.
+
+    When adding a new network to the system, many SysOps like to make
+    the starting conference number even.  A good example of this is making
+    the first conference number 100, 200, or 1000.  Following this type of
+    number scheme provides a good way to group conferences.
+
+    For the purpose of this example, let's make the starting conference
+    number 100.  We'll make conference 100 the "Bad Mail" conference and
+    101 will send/receive the netmail.
+
+    Create conferences 100 and 101 and configure them to be clones of the
+    Main Board (#0).  Once that is done, all that remains is to edit the
+    location of the message bases and configure a few options.  The following
+    breaks down all that must be done to configure the two conferences after
+    being cloned.
+
+    "Bad Mail" (Conference 100)
+
+      1.  Change the name/location of the message base to P:\PCB\FIDO\BADMSGS
+          or whatever is appropriate for your system.
+
+      2.  Press PgDn to edit the conference options.
+
+      3.  Change the "Type of netmail" option to 5 so PCBoard will know it is
+          a Fido Conference.
+
+      4.  Press PgDn again to get to the Fido Configuration screen for the
+          conference.  In the "Area Name" field, enter "BAD".  This name is
+          referred to as the tag for the area.
+
+    "Netmail" (Conference 101)
+
+      1.  Change the name/location of the message base to ..\FIDO\NETMAIL
+          or whatever is appropriate for your system.
+
+      2.  Press PgDn to edit the conference options.
+
+      3.  Using the list below, set the fields listed in the left column to
+          the response in the right column.
+
+             Make All Messages Private         Y
+             Force Echo on All Messages        Y
+             Type of Netmail Conference        5
+             Allow Internet (long) TO: Names   Y
+
+      4.  Press PgDn to get to the Fido configuration screen.  As the tag
+          or area name for the conference, enter "NETMAIL".
+
+    That's it.  We're now ready to test the netmail capabilities and send
+    the message to the coordinator.
+
+    Sending the Netmail Message
+    ---------------------------
+    Congratulations!  The hard part of the configuration has been done.
+    Now, we're ready to put the configuration through the paces and see
+    if there are any problems.  The test is sending a netmail message to the
+    hub and in receiving a reply.
+
+    1.  Log into the system as the SysOp.
+
+    2.  Join the netmail conference you setup in the "Creating the Netmail
+        Conferences" section.
+
+    3.  Use the "E" command to enter a message.  When asked who the message
+        is to be addressed to, enter
+
+           SYSOP@(Fido address) <+C> <+D>
+
+        Replace (Fido address) with the address of the coordinator.  For
+        example, to send mail to the coordinator of 1:311, the message is
+        addressed as:
+
+           SYSOP@1:311/0 <+C> <+D>
+
+        The +C and +D flags tell PCBFido to send the mail out as CRASH
+        (don't wait for an event to tell it when to dial out) and DIRECT
+        (ignore routing information).  Don't worry if you do not understand
+        the terms CRASH and DIRECT .  As you learn more about Fido and
+        continue on with the setup, these concepts will become more familiar
+        to you.
+
+    4.  When prompted for the "subject", enter something meaningful such as
+        "Request to become a new Fido node."
+
+    5.  Information about you and your system must be entered in the body
+        of the message.  A good format to follow is:
+
+          Request to have a node number assigned to my system:
+
+          NAME----------:
+          Address-------:
+          Voice Phone---:
+          Data Phone----:
+          Machine Make--:
+          Model - CPU---:
+          CPU Speed-----:
+          Multitasker---:
+          Lan Software--:
+          Operating Sys-:
+          Disk Storage--:
+          Mailer Softw--: PCBoard v15.21
+          Mail Tosser---: PCBoard v15.21
+          Modem Speed---:
+          Modem Mfr.----:
+          Modem Supports:
+          Modem Model---:
+          Online since--:
+          BBS Name------:
+          BBS Software--: PCBoard v15.21
+          Session Passwd:
+          AreaFix Passwd:
+          Compression---:(ZIP, LZH, ARJ, ARC, PAK)
+
+    6.  When all of the information has been entered, save the message.
+
+    7.  Logoff the BBS and return to the call-waiting screen.
+
+    8.  Press ALT-F to bring up the Fido menu.  Select "Scan for outbound mail"
+        from this menu.
+
+    9.  The screen will flash as PCBoard scans for mail to be exported.
+
+    10.  Next, check to see if the mail was found to be exported.  Select
+         "View/Modify Queue".  When you do, the Fido window will look
+         similar to the following example:
+
+                ษออออออออออออออออออออออออออออออออออป
+                บ     View/Modify Outbound Queue   บ
+                บ                                1 บ
+                บ   Filename : 28162430.PKT        บ
+                บ   Address  : 1:311/0             บ
+                บ                                  บ
+                บ   F) Flag  : CRASH               บ
+                บ   S) Send This Packet            บ
+
+    11.  Hit ESC until you get back to the call-waiting screen.  Now just
+    wait for about 1 minute or two when the dial timer (PCBSetup | Fido
+    Configuration | Fido Configuration) and PCBoard checks for any outgoing
+    mail.  A call will be made to your hub and the message is sent.  Expect
+    at least a couple of days before you receive a response via netmail.
+    Before you can receive a response, you must make sure Zone Mail Hour
+    is honored/configured on the system.
+
+    Configuring Zone Mail Hour
+    --------------------------
+    Now that the mail has been sent to the coordinator, zone mail hour must
+    be setup on your system so a reply can be received and a node number
+    assigned to your BBS.  It is during Zone Mail Hour that the mail assigning
+    your node number is sent.  Zone mail hour is one hour where every site
+    in the network is set to disallow human callers and netmail is
+    transferred.  Utilizing this design, netmail is sent in a quicker
+    fashion.
+
+    Setting up Zone Mail Hour is really quite easy.  Using PCBoard's event
+    editor, simply add an entry resembling the following:
+
+                       Batch     Begin  End                         Last
+             Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+             อออ  อออ  ออออออออ  อออออ  อออออ  อออออออ  ออออออออ  ออออออออ
+        1)    Y    M   MAILHOUR  02:00  03:00  YYYYYYY            00-00-00
+
+    That's all there is to defining the event.  The most difficult step for
+    you is determining when the Mail Hour is.  The POLICY4.TXT file
+    (obtained when using the FINDFIDO command on Salt Air) reveals
+    additional information about when zone mail hour is.  If you have
+    difficulty determining the time, contact a node in your area (refer to
+    FINDFIDO.LST if you must); they will have the answer.
+
+*** NOTE: Most likely this event will only need to run on one node.  If
+          this sounds like what you need, be sure to rename the MAILHOUR
+          file to MAILHOUR.### where ### is the node number.  For example,
+          if node 9 is to run the event, I'll rename the MAILHOUR file found
+          in the event batch file directory to MAILHOUR.009 (the leading
+          zeros are important).
+
+    Now just wait for a reply for coordinator.  Remember, it can take up to
+    two weeks to do all of the processing and assign a node number please be
+    patient.
+
+    Routing Mail to Your Hub
+    ------------------------
+    Normally, netmail is sent directly from one site to another.  While this
+    is fast, it can also be expensive.  A majority of Fido nodes will opt to
+    route the mail through their hub on the assumption his hub will route
+    it to the next step and so on.  While it is slower way to pass the mail
+    it is certainly more cost effective.
+
+    How do I tell PCBoard to route the mail.  To answer that question we
+    must revisit the event setup in PCBoard.  You'll recall we setup the
+    zone mail hour as an event.  Well, we will do something very similar
+    in order to route mail.  Add the following event to your system:
+
+                       Batch     Begin  End                         Last
+             Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+             อออ  อออ  ออออออออ  อออออ  อออออ  อออออออ  ออออออออ  ออออออออ
+        1)    Y    F   ALLDAY    00:00  23:59  YYYYYYY            00-00-00
+
+    Notice the "Mod" column has an F for (F)ido Event.  With a Fido event
+    you are defining the way PCBoard will behave during the begin time and
+    the end time of the event (midnight to 11:59pm in this example).  In
+    other words, we are going to alter the way PCBoard behaves during this
+    time period.  How are these actions defined?  Good question and one that
+    is answered by pressing F2 while the selection bar or cursor is on this
+    line.   When you press F2 you see a screen like the following:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   ออออออออออออออออออออออออออออออออออออออออออออ
+        1)
+
+    This is the screen where the activities or characteristics of the event
+    is defined.  Pressing F2 while the selection bar is in the Fido Verb
+    column brings up a list of valid Fido verbs.  Press F2 to see this list.
+
+                ฺฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฟ
+                ณAllow-Human-Callersณ
+                ณAllow-File-Requestsณ
+                ณAllow-Route-To     ณ
+                ณPoll               ณ
+                ณHold               ณ
+                ณCrash              ณ
+                ณRoute-To           ณ
+                ณFREQ               ณ
+                ภฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤู
+
+    Cursor down to "Route-To" and press ENTER.  Now TAB over to the
+    Parameters column.  In this column we tell it how to route the mail by
+    listing what mail will be routed and where it is to be routed.  We want
+    to route all mail so we use the wildcard (*:*/*).  The mail will be
+    routed to our hub which for the sake of this example is 1:311/0.  Our
+    entry now looks like this:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   ออออออออออออออออออออออออออออออออออออออออออออ
+        1) Route-To              *:*/* 1:311/0
+
+    Notice how we separated the two addresses with a space.  This is
+    IMPORTANT. It is also important to list both addresses.  If you do not,
+    PCBoard will not route the netmail.
+
+    Exit the editor by pressing ESC and choosing to save changes.  Also do
+    the same in the event editor.  Finally, return back to the call waiting
+    screen where we can begin testing the netmail to make sure it is routing
+    properly.
+
+    Log in to the system, join the netmail conference and leave the
+    following message:
+
+        TO: SYSOP@1:311/40
+      SUBJ: Testing Route Capabilities
+      --------------------------------
+      Testing 1...2...3...
+
+    Exit and save the message.  Now logoff.  While at the call waiting
+    screen press ALT-F for the Fido Menu and finally select "Scan for
+    outbound mail." After a brief pause and a screen flash you will be
+    return back to the call-waiting screen.  Press 5 to view the outbound
+    queue where and entry resembling the following appears:
+
+        ษออออออออออออออออออออออออออออออออออป
+        บ     View/Modify Outbound Queue   บ
+        บ                                1 บ
+        บ   Filename : 03172429.PKT        บ
+        บ   Address  : 1:311/0             บ  <--- Notice where this packet
+        บ                                  บ       is being sent.
+        บ   F) Flag  : NORMAL              บ
+        บ   S) Send This Packet            บ
+        บ   D) Delete                      บ
+        บ   N) Next                        บ
+        บ   P) Previous                    บ
+        บ   C) Clear Failed Connect      0 บ
+        บ                                  บ
+        บ   Enter selection :              บ
+        ศออออออออออออออออออออออออออออออออออผ
+
+    Look at the address where PCBoard will send the packet.  Is it your hub?
+    If not, you've misconfigured something in the event; Double check the
+    configuration.
+
+    Once the address is verified to be correct, go ahead an delete this
+    packet. There is no sense in sending out this message because it really
+    lacks any purpose other than for verification of your configuration.
+    Congratulations on a job well done.
+
+    Setting Up Echo Mail Areas
+    --------------------------
+    The procedure for adding the conferences for Fido echo areas include the
+    following steps:
+
+      1.  Get a FIDONET.NA file from your coordinator.
+      2.  Determine what areas you want to carry
+      3.  Prepare PCBoard to handle the increased conference load
+      4.  Use UUUTIL.EXE to add the additional conferences.
+
+    That is the shortened list of what you have to do.  Over the next few
+    paragraphs, detailed descriptions of each task is given.
+
+      1. Talk to your net coordinator.  He or she will have a copy of the
+         FIDONET.NA file which lists echo areas available.  Preferably, the
+         copy of the file received contains only those areas carried by the
+         hub.  If not, ask for a list of those too.
+
+      2. The FIDONET.NA file is nothing more than an ASCII file with each
+         line dedicated to an echo area.  On the left of the line is the
+         shortened name for the area.  This particular name is commonly
+         referred to as the AREA TAG.  On the right is a brief description
+         of the area and what topics are discussed there.
+
+         The next task is to trim down the .NA list to include only those
+         areas which interest you or your callers.  Don't be afraid to be
+         picky here as there are costs involved for your hub and maybe
+         yourself for pulling in a feed.  Trimming down the .NA list is done
+         by loading the file into a text editor--any editor will do.   When
+         you see an area you do not want, delete the line (CTRL-Y usually
+         works).  When done, save the file and exit the editor.  That's all
+         there is to it.
+
+         Look at this sample segment of the FIDONET.NA file:
+
+           ALTMED              Alternative Medicine
+           AMIGA               Amiga International Echo
+           AMIGAGAMES          Amiga Games
+           AMIGASALE           Amiga Hardware and Software ForSale Conference
+           AMIGA_CDROM         International AMIGA Discussions
+
+         Deciding I do not want the AMIGAGAMES area, I'll use the text editor
+         to make this section resemble the following:
+
+           ALTMED              Alternative Medicine
+           AMIGA               Amiga International Echo
+           AMIGASALE           Amiga Hardware and Software ForSale Conference
+           AMIGA_CDROM         International AMIGA Discussions
+
+         See how easy that was!
+
+      3. Next we must confirm the PCBoard setup is properly configured for
+         the hundred or maybe even 700 new conferences.  Make a
+         determination for a starting conference number; most SysOps elect
+         to start at an even number of 100.  Say for example the highest
+         conference currently in use is 78.  The common thing to do is to
+         start the Fido conferences at 100.
+
+         Once the starting conference number is determined, find out how
+         many areas you'll be carrying and add it to the starting conference
+         number. As an example let's assume you'll start the Fido
+         conferences at 200 and will be adding 212 areas.   This makes your
+         highest conference 412 so check PCBSetup | Configuration Options |
+         Messages to see if the "Highest Conference Desired" is set to the
+         an appropriate value.
+
+         If you have to change the number, load System Manager | User Info
+         File Maintenance | Change Conference Allocation to ensure the
+         USERS.INF file is up-to-date is upgraded too.
+
+      4. A utility is included with the PCBoard package called UUUTIL.  With
+         this utility the tedious task of setting up conferences is greatly
+         simplified.  Consult the following checklist before continuing:
+
+           1.  You have a FIDONET.NA file and have trimmed it down to list
+               only those areas you desire to carry.
+
+           2.  An adequate number of conferences is configured in PCBSetup |
+               Configuration Options | Messages.
+
+           3.  You know the starting conference number for the Fido
+               conferences.
+
+           4.  You have a copy of UUUTIL.EXE and know its location.
+
+         Now you're ready to import the new Fido conferences to your system.
+         The command line for UUTIL will be:
+
+            UUUTIL /START:[conf] /FIMPORT:[fidonet.na] /MSGS:[path]
+
+         The conference number entered after the /START parameter must be
+         your starting conference number for the Fido conferences.
+
+         The next parameter passed is /FIMPORT.  This parameter tells UUUTIL
+         where it can find the FIDONET.NA file.  The .NA file has
+         information about conference descriptions and tagnames.  The
+         tagname is used to generate the message base filenames, while the
+         descriptions of each tag are used for the actual conference names.
+
+         Finally, the last parameter tells UUUTIL where to store the message
+         bases for the new conference.  The following structure will be used
+
+            .\---A\
+                 B\
+                 C\
+                 .
+                 .
+                 Z\
+
+         Therefore, if you tell UUUTIL to store the messages in D:\FIDO\,
+         the message base for the ALTMED tag is stored in the D:\FIDO\A\
+         subdirectory because the tag begsins with an A.
+
+         NOTE: If you run UUUTIL and the screen clears but nothing seems to
+               have happened, make sure you are running UUUTIL from a
+               directory where a valid PCBOARD.DAT for your system exists.
+
+         When UUUTIL is running, you will see text indicating the progress
+         of the import which resembles the following:
+
+            Checking conference 100 ...
+            Inserting (!CHINESE) as conference 100 ...
+
+            Checking conference 101 ...
+            Inserting (12_STEPS) as conference 101 ...
+
+            Checking conference 102 ...
+            Inserting (4DOS) as conference 102 ...
+
+            Checking conference 103 ...
+            Inserting (60S_70S_PROGROCK) as conference 103 ...
+
+         Once a conference is "inserted" by UUUTIL, the following has
+         occurred:
+
+           1) The conference name has been updated
+
+           2) The message base location has been updated.  The format for
+              the messages file location is the first 5 characters of the
+              tag name followed by the conference number (e.g. TTTTT###).
+              Assuming the MSGS path was specified as D:\FIDO\, the message
+              base for the ALTMED conference is D:\FIDO\A\ALTME109.
+
+           3) The "Echo Mail in Conference" field is set to Y and the "Type
+              of Netmail Conference" field is set to 5.
+
+           4) Fido's configuration file has been updated with the
+              appropriate tag information.
+
+    What AreaFix Is and How to Use It
+    ---------------------------------
+    AreaFix is a function of hubs allowing you to subscribe and unsubscribe
+    to Fido areas via netmail.  The benefits to using this method are
+    numerous:
+
+      * The request is handled automatically which means you are not waiting
+        for the coordinator to process it.
+
+      * A current list of conferences you ARE carrying and those you CAN
+        carry is always available.
+
+      * You can make changes as often as you desire.  All that is required
+        is for you to send a netmail message to your hub.
+
+    We mention that an AreaFix request is simply a netmail message.  If that
+    is the case, there must be something special that allows the hub to
+    differentiate this netmail message from others.   Addressing the message
+    to "AREAFIX" is the key.
+
+    Because AreaFix requests alter your configuration, they are typically
+    protected by passwords different from your logon password.  The AreaFix
+    password is passed in the subject line of the message.  It's that
+    simple.
+
+    The following example illustrates how to address an AREAFIX request to
+    the hub at 1:311/0:
+
+         TO: AREAFIX@1:311/0
+       SUBJ: mypassword
+
+    Now that we know how to get the message to the hub all that is left to
+    understand is how to compose the request to do what we need to do.  PCBoard
+    supports the following AreaFix commands:
+
+      +<areaname>  Subscribe to <areaname>
+      -<areaname>  Stop receiving mail from tag <areaname>
+      %HELP        Request a help message listing available AreaFix commands
+      %LIST        Request a list of areas available to you
+      %QUERY       Request a list of areas to which you have selected
+      %UNLINKED    Request a list of areas to which you have not selected
+      %+ALL        Select all areas available to you
+      %-ALL        De-select all areas (stop receiving echo mail)
+
+    These commands must be entered beginning on the first line of the message
+    and at the beginning of a line.  For example, to get a list of areas
+    which are available to us but we have not selected for importing, send
+    the following netmail message:
+
+        TO: AREAFIX@1:311/0
+      SUBJ: mypassword
+      ----------------------------------------
+      %UNLINKED
+
+    That's all there is to it.  See how simple that is.  Realize that you
+    can specify more than one command per message.  All that is required
+    is for the command to be at the beginning of a line.
+
+    NOTE:  Some AreaFix processors do not like the messages to be addressed
+    in the manner AREAFIX@1:311/0.  Instead, they would much rather see
+    the hub information in the message body as shown in this example:
+
+        TO: AREAFIX
+      SUBJ: mypassword
+      ----------------------------------------
+      (1:311/0)
+      %UNLINKED
+
+    In short, do not be afraid to try some of the commands out.  There is
+    nothing you can do with AreaFix requests that will cause damage.
+
+    Setting Up The Archivers
+    ------------------------
+    In our initial steps to get netmail working we skipped over a few of the
+    Fido Configuration screens. It is now time to visit one of these screens
+    if we are to properly transfer echo mail.  You see, echo mail is sent in
+    compressed form and therefore we have to configure PCBoard to find
+    various compression and decompression programs and also tell it what
+    compression program is used by the hub.
+
+    In PCBSetup | Fido Configuration | Archiver Configuration, the programs
+    used for ZIP, ARJ, ARC, and LHA compression can be defined.  The
+    following screen captures shows how to setup each compression and
+    decompression program assuming they are located in C:\UTL\.
+
+         ZIP                     : C:\UTL\PKZIP.EXE
+         Switches for ZIP        : -a
+         UNZIP                   : C:\UTL\PKUNZIP.EXE
+         Switches for UNZIP      : -o
+         ARJ                     : C:\UTL\ARJ.EXE
+         Switches for ARJ        : a
+         UNARJ                   : C:\UTL\ARJ.EXE
+         Switches for UNARJ      : e
+         ARC                     : C:\UTL\ARC.EXE
+         Switches for ARC        : a
+         UNARC                   : C:\UTL\ARCE.EXE
+         Switches for UNARC      :
+         LZH                     : C:\UTL\LHA.EXE
+         Switches for LZH        : a
+         UNLZH                   : C:\UTL\LHA.EXE
+         Switches for UNLZH      : e
+
+    If the location of these programs differ on your system, make the
+    appropriate changes.  All of the programs shown on this screen are
+    either shareware or freeware.   Copies may be obtained from just
+    about any bulletin board including our support BBS.
+
+    NOTE:  PKZIP has a -m switch to move files.  This switch also has
+    a side-effect of physically removing empty subdirectories.  Therefore,
+    either do not use this switch or use the closely related -m- switch.
+
+Maintaining the Nodelist
+==============================================================================
+
+  Look at the nodelist as a phone book which is constantly being updated.  In
+  fact, updates are published on a weekly basis and come in two forms:  Full
+  and Update Only.
+
+  Electing to download the full nodelist on a weekly basis is asking quite a
+  bit since the file is nearly 4 megs in size.  An easier approach is to
+  obtain what is called the NODEDIF file.  This file contains the necessary
+  information to update the previous week's nodelist to the current edition.
+  Furthermore, this update file is significantly smaller than the full
+  list.
+
+  To utilize the smaller update file the following conditions must be met:
+
+     1.  The ASCII nodelist file (not just the compiled DBF) must exist.  This
+         is required because the DIF file records changes by line number to
+         this file.  PCBNLC updates the ASCII list and then recompiles
+         the database.
+
+     2.  The DIF file you get must be uncompressed and put in the directory
+         where the source ASCII nodelist is obtained.  As a reminder, this
+         subdirectory is determined in PCBSetup | Fido Configuration |
+         Nodelist Configuration.
+
+     3.  With items 1 and 2 taken care of, simply run PCBNLC /DIFF.  Running
+         PCBNLC with that command line switch recompiles the database.
+
+  NOTE:  If you miss a week when using the DIF files to update, the full
+  copy of the nodelist database must be downloaded.
+
+Fido Events
+============================================================================
+
+  At certain times of the day, you'll want to control the behavior of Fido.
+  Should it attempt to call a node between 2am and 4am?  Should all mail be
+  routed to a hub throughout the day?  To accomplish these tasks, you must
+  setup what is known as a Fido event.
+
+  These events are configured in the same place where the normal PCBoard
+  events are configured: PCBSetup | Event Configuration.  Specifying
+  an event type of "F" is the key as shown in this example:
+
+                   Batch     Begin  End                         Last
+         Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+         อออ  อออ  ออออออออ  อออออ  อออออ  อออออออ  ออออออออ  ออออออออ
+    1)    Y    F   ALLDAY    00:00  23:59  YYYYYYY            00-00-00
+
+  Fido events are similar to PCBoard's events but there are some differences
+  you need to be aware of:
+
+     1.  Batch files are not used for Fido events.  In place of the batch
+         file are what is known as Fido verbs.  Think of these are words
+         to describe actions that will take place during the event.
+
+     2.  The "Begin Time" and "End Time" fields define the window during
+         which the event is active.  With a normal event, these times specify
+         when the batch file may run.  Once run, the event is disregarded.
+         Fido events, on the other hand, are active during the entire time
+         period.
+
+  Do you need to setup an event?  The answer to that question is an emphatic
+  "YES".  In fact, one of the major requirements for becoming a Fido node is
+  to be available during Mail Hour.  Following the instructions in the "I'm
+  New to Fido" section, you will have already setup an event with the
+  special type of "M" for Mail Hour.  All other events are optional.
+
+  For this section of the document, we will focus on the three major Fido
+  verbs: POLL, ROUTE-TO, and CRASH.
+
+  POLL
+  ~~~~
+    A Poll instructs PCBFido to call another system and exchange any waiting
+    packets.  This is the ideal event to define when you call the hub at a
+    regular time every night.  For this example, let's assume the call is
+    made at 4:00am every day.  If so, we begin by making the appropriate
+    entry in the event editor:
+
+                      Batch     Begin  End                         Last
+            Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+            อออ  อออ  ออออออออ  อออออ  อออออ  อออออออ  ออออออออ  ออออออออ
+       1)    Y    F   CALLHUB1  04:00  04:45  YYYYYYY            00-00-00
+
+    You should notice two things right off.  First of all, the event
+    type/mode is "F" for Fido.  Secondly, the begin and end times define a
+    45 minute window.  It's a good idea to give yourself a little breathing
+    room in case the system is busy for a few minutes.  After 45 minutes of
+    unsuccessful attempts, we'll return to normal processing.
+
+    To setup the POLL verb, press F2 while on this line in the editor.
+    There you will see a screen like this:
+
+          Fido Verb             Parameters
+          อออออออออออออออออออ   อออออออออออออออออออออออออออ
+        1)
+
+    Press F2 once more to bring up a list of verbs.  Select POLL from the
+    list and press ENTER.  We've told PCBoard what to do but we have not
+    told it who to do it to.  Therefore, press TAB to move the cursor over
+    to the Parameters field.  In this field, enter the address to poll.
+    Multiple nodes can be polled by using a space to separate the addresses.
+    Look at the following examples:
+
+          Fido Verb             Parameters
+          อออออออออออออออออออ   อออออออออออออออออออออออออออ
+       1) POLL                  1:311/40
+
+          Fido Verb             Parameters
+          อออออออออออออออออออ   อออออออออออออออออออออออออออ
+       1) POLL                  1:311/40 1:311/25 1:311/18
+
+    The first example polls just the node identified with the address
+    1:311/40, while the second example polls an additional 2 nodes.
+
+    NOTE:  The dialing does not occur as soon as the event begins. Instead,
+    PCBFido is waiting for a scan or dial trigger to occur.  What is a dial
+    or scan trigger you ask?  Recall that PCBSetup | Fido Configuration |
+    Fido Configuration has fields to control how often PCBoard scans for
+    mail.  Make sure this is set to 1-5 minutes and you'll be set.
+
+  CRASH
+  ~~~~~
+    When mail is defined as CRASH mail, it will be sent the next time a
+    dial timer is triggered.  Otherwise, mail is considered to be NORMAL
+    or HOLD status.
+
+    The most popular use of a CRASH event is to hold packets in the queue
+    until such a time when phone rates are lower and packets that must
+    go out will go out at a lower cost.
+
+    To illustrate this concept let's look at a real-life example.  Clark
+    Development's node number is 1:311/40.  To conserve on phone costs,
+    we may want to send mail only to sites in our network (1:311/*) between
+    the hours of 8am and 11pm.  After 11pm, we'll send to any site.  This
+    is accomplished with the following event entries:
+
+                       Batch     Begin  End                         Last
+             Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+             อออ  อออ  ออออออออ  อออออ  อออออ  อออออออ  ออออออออ  ออออออออ
+        1)    Y    F   LOCAL     08:00  23:00  YYYYYYY            00-00-00
+        2)    Y    F   LONGDIST  23:01  07:59  YYYYYYY            00-00-00
+
+    Fido Verbs for the LOCAL Event:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   อออออออออออออออออออออออออออออออออออออออออออ
+        1) CRASH                 1:311/*
+
+
+    Fido Verbs for the LONGDIST Event:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   อออออออออออออออออออออออออออออออออออออออออออ
+        1) CRASH                 *:*/*
+
+    Can you see how our goal was accomplished.  The LOCAL event will be
+    active between 8am and 11pm and is configured to crash any node (*) in
+    the 1:311 network.  Just after 11pm, the LONGDIST event becomes active
+    and says it is okay to send mail to any site.
+
+    NOTE:  These CRASH settings can be overridden with netmail by adding the
+    <+C> modifier to the end of the TO line when entering the message.
+    Example:
+
+          To: SYSOP@1:311/40 <+C>
+
+  ROUTE-TO
+  ~~~~~~~~
+    To save on long distance phone calls, many Fido sites pull together and
+    pay a small fee to route mail through the hub.  How can you do this?
+
+    The trick to remember with this one is that you will have to first of
+    all define a Fido event to last all day.  If one is already defined,
+    we simply need to add a new Fido verb.
+
+    Let's work off the assumption you do not have an all-day Fido event
+    setup.  All that you really have to do is modify the begin and end
+    times to be equal to what is shown in this example:
+
+                       Batch     Begin  End                         Last
+             Act  Mod  File      Time   Time   SMTWTFS    Date      Date
+             อออ  อออ  ออออออออ  อออออ  อออออ  อออออออ  ออออออออ  ออออออออ
+        1)    Y    F   ALLDAY    00:00  23:59  YYYYYYY            00-00-00
+
+    All that remains is to update the Fido verbs to show the routing status.
+    This entails selecting the ROUTE-TO verb and adding the sites to route
+    followed by the site to route to as shown in this example:
+
+    Fido Verbs for the ALLDAY Event:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   อออออออออออออออออออออออออออออออออออออออออออ
+        1) ROUTE-TO              *.*/*  1:311/0
+
+    Notice how *.*/* was used to specify all sites.  Using the * as a wildcard
+    character allows any site to be matched by zone, net, or node as this
+    example so clearly illustrates.
+
+    Routing mail is obviously going to be slower so perhaps we can make this
+    a little more optimal by excluding one or more nodes from the routing
+    process.  We do this by using EXCLUSIONS as shown in this example:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   อออออออออออออออออออออออออออออออออออออออออออ
+        1) ROUTE-TO              *.*/*    1:311/0
+        2) ROUTE-TO              1:311/21 1:311/21
+        3) ROUTE-TO              1:311/40 1:311/40
+
+    Entries 2 and 3 are new to us so let's analyze what they add to the
+    picture.  Upon closely examining, we see these examples simply route
+    mail to themselves.  For example, mail destined to 1:311/21 will be sent
+    to 1:311/21.
+
+    NOTE: It is important to get these entries in the right order.  If the
+    *.*/* is not listed as the first ROUTE-TO entry, it will invalidate any
+    exclusions above it.  As a general rule, always put the least-specific
+    (wildcarding) entries at the top followed by the remaining entries.
+
+  OTHER FIDO VERBS
+  ~~~~~~~~~~~~~~~~ You may notice we have not covered all of the Fido verbs
+    in the section. The truth is these verbs are not utilized as often as
+    CRASH, ROUTE-TO, or POLL.  Therefore, this topic will describe each verb
+    and will rely on your knowledge gained from learning about the more
+    popular verbs.  If you have not had a chance to read up on the major
+    Fido verbs, do so before continuing.
+
+    Allow-Human-Callers
+    -------------------
+    This verb is designed to control times when human callers may call into
+    the system.  In the parameters field put either YES or NO depending
+    on the desired outcome.  For example, if I have an event defined
+    between 08:00 and 09:00 and want to disallow human callers, I will
+    make the following entry:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   อออออออออออออออออออออออออออออออออออออออออออ
+        1) Allow-Human-Callers   NO
+
+    NOTE: The default is to allow human callers at all times.  Therefore,
+    you must explicitly tell PCBoard when human callers are NOT desired.
+
+    Allow-File-Requests
+    -------------------
+    This verb determines if file requests (FREQs) are allowed.  The default
+    is to allow them but you may want to disable them during peak hours or
+    during zone mail hour.  In the "Parameters" field, enter one of the
+    following:
+
+      YES - Process all file requests (default)
+      NO  - Ignore all file requests
+
+    Example:
+
+           Fido Verb             Parameters
+           อออออออออออออออออออ   อออออออออออออออออออออออออออออออออออออออออออ
+        1) Allow-File-Requests   NO
+
+    Allow-Route-To (For nodes acting as a hub)
+    --------------
+    This verb tells PCBoard what nodes can have mail routed through you
+    during the event window.  In the "Parameters" field, enter a list of
+    Fido node addresses which will be considered valid.  Addresses must be
+    separated with spaces as shown in the following example:
+
+          Fido Verb             Parameters
+          อออออออออออออออออออ   อออออออออออออออออออออออออออออ
+       1) Allow-Route-To        1:311/100 1:300/10 3:12/25
+
+    NOTE:  Any nodes not listed will have their mail held until they come
+    and pick it up.
+
+Reference
+=============================================================================
+
+  This section is meant to be used as a reference.  Basically, it tells you
+  more about WHAT something does as opposed to HOW to do something.  For
+  example, all of Fido options in PCBSetup are outlined in this section.
+
+PCBSetup
+-----------------------------------------------------------------------------
+
+      Nearly every option and file location related to the Fido
+      implementation within PCBoard can be edited from the Fido
+      Configuration menu on PCBSetup's main menu.  Once this option is
+      selected, several other menu options become available.  The following
+      sections describe each option:
+
+  Fido Configuration
+  ------------------
+
+    Enable Fido Processing
+    ~~~~~~~~~~~~~~~~~~~~~~
+      This selection determines whether or not Fido processing is enabled
+      for the current node.  Valid options are:
+
+      	Y	Fido processing is enabled.
+      	N	Fido processing is disabled.
+
+    Import/Export Configuration File
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      The filename entered in this field is the Fido configuration file.
+      This file stores many of the other options/paths configured in
+      subsequent Fido screens.  The default for this file is a file named
+      PCBFIDO.CFG in the \PCB\MAIN\ subdirectory.
+
+    Name/Location of Fido Queue
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      The queue file contains information about what packets to send, when
+      they will go, and to which site they should be sent.  The filename
+      entered in this field determines the location of this file.  When two
+      or more nodes process Fido packets, it is advisable to insure the
+      nodes share the same queue file.
+
+    Import Immediately After File Transfers
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      An efficient way to handle the importing of mail is to disable all
+      scanning for mail to import (scan every 0 minutes) and enable
+      importing directly after a file transfer. Once mail has been exchanged
+      between two sites, any messages waiting for import will be in the
+      incoming subdirectory on your system.  The following are valid
+      responses:
+
+        Y       A scan for new mail will occur immediately after the call
+                takes place.  Any messages waiting to be imported are added
+                to the system at this time.  Make sure you disable the
+                periodic scanning of messages to import as it is pointless
+                when this switch is enabled.
+
+        N       PCBoard will not scan for mail to import upon hanging up the
+                phone.  Make sure periodic scanning of mail to import is
+                enabled (scan every 1 minute or greater) or messages will
+                never get added to the system.
+
+      NOTE:  When enabled, this setting forces a node to process mail even
+             if the node is configured to not allow the processing of
+             incoming packets.
+
+    Allow Node to Process Incoming Packets
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      This setting determines if the node will process incoming packets.  It
+      is entirely possible for a setup to exist where the node(s) on your
+      system will receive the incoming packets to a network drive and then
+      have a local-only node do all of the processing (importing into the
+      message bases).  The valid settings for this field are:
+
+        Y       The node will process all incoming packets as per the Scan
+                for Inbound Packets Frequency field also found on this
+                screen.
+
+        N       The node will NOT process incoming packets. Instead, some
+                other node will have to process or import the messages into
+                PCBoard's message base files.
+
+    Scan for Inbound Packets Frequency (min)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      PCBoard scans for incoming Fido packets while at the call-waiting
+      screen.  The value entered in this field determines how many minutes
+      elapse between each import scan.  Please understand that the elapsed
+      time is only counted while at the call-waiting screen. If a caller
+      calls in before the time has elapsed, the timer will be reset when the
+      caller hangs up.  For this reason, it is important to set the value in
+      this field to a small enough value that all mail can be processed.  A
+      setting between 2 and 10 is a good starting point.  2 minutes for the
+      busier system and 10 for a system which is not quite as busy. Valid
+      responses are between 1 and 1439.
+
+      NOTE: This option is only applicable if the node is configured to
+      process incoming Fido packets.
+
+    Allow Node to Export Mail
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+      A good recommendation for exporting Fido mail on your system is to
+      allow only one node to export.  All other nodes should be configured
+      to NOT export mail.  This setting controls whether or not the current
+      node will build the outbound packets. Valid responses are:
+
+      	Y	This node will export mail posted on the system.
+      	N	Mail will not be exported by this node.
+
+    Scan for Mail to Export Frequency (min)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      This selection is similar to scanning for inbound mail frequency in
+      that it tells PCBoard how often to scan your Fido conferences for
+      outbound mail (in minutes).  The same recommendations for inbound
+      frequency settings apply to outbound frequency settings.  Valid
+      responses are between 1 and 1439.
+
+      NOTE:  The value entered here only has relevance when
+      the node is configured to export mail.
+
+    Allow Node to Dial Out
+    ~~~~~~~~~~~~~~~~~~~~~~
+      This selection determines whether or not this node will dial out to
+      send packets or to poll another Fido node. Always make sure at least
+      one node is configured to dial out. Valid selections are:
+
+        Y       The node will be able to make calls to poll other nodes or
+                to send outbound mail.
+
+      	N	This node cannot dial-out.
+
+    Scan for Outbound Packets Frequency (min)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      If outbound packets exist and the current node is allowed to dial out,
+      the outbound packets will be sent to another node/hub.  The amount of
+      time which must elapse between each scan for outbound mail is
+      determined by this field. Remember, only the time spent at the
+      call-waiting screen counts. If you have the frequency set at every
+      five minutes and callers are logging in every 3 minutes to your
+      system, a successful scan will never occur.  Use a low enough setting
+      that mail can be sent as often as you desire.
+
+      NOTE:  Each time PCBoard dials a system it will only attempt that one
+      system.  This is an important fact to remember especially if
+      circumstances require multiple sites to be dialed. The next time the
+      timer triggers, the next system is called.
+
+    Default Zone and Net
+    ~~~~~~~~~~~~~~~~~~~~
+      When used in conjunction with the Default Net field, default values
+      will be used when entering an address at the Fido menu available from
+      the call-waiting screen.  Using the defaults you may enter just the
+      node number to poll and PCBoard will fill in the zone and net numbers
+      with the default values.
+
+      The defaults can be overridden simply by including the zone or net
+      information when polling.  Here are some examples based on a default
+      zone=1 and net=828
+
+        You Enter: 5
+        Site Polled: 1:828/5    (Use default values)
+
+        You Enter: 56/6
+        Site Polled: 1:56/6     (Default net overridden)
+
+        You Enter: 2:29/30
+        Site Polled: 2:29/30    (All defaults overridden)
+
+    Security Req'd for +C and +D Modifiers
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      When a netmail message is addressed with a <+C> on the addressee line,
+      it becomes what is known as crash mail. Crash mail ignores all event
+      information which means a message can be sent to any sight regardless
+      of the settings of the crash Fido verb in the current event.
+
+      Entering the <+D> flag on a netmail message forces PCBoard to ignore
+      any routing and instead go directly to the node.  With an
+      international network, this can be a very costly feature if put in the
+      power of unauthorized individuals.
+
+      If you give users access to the netmail conference, set an appropriate
+      security level to send Crash and Direct mail. It's not hard for a user
+      to abuse the netmail privileges if you let them.
+
+    Fido Logging Level (higher=more detail)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      This configuration option controls how detailed the log entries are
+      for Fido transfers and tossing.  The higher the number you enter, the
+      more detailed the entries in the caller logs will be.  The following
+      list summarizes the valid options for this field:
+
+      	0	Normal log entries
+      	1	More details for mail transfers
+      	2	More details for tossing
+      	3	More details for mail transfers and tossing
+      	4	Used only for debugging purposes
+      	5	Used only for debugging purposes
+
+      NOTE:  Because selecting a value higher than 1 results in more
+      information being logged, be aware that the size of logs on disk will
+      increase.
+
+  Create MSG with Outbound Packets Attached
+  -----------------------------------------
+      This option is designed for use with a configuration where PCBoard
+      will not be the one exporting the packets to other systems.  If
+      PCBoard will be the software used to transfer packets to other
+      systems, leave this option set to N.  Valid options for this field
+      follow:
+
+        Y       All outbound packets created by PCBoard are placed as file
+                attachment to MSG files.  Any MSG compatible mailer can then
+                transfer the mail to the necessary sites.  You must simply
+                tell the third-party mailer that the import/export directory
+                for MSG files is the directory specified by PCBSetup | Fido
+                Configuration | File & Directory Information.  Make sure the
+                /MSG switch is not specified in the PCBFIDO environment
+                variable when this option is selected.
+
+        N       PCBoard will handle both the exporting of mail and also the
+                dialing of other systems.  This is the default choice.
+
+  Enable Inbound Routing
+  ----------------------
+      The purpose of this option is to control whether inbound routing is
+      enabled.  With inbound routing enabled, a packet for another system
+      can be transferred to your system and held in your outbound queue for
+      transfer to another site.  In this type of configuration the system
+      operates in a "middle-man" type role.  This type of functionality is
+      usually only required by hubs.  Valid options for this field are:
+
+        Y       Packets can be routed from one system to another through
+                your system.
+
+        N       All packets sent to your system are imported. In other
+                words, all routing information is ignored.
+
+  Node Configuration
+  ------------------
+      When this menu option is selected, an editor screen is displayed where
+      nodes receiving outbound packets can be configured.  In other words,
+      this screen will list all nodes who will receive mail from your
+      system, what type of archiver they use, and what type of packet to
+      create.
+
+      The fields on this screen are as follows:
+
+      Node: Enter the node number to which mail will be sent.  The format
+      for the node number is <zone>:<net>/<node>.
+
+      Arc: Enter the archive type to be used for the node being defined.
+      Valid entries are 0-3: 0=ZIP, 1=ARJ, 2=ARC, and 3=LZH.  Make sure  the
+      proper entries are made in PCBSetup | Fido Configuration | Archive
+      Configuration for each type.  If you are unsure of the type to enter,
+      contact the SysOp of the node for the proper  setting.
+
+      Pkt: PCBoard's implementation of Fido supports two type of packets: 1)
+      Stone Age (type 1) and 2) Type 2+.  Select the appropriate type  for
+      the node being defined.  If unsure of which selection to make, contact
+      the SysOp of the node in question to get the proper setting.
+
+      NOTE:  The default settings for every site are to use ZIP compression
+      and Type 2+ packets.  If the site you are exchanging mail with uses
+      these values, an entry does not need to be made.  Only add an entry
+      when you must override the default values.
+
+  System Address
+  --------------
+
+      On this screen you must enter the Fido address/node number assigned to
+      you.  Remember the format is in the <zone>:<net>/<node> format. Use
+      ALT-I to add new fields where AKA (Also Known As) addresses can be
+      entered.
+
+      This selection allows you to tell PCBoard what your Fido system
+      address in the standard form of zone:net/node. You can make several
+      entries to allow for AKA's.  Why use AKAs?  If you are involved with
+      multiple Fido based networks, you'll have more than one node address
+      and will need the AKAs to properly identify your node.
+
+      A question that gets asked quite often revolves around node number
+      security.  If you can enter any node number, how can you stop someone
+      from enter your assigned node number and picking up your mail?  The
+      answer is that you cannot stop them from entering the number.
+      However, a password can be defined on the host system to prevent
+      others from acting as your node number.
+
+      Example system addresses follow:
+
+        10:125/56
+        1:583/5
+        6:5/82
+
+      NOTE:  If running more than one mail network, see The Fido Conference
+      Configuration Screen section for additional fields you may want to
+      change.
+
+  EMSI Profile
+  ------------
+      EMSI could be described as a negotiation protocol for Fido systems.
+      The information regarding your system name, city, phone number, baud,
+      etc. are sent during the negotiation sequence.
+
+      Normally this information is available in the node list but PCBoard
+      will gather the information from this screen and use it to override
+      what is in the nodelist.  It is important to enter the information
+      accurately because some hosts may use it to update node lists.  The
+      following describes each field:
+
+      BBS Name  : Enter the name of your BBS in this field.
+
+      SysOp Name: In this field, enter the name of the SysOp in the first
+      name / last name format.
+
+      City/State: Enter the city and state / province information where your
+      BBS operates.
+
+      Phone : Enter the phone number used for incoming Fido calls.  Make
+      sure you do not list your general BBS number if it is different from
+      the Fido number.
+
+      Baud: Enter the maximum baud rate your system supports.  In FidoNet,
+      9600 is generally considered to be a maximum value.  What you enter
+      here has no effect on what speed you call other systems; it is for
+      informational purposes only.
+
+      Flags : Ask your node coordinator what should be entered in the flags
+      field.  If in doubt, leave the default values.
+
+  File & Directory Configuration
+  ------------------------------
+      The Fido configuration needs the locations of several paths defined.
+      On this screen you will be entering the paths you want for incoming
+      packets, bad packets, etc.  Each directory location is described in
+      detail in the following sections:
+
+    Dir of Incoming Packets
+    ~~~~~~~~~~~~~~~~~~~~~~~
+      This field refers to the location where incoming mail packets are
+      stored.  Realizing that incoming packets can be large in size,
+      specifying a drive with plenty of free space.
+
+    Dir of Outgoing Packets
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Enter the subdirectory where compressed outgoing packets will be
+      stored before being sent out.
+
+    Dir to store Bad Packets
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+      In this field, enter the subdirectory where bad incoming packets will
+      be stored.  A packet is considered to be bad when any of the following
+      occur:
+
+        * Invalid password in the packet file
+        * File based errors such as unable to read the file from disk
+
+    Dir of Nodelist Database
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+      The compiled nodelist database is essential to Fido especially when
+      dialing out.  This field points to the directory where your nodelist
+      file is stored.  The location of the nodelist file to compile is
+      located in PCBSetup | Fido Configuration | Nodelist Configuration.
+
+    Work Directory
+    ~~~~~~~~~~~~~~
+      While processing mail packets temporary files will need to be created.
+      In this field, enter the subdirectory where these temporary files will
+      be stored.  Remember, the drive where this is located must have plenty
+      of free space available.
+
+      An ideal location to specify is one that is local to the node
+      processing mail.  This helps cut down on network traffic and therefore
+      increases the performance.
+
+    Dir to store *.MSG
+    ~~~~~~~~~~~~~~~~~~
+      A popular standard for messages in FidoNet is known as *.MSG
+      (star-dot-MSG).  Using the /MSG switch for the PCBFIDO environment
+      variable, you can have PCBoard keep a mirror image of all netmail
+      messages in MSG format.  Additionally, you may place .MSG files in
+      this subdirectory to be imported into the netmail message base.  The
+      use of MSG files are particularly useful for third party applications
+      and integrating them with your use of PCBoard.
+
+  Archiver Configuration
+  ----------------------
+      The Fido implementation in PCBoard supports four types of compressed
+      packets:  1) PKZIP, 2) ARJ, 3) ARC, and 4) LHA/LZH. This particular
+      screen is where the various compression programs are configured.  For
+      each archiver the program name for compressing and decompressing must
+      be specified.  Additionally, any necessary switches must be specified.
+      The following shows a sample of what may be entered:
+
+  Phone Number Translation
+  ------------------------
+      The Fido network spans many countries across the globe and relies on
+      being able to call one node from another. Phone numbers for each site
+      are obtained by searching the nodelist database.  Each entry in the
+      nodelist contains the FULL contact number for each site.  For example,
+      the phone number for a site in the United States may resemble this
+      entry:
+
+        1-352-555-1212
+
+      Why would any type of phone number translation have to be done if the
+      full phone number is there?  The quick answer is that many nodes call
+      one another within a local calling area. Using the previous example
+      number, we could say the following two phone numbers exchange mail:
+
+        1-352-555-5555
+        1-352-555-1212
+
+      When the first site calls the second, it needs to be able to strip off
+      the 1-352- because that is used only for long-distance calling.
+
+      Creating the translation is very easy.  On this screen are two
+      columns.  The first is the information to search for in a phone number
+      and the second column lists the replacement information.  If nothing
+      is entered in the Change To column, the matching information will be
+      stripped.  The following entry shows how the 1-352- can be stripped.
+
+            Find                    Change To
+          ---------                 -----------------------
+       1) 1-352-
+
+    International Calling
+    ~~~~~~~~~~~~~~~~~~~~~
+      If the setup of the network requires international calls to be made,
+      you must enter two entries in the translation list defining your
+      country information.  These entries will look like the following if
+      you live in the United States:
+
+            Find                    Change To
+          ---------                 -----------------------
+       1) IP                        011
+       2) IPX                       1-
+
+      The first entry, IP, defines the international prefix.  In other
+      words, international calls made from the United States must begin with
+      011 followed by the country code, and other appropriate phone numbers.
+      If unsure about the international prefix, contact your local phone
+      service provider for additional information.
+
+      The second entry, IPX, defines the country code.  The United States
+      country code is 1.  Most phone service providers make this information
+      available.  If in doubt, contact them for additional details.
+
+    Prefixes and Suffixes
+    ~~~~~~~~~~~~~~~~~~~~~
+      Your situation may require the use of prefixes (numbers to dial before
+      every phone number) and suffixes (numbers to dial AFTER every phone
+      number).
+
+      A classic example of this in the United States comes into play if you
+      have call-waiting.  It is possible to disable call-waiting by dialing
+      *70, before every phone number.  Another example for prefixing is in a
+      business situation where a 9 must be entered before every outgoing
+      phone call.
+
+      Suffixes are not typically used as much but are still quite useful.
+      For example, some long-distance carriers allow you to require a
+      password or special code on every long-distance call.  This code is
+      entered after the phone number--a perfect use of the suffix.  Prefixes
+      are defined by entering GP in the Find field.  In the Change To field,
+      enter the number(s) to add before every phone number.  Suffixes are
+      done in much the same manner.  In the Find field, enter GS followed by
+      the suffix to add in the Change To field.  As you may have guessed by
+      now, GP stands for Global Prefix and GS stands for Global Suffix.
+
+      Examples:
+
+              Find                                  Change To
+            ---------                               -----------
+         1) GP                                      *70,
+         2) GS                                      ,,1994
+
+      The first example shows a prefix defined as *70, and the second shows
+      a suffix defined of ,,1994.  The commas are used in modem dial strings
+      to define a 2 second pause.
+
+  Nodelist configuration
+  ----------------------
+
+      On this screen, you tell PCBoard where the nodelist file is stored.
+      The nodelist compiler will use this information when compiling the
+      nodelist.  There is no limit to the number of nodelists you can have.
+      Each file will be appended into the database until there are no more
+      lists to compile.
+
+    Diff Filenames
+    ~~~~~~~~~~~~~~
+      A Diff (DIF) file is used to update existing nodelist.  If you are
+      participating in the worldwide Fido network, you have seen how the
+      full nodelist can be several megabytes in size.  To prevent members of
+      the network from having to transfer such a large file each time,
+      updates or DIF files are usually available from the same location
+      where you can find a nodelist.
+
+      The nodelist compiler will properly update the local nodelist database
+      using the information stored in these DIF files.  To be properly
+      updated, the DIF file must be in the same directory as the nodelist.
+      Just the base filename of the DIF file needs to be entered on the
+      screen as the extension simply refers to the revision of the file.
+
+      To help explain the relationship between the nodelist
+      and the DIF files, look at the following entry:
+
+           Nodelist Path (No Extension)         Diff Filename
+           ----------------------------         -------------
+        1) C:\PCB\FIDO\NODELIST                  NODEDIF
+
+      Here is what will happen:
+
+        * Begin by compiling just the nodelist file
+
+        * As time passes, DIF files will be distributed by your network.
+          Pick up the DIF files, uncompress them to the same directory where
+          the nodelist file listed in column one is.
+
+        * Recompile the nodelist database with the compiler using the /DIFF
+          switch.
+
+      NOTE:  All filenames listed on this screen refer to the uncompressed
+      filenames.  You must uncompress the files manually before attempting
+      to compile the nodelist database. Compression types range from system
+      to system.  Ask if you are unsure about the type of compression.
+
+  FREQ Path List
+  --------------
+      When a Fido node requests a file from your site, PCBoard will search
+      all subdirectories listed on this screen. If a matching filename is
+      found in any subdirectory, the file is sent.
+
+      NOTE:  It is important to remember that any file in these
+      subdirectories can be obtained from a remote site. Therefore, do not
+      put confidential files in these directories.
+
+  FREQ Restrictions
+  -----------------
+
+      File Requests (FREQs) tie up your system for the time it takes to pick
+      up the files.  Therefore, a way to restrict the amount of time, or
+      bytes another site can pick up.  Several fields define how the file
+      requests can be restricted.  The following describes each:
+
+      Session Max Time
+
+      Enter the maximum number of minutes another site can spend FREQing
+      during the current call.
+
+      Session Max KBytes
+
+      Enter the number of kilobytes (1024 bytes) a remote site will be
+      allowed to download during a single connect.
+
+      Daily Max Time
+
+      The value in this field represents the total amount of time a remote
+      site can spend transferring files during any one daily period.  A day
+      to PCBoard is considered to be from midnight to 11:59pm (via the host
+      computer not the remote site).
+
+      Daily Max KBytes
+
+      Enter the total number of kilobytes a remote site may FREQ during a
+      daily period (midnight to 11:59pm).
+
+      Allowed Nodes
+
+      This field defines which remote sites will be able to FREQ a file from
+      your system.  The following describes each available option:
+
+        A       All Fido sites regardless if they are listed in your user or
+                nodelist will be able to FREQ a file.  Keeping in mind it is
+                possible to FREQ using wildcards is another reason not to
+                put confidential information in your FREQ paths.
+
+        L       Any Fido site listed in the nodelist or in your user file
+                will be able to FREQ a file.
+
+        N       Only those Fido sites listed in the nodelist will be able to
+                FREQ a file.  This option is ideal when you are involved in
+                a smaller Fido-based network but do not want just any Fido
+                capable mailer to be able to FREQ a file.
+
+        U       Only those sites listed in your user file will be allowed to
+                FREQ a file.
+
+      Min Allowed Baud
+
+      Because transferring files can be time consuming, you may choose to
+      limit FREQs to only those sites capable of a certain baud rate or
+      higher. For example, you may want to only allow those systems capable
+      of a 14400 connection or higher to FREQ.  With this type of
+      configuration, sites using 9600 baud modems would only be able to
+      transfer mail and not files.
+
+      In this field, enter the required baud rate for transferring files.
+      Any site capable of the speed you enter or higher will be able to
+      request files.
+
+  FREQ Magic Names
+  ----------------
+      A "Magic Name" can also be seen as an alias to a filename which can be
+      FREQed.  A common example of an alias is for a remote site to FREQ a
+      file called "FILES" on your system. This is commonly understood to be
+      a list of files available on your system.  What do you do though if
+      your list is called ALLFILES.LST?  Since FILES is a de facto standard,
+      you want to make this available to other nodes but do not want to
+      waste the space an additional copy occupies.  That is where the magic
+      name comes in handy.  Simply make an entry similar to the following:
+
+           Magic Name            Filename
+           ----------            --------
+        1) FILES                 C:\PCB\FILES\ALLFILES.LST
+
+      From this example you can tell that the alias or magic name is entered
+      in the left column and the actual filename to send is entered on the
+      right.
+
+      NOTE: For this to work, the C:\PCB\FILES\ subdirectory MUST be listed
+      in the FREQ Path list.  FULL pathnames are required.
+
+      A more sophisticated example involves wildcarding. You produce a
+      program which consists of 3 zip files (3 disks). Rather than having
+      remote sites requesting BOBOB-1.ZIP, BOBOB-2.ZIP, and BOBOB-3.ZIP you
+      want them to simply FREQ BOBOB. The following example illustrates:
+
+           Magic Name            Filename
+           ----------            --------
+        1) BOBOB                 C:\PCB\FILES\BOBOB-?.ZIP
+
+      Notice how the ? DOS wildcard character is used to make sure all 3
+      disks are included when BOBOB is requested.
+
+  FREQ Deny Nodelist
+  ------------------
+      Some remote sites may abuse their ability to FREQ. To deny these sites
+      the ability to FREQ from your system, add them to this list.  The
+      entire node number/address must be entered.
+
+Modem Related Options for PCBFido
+-----------------------------------------------------------------------------
+      New to the PCBSetup | Modem Information | Modem Setup screen are
+      fields relating to the Fido configuration.  These fields control what
+      command PCBoard will send to your modem for dialing other systems, and
+      how many attempts should be made when a call results in a busy signal
+      or failed attempt.  These fields are as follows:
+
+        Modem Dialout String           : ATDT
+        Max # of Redials on Busy       :    1
+        Max # of Attempts to Connect   :  100
+
+    Modem Dialout String
+    ~~~~~~~~~~~~~~~~~~~~
+      The command entered in this field is sent to the modem before a number
+      is dialed.  Notice the default of ATDT which is a standard for nearly
+      every modem.  The only time you may have to use something different is
+      when the modem must be switched from say fax to data mode or some
+      other special circumstance.
+
+    Max # of Redials on Busy
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+      When dialing a node it is not uncommon to get a busy signal as a
+      response.  This field controls how many attempts PCBoard will make
+      before it returns to the call-waiting screen to let the dial-timer
+      expire again.
+
+    Max # of Attempts to Connect
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      A call that results in a NO CARRIER, VOICE, or an unexpected modem
+      response is considered to be a failed attempt. After an attempt fails,
+      PCBoard will return to the call waiting screen.  This field controls
+      the number of failed attempts that may accumulate when trying to send
+      this packet.  Once a packet reaches this limit, it will not be sent
+      until you view the outbound queue and reset the failed attempts
+      counter.
+
+Call Waiting Screen
+------------------------------------------------------------------------------
+
+      Pressing ALT-F from the call-waiting screen reveals the following menu
+      (Fido must be enabled in PCBSetup | Fido Configuration | Fido
+      Configuration):
+
+                ษออออออออออออออออออออออออออออออออออป
+                บ         Sysop FIDO Menu          บ
+                บ                                  บ
+                บ   1) Poll a Node.                บ
+                บ   2) Request a file.             บ
+                บ   3) Transmit a file.            บ
+                บ   4) Force next call.            บ
+                บ   5) View/Modify Queue.          บ
+                บ   6) Scan for outbound mail.     บ
+                บ   7) Process inbound mail.       บ
+                บ   8) Compile Nodelist.           บ
+                บ   9) Send Mail to a Node.        บ
+                บ                                  บ
+                บ   Enter selection:               บ
+                ศออออออออออออออออออออออออออออออออออผ
+
+  Poll a Node
+  -----------
+      Although it is possible to setup a regular Poll to take place in an
+      event, you may want to make a manual run to pick up mail or maybe even
+      poll a site your event does not normally handle.
+
+      When this option is selected, you will be asked to enter the address
+      of the node to queue.  The full address can be entered in the form of
+      <zone>:<net>/<node> or if defaults have been entered in PCBSetup for
+      the zone and net, just the node number may be entered.  Once the
+      address in entered, an entry to crash poll the node is added to the
+      outbound queue.
+
+      NOTE:  In order to actually poll the node, you must send the packet
+      from the outbound queue.  This can be done by selecting either Force
+      Next Call or Send Mail to a Node from the Fido Menu.
+
+  Request a file
+  --------------
+      It is possible to FREQ a file from another node by selecting this menu
+      option.  You are first asked for the address.  Any defaults entered in
+      PCBSetup | Fido Configuration | Fido Configuration are in effect.
+
+      Next, you are prompted for the filename to request from the site.
+      Either a filename or magic name may be entered as both are perfectly
+      acceptable.  Once the filename is entered, the request is added to the
+      outbound queue.
+
+  Transmit a file
+  ---------------
+      To send a file to another site, an entry must be added to the outbound
+      queue by selecting this option.  First you are asked to enter the site
+      address where the file is to be sent.  Next, enter the filename to
+      send.  Make sure you enter the full path and filename to send and that
+      it exists.  If the file does not exist, the entry will NOT be added to
+      the outbound queue.
+
+  Force next call
+  ---------------
+      This option simply forces the next call to occur.  If the outbound
+      queue is empty, it will appear as if no activity took place.
+
+  View/Modify Queue
+  -----------------
+
+      The outbound queue stores outbound requests or activities (polling a
+      node, sending a file, FREQing a file, etc.)  To view the contents of
+      the queue, use this menu option. When entries are in the outbound
+      queue, entries similar to the following are shown:
+
+                ษออออออออออออออออออออออออออออออออออป
+                บ     View/Modify Outbound Queue   บ
+                บ                                1 บ
+                บ   Filename : POLL                บ
+                บ   Address  : 1:311/1             บ
+                บ                                  บ
+                บ   F) Flag  : POLL CRASH          บ
+                บ   S) Send This Packet            บ
+                บ   D) Delete                      บ
+                บ   N) Next                        บ
+                บ   P) Previous                    บ
+                บ   C) Clear Failed Connect      0 บ
+                บ   R) Re-Address Entry            บ
+                บ   Enter selection :              บ
+                ศออออออออออออออออออออออออออออออออออผ
+
+      Filename:  This field lists the filename to transfer or it shows the
+      activity taking place if not involving a file request (polling is a
+      good example).
+
+      Address:  Shows the full address where the request is being sent.
+
+      F)lag:  Allows you to change the flagged status of this entry.  Valid
+      options are CRASH (send immediately), NORMAL (wait for normal event
+      processing), and HOLD (wait for the other node to call you).
+
+      S)end:  Process this request immediately and ignore the flag status
+      (HOLD or NORMAL) of the packet.  All packets in the outbound queue for
+      this node will be sent once a connection is made.
+
+      D)elete:  When this menu item is selected, the current queue entry is
+      deleted.
+
+      N)ext:  View the next entry in the queue.
+
+      P)revious:  View the previous entry in the queue.
+
+      C)lear Failed Connect:  Resets the failed call counter to 0 making a
+      dialing attempt appear to be a first time call.
+
+      R)e-Address Entry:  Use this option to change the current address
+      where a packet is to be sent.
+
+  Scan for outbound mail
+  ----------------------
+      All netmail and echo mail entered on your system will be prepared for
+      sending to your hub.  This option is designed to manually scan for
+      mail as this is normally taken care of by the timers in PCBSetup |
+      Fido Configuration | Fido Configuration.
+
+  Process inbound mail
+  --------------------
+      Manually checks to see if there is any incoming mail to be processed.
+      Normally, PCBoard will check at regular intervals for new mail.
+      However, you may have a need to make a manual run and therefore must
+      force the incoming mail to be processed.
+
+  Compile Nodelist
+  ----------------
+      This option executes the PCBNLC (node list compiler) program.  Use
+      this option to generate a new node list database.
+
+  Send Mail to a node
+  -------------------
+      This option lists all nodes with outgoing mail (or requests).  Select
+      the site to send all requests to and these requests will be processed
+      immediately.  This option is identical to the S)end option when
+      viewing the queue except it lists by node number instead of by packet.
+
+The Fido Conference Configuration Screen
+-----------------------------------------------------------------------------
+
+      As you are aware, there is more than one setup screen for a
+      conference.  Pressing PgDn when editing the configuration of a
+      conference will take you to a screen full of further options beginning
+      with Auto-Rejoin into this Conf.  Also on this screen is an option
+      titled Type of Netmail Conference.  When this field is set to 5,
+      pressing d will bring you to what is known as the Fido Conference
+      Configuration screen.
+
+        PCBoard Conference   : 0
+        Messages file        : C:\PCB\MAIN\MSGS
+
+        Fido Area Name       :
+        Default AKA          :
+        Default Origin       :
+        High Ascii (S/R/C/N) :
+
+      The first two fields on the screen are just for reference purposes
+      only and may not be edited.  The others, however, can be edited and
+      relate to Fido issues only.  The following sections describe each of
+      the available fields.
+
+  Fido Area Name
+  --------------
+
+      This field holds the tag name for the conference. Every echo area in
+      Fido has a tag name which identifies the topic of discussion.  Simply
+      enter the tag for the echo area this conference will represent.
+
+      When a large number of conferences needs to be added, look into using
+      UUUTIL.  See FIDO.DOC in the same directory where PCBoard was
+      installed for further information.
+
+  Default AKA
+  -----------
+      When you are involved in multiple networks, you'll have more than one
+      node address.  These additional addresses are called AKAs which stands
+      for Also Known As.  When this field is blank, the address associated
+      with it is the first entry in PCBSetup | Fido Configuration | System
+      Address.  For conferences associated with other networks, enter the
+      node address you use for the network in each conference used by this
+      network.
+
+  Default Origin
+  --------------
+      Origin lines are added to each message sent out. When dealing with
+      multiple Fido based networks you may find it desirable to override the
+      default origin line which displays the node number.  To override what
+      is sent on the origin information, simply enter the information in the
+      field provided.
+
+  High Ascii
+  ----------
+      Most sites in Fido do not allow high ASCII characters in messages yet
+      if you are involved with other networks they may allow such characters
+      to be entered.  To accommodate this problem, PCBoard allows you to
+      determine how high ASCII characters are handled on a conference by
+      conference basis.  The following are valid selections:
+
+      	S	Removes all high ASCII characters and replaces
+                with nothing.
+
+        R       Replaces all high ASCII characters with periods (.)
+
+        C       Converts high-ASCII characters to similar looking low ASCII
+                equivalents.
+
+        N       Do no translations or modifications to high ASCII
+                characters.
+
+      The safest choice is option C because it guarantees low ASCII
+      characters will be used but yet it still attempts to portray the
+      effect of any high ASCII characters.
+
+Fido Batch Files
+------------------------------------------------------------------------------
+
+      There are a few hooks within PCBFido where it is desirable to use
+      third-party utilities to facilitate the flow of messages in a Fido
+      base network.  By hooks, we are referring to the use of batch files
+      where these third-party programs can be run.  The purpose of this
+      section is to explain detailed information about these batch files.
+
+  POSTCALL.BAT
+  ------------
+
+      After a successful Fido transfer, this batch file is run to process
+      the packets before PCBoard imports them.  This is of particular
+      interest to those SysOps involved in a file echo (files are exchanged
+      instead of messages).  In this type of scenario, a third-party TIC
+      processor must be used to handle the packets after a mail transfer
+      occurs.
+
+  FIDOSEND.BAT & FIDORECV.BAT
+  ---------------------------
+      Most sites support type 2+ packets which also denote Zmodem
+      capabilities.  By default, Fido executes ZMSEND.EXE and ZMRECV.EXE for
+      its Zmodem needs.  If you need to use a third-party version of Zmodem,
+      use these two batch files to load the program.  The parameters passed
+      to the batch files are identical to those PCBoard passes to an
+      external protocol in your normal configuration (refer to the PCBoard
+      manual for additional information).  FIDOSEND.BAT is used when a
+      packet is sent from your system, while FIDORECV.BAT is used to receive
+      a file to your system.
+
+New PCBoard Switches
+-----------------------------------------------------------------------------
+      New PCBoard command line and environment switches have been added to
+      help facilitate those who are running multiple nodes off of one
+      PCBOARD.DAT or who may want to manually control mail transfers.
+
+  "SET PCB=" Environment Switches
+  -------------------------------
+
+    /NOFIDO
+    ~~~~~~~
+      Disables Fido processing.  This is equivalent to answering N to the
+      Enable Fido Processing in PCBSetup | Fido Configuration | Fido
+      Configuration.  Example:
+
+        SET PCB=/NOFIDO
+
+  "SET PCBFIDO=" Environment Switches
+  -----------------------------------
+      This is actually a newly supported environment variable.  The
+      existence of the variable will enable Fido Processing (just the
+      opposite of the /NOFIDO switch).  This new variable supports the
+      following switches:
+
+    /MSG
+    ~~~~
+
+      Enable the mirroring support for netmail.  .MSG files can be imported
+      if put in the .MSG subdirectory and copies of all netmail messages
+      exported are keep in the same directory (in .MSG format.)
+
+    /IMPORT:[min]
+    ~~~~~~~~~~~~~
+      Overrides all settings in PCBSetup and checks for mail every x minutes
+      with x being the number of minutes entered after the colon.
+
+    /EXPORT:[min]
+    ~~~~~~~~~~~~~
+      Overrides the settings in PCBSetup and checks for items needing export
+      every x minutes with x being the number of minutes specified after the
+      colon.
+
+    /DIAL:[min]
+    ~~~~~~~~~~~
+      This option overrides any setting in PCBSetup and will change the
+      dialing frequency to the number of minutes specified after the colon.
+
+    Examples:
+    ~~~~~~~~~
+
+        SET PCBFIDO=/IMPORT:5 /EXPORT:3
+
+      This particular environment setting will check for importing every
+      five minutes and exporting every three minutes.
+
+        SET PCBFIDO=/DIAL:10
+
+      PCBoard checks every 10 minutes to see if any dialing attempts must be
+      made.
+
+  Command Line Parameters
+  -----------------------
+      To better facilitate manual processing of Fido mail, PCBoard accepts
+      two new command line parameters.  When used, PCBoard will
+      automatically import or export mail.
+
+    /IMPORT
+    ~~~~~~~
+      Manually import all new mail.  A synonym for this
+      parameter  is /TOSS.  Example:
+
+        PCBOARD /IMPORT
+      	or
+        PCBOARD /TOSS
+
+    /EXPORT
+    ~~~~~~~
+      Manually export all outgoing mail.  A synonym for this  parameter is
+      /SCAN.  Example:
+
+        PCBOARD /EXPORT
+      	or
+        PCBOARD /SCAN
+
+Appendices
+==============================================================================
+
+  Point Support
+  ~~~~~~~~~~~~~
+    A point can be best described as a extension to a node.  In fact, the
+    node acts as a hub to the point.  Look at the following illustration to
+    get a better picture as to what is going on:
+
+       +-------+        +------+ ----> Point
+       | Net   |        | Node |
+       | Hub   | -----> |      | ----> Point
+       +-------+        +------+
+           |
+           +----------> +------+
+                        | Node |
+                        |      |
+                        +------+
+
+    Not every node will have points.  It all depends on if you want to share
+    your Fido information with another system down from you on the
+    hierarchical structure.
+
+    The main point to realize in regards to a point system is that you will
+    not be listed in any nodelists.  This means it is not possible to send
+    netmail directly to a point site.
+
+    The addressing for a point is different from that of other sites.  For the
+    sake of example, let's assume you desire to be a point under our support
+    BBS (1:311/40).  Basically what happens is that you simply add a "point"
+    or period followed by the point number.  Since we do not have points
+    underneath us, you would become the first or 1:311/40.1.
+
+  Working With a Satellite Feed
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Some services offer satellite delivery of Fido echo areas and netmail.
+    This method of delivery cuts down on costs when carrying a full-feed or
+    when you are a great distance from a hub.
+
+    How does PCBoard import the messages if it never makes the call?  To
+    add mail to your system, PCBoard will simply scan the inbound packet
+    directory (PCBSetup | Fido Configuration | File and Directory
+    Configuration).
+
+    All you must do is get the packets from the satellite to the inbound
+    packets directory and let PCBoard import them.  A good method for
+    importing is either to use the /IMPORT command line switch or to
+    periodically scan the inbound directory every x minutes with the
+    setting in PCBSetup | Fido Configuration | Fido Configuration.
+
+    Because satellites offer just the delivery of messages, you must make
+    arrangements to send new messages from your system to a hub (most likely
+    chosen by the satellite service provider).  Making this type of setup
+    requires:
+
+      1)  Make a user record for the outbound site.
+      2)  Add RS conference flags for every area you send to the outbound
+          site.  Otherwise, new mail will not be packetized for export.
+
+  Fido User Records
+  ~~~~~~~~~~~~~~~~~
+    With any site you regularly exchange netmail or echo mail with, you'll
+    need to setup a user record for each site.  Why must a user record be
+    setup?
+
+       1.  All password information for sessions, packets, and AreaFixing
+           are stored in this user record.
+
+       2.  Information about the echo areas you carry and allow others to
+           carry (if acting as a hub) are extracted from the user record.
+
+    To add a Fido user record, follow these steps:
+
+       1.  Load System Manager and edit the user records by selecting User
+           File Maintenance followed by Edit User Records.
+
+       2.  Press ALT-A to add a new user record.
+
+       3.  In the "Name" field, enter "~FIDO~" followed by the address of
+           the net coordinator.  To create an account for the Fido node
+           1:311/0, enter the following:
+
+             ~FIDO~1:311/0
+
+       4.  Press F3 to view the Fido Form of the user record.  The screen
+           resembles the following:
+
+                                   Edit User Record (Fido Form)
+
+             Name        : ~FIDO~1:311/0
+
+             Passwords
+             Session        :
+             AreaFix        :
+             Packet         :
+             Phone Override :
+             Security Level : 0
+             Delete User    : N
+
+       5.  Fill in the apporpriate passwords for the system.  If unknown,
+           leave them blank.
+
+       6.  Press F2 twice to get to the conference view.  Here we must mark
+           those conferences that will be exchanging mail.  This differs
+           depnding on if you are acting as a node or a hub.
+
+           Nodes should put RS in each conference they will be exchanging.
+           Hubs have a little more control in that they put an R to denote
+           a site can access the conference and S to signify that they
+           are carrying a conference.
+
+           As far as a hub is conferenced, the following choice exist for
+           conference registration:
+
+              <blank> - Site cannot access the conference
+              R       - Site CAN access conference but is electing not to.
+              RS      - Site is carrying the conference feed.
+
+       7.  A helpful hint in setting up Fido user records is to setup all
+           Fido accounts using the same security level.  This way, you can
+           capitalize on the global conference changes available within
+           System Manager.
+
+       8.  Save the changes by pressing ESC and chosing to save changes and
+           you are ready to go.
+
+  FidoNet Terminology
+  ~~~~~~~~~~~~~~~~~~~
+    AKA:  Refers to <A>lso <K>nown <A>s.  Anytime your site is known by more
+          than one address, the additional addresses are called AKAs.
+
+    AREAFIX:  A process where, as a site, your configuration for the host
+              can be modified.  The type of things which can be modified are
+              what echo mail areas can be modified, etc.
+
+    CRASH:  Refers to sending immediately regardless of how your events are
+            configured.  In the case of an event, this term has PCBoard send
+            any crash mail to the nodes listed in the parameter list.
+
+    ECHO-MAIL:  The majority of mail sent in Fido is termed echo-mail.  Each
+                of the hundreds of conferences or areas send this publicly
+                readable mail.
+
+    FREQ:  Refers to <F>ile <REQ>uest.  A Fido node can request a file from
+           any other Fido node.  If the destination site/node has the file
+           available, it will be transferred during that call.
+
+    MAGIC NAMES:  In regards to FREQing a file, the name may not be known or
+                  multiple files may be involved.  In a situation like this,
+                  the site may have setup a magic name which will get the
+                  appropriate file or set of files.
+
+    NET-MAIL:  Netmail is a way to send private mail between users on two
+               different nodes/sites.  Mail must include the users name and
+               the node address.
+
+    NODELIST:  The source file containing all information about nodes
+               involved on the network.  Information includes phone numbers,
+               SysOp name, name of the site, maximum speed, etc.
+
+    POLL:  Call another site and request any waiting mail.
+
+    ROUTE:  Refers to instructions on how mail will be sent.  Mail can be
+            routed or sent to another node.

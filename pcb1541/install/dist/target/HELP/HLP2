@@ -1,5 +1,14 @@
- @X18ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X18³@X1F@BOARDNAME:76C@@X18³@X07
- @X18³@X1F             Running PCBoard version 15.2 by Clark Development              @X18³@X07
- @X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@CLS@@X0DVIEW/PRINT USER LIST
+
+<@X0EP@X0D>@X0E  PRINT USER LIST - A list of users will be printed to the printer defined
+     in PCBsetup.
+
+
+@X0D<@X0EV@X0D>@X0E  VIEW LIST OF USERS - This will print a list of users on your screen
+
+
+
+The Sysops record can only be seen if the user defined in user record #1 is
+the user issuing the command.
+@X07
 

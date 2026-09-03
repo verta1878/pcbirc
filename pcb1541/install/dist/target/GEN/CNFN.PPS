@@ -1,330 +1,115 @@
-Main Board
--1
-0
-0
-0
-0
-0
-0
-4
-..\MAIN\MSGS
-..\GEN\BRDM
-..\GEN\BRDS
-..\GEN\NEWS
-2
-..\MAIN\PUBLIC
-..\UPLOAD\
-2
-..\MAIN\PRIVATE
-..\PRIVUPLD\
--1
-..\GEN\DOORS
-..\GEN\DOORS.LST
-0
-..\GEN\BLT
-..\GEN\BLT.LST
+String sConf,Fly(9),CNames@,CNamesA
+Int i,mod
+Word wSize
+Boolean Bin2Bool(1)
+Boolean bWrite
+
+Declare Function Available (Integer)
+Declare Function GetConfName (Integer Conf#, Int Chan1, Int Chan2, UWORD CSize) String
+
+Fly(0) = "@X1Bş@X01ÛÛÛÛ@X07"
+Fly(1) = "@X01Û@X1Bş@X01ÛÛÛ@X07"
+Fly(2) = "@X01ÛÛ@X1Bş@X01ÛÛ@X07"
+Fly(3) = "@X01ÛÛÛ@X1Bş@X01Û@X07"
+Fly(4) = "@X01ÛÛÛÛ@X1Bş@X07"
+Fly(5) = "@X01ÛÛÛÛ@X1Bş@X07"
+Fly(6) = "@X01ÛÛÛ@X1Bş@X01Û@X07"
+Fly(7) = "@X01ÛÛ@X1Bş@X01ÛÛ@X07"
+Fly(8) = "@X01Û@X1Bş@X01ÛÛÛ@X07"
+Fly(9) = "@X1Bş@X01ÛÛÛÛ@X07"
+Bin2Bool(0) = TRUE
+Bin2Bool(1) = FALSE
+CNames@ = ReadLine (PCBDat(),31)+".@@@"
+CNamesA = ReadLine (PCBDat(),31)+".ADD"
+
+Cls
+PrintLn "@X18Ú@X17ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X18@X07"
+PrintLn "@X18³  @X1BYou are now in the @X1F@INCONF:50@     @X17³@X18@X07"
+PrintLn "@X18³  @X1EYou are authorized for the following conferences:                         @X17³@X18@X07"
+PrintLn "@X18ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X17Ù@X18@X07"
+PrintLn ""
+
+FOpen 1,CNAMES@,O_RD,S_DN
+FOpen 2,CNAMESA,O_RD,S_DN
+FRead 1,wSize,2
+
+For i = 0 to ReadLine(PCBDAT(),108)
+  sConf = GetConfName(i,1,2,wSize)
+  If (sConf <> "") then
+    If (Available(i)) then
+      If (GetX() > 45) PrintLn "     "
+      Print "@X0E",Left(String(i),3)," - ","@X0F",Left(sConf,30)
+      continue
+    Endif
+  Endif
+  if (mod > 9) mod = 0
+  Print Fly(mod)
+  Print Chr(8),Chr(8),Chr(8),Chr(8),Chr(8)
+  Inc mod
+  If (Abort()) Break
+Next
+
+Print "     "
+FClose 1
+FClose 2
+PrintLn ""
+End
+
+
+
+Function Available (Integer iConf) Boolean
+BIGStr Temp
+Boolean bPriv
+Word iSec
+Word ConfOffset
+
+Available = FALSE
+If (U_RecNum(U_Name()) = 1) then
+  Available = TRUE
+  Return
+Endif
+if (ConfReg(iConf)) then          ' if registered
+  Available = TRUE                '   then return available now
+  return
+else if (ConfExp(iConf)) then     ' no R flag, if X flag then locked out
+  return                          '   then return NOT available now
+endif
+
+ConfOffset = iConf*wSize
+
+FSeek 1,ConfOffset+16,Seek_Set
+FRead 1,Temp,1
+if (Bin2Bool(Asc(Temp))) then     ' if the conference is private, then return
+  return                          ' NOT available now because if we got this
+endif                             ' far we must not have a registration flag
+
+FSeek 1,ConfOffset+22,Seek_Set
+FRead 1,iSec,2
+;PrintLn "Not Private,Sec:",CurSec()," Required sec:",iSec," Reg:",ConfReg(iConf)," Exp:",ConfExp(iConf)
+If (CurSec() >= iSec) then
+    Available = TRUE
+Endif
+EndFunc
+
+;-------------------------------------------------------------------------
+;      ValidConf = ConfName <> ""
+;      IF (ValidConf) PRINTLN Counter, ") ", ConfName
+;------------------------------------------------------------------------
+
+FUNCTION GetConfName (INTEGER ConfNum, INT Chan1, INT Chan2, UWORD CSize) STRING
+
+STRING ShortName
+STRING LongName
 
-..\GEN\SCRIPT
-..\GEN\SCRIPT.LST
+   FSEEK Chan1, ConfNum * CSize + 2, SEEK_SET
+   FSEEK Chan2, ConfNum * 256 + 208, SEEK_SET
+   FREAD Chan1, ShortName, 14
+   FREAD Chan2, LongName, 48
 
-..\GEN\DIR
-..\GEN\DIR.LST
+GetConfName = STRING(ShortName) + STRING(LongName)
 
-..\GEN\DLPATH.LST
+ENDFUNC
 
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
-
-0
-0
-0
-0
-0
-0
-0
-0
-
-
-
-
-0
-
-
-0
-
-
-0
-
-
-0
-
-
-
-
-
-
-
-
-
-
+;-----------------------------------------------------------------------
+; |/Ä\
+

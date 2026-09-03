@@ -1,13 +1,18 @@
-@X0A@BOARDNAME:79C@
-@INCONF:79C@
-                              Bulletin Listings
+@CLS@@X0DEXECUTE DOS COMMAND
 
-        @X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
-        @X17³                                                           ³@X07
-        @X17³                                                           ³@X07
-        @X17³   @X1E1. - @X1FHow to use this system                             @X17³@X07
-        @X17³                                                           ³@X07
-        @X17³   @X1E2. - @X1FSystem Guidelines and Policies                     @X17³@X07
-        @X17³                                                           ³@X07
-        @X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X0EThis allows you to execute a DOS command without exiting to dos.
+
+You can run most applications expect those that will cause you memory problems
+or those that require keyboard interaction.
+
+If you need either of the above, use the F5 key from local or the 9 key from
+remote instead.
+
+
+
+
+
+
+
+@X07
 

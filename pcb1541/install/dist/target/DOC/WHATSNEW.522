@@ -1,4 +1,83 @@
-@X0EChanges made in Product 1 in the latest release
-@X04ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-  @X07Use this area to provide a "What's New" entry for Product 1
+Functional changes within PCBoard itself (ignoring Fido and PPL for a moment)
+are minor due to effort put into porting PCBoard over to OS/2 and the desire to
+"freeze" the feature set during much of the porting process.  However, a few
+changes in operation have been made:
+
+- A new option for the SHELL column in the DOORS.LST editor has been added.
+  You can now define a door as type 'F', for "Fast Shell".
+
+  When the Shell is set to "F", the door is shelled to *without* closing any
+  files, without closing the comm port, without swapping out (under DOS), etc.
+  It simply shells out and runs the door, then comes back as quickly as
+  possible.
+
+  NOTE:  It does create a users.sys file (if you tell it to), it also updates
+  the pcboard.sys file.  It does NOT re-load all of PCBoard's files upon
+  returning from a door the way a regular door operates, nor does it reopen
+  any of the files that were open because they remain open during the shell.
+
+- In a conference where Long TO Names are allowed, PCBoard will no longer
+  allow you to change the subject when replying to a message unless you
+  utilize the RO (reply other) command.  The reason for this change is for
+  compliance with internet RFCs which require that the subject not be modified
+  when replies are posted, except for the addition of "Re: " in front of the
+  message (which the new UUOUT module will handle).
+
+- In addition, PCBoard will now handle up to 120 characters for the subject.
+  It does not allow you to enter a subject that long, but if a message from
+  the internet has a subject that long it will be supported by PCBoard.
+
+- A native version of PCBoard is now available, which includes:
+  - An OS/2 text mode version of PCBoard (PCBOARD2.EXE)
+  - A new program (a PM app) called the PCBoard Control Panel (PCBCP.EXE)
+  - An OS/2 text mode version of PCBMoni (PCBMONI2.EXE)
+  - An OS/2 text mode version of PCBPack (PCBPACK2.EXE)
+  - An OS/2 text mode version of USERNET.EXE (USERNET2.EXE)
+
+  If you already have PCBoard-for-DOS running in the OS/2 environment,
+  setting up PCBoard-for-OS/2 will be a snap.  Most of your existing DOS
+  programs will continue to run, unmodified, with PCBoard-for-OS/2.
+
+- PCBSetup has been modified so that it now has an "OS/2" column in the
+  EVENT.DAT editor and also in the DOORS.LST editor, to accomodate the running
+  of OS/2 applications.  It also now has an "OS/2 Settings" screen in the
+  Configuration Options menu for setting various OS/2 priority levels and
+  controlling window behavior.
+
+- PCBSM has been modified to speed up the "Pack Online" capability in
+  situations where a large number of user records are in the users file, a
+  large number of users need to be packed out, and the users at the very end of
+  the file are not the ones that are to be packed out (basically, a scenario
+  resulting in a "bad combination" for the design of the online packing
+  process).  The change increases the possibility that the users file may not
+  shrink (but only if the reason a record wasn't packed out or moved was
+  because the user was online), but in exchange it greatly increases the
+  packing speed by overcoming an exponential slowdown that occured in the
+  previous design.
+
+  Also, the "Pack Online" capability has been modified so that it will work on
+  a system where networking is disabled.
+
+  Normally you'd have no need to use the Pack Online feature in such a setting
+  because it is normally used as a means of packing the users file while there
+  is a possibility that users may be online.  However, a situation has arisen
+  where it was needed for a different reason...  lack of disk space.
+
+  The Pack Online operation does not use a "backup file" because it directly
+  modifies the users and users.inf files.  So legitimately you may desire to
+  use the Pack Online feature if you simply don't have enough room on your
+  hard drive to use the normal pack method.
+
+  Finally, the "Pack Online" capability has been modified so that it is no
+  longer "disabled" if the alias support is enabled.  PCBoard is now storing
+  the alias in a hidden field of the usernet record allowing PCBSM to check for
+  the user being online even while PCBoard is hiding him from the WHO display.
+
+- Added an option to PCBFiler, on Defaults Page 1, which controls whether or
+  not PCBFiler will prompt on an overwrite when processing a DIR file.  The
+  default is to ask (which is what it has always done), but you can change it
+  to always assume yes (overwrite the file) or always assume no (never
+  overwrite).
+
+
 

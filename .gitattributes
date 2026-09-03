@@ -45,3 +45,9 @@ docs/** linguist-documentation
 *.DOC linguist-documentation
 *.NEW linguist-documentation
 *.TXT linguist-documentation
+
+# v1.7.2: prevent CRLF damage to target/ tree by marking EVERYTHING binary.
+# These are extracted installer bits — WCSC's originals used mixed CR/LF/CRLF
+# depending on file type; treat all as binary so Windows Git autocrlf can't
+# strip \r bytes.
+pcb1541/install/dist/target/** binary

@@ -1,12 +1,106 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
-CALGUIDE.ZIP    59649  02-14-94  An ASCII version of the Caller's Guide for
-                               | PCBoard.  Intended to guide your callers
-                               | through PCBoard for the first time, or to
-                               | help the more knowledgeable caller refine
-                               | his skills.  Formatted ASCII format may be
-                               | imported into a word processor or printed
-                               | directly as-is.  Copyright (C) 1993
-                               | Clark Development Company, Inc.
-                               | NOTE:  This file is compressed.  You must use
-                               | PKUNZIP v2.04+ to uncompress the file.
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(SELECT) Conferences For Scanning or Reading                         @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      In order to determine what conferences you want to scan or read mail
+      in, you must select the conference.  This command will enable you to
+      select the conferences that you want to select.
+@X0F
+   Subcommands
+@X03
+      @X0B[Conf. Num(s)]  Conference number(s) to select. @X03 You may specify a
+                      single conference or multiple conferences.  If you want
+                      to specify multiple conferences, you must do so by
+                      specify a range (e.g., 32-53) or by separating each
+                      conference by a space or semicolon.  You can even
+                      combine ranges and individual conferences.  See the
+                      example section of this command for more details.
+
+      @X0BS               Select all conferences. @X03 This subcommand selects all
+                      conferences for scanning or reading.
+
+      @X0BD               Deselect all conferences. @X03 This subcommand deselects
+                      all conferences for scanning or reading.
+@X0F
+   Using the SELECT Command Interactively
+@X03
+      If you do not specify any subcommands when you run the SELECT command
+      then you will be running it in interactive mode.  The only thing you
+      need to remember about interactive mode is that it is slightly
+      different than specifying everything when you use the command with
+      subcommands.  The following lists the differences between the various
+      subcommands when you are using the command in interactive mode.
+
+          @X0B(Conf. #)   Conference number(s) to select. @X03 In interactive mode
+                      When you select a conference you toggle its status.  If
+                      you select conference 1 and it was already selected
+                      (had an X in the FLAGS column), you will deselect that
+                      particular conference. If you select a conference that
+                      was not already selected, you will be asked what you
+                      wish to set your last message read pointer to. You may
+                      set the last message read pointer to any value that is
+                      within the range of messages in the conference. To find
+                      the range of messages in the conference look to the
+                      left of the conference name on the prompt where it is
+                      asking you to enter your last message read.  You will
+                      see a range of numbers that will look something like
+                      3005-8292.  The first number is the lowest message in
+                      the conference and the second number is the highest.
+
+                      In addition, you can add a D to the right of the
+                      conference number(s) to deselect the conference(s)
+                      that you specify.
+
+          @X0BS           Select all conferences.@X03  This subcommand selects all
+                      conferences for scanning and all conferences will have
+                      an "X" placed in its flags field.
+
+          @X0BD           Deselect all conferences. @X03 This subcommand deselects
+                      all conferences for scanning and removes the "X" if
+                      there was one in this conference's flags field.
+
+          @X0BQ           Quit. @X03 This subcommand quits the Select command.
+                      Control is returned to the main menu.
+@X0F
+   Description
+@X03
+      Quite often, there will be conferences on a bulletin board that you do
+      not want to participate in.  This command enables you to choose which
+      conferences to automatically scan for messages both at login and when
+      you use the A subcommand with a message read or scan command (e.g., the
+      R, TS, and Q commands).  A two-column listing of conferences that you
+      are able to join is displayed. In the list, PCBoard includes the
+      conference number, description, last message read, highest message in
+      the conference, and an "X" if you have marked this conference for
+      scanning.  Only the conferences that you have access to will be listed.
+      If you find that a conference is not listed, it is because you do not
+      have access to it.  The following is an example of the screen that is
+      displayed to you:
+
+@X0F                                   Last  High
+@X0F          Num  Conference          Read  Num.  Flags
+@X0F          -------------------------------------------
+@X07             1 Main Board          8548  7978  X
+             2 SysOps Talk         1018  1001  X
+             3 For Sale            6289  4301  X
+             5 Programming         2106  1839
+             6 Operating Systems   5119  4768  X
+             7 Chit Chat           7831  7659  X
+             8 BBS Ads             6711  6584
+             9 Modem Info          2478  2178  X
+
+@X0E          Enter Conference Numbers, (S)elect All, (D)eselect All, or (Q)uit?
+@X0F
+   Examples
+@X03
+      If you want to make sure that conferences 1 through 9 and conference
+      number 12 were selected, you could do this right from the command line
+      by typing the following:
+@X0E
+          SELECT 1-9;12
+@X03
+      Now, if you wanted to deselect just those conferences, you should do
+      that by running the SELECT command interactively by typing SELECT on
+      the command line.  At the next prompt, type 1-9;12 and you will see
+      that the conferences will be deselcted. @XFF

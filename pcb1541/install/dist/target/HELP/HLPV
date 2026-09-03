@@ -1,2 +1,104 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(V)iew Settings                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command allows you to view various information and stats regarding 
+      your current call.  The display may look like the following:
+@X07 
+          Caller Num.: 1,005,213
+          Lst Date On: 02-08-93
+          Expire Date: None
+          # Times On : 6,008
+          Page Length: 23
+          Expert Mode: On
+          Security Lv: 120
+          # Downloads: 684
+          # Uploads  : 256
+          Bytes Avail: Unlimited
+          L/Msg. Read: 117,261
+          High Msg. #: 117,261
+          Active Msgs: 1,936
+          Tr/Protocol: No default protocol -- ask each time.
+@X03
+      The following describes each field that you may see on the status 
+      screen:
+
+          @X0BCaller Num: @X03 This is the number of calls that the bulletin board 
+          system you are calling has answered since operation of the system 
+          began.
+
+          @X0BLst Date On: @X03 The last date you called the system is stored in this 
+          field.
+ 
+          @X0BExpire Date: @X03 This field contains the date at which your account 
+          will expire. If you have no expiration date then this field will 
+          contain the word None. Some bulletin board systems set their users 
+          to expire at a certain date. When you are "expired" your security 
+          level is usually dropped until you follow the instructions that are 
+          displayed to you.
+
+          @X0B# Times On: @X03 This value shows how many times you have called this 
+          system.
+
+          @X0BPage Length: @X03 The page length setting allows you to configure how 
+          many lines will be displayed on your screen before you want PCBoard 
+          to issue a More? prompt and ask you if you are ready for the next 
+          screen.  This value may be changed by using the P user command.
+
+          @X0BExpert Mode: @X03 If expert mode is turned on, an On is displayed. 
+          Otherwise, you are in novice mode and an Off is displayed.  You may 
+          toggle expert mode by using the X user command.
+
+          @X0BSecurity Lv: @X03 This value is the security level that you have been 
+          assigned on this system.  The bulletin board system uses this value 
+          to control what you can and cannot do on the  system.
+
+          @X0B# Downloads: @X03 This is the total number of files you have downloaded 
+          from the system.
+
+          @X0B# Uploads: @X03 This is the total number of files you have uploaded to 
+          the system.
+
+          @X0BBytes Avail: @X03 This field shows you how many bytes you can download 
+          for the remainder of the day.  If this value is set to Unlimited 
+          then you may download as much as your time allows.
+
+          @X0BL/Msg. Read: @X03 This field contains the last message number you have 
+          read in the current conference.  As you change conferences this 
+          value will be updated.
+
+          @X0BHigh Msg. #:@X03  This value is the highest message number in the 
+          conference you are currently in.
+
+          @X0BActive Msgs:@X03  This value is the number of messages that are active 
+          in the conference you are currently in.  While you will see that 
+          each conference has a range of messages (e.g. 332-982) some of the 
+          messages in that range may have been deleted. Therefore, you cannot 
+          subtract the low message number from the high message number to get 
+          the actual number of active messages.
+
+          @X0BTr/Protocol: @X03 This is the name of the protocol you have selected as 
+          your default transfer protocol.  If None is displayed, you will be 
+          prompted for a transfer protocol to use each time you start a file 
+          transfer.
+
+      If you happen to be logging in as the SysOp (as record #1 in the USERS 
+      file) then two additional lines will be displayed to you:
+
+          @X0BDefined #'s: @X03 When you setup a conference, you are asked how many 
+          message blocks you want for the particular conference.  If you 
+          enter 4 in that field, then you will be allowed to have a range of 
+          4096 active messages in the conference.  This field will list the 
+          number of active messages that can be in the current conference.  
+          This number is obtained by taking the message blocks as defined in 
+          the conference and multiplying it by 1024.
+
+          @X0BFree Msg #s: @X03 Displays the number of messages that you may add to 
+          the current conference before exceeding the number of message 
+          blocks that you have defined.  For example, if your low message 
+          number is 4362, your high message number is 8257, and you have 
+          defined the conference for 6 message blocks (6144 messages) then 
+          you will have 2248 free messages before you exceed your defined 
+          range of active messages.
+@XFF

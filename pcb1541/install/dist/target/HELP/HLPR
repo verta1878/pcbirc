@@ -1,2 +1,466 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(R)ead Messages                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      The Read messages command permits you to read messages on a bulletin
+      board system.  Messages may be addressed to you, or to other people.
+      From this command you may also reply to messages you are reading,
+      search for text in messages, and get a synopsis of messages that are
+      currently on the system.
+@X0F
+   Selection Subcommands
+@X03
+      The following is a list of what are called the selection subcommands.
+      These commands will determine the criteria for the messages that you
+      will read. With the exception of the message #, you may use any
+      subcommand in conjunction with any other subcommand.  For example, if
+      you wanted to read new mail in all conferences that you have set for
+      scanning, enter R;S;A. Likewise, if you wanted to read the same
+      messages, but only display those from a user named FRANK CROSS, enter
+      R;S;A;USER;FRANK CROSS at the conference command prompt.
+          @X0B
+          [Message #] Message number to read.
+          A           Scan all selected conferences.
+          ALL         Scan all conferences that you have access to.
+          F           Read messages from current user.
+          FROM        Read messages from a user.
+          N           New Messages by date.
+          S           Read new messages.
+          TO          Read messages to a user.
+          TS          Search messages for specific text.
+          U           Read unread messages.
+          USER        Search messages to or from a particular user.
+          WAIT        Scan messages in conferences where you have mail waiting.
+          Y           Read messages addressed to you.
+          YA          Read messages to you or to ALL.
+@X0F
+   Scan Subcommands
+@X03
+      These particular subcommands can be used to set the direction that you
+      will read mail.  For example, if you wanted to begin reading at the end
+      of the current message base, you would enter R;L.
+@X0B
+          + @X03/@X0B -       Set read direction
+          1+          Begin with first message in the message base.
+          L           Begin with the last message.
+          N           New messages by date.
+          RM          Read memorized message.
+          RM+         Read memorized message and continue reading forward.
+          RM-         Read memorized message and continue reading reverse.
+@X0F
+   Capture Subcommands
+@X03
+      One time-saving feature that PCBoard offers is the ability to capture
+      messages into one single file which you may download and browse
+      off-line. The resulting file is an ASCII file that looks just like what
+      you see on the screen when viewing messages.
+
+      Sometimes you may want to download a group of messages or just a single
+      message.  These subcommands allow you to capture messages and then
+      download them to either a file or printer on your system.
+@X0B
+          C           Capture messages
+          D           Capture messages
+          QWK         Capture messages to a QWK packet
+          Z           Capture and compress messages
+@X0F
+   General Subcommands
+@X03
+      The following commands could be categorized as miscellaneous
+      subcommands. Here, you will find commands to perform various functions
+      that may not necessarily be directly related to reading messages, but
+      are still available for your convenience.
+@X0B
+          DE          De-select current conference
+          G           Goodbye.
+          J           Join a conference.
+          K           Kill a message.
+          LONG        Use the extended message header for displaying.
+          NS          Nonstop mode.
+          O           Read-only mode.
+          Q           Quick scan messages.
+          SE          Select current conference for scanning.
+          SET         Set the last message read number.
+          SHORT       Use the brief message header for displaying.
+@X0F
+   Description
+@X03
+      Exchanging electronic mail or messages between users is probably the
+      most popular form of communications on bulletin board systems.  Users
+      will enter and read messages almost every call. PCBoard has several
+      subcommands that allow you to read only those messages that interest
+      you.
+
+      While the number of subcommands may overwhelm you at first, you will
+      find that you will become familiar with them after a little bit of
+      practice.  You may also find that using mnemonics will help you
+      remember the commands easier.  By looking at the subcommands described
+      earlier you would find that you could enter R;S;A at a conference
+      command prompt to read all new messages in the conferences that you
+      have selected for scanning. You may find it easier to remember that
+      R;S;A means Read mail Since last time in All selected conferences.
+
+      Use the selection subcommands to determine the messages that you will
+      read. After you read each message you will be presented with an End of
+      Message Command prompt where you can enter other commands that enable
+      you to reply to messages and other functions as well.
+@X0F
+   Combining Read Subcommands
+@X03
+      Once you understand how you can combine the various read subcommands,
+      you will be able to better make use of PCBoard's power.  The following
+      section is designed to help you find the right subcommand for the right
+      situation.
+
+      If you enter R at a conference command prompt you will see a line which
+      shows you the range of the message numbers in the current conference
+      message base and will ask you what Message Read Command you would like
+      to use.  At this point, choose at least one subcommand from the Read:
+      Selection Subcommands section.  For example, if you were to enter a Y,
+      you are telling PCBoard to read messages that are addressed to you.
+      Now that PCBoard has enough information to go on, it will begin
+      scanning with message #1 for any mail that is addressed to you.
+
+      You may be wondering what you would do if you did not want to begin
+      scanning at message number one -- Maybe you only wanted to scan any new
+      mail that is addressed to you.  What you would do in this case is use
+      both the Y and the S subcommands.  Simply enter both subcommands at the
+      Message Read Command prompt putting either a space or a semicolon
+      between each command.  The following is a sample scenario:
+@X0E
+          (@X0C50@X0E min. left) Main Board Command? @X07R
+          @X0E
+          (H)elp, (3523-5032), Message Read Command?@X07 Y;S
+@X03
+      At this point, PCBoard would begin scanning all new mail in the current
+      conference for any messages that are addressed to you.
+@X0F
+   The Difference Between LONG and SHORT Message Headers
+@X03
+      The message header is the information that you are displayed regarding
+      who the message is from or to, the subject of the message, etc.
+      PCBoard supports two different message headers -- long and short.
+
+      The long message header closely resembles the message header of
+      previous versions of PCBoard with the exception that the, TO, FROM, and
+      SUBJECT fields all take one line a piece.  The long message header
+      displays the following information:
+@X0B
+          Date
+          Message number
+          Reference number (if message is a reply)
+          Who the message is address to
+          Who the message is from
+          The subject of the message
+          If the message has been read or not
+          The current conference (name and number)
+          The status of a message (has replies, message security, etc.)
+          Type of message read you are using
+@X03
+      All in all, this format takes a hefty 7 display lines on the screen
+      including the blank line between the header and the message text.  This
+      amounts to nearly one third of the entire display area on the screen.
+      The short header, on the other hand, uses only 5 display lines
+      including the blank line.  This amounts to less than one quarter of the
+      display screen enabling you to fit more message text on the screen.
+      The short message header displays the following information:
+@X0B
+          Date and time the message was entered
+          Message number
+          If the message has replies (displayed as an R on the top line)
+          If the message has been read (displayed as an * on the top line)
+          Who the message is addressed to
+          Who the message is from
+          The subject of the message
+@X03
+      The following shows the long message header style:
+
+@X1FDate: 07-12-93 (17:53)              Number: 71303 of 71372 (Refer# 71235)@CLREOL@
+@X3F  To: STEVE HOWLETT@CLREOL@
+From: DARRELL FARMER@CLREOL@
+Subj: Security Levels@CLREOL@
+@X3ERead: NO                            Status: PUBLIC MESSAGE@CLREOL@
+Conf: Chatter (1)                Read Type: MAIL FOR YOU (+)@CLREOL@
+@X03
+      The following illustrates the short message header style
+
+@X1FDate: 07-12-93 (17:53)              Number: 71303 of 71372 (Refer# 71235)@CLREOL@
+@X3F  To: STEVE HOWLETT@CLREOL@
+From: DARRELL FARMER@CLREOL@
+Subj: Security Levels@CLREOL@
+@X03
+      As you can see two lines of information really does make a difference.
+      The default header that is used is determined by how you answered the
+      following question using the W user command:
+@X0E
+          Use long headers when reading messages? (@X07Y@X0E)
+@X03
+      You can also switch between long and short headers by typing either
+      LONG or SHORT at the End of Message Command prompt.  In addition, you
+      may also use these words when using the R user command.  For example:
+@X0E
+          R;A;LONG
+          R;Y;S;SHORT
+@X0F
+   Examples
+@X03
+      If you do not like to read a lot of mail when you login to a system,
+      you may want to only read new messages that are addressed to you in
+      all conferences that you are able to join. To do this, you would enter
+      the following at the conference command prompt:
+@X0E
+          R;Y;S;ALL
+@X03
+      If you wanted to read the same messages but instead you wanted to
+      capture them to a file that you could download, you would enter the
+      following instead:
+@X0E
+          R;Y;S;ALL;C
+@X03
+      Sometimes you may want to search for messages that only have certain
+      text in either the message header or the actual message body.  For,
+      example, if you wanted to search all of the messages in the current
+      message base for HARD DRIVE you would enter the following:
+@X0E
+          R;TS;HARD DRIVE
+@X03
+      At this point, PCBoard would ask you what message you wished to begin
+      the scan with.  If you enter L it will begin with the end of the
+      message base and search backwards.  If you want to scan with the
+      beginning message and search forward, you would enter 1+.
+@X0F
+   Subcommands: Alphabetical Listing
+@X03
+      For your convenience, the following is a detailed alphabetical list of
+      subcommands that are available with the R command.  Even the subcommands
+      that are available at the End of Message Command prompt are listed.
+
+      @X0B[Message #]     Message number to read. @X03 This number indicates the
+                      number of the message that you wish to read.  If you
+                      wish, you may also append either a + or a - to the
+                      message number to read in the forward or reverse
+                      direction, starting with the message number specified.
+                      For example, to read message #3236 and every message
+                      afterwards, you would enter 3236+ instead of just 3236.
+
+                      You may also specify a range of message numbers by
+                      adding a dash between the low message number and high
+                      message number. For example, to specify messages
+                      between 3000 and 4000 , enter 3000-4000.
+
+      @X0BENTER           Read next message in current direction.@X03  When pressed
+                      at the End of Message Command? prompt, the next message
+                      is displayed in the direction that you are reading.
+
+      @X0B+  @X03/@X0B -          Set read direction. @X03 When appended to a message number
+                      or used by itself, PCBoard displays all messages in
+                      forward-numerical or reverse-numerical order
+                      respectively from that point.  You can always tell what
+                      mode you are in by looking at the Read Type at the top
+                      of the message you are reading.  In that field you will
+                      see either a + or a - to denote which direction you are
+                      reading.
+
+      @X0B1+              Begin with first message in the message base. @X03 If you
+                      want to specify the first message in the message base
+                      you would specify this subcommand.
+
+     @X0B A               Scan all selected conferences. @X03 Messages are read from
+                      all conferences that have been selected for scanning.
+                      You may choose which conferences you wish to scan for
+                      messages by using the SE command at the conference
+                      command prompt or by using  DE or SE with the R user
+                      command.
+
+    @X0B  ALL             Scan all conferences that you have access to. @X03 Messages
+                      are read from all conferences that you have access to
+                      whether you have selected them for scanning or not.
+
+    @X0B  C               Capture messages. @X03 The messages displayed by the
+                      current command are captured, placed in a file, and
+                      prepared for download.  You are given the choice to
+                      continue with the download, abort the transfer, or
+                      hangup after the transfer.
+
+    @X0B  D               Capture messages. @X03  The messages displayed by the
+                      current command are captured, placed in a file, and
+                      immediately prepared for download.
+
+@X0B      DE              De-select current conference. @X03 If a particular
+                      conference is chosen for scanning, the conference is
+                      de-selected.  This has the same effect as using the
+                      Select command from the main menu and de-selecting the
+                      conference by pressing the corresponding number for the
+                      conference.  This would cause the "X" flag in the flags
+                      column from the SELECT command (executed from a
+                      conference command prompt) to be removed.
+
+@X0B      E               Enter a message. @X03 See the E user command for more
+                      details.
+
+@X0B      F               Read messages from current user. @X03 The message base is
+                      scanned for all messages from you.
+
+@X0B      FROM            Read messages from a user. @X03 If you wish to read mail
+                      that is only from a particular user, use this
+                      subcommand.  When you use this subcommand, PCBoard will
+                      prompt you for the user you wish to read mail from.
+
+@X0B      G               GoodBye. @X03 (See the G user command for more details.)
+
+@X0B      J               Join a conference. @X03 You may join another conference.
+                      (See the J user command for more details.)
+
+@X0B      JUMP            Jump to the next conference. @X03 If you read all
+                      conferences (R;A or R;ALL), you may jump to the next
+                      available conference for message base scanning by using
+                      this command.  The last message read pointer is not
+                      advanced to the last message when you jump a
+                      conference.  Next time you scan for new mail in that
+                      conference, all of the messages you jumped over will be
+                      shown in the scan.  This subcommand is only available
+                      at the End of Message Command prompt.
+
+@X0B      L               Begin with the last message. @X03 The current message base is
+                      read backward from the last message to the first.
+
+@X0B      LONG            Use the extended message header for displaying. @X03
+                      Displays the extended message header.  All message
+                      header fields are displayed, but the extended header
+                      uses 7 lines as opposed to the 5 lines used by the
+                      short header display.
+
+@X0B      N               New messages by date. @X03 The first message that is read
+                      is the one that matches the date that you specify.
+                      This enables you to read only messages that were left
+                      after a certain date.
+
+@X0B      NS              Non-stop mode. @X03 Messages are displayed in non-stop mode,
+                      thus eliminating More? prompts from the display.
+
+@X0B      O               Read messages in read-only mode. @X03 When you want to read
+                      messages and do not want your last message read updated
+                      as you read the mail, read the mail in what is called
+                      read-only mode. Additionally, if you have sufficient
+                      security, he message read status will not be updated.
+                      This means that even though you have read the message,
+                      it will not be shown as having been read and your last
+                      message read pointers will not be updated.
+
+@X0B      Q               Quick scan messages. @X03 See the Q user command for more
+                      information.
+
+@X0B      QWK             Capture message in QWK format.@X03  One of the most popular
+                      off-line message format is the QWK format.  With what
+                      is called a QWK packet you can load it into an off-line
+                      mail reader and read and reply to messages off-line
+                      saving time and money.  If you use this subcommand, any
+                      message that would have normally been displayed to your
+                      screen will be sent to a QWK packet that you may
+                      download and read off-line.
+
+@X0B      RM              Read memorized message.@X03  The message previously
+                      memorized is re-displayed.
+
+@X0B      RM+             Read memorized message and continue reading forward.@X03
+                      The message previously memorized is re-displayed and
+                      the message base is placed in forward mode for further
+                      reading.
+
+@X0B      RM-             Read memorized message and continue reading reverse.  @X03
+                      The message previously memorized is re-displayed and
+                      the message base is placed in reverse mode for further
+                      reading.
+
+@X0B      S               Read new messages. @X03 All messages in the current
+                      conference that have not already been read will be
+                      displayed.  You may specify the A or ALL subcommand to
+                      scan for new mail in other conferences besides the
+                      current conference.
+
+@X0B      SE              Select current conference for scanning.@X03  While reading
+                      a message you may select the current conference to scan
+                      for messages.  This has the same effect as if you
+                      executed the Select command from the main menu and
+                      placed an "X" in the flags column.  Using this command
+                      you may select the conferences you wish to scan for
+                      mail on-the-fly.
+
+@X0B      SET             Set the last message read number. @X03 PCBoard stores last
+                      message read pointers for each conference.  These
+                      pointers contain the last message number that you read
+                      in any particular conference.  By looking at this
+                      value, PCBoard is able to determine which messages you
+                      have not read yet.  As you read messages, this number
+                      will be automatically updated. If you need to manually
+                      update this value, use this command. When executed, you
+                      will be asked to enter the highest message number that
+                      you have read.  Enter any valid message number into the
+                      field.  If the number you enter is higher than the
+                      highest message in the conference, your last message
+                      read will be set to the highest number in the
+                      conference.
+
+@X0B      SHORT           Use the brief message header for displaying. @X03 Displays
+                      the four line version of the message header.  This
+                      means that not all of the fields in the header are
+                      displayed so that more of the message will be displayed
+                      on the screen.
+
+@X0B      SKIP            Skip current conference. @X03 While executing an R;ALL or an
+                      R;A command, you may use SKIP to bypass the remaining
+                      messages in the current conference and to set the last
+                      message read pointer to the last message.  In the R;A
+                      case, however, invoking SKIP will act just as it does
+                      with the R;A command only it moves you to the next
+                      available conference and permits you to continue
+                      reading messages in the next conference.
+
+@X0B      TO              Read messages to a user. @X03 If you wish to read mail that
+                      is addressed to a particular user, use this subcommand.
+                      When you do, you will be prompted for the username that
+                      PCBoard will use to search the TO: field of each
+                      message.
+
+@X0B      TS              Search messages for specific text. @X03 Each message is
+                      scanned for the text that you indicate.  You may
+                      perform complex text searches by using Boolean text
+                      searches.  For more information on Boolean text
+                      searches, access the online help available at the
+                      @X0EEnter the Text to Scan for@X03 prompt.
+
+@X0B      U               Read unread messages. @X03 Anytime that you want to read
+                      messages that have not been read, you can use this
+                      subcommand.  If a message has been read by the
+                      recipient, PCBoard will display the date and time that
+                      the message was read in the message header. Messages to
+                      ALL will always be considered as unread.
+
+@X0B      USER            Search messages to or from a particular user. @X03 When
+                      executed you are prompted to enter the name of the user
+                      you would like to search for.  After you enter a valid
+                      user name, the message base is scanned for messages
+                      both for a specified user and those left by a specified
+                      user.
+
+@X0B      WAIT            Scan messages in conferences where you have mail
+                      waiting. @X03Messages are read only from conferences that
+                      you currently have personal mail waiting to be read.
+                      For example, if you login and see that you have mail
+                      waiting in conferences 2,3, and 25 you could read all
+                      new messages in only those conferences by entering
+                      R;WAIT at the conference command prompt.
+
+@X0B      Y               Read messages addressed to you. @X03 The message base is
+                      scanned for all messages addressed to you.
+
+@X0B      YA              Read messages to you or to ALL. @X03 The message base is
+                      scanned for all messages addressed to you or to ALL.
+
+@X0B      Z               Capture and compress messages. @X03 As with the D command,
+                      the messages displayed by the current command are
+                      captured and placed in a file.  The  file, however, is
+                      compressed before it is downloaded and therefore may
+                      not be sent to your local printer.
+@XFF

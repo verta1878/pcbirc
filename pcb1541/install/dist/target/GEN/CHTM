@@ -1,3 +1,22 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
-ORDER            5943  02-13-95  Order form for PCBoard products
+@X00
+@X7FÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X78¿@CLREOL@
+@X7F³@X7A @X7F@SYSDATE@@X7B                 N o d e   C h a t   M e n u                  @X7F@SYSTIME@@X7A @X78³@CLREOL@
+@X7FÀ@X78ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@CLREOL@
+@X78ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X7F¿@CLREOL@
+@X78³@X71 (@X7ECALL@X71)      Call a user to chat            (@X7EMENU@X71)     Display this menu     @X7F³@CLREOL@
+@X78³@X71 (@X7ECHANNEL@X71)   Change channels                (@X7EX@X71)pert    Toggle 'Expert Mode'  @X7F³@CLREOL@
+@X78³@X71 (@X7EHANDLE@X71)    Change your handle             (@X7EQ@X71)uit     Exit chat             @X7F³@CLREOL@
+@X78³@X71 (@X7ESEND@X71)      Send private message           @X71(@X7EG@X71)oodbye  Logoff system         @X7F³@CLREOL@
+@X78³@X71                                                                             @X7F³@CLREOL@
+@X78³@X71 (@X7ETOPIC@X71)     Change current topic                                            @X7F³@CLREOL@
+@X78³@X71 (@X7EPRIVATE@X71)   Make disscussion private       (@X7ESHOW@X71)  Show users in chat       @X7F³@CLREOL@
+@X78³@X71 (@X7EPUBLIC@X71)    Make disscussion public        (@X7EWHO@X71)   Show who is online       @X7F³@CLREOL@
+@X78³@X71                                                                             @X7F³@CLREOL@
+@X78³@X71 (@X7EECHO@X71)      Enable echo mode                                                @X7F³@CLREOL@
+@X78³@X71 (@X7ENOECHO@X71)    Disable chat echo (use with split screen)                       @X7F³@CLREOL@
+@X78³@X71 (@X7EIGNORE@X71)    Ignore input from one or more nodes                             @X7F³@CLREOL@
+@X78³@X71 (@X7EMONITOR@X71)   Toggle 'Monitor Mode' (monitor one or more public channels)     @X7F³@CLREOL@
+@X78³@X71 (@X7ESILENT@X71)    Toggle 'Silent Mode' (disables system messages)                 @X7F³@CLREOL@
+@X78À@X7FÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@CLREOL@@XFF
+
+

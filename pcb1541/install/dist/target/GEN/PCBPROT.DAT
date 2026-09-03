@@ -1,8 +1,12 @@
- @X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X17³  @X1FThis conference is for all employees to send E-Mail to each other.     @X17 ³@X07
- @X17³  @X1FNo file areas , bulletins, DOORs, or Script Questionaires are          @X17 ³@X07
- @X17³  @X1Favailable.  It is a general access conference which will allow private @X17 ³@X07
- @X17³  @X1Fmessages from one caller to another, or public messages that anyone    @X17 ³@X07
- @X17³  @X1Fmay read.                                                              @X17 ³@X07
- @X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+A,I,128,Ascii,N,N,N
+X,I,128,Xmodem/Checksum,N,N,N
+C,I,128,Xmodem/CRC,N,N,N
+O,I,1024,1K-Xmodem       (a.k.a. non-BATCH Ymodem),N,N,N
+F,I,1024,1K-Xmodem/G     (a.k.a. non-BATCH Ymodem/G),Y,N,N
+Y,I,1024,Ymodem BATCH,N,N,N
+G,I,1024,Ymodem/G BATCH,Y,N,N
+Z,D,1024,Zmodem (batch),N,N,Y
+H,B,1024,HS/Link (bidirectional),N,N,Y
+B,B,1024,BiModem (bidirectional),N,N,N
+N,I,0,None,N,N,N
 

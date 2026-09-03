@@ -1,7 +1,39 @@
- @X17ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿@X07
- @X17³ @X1FThis is a conference for the Sales and Marketing Department(s).         @X17 ³@X07
- @X17³ @X1FDiscussion of unrelated topics should be kept private or moved to a     @X17 ³@X07
- @X17³ @X1Fseperate area of this system.  For questions regarding this or other    @X17 ³@X07
- @X17³ @X1Fareas of the system, please use the (C)omment to Sysop command.         @X17 ³@X07
- @X17ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(H) Online Help                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+       This command lets you explicitly access the on-line help system. Using
+       this command, you can get help for any of the commands available on
+       the main menu.
+
+@X0F
+   Subcommands
+
+       @X0B[command]       @X03The command or filename that you want additional
+                       assistance with.
+
+@X0F
+   Description
+@X03
+       Each of PCBoard's main commands have additional assistance available
+       in the form of on-line help.  The on-line help will be displayed on
+       the screen.  To access help for a particular command, enter the
+       command you want additional help with when prompted.
+
+@X0F
+   Examples
+@X03
+       To get online help for the R user command, you would type in the
+       following:
+@X07
+           H R
+@X03
+       If the SysOp has defined additional help topics, you can access these
+       by entering the topic you want help with.  For example, if a topic is
+       listed as ORDER, you would type the following to get help for that
+       particular topic:
+@X07
+           H ORDER
+@XFF
 

@@ -1,11 +1,55 @@
- @X10ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X19¿@X07
- @X10³                    @X1BB u l l e t i n s                                       @X19³@X07
- @X10³                                                                            @X19³@X07
- @X10³  @X1E#  @X13°  @X1EDescription                                          @X13° @X1EFilename     @X19³@X07
- @X10³ @X1Bùùù @X13° @X1Bùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù @X13° @X1Bùùùùùùùùùùùù @X19³@X07
- @X10³  @X1F1  @X13°  @X1FRules of this system.                                @X13° @X1ARULES        @X19³@X07
- @X10³  @X1F2  @X13°  @X1FHistory of @BOARDNAME:42@@X13° @X1AHISTORY      @X19³@X07
- @X10³     @X13°                                                       @X13°              @X19³@X07
- @X10³     @X13°                                                       @X13°              @X19³@X07
- @X10À@X19ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X07
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3FSet Conference Registrations                                         @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+@X0F
+   Subcommands
+@X03
+          @X0BS           selects ALL conferences
+          @X0B#           selects a specific conference
+          @X0B#-#         selects a range of conferences
+@X0F
+   Description
+@X03
+      While modifying a user record the last question asked is
+      "Select Conferences" which brings up a conference registration
+      screen if you answer in the affirmative.
+
+      After selecting the conference(s) to act upon the system will
+      ask you for the flags you wish to use for that conference.  The
+      possible answers are as follows:
+
+@X0B      Registration Flags@X03
+      ------------------
+
+           @X0B R @X03            = Caller is registered in conference if his
+                            subscription has not expired.
+
+           @X0B X @X03            = Caller is registered in conference even
+                            if his subscription has expired.
+
+           @X0B L @X03            = Caller is locked out of the conference.
+
+           @X0B S @X03            = Caller has chosen to scan this conference.
+
+           @X0B C @X03            = Caller is made a "sysop" temporarily while
+                            in this conference.
+
+      Note that if a conference is flagged as PUBLIC and the caller
+      has sufficient security to join the conference he may do so
+      regardless of the "R" and "X" flags unless his "L" flag is
+      turned on to indicate that he is locked out of that conference.
+@X0F
+   Examples
+@X03
+      To register a user in a conference and mark the conference for scanning
+      enter the following:
+@X0E
+          RS
+@X03
+      To register the user in a conference even if they are expired enter the
+      following:
+@X0E
+          RX
+@XFF
 

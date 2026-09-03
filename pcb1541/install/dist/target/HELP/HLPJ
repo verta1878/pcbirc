@@ -1,2 +1,78 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(J)oin a Conference                                                  @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      Conferences serve as a way to separate information and topics on a
+      bulletin board system.  By dividing up the information, you can find
+      what you are after quicker than ever before.
+@X0F
+   Subcommands
+
+      @X0B[conf. name]    Conference name to join.@X03  Specifies the conference
+                      name you wish to join.  Joining a conference by
+                      name is useful when you do not remember conference
+                      numbers, or in case the conference is moved to a
+                      new number.
+
+      @X0B[conf. num.]    Conference number to join.@X03  Specifies the conference
+                      number you wish to join.
+
+      @X0BQ               Quick-join the conference.@X03  Sometimes the conference
+                      that is being joined will have a news or introduction
+                      file.  This subcommand will make sure that these files
+                      are not displayed when the conference is joined.
+
+      @X0BS               Search conference names for text.@X03  As pointed out
+                      earlier, you may want to join a conference by name
+                      instead of number. What if you do not know or remember
+                      the conference names? This subcommand enables you to
+                      search the conference names on a system for text.  When
+                      prompted for text to search for, enter the text you
+                      wish to search for.  If a match is found in the
+                      conference name then both the conference name and
+                      number will be displayed.
+@X0F
+   Description
+@X03
+      Conferences provide a method which information on the bulletin board
+      system can be broken down into areas.  Each conference can have unique
+      file directories, message bases, scripts, bulletins, and doors, or it
+      may share these with other conferences on the system.  In order to go
+      to one of these conferences, use this command.  Once you join the
+      conference all of the features of the conference are made available to
+      you.
+@X0F
+   Examples
+@X03
+      If you want to join conference number 13, enter the following at the
+      conference command prompt:
+@X0E
+          J;13
+@X03
+      If you know the name of the conference instead of the number of the
+      conference, type in the name of the conference to join.  For example,
+      if you want to join the Computer_Art conference then you would type:
+@X0E
+          J;COMPUTER_ART
+@X03
+      If you do not know either the conference name or the conference number,
+      use the search subcommand to help you find the right conference.  For
+      example, you may only remember that the conference deal with art.  In
+      that case, type the following at the conference command prompt:
+@X0E
+          J;S;ART
+@X03
+      PCBoard will  search the conference names to see if it could find a
+      match.  For this particular example, you may see a report like the
+      following:
+@X07
+          1) Classic_Art
+          13) Computer_Art
+          37) Digitized_Art
+@X03
+      The number to the left is the conference number and the conference name
+      is listed to the right.  You can then pick the conference number or
+      name that you wish to join.
+@XFF
+

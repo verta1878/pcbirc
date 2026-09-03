@@ -1,2 +1,31 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(X) Expert Mode                                                      @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+    This command enables you to toggle expert mode on the system. Using 
+    subcommands you may also explicitly specify if you want expert mode or 
+    not.
+@X0F
+   Subcommands
+@X03
+      @X0BON              Explicitly select expert mode.
+      @X0BOFF             Explicitly select non-expert or novice mode.
+@X0F
+   Description
+@X03
+      When this command is used with no subcommands it acts as a toggle 
+      between expert and novice modes.  If expert mode is turned on, menus 
+      are not shown. In novice mode, if there is a menu, it will be displayed 
+      after each command is executed.
+@X0F
+   Examples
+@X03
+      If you simply want to toggle expert mode then you would press X at any 
+      conference command prompt.
+
+      If you wanted to explicitly select either expert or novice mode then 
+      you would need to use one of the subcommands.  For example, if you want 
+      to make sure that you are in export mode, then you would enter X OFF at 
+      any conference command prompt.
+@XFF

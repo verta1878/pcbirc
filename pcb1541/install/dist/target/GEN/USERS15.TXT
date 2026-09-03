@@ -1,75 +1,188 @@
-@X0EHow to use this system
-@X04ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
-@X07
-         Access to the system is restricted to pre-registered callers only.
-         No public access is allowed.
+                  Changes for PCBoard 15.0 that effect callers
+                  --------------------------------------------
 
-         Main Board-
-                -Private messages between callers and Sysops only.
 
-                -No file areas, scripts, bulletins are available.
+     ADDED   A brand new chat module!  The CHAT # and NODE # commands no
+             longer work.  The user must now go into CHAT G and from there
+             use the CALL command to call a user into chat.
 
-         Employee E-Mail-
-                -No file area, scripts, bulletins are available.
 
-                -Conference is available to all employees.
-                 Messaging may be either public or private.
+     ADDED   The (P)rotocol selection at the prompt that PCBoard issues
+             just before a file transfer begins.  This will let the caller
+             easily change the protocol before beginning the file transfer.
 
-         Sales & Marketing-
-                -Access is restricted to members of the Sales & Marketing
-                 Department(s).
 
-                -Bulletins are available for display of information relating
-                 specifically to this area.
+     ADDED   Immediate detection, after an upload, of the existence of a
+             FILE_ID.DIZ file within a .ZIP or .EXE file.  If a FILE_ID.DIZ
+             file is found AND the sysop has configured the system to
+             verify uploads, the user will *not* be asked for a
+             description.
 
-                -Files areas are available for download of information
-                 relating specifically to this area.
 
-         MIS-
-                -Access is restricted to members of the MIS Department.
+     CHANGED The upload process will now allow you to type H to hangup
+             before the upload testing process begins.  Also, any
+             unannounced files that need to be described will be recognized
+             immediately after the upload is finished and the user will be
+             prompted to describe all of them before any testing begins.
 
-                -Bulletins are available for display of information relating
-                 specifically to this area.
 
-                -Files areas are available for download of information
-                 relating specifically to this area.
+     CHANGED Messages can now be uploaded into the message editor using any
+             available protocol.  ANSI files, with lines longer than 79
+             characters, may be uploaded into the message editor and
+             saved - but cannot be edited online.
 
-         Administration-
-                -Access is restricted to members of Administration.
 
-                -Bulletins are available for display of information relating
-                 specifically to this area.
+     ADDED   The ability to immediately read your mail whenever there is
+             new mail waiting for you.  This is set by answering YES to
+             "Prompt to Read Mail when Mail Waiting" in Configuration
+             Options : Messages.  PCBoard will prompt the caller like this:
 
-                -Files areas are available for download of information
-                 relating specifically to this area.
+             New messages found in conference XYZ...
 
-         Human Resources-
-                -Access is restricted to members of the Human Resources
-                 Department.
+             Read your personal mail now: (Y)es, (N)o, (A)ll new mail
 
-                -Bulletins are available for display of information relating
-                 specifically to this area.
+             If you answer Y or A, PCBoard will scan all conferences that
+             have the "Mail waiting flag" turned on.  These conferences
+             NEED NOT BE selected - as in the R A S command.
 
-                -Files areas are available for download of information
-                 relating specifically to this area.
+             If you select Y then PCBoard will display new messages, which
+             are addressed to you, in each of the conferences that were
+             listed as having new personal mail.  NOTE: Last Message Read
+             pointers will NOT be updated.
 
-         Customer Support-
-                -Access is restricted to members of the Customer Support
-                 Department.
+             If you select A then ALL new messages, your personal mail or
+             not, in each of the conferences that were listed as having new
+             personal mail, will be displayed.  PCBoard will keep track of
+             and update your Last Message Read pointers while reading the
+             mail.
 
-                -Bulletins are available for display of information relating
-                 specifically to this area.
+             One more thing: the mail waiting flags have been made much
+             more reliable!  It is still possible for the flags to NOT be
+             set, due to the message having been posted by software that
+             does not support the mail waiting flags.  But you should now
+             NEVER see a pop-up "You have mail waiting in conference XYZ"
+             message *except* when you really DO have mail waiting for you
+             there.  PCBoard also no longer clears the flags just because
+             you were reading mail (on the assumption that you *might* have
+             read the new mail) since it can now verify whether or not new
+             mail actually exists.
 
-                -Files areas are available for download of information
-                 relating specifically to this area.
 
-         Engineering-
-                -Access is restricted to members of the Engineering
-                 Department.
+     ADDED   New message base commands:
 
-                -Bulletins are available for display of information relating
-                 specifically to this area.
+             TO      read messages addressed TO a specific user
 
-                -Files areas are available for download of information
-                 relating specifically to this area.
-
+             FROM    read messages FROM a specific user
+
+             N       read messages NEW since a specific date
+
+             WAIT    read all conferences where the mail waiting flags are
+                     set
+
+             LONG    view long message headers
+
+             SHORT   view short message headers
+
+             FLAG    flag a file for download while reading messages
+
+             V       view a file while reading messages
+
+             QWK     creates a QWK packet (can be combined with any other
+                     valid read commands; i.e. R 1+ QWK, R A QWK,
+                     R A Y QWK, TS blah QWK, etc)
+
+             C,D,Z   These commands can now be used while reading messages
+                     to capture and download the current message
+
+
+     ADDED   The message base has new capabilities including:
+
+             - File attachments (1 per message)
+
+             - A Return Receipt message can be requested when writing a
+               private message in a conference where Return Receipts are
+               enabled
+
+             Return Receipts are visible only to the user who requested
+             them and, optionally, anyone (presumably a sysop) who has a
+             security level high enough to see them.  The sysop can,
+             therefore, avoid seeing the return receipts by setting the
+             security level for that feature to something higher than his
+             or her security level.
+
+             PCBSetup allows you to determine which users, by security, can
+             request return receipts on a conference-by-conference basis.
+
+
+     CHANGED All users may now use the Read-(O)nly message command now
+             regardless of their security level.  The "R O" command has
+             been change so that all it does is avoid setting the Last
+             Message Read pointers.  The sysop may still assign a security
+             level to that command.  The question in PCBSetup now asks:
+             "Level Needed to NOT Update Msg Read Status (R O cmd)". If a
+             user has that level or greater than the "R O" command not only
+             avoids setting Last Message Read pointers, but it also avoids
+             updating the "Message Read Status" when reading personal mail.
+
+
+     ADDED   The ability to FLAG or (V)iew a file while reading messages.
+             This can be a file attachment that is being flagged or viewed,
+             or it can be any file found in the current conference download
+             path.
+
+
+     CHANGED At an input prompt you can now press ESC to abort what you
+             have typed so far and re-enter the information.
+
+
+     ADDED   Built-in support for QWK packets.  That is, the ability to
+             create a QWK packet and send it to the caller, plus the
+             ability to receive a reply packet and integrate the messages.
+             New commands are as follows:
+
+                  QWK D (p) (bye)
+                  QWK U (p) (bye)
+
+             After either of the two QWK commands you can optionally stack
+             the letter of the protocol to use and/or the word BYE to
+             logoff when done.
+
+             While the QWK D command is simplistic, performing nothing more
+             than an R;A;S command (scan all conference for new mail) and
+             turning it into a QWK packet, the full power of PCBoard's
+             message reading capabilities can still be used in an alternate
+             form.  Like this:
+
+                  R (...) QWK         where (...) is any valid Read Command
+
+             Example:
+
+                  R A TO JANE DOE FROM JOHN DOE TS THIS | THAT 1+ QWK
+
+             NOTE: None of the more advance features of QWK-mail doors will
+                   be implemented here.  This feature is simply an "easy to
+                   use" method of obtaining QWK packets which can be
+                   performed on any v15.0 BBS.
+
+
+     CHANGED Increased the timeout when starting a file transfer from 60
+             seconds to 90 seconds.  Should give those slow modem users a
+             little more time to get the ball rolling before the system
+             calls it quits.
+
+
+     CHANGED (L)ocate command has been enhanced so that if the user types a
+             multi-word search criteria PCBoard will split it up and put
+             ampersands (&) in between each word.  Since a command such as
+             "L RECOVER DATA" is invalid, we might as well do what we can
+             to help the caller find what he's looking for.  In v14.5a
+             PCBoard turned "L RECOVER DATA" into "Z RECOVER DATA".  For
+             v15.0 we'll take it a step further and turn it into "Z RECOVER
+             & DATA".
+
+
+     CHANGED PCBoard now remembers across sessions how your Chat Status is
+             set.  If you make yourself unavailable for chat and later
+             logoff, on your next call you will be unavailable for chat.
+             Likewise, making yourself available for chat will be
+             remembered the next time you log in.

@@ -1,2 +1,25 @@
-..\MIS\FILES1\
-..\MIS\UPLOAD\
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(C)omment To The Sysop                                               @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      Enters a comment to the SysOp.  The message is addressed to SysOp and
+      is always a private message.
+@X0F
+   Description
+@X03
+      When you have a question about the system you will usually want to
+      leave a message to the SysOp.  PCBoard provides a method by which you
+      can easily enter a message to the SysOp without worrying who the
+      message should be addressed to.  Before the actually leaving the
+      message, you will be asked to confirm that you wish to leave a comment
+      to the SysOp.  If you answer with a "Y" then you will be taken directly
+      into the message editor.
+
+      When the message is saved it will be placed into the current conference
+      unless this system is configured to Force COMMENTS-to-the-Sysop into
+      Main (Conference #0).
+
+      See the help for (E)nter a Message for further information.
+@XFF
+

@@ -1,2 +1,43 @@
-Filename       Size      Date    Description of File Contents
-============ ========  ========  ============================================
+@X00
+@X38ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ@X3B¿@X0B
+@X38³ @X3EHelp: @X3F(W)rite User Information                                             @X3B³@X0B
+@X38À@X3BÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ@X0E
+
+      This command allows you to change various information about your
+      account such as your password.
+@X0F
+   Description
+@X03
+      This command allows you to change your own user information. Based
+      on how the Disable Full Record Updating option was answered in
+      PCBSetup, certain questions may not be updated via this command.
+      The following lists each question which will be asked depending on
+      how the SysOp has configured the system.  You will get asked one of
+      two sets of questions.
+@X0B
+          Question Set #1
+@X07
+                        Password (one word please)?
+                       City and State calling from?
+                       Business or data phone # is?
+                          Home or voice phone # is?
+                                      Brand of CPU?
+             Clear the screen between each message?
+                      Scroll multi-screen messages?
+            Use long headers when reading messages?
+    Full Screen Editor Default: (Y)es, (N)o, (A)sk?
+        Set editor workspace default to 79 columns?
+                              Select Conference(s)?
+
+@X0B
+          Question Set #2
+@X07
+                        Password (one word please)?
+             Clear the screen between each message?
+                      Scroll multi-screen messages?
+            Use long headers when reading messages?
+    Full Screen Editor Default: (Y)es, (N)o, (A)sk?
+        Set editor workspace default to 79 columns?
+                              Select Conference(s)?
+@XFF
+
