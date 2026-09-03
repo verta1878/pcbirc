@@ -1,0 +1,58 @@
+pcbirc — delta: fixes what's missing on origin (with ROOT-CAUSE fix)
+======================================================================
+Origin HEAD: fb41ae0 "Today's work"
+My HEAD:     502e6a7f04d6e49e71e5cf87ca12d1b4bfe995e0
+
+WHAT WAS ACTUALLY WRONG
+
+  You spotted it — the LST files were being ignored by .gitignore.
+  
+  The rule '*.lst' (lowercase) in .gitignore matches CASE-INSENSITIVELY
+  on Windows and macOS git (core.ignorecase=true is the default there).
+  So BLT.LST, DIR.LST, DLPATH.LST match *.lst and get silently dropped
+  from every 'git add' and 'git commit'.
+  
+  That's exactly what APPLY-THIS-FIRST.txt on origin documented: "48
+  .LST files got dropped." But it treated the symptom (missing files),
+  not the cause (the gitignore rule). Without fixing the rule, the same
+  files would drop AGAIN on the next Windows-side push.
+
+WHAT THIS DELTA FIXES
+
+  Content (my earlier delta already had these):
+    47 x conference LST files (ADMIN, CUSTSRVC, EMPLOYEE, ENGINRNG, FILES,
+        GEN, GRAPHICS, HMNRSRC, MIS, PROD1, PROD2, SLSMKTNG)
+     5 x MAIN/CNAMES.* renames (DOS-authentic trailing-dot names)
+     1 x rebuild.sh (disk-aware v1.7.1)
+
+  NEW — root cause fix:
+     .gitignore    — extends target/ allowlist with:
+                       !pcb1541/install/dist/target/**/*.LST
+                       !pcb1541/install/dist/target/**/*.lst
+     CHECKSUMS.md5, .sha256, .txt  — regenerated
+
+  Verified: on Windows-like config (core.ignorecase=true), LST files
+  now correctly ADDED instead of ignored.
+
+APPLY (via GitHub Desktop)
+
+  Step 1: Extract this zip into your repo root (overwrites/adds files).
+
+  Step 2: MANUALLY DELETE these 3 stale root docs:
+             APPLY-THIS-FIRST.txt          (v1.6.6 fix note, now superseded)
+             RELEASE-v1.6.5-README.txt     (v1.6.5 release readme, historical)
+             cleanup.bat                   (v1.6.0-v1.6.4 reorg script)
+
+  Step 3: MANUALLY DELETE these 5 old CNAMES files (trailing-underscore
+          mangled names, being replaced by trailing-dot originals):
+             pcb1541/install/dist/target/MAIN/CNAMES_
+             pcb1541/install/dist/target/MAIN/CNAMES.72_
+             pcb1541/install/dist/target/MAIN/CNAMES.L_
+             pcb1541/install/dist/target/MAIN/CNAMES.M3_
+             pcb1541/install/dist/target/MAIN/CNAMES.P0_
+
+  Step 4: Commit + push in GitHub Desktop.
+
+  The .gitignore fix means all 47 LST files will actually stage this
+  time — not silently drop. Verify in GitHub Desktop's staging view
+  before committing; you should see 47 new LST files listed.

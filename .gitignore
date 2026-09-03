@@ -63,3 +63,9 @@ pcb15everything.zip
 !pcb1541/install/dist/target/**/*.dll
 !pcb1541/install/dist/target/**/*.BIN
 !pcb1541/install/dist/target/**/*.bin
+
+# Allow extracted-installer parity list files under target/
+# (needed because *.lst above matches case-insensitively on Windows/macOS Git,
+#  which would otherwise silently drop BLT.LST, DIR.LST, DLPATH.LST files)
+!pcb1541/install/dist/target/**/*.LST
+!pcb1541/install/dist/target/**/*.lst
