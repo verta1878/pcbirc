@@ -1,0 +1,118 @@
+;***********************************************************************
+
+; WELFIRST.PPS - A PPE to be used in a WELCOMEG file.
+;                Because of the time required to display ANSI animation
+;                to low speed callers it is usually avoided.  However,
+;                this PPL allows you to send a long ANSI animation file
+;                in pieces while waiting for the user to enter his
+;                first name.  WARNING!  Do not use in a WELCOME file,
+;                only WELCOMEG or WELCOMER, as it assumes ANSI graphics
+;                are available.
+
+;***********************************************************************
+
+; Variable Declarations
+
+BOOLEAN exitflag ' Flag to determine when we should exit
+
+INTEGER x        ' Last column position of cursor
+INTEGER y        ' Last row position of cursor
+INTEGER c        ' Last color used
+
+STRING  fn       ' The first name of the user
+STRING  s        ' A miscellaneous string variable
+
+STRING  file     ' The ANSI animation file to display
+STRING  line     ' The ANSI animation line to display
+
+STRING  BS       ' An ASCII backspace character
+STRING  CR       ' An ASCII carriage return character
+
+;***********************************************************************
+
+; Initializations
+
+LET BS = CHR(8)  ' Backspace
+LET CR = CHR(13) ' Carriage return
+
+;***********************************************************************
+
+; Main Program
+
+IF (TOKCOUNT() = 0) END ' If a file wasn't specified, exit
+
+LET file = GETTOKEN()   ' Get the path and file name to display
+IF (!EXIST(file)) END   ' If the file doesn't exist, exit
+
+FOPEN 1,file,O_RD,S_DN  ' Open channel 1 for read/deny none access
+
+ANSIPOS 1,23            ' Position on the bottom line of the display
+PRINT "@X0EWhat is your first name? " ' and display the prompt
+
+' While the user hasn't exited and no file errors have occurred . . .
+WHILE (!exitflag & !FERR(1)) DO
+
+  FGET 1,line        ' Get a line to display
+  PRINT line         ' Display it
+
+  LET x = GETX()     ' Save the cursor position
+  LET y = GETY()
+  LET c = CURCOLOR() ' Save the current color
+
+  ANSIPOS 1,23       ' Position at the bottom of the display
+  PRINT "@X0EWhat is your first name? " ' and display the prompt
+
+  DEFCOLOR         ' Change to the system default color
+
+  LET s = INKEY()  ' Get a keypress from the user
+
+  IF ((s >= " ") & (s <= "~") & (LEN(fn) < 50)) THEN
+
+    ' If it's ASCII append it
+    LET fn = fn + s 
+
+  ELSEIF ((s == BS) & (LEN(fn) > 0)) THEN
+
+    ' If it's a backspace remove the last character
+    LET fn = LEFT(fn,LEN(fn)-1) 
+
+  ELSEIF (s == CR) THEN
+
+    ' If it's a carriage return append it and prepare to exit
+    LET fn = fn + s
+    LET exitflag = TRUE
+
+  ENDIF
+
+  PRINT fn," ",BS ' Display the first name
+
+  ANSIPOS x,y     ' Restore the last cursor position
+  COLOR c         ' Restore the last color
+
+ENDWHILE
+
+FCLOSE 1 ' Close the file
+
+' If we exited due to a file error and not a carriage return
+IF (!exitflag) THEN
+
+  ANSIPOS 1,23 ' Position at the bottom of the display
+  DEFCOLOR     ' Change to the system default color
+  CLREOL       ' Clear to the end of the line
+
+  KBDSTUFF fn  ' Stuff the name into the keyboard buffer for INPUTSTR
+
+  LET s  = "What is your first name" ' Initialize the prompt
+  LET fn = ""                        ' Clear out the first name
+
+  INPUTSTR s,fn,@X0E,50,MASK_ASCII(),DEFS ' Finish getting the name
+  LET fn = fn + CR                        ' Append a CR to the end
+
+ENDIF
+
+CLS         ' Clear the screen
+KBDSTUFF fn ' Stuff the first name into the keyboard buffer
+
+END ' Exit the PPE file
+
+;***********************************************************************

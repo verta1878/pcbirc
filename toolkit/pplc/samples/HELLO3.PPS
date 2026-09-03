@@ -1,0 +1,5 @@
+; HELLO3.PPS - "Hello, World!" #3
+; Now we will display the string first without the newline,
+; then print the newline with a separate command
+PRINT "Hello, World!"
+NEWLINE

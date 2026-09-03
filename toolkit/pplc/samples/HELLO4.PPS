@@ -1,0 +1,5 @@
+; HELLO4.PPS - "Hello, World!" #4
+; Finally we will display it to the local screen first, then
+; to the remote screen, with two separate statements
+SPRINTLN "Hello, World!"
+MPRINTLN "Hello, World!"

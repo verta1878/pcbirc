@@ -59,3 +59,19 @@ The PPL compiler *source* also exists — see
 `reference/pcball/pcboard/pcb-main/153/PPLC.MAK`. Rebuilding PPLC
 from that source is a separate project; the binaries here are for
 immediate use.
+
+## Samples
+
+20 sample PPL scripts (.PPS source + .PPE Clark-compiled binaries) plus
+2 helper .BATs shipped by Clark with PCBoard 15.41. See
+[`samples/SAMPLES.md`](samples/SAMPLES.md) for the full catalog.
+
+These serve two purposes:
+- **Tutorial** — HELLO1-7 walk through the language progressively.
+- **Round-trip parity target** — when PPLC clean-room compilers are
+  ready, recompiling each `.PPS` should produce a `.PPE` byte-perfect
+  against Clark's originals in `samples/`.
+
+The same files also live at `pcb1541/install/dist/target/PPL/` as the
+installer parity target. Both locations are byte-identical.
+

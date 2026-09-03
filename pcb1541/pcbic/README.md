@@ -56,3 +56,9 @@ RUNINET.PPE). Fix bugs only AFTER full byte-for-byte restoration.
 The main EXEs (Pcbic.exe etc.) have no recovered source yet — they're
 preserved as reference binaries and the byte-exact targets. Source hunt
 continues.
+
+## Roadmap
+
+See [`ROADMAP.md`](ROADMAP.md) for the v1.9+ byte-exact reconstruction
+plan covering RUNINET.PPE (source in hand), the 6 EXEs (Ghidra Linux
+workflow), and the adjacent INSTALL.EXE completion.

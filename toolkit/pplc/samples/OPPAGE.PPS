@@ -1,0 +1,146 @@
+;***********************************************************************
+
+; OPPAGE.PPS - An O command (operator page) replacement
+
+;***********************************************************************
+
+; Variable Declarations
+
+TIME    pTime    ' The time at which the user requested the page
+TIME    sTime    ' The start time at which paging is allowed for all
+TIME    eTime    ' The end time at which paging is allowed for all
+
+INTEGER x        ' Temporary storage for cursor x position
+INTEGER y        ' Temporary storage for cursor y position
+INTEGER i        ' Index variable for page loop
+INTEGER maxTries ' The maximum tries allowed to page the SysOp
+
+STRING  msg      ' A variable to hold the message to be displayed
+                 ' to the SysOp
+STRING  ynAns    ' A generic variable to hold a yes/no response
+
+STRING  BEEP     ' An ASCII beep
+STRING  CR       ' An ASCII carriage return
+STRING  ANSI     ' ANSI escape sequence header
+STRING  HOME     ' ANSI home sequence
+STRING  CLREOL   ' ANSI clear to end of line sequence
+
+;***********************************************************************
+
+; Initializations
+
+LET pTime    = TIME()                 ' Start time of the page
+LET sTime    = READLINE(PCBDAT(),189) ' Read these two from the
+LET eTime    = READLINE(PCBDAT(),190) ' PCBOARD.DAT file
+
+LET maxTries = 5
+
+LET BEEP     = CHR(7)
+LET CR       = CHR(13)
+LET ANSI     = CHR(27)+"["
+LET HOME     = ANSI+"0;0H"
+LET CLREOL   = ANSI+"K"
+
+;***********************************************************************
+
+; Main Program
+
+' If pagins is allowed right now or if the user has SysOp level access
+IF (((pTime>=sTime) & (pTime<=eTime)) | (CURSEC()>=SYSOPSEC())) THEN
+
+  ' If SysOp level access or caller hasn't already paged
+  IF ((CURSEC() >= SYSOPSEC()) | !PAGESTAT()) THEN
+
+    ' The user may page (either a valid time or high security level)
+
+    DISPTEXT 579,LFBEFORE ' Display the paging SysOp message
+    DISPTEXT 97,LFBEFORE  ' Display the time and abort information
+
+    ' Tell SysOp what to do
+    LET msg = SPACE(15)+"Press (Space) to acknowledge Page, "
+    LET msg = msg+"(Esc) when done."
+    GOSUB topLineMsg
+
+    FOR i = 1 TO maxTries
+
+      ' Display a walking dot and beep at remote caller and SysOp
+      PRINT "."
+      MPRINT BEEP
+      GOSUB localBeep
+
+      ' If SysOp hits the space bar . . .
+      IF (KINKEY() = " ") THEN
+        LET msg = ""     ' Clear the SysOp message
+        GOSUB topLineMsg
+        CHAT             ' Start SysOp chat
+        PAGEOFF          ' Since we've chatted, turn off page indicator
+        END              ' Exit
+      ENDIF
+
+      ' If user aborted page, set up to exit loop
+      IF (ABORT()) LET i = maxTries+1
+
+    NEXT
+
+    ' Clear the SysOp message
+    LET msg = ""
+    GOSUB topLineMsg
+
+    ' If user aborted page . . .
+    IF (ABORT()) THEN
+      RESETDISP ' Reset the display so more info may be displayed
+      NEWLINE   ' Send a newline
+      END       ' Exit
+    ELSE
+      NEWLINE   ' Otherwise a newline is sufficient
+    ENDIF
+
+  ENDIF
+
+ENDIF
+
+' The user shouldn't be allowed to page (or page not successful), so
+PAGEON                                         ' Turn on paged indicator
+
+DISPTEXT 128,LFBEFORE+NEWLINE                  ' SysOp not available
+
+LET ynAns = NOCHAR()                           ' Default to no
+PROMPTSTR 571,ynAns,1,"",YESNO+NEWLINE+LFAFTER+FIELDLEN+UPCASE
+
+IF (ynAns = YESCHAR()) KBDSTUFF "C"+CR+"Y"+CR  ' If yes do a comment
+
+END
+
+;***********************************************************************
+
+:topLineMsg ' Clear the top line of the BBS screen and display a message
+
+LET x = GETX()     ' Save the cursor position
+LET y = GETY()
+
+SPRINT HOME,CLREOL ' Pos in upper left of display and clear the line
+
+SPRINT msg         ' Display message to the SysOp
+
+SPRINT ANSI+STRING(y)+";"+STRING(x)+"H" ' Restore original position
+
+RETURN             ' Return to the calling routine
+
+;***********************************************************************
+
+:localBeep ' Routine to alert the SysOp (not the caller)
+
+SOUND 110  ' Sound a 110 hertz tone locally
+DELAY 2    ' Pause for a couple of clock ticks
+SOUND 220  ' Sound a 220 hertz tone locally
+DELAY 2    ' Pause for a couple of clock ticks
+SOUND 440  ' Sound a 440 hertz tone locally
+DELAY 2    ' Pause for a couple of clock ticks
+SOUND 880  ' Sound a 880 hertz tone locally
+DELAY 2    ' Pause for a couple of clock ticks
+SOUND 0    ' Turn off the speaker
+DELAY 10   ' Pause for the remainder of the clock ticks
+
+RETURN     ' Return to the calling routine
+
+;***********************************************************************

@@ -76,3 +76,9 @@ build outputs.
 Pcbic.exe etc. have no recovered source. They remain byte-exact
 reference targets. Source hunt continues; until then they're preserved
 as-is in decrypted/.
+
+---
+
+**See also**: [`ROADMAP.md`](ROADMAP.md) — v1.9+ phase plan covering
+this reconstruction work plus the 6 EXEs (Ghidra Linux) and adjacent
+INSTALL.EXE completion.

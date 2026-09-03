@@ -118,7 +118,7 @@ original `PCBMAIL.EXE` to run.
 
 ---
 
-# Work log — install v1.0 → install v1.7.2
+# Work log — install v1.0 → install v1.8
 
 Full chronological record of how the installer subsystem (`pcb1541/install/`)
 came to be. The version numbers here (install v1.0, v1.1, ... v1.7.2) are
@@ -368,3 +368,130 @@ Result:
 - **If you need to modify a file under `target/`**, modify the `.RED`
   source instead, then rerun `rebuild.sh` — otherwise the tracked file
   and the rebuild output will diverge and confusion will follow.
+
+
+## install v1.8.2 (2026-09-03) — runtime dependencies documentation
+
+The install tree is what WCSC shipped. It does NOT include external
+DOS utilities PCBoard 15.41 needs at runtime — FOSSIL driver, archivers
+(PKZIP/ARJ/LHA), transfer protocols (DSZ/GSZ). Sysops previously had
+to figure this out from period documentation.
+
+`pcb1541/install/RUNTIME-DEPS.md` (194 lines) now documents:
+
+- **What is NOT a runtime dep** (COMMDRV suite including XABIOS.BIN,
+  XACOOK.BIN, XACOMX.BIN, BOCA1610.BIN, ARNETSP*.DAT, DIGI*E.DAT —
+  all COMMDRV internal blobs already bundled). Corrects an earlier
+  misreading that treated these as external deps.
+- **Serial I/O layer** — the four PCBSETUP modes (A/C/F/O), which need
+  externals (FOSSIL, OS/2 SIO) and which don't (ASYNC, bundled COMMDRV).
+- **FOSSIL drivers** — BNU 1.70 / X00 1.53 / ADF 5.10 with archive.org
+  sources and load-order guidance.
+- **Archiver externals** — the four PCBSETUP archiver slots (ZIP/ARJ/
+  ARC/LZH) with period-appropriate versions (PKZIP 2.04g, ARJ 2.71,
+  LHA 2.13, PKPAK 3.61) and archive.org URLs. Explicitly notes the
+  vendored `lha 1.14i` under `archivers/lha/` is for `.RED` work only,
+  NOT a runtime archiver.
+- **Transfer protocols** — DSZ/GSZ (Zmodem), HS/Link, Puma with example
+  `PCBPROT.DAT` entries.
+- **DOS environment** — real-mode-only, no DPMI/DOS extenders needed
+  (confirmed by scanning `PCBOARD.EXE` strings — zero DPMI references).
+- **OS/2 native path** — brief cross-reference to `pcb1541/OS2/`.
+- **Recommended minimum sysop kit** — 5-item bootstrap list.
+- **Licensing** — what can/can't be bundled (nothing on the list, in
+  short) and why we document URLs instead.
+
+Scoping decision: earlier notes had XABIOS/XACOOK/XACOMX/BOCA1610 on
+the runtime-deps list. Verified they're already in target/COMMDRV/
+(extracted byte-perfect from COMMDRV.RED). Not runtime deps — bundled
+driver blobs. Removed from the list and moved to a "not a runtime dep"
+section so anyone else who gets confused finds the correction fast.
+
+## install v1.8.0 (2026-09-03) — PPL samples cataloged and staged for toolkit
+
+`PPLC.RED` was already extracted in install v1.6.0, but the 20 PPL
+sample scripts + 2 helper .BATs living at `target/PPL/` were undocumented
+and hard to find for PPLC toolchain work (`toolkit/pplc/`).
+
+Actions:
+
+- **Copied byte-perfect** to `toolkit/pplc/samples/` so compiler,
+  decompiler, and debugger work under `toolkit/pplc/` has samples at
+  hand without cross-tree paths. `target/PPL/` remains the installer
+  parity target — both locations byte-identical.
+- **Cataloged** all 20 samples in `toolkit/pplc/samples/SAMPLES.md`
+  (90 lines) with what each teaches, grouped as:
+  - 7 HELLO tutorials (progressive language walkthrough)
+  - 9 sysop utilities (OPPAGE, START, PWRDWARN, LANGUAGE, MORE,
+    NODEFILE, DOORS, ORDER, WELFIRST)
+  - 2 DBase / accounting (DBASE, ACCNTDBF — Clark 1994 copyright)
+  - 2 recreational (KAL kaleidoscope, HAMURABI game port)
+- **Authorship documented** — Scott Dale Robison is Clark's in-house
+  PPL evangelist and authored most sysop utilities + demos.
+- **Cross-linked** from `toolkit/pplc/README.md` — samples now
+  discoverable from the PPLC toolchain docs, framed as both a
+  tutorial resource and future round-trip parity target for clean-room
+  PPLC compilers.
+
+Scoping note: earlier plan called v1.8.0 "PPLC.RED samples probe" as if
+extraction was pending. Actually extracted in v1.6.0 — the real work
+is discoverability + cataloging for downstream PPLC compiler
+development.
+
+## install v1.8.1 (2026-09-03) — native LHA encoder scaffold
+
+`red_pack.c::lha_compress()` currently shells out to `system("lha
+aq5 ...")` for LH5 compression. Goal: fold the encoder into redx
+itself so redx is a single self-contained binary.
+
+**This commit lands the scaffold, NOT the encoder.** Implementation
+is broken across 5 sub-milestones (v1.8.1.1 through v1.8.1.5) because
+byte-perfect round-trip decode of arbitrary LH5-encoded input is a
+subtle correctness problem — rushing = subtle bugs that break parity
+on records that decompressed fine yesterday.
+
+Landed in `pcb1541/install/archivers/redx/native_lha/`:
+
+- **DESIGN.md** (130 lines): architecture, phase plan, why not
+  miniz/zlib (they're DEFLATE, not LZSS+Huffman — would not produce
+  valid LH5 output). Attribution back to Yoshi's original code under
+  `archivers/lha/src/` from which encode paths will be extracted.
+- **ACCEPTANCE.md** (106 lines): four tests that must pass before
+  native encoder becomes default:
+  1. Round-trip integrity (our encoder + our decoder consistent)
+  2. Interop out (lha 1.14i can decode our output)
+  3. Interop in (regression: existing decode still works on all
+     481 target files byte-perfect)
+  4. Compression ratio within 10% of lha 1.14i mean, 20% max
+
+  Critically: byte-parity vs lha 1.14i is NOT the acceptance bar —
+  two conformant LH5 encoders virtually never produce byte-identical
+  streams. Round-trip integrity + interop are the correct bars.
+
+- **lh5_encode.h** (49 lines): frozen public API — `lh5_encode()`
+  and `lha_wrap_level0()`.
+- **lh5_encode.c** (55 lines): stubs returning 0/NULL. `red_pack.c`
+  untouched — shell-out path continues to work.
+- **README.md** (38 lines): reading order + status table + milestone
+  list (v1.8.1 through v1.8.1.5).
+
+Phase plan (from DESIGN.md):
+
+| Milestone | Deliverable |
+|-----------|-------------|
+| v1.8.1    | Scaffold + API + design docs (this commit) |
+| v1.8.1.1  | LZSS slide pass |
+| v1.8.1.2  | Huffman pass |
+| v1.8.1.3  | Level-0 LHA container emission |
+| v1.8.1.4  | Wire into red_pack.c behind --native flag |
+| v1.8.1.5  | All acceptance tests pass, flip default; shell-out becomes --legacy-lha |
+
+Until v1.8.1.5: shell-out to lha 1.14i remains default. Native path
+opt-in for testing.
+
+Scoping honesty: initial plan had v1.8.1 = "native LHA encoder in
+redx" as if a single commit. Reality is 5+ commits over multiple
+sessions because getting LH5 round-trip correct is unforgiving work.
+Landing the scaffold + acceptance criteria now means the next session
+has a proper landing pad instead of starting from a blank file.
+

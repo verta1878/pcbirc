@@ -1,0 +1,3 @@
+; HELLO2.PPS - "Hello, World!" #2
+; This one displays it as two strings pasted together
+PRINTLN "Hello, ","World!"

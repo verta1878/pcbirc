@@ -61,7 +61,22 @@ See `archivers/README.md` for details on the vendored LHA and the
 `redx` CLI.
 
 
-## Work log (install v1.0 → install v1.7.2 arc)
+## Runtime dependencies
+
+The bundled install tree is what WCSC shipped. It doesn't include the
+external DOS utilities PCBoard 15.41 needs at runtime (FOSSIL driver,
+archivers, Zmodem protocol). See [`RUNTIME-DEPS.md`](RUNTIME-DEPS.md)
+for the full external-dep list with recommended sources.
+
+## Related — INSTALL.EXE completion
+
+`src/install.c` (518 lines, Phase 27 stub, ~5 of 40 @Commands) will
+be completed in the v1.9+ arc alongside pcbic byte-exact
+reconstructions — same Ghidra-Linux workflow, same acceptance bar
+(`cmp -s` against original). See
+[`../pcbic/ROADMAP.md`](../pcbic/ROADMAP.md) Phase 3.
+
+## Work log (install v1.0 → install v1.8 arc)
 
 The full chronological record of how the installer subsystem came to
 be — .RED format reverse-engineering, INSTALL.DAT discovery, the

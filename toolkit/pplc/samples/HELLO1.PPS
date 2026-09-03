@@ -1,0 +1,3 @@
+; HELLO1.PPS - "Hello, World!" #1
+; Display (print) the string and terminate with a newline
+PRINTLN "Hello, World!"

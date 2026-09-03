@@ -1,0 +1,49 @@
+;***********************************************************************
+
+; LANGUAGE.PPS - A replacement for prompt 387 in the PCBTEXT file
+;                to prompt for the desired language with a 20 second
+;                timeout if the user doesn't respond (just in case the
+;                user is automated we don't want to break their script)
+
+;***********************************************************************
+
+; Variable Declarations
+
+STRING prompt    ' A variable to hold the language question
+STRING lang_ansr ' A variable to hold the users response
+
+STRING CR        ' A carriage return character
+
+;***********************************************************************
+
+; Initializations
+
+LET prompt = "Enter Language # to use (enter)=no change"
+
+LET CR     = CHR(13)
+
+;***********************************************************************
+
+; Main Program
+
+' Ask the user what language they want to use
+INPUTSTR prompt,lang_ansr,@X07,2,MASK_NUM(),LFAFTER+AUTO
+
+' If the user didn't answer the question (empty response) . . .
+IF (LANG_ANSR = "") THEN
+
+   ' We need to stuff the keyboard buffer with a CR so that
+   ' PCBoard won't ask a second question (without a prompt)
+   KBDSTUFF CR
+
+ELSE
+
+   ' Otherwise we just need to stuff the answer so that PCBoard
+   ' knows that the PPE asked the question and got the answer
+   KBDSTUFF lang_ansr
+
+ENDIF
+
+END
+
+;***********************************************************************

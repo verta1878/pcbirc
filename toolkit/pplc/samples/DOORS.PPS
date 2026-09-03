@@ -1,0 +1,79 @@
+;***********************************************************************
+
+; DOORS.PPS - A PPE to be used in place of the DOORS menu file.
+;             This PPL application is designed to provide a hot key
+;             interface to door selection.
+
+;***********************************************************************
+
+; Variable Declarations
+
+BOOLEAN exitflag ' Flag to indicate when to exit the PPE
+
+INTEGER i        ' A miscellaneous index variable
+INTEGER x        ' The cursor column to display the whirly-gig
+INTEGER y        ' The cursor row    to display the whirly-gig
+INTEGER off      ' The offset of the whirly-gig in char array
+
+STRING  name(25) ' A list of door names
+STRING  char(3)  ' An array of whirly-gig animation
+STRING  key      ' The users keypress
+STRING  CR       ' An ASCII carriage return character
+
+;***********************************************************************
+
+; Initializations
+
+LET exitflag = FALSE
+
+FOR i = 0 TO 4                   ' These should be initialized to the
+  LET name(i) = "DOOR"+STRING(i) ' actual door names or nothing ("")
+NEXT                             ' for that letter to abort the PPE
+FOR i = 5 TO 25                  ' menu
+  LET name(i) = ""               ' NOTE that A = 0, B = 1, etc, Z = 25
+NEXT
+
+LET char(0)  = "/"
+LET char(1)  = "-"
+LET char(2)  = "\"
+LET char(3)  = "|"
+
+LET CR       = CHR(13)
+
+;***********************************************************************
+
+; Main Program
+
+DEFCOLOR ' Change to the system default and clear the screen
+CLS
+
+' Display the PPE display file (base name + alternates)
+DISPFILE PPEPATH()+PPENAME(),SEC+GRAPH+LANG
+
+' Display the prompt
+FRESHLINE
+PRINT "@X09Hit key to select door:  "
+LET x = GETX()
+LET y = GETY()
+
+WHILE (!exitflag) DO
+
+  ANSIPOS x,y       ' Position the cursor in the whirly-gig spot
+  DELAY 2           ' Wait for a couple of clock ticks
+  PRINT char(off%4) ' Display the current stage of whirly-gig animation
+  INC off           ' Update off for the next stage of whirly-gig
+
+  LET key = UPPER(INKEY()) ' Get the users keypress
+
+  ' If the user pressed a hot key . . .
+  IF ((key >= "A") & (key <= "Z")) THEN
+    LET exitflag = TRUE                 ' Get ready to exit
+    KBDSTUFF name(ASC(key)-ASC("A"))+CR ' Stuff the door name and a CR
+  ELSEIF (key <> "")
+    LET exitflag = TRUE                 ' Get ready to exit
+    KBDSTUFF CR                         ' Stuff CR to abort door prompt
+  ENDIF
+
+ENDWHILE
+
+;***********************************************************************
