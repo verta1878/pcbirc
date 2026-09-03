@@ -1,0 +1,51 @@
+pcbirc — CRLF fix for toolkit/pplc/samples/ .PPS files
+========================================================
+HEAD: 1692cad4ed152cc94a9ee9b7e522cf6e1afedd76
+
+PARITY CHECK RESULT
+
+Checked my local vs origin/main. Origin advanced by 1 commit (your
+"What's new" push after applying the v1.8 zip). Compared file-by-file:
+
+  MATCH:    Everything else — HISTORY.md, README.md, target/README.md,
+            MCI-CODES.md, PLANNED-FEATURES.md, ROADMAP.md, RUNTIME-DEPS.md,
+            all v1.8.1 native_lha/ files, all .PPE binaries, all .BAT files
+            — all byte-perfect between my local and origin.
+
+  MISMATCH: 20 files in toolkit/pplc/samples/*.PPS
+            Origin has stripped CRLF, my local has preserved CRLF matching
+            target/PPL/ originals. GitHub Desktop autocrlf stripped \r
+            bytes on Windows because no binary rule covered the new
+            location.
+
+            Example:
+              pcb1541/install/dist/target/PPL/HELLO1.PPS      119 bytes ✓
+              toolkit/pplc/samples/HELLO1.PPS (origin)        116 bytes ✗
+              toolkit/pplc/samples/HELLO1.PPS (my local)      119 bytes ✓
+
+            target/PPL/ was NOT affected — it's already protected by
+            v1.7.2's 'pcb1541/install/dist/target/** binary' rule.
+
+FIX (this zip)
+
+  .gitattributes             +6 lines:
+                               toolkit/pplc/samples/**  binary
+                               *.PPS                    binary
+                               *.PPE                    binary
+                             Belt-and-suspenders protection for the
+                             new location AND any future PPL sources
+                             anywhere in the tree.
+
+  toolkit/pplc/samples/*.PPS 20 files, byte-perfect (matching target/PPL/)
+
+  CHECKSUMS.md5/.sha256/.txt Regenerated
+
+APPLY
+
+  1. Extract into repo root
+  2. Let it overwrite .gitattributes + all 20 .PPS files + CHECKSUMS
+  3. Commit + push via GitHub Desktop
+  4. Verify: run 'md5sum -c CHECKSUMS.md5' after push, should be 100% pass
+
+After apply: toolkit/pplc/samples/ matches target/PPL/ byte-perfect
+in both locations, and future edits/re-applies won't get CRLF-stripped.

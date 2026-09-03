@@ -51,3 +51,9 @@ docs/** linguist-documentation
 # depending on file type; treat all as binary so Windows Git autocrlf can't
 # strip \r bytes.
 pcb1541/install/dist/target/** binary
+
+# install v1.8.0: toolkit/pplc/samples/ mirrors target/PPL/ byte-perfect.
+# Belt-and-suspenders CRLF protection for the .PPS/.PPE payload copied there.
+toolkit/pplc/samples/** binary
+*.PPS binary
+*.PPE binary
