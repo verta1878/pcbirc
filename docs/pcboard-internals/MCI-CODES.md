@@ -186,6 +186,9 @@ after byte-exact reconstruction of the shipped binary is achieved.
 
 ## See also
 
+- `PCBDCOM-CARDS.md` — COMMDRV multiport card support (shipped/stubbed/hidden)
+- `PCBTEXT-CODES.md` — companion analysis of the 747 numbered screen prompts
+
 For the full inventory of 15.4 additions across all subsystems (PPL
 tokens, PPL statements, PPL user variables, PCBTEXT prompts, chat
 commands, PCBIC verbs, and the ListServ PPE that never shipped), see

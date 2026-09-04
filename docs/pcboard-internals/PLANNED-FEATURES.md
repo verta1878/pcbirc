@@ -19,9 +19,17 @@ cross-reference after the previous list was lost.
 | PPL statements     | 3 | — |
 | PPL user variables | 5 | — |
 | PCBTEXT prompts    | 4 | — |
+| PCBTEXT Plan A (in `PCBTEXT.H`, missing from binary) | — | 4 (`#747-#750` GENDER/BIRTHDATE/WEBADDR/COLOR) |
+| PCBTEXT Plan B (in `MKPCB.C` only) | — | 71 (`#747-#817` DOS errno / PCBSM help / CLI switches / Latin-1 fold) |
 | PPE add-ons        | — | 1 (ListServ) |
 | CHAT commands      | 1 (COLOR) + N action-cmds | — |
 | PCBIC FTP verbs    | 1 (MGET) | — |
+| COMMDRV card types | — | 3 (see PCBDCOM-CARDS.md) |
+
+**Cross-reference**: `PCBTEXT-CODES.md` §"Slots 747–817 — Clark's phantom
+expansion" documents the two competing 747+ reservations. Plan A and
+Plan B collide on slots 747–750 — the strongest single piece of evidence
+that 15.4 was abandoned mid-refactor.
 
 ## PPL 3.40 additions (15.4 over 15.3)
 
