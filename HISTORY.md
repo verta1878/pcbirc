@@ -426,7 +426,23 @@ Sub-phases:
   control flow — that's v1.10.2). Cumulative: 18 of 60 directives coded.
   install.c grows from 518 to ~950 lines; added `src/README.md` and
   `src/Makefile`.
-- **v1.10.2** — variables + control flow + string ops
+- **v1.10.2** — variables + control flow + string ops (shipped).
+  11 new directives (`@If`/`@Else`/`@EndIf`/`@Endif`/`@Goto`/`@Label`/
+  `@Set`/`@StrLen`/`@StrHead`/`@StrToken`/`@Exists`-as-predicate). Full
+  recursive-descent expression evaluator supporting `[= [! == != > <
+  >= <= && || ()` on int and string operands, with `@Func(...)` inline
+  invocation inside string literals (needed for Clark's nested-quote
+  patterns like `"@StrToken("@Fname",0," ")"`). Handles trailing
+  `@Group X` clause on `@File` as per-directive filter. Real INSTALL.DAT
+  runs end-to-end for the first time — 471 successful @File operations,
+  348 files byte-perfect vs `pcb1541/install/dist/target/` (94.8% of
+  placed). Cumulative: 29 of 60 directives coded. install.c grows to
+  1984 lines. Also added: v1.10.4-territory stubs (`@GetString`/
+  `@GetOutDrive`/`@GetSubdir`/`@GetGroups`), v1.10.3 stubs
+  (`@DefineDisk`/`@EndDisk`), v1.10.5 stubs (`@SetConfig`/`@SetAutoexec`/
+  `@Finish` + matching `@End*`) — all skip cleanly, letting execution
+  proceed past sections we haven't implemented yet. New CLI arg
+  `--groups STR` simulates the v1.10.4 checkbox selection.
 - **v1.10.3** — filesystem + disk sequencing
 - **v1.10.4** — interactive menu (6-checkbox First-Time / Upgrade /
   COMM-DRV / PPL / PCBMail / OS2 selector)

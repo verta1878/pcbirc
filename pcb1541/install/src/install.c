@@ -1,5 +1,5 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* install.c -- PCBoard Installer (install v1.10.1)                          */
+/* install.c -- PCBoard Installer (install v1.10.2)                          */
 /*                                                                            */
 /* C reimplementation of Clark's INSTALL.EXE (338,548 B, NE format).          */
 /* Reads INSTALL.DAT and processes @-directives to lay down 481 files of      */
@@ -17,7 +17,11 @@
 /*   v1.10.1  --   6  File operations                                         */
 /*                    (@BeginLib/@EndLib/@File[@Out/@Size/@AppendTo]/         */
 /*                     @Copy/@Delete/@FileAttr)                               */
-/*   v1.10.2      Variables + control flow + string ops                       */
+/*   v1.10.2  --  10  Variables + control flow + string ops                   */
+/*                    (@If/@Else/@Endif[/@EndIf]/@Goto/@Label/@Set/           */
+/*                     @StrLen/@StrHead/@StrToken/@Exists + expression        */
+/*                     evaluator with [= [! == != > < >= <= && || ()         */
+/*                     and top-level bare-var assignment @Foo = expr)         */
 /*   v1.10.3      Filesystem + disk sequencing                                */
 /*   v1.10.4      Interactive menu                                            */
 /*   v1.10.5      System hooks + finish                                       */
@@ -149,6 +153,17 @@ typedef struct {
     int      InLibBlock;                /* 1 while inside @BeginLib...@EndLib */
     long     FilesPlaced;               /* running count of @File ops      */
     long     FilesFailed;               /* running count of failures       */
+
+    /* v1.10.2 additions: control flow */
+    char     SelectedGroups[64];                /* selected group letters, e.g. "ab"  */
+    struct {
+        int TakenTrue;                  /* @If expression evaluated true       */
+        int InElse;                     /* currently inside @Else branch      */
+    } IfStack[32];
+    int      IfDepth;                   /* @If nesting depth                  */
+    long     LabelPos[MAX_LABELS];      /* file position of each @Label       */
+    char     LabelName[MAX_LABELS][64]; /* label names for @Goto lookup       */
+    int      NumLabelDefs;              /* label-def count                    */
 } InstState;
 
 
@@ -204,9 +219,23 @@ static const char *inst_get_var(InstState *St, const char *Name)
 /* inst_expand() -- Expand @Variable references in a string             */
 /*                                                                       */
 /* Replaces @Name, @Version, @SubDir, @OutDrive, and user variables.    */
-/* Also translates escaped backslashes (\\\\ → \) and normalizes         */
+/* Also translates escaped backslashes (\\\\ -> \) and normalizes         */
 /* Clark's @Foo:@Bar path style.                                         */
+/*                                                                       */
+/* If a `@Name(` is seen, invokes it as a function call (via the         */
+/* expression evaluator) so nested constructs like                        */
+/*    "@StrToken(\"@Fname\",0,\" \")"                                    */
+/* embedded inside string literals get their function results            */
+/* substituted, not just the surface identifier.                         */
 /*-----------------------------------------------------------------------*/
+
+/* Forward decls — the string funcs are defined later in the v1.10.2
+ * eval section, but inst_expand needs them here. */
+static long inst_func_strlen(InstState *St, const char *ArgsRaw);
+static void inst_func_strhead(InstState *St, const char *ArgsRaw,
+                               char *OutBuf, int OutSize);
+static void inst_func_strtoken(InstState *St, const char *ArgsRaw,
+                                char *OutBuf, int OutSize);
 
 static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
 {
@@ -215,7 +244,7 @@ static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
 
     while (*p && d < DstSize - 1) {
         if (*p == '@') {
-            /* Extract variable name */
+            /* Extract identifier */
             char VarName[64];           /* variable name buffer           */
             int  v = 0;                 /* name position                  */
             const char *Val;            /* resolved value                 */
@@ -224,6 +253,51 @@ static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
             while (*p && (isalnum(*p) || *p == '_') && v < 63)
                 VarName[v++] = *p++;
             VarName[v] = '\0';
+
+            if (*p == '(') {
+                /* Function call inside a string — invoke it via the
+                 * expression evaluator to get the substituted value. */
+                extern const char *inst_eval_primary_public(
+                    InstState *St, const char *p, void *Out);
+                /* We can't forward-call inst_eval_primary yet (defined
+                 * later). Inline a minimal handler for the two most
+                 * common cases here: @StrToken and @StrHead + @StrLen.
+                 * Anything else falls through to variable expansion.
+                 *
+                 * We handle these by parsing args and calling the
+                 * inst_func_* helpers directly. */
+                char Args[512];
+                int  Depth = 1;
+                int  ai = 0;
+                p++;
+                while (*p && ai < 511) {
+                    if (*p == '(') Depth++;
+                    else if (*p == ')') { Depth--; if (Depth == 0) break; }
+                    Args[ai++] = *p++;
+                }
+                Args[ai] = '\0';
+                if (*p == ')') p++;
+
+                if (strcasecmp(VarName, "StrToken") == 0) {
+                    char Buf[512];
+                    inst_func_strtoken(St, Args, Buf, sizeof(Buf));
+                    { const char *bp = Buf;
+                      while (*bp && d < DstSize - 1) Dst[d++] = *bp++; }
+                } else if (strcasecmp(VarName, "StrHead") == 0) {
+                    char Buf[512];
+                    inst_func_strhead(St, Args, Buf, sizeof(Buf));
+                    { const char *bp = Buf;
+                      while (*bp && d < DstSize - 1) Dst[d++] = *bp++; }
+                } else if (strcasecmp(VarName, "StrLen") == 0) {
+                    char Buf[32];
+                    long L = inst_func_strlen(St, Args);
+                    snprintf(Buf, sizeof(Buf), "%ld", L);
+                    { const char *bp = Buf;
+                      while (*bp && d < DstSize - 1) Dst[d++] = *bp++; }
+                }
+                /* Other functions inside strings — silently drop */
+                continue;
+            }
 
             Val = inst_get_var(St, VarName);
             while (*Val && d < DstSize - 1)
@@ -731,6 +805,39 @@ static void inst_cmd_file(InstState *St, const char *Line)
     while (n > 0 && (DstRaw[n-1] == ' ' || DstRaw[n-1] == '\t'))
         DstRaw[--n] = '\0';
 
+    /* Trailing "@Group X" clause?  E.g.
+     *   @File N @Size 252 @Out MAIN\CNAMES.IDX         @Group n
+     * means "only place this file if group letter 'n' is currently selected."
+     * Detect + strip it from the destination path. */
+    {
+        char *GrpTag = NULL;
+        int   i;
+        for (i = n - 7; i >= 0; i--) {
+            if (DstRaw[i] == '@' &&
+                (DstRaw[i+1]=='G' || DstRaw[i+1]=='g') &&
+                strncasecmp(DstRaw + i, "@Group", 6) == 0 &&
+                (i == 0 || DstRaw[i-1] == ' ' || DstRaw[i-1] == '\t')) {
+                GrpTag = DstRaw + i;
+                break;
+            }
+        }
+        if (GrpTag) {
+            char *g = GrpTag + 6;              /* skip past "@Group" */
+            char  GrpLetter;
+            while (*g == ' ' || *g == '\t') g++;
+            GrpLetter = *g;
+            /* Trim destination at the @Group marker */
+            while (GrpTag > DstRaw && (*(GrpTag - 1) == ' ' ||
+                                       *(GrpTag - 1) == '\t'))
+                GrpTag--;
+            *GrpTag = '\0';
+            /* Skip if this letter isn't in the selected groups */
+            if (GrpLetter && !strchr(St->SelectedGroups, GrpLetter)) {
+                return;   /* group not selected — do nothing */
+            }
+        }
+    }
+
     /* Expand @vars in dst */
     inst_expand(St, DstRaw, DstExpanded, sizeof(DstExpanded));
     inst_normalize_path(St, DstExpanded, DstNormalized, sizeof(DstNormalized));
@@ -919,9 +1026,691 @@ static int inst_cmd_file_attr(InstState *St, const char *Line)
 }
 
 
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                    v1.10.2 Control Flow + Expression Eval                 */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
 /*-----------------------------------------------------------------------*/
-/* inst_process() -- Main script processing loop                        */
+/* inst_should_skip() -- Are we currently in a skipped @If branch?      */
 /*-----------------------------------------------------------------------*/
+
+static int inst_should_skip(InstState *St)
+{
+    int i;
+    for (i = 0; i < St->IfDepth; i++) {
+        int active = St->IfStack[i].InElse
+                     ? !St->IfStack[i].TakenTrue
+                     :  St->IfStack[i].TakenTrue;
+        if (!active) return 1;
+    }
+    return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_scan_labels() -- Pre-scan pass to build label -> filepos map    */
+/*                                                                       */
+/* @Goto targets are lines of form `LabelName:` (at column 0 after any  */
+/* whitespace). Called once before inst_process().                       */
+/*-----------------------------------------------------------------------*/
+
+static void inst_scan_labels(InstState *St)
+{
+    char Line[MAX_LINE];
+    long Pos;
+
+    St->NumLabelDefs = 0;
+    rewind(St->ScriptFp);
+
+    Pos = ftell(St->ScriptFp);
+    while (fgets(Line, sizeof(Line), St->ScriptFp)) {
+        char *p = Line;
+        char *End;
+        while (*p == ' ' || *p == '\t') p++;
+
+        /* Line format: NAME:\n where NAME is [A-Za-z_][A-Za-z0-9_]* */
+        if (isalpha(*p) || *p == '_') {
+            char *Start = p;
+            while (isalnum(*p) || *p == '_') p++;
+            if (*p == ':' && (p[1] == '\r' || p[1] == '\n' || p[1] == '\0')) {
+                int Len = (int)(p - Start);
+                if (Len < 63 && St->NumLabelDefs < MAX_LABELS) {
+                    memcpy(St->LabelName[St->NumLabelDefs], Start, Len);
+                    St->LabelName[St->NumLabelDefs][Len] = '\0';
+                    St->LabelPos[St->NumLabelDefs] = ftell(St->ScriptFp);
+                    St->NumLabelDefs++;
+                }
+            }
+        }
+        (void)End;
+        Pos = ftell(St->ScriptFp);
+    }
+    (void)Pos;
+
+    rewind(St->ScriptFp);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_goto_label() -- fseek to a named label                          */
+/*                                                                       */
+/* Returns 0 on success, -1 if label not found.                         */
+/*-----------------------------------------------------------------------*/
+
+static int inst_goto_label(InstState *St, const char *Name)
+{
+    int i;
+    for (i = 0; i < St->NumLabelDefs; i++) {
+        if (strcasecmp(St->LabelName[i], Name) == 0) {
+            fseek(St->ScriptFp, St->LabelPos[i], SEEK_SET);
+            /* Reset @If stack on goto — we jump out of any enclosing @If */
+            St->IfDepth = 0;
+            return 0;
+        }
+    }
+    return -1;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* Expression evaluator                                                  */
+/*                                                                       */
+/* Parses a subset of INSTALL.DAT expressions:                          */
+/*   Primary: number | "string" | @Var | @Func(args) | (expr)           */
+/*   Compare: == != > < >= <= [= [!                                     */
+/*   Logic:   && ||                                                      */
+/*                                                                       */
+/* EvalVal carries both int and string interpretations. Comparisons     */
+/* work on strings if either side is string, else on ints.              */
+/*-----------------------------------------------------------------------*/
+
+typedef struct {
+    int  IsString;                      /* 1 if string, 0 if int          */
+    long IVal;                          /* integer value                  */
+    char SVal[512];                     /* string value                   */
+} EvalVal;
+
+static const char *inst_eval_expr(InstState *St, const char *p, EvalVal *Out);
+static const char *inst_eval_or(InstState *St, const char *p, EvalVal *Out);
+static const char *inst_eval_and(InstState *St, const char *p, EvalVal *Out);
+static const char *inst_eval_cmp(InstState *St, const char *p, EvalVal *Out);
+static const char *inst_eval_primary(InstState *St, const char *p, EvalVal *Out);
+
+
+static const char *skip_ws(const char *p)
+{
+    while (*p == ' ' || *p == '\t') p++;
+    return p;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* Function-call helpers evaluated during expression parsing             */
+/*-----------------------------------------------------------------------*/
+
+static long inst_func_strlen(InstState *St, const char *ArgsRaw)
+{
+    char Str[512], Exp[512];
+    const char *p = skip_ws(ArgsRaw);
+    int  n = 0;
+    if (*p == '"') p++;
+    while (*p && *p != '"' && n < 511) Str[n++] = *p++;
+    Str[n] = '\0';
+    inst_expand(St, Str, Exp, sizeof(Exp));
+    return (long)strlen(Exp);
+}
+
+
+static void inst_func_strhead(InstState *St, const char *ArgsRaw, char *OutBuf,
+                               int OutSize)
+{
+    char Str[512], Exp[512];
+    const char *p = skip_ws(ArgsRaw);
+    int  n = 0, MaxLen;
+    if (*p == '"') p++;
+    while (*p && *p != '"' && n < 511) Str[n++] = *p++;
+    Str[n] = '\0';
+    if (*p == '"') p++;
+    while (*p == ' ' || *p == '\t' || *p == ',') p++;
+    MaxLen = (int)strtol(p, NULL, 10);
+    if (MaxLen < 0) MaxLen = 0;
+    if (MaxLen >= OutSize) MaxLen = OutSize - 1;
+    inst_expand(St, Str, Exp, sizeof(Exp));
+    if ((int)strlen(Exp) < MaxLen) MaxLen = (int)strlen(Exp);
+    memcpy(OutBuf, Exp, MaxLen);
+    OutBuf[MaxLen] = '\0';
+}
+
+
+static void inst_func_strtoken(InstState *St, const char *ArgsRaw,
+                                char *OutBuf, int OutSize)
+{
+    char Str[512], Exp[512];
+    const char *p = skip_ws(ArgsRaw);
+    int  n = 0, Idx, i, Cur = 0;
+    char Delim = ' ';
+    char *Tokens[64];
+    int  NumTokens = 0;
+    char Work[512];
+
+    if (*p == '"') p++;
+    while (*p && *p != '"' && n < 511) Str[n++] = *p++;
+    Str[n] = '\0';
+    if (*p == '"') p++;
+    while (*p == ' ' || *p == '\t' || *p == ',') p++;
+    Idx = (int)strtol(p, (char **)&p, 10);
+    while (*p == ' ' || *p == '\t' || *p == ',') p++;
+    if (*p == '"') p++;
+    if (*p) Delim = *p;
+
+    inst_expand(St, Str, Exp, sizeof(Exp));
+
+    /* Split Exp on Delim */
+    strncpy(Work, Exp, sizeof(Work) - 1);
+    Work[sizeof(Work) - 1] = '\0';
+    Tokens[NumTokens++] = Work;
+    for (i = 0; Work[i] && NumTokens < 64; i++) {
+        if (Work[i] == Delim) {
+            Work[i] = '\0';
+            if (Work[i+1]) Tokens[NumTokens++] = &Work[i+1];
+        }
+    }
+
+    if (Idx < 0 || Idx >= NumTokens) { OutBuf[0] = '\0'; return; }
+    strncpy(OutBuf, Tokens[Idx], OutSize - 1);
+    OutBuf[OutSize - 1] = '\0';
+    (void)Cur;
+}
+
+
+static int inst_func_exists(InstState *St, const char *ArgsRaw)
+{
+    char Str[MAX_PATH_LEN], Exp[MAX_PATH_LEN], Norm[MAX_PATH_LEN];
+    const char *p = skip_ws(ArgsRaw);
+    int  n = 0;
+    FILE *F;
+
+    if (*p == '"') p++;
+    while (*p && *p != '"' && n < MAX_PATH_LEN - 1) Str[n++] = *p++;
+    Str[n] = '\0';
+    inst_expand(St, Str, Exp, sizeof(Exp));
+    inst_normalize_path(St, Exp, Norm, sizeof(Norm));
+
+    F = fopen(Norm, "rb");
+    if (F) { fclose(F); return 1; }
+
+    /* Try as directory */
+    {
+        struct stat s;
+        if (stat(Norm, &s) == 0 && (s.st_mode & S_IFDIR)) return 1;
+    }
+    return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_eval_primary() -- number | "string" | @Var | @Func(args) | (expr) */
+/*-----------------------------------------------------------------------*/
+
+static const char *inst_eval_primary(InstState *St, const char *p, EvalVal *Out)
+{
+    p = skip_ws(p);
+    Out->IsString = 0;
+    Out->IVal = 0;
+    Out->SVal[0] = '\0';
+
+    /* Parenthesized subexpression */
+    if (*p == '(') {
+        p++;
+        p = inst_eval_or(St, p, Out);
+        p = skip_ws(p);
+        if (*p == ')') p++;
+        return p;
+    }
+
+    /* Negative number */
+    if (*p == '-' && isdigit(p[1])) {
+        char *End;
+        Out->IVal = strtol(p, &End, 10);
+        return End;
+    }
+
+    /* Integer literal */
+    if (isdigit(*p)) {
+        char *End;
+        Out->IVal = strtol(p, &End, 10);
+        return End;
+    }
+
+    /* Quoted string literal — track parenthesis depth so nested `"` inside
+     * @Foo(...) function-call args don't terminate the literal prematurely.
+     * Clark's INSTALL.DAT uses shapes like  "@StrToken(\"@Fname\",0,\" \")"
+     * where the inner `"`s are inside function-call parens and must be
+     * treated as literal characters, not as string terminators. */
+    if (*p == '"') {
+        char Raw[512];
+        int  n = 0;
+        int  ParenDepth = 0;
+        p++;
+        while (*p && n < 511) {
+            if (*p == '(') ParenDepth++;
+            else if (*p == ')' && ParenDepth > 0) ParenDepth--;
+            else if (*p == '"' && ParenDepth == 0) break;
+            Raw[n++] = *p++;
+        }
+        Raw[n] = '\0';
+        if (*p == '"') p++;
+        Out->IsString = 1;
+        inst_expand(St, Raw, Out->SVal, sizeof(Out->SVal));
+        return p;
+    }
+
+    /* @Var or @Func(args) or single-letter identifier */
+    if (*p == '@' || isalpha(*p)) {
+        char Ident[64];
+        int  n = 0;
+        if (*p == '@') p++;
+        while (*p && (isalnum(*p) || *p == '_') && n < 63) Ident[n++] = *p++;
+        Ident[n] = '\0';
+        p = skip_ws(p);
+
+        if (*p == '(') {
+            /* Function call — collect args until matching ')' */
+            char Args[512];
+            int  Depth = 1;
+            int  ai = 0;
+            p++;
+            while (*p && ai < 511) {
+                if (*p == '(') Depth++;
+                else if (*p == ')') { Depth--; if (Depth == 0) break; }
+                Args[ai++] = *p++;
+            }
+            Args[ai] = '\0';
+            if (*p == ')') p++;
+
+            if (strcasecmp(Ident, "StrLen") == 0) {
+                Out->IVal = inst_func_strlen(St, Args);
+            } else if (strcasecmp(Ident, "StrHead") == 0) {
+                Out->IsString = 1;
+                inst_func_strhead(St, Args, Out->SVal, sizeof(Out->SVal));
+            } else if (strcasecmp(Ident, "StrToken") == 0) {
+                Out->IsString = 1;
+                inst_func_strtoken(St, Args, Out->SVal, sizeof(Out->SVal));
+            } else if (strcasecmp(Ident, "Exists") == 0) {
+                Out->IVal = inst_func_exists(St, Args);
+            } else if (strcasecmp(Ident, "FileAttr") == 0) {
+                /* Two forms: query (1 arg) — v1.10.5 territory; and setter
+                 * (2 args) — but the setter is already called at line
+                 * dispatch. Here in expression context it's the checker.
+                 * Simplification: return 0 (success). */
+                Out->IVal = 0;
+            } else if (strcasecmp(Ident, "System") == 0) {
+                /* @System(cmd) — v1.10.5. For v1.10.2 always return 0. */
+                Out->IVal = 0;
+            } else if (strcasecmp(Ident, "Group") == 0) {
+                /* Empty function-form of @Group — treat as string of selected groups */
+                Out->IsString = 1;
+                strncpy(Out->SVal, St->SelectedGroups, sizeof(Out->SVal) - 1);
+                Out->SVal[sizeof(Out->SVal) - 1] = '\0';
+            } else {
+                /* Unknown function — return 0 */
+                Out->IVal = 0;
+            }
+            return p;
+        }
+
+        /* Not a function — treat as variable reference (@Var or bare letter) */
+        {
+            const char *Val;
+            if (strcasecmp(Ident, "Group") == 0) {
+                Out->IsString = 1;
+                strncpy(Out->SVal, St->SelectedGroups, sizeof(Out->SVal) - 1);
+                Out->SVal[sizeof(Out->SVal) - 1] = '\0';
+                return p;
+            }
+            Val = inst_get_var(St, Ident);
+            if (Val && *Val) {
+                Out->IsString = 1;
+                strncpy(Out->SVal, Val, sizeof(Out->SVal) - 1);
+                Out->SVal[sizeof(Out->SVal) - 1] = '\0';
+            } else {
+                /* Not a known variable — treat identifier itself as string
+                 * (single-letter group ids fall here: `a [= @Group`) */
+                Out->IsString = 1;
+                strncpy(Out->SVal, Ident, sizeof(Out->SVal) - 1);
+                Out->SVal[sizeof(Out->SVal) - 1] = '\0';
+            }
+            return p;
+        }
+    }
+
+    return p;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_eval_cmp() -- primary [op primary]                              */
+/*                                                                       */
+/* Comparison operators: == != > < >= <= [= [!                          */
+/*  [= means "left substring/char is contained in right string"         */
+/*  [! is the negation                                                  */
+/*-----------------------------------------------------------------------*/
+
+static const char *inst_eval_cmp(InstState *St, const char *p, EvalVal *Out)
+{
+    EvalVal Rhs;
+    char Op[4] = "";
+    long Result = 0;
+    int  CmpAsString = 0;
+
+    p = inst_eval_primary(St, p, Out);
+    p = skip_ws(p);
+
+    /* Look for comparison operator */
+    if (p[0] == '=' && p[1] == '=') { Op[0]='='; Op[1]='='; p += 2; }
+    else if (p[0] == '!' && p[1] == '=') { Op[0]='!'; Op[1]='='; p += 2; }
+    else if (p[0] == '>' && p[1] == '=') { Op[0]='>'; Op[1]='='; p += 2; }
+    else if (p[0] == '<' && p[1] == '=') { Op[0]='<'; Op[1]='='; p += 2; }
+    else if (p[0] == '>') { Op[0]='>'; p++; }
+    else if (p[0] == '<') { Op[0]='<'; p++; }
+    else if (p[0] == '[' && p[1] == '=') { Op[0]='['; Op[1]='='; p += 2; }
+    else if (p[0] == '[' && p[1] == '!') { Op[0]='['; Op[1]='!'; p += 2; }
+    else return p;
+
+    p = skip_ws(p);
+    p = inst_eval_primary(St, p, &Rhs);
+    CmpAsString = (Out->IsString || Rhs.IsString);
+
+    if (Op[0] == '[') {
+        /* Substring / containment test */
+        char Needle[512];
+        const char *Hay = Rhs.IsString ? Rhs.SVal : "";
+        if (Out->IsString) strncpy(Needle, Out->SVal, sizeof(Needle) - 1);
+        else snprintf(Needle, sizeof(Needle), "%ld", Out->IVal);
+        Needle[sizeof(Needle) - 1] = '\0';
+        {
+            int Found = (strstr(Hay, Needle) != NULL);
+            if (Op[1] == '=') Result = Found ? 1 : 0;
+            else              Result = Found ? 0 : 1;
+        }
+    } else if (CmpAsString) {
+        const char *A = Out->IsString ? Out->SVal : "";
+        const char *B = Rhs.IsString  ? Rhs.SVal  : "";
+        int Cmp = strcmp(A, B);
+        if (Op[0] == '=' && Op[1] == '=')      Result = (Cmp == 0);
+        else if (Op[0] == '!' && Op[1] == '=') Result = (Cmp != 0);
+        else if (Op[0] == '>' && Op[1] == '=') Result = (Cmp >= 0);
+        else if (Op[0] == '<' && Op[1] == '=') Result = (Cmp <= 0);
+        else if (Op[0] == '>')                 Result = (Cmp >  0);
+        else if (Op[0] == '<')                 Result = (Cmp <  0);
+    } else {
+        long A = Out->IVal, B = Rhs.IVal;
+        if (Op[0] == '=' && Op[1] == '=')      Result = (A == B);
+        else if (Op[0] == '!' && Op[1] == '=') Result = (A != B);
+        else if (Op[0] == '>' && Op[1] == '=') Result = (A >= B);
+        else if (Op[0] == '<' && Op[1] == '=') Result = (A <= B);
+        else if (Op[0] == '>')                 Result = (A >  B);
+        else if (Op[0] == '<')                 Result = (A <  B);
+    }
+
+    Out->IsString = 0;
+    Out->IVal = Result;
+    Out->SVal[0] = '\0';
+    return p;
+}
+
+
+static const char *inst_eval_and(InstState *St, const char *p, EvalVal *Out)
+{
+    p = inst_eval_cmp(St, p, Out);
+    for (;;) {
+        p = skip_ws(p);
+        if (p[0] == '&' && p[1] == '&') {
+            EvalVal Rhs;
+            int L = Out->IsString ? (Out->SVal[0] != '\0') : (Out->IVal != 0);
+            int R;
+            p += 2;
+            p = skip_ws(p);
+            p = inst_eval_cmp(St, p, &Rhs);
+            R = Rhs.IsString ? (Rhs.SVal[0] != '\0') : (Rhs.IVal != 0);
+            Out->IsString = 0;
+            Out->IVal = (L && R) ? 1 : 0;
+            Out->SVal[0] = '\0';
+        } else break;
+    }
+    return p;
+}
+
+
+static const char *inst_eval_or(InstState *St, const char *p, EvalVal *Out)
+{
+    p = inst_eval_and(St, p, Out);
+    for (;;) {
+        p = skip_ws(p);
+        if (p[0] == '|' && p[1] == '|') {
+            EvalVal Rhs;
+            int L = Out->IsString ? (Out->SVal[0] != '\0') : (Out->IVal != 0);
+            int R;
+            p += 2;
+            p = skip_ws(p);
+            p = inst_eval_and(St, p, &Rhs);
+            R = Rhs.IsString ? (Rhs.SVal[0] != '\0') : (Rhs.IVal != 0);
+            Out->IsString = 0;
+            Out->IVal = (L || R) ? 1 : 0;
+            Out->SVal[0] = '\0';
+        } else break;
+    }
+    return p;
+}
+
+
+static const char *inst_eval_expr(InstState *St, const char *p, EvalVal *Out)
+{
+    return inst_eval_or(St, p, Out);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_if() -- Handle @If (expr)                                    */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_if(InstState *St, const char *Line)
+{
+    const char *p = Line;
+    EvalVal V;
+    int TrueVal;
+
+    /* Skip past "@If" */
+    while (*p == ' ' || *p == '\t') p++;
+    if (strncasecmp(p, "@If", 3) == 0) p += 3;
+    p = skip_ws(p);
+
+    (void)inst_eval_expr(St, p, &V);
+    TrueVal = V.IsString ? (V.SVal[0] != '\0') : (V.IVal != 0);
+
+    if (St->IfDepth < 32) {
+        St->IfStack[St->IfDepth].TakenTrue = TrueVal;
+        St->IfStack[St->IfDepth].InElse    = 0;
+        St->IfDepth++;
+    }
+}
+
+
+static void inst_cmd_else(InstState *St)
+{
+    if (St->IfDepth > 0) {
+        St->IfStack[St->IfDepth - 1].InElse = 1;
+    }
+}
+
+
+static void inst_cmd_endif(InstState *St)
+{
+    if (St->IfDepth > 0) St->IfDepth--;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_goto() -- Handle @Goto <label>                               */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_goto(InstState *St, const char *Line)
+{
+    const char *p = Line;
+    char LabelName[64];
+    int  n = 0;
+
+    while (*p == ' ' || *p == '\t') p++;
+    if (strncasecmp(p, "@Goto", 5) == 0) p += 5;
+    while (*p == ' ' || *p == '\t') p++;
+
+    while (*p && !isspace(*p) && n < 63) LabelName[n++] = *p++;
+    LabelName[n] = '\0';
+
+    if (inst_goto_label(St, LabelName) != 0) {
+        printf("  GOTO-MISS  %s (label not found)\n", LabelName);
+    }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_get_string_stub() -- Handle @GetString @Var ... @EndString  */
+/*                                                                       */
+/* Full interactive impl lands in v1.10.4. For v1.10.2 acceptance, we    */
+/* need a stub that (a) parses through to @EndString without prompting,  */
+/* and (b) ensures the target variable is non-empty so Clark's           */
+/* validation loops (`@If StrLen==0 @Goto ...`) don't spin forever.     */
+/*                                                                       */
+/* Same pattern for @GetOutDrive / @GetSubdir / @GetGroups.              */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_get_string_stub(InstState *St, const char *Line,
+                                      const char *EndTag)
+{
+    const char *p = Line;
+    char  VarName[64] = "";
+    int   n = 0;
+    char  Discard[MAX_LINE];
+
+    /* If line has form "@GetString @Var" or similar, extract var name */
+    while (*p == ' ' || *p == '\t') p++;
+    while (*p && !isspace(*p)) p++;  /* skip "@GetString" */
+    while (*p == ' ' || *p == '\t') p++;
+    if (*p == '@') p++;
+    while (*p && (isalnum(*p) || *p == '_') && n < 63) VarName[n++] = *p++;
+    VarName[n] = '\0';
+
+    /* Skip content until the matching @EndTag */
+    while (fgets(Discard, sizeof(Discard), St->ScriptFp)) {
+        char *q = Discard;
+        while (*q == ' ' || *q == '\t') q++;
+        if (strncasecmp(q, EndTag, strlen(EndTag)) == 0) break;
+    }
+
+    /* Pre-fill a sensible default if the var is empty. This lets
+     * Clark's validation loops fall through instead of infinite-looping
+     * on user input we never actually collect at this phase. */
+    if (VarName[0]) {
+        const char *Cur = inst_get_var(St, VarName);
+        if (!Cur || !*Cur) {
+            /* Choose a plausible default based on the var name */
+            const char *Def = "TEST";
+            if (strcasecmp(VarName, "Fname") == 0)   Def = "SysOp";
+            else if (strcasecmp(VarName, "Lname") == 0)   Def = "Operator";
+            else if (strcasecmp(VarName, "CitySt") == 0)  Def = "Unknown, XX";
+            else if (strcasecmp(VarName, "Pwd") == 0)     Def = "password";
+            else if (strcasecmp(VarName, "RegCode") == 0) Def = "0";
+            inst_set_var(St, VarName, Def);
+        }
+    }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_get_groups_stub() -- Handle @GetGroups ... @EndGroups        */
+/*                                                                       */
+/* v1.10.4 will render the interactive checkbox menu. For v1.10.2, we    */
+/* skip through the block silently — the user pre-sets group state via  */
+/* the --groups CLI arg (default "abcdef"), which is what @If tests      */
+/* against.                                                              */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_skip_block(InstState *St, const char *EndTag)
+{
+    char Line[MAX_LINE];
+    int  TagLen = (int)strlen(EndTag);
+
+    while (fgets(Line, sizeof(Line), St->ScriptFp)) {
+        char *p = Line;
+        while (*p == ' ' || *p == '\t') p++;
+        if (strncasecmp(p, EndTag, TagLen) == 0) break;
+    }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_set() -- Handle @Set var = value  or  @Var = value           */
+/*                                                                       */
+/* Line has already had "@Set" (if present) stripped; parse "var = expr" */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_set(InstState *St, const char *Line)
+{
+    const char *p = Line;
+    char VarName[64];
+    char Val[512];
+    int  n = 0;
+    EvalVal V;
+
+    while (*p == ' ' || *p == '\t') p++;
+    if (*p == '@') p++;
+    while (*p && (isalnum(*p) || *p == '_') && n < 63) VarName[n++] = *p++;
+    VarName[n] = '\0';
+
+    p = skip_ws(p);
+    if (*p != '=') return;
+    p++;
+    p = skip_ws(p);
+
+    /* Evaluate RHS */
+    inst_eval_expr(St, p, &V);
+    if (V.IsString)
+        strncpy(Val, V.SVal, sizeof(Val) - 1);
+    else
+        snprintf(Val, sizeof(Val), "%ld", V.IVal);
+    Val[sizeof(Val) - 1] = '\0';
+
+    /* Special: assignments to built-in project vars update the state */
+    if (strcasecmp(VarName, "SubDir") == 0 ||
+        strcasecmp(VarName, "Subdir") == 0) {
+        strncpy(St->SubDir, Val, sizeof(St->SubDir) - 1);
+        St->SubDir[sizeof(St->SubDir) - 1] = '\0';
+    } else if (strcasecmp(VarName, "OutDrive") == 0) {
+        St->OutDrive = Val[0] ? Val[0] : 'C';
+    } else if (strcasecmp(VarName, "Name") == 0) {
+        strncpy(St->ProjName, Val, sizeof(St->ProjName) - 1);
+    } else if (strcasecmp(VarName, "Version") == 0) {
+        strncpy(St->ProjVersion, Val, sizeof(St->ProjVersion) - 1);
+    } else if (strcasecmp(VarName, "Label") == 0 ||
+               strcasecmp(VarName, "Prompt") == 0 ||
+               strcasecmp(VarName, "Files") == 0 ||
+               strcasecmp(VarName, "Path") == 0) {
+        /* These are metadata / v1.10.5-territory — accept but no side effect */
+        inst_set_var(St, VarName, Val);
+    } else if (strlen(VarName) == 1 && islower((unsigned char)VarName[0])) {
+        /* Single lowercase letter: group-label declaration inside a
+         * @GetGroups...@EndGroups block. NOT a normal variable — Clark's
+         * script uses these as checkbox display strings, and `a [= @Group`
+         * later tests the LETTER against the selected-groups state. If we
+         * stored it as a variable, `a` in expressions would resolve to
+         * the label text, breaking the group test. Skip. */
+    } else {
+        inst_set_var(St, VarName, Val);
+    }
+}
+
+
+
 
 static int inst_process(InstState *St)
 {
@@ -929,6 +1718,7 @@ static int inst_process(InstState *St)
 
     while (fgets(Line, sizeof(Line), St->ScriptFp)) {
         char *p = Line;                 /* line scan pointer              */
+        int   Skip;                     /* skipping due to @If (false)?   */
 
         while (*p == ' ' || *p == '\t') p++;
 
@@ -944,22 +1734,64 @@ static int inst_process(InstState *St)
                 *End-- = '\0';
         }
 
-        /* Dispatch @ commands */
-        if (strncasecmp(p, "@DefineProject", 14) == 0)
+        Skip = inst_should_skip(St);
+
+        /* When skipping, we only track @If nesting + @Else/@Endif. */
+        if (Skip) {
+            if (strncasecmp(p, "@If", 3) == 0 && !isalnum(p[3])) {
+                if (St->IfDepth < 32) {
+                    St->IfStack[St->IfDepth].TakenTrue = 0;
+                    St->IfStack[St->IfDepth].InElse    = 0;
+                    St->IfDepth++;
+                }
+            }
+            else if (strncasecmp(p, "@Else", 5) == 0 && !isalnum(p[5])) {
+                inst_cmd_else(St);
+            }
+            else if (strncasecmp(p, "@Endif", 6) == 0 ||
+                     strncasecmp(p, "@EndIf", 6) == 0) {
+                inst_cmd_endif(St);
+            }
+            continue;
+        }
+
+        /* v1.10.2: control flow */
+        if (strncasecmp(p, "@If", 3) == 0 && !isalnum(p[3])) {
+            inst_cmd_if(St, p);
+        }
+        else if (strncasecmp(p, "@Else", 5) == 0 && !isalnum(p[5])) {
+            inst_cmd_else(St);
+        }
+        else if (strncasecmp(p, "@Endif", 6) == 0 ||
+                 strncasecmp(p, "@EndIf", 6) == 0) {
+            inst_cmd_endif(St);
+        }
+        else if (strncasecmp(p, "@Goto", 5) == 0 && !isalnum(p[5])) {
+            inst_cmd_goto(St, p);
+        }
+        else if (strncasecmp(p, "@Set ", 5) == 0 ||
+                 strncasecmp(p, "@Set\t", 5) == 0) {
+            inst_cmd_set(St, p + 4);
+        }
+
+        /* v1.10.0 dispatch */
+        else if (strncasecmp(p, "@DefineProject", 14) == 0)
             inst_cmd_define_project(St);
         else if (strncasecmp(p, "@DefineVars", 11) == 0)
             inst_cmd_define_vars(St);
         else if (strncasecmp(p, "@Display", 8) == 0)
             inst_cmd_display(St);
         else if (strncasecmp(p, "@Cls", 4) == 0)
-            printf("\033[2J\033[H");    /* ANSI clear screen              */
+            printf("\033[2J\033[H");
         else if (strncasecmp(p, "@Pause", 6) == 0) {
             printf("\n PRESS ANY KEY ");
             fflush(stdout);
 #ifdef __WATCOMC__
             getch();
 #else
-            getchar();
+            /* Skip actual keypress when stdin isn't a tty (for automated
+             * end-to-end tests) */
+            if (isatty(fileno(stdin))) getchar();
 #endif
             printf("\n");
         }
@@ -970,9 +1802,10 @@ static int inst_process(InstState *St)
         else if (strncasecmp(p, "@Exit", 5) == 0) {
             return 0;
         }
-        /* v1.10.1 additions: file operations */
+
+        /* v1.10.1 dispatch: file operations */
         else if (strncasecmp(p, "@BeginLib", 9) == 0) {
-            char ArchName[64];          /* archive name                   */
+            char ArchName[64];
             const char *ap = p + 9;
             int n = 0;
             while (*ap == ' ' || *ap == '\t') ap++;
@@ -983,7 +1816,7 @@ static int inst_process(InstState *St)
         else if (strncasecmp(p, "@EndLib", 7) == 0) {
             inst_cmd_end_lib(St);
         }
-        else if (strncasecmp(p, "@File", 5) == 0) {
+        else if (strncasecmp(p, "@File", 5) == 0 && !isalnum(p[5])) {
             inst_cmd_file(St, p);
         }
         else if (strncasecmp(p, "@Copy", 5) == 0) {
@@ -995,7 +1828,52 @@ static int inst_process(InstState *St)
         else if (strncasecmp(p, "@FileAttr", 9) == 0) {
             inst_cmd_file_attr(St, p);
         }
-        /* TODO v1.10.2+: control flow, filesystem, menu, system hooks */
+
+        /* v1.10.2 stubs (real interactive impls land in v1.10.4) */
+        else if (strncasecmp(p, "@GetString", 10) == 0) {
+            inst_cmd_get_string_stub(St, p, "@EndString");
+        }
+        else if (strncasecmp(p, "@GetOutDrive", 12) == 0) {
+            inst_cmd_skip_block(St, "@EndOutDrive");
+        }
+        else if (strncasecmp(p, "@GetSubdir", 10) == 0) {
+            inst_cmd_skip_block(St, "@EndSubdir");
+        }
+        else if (strncasecmp(p, "@GetGroups", 10) == 0) {
+            inst_cmd_skip_block(St, "@EndGroups");
+        }
+        else if (strncasecmp(p, "@DefineDisk", 11) == 0) {
+            /* v1.10.3 stub — no @EndDisk marker treatment for now; disk
+             * boundaries don't affect file placement semantics here. */
+        }
+        else if (strncasecmp(p, "@EndDisk", 8) == 0) {
+            /* v1.10.3 stub */
+        }
+        else if (strncasecmp(p, "@SetConfig", 10) == 0) {
+            inst_cmd_skip_block(St, "@EndConfig");
+        }
+        else if (strncasecmp(p, "@SetAutoexec", 12) == 0) {
+            inst_cmd_skip_block(St, "@EndAutoexec");
+        }
+        else if (strncasecmp(p, "@Finish", 7) == 0) {
+            inst_cmd_skip_block(St, "@EndFinish");
+        }
+
+        /* Top-level bare-var assignment (v1.10.2 fallback):
+         * @VarName = expr  outside of any @DefineVars block. */
+        else if (*p == '@' && isalpha(p[1])) {
+            const char *eq = strchr(p, '=');
+            if (eq && *(eq + 1) != '=' && eq > p + 1) {
+                char prev = *(eq - 1);
+                /* Not a comparison; treat as assignment */
+                if (prev != '!' && prev != '>' && prev != '<' &&
+                    prev != '=') {
+                    inst_cmd_set(St, p);
+                }
+            }
+        }
+
+        /* Silently ignore other lines (labels handled by pre-scan pass) */
     }
 
     return 0;
@@ -1017,6 +1895,10 @@ static void usage(const char *ProgName)
     printf("                       (default: current directory)\n");
     printf("  -r, --redx PATH      Path to redx binary\n");
     printf("                       (default: redx in PATH)\n");
+    printf("  -g, --groups STR     Selected install-group letters, e.g. \"ab\"\n");
+    printf("                       for First-Time + Upgrade. Default: \"abcdef\".\n");
+    printf("                       (Interactive @GetGroups menu lands v1.10.4;\n");
+    printf("                        until then this arg simulates the selection.)\n");
     printf("  -h, --help           This message\n");
     printf("\n");
     printf("If INSTALL.DAT is not given, defaults to ./INSTALL.DAT\n");
@@ -1037,6 +1919,7 @@ int main(int Argc, char *Argv[])
     strcpy(St.ArchivesDir, ".");
     strcpy(St.TargetRoot,  ".");
     strcpy(St.RedxPath,    "redx");
+    strcpy(St.SelectedGroups,      "abcdef");   /* default: all v1.10.4 checkboxes selected */
 
     /* Parse args */
     for (i = 1; i < Argc; i++) {
@@ -1056,6 +1939,10 @@ int main(int Argc, char *Argv[])
                   strcmp(Argv[i], "--redx") == 0) && i + 1 < Argc) {
             strncpy(St.RedxPath, Argv[++i], sizeof(St.RedxPath) - 1);
         }
+        else if ((strcmp(Argv[i], "-g") == 0 ||
+                  strcmp(Argv[i], "--groups") == 0) && i + 1 < Argc) {
+            strncpy(St.SelectedGroups, Argv[++i], sizeof(St.SelectedGroups) - 1);
+        }
         else if (Argv[i][0] != '-') {
             DatFile = Argv[i];
         }
@@ -1068,11 +1955,15 @@ int main(int Argc, char *Argv[])
         return 1;
     }
 
-    printf("\n PCBoard Installation Program (install v1.10.1)\n");
+    printf("\n PCBoard Installation Program (install v1.10.2)\n");
     printf(" Script:    %s\n", DatFile);
     printf(" Archives:  %s\n", St.ArchivesDir);
     printf(" Target:    %s\n", St.TargetRoot);
-    printf(" Redx CLI:  %s\n\n", St.RedxPath);
+    printf(" Redx CLI:  %s\n", St.RedxPath);
+    printf(" Groups:    %s\n\n", St.SelectedGroups);
+
+    /* v1.10.2: pre-scan for @Goto labels */
+    inst_scan_labels(&St);
 
     Rc = inst_process(&St);
 
@@ -1081,9 +1972,10 @@ int main(int Argc, char *Argv[])
 
     fclose(St.ScriptFp);
 
-    printf("\n Files placed: %ld\n", St.FilesPlaced);
+    printf("\n Files placed:  %ld\n", St.FilesPlaced);
     if (St.FilesFailed > 0)
-        printf(" Files failed: %ld\n", St.FilesFailed);
+        printf(" Files failed:  %ld\n", St.FilesFailed);
+    printf(" Labels found:  %d\n", St.NumLabelDefs);
 
     if (Rc == 0)
         printf("\nInstallation complete.\n");

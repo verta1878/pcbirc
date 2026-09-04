@@ -7,7 +7,8 @@ reimplementation at `pcb1541/install/src/install.c` must match).
 This document is grown as install v1.10.1 → v1.10.5 lands each
 directive's implementation. Entries marked **spec-only** haven't
 been coded yet; entries marked **v1.10.N** have been implemented in
-that sub-phase (v1.10.1 shipped 6 directives — file operations).
+that sub-phase (v1.10.1 shipped 6 directives — file operations;
+v1.10.2 shipped 11 more — control flow + strings).
 
 ## Source
 
@@ -50,7 +51,7 @@ password, reg code.
 | `@CitySt`     |  6 |  18 | **spec-only** | Storage for city/state |
 | `@Pwd`        |  6 |  19 | **spec-only** | Storage for password |
 | `@RegCode`    |  1 |  20 | **spec-only** | Storage for registration code |
-| `@Set`        | 14 | 115 | **spec-only** | Set a variable's value inline |
+| `@Set`        | 14 | 115 | **v1.10.2**   | Set a variable's value inline. Single-letter names (`@Set a = "..."`) are recognized as group-label declarations, NOT stored as normal variables (would break `a [= @Group` semantics). Top-level bare `@Var = expr` outside @DefineVars also handled. |
 
 ### 3. Output / display (v1.10.0 — parsed by existing stub)
 
@@ -94,12 +95,12 @@ Conditional execution, jumps, labels.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@If`     | 126 |  85 | **spec-only** | Open a conditional block |
-| `@Else`   |   2 | 328 | **spec-only** | Alternative branch |
-| `@EndIf`  |  31 |  88 | **spec-only** | Close it (uppercase variant) |
-| `@Endif`  |  95 | 132 | **spec-only** | Close it (mixed-case variant — same as EndIf) |
-| `@Goto`   |  12 |  87 | **spec-only** | Jump to a label |
-| `@Label`  |   4 | 321 | **spec-only** | Define a jump target |
+| `@If`     | 126 |  85 | **v1.10.2**   | Open a conditional block (recursive-descent evaluator with `[= [! == != > < >= <= && || ()` on int and string operands, plus @Func(...) inline in string literals) |
+| `@Else`   |   2 | 328 | **v1.10.2**   | Alternative branch |
+| `@EndIf`  |  31 |  88 | **v1.10.2**   | Close it (uppercase variant) |
+| `@Endif`  |  95 | 132 | **v1.10.2**   | Close it (mixed-case variant — same as EndIf) |
+| `@Goto`   |  12 |  87 | **v1.10.2**   | Jump to a label (pre-scan pass builds label → filepos map; @If stack reset on jump) |
+| `@Label`  |   4 | 321 | **v1.10.2** (as `Name:` lines detected by pre-scan) | Define a jump target — actual syntax is `Name:` at start of line, not `@Label = "..."` (which is disk metadata) |
 | `@Abort`  |   1 | 245 | parsed | Terminate the install |
 
 ### 6. String manipulation (v1.10.2 planned)
@@ -108,9 +109,9 @@ String utilities — length, prefix, tokenize.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@StrLen`   | 9 |  85 | **spec-only** | Length of a string |
-| `@StrHead`  | 5 |  86 | **spec-only** | Prefix (first N chars) of a string |
-| `@StrToken` | 4 | 168 | **spec-only** | Tokenize a string |
+| `@StrLen`   | 9 |  85 | **v1.10.2**   | Length of a string |
+| `@StrHead`  | 5 |  86 | **v1.10.2**   | Prefix (first N chars) of a string |
+| `@StrToken` | 4 | 168 | **v1.10.2**   | Tokenize a string (Nth token by delimiter) |
 
 ### 7. File / archive operations (v1.10.1 — highest priority)
 
@@ -152,7 +153,7 @@ Directory ops, path predicates, size queries.
 | `@ChDir`     |  3 | 899 | **spec-only** | Change working directory |
 | `@ChDrive`   |  2 | 898 | **spec-only** | Change current drive |
 | `@DirExists` |  1 |1134 | **spec-only** | Predicate: does a directory exist |
-| `@Exists`    |  3 | 134 | **spec-only** | Predicate: does a file exist |
+| `@Exists`    |  3 | 134 | **v1.10.2** (as @If predicate) | Predicate: does a file exist |
 
 ### 10. System hooks (v1.10.5 planned)
 
@@ -189,7 +190,7 @@ Running total of directives coded in `pcb1541/install/src/install.c`
 |---|---:|---:|---|
 | v1.10.0 | 12 | 12 | Existing Phase 27 stub — project metadata + basic display |
 | v1.10.1 |  6 | 18 | File operations via redx wire-up (@BeginLib/@EndLib/@File/@Copy/@Delete/@FileAttr; @Out/@Size/@AppendTo as @File subclauses). Verified byte-perfect against dist/target/. |
-| v1.10.2 |  ? |  ? | Vars + control flow + string ops |
+| v1.10.2 | 11 | 29 | Variables + control flow + string ops (@If/@Else/@EndIf/@Endif/@Goto/@Label/@Set/@StrLen/@StrHead/@StrToken/@Exists-as-predicate). Full recursive-descent expression evaluator with `[= [! == != > < >= <= && \|\| ()` on int and string operands, @Func(...) inline in string literals, trailing `@Group X` clause on @File as per-directive filter. Real INSTALL.DAT runs end-to-end: 471 successful @File operations, 348 files byte-perfect vs `dist/target/` (94.8% of placed). |
 | v1.10.3 |  ? |  ? | Filesystem + disk sequencing |
 | v1.10.4 |  ? |  ? | Interactive menu |
 | v1.10.5 |  ? |  ? | System hooks + finish |

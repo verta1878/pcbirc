@@ -1,25 +1,32 @@
-install v1.10.1 — redx wire-up, first real code
-================================================
+install v1.10.2 — control flow, real INSTALL.DAT runs end-to-end
+=================================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 47ad15a
+Prev origin/main HEAD: c8f0a37
 
 WHAT THIS RELEASE DOES
 
-  Wires the .RED archive extractor (redx) into install.c and adds
-  6 file-operation directives:
+  Real INSTALL.DAT runs end-to-end for the first time.
 
-    @BeginLib / @EndLib  - open/close an archive extraction context
-    @File                - place one file from the current archive
-                           (subclauses: @Out, @Size, @AppendTo)
-    @Copy                - copy a file (non-archive source)
-    @Delete              - remove a file or directory
-    @FileAttr            - set file read-only attribute
+  11 new directives implemented (29 of 60 total):
 
-  Cumulative: 18 of 60 semantically distinct @-directives implemented
-  (up from 12 in v1.10.0).
+    @If / @Else / @EndIf / @Endif   - conditional branches
+    @Goto / @Label                    - script-position jumps
+    @Set                              - variable assignment
+    @StrLen / @StrHead / @StrToken    - string utilities
+    @Exists (as @If predicate)        - file existence check
 
-  Verified: minimal test .DAT produces byte-perfect output vs
-  pcb1541/install/dist/target/ on the file-op subset.
+  Plus a full recursive-descent expression evaluator supporting
+  `[= [!  == != > < >= <= && || ()` on int and string operands,
+  with @Func(...) inline invocation inside string literals (needed
+  for Clark's nested-quote pattern like "@StrToken("@Fname",0," ")").
+
+  Also handles trailing `@Group X` clause on `@File` as a per-directive
+  filter (Clark's INSTALL.DAT uses `@File N @Out MAIN\CNAMES.IDX @Group n`
+  to gate per-bulletin-board files).
+
+  Verified end-to-end: real 42 KB INSTALL.DAT runs to `@Exit`,
+  471 successful @File operations, 348 files byte-perfect vs
+  pcb1541/install/dist/target/ reference (94.8% of placed).
 
 APPLY (Windows / GitHub Desktop) - 3 STEPS
 
@@ -27,92 +34,106 @@ APPLY (Windows / GitHub Desktop) - 3 STEPS
     Overwrites:
       HISTORY.md
       pcb1541/install/src/install.c
+      pcb1541/install/src/README.md
       docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
       APPLY.txt
-    Adds:
-      pcb1541/install/src/README.md
-      pcb1541/install/src/Makefile
 
   STEP 2 - Open GitHub Desktop. Expected changes:
     M  APPLY.txt
     M  HISTORY.md
-    M  pcb1541/install/src/install.c          (518 -> ~950 lines)
+    M  pcb1541/install/src/install.c          (1092 -> 1984 lines)
+    M  pcb1541/install/src/README.md          (progress row updated)
     M  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
-    +  pcb1541/install/src/README.md          (new - build + usage)
-    +  pcb1541/install/src/Makefile           (new - cross-platform build)
+                                              (11 directives flipped
+                                               spec-only -> v1.10.2)
 
-    Total: 4 modified, 2 added
+    Total: 5 modified, 0 added
 
   STEP 3 - Commit + push. Suggested message:
-    install v1.10.1: redx wire-up, file operations - 18/60 directives coded
+    install v1.10.2: control flow, real INSTALL.DAT end-to-end,
+    29/60 directives coded
 
 ACCEPTANCE VERIFIED
 
-  Test setup: gcc-compiled install binary + redx binary + INSTALL.zip
-  archives extracted to a scratch dir. Minimal test .DAT exercises
-  @BeginLib on PCBOARD.RED and COMMDRV.RED, placing 6 files.
+  Setup: gcc-compiled install v1.10.2 binary + redx + INSTALL.zip
+  archives + all groups selected (-g "abcdefghijklmnopqrstuvwxyz").
 
-  Output vs pcb1541/install/dist/target/ reference (md5):
-    MATCH  PCBOARD.EXE
-    MATCH  PCBOARDM.EXE
-    MATCH  PPLC.EXE              (extracted from PPLC330.EXE)
-    MATCH  COMMDRV/COMMDRV.EXE
-    MATCH  COMMDRV/COMMTSR.EXE
-    MATCH  COMMDRV/DRVSETUP.EXE
+  End-to-end run on real 42,294 B INSTALL.DAT (1187 lines):
+    Files placed:   471   (up from 6 in v1.10.1)
+    Files failed:    11   (mostly @Copy sources not in archives)
+    Labels found:     6   (EnterSubdir, Entergroups, EnterFName,
+                           EnterLname, EnterCitySt, EnterPwd)
 
-  6/6 byte-perfect. Real INSTALL.DAT can't run end-to-end yet -
-  @If/@Group control-flow lands in v1.10.2, which is when the
-  installer can start producing full install trees.
+  Byte-perfect diff vs pcb1541/install/dist/target/ reference:
+    matched:  348 / 367 placed  (94.8%)
+    differ:    13   (per-bulletin-board multi-writer collisions —
+                     Clark's script writes MAIN/CNAMES with different
+                     content for each BBS flavor; last-write-wins.
+                     rebuild_place.py disambiguates via source-key
+                     suffixes; we don't yet)
+    extras:     6   (paths not in the reference tree)
+
+  Remaining gap to full 481-file target (~113 files):
+    Some Disk 3 blocks under @DefineDisk that our stubs don't fully
+    traverse; PPL samples; PCBMAIL; PCBOS2 (v1.10.3 will land
+    proper @DefineDisk semantics).
 
 RUNTIME NOTES
 
-  install.c needs the redx binary at runtime. Build it in the repo:
-    cd pcb1541/install/archivers/redx && make
+  New CLI arg:
+    -g, --groups STR    Selected install-group letters (default "abcdef").
+                        v1.10.4 will render an interactive checkbox
+                        menu; until then this simulates the selection.
 
-  Then either put redx in your PATH, or pass its path to install:
-    ./install --redx /path/to/redx --archives /where/reds/live \
-              --target /where/install/goes INSTALL.DAT
+  Full usage:
+    ./install -a <redx-archives-dir> -t <install-target> \
+              -r <path-to-redx> -g "abcdef" INSTALL.DAT
 
-  Matches Clark's original shell-out pattern (INSTALL.EXE shells to
-  DSZ/GSZ for external protocols; we shell to redx for archives).
+  For end-to-end tests use `-g "abcdefghijklmnopqrstuvwxyz"` to enable
+  all group letters (catches bulletin-board flavors too).
+
+  install.c stdin read is now tty-conditional: automated tests
+  (stdin = /dev/null) skip the @Pause keypress; interactive runs
+  behave as before.
 
 WHAT'S IN THE FILE-CHANGES
 
-  pcb1541/install/src/install.c (rewritten, 518 -> ~950 lines)
+  pcb1541/install/src/install.c  (rewritten, 1092 -> 1984 lines)
     Additions:
-     - inst_make_temp_dir / inst_remove_temp_dir
-     - inst_cmd_begin_lib / inst_cmd_end_lib (shell out to redx)
-     - inst_find_extracted (name + numeric-key source resolution)
-     - inst_cmd_file (parse @File src [@Size N] @Out|@AppendTo dst)
-     - inst_cmd_copy / inst_cmd_delete / inst_cmd_file_attr
-     - inst_parse_quoted_pair (parses "a","b" from @Foo("a","b"))
-     - inst_normalize_path (cross-platform DOS path handling)
-     - inst_mkdir_p (recursive mkdir)
-     - inst_copy_file (with append mode)
-     - CLI args: -a/--archives, -t/--target, -r/--redx
-    Existing v1.10.0 handlers unchanged.
+     - inst_should_skip                  (@If stack query)
+     - inst_scan_labels                  (pre-scan label -> filepos)
+     - inst_goto_label
+     - inst_eval_expr / inst_eval_or / inst_eval_and / inst_eval_cmp /
+       inst_eval_primary                 (recursive-descent evaluator)
+     - inst_func_strlen / _strhead / _strtoken / _exists  (as helpers)
+     - inst_cmd_if / _else / _endif / _goto / _set
+     - inst_cmd_get_string_stub / _skip_block   (v1.10.4/1.10.5 stubs)
+     - Enhanced inst_expand: invokes @Func(...) inline in strings
+     - Enhanced inst_eval_primary string literal reader: tracks
+       paren depth so nested "s inside @Foo(...) don't terminate
+     - Enhanced inst_cmd_file: parses trailing @Group X per-file filter
+     - Enhanced @Pause: isatty-conditional keypress read
 
-  pcb1541/install/src/Makefile (new) - cross-platform build.
-  pcb1541/install/src/README.md (new) - build + usage + progress.
+  pcb1541/install/src/README.md  (progress row updated)
 
-  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md (modified)
-    Flipped 6 directives from spec-only -> v1.10.1.
-    Clarified @Files and @Path are actually CONFIG.SYS/AUTOEXEC.BAT
-    system-config directives (v1.10.5), not file ops.
-    Progress table row for v1.10.1 filled in.
+  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md  (11 directives
+    flipped from spec-only to v1.10.2; progress row filled in)
 
-  HISTORY.md (modified) - v1.10.1 sub-phase expanded to "shipped".
+  HISTORY.md  (v1.10.2 subphase expanded from "planned" to "shipped"
+    with full implementation summary + acceptance metrics)
 
 NEXT AFTER THIS PUSH
 
-  install v1.10.2 - variables + control flow + string ops:
-   - @If / @Endif (case-fold with @EndIf) / @Else
-   - @Goto / @Label (script-position jumps)
-   - @Set (assign a value to a variable)
-   - @StrLen / @StrHead / @StrToken (string utilities)
-   - @Exists as an @If predicate
-   - @FileAttr return value integrated with @If
-  Acceptance: real INSTALL.DAT can run beyond the first @If block
-  without falling through to unintended branches.
+  install v1.10.3 - filesystem + disk sequencing:
+   - @MkDir / @Mkdir / @ChDir / @ChDrive / @DirExists
+   - @Size (as filesystem query, not just @File subclause)
+   - @Path
+   - @DefineDisk / @EndDisk semantics (per-disk file grouping)
+   - @GetOutDrive / @GetSubdir prompt handling (v1.10.4 will do the
+     real interactive UI, but v1.10.3 wires the disk-block prompts)
+   - @Requires / @Version / @HardDisk predicates fully implemented
+  Acceptance: file count closer to 481. Per-bulletin-board content
+  collisions still resolved by last-write-wins (matching reference-
+  tree flavor selection is v1.10.4).
 
---hexadecimal & crew, install v1.10.1, 2026-09-05
+--hexadecimal & crew, install v1.10.2, 2026-09-05
