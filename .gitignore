@@ -7,9 +7,17 @@
 *.EXE
 *.exe
 # Exception: Clark's original reference binaries (tracked byte-exact)
-!pcb1541/pcbic/pcbic12/*.EXE
-!pcb1541/pcbic/pcbic12/*.exe
+!pcb1541/pcbic12/bin/*.EXE
+!pcb1541/pcbic12/bin/*.exe
 !pcb1541/install/reference/*.EXE
+
+# Local reverse-engineering scratch — one working folder at repo root,
+# named by archive under /analysis/<archive>/. Never tracked.
+# Explicit patterns cover the dir + everything under it (belt-and-suspenders).
+/analysis/
+/analysis/**
+/analysis/*/
+/analysis/*/*
 *.MAP
 *.map
 *.ERR

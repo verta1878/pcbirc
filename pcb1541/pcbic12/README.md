@@ -13,8 +13,8 @@ release.
 ```
 pcb1541/pcbic12/
 ├── bin/           Clark's original 1.2 binaries + all shipped support files
-├── src/           Our reconstruction source (grows as reverse-engineering lands)
-├── rebuilt/       Our compiled outputs (byte-diffed against bin/)
+├── src/           Byte-exact reconstruction source (compiles, byte-diffs)
+├── Pcbic12d.zip   Unlocked archive (provenance — see "Provenance" below)
 ├── README.md      (this file)
 ├── ROADMAP.md     Phase plan for byte-exact reconstruction
 └── RECONSTRUCTION.md
@@ -34,7 +34,7 @@ These are the byte-exact targets. Do not modify.
 | `PCBICCFG.EXE` | 185,398 | MS-DOS MZ | configuration UI |
 | `PCBICEVT.EXE` |  89,612 | MS-DOS MZ | event handler |
 | `TESTIC2.EXE`  |  46,627 | OS/2 LX 32-bit | test utility (OS/2) |
-| `TESTIC.EXE`   |  40,104 | MS-DOS MZ | test utility (smallest — Ghidra warm-up) |
+| `TESTIC.EXE`   |  40,104 | MS-DOS MZ | test utility (smallest — reverse-engineering warm-up) |
 
 **Source we can rebuild directly:**
 - `RUNINET.PPS` (3,895 B) — PPL source for the SLIP/PPP launcher
@@ -63,13 +63,7 @@ These are the byte-exact targets. Do not modify.
 
 See [`src/README.md`](src/README.md) for what's in there and what's
 planned per binary. Currently a Phase 27 stub (`pcbic.c`, 187 lines);
-grows into per-binary subdirs as Ghidra work lands.
-
-### `rebuilt/` — our compiled outputs
-
-Byte-diffed against `bin/`. Currently: `RUNINET.3.40.PPE` (early
-compile test with the wrong compiler version — see RECONSTRUCTION.md
-for why PPLC 3.20 is the right one).
+grows into per-binary subdirs as reverse-engineering lands.
 
 ## Provenance
 
@@ -81,8 +75,11 @@ InterCom. The full 42-entry archive was unlocked and delivered as
 
 The untouched encrypted archive is preserved in the reference tree at
 `reference/pcball/pcboard/Pcbic12   04-30-97.zip` (md5 `ecc17649`).
-We no longer keep a working copy in this directory — everything we
-work from is already extracted into `bin/`.
+The unlocked archive (`Pcbic12d.zip`, 739 KB) lives at the top of
+this directory — kept alongside `bin/` and `src/` as the subsystem's
+own provenance artifact, in recognition of the research effort byte
+put into recovering it. Everything we work from day-to-day is already
+extracted into `bin/`.
 
 ## Rebuild directive
 
@@ -96,7 +93,7 @@ Order:
 1. `RUNINET.PPE` — source (`RUNINET.PPS`) IS in hand, compiler
    (PPLC 3.20) IS in tree at `toolkit/pplc/3.20/PPLC320.EXE`. Just
    needs source-fidelity tweaks to close the 2,261→1,808-byte gap.
-2. `TESTIC.EXE` — smallest EXE, best Ghidra warm-up.
+2. `TESTIC.EXE` — smallest EXE, best reverse-engineering warm-up.
 3. `TESTIC2.EXE` — OS/2 LX sibling; diff against TESTIC to isolate
    DOS/OS2 delta.
 4. `PCBICEVT.EXE` — moderate complexity, event-handler patterns.
@@ -109,9 +106,8 @@ Order:
   `reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`, md5
   `2a23e7686f79ea07bbb3c4d04e064a75`). Released compiler; we're **not**
   clean-rooming it.
-- **Ghidra Linux** — reverse-engineering side, driven off-sandbox.
-- **OpenWatcom / Borland C++ 4.5-5.0** — compile side for the C
-  reconstruction (target-dependent — Ghidra output tells us which).
+- - **OpenWatcom / Borland C++ 4.5-5.0** — compile side for the C
+  reconstruction (target-dependent — the disassembly tells us which).
 
 ## See also
 

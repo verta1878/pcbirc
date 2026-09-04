@@ -1,105 +1,138 @@
-# pcbic12/src/ — reconstruction source
+# pcbic12/src/ — byte-exact reconstruction source
 
-Our byte-exact reconstruction targets, one subdirectory per binary
-as Ghidra work lands.
+Only source that **compiles** and **byte-matches** its target in
+`../bin/` lives here. Nothing else — no scratch, no notes, no
+disassembler exports.
 
-## Current contents
+## Layout
 
-```
-src/
-├── README.md         (this file)
-└── pcbic.c           Phase 27 stub — placeholder for the main IC binary
-                      reproduction. 187 lines, opens with a directive to
-                      match Clark's PCBIC v1.2 byte-for-byte. Real
-                      content lands as Ghidra output is cleaned and
-                      merged in.
-```
+Flat by default — one file per binary. Subdirs appear only when a
+single binary genuinely decomposes into multiple source files (main
+IC binary likely will; smaller utilities probably won't).
 
-## Planned layout as reverse-engineering lands
+    src/
+    ├── README.md              (this file)
+    ├── pcbic.c                pcbic v1.0.6 target — Pcbic.exe (313 KB, main)
+    │                          Currently a Phase 27 stub; grows into a
+    │                          real reproduction as the disassembly pass
+    │                          on Pcbic.exe lands. May split into
+    │                          src/pcbic/*.c later if the source fans out
+    │                          (menu.c, tcpio.c, etc.)
+    │
+    ├── runinet.pps            pcbic v1.0.1 target — RUNINET.PPE (1,808 B)
+    │                          PPL 3.20 source. Tweak-loop working file.
+    │
+    ├── testic.c               pcbic v1.0.2 target — TESTIC.EXE (40 KB)
+    ├── testic2.c              pcbic v1.0.3 target — TESTIC2.EXE (47 KB, OS/2)
+    ├── pcbicevt.c             pcbic v1.0.4 target — PCBICEVT.EXE (90 KB)
+    ├── pcbiccfg.c             pcbic v1.0.5 target — PCBICCFG.EXE (185 KB)
+    └── pcbic2.c               pcbic v1.0.7 target — Pcbic2.exe (217 KB, OS/2)
 
-Each of the 6 reference binaries in `../bin/` gets its own subdirectory
-here, following the same shape:
+## Reconstruction pattern (every target)
 
-```
-src/
-├── testic/            pcbic v1.0.2 target — TESTIC.EXE (40 KB, MS-DOS MZ)
-│   ├── SPEC.md            What the binary does (from Ghidra + docs)
-│   ├── GHIDRA-NOTES.md    Analysis log: function map, RTL IDs, tricky bits
-│   ├── testic.c           Main entry
-│   ├── icmp.c             Ping implementation
-│   ├── tcpio.c            TCP stack glue
-│   └── Makefile           Or Turbo project file for BC
-│
-├── testic2/           pcbic v1.0.3 target — TESTIC2.EXE (47 KB, OS/2 LX)
-│   └── (mirrors testic/ structure; diff to isolate OS/2 delta)
-│
-├── pcbicevt/          pcbic v1.1 target — PCBICEVT.EXE (90 KB)
-├── pcbiccfg/          pcbic v1.2 target — PCBICCFG.EXE (185 KB)
-├── pcbic/             pcbic v1.3 target — Pcbic.exe (313 KB, main binary)
-└── pcbic2/            pcbic v1.4 target — Pcbic2.exe (217 KB, OS/2 main)
-```
+Two acceptance steps per target:
 
-## Build outputs
+**Step a — decompile.** Extract a starting-point source from the
+binary using the right decompiler for the target format. This is a
+**local** step — decompiler output is not part of the tracked source
+tree. Only cleaned, compilable source lands here in `src/`.
 
-Compiled binaries go to `../rebuilt/<binary>/<output>.EXE`, not into
-`src/`. This keeps source and artifacts separated for cleaner git
-diffs and easier `cmp -s rebuilt/<binary>/foo.EXE bin/FOO.EXE`
-acceptance checks.
+**Step b — clean, compile, diff.** Rewrite the decompile output into
+real source (fix types, name variables, fold obvious patterns),
+commit as `src/<target>.<ext>`, compile with the matching toolchain,
+byte-diff against `../bin/<target>`. Iterate the deltas until match.
 
-## The existing `pcbic.c` (Phase 27 stub)
+    edit src/<target>.<ext>
+    <compile>                       # PPLC320 or OpenWatcom/Borland
+    cmp -l <built-output> ../bin/<target>
+    # note delta trend; keep tweaks that shrink, revert those that grow
 
-`pcbic.c` predates this restructure — a scaffold written before we had
-the unlocked EXEs to actually analyze. Its header lays out the
-directive:
+**Acceptance:** `cmp -s <built-output> ../bin/<target>` exits 0.
+Build outputs go wherever your local build lands them — nothing to
+track in this repo except source.
 
-```
-/* Exact reproduction of Clark's PCBIC v1.2 (April 30, 1997).
- *   Pcbic.exe     313K   Main IC program
- *   Pcbic2.exe    217K   IC v2
- *   PCBICCFG.EXE  185K   IC configurator
- *   PCBICEVT.EXE   90K   IC event scheduler
- *   TESTIC.EXE     40K   IC test
- *   TESTIC2.EXE    47K   IC test 2
- *   RUNINET.PPE     2K   PPE launcher (source: RUNINET.PPS)
- *   PCBIC.DOC     112K   Documentation (text)
- *   PCBIC.PDF     339K   Documentation (PDF)
- *
- * Services: FTP, Gopher, Finger, Ping, Telnet, RLOGIN, PPP/SLIP, WHO
- *
- * This is the ancestor of our pcbis (Phase 6). Behavior must match
- * exactly before we extend it.
- */
-```
+## RUNINET.PPE — pcbic v1.0.1 (nearest target)
 
-Once Pcbic.exe gets its own Ghidra pass (pcbic v1.3), this stub
-migrates into `src/pcbic/pcbic.c` and grows from Ghidra-cleaned
-output. Until then it stays as a placeholder + intent marker.
+The .PPS/.PPE pair is the shortest path to a first byte-exact win —
+source language is small, compile time is instant.
 
-## Ghidra workflow
+**pcbic v1.0.1a — decompile baseline**
+- Run a PPL 3.20 decompiler against `../bin/RUNINET.PPE` locally
+- Compare against `../bin/RUNINET.PPS` (the .PPS Clark shipped
+  alongside the .PPE — same size range, may or may not match a fresh
+  decompile)
+- Whichever gives the closer compile output becomes the baseline
+  copied into `src/runinet.pps`
 
-Off-sandbox (your Linux box):
-1. Import `../bin/<BINARY>.EXE` into Ghidra
-2. Auto-analyze, then manual clean-up (name functions, mark library
-   code, recover types from strings/RTTI)
-3. Export decompiled C via Ghidra's C-decompile-and-save-selection
-4. Clean up manually, add types, name variables
-5. Commit `SPEC.md`, `GHIDRA-NOTES.md`, cleaned `.c/.h` files here
+**pcbic v1.0.1b — compile-diff loop**
+- Compiler: `../../../toolkit/pplc/3.20/PPLC320.EXE`
+  (in tree, runs under DOSBox-X)
+- Last measured: PPLC 3.20 on `bin/RUNINET.PPS` → 2,261 B
+- Target:                                          1,808 B
+- Gap: 453 B, closed via whitespace / statement order / declaration
+  order tweaks
+- Compiler-version question is CLOSED; source-fidelity is the open work
 
-In-sandbox (Claude):
-1. Reviews the exports, flags Borland RTL patterns Ghidra missed
-2. Writes missing headers/glue, wires up the Makefile
-3. Runs OpenWatcom or Borland compile via DOSBox-X
-4. Byte-diffs against `../bin/<BINARY>.EXE`
-5. Iterates on deltas (compiler version, library version, code order,
-   string layout, padding are the usual culprits)
+## The 6 EXEs — pcbic v1.0.2 onward
 
-See [`../ROADMAP.md`](../ROADMAP.md) for the full phase plan.
+No shipped source. Reconstruction is disassembly-driven clean-room
+reimplementation. Two-step pattern applies per binary:
+
+**Step a — decompile (local).** Disassemble each `../bin/<BINARY>.EXE`
+with an appropriate tool; produce a starting-point source. Work
+happens locally, not in the tracked tree.
+
+**Step b — clean, compile, diff (in this folder).** Rewrite into
+real source with proper types, named variables, structured control
+flow. Commit as `src/<binary>.c` (or `src/<binary>/*.c` if
+multi-file). Compile via OpenWatcom (sandbox-native) or Borland
+C++ 4.5/5.0 via DOSBox-X. Byte-diff against `../bin/<BINARY>.EXE`.
+Iterate — usual delta culprits: compiler version, library version,
+code order, string layout, alignment padding.
+
+**One binary at a time.** Focus one target, get it to `cmp -s`, land
+cleaned source here, then start the next.
+
+## The existing `pcbic.c` (Phase 27 stub — legacy)
+
+`pcbic.c` predates this restructure. Was a scaffold before we had
+the unlocked EXEs to analyze. Its header directive:
+
+    /* Exact reproduction of Clark's PCBIC v1.2 (April 30, 1997).
+     *   Pcbic.exe     313K   Main IC program
+     *   Pcbic2.exe    217K   IC v2
+     *   PCBICCFG.EXE  185K   IC configurator
+     *   PCBICEVT.EXE   90K   IC event scheduler
+     *   TESTIC.EXE     40K   IC test
+     *   TESTIC2.EXE    47K   IC test 2
+     *   RUNINET.PPE     2K   PPE launcher (source: RUNINET.PPS)
+     *
+     * Services: FTP, Gopher, Finger, Ping, Telnet, RLOGIN, PPP/SLIP, WHO
+     *
+     * This is the ancestor of our pcbis (Phase 6). Behavior must match
+     * exactly before we extend it.
+     */
+
+Stays as a placeholder + intent marker. Real content lands (and
+supersedes it) when pcbic v1.0.6 work delivers cleaned source to
+`src/pcbic.c`.
 
 ## Toolchain
 
-- **PPLC 3.20** at `../../../toolkit/pplc/3.20/PPLC320.EXE` — for
-  RUNINET.PPE compilation (pcbic v1.0.1, non-C target)
-- **OpenWatcom 2.0** — Claude's default cross-compiler (sandbox-native)
+- **PPLC 3.20** — `../../../toolkit/pplc/3.20/PPLC320.EXE`
+  (in tree, DOSBox-X). Compiler for RUNINET.PPE reconstruction.
+- **OpenWatcom 2.0** — Claude's default cross-compiler for EXE
+  compile-diff loops. Sandbox-native, targets DOS + OS/2.
 - **Borland C++ 4.5 / 5.0** — target-truth compiler where byte-exact
-  requires it (vendored in `reference/` if we can source clean copies)
-- **Ghidra Linux** — reverse-engineering, off-sandbox
+  requires it (vendored in `reference/` when sourced clean).
+
+Decompiler tooling for step-a runs locally and is not published as
+part of this reconstruction — only its cleaned output does, in this
+folder.
+
+## See also
+
+- [`../README.md`](../README.md) — pcbic12 directory overview + provenance
+- [`../ROADMAP.md`](../ROADMAP.md) — full phase plan (pcbic v1.0.0 → v1.1)
+- [`../RECONSTRUCTION.md`](../RECONSTRUCTION.md) — per-target status log
+- [`../bin/`](../bin/) — Clark's originals (reference targets, read-only)

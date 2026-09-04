@@ -8,12 +8,14 @@ originals in `bin/`. Fix bugs only AFTER byte-exact restoration.
 | Component     | Original    | Version tag | Status |
 |---|---|---|---|
 | RUNINET.PPE   |   1,808 B   | pcbic v1.0.1 | PPLC 3.20 in hand; source is decompiled (see below) |
-| TESTIC.EXE    |  40,104 B   | pcbic v1.0.2 | Ghidra pass pending — smallest, easiest warm-up |
+| TESTIC.EXE    |  40,104 B   | pcbic v1.0.2 | disassembly pending — smallest, easiest warm-up |
 | TESTIC2.EXE   |  46,627 B   | pcbic v1.0.3 | OS/2 LX sibling — compare to TESTIC to isolate delta |
-| PCBICEVT.EXE  |  89,612 B   | pcbic v1.1   | no source yet |
-| PCBICCFG.EXE  | 185,398 B   | pcbic v1.2   | no source yet |
-| Pcbic.exe     | 313,310 B   | pcbic v1.3   | no source yet |
-| Pcbic2.exe    | 217,111 B   | pcbic v1.4   | no source yet (OS/2 sibling of Pcbic.exe) |
+| PCBICEVT.EXE  |  89,612 B   | pcbic v1.0.4 | no source yet |
+| PCBICCFG.EXE  | 185,398 B   | pcbic v1.0.5 | no source yet |
+| Pcbic.exe     | 313,310 B   | pcbic v1.0.6 | no source yet (main binary) |
+| Pcbic2.exe    | 217,111 B   | pcbic v1.0.7 | no source yet (OS/2 sibling of Pcbic.exe) |
+
+**pcbic v1.1** = whole arc complete (all 7 targets `cmp -s` verified).
 
 ## RUNINET.PPE — first verifiable target (pcbic v1.0.1)
 
@@ -61,32 +63,34 @@ recover Clark's exact 1,808-byte PPE we'd need:
 The compiler-version question is *closed*; the source-fidelity
 question is open.
 
-Our tweak loop writes to `rebuilt/` (not `bin/`), preserving Clark's
-originals as reference:
+Our tweak loop writes to a local working file (not `bin/`),
+preserving Clark's originals as reference:
 
 ```
-cp bin/RUNINET.PPS rebuilt/RUNINET.PPS      # working copy
-edit rebuilt/RUNINET.PPS
-PPLC320 rebuilt/RUNINET.PPS
-cmp -l rebuilt/RUNINET.PPE bin/RUNINET.PPE   # measure the gap
+cp bin/RUNINET.PPS <local-work>/RUNINET.PPS      # working copy
+edit <local-work>/RUNINET.PPS
+PPLC320 <local-work>/RUNINET.PPS
+cmp -l <local-work>/RUNINET.PPE bin/RUNINET.PPE  # measure the gap
 ```
 
-Old-compiler artifact `rebuilt/RUNINET.3.40.PPE` kept as a witness of
-what the wrong compiler produces.
+For historical reference, an earlier compile with the WRONG compiler
+version (PPLC 3.40 instead of 3.20) produced 2,286 B — versus 2,261 B
+from PPLC 3.20 and the 1,808 B target from Clark's `bin/RUNINET.PPE`.
+Compiler-version question is closed; source-fidelity is the open work.
 
-## The EXEs (pcbic v1.0.2, v1.0.3, v1.1+)
+## The EXEs (pcbic v1.0.2 through v1.0.7)
 
 Pcbic.exe etc. have no recovered source. They remain byte-exact
 reference targets. Source hunt continues; until then they're preserved
 as-is in `bin/`.
 
-Ghidra Linux is the primary tool for the reverse-engineering side —
+a disassembler Linux is the primary tool for the reverse-engineering side —
 you drive it off-sandbox, export cleaned C into `src/<binary>/`,
 and Claude wires up the compile-diff loop on this side. See
 [`ROADMAP.md`](ROADMAP.md) Phase 2 for the per-EXE workflow.
 
-**First real Ghidra target: TESTIC.EXE** (40,104 B). Smallest,
-single-purpose (ping test). Once we've walked a full Ghidra →
+**First real a disassembler target: TESTIC.EXE** (40,104 B). Smallest,
+single-purpose (ping test). Once we've walked a full a disassembler →
 C source → OpenWatcom / Borland compile → byte-diff loop end-to-end
 on TESTIC, the same workflow scales up to the four bigger EXEs.
 

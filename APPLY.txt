@@ -1,109 +1,144 @@
-pcbic v1.0.0 — restructure pcbic → pcbic12, decrypted → bin, unlock 6 EXEs
-==========================================================================
+pcbic v1.0.0 doc-pass — /analysis/ at root, phase renumber
+============================================================
 Date: 2026-09-04
-Prev origin/main HEAD: f73a975
+Prev origin/main HEAD: 3c0dfb6
 
-APPLY (Windows / GitHub Desktop) — 3 STEPS
+WHAT THIS RELEASE DOES
 
-  STEP 1 — Extract this release zip INTO your repo root.
-    Right-click → Extract Here. Overwrite when prompted.
-    This populates pcb1541\pcbic12\ (new location) and updates
-    .gitignore + todo\cleanup.bat.
+  Doc-only cleanup on top of pcbic v1.0.0 (already pushed as 3c0dfb6).
+  Nothing structural changes in bin/, src/, or reference/. This
+  release:
 
-  STEP 2 — Run the cleanup script from the repo root:
-    todo\cleanup.bat
-    It will:
-      - Verify pcb1541\pcbic12\bin\Pcbic.exe + RUNINET.PPE exist
-      - Remove the old pcb1541\pcbic\ directory
-        (which also removes the encrypted Pcbic12.zip inside it)
-      - Log the operation to CLEANUP.LOG
+  - Fixes .gitignore (3 stale wrong paths + /analysis/ at root)
+  - Rewrites the four pcbic12 docs to reflect final decisions:
+      * /analysis/ is at REPO ROOT (gitignored, never tracked)
+      * Named by ARCHIVE (/analysis/pcbic12/, later /analysis/install/)
+      * ONE working folder at a time — one binary reconstruction in
+        flight, one at rest
+      * No `rebuilt/` folder anywhere (deleted in prior cleanup)
+      * No `build/` tracking rules (build wherever your local build lands)
+      * No reverse-engineering tool named in tracked docs
+      * Phase labels renumbered under v1.0.x to avoid confusion with
+        Clark's product version "PCBIC 1.2"
+
+  Working tree still needs Explorer moves (leftover from prior cycle
+  that wasn't fully cleaned up) — see APPLY steps below.
+
+APPLY (Windows / GitHub Desktop)
+
+  STEP 1 — Manual moves before extracting:
+
+    (a) Delete rebuilt/ if still present:
+        pcb1541\pcbic12\rebuilt\
+
+    (b) Old pcb1541\pcbic\ handling (already done on your side —
+        listed here for completeness / anyone else applying):
+          - Pcbic12d.zip → moved to pcb1541\pcbic12\Pcbic12d.zip
+            (lives alongside bin/ and src/ as the subsystem's own
+            provenance artifact — kept because byte's research
+            recovering it earned it a home in the subsystem tree)
+          - Rest of pcb1541\pcbic\ deleted (all files were duplicated
+            in pcbic12/ already)
+
+        reference/ tree is left untouched. The encrypted preservation
+        copy at reference/pcball/pcboard/Pcbic12   04-30-97.zip stays
+        where it is; no duplicate of the unlocked archive gets added
+        there.
+
+  STEP 2 — Extract this release zip INTO your repo root.
+    Overwrites: .gitignore, pcbic12/README.md, pcbic12/ROADMAP.md,
+    pcbic12/RECONSTRUCTION.md, pcbic12/src/README.md, APPLY.txt.
+    Adds no new tracked files.
 
   STEP 3 — Open GitHub Desktop. Expected changes:
-    M  .gitignore                              (3 exception lines added)
-    M  todo/cleanup.bat                         (pcbic v1.0.0 block added)
-    D  pcb1541/pcbic/Pcbic12.zip                (removed by cleanup.bat)
-    R  pcb1541/pcbic/README.md         → pcb1541/pcbic12/README.md (rewritten)
-    R  pcb1541/pcbic/ROADMAP.md        → pcb1541/pcbic12/ROADMAP.md (rewritten)
-    R  pcb1541/pcbic/RECONSTRUCTION.md → pcb1541/pcbic12/RECONSTRUCTION.md (rewritten)
-    R  pcb1541/pcbic/src/pcbic.c       → pcb1541/pcbic12/src/pcbic.c (unchanged)
-    R  pcb1541/pcbic/rebuilt/*         → pcb1541/pcbic12/rebuilt/* (2 files)
-    R  pcb1541/pcbic/decrypted/*       → pcb1541/pcbic12/bin/* (32 renames)
-    +  pcb1541/pcbic12/bin/PCBICCFG.EXE   (new, 185 KB)
-    +  pcb1541/pcbic12/bin/PCBICEVT.EXE   (new, 90 KB)
-    +  pcb1541/pcbic12/bin/TESTIC.EXE     (new, 40 KB)
-    +  pcb1541/pcbic12/bin/TESTIC2.EXE    (new, 47 KB)
-    +  pcb1541/pcbic12/bin/Pcbic.exe      (new, 313 KB)
-    +  pcb1541/pcbic12/bin/Pcbic2.exe     (new, 217 KB)
-    +  pcb1541/pcbic12/src/README.md      (new, reconstruction source layout)
-
-    Total: 2 modified, 1 deleted, 38 renames, 7 additions
+    M  .gitignore
+    M  APPLY.txt
+    M  pcb1541/pcbic12/README.md
+    M  pcb1541/pcbic12/ROADMAP.md
+    M  pcb1541/pcbic12/RECONSTRUCTION.md
+    M  pcb1541/pcbic12/src/README.md
+    D  pcb1541/pcbic12/rebuilt/README.md         (if still tracked)
+    D  pcb1541/pcbic12/rebuilt/RUNINET.3.40.PPE  (if still tracked)
+    D  pcb1541/pcbic/**                          (whole tree, ~40 files)
+    R  pcb1541/pcbic/Pcbic12d.zip → pcb1541/pcbic12/Pcbic12d.zip
+                                    (git may detect as rename or as D+A)
 
   STEP 4 — Commit + push. Suggested message:
-    pcbic v1.0.0: restructure pcbic → pcbic12, decrypted → bin,
-    unlock 6 reference EXEs, remove encrypted archive
+    pcbic v1.0.0 doc-pass: /analysis/ at root, phase renumber v1.0.x,
+    remove old pcbic/, land Pcbic12d.zip in pcbic12/
 
-WHY THE RESTRUCTURE
+ON THE LOCAL /analysis/ FOLDER
 
-  - `pcbic/` was generic; the actual content is PCBIC v1.2 (April 30,
-    1997). Promoting to `pcbic12/` makes the version explicit
-    everywhere in paths.
-  - `decrypted/` was a misleading name (implied we broke the
-    encryption; really Clark's binaries were just packaged encrypted
-    by a third party). `bin/` reflects what they ARE: Clark's original
-    compiled binaries — reference targets for reconstruction.
-  - `src/README.md` (new) documents the reconstruction source layout —
-    what `pcbic.c` is now, and the per-binary subdir plan as Ghidra
-    work lands.
+  /analysis/ lives at REPO ROOT and is gitignored. Its purpose:
+  one archive's reverse-engineering scratch at a time. Layout on your
+  local machine:
 
-WHAT'S IN pcbic12/ AFTER THIS RELEASE
+    <repo_root>/
+    ├── analysis/                      (gitignored — never pushed)
+    │   └── pcbic12/                   (ONE archive at a time)
+    │       └── <current-target>/      (ONE binary in flight)
+    │           └── ...raw decompile, working notes, local build...
+    └── ...tracked tree...
 
-  bin/       38 files — Clark's originals (6 EXEs + PPE + PPS +
-             HLP + batches + DATA/ + DOCS/ + SCRIPTS/)
-  src/        2 files — pcbic.c (Phase 27 stub) + README.md
-  rebuilt/    2 files — RUNINET.3.40.PPE (wrong-compiler witness) +
-             README.md
-  README.md, ROADMAP.md, RECONSTRUCTION.md — full doc pass, all
-  `decrypted/` prose replaced with `bin/` or "unlocked", pcbic v1.0.x
-  version labels applied, restructure story reflected
+  Rules:
 
-MD5 (6 unlocked EXEs):
-  092a895b9dcc7e8b84cb1cea46adeccd  PCBICCFG.EXE
-  45bcc0367c6d7e9a51ea1323ba7248f9  PCBICEVT.EXE
-  985bf3f06b7ce592cf718667697be7b1  TESTIC.EXE
-  bfb0e052edebcf5abeb56139ee9f700c  TESTIC2.EXE
-  8b8e19ac5a62b55af08b7a6acfc516bc  Pcbic.exe
-  44e459deeaa901cad575472f91dd3943  Pcbic2.exe
+  - Only ONE archive folder inside /analysis/ at any time. When
+    pcbic12 work is done and cleaned source is in pcbic12/src/,
+    delete /analysis/pcbic12/ and start /analysis/install/ (or
+    whichever archive is next).
+  - Only ONE binary in flight per archive at a time. Get it to
+    `cmp -s <built> ../bin/<target>`, land cleaned source in
+    pcb1541/<subsystem>/src/, then start the next.
+  - Nothing in the tracked tree references /analysis/. It's invisible
+    to git status. Nothing to modify when you delete it locally —
+    the tracked reconstruction stands on src/ + bin/ alone.
+  - Regenerable any time by re-running the disassembler against
+    bin/<target>.
 
-.gitignore CHANGES
+PHASE RENUMBER — pcbic subsystem
 
-  Adds 3 exception lines so Clark's reference binaries aren't blocked
-  by the broad *.EXE / *.exe rules:
-    !pcb1541/pcbic12/bin/*.EXE
-    !pcb1541/pcbic12/bin/*.exe
-    !pcb1541/install/reference/*.EXE   (for install v1.10.0 next)
+  Old labels collided with Clark's product version (PCBIC 1.2).
+  New scheme: all reconstruction phases under v1.0.x; v1.1 reserved
+  for "whole arc complete".
 
-cleanup.bat CHANGES
+  Old               New         Target
+  ---------------   ---------   -----------------------------------
+  pcbic v1.0        v1.0.0      Restructure + reference landed (DONE)
+  pcbic v1.0.1a     v1.0.1a     RUNINET.PPE decompile baseline
+  pcbic v1.0.1b     v1.0.1b     RUNINET.PPE compile-diff loop
+  pcbic v1.0.2      v1.0.2      TESTIC.EXE
+  pcbic v1.0.3      v1.0.3      TESTIC2.EXE (OS/2)
+  pcbic v1.1        v1.0.4      PCBICEVT.EXE  ← was collision zone
+  pcbic v1.2        v1.0.5      PCBICCFG.EXE  ← was BAD collision (looked
+                                                like Clark's product name)
+  pcbic v1.3        v1.0.6      Pcbic.exe (main)
+  pcbic v1.4        v1.0.7      Pcbic2.exe (OS/2 main)
+  —                 v1.1        Whole arc complete (all 7 cmp -s'd)
 
-  Adds a pcbic v1.0.0 block that:
-   - Detects pcb1541\pcbic\ still present
-   - Verifies pcb1541\pcbic12\bin\Pcbic.exe + RUNINET.PPE exist
-   - Safely removes pcb1541\pcbic\ (with Pcbic12.zip inside it)
-  Also updates the header and idempotency check to include the new path.
-  Existing v1.6 reorg logic unchanged.
+  Prose rule: "PCBIC 1.2" (uppercase, no `v`) is Clark's product
+  (matches the pcbic12/ folder name). "pcbic v1.0.x" (lowercase `v`)
+  is our reconstruction phase. Different capitalization + presence
+  of `v` disambiguates.
 
-WHAT PROVENANCE COPY LOOKS LIKE
+WHAT ELSE ISN'T IN THIS RELEASE
 
-  reference/pcball/pcboard/Pcbic12   04-30-97.zip
-    Original encrypted 1997-04-30 archive, md5 ecc17649. Untouched.
-    Kept in the reference tree as the historical preservation copy;
-    we no longer duplicate a working copy in pcbic12/.
+  - HISTORY.md / root README.md — not touched. Version labels edit
+    for those lives in a future combined shipment with install v1.10.
+  - cleanup.bat — not touched. Doesn't reference /analysis/ or
+    build/; existing v1.6 + pcbic v1.0.0 logic stays valid.
+  - No new binaries, no config edits, no compile.
 
 NEXT AFTER THIS PUSH
 
-  install v1.10.0 combined shipment (still queued):
-    - pcb1541/install/reference/INSTALL.DAT + INSTALL.EXE + README.md
-    - HISTORY.md updates (v1.10 + pcbic v1.0 sections + Version labels)
-    - docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md skeleton
-    - CHECKSUMS regen
+  1. Verify: dir pcb1541\pcbic12\bin\*.exe
+     If 6 EXEs present → we're clean. If missing → AV workaround
+     release before pcbic v1.0.2 opens.
+  2. install v1.10.0 combined shipment:
+     - pcb1541/install/reference/INSTALL.DAT + INSTALL.EXE
+     - HISTORY.md updates (Version labels + install v1.10 + pcbic v1.0
+       sections)
+     - docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md skeleton
+     - CHECKSUMS regen
+  3. install v1.10.1 — redx wire-up (first real install.c code)
 
 --hexadecimal & crew, 2026-09-04
