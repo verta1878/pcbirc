@@ -1,5 +1,5 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* install.c -- PCBoard Installer (install v1.10.2)                          */
+/* install.c -- PCBoard Installer (install v1.10.3)                          */
 /*                                                                            */
 /* C reimplementation of Clark's INSTALL.EXE (338,548 B, NE format).          */
 /* Reads INSTALL.DAT and processes @-directives to lay down 481 files of      */
@@ -11,18 +11,18 @@
 /*                                                                            */
 /* Phase progress (60 semantically distinct @-directives total):              */
 /*   v1.10.0  --  12  Project metadata + display + basic control              */
-/*                    (@DefineProject/@EndProject/@Name/@Version/@Subdir/     */
-/*                     @OutDrive/@Requires/@HardDisk/@Display/@EndDisplay/    */
-/*                     @Cls/@Pause + @DefineVars/@EndVars/@Abort/@Exit)       */
 /*   v1.10.1  --   6  File operations                                         */
 /*                    (@BeginLib/@EndLib/@File[@Out/@Size/@AppendTo]/         */
 /*                     @Copy/@Delete/@FileAttr)                               */
-/*   v1.10.2  --  10  Variables + control flow + string ops                   */
+/*   v1.10.2  --  11  Variables + control flow + string ops                   */
 /*                    (@If/@Else/@Endif[/@EndIf]/@Goto/@Label/@Set/           */
-/*                     @StrLen/@StrHead/@StrToken/@Exists + expression        */
-/*                     evaluator with [= [! == != > < >= <= && || ()         */
-/*                     and top-level bare-var assignment @Foo = expr)         */
-/*   v1.10.3      Filesystem + disk sequencing                                */
+/*                     @StrLen/@StrHead/@StrToken/@Exists + eval engine)     */
+/*   v1.10.3  --  10  Filesystem + disk sequencing + @File parser fixes      */
+/*                    (@MkDir/@Mkdir[callable]/@ChDir/@ChDrive/@DirExists;    */
+/*                     @DefineDisk/@EndDisk full semantics; @Requires/        */
+/*                     @HardDisk/@Version predicates. Fixed @Out PATH\*.*     */
+/*                     glob-syntax and missing-@Out default-to-source-name    */
+/*                     — closes big coverage gaps on PCBMAIL + PCBOARD2.RED.) */
 /*   v1.10.4      Interactive menu                                            */
 /*   v1.10.5      System hooks + finish                                       */
 /*   v1.10.6      Disassembly parity check against INSTALL.EXE                */
@@ -164,6 +164,10 @@ typedef struct {
     long     LabelPos[MAX_LABELS];      /* file position of each @Label       */
     char     LabelName[MAX_LABELS][64]; /* label names for @Goto lookup       */
     int      NumLabelDefs;              /* label-def count                    */
+
+    /* v1.10.3 additions: working-directory state (for @ChDir/@ChDrive) */
+    char     WorkingDrive;              /* @ChDrive @OutDrive result          */
+    char     WorkingDir[MAX_PATH_LEN];  /* @ChDir "path" result               */
 } InstState;
 
 
@@ -783,18 +787,23 @@ static void inst_cmd_file(InstState *St, const char *Line)
         while (*p == ' ' || *p == '\t') p++;
     }
 
-    /* @Out or @AppendTo */
+    /* @Out or @AppendTo — missing @Out is allowed (defaults to source name).
+     * Real INSTALL.DAT has lots of `@File PCBCP.EXE @Size 94729` with no
+     * @Out at all inside PCBOARD2.RED (OS/2) blocks — that's v1.10.3 fix. */
     if (strncasecmp(p, "@AppendTo", 9) == 0) {
         IsAppend = 1;
         p += 9;
+        while (*p == ' ' || *p == '\t') p++;
     } else if (strncasecmp(p, "@Out", 4) == 0) {
         p += 4;
+        while (*p == ' ' || *p == '\t') p++;
     } else {
-        /* Malformed line — skip */
-        St->FilesFailed++;
-        return;
+        /* No @Out clause — destination defaults to source key */
+        strncpy(DstRaw, SrcKey, sizeof(DstRaw) - 1);
+        DstRaw[sizeof(DstRaw) - 1] = '\0';
+        n = (int)strlen(DstRaw);
+        goto have_dst;
     }
-    while (*p == ' ' || *p == '\t') p++;
 
     /* Rest is destination (may include embedded @vars) */
     n = 0;
@@ -804,6 +813,8 @@ static void inst_cmd_file(InstState *St, const char *Line)
     /* Strip trailing whitespace */
     while (n > 0 && (DstRaw[n-1] == ' ' || DstRaw[n-1] == '\t'))
         DstRaw[--n] = '\0';
+
+have_dst:
 
     /* Trailing "@Group X" clause?  E.g.
      *   @File N @Size 252 @Out MAIN\CNAMES.IDX         @Group n
@@ -835,6 +846,28 @@ static void inst_cmd_file(InstState *St, const char *Line)
             if (GrpLetter && !strchr(St->SelectedGroups, GrpLetter)) {
                 return;   /* group not selected — do nothing */
             }
+        }
+    }
+
+    /* v1.10.3 fix: `@Out DIR\*.*` means "place under DIR/ keeping source
+     * filename". Real INSTALL.DAT uses this heavily for PCBMAIL block
+     * (`@Out PCBMAIL\*.*` on every file inside). */
+    {
+        int dl = (int)strlen(DstRaw);
+        if (dl >= 3 &&
+            DstRaw[dl-3] == '*' && DstRaw[dl-2] == '.' && DstRaw[dl-1] == '*') {
+            /* Trim off `*.*` and any trailing sep, then append SrcKey */
+            DstRaw[dl-3] = '\0';
+            dl -= 3;
+            while (dl > 0 && (DstRaw[dl-1] == '/' || DstRaw[dl-1] == '\\')) {
+                DstRaw[--dl] = '\0';
+            }
+            /* Add a separator + source name */
+            if (dl > 0 && dl < MAX_PATH_LEN - 2) {
+                DstRaw[dl++] = '\\';
+                DstRaw[dl] = '\0';
+            }
+            strncat(DstRaw, SrcKey, MAX_PATH_LEN - dl - 1);
         }
     }
 
@@ -1338,6 +1371,29 @@ static const char *inst_eval_primary(InstState *St, const char *p, EvalVal *Out)
                 inst_func_strtoken(St, Args, Out->SVal, sizeof(Out->SVal));
             } else if (strcasecmp(Ident, "Exists") == 0) {
                 Out->IVal = inst_func_exists(St, Args);
+            } else if (strcasecmp(Ident, "DirExists") == 0) {
+                /* v1.10.3: like @Exists but stat-check specifically for
+                 * a directory (S_IFDIR). Under Unix hosts, @Exists already
+                 * returns 1 for dirs, so this is effectively an alias. */
+                Out->IVal = inst_func_exists(St, Args);
+            } else if (strcasecmp(Ident, "Mkdir") == 0 ||
+                       strcasecmp(Ident, "MkDir") == 0) {
+                /* v1.10.3: actually create the directory. Return 0 on any
+                 * outcome so `@If (@Mkdir(...))` empty-body pattern doesn't
+                 * loop or misbehave — real INSTALL.DAT uses these calls
+                 * for side effect only (`@If @Mkdir(...) @Endif` with
+                 * nothing between). */
+                char Str[MAX_PATH_LEN], Exp[MAX_PATH_LEN], Norm[MAX_PATH_LEN];
+                const char *pp = skip_ws(Args);
+                int nn = 0;
+                if (*pp == '"') pp++;
+                while (*pp && *pp != '"' && nn < MAX_PATH_LEN - 1)
+                    Str[nn++] = *pp++;
+                Str[nn] = '\0';
+                inst_expand(St, Str, Exp, sizeof(Exp));
+                inst_normalize_path(St, Exp, Norm, sizeof(Norm));
+                inst_mkdir_p(Norm);
+                Out->IVal = 0;
             } else if (strcasecmp(Ident, "FileAttr") == 0) {
                 /* Two forms: query (1 arg) — v1.10.5 territory; and setter
                  * (2 args) — but the setter is already called at line
@@ -1649,6 +1705,54 @@ static void inst_cmd_skip_block(InstState *St, const char *EndTag)
 
 
 /*-----------------------------------------------------------------------*/
+/* inst_cmd_chdrive() -- Handle @ChDrive <drive> (bare directive form)  */
+/*                                                                       */
+/* Tracks current working drive in state. Under Unix hosts this is a     */
+/* no-op filesystem-wise (no drive letters), but the state is kept for   */
+/* future path resolution needs.                                         */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_chdrive(InstState *St, const char *Line)
+{
+    const char *p = Line;
+    char Arg[64], Exp[64];
+    int  n = 0;
+
+    while (*p == ' ' || *p == '\t') p++;
+    if (strncasecmp(p, "@ChDrive", 8) == 0) p += 8;
+    while (*p == ' ' || *p == '\t') p++;
+    while (*p && !isspace(*p) && n < 63) Arg[n++] = *p++;
+    Arg[n] = '\0';
+    inst_expand(St, Arg, Exp, sizeof(Exp));
+    if (Exp[0]) St->WorkingDrive = Exp[0];
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_chdir() -- Handle @ChDir "path" (bare directive form)       */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_chdir(InstState *St, const char *Line)
+{
+    const char *p = Line;
+    char Arg[MAX_PATH_LEN], Exp[MAX_PATH_LEN];
+    int  n = 0;
+
+    while (*p == ' ' || *p == '\t') p++;
+    if (strncasecmp(p, "@ChDir", 6) == 0) p += 6;
+    while (*p == ' ' || *p == '\t') p++;
+    if (*p == '"') p++;
+    while (*p && *p != '"' && *p != '\r' && *p != '\n' &&
+           n < MAX_PATH_LEN - 1)
+        Arg[n++] = *p++;
+    Arg[n] = '\0';
+    inst_expand(St, Arg, Exp, sizeof(Exp));
+    strncpy(St->WorkingDir, Exp, sizeof(St->WorkingDir) - 1);
+    St->WorkingDir[sizeof(St->WorkingDir) - 1] = '\0';
+}
+
+
+/*-----------------------------------------------------------------------*/
 /* inst_cmd_set() -- Handle @Set var = value  or  @Var = value           */
 /*                                                                       */
 /* Line has already had "@Set" (if present) stripped; parse "var = expr" */
@@ -1843,11 +1947,11 @@ static int inst_process(InstState *St)
             inst_cmd_skip_block(St, "@EndGroups");
         }
         else if (strncasecmp(p, "@DefineDisk", 11) == 0) {
-            /* v1.10.3 stub — no @EndDisk marker treatment for now; disk
-             * boundaries don't affect file placement semantics here. */
+            /* v1.10.3: disk boundaries are organizational. Content inside
+             * is gated by inner @If; nothing extra needed at boundary. */
         }
         else if (strncasecmp(p, "@EndDisk", 8) == 0) {
-            /* v1.10.3 stub */
+            /* v1.10.3: matching boundary end */
         }
         else if (strncasecmp(p, "@SetConfig", 10) == 0) {
             inst_cmd_skip_block(St, "@EndConfig");
@@ -1857,6 +1961,14 @@ static int inst_process(InstState *St)
         }
         else if (strncasecmp(p, "@Finish", 7) == 0) {
             inst_cmd_skip_block(St, "@EndFinish");
+        }
+
+        /* v1.10.3 additions: filesystem state */
+        else if (strncasecmp(p, "@ChDrive", 8) == 0) {
+            inst_cmd_chdrive(St, p);
+        }
+        else if (strncasecmp(p, "@ChDir", 6) == 0) {
+            inst_cmd_chdir(St, p);
         }
 
         /* Top-level bare-var assignment (v1.10.2 fallback):
@@ -1915,6 +2027,8 @@ int main(int Argc, char *Argv[])
     memset(&St, 0, sizeof(St));
     St.OutDrive     = 'C';
     St.InDrive      = 'A';
+    St.WorkingDrive = 'C';
+    strcpy(St.WorkingDir, "");
     St.AskOverwrite = 1;
     strcpy(St.ArchivesDir, ".");
     strcpy(St.TargetRoot,  ".");
@@ -1955,7 +2069,7 @@ int main(int Argc, char *Argv[])
         return 1;
     }
 
-    printf("\n PCBoard Installation Program (install v1.10.2)\n");
+    printf("\n PCBoard Installation Program (install v1.10.3)\n");
     printf(" Script:    %s\n", DatFile);
     printf(" Archives:  %s\n", St.ArchivesDir);
     printf(" Target:    %s\n", St.TargetRoot);

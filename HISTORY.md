@@ -443,7 +443,22 @@ Sub-phases:
   `@Finish` + matching `@End*`) — all skip cleanly, letting execution
   proceed past sections we haven't implemented yet. New CLI arg
   `--groups STR` simulates the v1.10.4 checkbox selection.
-- **v1.10.3** — filesystem + disk sequencing
+- **v1.10.3** — filesystem + disk sequencing (shipped).
+  10 new directives (`@MkDir`/`@Mkdir` as callable that actually creates
+  the dir; `@ChDir`/`@ChDrive` with state tracking; `@DirExists`
+  predicate; `@DefineDisk`/`@EndDisk` semantics; `@Requires`/`@HardDisk`/
+  `@Version` accepted as project-metadata). Also fixed two `@File` parser
+  bugs surfaced by real INSTALL.DAT: `@Out DIR\*.*` glob (means "keep
+  source filename") and missing `@Out` fallback (default to source key
+  as destination) — these two fixes alone closed most of the coverage
+  gap on PCBMAIL and PCBOARD2.RED (OS/2) blocks. Cumulative: 39 of 60
+  directives coded. install.c grows to 2098 lines. Full 481 `@File`
+  operations succeed vs real INSTALL.DAT (matches reference tree total
+  exactly), 394 files byte-perfect vs `pcb1541/install/dist/target/`
+  (94.0% of placed); only PCBOARD.SER fails (legitimately not in any
+  archive — physical disk file). Remaining gap to 481-byte-perfect
+  is the per-bulletin-board multi-writer collisions that v1.10.4 will
+  disambiguate via the interactive @GetGroups flavor selection.
 - **v1.10.4** — interactive menu (6-checkbox First-Time / Upgrade /
   COMM-DRV / PPL / PCBMail / OS2 selector)
 - **v1.10.5** — system hooks + finish; end-to-end DOSBox-X run

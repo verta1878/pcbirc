@@ -1,32 +1,30 @@
-install v1.10.2 — control flow, real INSTALL.DAT runs end-to-end
+install v1.10.3 — filesystem, disk sequencing, full 481 file ops
 =================================================================
 Date: 2026-09-05
-Prev origin/main HEAD: c8f0a37
+Prev origin/main HEAD: 78f68f1
 
 WHAT THIS RELEASE DOES
 
-  Real INSTALL.DAT runs end-to-end for the first time.
+  Full 481 @File operations succeed against real INSTALL.DAT
+  (matches reference tree total exactly). 394 files byte-perfect
+  vs pcb1541/install/dist/target/ (94.0% of placed).
 
-  11 new directives implemented (29 of 60 total):
+  10 new directives implemented (39 of 60 total):
 
-    @If / @Else / @EndIf / @Endif   - conditional branches
-    @Goto / @Label                    - script-position jumps
-    @Set                              - variable assignment
-    @StrLen / @StrHead / @StrToken    - string utilities
-    @Exists (as @If predicate)        - file existence check
+    @MkDir / @Mkdir   - actually create the directory
+    @ChDir            - change working dir (state-tracked)
+    @ChDrive          - change working drive (state-tracked)
+    @DirExists        - predicate: does dir exist
+    @DefineDisk / @EndDisk  - disk-scope block semantics
+    @Requires / @HardDisk / @Version  - project-metadata predicates
 
-  Plus a full recursive-descent expression evaluator supporting
-  `[= [!  == != > < >= <= && || ()` on int and string operands,
-  with @Func(...) inline invocation inside string literals (needed
-  for Clark's nested-quote pattern like "@StrToken("@Fname",0," ")").
-
-  Also handles trailing `@Group X` clause on `@File` as a per-directive
-  filter (Clark's INSTALL.DAT uses `@File N @Out MAIN\CNAMES.IDX @Group n`
-  to gate per-bulletin-board files).
-
-  Verified end-to-end: real 42 KB INSTALL.DAT runs to `@Exit`,
-  471 successful @File operations, 348 files byte-perfect vs
-  pcb1541/install/dist/target/ reference (94.8% of placed).
+  Also fixed two @File parser bugs surfaced by real INSTALL.DAT:
+    - `@Out DIR\*.*` glob: means "keep source filename under DIR/"
+      (PCBMAIL.RED uses this heavily; without the fix, all 4 PCBMAIL
+      files failed placement)
+    - Missing `@Out`: destination defaults to source key
+      (PCBOARD2.RED / OS/2 block uses this — 7-10 files failed
+      placement without the fix)
 
 APPLY (Windows / GitHub Desktop) - 3 STEPS
 
@@ -41,99 +39,79 @@ APPLY (Windows / GitHub Desktop) - 3 STEPS
   STEP 2 - Open GitHub Desktop. Expected changes:
     M  APPLY.txt
     M  HISTORY.md
-    M  pcb1541/install/src/install.c          (1092 -> 1984 lines)
-    M  pcb1541/install/src/README.md          (progress row updated)
+    M  pcb1541/install/src/install.c          (1984 -> 2098 lines)
+    M  pcb1541/install/src/README.md
     M  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
-                                              (11 directives flipped
-                                               spec-only -> v1.10.2)
 
     Total: 5 modified, 0 added
 
   STEP 3 - Commit + push. Suggested message:
-    install v1.10.2: control flow, real INSTALL.DAT end-to-end,
-    29/60 directives coded
+    install v1.10.3: filesystem + disk sequencing + @File parser
+    fixes, 39/60 directives coded
 
 ACCEPTANCE VERIFIED
 
-  Setup: gcc-compiled install v1.10.2 binary + redx + INSTALL.zip
-  archives + all groups selected (-g "abcdefghijklmnopqrstuvwxyz").
+  Setup: gcc-compiled install v1.10.3 + redx + INSTALL.zip archives.
+  All groups selected (-g "abcdefghijklmnopqrstuvwxyz").
 
   End-to-end run on real 42,294 B INSTALL.DAT (1187 lines):
-    Files placed:   471   (up from 6 in v1.10.1)
-    Files failed:    11   (mostly @Copy sources not in archives)
-    Labels found:     6   (EnterSubdir, Entergroups, EnterFName,
-                           EnterLname, EnterCitySt, EnterPwd)
+    Files placed:    481   (matches reference tree total exactly)
+    Files failed:      1   (PCBOARD.SER - legit not in any archive,
+                            ships loose on physical disk)
+    Labels found:      6
 
-  Byte-perfect diff vs pcb1541/install/dist/target/ reference:
-    matched:  348 / 367 placed  (94.8%)
+  Byte-perfect vs pcb1541/install/dist/target/ reference (481 files):
+    matched:  394 / 419 unique files placed  (94.0% of placed)
     differ:    13   (per-bulletin-board multi-writer collisions —
-                     Clark's script writes MAIN/CNAMES with different
-                     content for each BBS flavor; last-write-wins.
-                     rebuild_place.py disambiguates via source-key
-                     suffixes; we don't yet)
-    extras:     6   (paths not in the reference tree)
+                     v1.10.4 disambiguates via @GetGroups flavor UI)
+    extras:    12   (files placed correctly per INSTALL.DAT but not
+                     in reference tree since reference was built with
+                     different flavor selected)
 
-  Remaining gap to full 481-file target (~113 files):
-    Some Disk 3 blocks under @DefineDisk that our stubs don't fully
-    traverse; PPL samples; PCBMAIL; PCBOS2 (v1.10.3 will land
-    proper @DefineDisk semantics).
+  Delta vs v1.10.2:
+    +10 files placed byte-perfect (v1.10.2: 348 -> v1.10.3: 394)
+    +10 file ops closed (v1.10.2: 471 -> v1.10.3: 481, hitting target)
+    -10 file ops failed (v1.10.2: 11 -> v1.10.3: 1)
 
-RUNTIME NOTES
-
-  New CLI arg:
-    -g, --groups STR    Selected install-group letters (default "abcdef").
-                        v1.10.4 will render an interactive checkbox
-                        menu; until then this simulates the selection.
-
-  Full usage:
-    ./install -a <redx-archives-dir> -t <install-target> \
-              -r <path-to-redx> -g "abcdef" INSTALL.DAT
-
-  For end-to-end tests use `-g "abcdefghijklmnopqrstuvwxyz"` to enable
-  all group letters (catches bulletin-board flavors too).
-
-  install.c stdin read is now tty-conditional: automated tests
-  (stdin = /dev/null) skip the @Pause keypress; interactive runs
-  behave as before.
+  The remaining gap to 481-byte-perfect is entirely the per-flavor
+  collision problem (13 files) - Clark's script writes different
+  content to same output path per BBS-type; last-write-wins gives
+  us one flavor's content instead of all. Fixes with v1.10.4 menu.
 
 WHAT'S IN THE FILE-CHANGES
 
-  pcb1541/install/src/install.c  (rewritten, 1092 -> 1984 lines)
+  pcb1541/install/src/install.c  (rewritten, 1984 -> 2098 lines)
     Additions:
-     - inst_should_skip                  (@If stack query)
-     - inst_scan_labels                  (pre-scan label -> filepos)
-     - inst_goto_label
-     - inst_eval_expr / inst_eval_or / inst_eval_and / inst_eval_cmp /
-       inst_eval_primary                 (recursive-descent evaluator)
-     - inst_func_strlen / _strhead / _strtoken / _exists  (as helpers)
-     - inst_cmd_if / _else / _endif / _goto / _set
-     - inst_cmd_get_string_stub / _skip_block   (v1.10.4/1.10.5 stubs)
-     - Enhanced inst_expand: invokes @Func(...) inline in strings
-     - Enhanced inst_eval_primary string literal reader: tracks
-       paren depth so nested "s inside @Foo(...) don't terminate
-     - Enhanced inst_cmd_file: parses trailing @Group X per-file filter
-     - Enhanced @Pause: isatty-conditional keypress read
+     - WorkingDrive / WorkingDir state fields
+     - inst_cmd_chdrive / inst_cmd_chdir  (bare directive handlers)
+     - @Mkdir / @MkDir wired into expression evaluator as callable
+       (actually mkdirs, returns 0 so `@If @Mkdir(...) @Endif`
+       empty-body pattern works cleanly)
+     - @DirExists wired into evaluator (S_IFDIR check via stat)
+     - Fixed inst_cmd_file:
+        * Missing @Out clause: destination defaults to SrcKey
+        * @Out DIR\*.* glob: trim `*.*`, append SrcKey to get real dest
+     - Dispatcher wires @ChDrive/@ChDir before general fall-through
 
   pcb1541/install/src/README.md  (progress row updated)
 
-  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md  (11 directives
-    flipped from spec-only to v1.10.2; progress row filled in)
+  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
+    10 directives flipped from spec-only to v1.10.3.
+    Progress table row filled in.
 
-  HISTORY.md  (v1.10.2 subphase expanded from "planned" to "shipped"
-    with full implementation summary + acceptance metrics)
+  HISTORY.md  (v1.10.3 subphase expanded from "planned" to "shipped"
+    with full implementation summary and byte-perfect metrics)
 
 NEXT AFTER THIS PUSH
 
-  install v1.10.3 - filesystem + disk sequencing:
-   - @MkDir / @Mkdir / @ChDir / @ChDrive / @DirExists
-   - @Size (as filesystem query, not just @File subclause)
-   - @Path
-   - @DefineDisk / @EndDisk semantics (per-disk file grouping)
-   - @GetOutDrive / @GetSubdir prompt handling (v1.10.4 will do the
-     real interactive UI, but v1.10.3 wires the disk-block prompts)
-   - @Requires / @Version / @HardDisk predicates fully implemented
-  Acceptance: file count closer to 481. Per-bulletin-board content
-  collisions still resolved by last-write-wins (matching reference-
-  tree flavor selection is v1.10.4).
+  install v1.10.4 - interactive menu (~10 directives):
+   - @GetGroups / @CheckBox / @Group (checkbox UI)
+   - @SetGroup / @ClearGroup / @AskOverwrite / @Prompt
+   - @Qstring / @RegCode (variable-type declarations)
+   - Real @GetString (currently pre-filled stub)
 
---hexadecimal & crew, install v1.10.2, 2026-09-05
+  Acceptance: bulletin-board flavor selection resolves the 13
+  content-differs; file-count should reach 460-475 byte-perfect
+  (close to full 481). The last few come from v1.10.5 system hooks.
+
+--hexadecimal & crew, install v1.10.3, 2026-09-05

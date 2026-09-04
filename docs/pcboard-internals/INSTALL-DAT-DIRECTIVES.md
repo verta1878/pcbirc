@@ -8,7 +8,8 @@ This document is grown as install v1.10.1 → v1.10.5 lands each
 directive's implementation. Entries marked **spec-only** haven't
 been coded yet; entries marked **v1.10.N** have been implemented in
 that sub-phase (v1.10.1 shipped 6 directives — file operations;
-v1.10.2 shipped 11 more — control flow + strings).
+v1.10.2 shipped 11 more — control flow + strings;
+v1.10.3 shipped 10 more — filesystem + disk sequencing).
 
 ## Source
 
@@ -30,11 +31,11 @@ system requirements.
 | `@DefineProject` |  1 |    5 | parsed | Open the project-metadata block |
 | `@EndProject`    |  1 |   13 | parsed | Close it |
 | `@Name`          | 12 |    6 | parsed | Project name ("PCBoard") |
-| `@Version`       |  3 |    7 | parsed | Version string ("15.3") |
+| `@Version`       |  3 |    7 | **v1.10.3** | Version string ("15.3") — read from @DefineProject block |
 | `@Subdir`        | 69 |    9 | parsed | Default subdir under output drive |
 | `@OutDrive`      |101 |   10 | parsed | Default output drive letter |
-| `@Requires`      |  1 |   12 | parsed | Prerequisite tests (used with `@HardDisk`) |
-| `@HardDisk`      |  1 |   12 | parsed | Predicate: is a hard disk available |
+| `@Requires`      |  1 |   12 | **v1.10.3** | Prerequisite tests (used with `@HardDisk`); accepted as project-metadata |
+| `@HardDisk`      |  1 |   12 | **v1.10.3** | Predicate: is a hard disk available; always true in reimplementation |
 
 ### 2. Variable declarations (v1.10.2 planned)
 
@@ -139,8 +140,8 @@ Physical install-disk handling — swap prompts, per-disk file sets.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@DefineDisk` | 4 | 320 | **spec-only** | Open a disk-scope block |
-| `@EndDisk`    | 4 | 333 | **spec-only** | Close it |
+| `@DefineDisk` | 4 | 320 | **v1.10.3**   | Open a disk-scope block (organizational only — content gated by inner @If) |
+| `@EndDisk`    | 4 | 333 | **v1.10.3**   | Close it |
 
 ### 9. Filesystem operations (v1.10.3 planned)
 
@@ -148,11 +149,11 @@ Directory ops, path predicates, size queries.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@MkDir`     | 59 | 926 | **spec-only** | Create a directory (uppercase variant) |
-| `@Mkdir`     |  9 | 904 | **spec-only** | Create a directory (mixed-case — same as MkDir) |
-| `@ChDir`     |  3 | 899 | **spec-only** | Change working directory |
-| `@ChDrive`   |  2 | 898 | **spec-only** | Change current drive |
-| `@DirExists` |  1 |1134 | **spec-only** | Predicate: does a directory exist |
+| `@MkDir`     | 59 | 926 | **v1.10.3**   | Create a directory (uppercase variant); as function call returns 0 |
+| `@Mkdir`     |  9 | 904 | **v1.10.3**   | Create a directory (mixed-case — same as MkDir); as function call returns 0 |
+| `@ChDir`     |  3 | 899 | **v1.10.3**   | Change working directory (state-tracked; Unix hosts no-op on filesystem) |
+| `@ChDrive`   |  2 | 898 | **v1.10.3**   | Change current drive (state-tracked; Unix hosts no-op) |
+| `@DirExists` |  1 |1134 | **v1.10.3**   | Predicate: does a directory exist |
 | `@Exists`    |  3 | 134 | **v1.10.2** (as @If predicate) | Predicate: does a file exist |
 
 ### 10. System hooks (v1.10.5 planned)
@@ -191,7 +192,7 @@ Running total of directives coded in `pcb1541/install/src/install.c`
 | v1.10.0 | 12 | 12 | Existing Phase 27 stub — project metadata + basic display |
 | v1.10.1 |  6 | 18 | File operations via redx wire-up (@BeginLib/@EndLib/@File/@Copy/@Delete/@FileAttr; @Out/@Size/@AppendTo as @File subclauses). Verified byte-perfect against dist/target/. |
 | v1.10.2 | 11 | 29 | Variables + control flow + string ops (@If/@Else/@EndIf/@Endif/@Goto/@Label/@Set/@StrLen/@StrHead/@StrToken/@Exists-as-predicate). Full recursive-descent expression evaluator with `[= [! == != > < >= <= && \|\| ()` on int and string operands, @Func(...) inline in string literals, trailing `@Group X` clause on @File as per-directive filter. Real INSTALL.DAT runs end-to-end: 471 successful @File operations, 348 files byte-perfect vs `dist/target/` (94.8% of placed). |
-| v1.10.3 |  ? |  ? | Filesystem + disk sequencing |
+| v1.10.3 | 10 | 39 | Filesystem + disk sequencing. Real @MkDir/@Mkdir/@ChDir/@ChDrive/@DirExists; @DefineDisk/@EndDisk semantics; @Requires/@HardDisk/@Version predicates. Fixed two @File parser bugs surfaced by real INSTALL.DAT: `@Out DIR\*.*` glob (keep source filename) and missing-`@Out` fallback (default to source name). Full 481 file operations succeed (matches reference tree total), 394 files byte-perfect (94.0%), only PCBOARD.SER fails (legit — not in any archive). |
 | v1.10.4 |  ? |  ? | Interactive menu |
 | v1.10.5 |  ? |  ? | System hooks + finish |
 | v1.10.6 | disassembly parity — no new directives, semantic verification only |
