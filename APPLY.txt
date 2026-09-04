@@ -1,51 +1,109 @@
-pcbirc — CRLF fix for toolkit/pplc/samples/ .PPS files
-========================================================
-HEAD: 1692cad4ed152cc94a9ee9b7e522cf6e1afedd76
+pcbic v1.0.0 — restructure pcbic → pcbic12, decrypted → bin, unlock 6 EXEs
+==========================================================================
+Date: 2026-09-04
+Prev origin/main HEAD: f73a975
 
-PARITY CHECK RESULT
+APPLY (Windows / GitHub Desktop) — 3 STEPS
 
-Checked my local vs origin/main. Origin advanced by 1 commit (your
-"What's new" push after applying the v1.8 zip). Compared file-by-file:
+  STEP 1 — Extract this release zip INTO your repo root.
+    Right-click → Extract Here. Overwrite when prompted.
+    This populates pcb1541\pcbic12\ (new location) and updates
+    .gitignore + todo\cleanup.bat.
 
-  MATCH:    Everything else — HISTORY.md, README.md, target/README.md,
-            MCI-CODES.md, PLANNED-FEATURES.md, ROADMAP.md, RUNTIME-DEPS.md,
-            all v1.8.1 native_lha/ files, all .PPE binaries, all .BAT files
-            — all byte-perfect between my local and origin.
+  STEP 2 — Run the cleanup script from the repo root:
+    todo\cleanup.bat
+    It will:
+      - Verify pcb1541\pcbic12\bin\Pcbic.exe + RUNINET.PPE exist
+      - Remove the old pcb1541\pcbic\ directory
+        (which also removes the encrypted Pcbic12.zip inside it)
+      - Log the operation to CLEANUP.LOG
 
-  MISMATCH: 20 files in toolkit/pplc/samples/*.PPS
-            Origin has stripped CRLF, my local has preserved CRLF matching
-            target/PPL/ originals. GitHub Desktop autocrlf stripped \r
-            bytes on Windows because no binary rule covered the new
-            location.
+  STEP 3 — Open GitHub Desktop. Expected changes:
+    M  .gitignore                              (3 exception lines added)
+    M  todo/cleanup.bat                         (pcbic v1.0.0 block added)
+    D  pcb1541/pcbic/Pcbic12.zip                (removed by cleanup.bat)
+    R  pcb1541/pcbic/README.md         → pcb1541/pcbic12/README.md (rewritten)
+    R  pcb1541/pcbic/ROADMAP.md        → pcb1541/pcbic12/ROADMAP.md (rewritten)
+    R  pcb1541/pcbic/RECONSTRUCTION.md → pcb1541/pcbic12/RECONSTRUCTION.md (rewritten)
+    R  pcb1541/pcbic/src/pcbic.c       → pcb1541/pcbic12/src/pcbic.c (unchanged)
+    R  pcb1541/pcbic/rebuilt/*         → pcb1541/pcbic12/rebuilt/* (2 files)
+    R  pcb1541/pcbic/decrypted/*       → pcb1541/pcbic12/bin/* (32 renames)
+    +  pcb1541/pcbic12/bin/PCBICCFG.EXE   (new, 185 KB)
+    +  pcb1541/pcbic12/bin/PCBICEVT.EXE   (new, 90 KB)
+    +  pcb1541/pcbic12/bin/TESTIC.EXE     (new, 40 KB)
+    +  pcb1541/pcbic12/bin/TESTIC2.EXE    (new, 47 KB)
+    +  pcb1541/pcbic12/bin/Pcbic.exe      (new, 313 KB)
+    +  pcb1541/pcbic12/bin/Pcbic2.exe     (new, 217 KB)
+    +  pcb1541/pcbic12/src/README.md      (new, reconstruction source layout)
 
-            Example:
-              pcb1541/install/dist/target/PPL/HELLO1.PPS      119 bytes ✓
-              toolkit/pplc/samples/HELLO1.PPS (origin)        116 bytes ✗
-              toolkit/pplc/samples/HELLO1.PPS (my local)      119 bytes ✓
+    Total: 2 modified, 1 deleted, 38 renames, 7 additions
 
-            target/PPL/ was NOT affected — it's already protected by
-            v1.7.2's 'pcb1541/install/dist/target/** binary' rule.
+  STEP 4 — Commit + push. Suggested message:
+    pcbic v1.0.0: restructure pcbic → pcbic12, decrypted → bin,
+    unlock 6 reference EXEs, remove encrypted archive
 
-FIX (this zip)
+WHY THE RESTRUCTURE
 
-  .gitattributes             +6 lines:
-                               toolkit/pplc/samples/**  binary
-                               *.PPS                    binary
-                               *.PPE                    binary
-                             Belt-and-suspenders protection for the
-                             new location AND any future PPL sources
-                             anywhere in the tree.
+  - `pcbic/` was generic; the actual content is PCBIC v1.2 (April 30,
+    1997). Promoting to `pcbic12/` makes the version explicit
+    everywhere in paths.
+  - `decrypted/` was a misleading name (implied we broke the
+    encryption; really Clark's binaries were just packaged encrypted
+    by a third party). `bin/` reflects what they ARE: Clark's original
+    compiled binaries — reference targets for reconstruction.
+  - `src/README.md` (new) documents the reconstruction source layout —
+    what `pcbic.c` is now, and the per-binary subdir plan as Ghidra
+    work lands.
 
-  toolkit/pplc/samples/*.PPS 20 files, byte-perfect (matching target/PPL/)
+WHAT'S IN pcbic12/ AFTER THIS RELEASE
 
-  CHECKSUMS.md5/.sha256/.txt Regenerated
+  bin/       38 files — Clark's originals (6 EXEs + PPE + PPS +
+             HLP + batches + DATA/ + DOCS/ + SCRIPTS/)
+  src/        2 files — pcbic.c (Phase 27 stub) + README.md
+  rebuilt/    2 files — RUNINET.3.40.PPE (wrong-compiler witness) +
+             README.md
+  README.md, ROADMAP.md, RECONSTRUCTION.md — full doc pass, all
+  `decrypted/` prose replaced with `bin/` or "unlocked", pcbic v1.0.x
+  version labels applied, restructure story reflected
 
-APPLY
+MD5 (6 unlocked EXEs):
+  092a895b9dcc7e8b84cb1cea46adeccd  PCBICCFG.EXE
+  45bcc0367c6d7e9a51ea1323ba7248f9  PCBICEVT.EXE
+  985bf3f06b7ce592cf718667697be7b1  TESTIC.EXE
+  bfb0e052edebcf5abeb56139ee9f700c  TESTIC2.EXE
+  8b8e19ac5a62b55af08b7a6acfc516bc  Pcbic.exe
+  44e459deeaa901cad575472f91dd3943  Pcbic2.exe
 
-  1. Extract into repo root
-  2. Let it overwrite .gitattributes + all 20 .PPS files + CHECKSUMS
-  3. Commit + push via GitHub Desktop
-  4. Verify: run 'md5sum -c CHECKSUMS.md5' after push, should be 100% pass
+.gitignore CHANGES
 
-After apply: toolkit/pplc/samples/ matches target/PPL/ byte-perfect
-in both locations, and future edits/re-applies won't get CRLF-stripped.
+  Adds 3 exception lines so Clark's reference binaries aren't blocked
+  by the broad *.EXE / *.exe rules:
+    !pcb1541/pcbic12/bin/*.EXE
+    !pcb1541/pcbic12/bin/*.exe
+    !pcb1541/install/reference/*.EXE   (for install v1.10.0 next)
+
+cleanup.bat CHANGES
+
+  Adds a pcbic v1.0.0 block that:
+   - Detects pcb1541\pcbic\ still present
+   - Verifies pcb1541\pcbic12\bin\Pcbic.exe + RUNINET.PPE exist
+   - Safely removes pcb1541\pcbic\ (with Pcbic12.zip inside it)
+  Also updates the header and idempotency check to include the new path.
+  Existing v1.6 reorg logic unchanged.
+
+WHAT PROVENANCE COPY LOOKS LIKE
+
+  reference/pcball/pcboard/Pcbic12   04-30-97.zip
+    Original encrypted 1997-04-30 archive, md5 ecc17649. Untouched.
+    Kept in the reference tree as the historical preservation copy;
+    we no longer duplicate a working copy in pcbic12/.
+
+NEXT AFTER THIS PUSH
+
+  install v1.10.0 combined shipment (still queued):
+    - pcb1541/install/reference/INSTALL.DAT + INSTALL.EXE + README.md
+    - HISTORY.md updates (v1.10 + pcbic v1.0 sections + Version labels)
+    - docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md skeleton
+    - CHECKSUMS regen
+
+--hexadecimal & crew, 2026-09-04

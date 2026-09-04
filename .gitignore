@@ -6,6 +6,10 @@
 *.LIB
 *.EXE
 *.exe
+# Exception: Clark's original reference binaries (tracked byte-exact)
+!pcb1541/pcbic/pcbic12/*.EXE
+!pcb1541/pcbic/pcbic12/*.exe
+!pcb1541/install/reference/*.EXE
 *.MAP
 *.map
 *.ERR

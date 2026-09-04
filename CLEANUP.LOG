@@ -7,3 +7,12 @@ REMOVING archivers\ (now at pcb1541/install/archivers/)
  
 Summary: 1 removed, 0 kept (waiting on new-location files). 
  
+ 
+============================================================================ 
+pcbirc cleanup run: Thu 09/03/2026 21:25:20.90 
+============================================================================ 
+ 
+ 
+Summary: 0 removed, 0 kept (waiting on new-location files). 
+ 
+KEEPING pcb1541\pcbic\ -- pcbic12/bin/Pcbic.exe missing, cannot verify safe delete 

@@ -1,0 +1,10 @@
+PCBIC v1.2 - PCBoard InterCom
+by Clark, released 1997-04-30
+
+Internet door for PCBoard BBS:
+FTP/Gopher/Ping/PPP/Rlogin/
+SLIP/Telnet/Traceroute/Who/
+Finger + menu (11 tools).
+
+Drives host dialer via chat
+scripts - no built-in PPP/SLIP.
