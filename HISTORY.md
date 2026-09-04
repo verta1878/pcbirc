@@ -477,7 +477,22 @@ Sub-phases:
   (`MAIN/CNAMES.N`, `MAIN/CNAMES.O`, etc); a real installer running one
   flavor at a time correctly produces ~371 files. This gap will not
   close via more @-directives — it's a reference-tree naming choice.
-- **v1.10.5** — system hooks + finish; end-to-end DOSBox-X run
+- **v1.10.5** — system hooks + finish (shipped).
+  7 new directives (`@System`/`@SetConfig`/`@EndConfig`/`@SetAutoexec`/
+  `@EndAutoexec`/`@Finish`/`@EndFinish`; `@Files`/`@Path` handled inline
+  when inside their respective config-block). Real `@SetConfig`/
+  `@SetAutoexec` generate `CONFIG.SYS.pcb` and `AUTOEXEC.BAT.pcb`
+  drop-in files in the target root (admin merges them into actual
+  system files). Real `@System(cmd)`: default headless returns 0
+  (matches Clark's success semantic for `@If @System(...) == 0` gating);
+  `--exec-system` CLI flag opts into actual shell-out via `system(3)`.
+  `@Finish/@EndFinish`: contents execute inline by default under
+  `--run-finish`, or are skipped (default) for test-friendly output
+  since Clark's post-install `@Delete` calls remove `INIT.EXE`/
+  `UPGRADE.EXE`/etc. Cumulative: 56 of 60 directives coded. install.c
+  grows to 2443 lines. File-placement acceptance unchanged from v1.10.4
+  (350/361 byte-perfect); adds 2 generated system-config files that
+  are new but expected.; end-to-end DOSBox-X run
   landing a complete C:\PCB tree matching `dist/target/`
 - **v1.10.6** — disassembly parity check on `INSTALL.EXE`. Byte-exact
   rebuild of INSTALL.EXE itself is deferred to install v1.11+.

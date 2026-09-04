@@ -10,7 +10,8 @@ been coded yet; entries marked **v1.10.N** have been implemented in
 that sub-phase (v1.10.1 shipped 6 directives — file operations;
 v1.10.2 shipped 11 more — control flow + strings;
 v1.10.3 shipped 10 more — filesystem + disk sequencing;
-v1.10.4 shipped 10 more — interactive menu + user input).
+v1.10.4 shipped 10 more — interactive menu + user input;
+v1.10.5 shipped 7 more — system hooks + finish).
 
 ## Source
 
@@ -127,9 +128,9 @@ and 481 files land byte-perfect.
 | `@BeginLib`  |   8 | 323 | **v1.10.1**      | Open a `.RED` archive to extract from |
 | `@EndLib`    |   8 | 331 | **v1.10.1** | Close it |
 | `@File`      | 491 | 324 | **v1.10.1**      | Place one file from the current archive |
-| `@Files`     |   1 | 876 | **spec-only** (v1.10.5 — CONFIG.SYS FILES=N, not a file op) | Sets `FILES=N` in generated CONFIG.SYS |
+| `@Files`     |   1 | 876 | **v1.10.5**   | Sets `FILES=N` in generated CONFIG.SYS.pcb (inside @SetConfig) |
 | `@Size`      | 476 | 339 | **v1.10.1** (as `@File` subclause) | Expected size of the current `@File` (verification) |
-| `@Path`      |   1 | 883 | **spec-only** (v1.10.5 — AUTOEXEC.BAT PATH=..., not a file op) | Sets `PATH=...` in generated AUTOEXEC.BAT |
+| `@Path`      |   1 | 883 | **v1.10.5**   | Sets `PATH=%PATH%;...` in generated AUTOEXEC.BAT.pcb (inside @SetAutoexec) |
 | `@Copy`      |   1 | 252 | **v1.10.1**   | Copy a file (non-archive source), syntax `@Copy("src","dst")` |
 | `@Delete`    |   6 |1158 | **v1.10.1**   | Delete a file (or directory), syntax `@Delete("path")` |
 | `@AppendTo`  |   1 | 559 | **v1.10.1** (as `@File` subclause) | Append content to a file instead of overwriting |
@@ -164,13 +165,13 @@ edits, shell-out commands, wrap-up.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@System`      | 6 | 241 | **spec-only** | Shell out to DOS |
-| `@Finish`      | 1 | 896 | **spec-only** | Open the finish-block |
-| `@EndFinish`   | 1 |1185 | **spec-only** | Close it |
-| `@SetAutoexec` | 1 | 881 | **spec-only** | Open an AUTOEXEC.BAT edit-block |
-| `@EndAutoexec` | 1 | 886 | **spec-only** | Close it |
-| `@SetConfig`   | 1 | 874 | **spec-only** | Open a CONFIG.SYS edit-block |
-| `@EndConfig`   | 1 | 879 | **spec-only** | Close it |
+| `@System`      | 6 | 241 | **v1.10.5**   | Shell out to DOS; headless stub returns 0 (success), --exec-system opts into real shell-out |
+| `@Finish`      | 1 | 896 | **v1.10.5**   | Post-install cleanup block; contents execute inline (unless --skip-finish, default for test-friendliness) |
+| `@EndFinish`   | 1 |1185 | **v1.10.5**   | Close it |
+| `@SetAutoexec` | 1 | 881 | **v1.10.5**   | Open AUTOEXEC.BAT.pcb writer (generates PATH= additions from @Path directives inside) |
+| `@EndAutoexec` | 1 | 886 | **v1.10.5**   | Close AUTOEXEC.BAT.pcb |
+| `@SetConfig`   | 1 | 874 | **v1.10.5**   | Open CONFIG.SYS.pcb writer (generates FILES= additions from @Files directives inside) |
+| `@EndConfig`   | 1 | 879 | **v1.10.5**   | Close CONFIG.SYS.pcb |
 
 ## Case-fold pairs
 
@@ -195,6 +196,7 @@ Running total of directives coded in `pcb1541/install/src/install.c`
 | v1.10.2 | 11 | 29 | Variables + control flow + string ops (@If/@Else/@EndIf/@Endif/@Goto/@Label/@Set/@StrLen/@StrHead/@StrToken/@Exists-as-predicate). Full recursive-descent expression evaluator with `[= [! == != > < >= <= && \|\| ()` on int and string operands, @Func(...) inline in string literals, trailing `@Group X` clause on @File as per-directive filter. Real INSTALL.DAT runs end-to-end: 471 successful @File operations, 348 files byte-perfect vs `dist/target/` (94.8% of placed). |
 | v1.10.3 | 10 | 39 | Filesystem + disk sequencing. Real @MkDir/@Mkdir/@ChDir/@ChDrive/@DirExists; @DefineDisk/@EndDisk semantics; @Requires/@HardDisk/@Version predicates. Fixed two @File parser bugs surfaced by real INSTALL.DAT: `@Out DIR\*.*` glob (keep source filename) and missing-`@Out` fallback (default to source name). Full 481 file operations succeed (matches reference tree total), 394 files byte-perfect (94.0%), only PCBOARD.SER fails (legit — not in any archive). |
 | v1.10.4 | 10 | 49 | Interactive menu. Real @GetGroups/@CheckBox/@GetString handlers (TTY prompt when stdin is terminal, headless fallback to `--groups` CLI + sensible defaults). @SetGroup/@ClearGroup modify SelectedGroups programmatically. @AskOverwrite/@Prompt accepted as directives. @Qstring/@RegCode + variable-type declarations parsed via @DefineVars. Single-flavor install (-g "abcdefp" for Corporate BBS) places 371 files, 350 byte-perfect (94.5%). Reference tree's 481 total = rebuild_place.py per-flavor artifact accumulation; a real installer produces one flavor at a time. |
+| v1.10.5 |  7 | 56 | System hooks + finish. @System real (headless returns 0; --exec-system opts into shell-out). @SetConfig/@EndConfig generate CONFIG.SYS.pcb with FILES= lines. @SetAutoexec/@EndAutoexec generate AUTOEXEC.BAT.pcb with PATH= additions. @Finish/@EndFinish executes contents inline (unless --skip-finish, default for test-friendliness). File placement unchanged (350/361 byte-perfect); adds 2 generated system-config files. |
 | v1.10.4 |  ? |  ? | Interactive menu |
 | v1.10.5 |  ? |  ? | System hooks + finish |
 | v1.10.6 | disassembly parity — no new directives, semantic verification only |

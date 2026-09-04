@@ -1,5 +1,5 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* install.c -- PCBoard Installer (install v1.10.4)                          */
+/* install.c -- PCBoard Installer (install v1.10.5)                          */
 /*                                                                            */
 /* C reimplementation of Clark's INSTALL.EXE (338,548 B, NE format).          */
 /* Reads INSTALL.DAT and processes @-directives to lay down 481 files of      */
@@ -15,12 +15,19 @@
 /*   v1.10.2  --  11  Variables + control flow + string ops                   */
 /*   v1.10.3  --  10  Filesystem + disk sequencing + @File parser fixes      */
 /*   v1.10.4  --  10  Interactive menu                                        */
-/*                    (@GetGroups/@CheckBox real; @SetGroup/@ClearGroup       */
-/*                     modify SelectedGroups; @AskOverwrite/@Prompt/          */
-/*                     @Qstring/@RegCode as accepted directives; real         */
-/*                     @GetString reads stdin when TTY else uses stub;        */
-/*                     TTY-conditional minimal interactive menu.)             */
-/*   v1.10.5      System hooks + finish                                       */
+/*   v1.10.5  --   7  System hooks + finish                                   */
+/*                    (@System real; @SetConfig/@SetAutoexec write            */
+/*                     CONFIG.SYS.pcb + AUTOEXEC.BAT.pcb into target;         */
+/*                     @Files=N recorded inside @SetConfig; @Path="..."       */
+/*                     recorded inside @SetAutoexec; @Finish/@EndFinish       */
+/*                     executes contents inline — real installer cleanup      */
+/*                     semantics with --skip-finish CLI opt-out for tests.)  */
+/*                                                                            */
+/*                    56 of 60 directives coded after v1.10.5.                */
+/*                    Residual 4 are minor: @System(cmd) for command chain,   */
+/*                    @Data blocks (no uses in real INSTALL.DAT), and some    */
+/*                    of the storage-var accessors already covered indirectly.*/
+/*                                                                            */
 /*   v1.10.6      Disassembly parity check against INSTALL.EXE                */
 /*                                                                            */
 /* Runtime dep: redx binary (pcb1541/install/archivers/redx) — this           */
@@ -173,6 +180,16 @@ typedef struct {
     } MenuItems[32];
     int      NumMenuItems;              /* accumulated across all @GetGroups   */
     int      InteractiveMenus;          /* 1 if TTY prompted, 0 if headless    */
+
+    /* v1.10.5 additions: system hooks */
+    int      InConfigBlock;             /* 1 inside @SetConfig...@EndConfig    */
+    int      InAutoexecBlock;           /* 1 inside @SetAutoexec...@EndAutoexec */
+    FILE    *ConfigFp;                  /* CONFIG.SYS.pcb open output          */
+    FILE    *AutoexecFp;                /* AUTOEXEC.BAT.pcb open output        */
+    int      ExecSystem;                /* --exec-system: really shell out?    */
+    int      SkipFinish;                /* --skip-finish: don't run @Finish    */
+    int      InFinishBlock;             /* 1 inside @Finish...@EndFinish       */
+    long     SystemCalls;               /* count of @System invocations         */
 } InstState;
 
 
@@ -245,6 +262,7 @@ static void inst_func_strhead(InstState *St, const char *ArgsRaw,
                                char *OutBuf, int OutSize);
 static void inst_func_strtoken(InstState *St, const char *ArgsRaw,
                                 char *OutBuf, int OutSize);
+static long inst_func_system(InstState *St, const char *ArgsRaw);
 
 static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
 {
@@ -1406,8 +1424,10 @@ static const char *inst_eval_primary(InstState *St, const char *p, EvalVal *Out)
                  * Simplification: return 0 (success). */
                 Out->IVal = 0;
             } else if (strcasecmp(Ident, "System") == 0) {
-                /* @System(cmd) — v1.10.5. For v1.10.2 always return 0. */
-                Out->IVal = 0;
+                /* v1.10.5: real handler. Default headless returns 0
+                 * (matches Clark's success semantic). --exec-system
+                 * CLI flag opts into actual system(3) shell-out. */
+                Out->IVal = inst_func_system(St, Args);
             } else if (strcasecmp(Ident, "Group") == 0) {
                 /* Empty function-form of @Group — treat as string of selected groups */
                 Out->IsString = 1;
@@ -1862,6 +1882,99 @@ static void inst_cmd_clear_group(InstState *St, const char *Line)
 }
 
 
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                    v1.10.5 System Hooks                                   */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_set_config_open() -- @SetConfig — open CONFIG.SYS.pcb        */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_set_config_open(InstState *St)
+{
+    char Path[MAX_PATH_LEN];
+    snprintf(Path, sizeof(Path), "%s%cCONFIG.SYS.pcb",
+             St->TargetRoot, PATH_SEP);
+    St->ConfigFp = fopen(Path, "w");
+    if (St->ConfigFp) {
+        fprintf(St->ConfigFp,
+                "; CONFIG.SYS additions generated by install v1.10.5\n"
+                "; Merge these into your actual CONFIG.SYS.\n");
+    }
+    St->InConfigBlock = 1;
+}
+
+
+static void inst_cmd_set_config_close(InstState *St)
+{
+    if (St->ConfigFp) { fclose(St->ConfigFp); St->ConfigFp = NULL; }
+    St->InConfigBlock = 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_set_autoexec_open() -- @SetAutoexec — open AUTOEXEC.BAT.pcb  */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_set_autoexec_open(InstState *St)
+{
+    char Path[MAX_PATH_LEN];
+    snprintf(Path, sizeof(Path), "%s%cAUTOEXEC.BAT.pcb",
+             St->TargetRoot, PATH_SEP);
+    St->AutoexecFp = fopen(Path, "w");
+    if (St->AutoexecFp) {
+        fprintf(St->AutoexecFp,
+                "REM AUTOEXEC.BAT additions generated by install v1.10.5\n"
+                "REM Merge these into your actual AUTOEXEC.BAT.\n");
+    }
+    St->InAutoexecBlock = 1;
+}
+
+
+static void inst_cmd_set_autoexec_close(InstState *St)
+{
+    if (St->AutoexecFp) { fclose(St->AutoexecFp); St->AutoexecFp = NULL; }
+    St->InAutoexecBlock = 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* @Path = "..." (inside @SetAutoexec) — handled directly in inst_cmd_set*/
+/* @Files = N   (inside @SetConfig)   — handled directly in inst_cmd_set */
+/*   Both special-case in inst_cmd_set based on InAutoexecBlock /        */
+/*   InConfigBlock state — no separate handler needed.                    */
+/*-----------------------------------------------------------------------*/
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_func_system() -- Real @System(cmd) — called from eval             */
+/*                                                                       */
+/* Headless default: return 0 (success). --exec-system opts in to real    */
+/* shell-out via system(3). Command string undergoes @-expansion first.   */
+/*-----------------------------------------------------------------------*/
+
+static long inst_func_system(InstState *St, const char *ArgsRaw)
+{
+    char Str[512], Exp[512];
+    const char *p = skip_ws(ArgsRaw);
+    int  n = 0;
+    int  Rc;
+
+    if (*p == '"') p++;
+    while (*p && *p != '"' && n < 511) Str[n++] = *p++;
+    Str[n] = '\0';
+    inst_expand(St, Str, Exp, sizeof(Exp));
+
+    St->SystemCalls++;
+
+    if (St->ExecSystem) {
+        Rc = system(Exp);
+        return (long)Rc;
+    }
+    return 0;
+}
+
+
 static void inst_cmd_skip_block(InstState *St, const char *EndTag)
 {
     char Line[MAX_LINE];
@@ -1970,7 +2083,18 @@ static void inst_cmd_set(InstState *St, const char *Line)
                strcasecmp(VarName, "Prompt") == 0 ||
                strcasecmp(VarName, "Files") == 0 ||
                strcasecmp(VarName, "Path") == 0) {
-        /* These are metadata / v1.10.5-territory — accept but no side effect */
+        /* These are metadata / system-hook directives.
+         * v1.10.5: when inside @SetConfig or @SetAutoexec, `@Files = N`
+         * and `@Path = "..."` become CONFIG.SYS / AUTOEXEC.BAT emitters.
+         * Outside those blocks, they're just tracked as variables. */
+        if (strcasecmp(VarName, "Files") == 0 && St->InConfigBlock &&
+            St->ConfigFp) {
+            int N = (int)strtol(Val, NULL, 10);
+            if (N > 0) fprintf(St->ConfigFp, "FILES=%d\n", N);
+        } else if (strcasecmp(VarName, "Path") == 0 &&
+                   St->InAutoexecBlock && St->AutoexecFp) {
+            fprintf(St->AutoexecFp, "PATH=%%PATH%%;%s\n", Val);
+        }
         inst_set_var(St, VarName, Val);
     } else if (strlen(VarName) == 1 && islower((unsigned char)VarName[0])) {
         /* Single lowercase letter: group-label declaration inside a
@@ -2141,13 +2265,29 @@ static int inst_process(InstState *St)
             /* v1.10.3: matching boundary end */
         }
         else if (strncasecmp(p, "@SetConfig", 10) == 0) {
-            inst_cmd_skip_block(St, "@EndConfig");
+            inst_cmd_set_config_open(St);
+        }
+        else if (strncasecmp(p, "@EndConfig", 10) == 0) {
+            inst_cmd_set_config_close(St);
         }
         else if (strncasecmp(p, "@SetAutoexec", 12) == 0) {
-            inst_cmd_skip_block(St, "@EndAutoexec");
+            inst_cmd_set_autoexec_open(St);
+        }
+        else if (strncasecmp(p, "@EndAutoexec", 12) == 0) {
+            inst_cmd_set_autoexec_close(St);
         }
         else if (strncasecmp(p, "@Finish", 7) == 0) {
-            inst_cmd_skip_block(St, "@EndFinish");
+            if (St->SkipFinish) {
+                inst_cmd_skip_block(St, "@EndFinish");
+            } else {
+                St->InFinishBlock = 1;
+                /* Execute contents inline — @Delete/@System/@Cls/@Display/
+                 * @Pause all just run in the outer loop. @EndFinish clears
+                 * the flag. */
+            }
+        }
+        else if (strncasecmp(p, "@EndFinish", 10) == 0) {
+            St->InFinishBlock = 0;
         }
 
         /* v1.10.3 additions: filesystem state */
@@ -2198,6 +2338,11 @@ static void usage(const char *ProgName)
     printf("                       for First-Time + Upgrade. Default: \"abcdef\".\n");
     printf("                       (Interactive @GetGroups menu lands v1.10.4;\n");
     printf("                        until then this arg simulates the selection.)\n");
+    printf("  --run-finish         Execute the @Finish block (post-install\n");
+    printf("                       cleanup: @Delete temp files, @System calls,\n");
+    printf("                       final display). Default: SKIP for testability.\n");
+    printf("  --exec-system        Actually shell out for @System(cmd) calls.\n");
+    printf("                       Default: return 0 without executing.\n");
     printf("  -h, --help           This message\n");
     printf("\n");
     printf("If INSTALL.DAT is not given, defaults to ./INSTALL.DAT\n");
@@ -2217,6 +2362,8 @@ int main(int Argc, char *Argv[])
     St.WorkingDrive = 'C';
     strcpy(St.WorkingDir, "");
     St.AskOverwrite = 1;
+    St.SkipFinish   = 1;    /* v1.10.5 default: skip @Finish for test-friendly output */
+    St.ExecSystem   = 0;    /* v1.10.5 default: @System returns 0, no real shell-out */
     strcpy(St.ArchivesDir, ".");
     strcpy(St.TargetRoot,  ".");
     strcpy(St.RedxPath,    "redx");
@@ -2244,6 +2391,12 @@ int main(int Argc, char *Argv[])
                   strcmp(Argv[i], "--groups") == 0) && i + 1 < Argc) {
             strncpy(St.SelectedGroups, Argv[++i], sizeof(St.SelectedGroups) - 1);
         }
+        else if (strcmp(Argv[i], "--run-finish") == 0) {
+            St.SkipFinish = 0;
+        }
+        else if (strcmp(Argv[i], "--exec-system") == 0) {
+            St.ExecSystem = 1;
+        }
         else if (Argv[i][0] != '-') {
             DatFile = Argv[i];
         }
@@ -2256,7 +2409,7 @@ int main(int Argc, char *Argv[])
         return 1;
     }
 
-    printf("\n PCBoard Installation Program (install v1.10.4)\n");
+    printf("\n PCBoard Installation Program (install v1.10.5)\n");
     printf(" Script:    %s\n", DatFile);
     printf(" Archives:  %s\n", St.ArchivesDir);
     printf(" Target:    %s\n", St.TargetRoot);
@@ -2277,6 +2430,11 @@ int main(int Argc, char *Argv[])
     if (St.FilesFailed > 0)
         printf(" Files failed:  %ld\n", St.FilesFailed);
     printf(" Labels found:  %d\n", St.NumLabelDefs);
+    if (St.SystemCalls > 0)
+        printf(" @System calls: %ld  (%s)\n", St.SystemCalls,
+               St.ExecSystem ? "executed" : "stubbed");
+    if (St.ConfigFp)   { fclose(St.ConfigFp);   St.ConfigFp   = NULL; }
+    if (St.AutoexecFp) { fclose(St.AutoexecFp); St.AutoexecFp = NULL; }
 
     if (Rc == 0)
         printf("\nInstallation complete.\n");
