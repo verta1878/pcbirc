@@ -494,8 +494,36 @@ Sub-phases:
   (350/361 byte-perfect); adds 2 generated system-config files that
   are new but expected.; end-to-end DOSBox-X run
   landing a complete C:\PCB tree matching `dist/target/`
-- **v1.10.6** — disassembly parity check on `INSTALL.EXE`. Byte-exact
-  rebuild of INSTALL.EXE itself is deferred to install v1.11+.
+- **v1.10.6** — disassembly parity check on `INSTALL.EXE` (shipped).
+  No new directives — semantic verification only. Discovered
+  `INSTALL.EXE` supports 329 total `@`-directives; Clark's PCBoard
+  `INSTALL.DAT` uses 60 (which we've implemented). The other 269 are
+  supported by the engine (system-query family for OS/Windows/CD-ROM/
+  memory/video/drives/machine, extra string ops @StrDel/@StrFind/
+  @StrMid/@StrIndex/@StrLwr/@StrUpr etc., file-I/O @Write/@ReadLn/
+  @Verbatim, process spawning @Execute/@Spawn/@Shell, INI file ops
+  @GetIni/@SetIni, disk-size-conditional @Out variants @Out0K through
+  @OutAbs, and more) but unexercised by this script. Two undocumented
+  constraints found in binary error strings: "Cannot use @Goto to exit
+  the @Finish block" (we don't enforce; Clark's script doesn't trigger)
+  and "@Size commands cannot be used when @Requires is specified"
+  (constraint doesn't fire on @Requires @HardDisk which is what the
+  script uses). Full parity report at
+  `docs/pcboard-internals/INSTALL-EXE-PARITY.md`.
+
+  **install v1.10 arc: understanding-complete.** Our C reimplementation
+  faithfully executes Clark's INSTALL.DAT end-to-end, producing
+  byte-perfect output on 94.5% of placed files (350/361 unique on
+  disk). The remaining 9 differ + 2 extras are per-BBS multi-writer
+  collisions (last-write-wins architectural choice matching real
+  installer behavior). CONFIG.SYS.pcb and AUTOEXEC.BAT.pcb generated
+  correctly. @Finish cleanup semantics verified under --run-finish.
+
+  Byte-exact rebuild of INSTALL.EXE itself is deferred to install
+  v1.11+ (separate arc — requires implementing all 329 engine
+  directives, enforcing all constraints, and matching Clark's
+  toolchain: Borland C++ 4.5/5.0 targeting OS/2 Family API, linker
+  version 5.10).
 
 ---
 

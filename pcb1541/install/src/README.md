@@ -63,7 +63,7 @@ Version labels track how much of Clark's INSTALL.DAT we can execute:
 | **v1.10.3** | **10** | **39** | **Filesystem + disk sequencing shipped.** Real `@MkDir`/`@Mkdir` (actual mkdir); `@ChDir`/`@ChDrive` with state tracking; `@DirExists` predicate; `@DefineDisk`/`@EndDisk` semantics; `@Requires`/`@HardDisk`/`@Version` metadata. Also fixed `@Out DIR\*.*` glob-syntax + missing-`@Out` fallback. Full 481 file ops succeed vs real INSTALL.DAT (matches reference tree), 394 byte-perfect (94.0%). |
 | **v1.10.4** | **10** | **49** | **Interactive menu shipped.** Real `@GetGroups`/`@CheckBox`/`@GetString` (TTY prompt + headless fallback); `@SetGroup`/`@ClearGroup` state mutators; `@AskOverwrite`/`@Prompt`/`@Qstring`/`@RegCode` accepted. Single-flavor install (`-g abcdefp`): 371 files placed, 350 byte-perfect (94.5%). |
 | **v1.10.5** | **7** | **56** | **System hooks + finish shipped.** `@System(cmd)` (headless stub / `--exec-system` opts in); `@SetConfig`/`@SetAutoexec` generate `CONFIG.SYS.pcb` + `AUTOEXEC.BAT.pcb`; `@Files=N`/`@Path=...` emit inside; `@Finish`/`@EndFinish` executes inline (or `--skip-finish` default). File placement unchanged (350/361 byte-perfect); adds 2 system-config files. |
-| v1.10.6 | 0 | ? | Disassembly parity check against reference `INSTALL.EXE`. |
+| **v1.10.6** | **0** | **60** | **install v1.10 arc COMPLETE.** Disassembly parity vs INSTALL.EXE binary. No new code — verified our 60 directives all present in the binary. Found INSTALL.EXE supports 329 total directives (Clark's INSTALL.DAT uses 60 = our coverage). See `docs/pcboard-internals/INSTALL-EXE-PARITY.md`. Understanding-complete. Byte-exact INSTALL.EXE rebuild is v1.11+. |
 
 Full directive catalog: `docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md`.
 

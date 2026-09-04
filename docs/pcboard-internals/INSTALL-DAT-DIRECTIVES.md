@@ -11,7 +11,8 @@ that sub-phase (v1.10.1 shipped 6 directives — file operations;
 v1.10.2 shipped 11 more — control flow + strings;
 v1.10.3 shipped 10 more — filesystem + disk sequencing;
 v1.10.4 shipped 10 more — interactive menu + user input;
-v1.10.5 shipped 7 more — system hooks + finish).
+v1.10.5 shipped 7 more — system hooks + finish;
+v1.10.6 verified all 60 vs binary — install v1.10 arc complete).
 
 ## Source
 
@@ -197,12 +198,14 @@ Running total of directives coded in `pcb1541/install/src/install.c`
 | v1.10.3 | 10 | 39 | Filesystem + disk sequencing. Real @MkDir/@Mkdir/@ChDir/@ChDrive/@DirExists; @DefineDisk/@EndDisk semantics; @Requires/@HardDisk/@Version predicates. Fixed two @File parser bugs surfaced by real INSTALL.DAT: `@Out DIR\*.*` glob (keep source filename) and missing-`@Out` fallback (default to source name). Full 481 file operations succeed (matches reference tree total), 394 files byte-perfect (94.0%), only PCBOARD.SER fails (legit — not in any archive). |
 | v1.10.4 | 10 | 49 | Interactive menu. Real @GetGroups/@CheckBox/@GetString handlers (TTY prompt when stdin is terminal, headless fallback to `--groups` CLI + sensible defaults). @SetGroup/@ClearGroup modify SelectedGroups programmatically. @AskOverwrite/@Prompt accepted as directives. @Qstring/@RegCode + variable-type declarations parsed via @DefineVars. Single-flavor install (-g "abcdefp" for Corporate BBS) places 371 files, 350 byte-perfect (94.5%). Reference tree's 481 total = rebuild_place.py per-flavor artifact accumulation; a real installer produces one flavor at a time. |
 | v1.10.5 |  7 | 56 | System hooks + finish. @System real (headless returns 0; --exec-system opts into shell-out). @SetConfig/@EndConfig generate CONFIG.SYS.pcb with FILES= lines. @SetAutoexec/@EndAutoexec generate AUTOEXEC.BAT.pcb with PATH= additions. @Finish/@EndFinish executes contents inline (unless --skip-finish, default for test-friendliness). File placement unchanged (350/361 byte-perfect); adds 2 generated system-config files. |
-| v1.10.4 |  ? |  ? | Interactive menu |
-| v1.10.5 |  ? |  ? | System hooks + finish |
-| v1.10.6 | disassembly parity — no new directives, semantic verification only |
+| **v1.10.6** | 0 | 60 | **install v1.10 arc COMPLETE.** Disassembly parity check vs INSTALL.EXE binary. No new code, semantic verification only. Discovered INSTALL.EXE supports 329 total @-directives; our 60 (matching Clark's INSTALL.DAT usage) all verified present. Two undocumented constraints found in binary error strings but not triggered by Clark's script. Full parity report: [`INSTALL-EXE-PARITY.md`](INSTALL-EXE-PARITY.md). Understanding-complete milestone reached. Byte-exact rebuild of INSTALL.EXE itself is v1.11+ (requires all 329 directives + vintage Borland C++ toolchain). |
 
 ## See also
 
+- [`INSTALL-EXE-PARITY.md`](INSTALL-EXE-PARITY.md) — v1.10.6 parity
+  report vs Clark's compiled INSTALL.EXE binary (329 total directives
+  in the engine, of which we cover the 60 that Clark's INSTALL.DAT
+  actually uses)
 - `pcb1541/install/reference/README.md` — the reference files
   themselves
 - `pcb1541/install/src/install.c` — our C reimplementation
