@@ -412,11 +412,20 @@ Reference material added in v1.10.0:
   lands.
 
 Sub-phases:
-- **v1.10.0** — reference material lands + directive catalog (this ship)
-- **v1.10.1** — redx wire-up: `@BeginLib`/`@EndLib`/`@File`/`@Files`/
-  `@Copy`/`@Delete`/`@AppendTo`/`@FileAttr`. Logic lifted from the
-  working `rebuild_place.py`. Acceptance: install.c processes all 8
-  archives, places 481 files byte-matching the tracked target/ tree.
+- **v1.10.0** — reference material lands + directive catalog (shipped).
+- **v1.10.1** — redx wire-up (shipped). File operations land: 6 new
+  directives (`@BeginLib`/`@EndLib`/`@File`/`@Copy`/`@Delete`/`@FileAttr`)
+  plus `@Out`/`@Size`/`@AppendTo` as `@File` subclauses. install.c
+  shells out to `pcb1541/install/archivers/redx` for each `@BeginLib`
+  block, extracts the archive to a temp dir, then executes each
+  `@File` by resolving the source key (name or numeric), verifying
+  `@Size` if given, and copying to the expanded destination path
+  (with `@OutDrive:@SubDir` variable expansion + cross-platform path
+  normalization). Verified byte-perfect against `pcb1541/install/dist/target/`
+  on a minimal file-op subset (real INSTALL.DAT blocks on `@If`/`@Group`
+  control flow — that's v1.10.2). Cumulative: 18 of 60 directives coded.
+  install.c grows from 518 to ~950 lines; added `src/README.md` and
+  `src/Makefile`.
 - **v1.10.2** — variables + control flow + string ops
 - **v1.10.3** — filesystem + disk sequencing
 - **v1.10.4** — interactive menu (6-checkbox First-Time / Upgrade /

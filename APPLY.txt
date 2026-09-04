@@ -1,77 +1,118 @@
-install v1.10.0 — INSTALL.EXE completion arc opens
-====================================================
+install v1.10.1 — redx wire-up, first real code
+================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 49525c1
+Prev origin/main HEAD: 47ad15a
 
-SCOPE
+WHAT THIS RELEASE DOES
 
-  Opens the install v1.10 arc — completing our C reimplementation of
-  Clark's INSTALL.EXE at pcb1541/install/src/install.c.
+  Wires the .RED archive extractor (redx) into install.c and adds
+  6 file-operation directives:
 
-  This ship lands the reference material we need to diff against.
-  No code changes to install.c yet — that starts in v1.10.1.
+    @BeginLib / @EndLib  - open/close an archive extraction context
+    @File                - place one file from the current archive
+                           (subclauses: @Out, @Size, @AppendTo)
+    @Copy                - copy a file (non-archive source)
+    @Delete              - remove a file or directory
+    @FileAttr            - set file read-only attribute
 
-APPLY (Windows / GitHub Desktop) — 3 STEPS
+  Cumulative: 18 of 60 semantically distinct @-directives implemented
+  (up from 12 in v1.10.0).
 
-  STEP 1 — Extract this release zip INTO your repo root.
-    Adds pcb1541\install\reference\ (new dir with 3 files),
-    adds docs\pcboard-internals\INSTALL-DAT-DIRECTIVES.md,
-    updates HISTORY.md + APPLY.txt.
+  Verified: minimal test .DAT produces byte-perfect output vs
+  pcb1541/install/dist/target/ on the file-op subset.
 
-  STEP 2 — Open GitHub Desktop. Expected changes:
+APPLY (Windows / GitHub Desktop) - 3 STEPS
+
+  STEP 1 - Extract this release zip INTO your repo root.
+    Overwrites:
+      HISTORY.md
+      pcb1541/install/src/install.c
+      docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
+      APPLY.txt
+    Adds:
+      pcb1541/install/src/README.md
+      pcb1541/install/src/Makefile
+
+  STEP 2 - Open GitHub Desktop. Expected changes:
     M  APPLY.txt
-    M  HISTORY.md                             (new sections + version labels)
-    +  pcb1541/install/reference/README.md    (new)
-    +  pcb1541/install/reference/INSTALL.DAT  (new, 42 KB — Clark's script)
-    +  pcb1541/install/reference/INSTALL.EXE  (new, 338 KB — Clark's binary)
-    +  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md  (new, 60-directive catalog)
+    M  HISTORY.md
+    M  pcb1541/install/src/install.c          (518 -> ~950 lines)
+    M  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
+    +  pcb1541/install/src/README.md          (new - build + usage)
+    +  pcb1541/install/src/Makefile           (new - cross-platform build)
 
-    Total: 2 modified, 4 added
+    Total: 4 modified, 2 added
 
-  STEP 3 — Commit + push. Suggested message:
-    install v1.10.0: reference material + directive catalog
+  STEP 3 - Commit + push. Suggested message:
+    install v1.10.1: redx wire-up, file operations - 18/60 directives coded
 
-WHAT'S IN THIS RELEASE
+ACCEPTANCE VERIFIED
 
-  pcb1541/install/reference/  (NEW dir)
-    INSTALL.DAT   (42,294 B, md5 cca38d36)
-       Clark's original installer script — the DAT-language program
-       INSTALL.EXE interprets to lay down the 481 files of a PCBoard
-       install. 72 unique @-directives (60 semantically distinct
-       after case-folding EndIf/Endif + MkDir/Mkdir pairs).
-       Extracted once from ../INSTALL.zip for stable diffing.
+  Test setup: gcc-compiled install binary + redx binary + INSTALL.zip
+  archives extracted to a scratch dir. Minimal test .DAT exercises
+  @BeginLib on PCBOARD.RED and COMMDRV.RED, placing 6 files.
 
-    INSTALL.EXE   (338,548 B, md5 5239767b, NE format)
-       Clark's compiled 16-bit installer binary. Windows/OS2 Family
-       API. Header string reveals the build source path:
-         $Logfile: W:/master/install/main.c_v $
-         INSTALL Ver ... Copyright (c) 1987-1995
-       This is the disassembly parity target for install v1.10.6.
+  Output vs pcb1541/install/dist/target/ reference (md5):
+    MATCH  PCBOARD.EXE
+    MATCH  PCBOARDM.EXE
+    MATCH  PPLC.EXE              (extracted from PPLC330.EXE)
+    MATCH  COMMDRV/COMMDRV.EXE
+    MATCH  COMMDRV/COMMTSR.EXE
+    MATCH  COMMDRV/DRVSETUP.EXE
 
-    README.md
-       Reference-material provenance + use notes.
+  6/6 byte-perfect. Real INSTALL.DAT can't run end-to-end yet -
+  @If/@Group control-flow lands in v1.10.2, which is when the
+  installer can start producing full install trees.
 
-  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md  (NEW)
-    Canonical @-directive reference for INSTALL.DAT. Organized into
-    10 categories. Every directive shows: use count in real INSTALL.DAT,
-    first-line location, current implementation status, semantic purpose.
-    Grown as v1.10.1 -> v1.10.5 lands each directive's implementation.
+RUNTIME NOTES
 
-  HISTORY.md  (modified)
-    Version-labels section: added install v1.8/1.9/1.10 subsystem
-    numbering + pcbic v1.0 subsystem numbering.
-    Timeline: added "pcbic v1.0.0" and "install v1.10" sections.
-    Cumulative totals: bumped tracked-file count to 10,520.
+  install.c needs the redx binary at runtime. Build it in the repo:
+    cd pcb1541/install/archivers/redx && make
 
-  APPLY.txt  (rewritten — this file)
+  Then either put redx in your PATH, or pass its path to install:
+    ./install --redx /path/to/redx --archives /where/reds/live \
+              --target /where/install/goes INSTALL.DAT
+
+  Matches Clark's original shell-out pattern (INSTALL.EXE shells to
+  DSZ/GSZ for external protocols; we shell to redx for archives).
+
+WHAT'S IN THE FILE-CHANGES
+
+  pcb1541/install/src/install.c (rewritten, 518 -> ~950 lines)
+    Additions:
+     - inst_make_temp_dir / inst_remove_temp_dir
+     - inst_cmd_begin_lib / inst_cmd_end_lib (shell out to redx)
+     - inst_find_extracted (name + numeric-key source resolution)
+     - inst_cmd_file (parse @File src [@Size N] @Out|@AppendTo dst)
+     - inst_cmd_copy / inst_cmd_delete / inst_cmd_file_attr
+     - inst_parse_quoted_pair (parses "a","b" from @Foo("a","b"))
+     - inst_normalize_path (cross-platform DOS path handling)
+     - inst_mkdir_p (recursive mkdir)
+     - inst_copy_file (with append mode)
+     - CLI args: -a/--archives, -t/--target, -r/--redx
+    Existing v1.10.0 handlers unchanged.
+
+  pcb1541/install/src/Makefile (new) - cross-platform build.
+  pcb1541/install/src/README.md (new) - build + usage + progress.
+
+  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md (modified)
+    Flipped 6 directives from spec-only -> v1.10.1.
+    Clarified @Files and @Path are actually CONFIG.SYS/AUTOEXEC.BAT
+    system-config directives (v1.10.5), not file ops.
+    Progress table row for v1.10.1 filled in.
+
+  HISTORY.md (modified) - v1.10.1 sub-phase expanded to "shipped".
 
 NEXT AFTER THIS PUSH
 
-  install v1.10.1 — redx wire-up. First real code change to install.c:
-   - @BeginLib / @EndLib / @File / @Files
-   - @Copy / @Delete / @AppendTo / @FileAttr
-   - Logic lifted from pcb1541/install/dist/target/rebuild_place.py
-   - Acceptance: install.c against real INSTALL.DAT produces target/
-     files matching pcb1541/install/dist/target/ md5s.
+  install v1.10.2 - variables + control flow + string ops:
+   - @If / @Endif (case-fold with @EndIf) / @Else
+   - @Goto / @Label (script-position jumps)
+   - @Set (assign a value to a variable)
+   - @StrLen / @StrHead / @StrToken (string utilities)
+   - @Exists as an @If predicate
+   - @FileAttr return value integrated with @If
+  Acceptance: real INSTALL.DAT can run beyond the first @If block
+  without falling through to unintended branches.
 
---hexadecimal & crew, install v1.10.0, 2026-09-05
+--hexadecimal & crew, install v1.10.1, 2026-09-05

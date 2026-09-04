@@ -7,7 +7,7 @@ reimplementation at `pcb1541/install/src/install.c` must match).
 This document is grown as install v1.10.1 → v1.10.5 lands each
 directive's implementation. Entries marked **spec-only** haven't
 been coded yet; entries marked **v1.10.N** have been implemented in
-that sub-phase.
+that sub-phase (v1.10.1 shipped 6 directives — file operations).
 
 ## Source
 
@@ -121,16 +121,16 @@ and 481 files land byte-perfect.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@BeginLib`  |   8 | 323 | parsed (stubbed) | Open a `.RED` archive to extract from |
-| `@EndLib`    |   8 | 331 | parsed | Close it |
-| `@File`      | 491 | 324 | parsed (stubbed) | Place one file from the current archive |
-| `@Files`     |   1 | 876 | **spec-only** | Bulk file operation (context-dependent) |
-| `@Size`      | 476 | 339 | **spec-only** | Expected size of the current `@File` (verification) |
-| `@Path`      |   1 | 883 | **spec-only** | Path override for the current file |
-| `@Copy`      |   1 | 252 | **spec-only** | Copy a file (non-archive source) |
-| `@Delete`    |   6 |1158 | **spec-only** | Delete a file |
-| `@AppendTo`  |   1 | 559 | **spec-only** | Append content to a file |
-| `@FileAttr`  |   8 | 888 | **spec-only** | Set file attributes (read-only, hidden, etc.) |
+| `@BeginLib`  |   8 | 323 | **v1.10.1**      | Open a `.RED` archive to extract from |
+| `@EndLib`    |   8 | 331 | **v1.10.1** | Close it |
+| `@File`      | 491 | 324 | **v1.10.1**      | Place one file from the current archive |
+| `@Files`     |   1 | 876 | **spec-only** (v1.10.5 — CONFIG.SYS FILES=N, not a file op) | Sets `FILES=N` in generated CONFIG.SYS |
+| `@Size`      | 476 | 339 | **v1.10.1** (as `@File` subclause) | Expected size of the current `@File` (verification) |
+| `@Path`      |   1 | 883 | **spec-only** (v1.10.5 — AUTOEXEC.BAT PATH=..., not a file op) | Sets `PATH=...` in generated AUTOEXEC.BAT |
+| `@Copy`      |   1 | 252 | **v1.10.1**   | Copy a file (non-archive source), syntax `@Copy("src","dst")` |
+| `@Delete`    |   6 |1158 | **v1.10.1**   | Delete a file (or directory), syntax `@Delete("path")` |
+| `@AppendTo`  |   1 | 559 | **v1.10.1** (as `@File` subclause) | Append content to a file instead of overwriting |
+| `@FileAttr`  |   8 | 888 | **v1.10.1**   | Set file attributes: `@FileAttr("path","r-")` sets r/o, `"r+"` clears |
 
 ### 8. Disk sequencing (v1.10.3 planned)
 
@@ -188,7 +188,7 @@ Running total of directives coded in `pcb1541/install/src/install.c`
 | Phase | Directives | Cumulative | Notes |
 |---|---:|---:|---|
 | v1.10.0 | 12 | 12 | Existing Phase 27 stub — project metadata + basic display |
-| v1.10.1 |  8 | 20 | File/archive operations (redx wire-up) |
+| v1.10.1 |  6 | 18 | File operations via redx wire-up (@BeginLib/@EndLib/@File/@Copy/@Delete/@FileAttr; @Out/@Size/@AppendTo as @File subclauses). Verified byte-perfect against dist/target/. |
 | v1.10.2 |  ? |  ? | Vars + control flow + string ops |
 | v1.10.3 |  ? |  ? | Filesystem + disk sequencing |
 | v1.10.4 |  ? |  ? | Interactive menu |

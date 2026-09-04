@@ -1,24 +1,33 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* install.c -- PCBoard Installer (Phase 27 Reproduction)                   */
-/*                                                                           */
-/* Exact reproduction of Clark's INSTALL.EXE (331K, Aug 31 1996).            */
-/* Script-driven installer that reads INSTALL.DAT and processes              */
-/* @Command directives to install PCBoard from distribution disks.           */
-/*                                                                           */
-/* Original source: W:/master/install/main.c (from string scan)              */
-/*                                                                           */
-/* This file implements the ~40 @ commands actually used by PCBoard's        */
-/* INSTALL.DAT. The full INSTALL.EXE supports 250+ commands but most         */
-/* are for other Clark products.                                              */
-/*                                                                           */
-/* DEPENDENCY: .RED container extraction/creation                            */
-/*   The @BeginLib/@File/@EndLib directives unpack files from Clark's        */
-/*   .RED containers (RR magic, LH5-family compression, per-record header    */
-/*   with compressed/uncompressed sizes and CRC16). Once pcb1541/install/archivers/redx      */
-/*   and pcb1541/install/archivers/redc land (built on pcb1541/install/archivers/lha/), this installer       */
-/*   links against them instead of shelling out. See pcb1541/install/archivers/README.md     */
-/*   for the codec phase plan.                                                */
-/*                                                                           */
+/* install.c -- PCBoard Installer (install v1.10.1)                          */
+/*                                                                            */
+/* C reimplementation of Clark's INSTALL.EXE (338,548 B, NE format).          */
+/* Reads INSTALL.DAT and processes @-directives to lay down 481 files of      */
+/* a PCBoard install from Clark's 8 .RED archives.                            */
+/*                                                                            */
+/* Original binary strings:                                                   */
+/*   $Logfile: W:/master/install/main.c_v $                                   */
+/*   INSTALL Ver ... Copyright (c) 1987-1995                                  */
+/*                                                                            */
+/* Phase progress (60 semantically distinct @-directives total):              */
+/*   v1.10.0  --  12  Project metadata + display + basic control              */
+/*                    (@DefineProject/@EndProject/@Name/@Version/@Subdir/     */
+/*                     @OutDrive/@Requires/@HardDisk/@Display/@EndDisplay/    */
+/*                     @Cls/@Pause + @DefineVars/@EndVars/@Abort/@Exit)       */
+/*   v1.10.1  --   6  File operations                                         */
+/*                    (@BeginLib/@EndLib/@File[@Out/@Size/@AppendTo]/         */
+/*                     @Copy/@Delete/@FileAttr)                               */
+/*   v1.10.2      Variables + control flow + string ops                       */
+/*   v1.10.3      Filesystem + disk sequencing                                */
+/*   v1.10.4      Interactive menu                                            */
+/*   v1.10.5      System hooks + finish                                       */
+/*   v1.10.6      Disassembly parity check against INSTALL.EXE                */
+/*                                                                            */
+/* Runtime dep: redx binary (pcb1541/install/archivers/redx) — this           */
+/* installer shells out to `redx extract <archive> <destdir>` for each        */
+/* @BeginLib block. See RUNTIME-DEPS.md for the full runtime-dependency       */
+/* list (matches Clark's original shell-out pattern to DSZ/GSZ etc).          */
+/*                                                                            */
 /* License: GPLv3                                                            */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
@@ -27,6 +36,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <errno.h>
 
 #ifdef __WATCOMC__
 #include <conio.h>
@@ -58,7 +68,7 @@
 #define MAX_VARS      64                /* max script variables           */
 #define MAX_GROUPS    16                /* max install groups             */
 #define MAX_LINE     512                /* max script line length         */
-#define MAX_PATH_LEN 260                /* max file path                 */
+#define MAX_PATH_LEN 260                /* max file path                  */
 #define MAX_LABELS    64                /* max @Goto labels               */
 
 
@@ -71,15 +81,15 @@
 
 #pragma pack(push, 1)
 typedef struct {
-    uint16_t Signature;                 /* 0x5252 "RR"                   */
-    uint8_t  Version;                   /* 0x01                          */
-    uint32_t CrcOrSize;                 /* CRC or compressed total       */
+    uint16_t Signature;                 /* 0x5252 "RR"                    */
+    uint8_t  Version;                   /* 0x01                           */
+    uint32_t CrcOrSize;                 /* CRC or compressed total        */
     uint32_t Field2;                    /* uncompressed size?             */
-    uint32_t Field3;                    /* data offset?                  */
-    uint16_t Marker;                    /* 0xFFFF                        */
-    uint32_t Field4;                    /* unknown                       */
-    uint16_t FileCount;                 /* number of files               */
-    uint16_t NameLen;                   /* length of first filename      */
+    uint32_t Field3;                    /* data offset?                   */
+    uint16_t Marker;                    /* 0xFFFF                         */
+    uint32_t Field4;                    /* unknown                        */
+    uint16_t FileCount;                 /* number of files                */
+    uint16_t NameLen;                   /* length of first filename       */
 } RedHeader;
 #pragma pack(pop)
 
@@ -90,45 +100,55 @@ typedef struct {
 
 typedef struct {
     char Name[32];                      /* variable name                 */
-    char Value[MAX_PATH_LEN];           /* variable value                */
+    char Value[MAX_PATH_LEN];           /* variable value                 */
 } ScriptVar;
 
 typedef struct {
-    char Name[64];                      /* group name                    */
-    int  Selected;                      /* selected by user              */
+    char Name[64];                      /* group name                     */
+    int  Selected;                      /* selected by user               */
 } InstGroup;
 
 typedef struct {
-    char Name[32];                      /* label name                    */
-    long FilePos;                       /* position in script file       */
+    char Name[32];                      /* label name                     */
+    long FilePos;                       /* position in script file        */
 } ScriptLabel;
 
 typedef struct {
     /* Project info */
-    char     ProjName[64];              /* @Name value                   */
-    char     ProjVersion[16];           /* @Version value                */
-    char     SubDir[MAX_PATH_LEN];      /* install subdirectory          */
-    char     OutDrive;                  /* output drive letter           */
-    char     InDrive;                   /* input drive letter            */
+    char     ProjName[64];              /* @Name value                    */
+    char     ProjVersion[16];           /* @Version value                 */
+    char     SubDir[MAX_PATH_LEN];      /* install subdirectory           */
+    char     OutDrive;                  /* output drive letter            */
+    char     InDrive;                   /* input drive letter             */
 
     /* Variables */
-    ScriptVar Vars[MAX_VARS];           /* user-defined variables        */
-    int       NumVars;                  /* variable count                */
+    ScriptVar Vars[MAX_VARS];           /* user-defined variables         */
+    int       NumVars;                  /* variable count                 */
 
     /* Groups */
-    InstGroup Groups[MAX_GROUPS];       /* install option groups         */
-    int       NumGroups;                /* group count                   */
+    InstGroup Groups[MAX_GROUPS];       /* install option groups          */
+    int       NumGroups;                /* group count                    */
 
     /* Labels */
-    ScriptLabel Labels[MAX_LABELS];     /* @Goto targets                 */
-    int         NumLabels;              /* label count                   */
+    ScriptLabel Labels[MAX_LABELS];     /* @Goto targets                  */
+    int         NumLabels;              /* label count                    */
 
     /* State */
-    FILE    *ScriptFp;                  /* INSTALL.DAT file handle       */
-    int      UseCheckBox;               /* checkbox mode for groups      */
-    int      AskOverwrite;              /* ask before overwriting files   */
-    int      Aborted;                   /* user pressed ESC              */
-    char     CurrentDisk[32];           /* current disk label            */
+    FILE    *ScriptFp;                  /* INSTALL.DAT file handle        */
+    int      UseCheckBox;               /* checkbox mode for groups       */
+    int      AskOverwrite;              /* ask before overwriting files    */
+    int      Aborted;                   /* user pressed ESC               */
+    char     CurrentDisk[32];           /* current disk label             */
+
+    /* v1.10.1 additions: archive-extraction state */
+    char     ArchivesDir[MAX_PATH_LEN]; /* where .RED archives live       */
+    char     TargetRoot[MAX_PATH_LEN];  /* where output tree gets built   */
+    char     RedxPath[MAX_PATH_LEN];    /* path to redx CLI binary        */
+    char     CurrentArchive[64];        /* current @BeginLib archive name */
+    char     ExtractDir[MAX_PATH_LEN];  /* temp dir with extracted files  */
+    int      InLibBlock;                /* 1 while inside @BeginLib...@EndLib */
+    long     FilesPlaced;               /* running count of @File ops      */
+    long     FilesFailed;               /* running count of failures       */
 } InstState;
 
 
@@ -138,7 +158,7 @@ typedef struct {
 
 static void inst_set_var(InstState *St, const char *Name, const char *Value)
 {
-    int i;                              /* search index                  */
+    int i;                              /* search index                   */
 
     for (i = 0; i < St->NumVars; i++) {
         if (strcasecmp(St->Vars[i].Name, Name) == 0) {
@@ -160,7 +180,7 @@ static void inst_set_var(InstState *St, const char *Name, const char *Value)
 
 static const char *inst_get_var(InstState *St, const char *Name)
 {
-    int i;                              /* search index                  */
+    int i;                              /* search index                   */
 
     /* Built-in variables */
     if (strcasecmp(Name, "Name") == 0)     return St->ProjName;
@@ -184,19 +204,21 @@ static const char *inst_get_var(InstState *St, const char *Name)
 /* inst_expand() -- Expand @Variable references in a string             */
 /*                                                                       */
 /* Replaces @Name, @Version, @SubDir, @OutDrive, and user variables.    */
+/* Also translates escaped backslashes (\\\\ → \) and normalizes         */
+/* Clark's @Foo:@Bar path style.                                         */
 /*-----------------------------------------------------------------------*/
 
 static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
 {
-    const char *p = Src;                /* source scan pointer           */
-    int         d = 0;                  /* destination position          */
+    const char *p = Src;                /* source scan pointer            */
+    int         d = 0;                  /* destination position           */
 
     while (*p && d < DstSize - 1) {
         if (*p == '@') {
             /* Extract variable name */
-            char VarName[64];           /* variable name buffer          */
-            int  v = 0;                 /* name position                 */
-            const char *Val;            /* resolved value                */
+            char VarName[64];           /* variable name buffer           */
+            int  v = 0;                 /* name position                  */
+            const char *Val;            /* resolved value                 */
 
             p++;
             while (*p && (isalnum(*p) || *p == '_') && v < 63)
@@ -206,6 +228,10 @@ static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
             Val = inst_get_var(St, VarName);
             while (*Val && d < DstSize - 1)
                 Dst[d++] = *Val++;
+        } else if (*p == '\\' && *(p+1) == '\\') {
+            /* Collapse escaped backslash pair to single */
+            Dst[d++] = '\\';
+            p += 2;
         } else {
             Dst[d++] = *p++;
         }
@@ -215,102 +241,160 @@ static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
 
 
 /*-----------------------------------------------------------------------*/
-/* inst_group_selected() -- Check if a group is selected                */
+/* inst_normalize_path() -- Turn DOS-style path into host-native path    */
+/*                                                                       */
+/* Under Unix hosts, converts "C:\PCB\FOO.EXE" to "<TargetRoot>/FOO.EXE" */
+/* (drops the drive letter, converts backslashes to forward slashes,     */
+/* strips the top-level SubDir since TargetRoot already includes it).    */
+/* Under DOS/Windows hosts, path is used mostly as-is.                    */
 /*-----------------------------------------------------------------------*/
 
-static int inst_group_selected(InstState *St, const char *VarName)
+static void inst_normalize_path(InstState *St, const char *Src, char *Dst,
+                                int DstSize)
 {
-    int i;                              /* search index                  */
+    const char *p = Src;                /* scan pointer                   */
+    int  d = 0;                         /* destination position           */
+    char SubDirNoSlash[MAX_PATH_LEN];   /* SubDir without leading slash   */
+    int  SubDirLen;                     /* how many chars to strip         */
 
-    /* Groups are stored as single-letter variables (a-z) */
-    for (i = 0; i < St->NumGroups; i++) {
-        if (strcasecmp(St->Groups[i].Name, VarName) == 0)
-            return St->Groups[i].Selected;
+#if PATH_SEP == '/'
+    /* Cross-platform: drop drive letter, strip top-level SubDir */
+    if (isalpha(*p) && *(p+1) == ':') p += 2;
+    while (*p == '\\' || *p == '/') p++;
+
+    /* If path starts with SubDir (e.g. "PCB\FOO"), strip it — TargetRoot
+     * already lands us inside it. */
+    strcpy(SubDirNoSlash, St->SubDir);
+    {
+        char *s = SubDirNoSlash;
+        while (*s == '\\' || *s == '/') memmove(s, s+1, strlen(s));
+        while (SubDirNoSlash[strlen(SubDirNoSlash)-1] == '\\' ||
+               SubDirNoSlash[strlen(SubDirNoSlash)-1] == '/')
+            SubDirNoSlash[strlen(SubDirNoSlash)-1] = '\0';
     }
-    return 0;
+    SubDirLen = (int)strlen(SubDirNoSlash);
+    if (SubDirLen > 0 && strncasecmp(p, SubDirNoSlash, SubDirLen) == 0 &&
+        (p[SubDirLen] == '\\' || p[SubDirLen] == '/')) {
+        p += SubDirLen + 1;
+    }
+
+    /* Prepend TargetRoot */
+    {
+        const char *tr = St->TargetRoot;
+        while (*tr && d < DstSize - 1) Dst[d++] = *tr++;
+        if (d > 0 && Dst[d-1] != '/') Dst[d++] = '/';
+    }
+    /* Copy the rest, converting backslash to forward */
+    while (*p && d < DstSize - 1) {
+        Dst[d++] = (*p == '\\') ? '/' : *p;
+        p++;
+    }
+#else
+    /* DOS/Windows host: path is basically fine as-is */
+    while (*p && d < DstSize - 1) Dst[d++] = *p++;
+#endif
+    Dst[d] = '\0';
 }
 
 
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/*                      .RED Decompression Stub                              */
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*-----------------------------------------------------------------------*/
+/* inst_mkdir_p() -- Recursive mkdir (like `mkdir -p`)                  */
+/*-----------------------------------------------------------------------*/
 
-/* TODO: Reverse engineer exact decompression algorithm from INSTALL.EXE.
- * For now, stub that reads the .RED header and reports file entries.
- * The actual decompression needs to be determined from disassembly. */
+static void inst_mkdir_p(const char *Path)
+{
+    char Tmp[MAX_PATH_LEN];             /* working path buffer            */
+    char *p;                            /* scan pointer                   */
+
+    strncpy(Tmp, Path, sizeof(Tmp) - 1);
+    Tmp[sizeof(Tmp) - 1] = '\0';
+
+    for (p = Tmp + 1; *p; p++) {
+        if (*p == '/' || *p == '\\') {
+            char Save = *p;
+            *p = '\0';
+#ifdef _WIN32
+            _mkdir(Tmp);
+#elif defined(__WATCOMC__)
+            mkdir(Tmp);
+#else
+            mkdir(Tmp, 0755);
+#endif
+            *p = Save;
+        }
+    }
+#ifdef _WIN32
+    _mkdir(Tmp);
+#elif defined(__WATCOMC__)
+    mkdir(Tmp);
+#else
+    mkdir(Tmp, 0755);
+#endif
+}
 
 
 /*-----------------------------------------------------------------------*/
-/* red_open() -- Open and validate a .RED archive                       */
+/* inst_copy_file() -- Byte-copy Src to Dst, optionally in append mode  */
 /*                                                                       */
 /* Returns 0 on success, -1 on error.                                    */
 /*-----------------------------------------------------------------------*/
 
-static int red_open(const char *Path, FILE **Fp)
+static int inst_copy_file(const char *Src, const char *Dst, int Append)
 {
-    RedHeader Hdr;                      /* archive header                */
+    FILE *In  = fopen(Src, "rb");
+    FILE *Out;
+    char  Buf[8192];                    /* copy buffer                    */
+    size_t n;                           /* bytes read this iteration      */
 
-    *Fp = fopen(Path, "rb");
-    if (!*Fp) {
-        printf(" ERROR: Cannot open %s\n", Path);
-        return -1;
+    if (!In) return -1;
+
+    /* Ensure destination dir exists */
+    {
+        char Dir[MAX_PATH_LEN];         /* dir portion of Dst             */
+        char *LastSep;                  /* last separator                 */
+        strncpy(Dir, Dst, sizeof(Dir) - 1);
+        Dir[sizeof(Dir) - 1] = '\0';
+        LastSep = strrchr(Dir, '/');
+        if (!LastSep) LastSep = strrchr(Dir, '\\');
+        if (LastSep) {
+            *LastSep = '\0';
+            inst_mkdir_p(Dir);
+        }
     }
 
-    if (fread(&Hdr, sizeof(Hdr), 1, *Fp) != 1) {
-        printf(" ERROR: Cannot read header from %s\n", Path);
-        fclose(*Fp);
-        return -1;
-    }
+    Out = fopen(Dst, Append ? "ab" : "wb");
+    if (!Out) { fclose(In); return -1; }
 
-    if (Hdr.Signature != RED_SIGNATURE || Hdr.Version != RED_VERSION) {
-        printf(" ERROR: Invalid .RED signature in %s\n", Path);
-        fclose(*Fp);
-        return -1;
-    }
+    while ((n = fread(Buf, 1, sizeof(Buf), In)) > 0)
+        fwrite(Buf, 1, n, Out);
 
+    fclose(In);
+    fclose(Out);
     return 0;
 }
 
 
 /*-----------------------------------------------------------------------*/
-/* red_extract_file() -- Extract a named file from a .RED archive       */
+/* inst_read_block() -- Read lines until a terminator directive          */
 /*                                                                       */
-/* TODO: Implement actual decompression. Currently a stub.               */
+/* Concatenates lines into Buf until the terminator (e.g. "@EndDisplay") */
+/* is seen. Used for @Display blocks.                                    */
 /*-----------------------------------------------------------------------*/
 
-static int red_extract_file(FILE *RedFp, const char *FileName,
-                             const char *OutPath)
-{
-    /* STUB — needs decompression algorithm from disassembly */
-    printf("  Extracting %s -> %s\n", FileName, OutPath);
-    (void)RedFp;
-    return 0;
-}
-
-
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/*                     Script Command Dispatcher                             */
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-
-
-/*-----------------------------------------------------------------------*/
-/* inst_read_block() -- Read a multi-line block until @End<token>        */
-/*-----------------------------------------------------------------------*/
-
-static void inst_read_block(InstState *St, const char *EndToken,
+static void inst_read_block(InstState *St, const char *EndTag,
                              char *Buf, int BufSize)
 {
-    char Line[MAX_LINE];                /* line read buffer              */
-    int  Pos = 0;                       /* buffer write position         */
+    char Line[MAX_LINE];                /* line read buffer               */
+    int  TagLen = (int)strlen(EndTag);  /* terminator length              */
+    int  Pos = 0;                       /* buffer position                */
 
     Buf[0] = '\0';
+
     while (fgets(Line, sizeof(Line), St->ScriptFp)) {
-        char *p = Line;                 /* line scan pointer             */
+        char *p = Line;                 /* line scan pointer              */
 
         while (*p == ' ' || *p == '\t') p++;
-
-        /* Check for end token */
-        if (strncasecmp(p, EndToken, strlen(EndToken)) == 0)
+        if (strncasecmp(p, EndTag, TagLen) == 0)
             break;
 
         /* Append to buffer */
@@ -332,8 +416,8 @@ static void inst_read_block(InstState *St, const char *EndToken,
 
 static void inst_cmd_display(InstState *St)
 {
-    char Block[4096];                   /* display text buffer           */
-    char Expanded[4096];                /* after variable expansion      */
+    char Block[4096];                   /* display text buffer            */
+    char Expanded[4096];                /* after variable expansion       */
 
     inst_read_block(St, "@EndDisplay", Block, sizeof(Block));
     inst_expand(St, Block, Expanded, sizeof(Expanded));
@@ -348,12 +432,12 @@ static void inst_cmd_display(InstState *St)
 
 static void inst_cmd_define_project(InstState *St)
 {
-    char Line[MAX_LINE];                /* line read buffer              */
+    char Line[MAX_LINE];                /* line read buffer               */
 
     while (fgets(Line, sizeof(Line), St->ScriptFp)) {
-        char *p = Line;                 /* line scan pointer             */
-        char  Key[64];                  /* parsed key                    */
-        char  Val[256];                 /* parsed value                  */
+        char *p = Line;                 /* line scan pointer              */
+        char  Key[64];                  /* parsed key                     */
+        char  Val[256];                 /* parsed value                   */
 
         while (*p == ' ' || *p == '\t') p++;
         if (strncasecmp(p, "@EndProject", 11) == 0) break;
@@ -362,7 +446,7 @@ static void inst_cmd_define_project(InstState *St)
         if (sscanf(p, "%63s = %255[^\r\n]", Key, Val) == 2) {
             /* Strip quotes */
             if (Val[0] == '"') {
-                char *End;              /* closing quote pointer         */
+                char *End;              /* closing quote pointer          */
                 memmove(Val, Val + 1, strlen(Val));
                 End = strrchr(Val, '"');
                 if (End) *End = '\0';
@@ -394,13 +478,13 @@ static void inst_cmd_define_project(InstState *St)
 
 static void inst_cmd_define_vars(InstState *St)
 {
-    char Line[MAX_LINE];                /* line read buffer              */
+    char Line[MAX_LINE];                /* line read buffer               */
 
     while (fgets(Line, sizeof(Line), St->ScriptFp)) {
-        char *p = Line;                 /* line scan pointer             */
-        char  Type[32];                 /* variable type                 */
-        char  Name[64];                 /* variable name                 */
-        char  Val[256] = "";            /* default value                 */
+        char *p = Line;                 /* line scan pointer              */
+        char  Type[32];                 /* variable type                  */
+        char  Name[64];                 /* variable name                  */
+        char  Val[256] = "";            /* default value                  */
 
         while (*p == ' ' || *p == '\t') p++;
         if (strncasecmp(p, "@EndVars", 8) == 0) break;
@@ -410,7 +494,7 @@ static void inst_cmd_define_vars(InstState *St)
             if (Name[0] == '@') memmove(Name, Name + 1, strlen(Name));
             /* Strip quotes from value */
             if (Val[0] == '"') {
-                char *End;              /* closing quote pointer         */
+                char *End;              /* closing quote pointer          */
                 memmove(Val, Val + 1, strlen(Val));
                 End = strrchr(Val, '"');
                 if (End) *End = '\0';
@@ -421,16 +505,430 @@ static void inst_cmd_define_vars(InstState *St)
 }
 
 
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*                    v1.10.1 File Operations                                */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+/*-----------------------------------------------------------------------*/
+/* inst_make_temp_dir() -- Create a per-archive extraction scratch dir  */
+/*-----------------------------------------------------------------------*/
+
+static void inst_make_temp_dir(InstState *St, const char *ArchName)
+{
+    const char *TmpBase;                /* /tmp or %TEMP%                 */
+
+#ifdef _WIN32
+    TmpBase = getenv("TEMP");
+    if (!TmpBase) TmpBase = "C:\\TEMP";
+#else
+    TmpBase = getenv("TMPDIR");
+    if (!TmpBase) TmpBase = "/tmp";
+#endif
+
+    snprintf(St->ExtractDir, sizeof(St->ExtractDir),
+             "%s%cpcbinst.%d.%s",
+             TmpBase, PATH_SEP, (int)(long)time(NULL), ArchName);
+    inst_mkdir_p(St->ExtractDir);
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_remove_temp_dir() -- rm -rf the scratch dir after @EndLib       */
+/*-----------------------------------------------------------------------*/
+
+static void inst_remove_temp_dir(InstState *St)
+{
+    char Cmd[MAX_PATH_LEN + 32];        /* shell command buffer           */
+
+    if (St->ExtractDir[0] == '\0') return;
+
+#ifdef _WIN32
+    snprintf(Cmd, sizeof(Cmd), "rmdir /s /q \"%s\" 2>nul", St->ExtractDir);
+#else
+    snprintf(Cmd, sizeof(Cmd), "rm -rf \"%s\"", St->ExtractDir);
+#endif
+    system(Cmd);
+    St->ExtractDir[0] = '\0';
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_begin_lib() -- Handle @BeginLib <archive>                   */
+/*                                                                       */
+/* Shells out to redx to extract the archive into a temp dir. All @File */
+/* directives until the matching @EndLib pull from this temp dir.        */
+/*-----------------------------------------------------------------------*/
+
+static int inst_cmd_begin_lib(InstState *St, const char *ArchName)
+{
+    char ArchPath[MAX_PATH_LEN];        /* full path to archive           */
+    char Cmd[MAX_PATH_LEN * 3];         /* shell command buffer           */
+    int  Rc;                            /* system() return code           */
+
+    strncpy(St->CurrentArchive, ArchName, sizeof(St->CurrentArchive) - 1);
+    St->InLibBlock = 1;
+
+    /* Locate the archive file */
+    snprintf(ArchPath, sizeof(ArchPath), "%s%c%s",
+             St->ArchivesDir, PATH_SEP, ArchName);
+
+    inst_make_temp_dir(St, ArchName);
+
+    /* Shell out: cd <extractdir> && redx extract <archive> */
+    snprintf(Cmd, sizeof(Cmd),
+             "cd \"%s\" && \"%s\" extract \"%s\" > /dev/null 2>&1",
+             St->ExtractDir, St->RedxPath, ArchPath);
+
+#ifdef _WIN32
+    /* Windows: use "cd /D" for cross-drive, redirect to nul */
+    snprintf(Cmd, sizeof(Cmd),
+             "cd /D \"%s\" && \"%s\" extract \"%s\" > nul 2>&1",
+             St->ExtractDir, St->RedxPath, ArchPath);
+#endif
+
+    Rc = system(Cmd);
+    if (Rc != 0) {
+        printf("  WARNING: redx extract failed for %s (rc=%d)\n",
+               ArchName, Rc);
+        return -1;
+    }
+
+    return 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_end_lib() -- Handle @EndLib                                  */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_end_lib(InstState *St)
+{
+    inst_remove_temp_dir(St);
+    St->CurrentArchive[0] = '\0';
+    St->InLibBlock = 0;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_find_extracted() -- Locate a source by key in ExtractDir         */
+/*                                                                       */
+/* Sources can be named (PCBOARD.EXE) or numeric (1, 2, ..., A, B ...).  */
+/* Numeric keys map to whatever the archive listed at that position.     */
+/* Returns 0 on success, -1 if not found.                                */
+/*-----------------------------------------------------------------------*/
+
+static int inst_find_extracted(InstState *St, const char *SrcKey,
+                                long ExpectedSize, char *FoundPath,
+                                int PathSize)
+{
+#ifdef _WIN32
+    /* Windows: use FindFirstFile — deferred for cross-compile test */
+    (void)St; (void)SrcKey; (void)ExpectedSize;
+    FoundPath[0] = '\0'; (void)PathSize;
+    return -1;
+#else
+    DIR *D = opendir(St->ExtractDir);
+    struct dirent *E;
+    struct stat St2;
+    char Full[MAX_PATH_LEN];
+
+    if (!D) return -1;
+
+    /* First try: exact name match */
+    while ((E = readdir(D))) {
+        if (strcasecmp(E->d_name, SrcKey) == 0) {
+            snprintf(Full, sizeof(Full), "%s/%s", St->ExtractDir, E->d_name);
+            if (stat(Full, &St2) == 0) {
+                if (ExpectedSize > 0 && St2.st_size != ExpectedSize) continue;
+                strncpy(FoundPath, Full, PathSize - 1);
+                FoundPath[PathSize - 1] = '\0';
+                closedir(D);
+                return 0;
+            }
+        }
+    }
+    rewinddir(D);
+
+    /* Second try: exact size match (for numeric-key sources) */
+    if (ExpectedSize > 0) {
+        while ((E = readdir(D))) {
+            if (E->d_name[0] == '.') continue;
+            snprintf(Full, sizeof(Full), "%s/%s", St->ExtractDir, E->d_name);
+            if (stat(Full, &St2) == 0 && St2.st_size == ExpectedSize) {
+                strncpy(FoundPath, Full, PathSize - 1);
+                FoundPath[PathSize - 1] = '\0';
+                closedir(D);
+                return 0;
+            }
+        }
+    }
+
+    closedir(D);
+    return -1;
+#endif
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_file() -- Handle @File src [@Size N] @Out|@AppendTo dst     */
+/*                                                                       */
+/* Parses the directive, resolves src in the current ExtractDir,         */
+/* verifies @Size if given, then copies (or appends) to dst.             */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_file(InstState *St, const char *Line)
+{
+    char  SrcKey[128];                  /* source key (name or numeric)   */
+    char  DstRaw[MAX_PATH_LEN];         /* destination as written         */
+    char  DstExpanded[MAX_PATH_LEN];    /* after variable expansion       */
+    char  DstNormalized[MAX_PATH_LEN];  /* after path normalization       */
+    char  SrcPath[MAX_PATH_LEN];        /* resolved source in ExtractDir  */
+    long  ExpectedSize = 0;             /* @Size value, 0 if not given    */
+    int   IsAppend = 0;                 /* 1 for @AppendTo, 0 for @Out    */
+    const char *p = Line;               /* scan pointer                   */
+    int   n;                            /* sscanf arg count               */
+
+    if (!St->InLibBlock) return;        /* @File only valid inside @BeginLib */
+
+    /* Skip past "@File " */
+    while (*p == ' ' || *p == '\t') p++;
+    if (strncasecmp(p, "@File", 5) == 0) p += 5;
+    while (*p == ' ' || *p == '\t') p++;
+
+    /* First token: source key */
+    n = 0;
+    while (*p && !isspace(*p) && n < 127) SrcKey[n++] = *p++;
+    SrcKey[n] = '\0';
+    while (*p == ' ' || *p == '\t') p++;
+
+    /* Optional @Size N */
+    if (strncasecmp(p, "@Size", 5) == 0) {
+        p += 5;
+        while (*p == ' ' || *p == '\t') p++;
+        ExpectedSize = strtol(p, (char **)&p, 10);
+        while (*p == ' ' || *p == '\t') p++;
+    }
+
+    /* @Out or @AppendTo */
+    if (strncasecmp(p, "@AppendTo", 9) == 0) {
+        IsAppend = 1;
+        p += 9;
+    } else if (strncasecmp(p, "@Out", 4) == 0) {
+        p += 4;
+    } else {
+        /* Malformed line — skip */
+        St->FilesFailed++;
+        return;
+    }
+    while (*p == ' ' || *p == '\t') p++;
+
+    /* Rest is destination (may include embedded @vars) */
+    n = 0;
+    while (*p && *p != '\r' && *p != '\n' && n < MAX_PATH_LEN - 1)
+        DstRaw[n++] = *p++;
+    DstRaw[n] = '\0';
+    /* Strip trailing whitespace */
+    while (n > 0 && (DstRaw[n-1] == ' ' || DstRaw[n-1] == '\t'))
+        DstRaw[--n] = '\0';
+
+    /* Expand @vars in dst */
+    inst_expand(St, DstRaw, DstExpanded, sizeof(DstExpanded));
+    inst_normalize_path(St, DstExpanded, DstNormalized, sizeof(DstNormalized));
+
+    /* Resolve src in ExtractDir */
+    if (inst_find_extracted(St, SrcKey, ExpectedSize, SrcPath,
+                             sizeof(SrcPath)) != 0) {
+        printf("  MISS  %s (size=%ld) in %s\n", SrcKey, ExpectedSize,
+               St->CurrentArchive);
+        St->FilesFailed++;
+        return;
+    }
+
+    /* Copy or append */
+    if (inst_copy_file(SrcPath, DstNormalized, IsAppend) != 0) {
+        printf("  FAIL  %s -> %s (%s)\n", SrcKey, DstNormalized,
+               strerror(errno));
+        St->FilesFailed++;
+        return;
+    }
+
+    St->FilesPlaced++;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_parse_quoted_pair() -- Extract "arg1","arg2" from @Cmd("a","b") */
+/*                                                                       */
+/* Returns number of args parsed (0, 1, or 2).                          */
+/*-----------------------------------------------------------------------*/
+
+static int inst_parse_quoted_pair(const char *Line, char *Arg1, int A1Size,
+                                    char *Arg2, int A2Size)
+{
+    const char *p = Line;               /* scan pointer                   */
+    int  n;                             /* arg-fill index                 */
+
+    Arg1[0] = Arg2[0] = '\0';
+
+    /* Skip to opening paren */
+    while (*p && *p != '(') p++;
+    if (!*p) return 0;
+    p++;
+    /* Skip to opening quote */
+    while (*p && *p != '"') p++;
+    if (!*p) return 0;
+    p++;
+    /* Fill Arg1 until closing quote */
+    n = 0;
+    while (*p && *p != '"' && n < A1Size - 1) Arg1[n++] = *p++;
+    Arg1[n] = '\0';
+    if (*p != '"') return 1;
+    p++;
+    /* Skip to comma + opening quote */
+    while (*p && *p != ',') p++;
+    if (!*p) return 1;
+    while (*p && *p != '"') p++;
+    if (!*p) return 1;
+    p++;
+    /* Fill Arg2 until closing quote */
+    n = 0;
+    while (*p && *p != '"' && n < A2Size - 1) Arg2[n++] = *p++;
+    Arg2[n] = '\0';
+    return 2;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_copy() -- Handle @Copy("src","dst")                          */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_copy(InstState *St, const char *Line)
+{
+    char SrcRaw[MAX_PATH_LEN], DstRaw[MAX_PATH_LEN];
+    char SrcExp[MAX_PATH_LEN], DstExp[MAX_PATH_LEN];
+    char SrcNorm[MAX_PATH_LEN], DstNorm[MAX_PATH_LEN];
+
+    if (inst_parse_quoted_pair(Line, SrcRaw, sizeof(SrcRaw),
+                                DstRaw, sizeof(DstRaw)) != 2)
+        return;
+
+    inst_expand(St, SrcRaw, SrcExp, sizeof(SrcExp));
+    inst_expand(St, DstRaw, DstExp, sizeof(DstExp));
+    inst_normalize_path(St, SrcExp, SrcNorm, sizeof(SrcNorm));
+    inst_normalize_path(St, DstExp, DstNorm, sizeof(DstNorm));
+
+    /* @Copy source is usually in the current dir (not in an archive) —
+     * try both the ArchivesDir and normalized-in-target */
+    {
+        FILE *T = fopen(SrcNorm, "rb");
+        if (!T) {
+            /* Fall back: try SrcRaw directly (from InDrive:\SubDir) */
+            char AltSrc[MAX_PATH_LEN];
+            snprintf(AltSrc, sizeof(AltSrc), "%s%c%s",
+                     St->ArchivesDir, PATH_SEP, SrcRaw);
+            if (inst_copy_file(AltSrc, DstNorm, 0) == 0) {
+                St->FilesPlaced++;
+                return;
+            }
+            printf("  COPY-MISS  %s\n", SrcRaw);
+            St->FilesFailed++;
+            return;
+        }
+        fclose(T);
+    }
+
+    if (inst_copy_file(SrcNorm, DstNorm, 0) == 0)
+        St->FilesPlaced++;
+    else
+        St->FilesFailed++;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_delete() -- Handle @Delete("path")                           */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_delete(InstState *St, const char *Line)
+{
+    char PathRaw[MAX_PATH_LEN], PathExp[MAX_PATH_LEN];
+    char PathNorm[MAX_PATH_LEN], Dummy[16];
+
+    if (inst_parse_quoted_pair(Line, PathRaw, sizeof(PathRaw),
+                                Dummy, sizeof(Dummy)) < 1)
+        return;
+
+    inst_expand(St, PathRaw, PathExp, sizeof(PathExp));
+    inst_normalize_path(St, PathExp, PathNorm, sizeof(PathNorm));
+
+    /* Try file delete; if it's actually a dir, that's OK — remove recursively */
+    if (remove(PathNorm) != 0) {
+        /* Might be a directory */
+        char Cmd[MAX_PATH_LEN + 32];
+#ifdef _WIN32
+        snprintf(Cmd, sizeof(Cmd), "rmdir /s /q \"%s\" 2>nul", PathNorm);
+#else
+        snprintf(Cmd, sizeof(Cmd), "rm -rf \"%s\"", PathNorm);
+#endif
+        system(Cmd);
+    }
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_file_attr() -- Handle @FileAttr("path","r+"|"r-")            */
+/*                                                                       */
+/* Sets or clears the read-only attribute. Returns 0 on success, -1 on   */
+/* failure. Called both standalone and inside @If — the @If wrapper      */
+/* lands in v1.10.2 (control flow).                                      */
+/*-----------------------------------------------------------------------*/
+
+static int inst_cmd_file_attr(InstState *St, const char *Line)
+{
+    char PathRaw[MAX_PATH_LEN], PathExp[MAX_PATH_LEN];
+    char PathNorm[MAX_PATH_LEN], Mode[8];
+    int  ReadOnly;                      /* 1 = set r/o, 0 = clear         */
+
+    if (inst_parse_quoted_pair(Line, PathRaw, sizeof(PathRaw),
+                                Mode, sizeof(Mode)) != 2)
+        return -1;
+
+    inst_expand(St, PathRaw, PathExp, sizeof(PathExp));
+    inst_normalize_path(St, PathExp, PathNorm, sizeof(PathNorm));
+
+    ReadOnly = (Mode[0] == 'r' && Mode[1] == '-') ? 1 : 0;
+
+#ifdef _WIN32
+    {
+        DWORD attr = GetFileAttributesA(PathNorm);
+        if (attr == INVALID_FILE_ATTRIBUTES) return -1;
+        if (ReadOnly) attr |= FILE_ATTRIBUTE_READONLY;
+        else          attr &= ~FILE_ATTRIBUTE_READONLY;
+        return SetFileAttributesA(PathNorm, attr) ? 0 : -1;
+    }
+#else
+    {
+        struct stat s;
+        mode_t m;
+        if (stat(PathNorm, &s) != 0) return -1;
+        m = s.st_mode;
+        if (ReadOnly) m &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
+        else          m |=   S_IWUSR;
+        return chmod(PathNorm, m);
+    }
+#endif
+}
+
+
 /*-----------------------------------------------------------------------*/
 /* inst_process() -- Main script processing loop                        */
 /*-----------------------------------------------------------------------*/
 
 static int inst_process(InstState *St)
 {
-    char Line[MAX_LINE];                /* line read buffer              */
+    char Line[MAX_LINE];                /* line read buffer               */
 
     while (fgets(Line, sizeof(Line), St->ScriptFp)) {
-        char *p = Line;                 /* line scan pointer             */
+        char *p = Line;                 /* line scan pointer              */
 
         while (*p == ' ' || *p == '\t') p++;
 
@@ -454,7 +952,7 @@ static int inst_process(InstState *St)
         else if (strncasecmp(p, "@Display", 8) == 0)
             inst_cmd_display(St);
         else if (strncasecmp(p, "@Cls", 4) == 0)
-            printf("\033[2J\033[H");     /* ANSI clear screen             */
+            printf("\033[2J\033[H");    /* ANSI clear screen              */
         else if (strncasecmp(p, "@Pause", 6) == 0) {
             printf("\n PRESS ANY KEY ");
             fflush(stdout);
@@ -472,7 +970,32 @@ static int inst_process(InstState *St)
         else if (strncasecmp(p, "@Exit", 5) == 0) {
             return 0;
         }
-        /* TODO: Implement remaining ~35 commands */
+        /* v1.10.1 additions: file operations */
+        else if (strncasecmp(p, "@BeginLib", 9) == 0) {
+            char ArchName[64];          /* archive name                   */
+            const char *ap = p + 9;
+            int n = 0;
+            while (*ap == ' ' || *ap == '\t') ap++;
+            while (*ap && !isspace(*ap) && n < 63) ArchName[n++] = *ap++;
+            ArchName[n] = '\0';
+            inst_cmd_begin_lib(St, ArchName);
+        }
+        else if (strncasecmp(p, "@EndLib", 7) == 0) {
+            inst_cmd_end_lib(St);
+        }
+        else if (strncasecmp(p, "@File", 5) == 0) {
+            inst_cmd_file(St, p);
+        }
+        else if (strncasecmp(p, "@Copy", 5) == 0) {
+            inst_cmd_copy(St, p);
+        }
+        else if (strncasecmp(p, "@Delete", 7) == 0) {
+            inst_cmd_delete(St, p);
+        }
+        else if (strncasecmp(p, "@FileAttr", 9) == 0) {
+            inst_cmd_file_attr(St, p);
+        }
+        /* TODO v1.10.2+: control flow, filesystem, menu, system hooks */
     }
 
     return 0;
@@ -483,33 +1006,84 @@ static int inst_process(InstState *St)
 /*                             Main Entry                                    */
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
+static void usage(const char *ProgName)
+{
+    printf("Usage: %s [options] [INSTALL.DAT]\n", ProgName);
+    printf("\n");
+    printf("Options:\n");
+    printf("  -a, --archives DIR   Directory containing .RED archives\n");
+    printf("                       (default: current directory)\n");
+    printf("  -t, --target DIR     Target root for installed files\n");
+    printf("                       (default: current directory)\n");
+    printf("  -r, --redx PATH      Path to redx binary\n");
+    printf("                       (default: redx in PATH)\n");
+    printf("  -h, --help           This message\n");
+    printf("\n");
+    printf("If INSTALL.DAT is not given, defaults to ./INSTALL.DAT\n");
+}
+
+
 int main(int Argc, char *Argv[])
 {
-    InstState St;                       /* installer state               */
-    const char *DatFile = "INSTALL.DAT";/* script file path              */
-    int Rc;                             /* process return code           */
+    InstState St;                       /* installer state                */
+    const char *DatFile = "INSTALL.DAT";/* script file path               */
+    int Rc;                             /* process return code            */
+    int i;                              /* arg scan index                 */
 
     memset(&St, 0, sizeof(St));
-    St.OutDrive    = 'C';
-    St.InDrive     = 'A';
+    St.OutDrive     = 'C';
+    St.InDrive      = 'A';
     St.AskOverwrite = 1;
+    strcpy(St.ArchivesDir, ".");
+    strcpy(St.TargetRoot,  ".");
+    strcpy(St.RedxPath,    "redx");
 
-    /* Allow override of INSTALL.DAT path */
-    if (Argc > 1)
-        DatFile = Argv[1];
+    /* Parse args */
+    for (i = 1; i < Argc; i++) {
+        if (strcmp(Argv[i], "-h") == 0 || strcmp(Argv[i], "--help") == 0) {
+            usage(Argv[0]);
+            return 0;
+        }
+        else if ((strcmp(Argv[i], "-a") == 0 ||
+                  strcmp(Argv[i], "--archives") == 0) && i + 1 < Argc) {
+            strncpy(St.ArchivesDir, Argv[++i], sizeof(St.ArchivesDir) - 1);
+        }
+        else if ((strcmp(Argv[i], "-t") == 0 ||
+                  strcmp(Argv[i], "--target") == 0) && i + 1 < Argc) {
+            strncpy(St.TargetRoot, Argv[++i], sizeof(St.TargetRoot) - 1);
+        }
+        else if ((strcmp(Argv[i], "-r") == 0 ||
+                  strcmp(Argv[i], "--redx") == 0) && i + 1 < Argc) {
+            strncpy(St.RedxPath, Argv[++i], sizeof(St.RedxPath) - 1);
+        }
+        else if (Argv[i][0] != '-') {
+            DatFile = Argv[i];
+        }
+    }
 
     St.ScriptFp = fopen(DatFile, "r");
     if (!St.ScriptFp) {
-        printf("Unable to reopen script file \"INSTALL.DAT\"\n");
+        printf("Unable to open script file \"%s\"\n", DatFile);
         printf("The installation process cannot continue.\n");
         return 1;
     }
 
-    printf("\n PCBoard Installation Program\n\n");
+    printf("\n PCBoard Installation Program (install v1.10.1)\n");
+    printf(" Script:    %s\n", DatFile);
+    printf(" Archives:  %s\n", St.ArchivesDir);
+    printf(" Target:    %s\n", St.TargetRoot);
+    printf(" Redx CLI:  %s\n\n", St.RedxPath);
 
     Rc = inst_process(&St);
 
+    /* Ensure any stray extract dir is cleaned up */
+    if (St.ExtractDir[0]) inst_remove_temp_dir(&St);
+
     fclose(St.ScriptFp);
+
+    printf("\n Files placed: %ld\n", St.FilesPlaced);
+    if (St.FilesFailed > 0)
+        printf(" Files failed: %ld\n", St.FilesFailed);
 
     if (Rc == 0)
         printf("\nInstallation complete.\n");
