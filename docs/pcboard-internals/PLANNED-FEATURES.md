@@ -25,6 +25,8 @@ cross-reference after the previous list was lost.
 | CHAT commands      | 1 (COLOR) + N action-cmds | — |
 | PCBIC FTP verbs    | 1 (MGET) | — |
 | COMMDRV card types | — | 3 (see PCBDCOM-CARDS.md) |
+| Display-file lookup bits | 4 (GRAPHICS/SECURITY/LANGUAGE/RUNMENU) drive names | 2 more defined but never wired (RUNPPL, CMDFILE); RIP retrofitted via global |
+| Toolkit link-out subsystems | 17 stubs (NOANSI..NOXLATE) shipped | Serial slot has 2 impls (COMMDRV+FOSSIL); pattern allows N, only 2 ever shipped |
 
 **Cross-reference**: `PCBTEXT-CODES.md` §"Slots 747–817 — Clark's phantom
 expansion" documents the two competing 747+ reservations. Plan A and

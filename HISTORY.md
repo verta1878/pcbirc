@@ -271,7 +271,58 @@ missing, no bogus mappings, no CRLF corruption possible.
 
 ---
 
-## Cumulative totals (as of 2026-09-03)
+### install v1.8 → install v1.9 — Docs consolidation & stub-hunt (Sep 3-4, 2026)
+
+**Commits `d7f0217..HEAD`** — install v1.8 phase (PPL samples cataloged, native
+LHA scaffold, `RUNTIME-DEPS.md`, docs consolidation) followed by systematic
+stub-hunting across PCBoard source to surface *reserved-but-never-shipped*
+features and document them under `docs/pcboard-internals/`.
+
+New/expanded docs under `docs/pcboard-internals/`:
+
+- **`PCBTEXT-CODES.md`** (389 lines) — 747-slot screen-text catalog:
+  1 header + 716 active+named + 2 deprecated+named + 27 preserved-but-inactive
+  + 1 removed in 15.4 + 4 declared but missing from binary (#747-#750:
+  GENDER/BIRTHDATE/WEBADDR/COLOR). 4 identified as stubs (incomplete
+  strings). Ground truth cross-checked against `PCBTEXT.H`, `PCBTEXT.C`
+  `UseText[]` bitflag, `STRS15.C` (779 lines), and `MKPCB.C` (817-entry
+  table extracted by `extract_pcbtext.py`).
+
+- **`PCBDCOM-CARDS.md`** (155 lines) — 9 shipped COMMDRV backends
+  (COMMDV00-08.DRV, including hidden Windows 95 VxD at #08), 3 UI stubs
+  in `DRVSETUP.EXE` menu with no backend/firmware (AST, BOCA-DMB,
+  PC-COM), 3 TSR-only variants known to `COMMTSR.EXE`.
+
+- **`DISPLAY-FILE-LOOKUP.md`** (202 lines) — full 19-variant filename
+  ladder from Clark's own enum (`FILES.C:38-57`, one of the few
+  per-slot commented enums in Clark's tree). `displayfiletype` has 9
+  bits but only 4 drive filename decoration; RIP retrofitted through
+  the `Control.RipMode` global rather than a proper flag. PPL `DISPFILE`
+  masks input with `& 0x00000007` — PPE scripts see only 3 of 9 bits.
+
+- **`PCBOARD-LINKOUT.md`** (132 lines) — Clark's toolkit link-out
+  pattern documented at last. 17 `NO*.C` stubs in
+  `pcb154/LIB/SOURCE/TOOLKIT/` (NOANSI/NOCHAT/NODISP/NOHELP/NOINPUT/
+  NOLANG/NOLOG/NOMEMORY/NOPCBSYS/NOPRINT/NOSCREEN/NOSHELL/NOSTATUS/
+  NOSYS/NOTXT/NOUPDSYS/NOXLATE, 892 lines total) let each utility pick
+  the real subsystem OR the empty-body override per feature. Same
+  pattern extends to hardware: `COMMDRV.OBJ` + `FOSSIL.OBJ` share the
+  serial slot as a matched pair (Feb 15 1994 17:53 timestamp); the
+  slot was designed for N backends, only 2 ever shipped — `pcbdcom` is
+  the third slot finally getting populated, 32 years late.
+
+- **`MCI-CODES.md`** — updated with cross-link to
+  `DISPLAY-FILE-LOOKUP.md`.
+
+- **`PLANNED-FEATURES.md`** — summary table extended with 3 new rows:
+  COMMDRV card types (3 UI stubs), Display-file lookup bits (2 flags
+  never wired into filename decoration), Toolkit link-out subsystems
+  (17 stubs + serial slot with 2 of N ever populated).
+
+Housekeeping: `pcbirc-display-file-lookup.zip` (stray shipment
+artifact) removed from `docs/pcboard-internals/`.
+
+## Cumulative totals (as of 2026-09-04)
 
 - **10,460 tracked files** in the repo
 - **36+ programs shipped or ported**
