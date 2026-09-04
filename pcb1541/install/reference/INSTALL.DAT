@@ -1,0 +1,1188 @@
+// INSTALL.DAT//
+// Project: PCBoard
+// Version: 15.3
+
+@DefineProject
+	@Name = "PCBoard"
+	@Version = "15.3"
+	
+  @Subdir = "\\PCB\\"
+  @OutDrive = C
+
+  @Requires @HardDisk
+@EndProject
+
+@DefineVars
+  @Qstring @Fname = ""
+  @Qstring @Lname = ""
+  @Qstring @CitySt = ""
+  @Qstring @Pwd = ""
+  @Qstring @RegCode = ""
+@EndVars
+
+@Display
+  @Cls
+
+		 Welcome to @Name @Version for DOS and OS/2.
+
+   This program will install @Name version @Version on your computer system
+   and verify the integrity of the distribution disk(s).  You may press the
+   ESC key at any time to abort the installation process.
+
+   INSTALL will ask you several questions about your computer hardware and
+   then give you the option of installing only selected parts of @Name.
+
+   Each question has a default answer.  If the default answer is correct,
+   press the ENTER key in response to the question.  Otherwise, type the
+   answer and then press the ENTER key.
+
+   If you make a mistake while typing, press the BACKSPACE key and then
+   re-type the answer.
+
+  @Pause
+@EndDisplay
+
+@GetOutDrive
+  @Cls
+
+	On which disk drive do you wish to install @Name?
+
+
+
+
+
+
+
+
+
+
+
+
+
+	Use the arrow keys and hit enter to select the desired drive.
+
+@EndOutDrive
+
+
+EnterSubdir:
+@GetSubdir
+  @Cls
+
+  Now you will need to specify the disk destination subdirectory.  The sub-
+  directory is the location on your disk where the @Name system will be
+  installed.
+
+  If you are using a subdirectory system, and the DOS PATH command, and you
+  install @Name in the @Subdir subdirectory, you will probably want to modify
+  the PATH statement in your AUTOEXEC.BAT so it will include the sub-
+  directory @Subdir in addition to the current subdirectories.
+
+  NOTE:  The maximum path length allowed is 11 characters!
+
+  @Prompt = " Which subdirectory ([Enter] = @Subdir) "
+@EndSubdir
+
+@If (@StrLen("@Subdir") > 11)
+  @Subdir = @StrHead("@Subdir",11)
+  @Goto EnterSubdir
+@EndIf
+
+Entergroups:
+@GetGroups
+  @CheckBox
+  @Cls
+       Select the parts of @Name you wish to install on your computer:
+
+
+
+
+
+
+
+
+
+      Use the UP/DOWN arrow keys to move cursor and the SPACE BAR to select
+      the desired groups to install.  Press ENTER when you are finished.
+
+      Notes
+      ~~~~~
+      The First Time Installation does *not* automatically install COMM-DRV,
+      PPL, or PCBMail.  They must be selected manually if desired.
+
+      If you have not purchased the PPL Compiler, a demonstration version
+      has been provided for your evaluation.
+
+      @Set a = "The @Name First Time Installation"
+      @Set b = "The @Name Upgrade Installation"
+      @Set c = "Install COMM-DRV"
+      @Set d = "Install PPL"
+      @Set e = "Install PCBMail"
+      @Set f = "Install OS/2 version"
+
+@EndGroups
+
+@If ((a [! @Group) && (b [! @Group) && (c [! @Group) && (d [! @Group) && (e [! @Group) && (f [! @Group))
+  @Display
+
+        No Groups were selected!
+
+    @Pause
+    @Goto Entergroups
+  @EndDisplay
+@Endif
+
+@If ((a [= @Group) && (@Exists("@OutDrive:@Subdir\\PCBOARD.EXE") || @Exists("@OutDrive:@Subdir\\PCBOARDM.EXE")))
+  @Display
+
+        You've selected a First Time Install and already have a PCBoard
+        executable file in the @OutDrive:@SubDir sub-directory.
+
+        Hit Esc to abort or any other key to continue.
+
+    @Pause
+  @EndDisplay
+@Endif
+
+@If ((a [= @Group) && (b [= @Group))
+  @Display
+
+        You've selected both a First Time Install and Upgrade Install.
+
+        Hit Esc to abort or any other key to continue with a First Time
+        Installation.
+
+     @Pause
+     @ClearGroup(b)
+   @EndDisplay
+@EndIf
+
+
+@If ((a [= @Group) || (b [= @Group) || (f [= @Group))
+
+EnterFName:
+   @GetString @Fname
+	Please enter the SysOp's First Name *Only*.  10 characters max.
+	@Prompt = " What is your first name "
+   @EndString
+
+   @If ("@Fname" != "@StrToken("@Fname",0," ")")
+     @Fname = @StrToken("@Fname",0," ")
+     @Goto EnterFName
+   @Endif
+
+   @If (@StrLen("@Fname") > 10)
+     @Fname = @StrHead("@Fname",10)
+     @Goto EnterFName
+   @EndIf
+
+   @If (@StrLen("@Fname") == 0)
+     @Goto EnterFName
+   @EndIf
+
+EnterLname:
+   @GetString @Lname
+	Please enter the SysOp's Last Name *Only*.  14 characters max.
+        @Prompt = " What is your last name "
+   @EndString
+
+   @If ("@Lname" != "@StrToken("@Lname",0," ")")
+     @Lname = @StrToken("@Lname",0," ")
+     @Goto EnterLname
+   @EndIf
+
+   @If (@StrLen("@Lname") > 14)
+     @Lname = @StrHead("@Lname",14)
+     @Goto EnterLname
+   @EndIf
+
+   @If (@StrLen("@Lname") == 0)
+     @Goto EnterLName
+   @EndIf
+
+
+   @If (a [= @Group)
+
+EnterCitySt:
+      @GetString @CitySt
+           Please enter the SysOp's City and State.  24 characters max.
+           @Prompt = " What is your city and state "
+      @EndString
+
+      @If (@StrLen("@CitySt") > 24)
+        @CitySt = @StrHead("@CitySt",24)
+        @Goto EnterCitySt
+      @EndIf
+
+      @If (@StrLen("@CitySt") == 0)
+        @Goto EnterCitySt
+      @EndIf
+
+EnterPwd:
+      @GetString @Pwd
+           Please enter a password.  12 characters max.
+
+           This should be a unique password.  To avoid potential security
+           risks and breaches, choose a password which you do not use
+           anywhere else.
+
+           @Prompt = " What would you like for a password "
+      @EndString
+
+      @If (@StrLen("@Pwd") > 12)
+        @Pwd = @StrHead("@Pwd",12)
+        @Goto EnterPwd
+      @EndIf
+
+      @If (@StrLen("@Pwd") == 0)
+        @Goto EnterPwd
+      @EndIf
+   @Endif
+
+@If (@System("VTF.EXE SAMPLES.DOC @OutDrive:@SubDir") == -1)
+  @Display
+    Error Viewing SAMPLES.DOC
+  @EndDisplay
+  @Abort
+@Endif
+
+@If (@Exists("@OutDrive:@SubDir\\PCBOS2") == 0)
+  @ClearGroup(f)
+@Endif
+
+@Copy("PCBOARD.SER","@OutDrive:@SubDir\\PCBOARD.SER")
+
+
+@If (a [= @Group)
+   @GetGroups
+
+	@Cls
+
+	Select the type of board you wish to install on your computer:
+
+
+
+
+
+
+
+
+	Use the arrow keys and hit enter to select the desired type of BBS.
+
+	@Set n = "Technical Support Bulletin Board"
+	@Set o = "Sales Bulletin Board"
+	@Set p = "Corporate Bulletin Board"
+	@Set q = "Hobby Bulletin Board"
+	@Set r = "Basic/Unconfigured Bulletin Board"
+
+   @EndGroups
+
+   @If ((n [! @Group) && (o [! @Group) && (p [! @Group) && (q [! @Group) && (r [! @Group))
+     @Display
+
+	No BBS type was selected!
+
+	Hit Esc to abort or any other key to continue with a
+	Basic/Unconfigured Bulletin Board.
+
+	@Pause
+	@SetGroup(r)
+     @EndDisplay
+   @Endif
+
+
+   @Display
+
+    After the installation of the files, we will check your CONFIG.SYS
+    and AUTOEXEC.BAT files for needed configuration changes, such as
+    the FILES= line and the SET PATH= line.
+
+    You will be prompted to have the changes made automatically.  If you
+    refuse permission to have your files automatically updated, the
+    program will still inform you of the necessary changes so that you
+    may make them yourself later.
+
+    Additionally, you may need to add SHARE (a program that comes with DOS)
+    to your AUTOEXEC.BAT file if you are not installing this software on
+    a Novell NetWare based network.  PCBoard will inform you if it requires
+    the services provided by SHARE.
+
+    Refer to your DOS documentation for information on SHARE and how to
+    load it on your system.
+
+    You may wish to hit Print Screen at this time to save this information
+    for later.
+
+    @Pause
+
+   @EndDisplay
+@EndIf
+
+@DefineDisk
+  @Label = "Disk #1"
+  @if (a [= @Group || b [= @Group)
+    @BeginLib PCBOARD.RED
+      @File PCBOARD.EXE @Out PCBOARD.EXE
+      @File PCBOARDM.EXE @Out PCBOARDM.EXE
+      @If (@Exists("@OutDrive:@SubDir\\PPLCODE") == 0)
+        @File PPLC100.EXE @Out @OutDrive:@SubDir\PPLC.EXE
+      @Else
+        @File PPLC330.EXE @Out @OutDrive:@SubDir\PPLC.EXE
+      @Endif
+    @EndLib
+  @Endif
+@EndDisk
+
+@DefineDisk
+@Label = "Disk #1"
+  @BeginLib PCBDISK.002
+    @If (a [= @Group)
+      @File 1 @Size 744 @Out DL01\ALLFILES.ZIP
+      @File 2 @Size 43880 @Out DL01\CALGUIDE.ZIP
+    @Endif
+    @If (a [= @Group || b [= @Group)
+      @File 4 @Size 102675 @Out DOC\ADDENDUM.DOC
+      @File 5 @Size 2749 @Out DOC\COUNTRY.TXT
+      @File 6 @Size 1825 @Out DOC\DISCLAIM.TXT
+      @File 7 @Size 117161 @Out DOC\DOORWAY.DOC
+      @File 8 @Size 5430 @Out DOC\ENV2DOS.DOC
+      @File 9 @Size 109683 @Out DOC\FIDO.DOC
+      @File A @Size 15439 @Out DOC\FIDOHUB.DOC
+      @File B @Size 44544 @Out DOC\FIDONET.DOC
+      @File C @Size 6405 @Out DOC\NEWBOARD.DOC
+      @File D @Size 469 @Out DOC\PACK.DOC
+      @File E @Size 27622 @Out DOC\PCBCP.DOC
+      @File F @Size 29367 @Out DOC\PCBEDIT.DOC
+      @File G @Size 4253 @Out DOC\PCBMAIL.DOC
+      @File H @Size 14583 @Out DOC\PCBOARD2.DOC
+      @File I @Size 6319 @Out DOC\PCBOS2.TXT
+      @File J @Size 6737 @Out DOC\PPE_INFO.TXT
+      @File K @Size 3532 @Out DOC\PPE_MEM.DOC
+      @File L @Size 787 @Out DOC\PPLCMDS.DOC
+      @File M @Size 72177 @Out DOC\UUCP.DOC
+      @File N @Size 23470 @Out DOC\WHATSNEW.151
+      @File O @Size 105578 @Out DOC\WHATSNEW.152
+      @File P @Size 34551 @Out DOC\WHATSNEW.521
+      @File Q @Size 4628 @Out DOC\WHATSNEW.522
+      @File R @Size 11861 @Out DOC\WHATSNEW.FID
+      @File S @Size 22430 @Out DOC\WHATSNEW.PPL
+      @File T @Size 6785 @Out DOC\WHATSNEW.UU
+    @Endif
+    @If (a [= @Group)
+      @File W @Size 2 @Out FIDO\AKAS.DAT
+      @File X @Size 2 @Out FIDO\AREAS.DAT
+      @File Y @Size 2 @Out FIDO\AREAS.IDX
+      @File Z @Size 2 @Out FIDO\FREQDENY.DAT
+      @File 00 @Size 2 @Out FIDO\FREQPATH.DAT
+      @File 10 @Size 2 @Out FIDO\MAGICNAM.DAT
+      @File 20 @Size 2 @Out FIDO\NODEARC.DAT
+      @File 30 @Size 103 @Out FIDO\NODELIST.DAT
+      @File 40 @Size 2 @Out FIDO\ORIGINS.DAT
+      @File 50 @Size 2009 @Out FIDO\PCBFIDO.CFG
+      @File 60 @Size 2 @Out FIDO\PHONEX.DAT
+      @File 70 @Size 503 @Out FIDO\RESPONSE\AFIXAVL.HDR
+      @File 80 @Size 400 @Out FIDO\RESPONSE\AFIXFAIL.MSG
+      @File 90 @Size 1074 @Out FIDO\RESPONSE\AFIXHELP.MSG
+      @File A0 @Size 385 @Out FIDO\RESPONSE\AFIXLST.HDR
+      @File B0 @Size 378 @Out FIDO\RESPONSE\AFIXRSPN.HDR
+      @File C0 @Size 473 @Out FIDO\RESPONSE\FREQINFO.MSG
+      @File D0 @Size 402 @Out FIDO\RESPONSE\FRQPFAIL.MSG
+      @File G0 @Size 1003 @Out GEN\BLT
+      @File H0 @Size 60 @Out GEN\BLT.LST
+      @File I0 @Size 2153 @Out GEN\BRDM
+      @File J0 @Size 3496 @Out GEN\BRDS
+      @File K0 @Size 2085 @Out GEN\CHTM
+      @File L0 @Size 558 @Out GEN\CLOSED
+      @File M0 @Size 64 @Out GEN\CMD.LST
+      @File N0 @Size 3156 @Out GEN\CNFN.PPE
+      @File O0 @Size 3292 @Out GEN\CNFN.PPS
+      @File P0 @Size 672 @Out GEN\DIR.LST
+      @File Q0 @Size 2000 @Out GEN\DIR.PPE
+      @File R0 @Size 1135 @Out GEN\DIR.PPS
+      @File S0 @Size 1388 @Out GEN\DIR1
+      @File T0 @Size 142 @Out GEN\DIR2
+      @File U0 @Size 142 @Out GEN\DIR3
+      @File V0 @Size 142 @Out GEN\DIR4
+      @File W0 @Size 142 @Out GEN\DIR5
+      @File X0 @Size 142 @Out GEN\DIR6
+      @File Y0 @Size 142 @Out GEN\DIR7
+      @File Z0 @Size 2194 @Out GEN\DISPLAY
+      @File 01 @Size 101 @Out GEN\DLPATH.LST
+      @File 11 @Size 941 @Out GEN\DOORS
+      @File 21 @Size 123 @Out GEN\DOORS.LST
+      @File 31 @Size 567 @Out GEN\EXPIRED
+      @File 41 @Size 8141 @Out GEN\GRAF-D.DOC
+      @File 51 @Size 3995 @Out GEN\GRAF-D.HIS
+      @File 61 @Size 3274 @Out GEN\GRAF-D.PPE
+      @File 71 @Size 7030 @Out GEN\GRAF-D.PPS
+      @File 81 @Size 1399 @Out GEN\GROUP
+      @File 91 @Size 233 @Out GEN\HISTORY
+      @File A1 @Size 23 @Out GEN\MAINEVNT
+      @File B1 @Size 312 @Out GEN\NEWS
+      @File C1 @Size 346 @Out GEN\NEWUSER
+      @File D1 @Size 332 @Out GEN\NOANSI
+      @File E1 @Size 43 @Out GEN\PCBML.DAT
+      @File F1 @Size 386 @Out GEN\PCBPROT.DAT
+      @File PCBTEXT @Size 59760 @Out GEN\PCBTEXT
+      @File H1 @Size 930 @Out GEN\RULES
+      @File I1 @Size 1576 @Out GEN\SAMPLE
+      @File J1 @Size 907 @Out GEN\SCRIPT
+      @File K1 @Size 120 @Out GEN\SCRIPT.LST
+      @File L1 @Size 657 @Out GEN\SCRIPT1
+      @File M1 @Size 3078 @Out GEN\SCRIPT2.PPE
+      @File N1 @Size 3397 @Out GEN\SCRIPT2.PPS
+      @File O1 @Size 984 @Out GEN\STUFF
+      @File P1 @Size 142 @Out GEN\UPLOAD
+      @File Q1 @Size 498 @Out GEN\USERS15.PPE
+      @File R1 @Size 366 @Out GEN\USERS15.PPS
+      @File S1 @Size 8768 @Out GEN\USERS15.TXT
+      @File T1 @Size 567 @Out GEN\WARNING
+      @File U1 @Size 1432 @Out GEN\WELCOME
+      @File V1 @Size 1343 @Out HELP\HLP!
+      @File W1 @Size 808 @Out HELP\HLP1
+      @File X1 @Size 347 @Out HELP\HLP10
+      @File Y1 @Size 215 @Out HELP\HLP11
+      @File Z1 @Size 350 @Out HELP\HLP12
+      @File 02 @Size 366 @Out HELP\HLP13
+      @File 12 @Size 328 @Out HELP\HLP14
+      @File 22 @Size 241 @Out HELP\HLP15
+      @File 32 @Size 358 @Out HELP\HLP2
+      @File 42 @Size 1344 @Out HELP\HLP3
+      @File 52 @Size 451 @Out HELP\HLP4
+      @File 62 @Size 2392 @Out HELP\HLP5
+      @File 72 @Size 354 @Out HELP\HLP6
+      @File 82 @Size 1514 @Out HELP\HLP7
+      @File 92 @Size 973 @Out HELP\HLP8
+      @File A2 @Size 282 @Out HELP\HLP9
+      @File B2 @Size 986 @Out HELP\HLPA
+      @File C2 @Size 1576 @Out HELP\HLPALIAS
+      @File D2 @Size 3913 @Out HELP\HLPB
+      @File E2 @Size 2201 @Out HELP\HLPBRD
+      @File F2 @Size 1179 @Out HELP\HLPC
+      @File G2 @Size 3306 @Out HELP\HLPCHAT
+      @File H2 @Size 9548 @Out HELP\HLPCMENU
+      @File I2 @Size 6675 @Out HELP\HLPD
+      @File J2 @Size 17796 @Out HELP\HLPE
+      @File K2 @Size 14316 @Out HELP\HLPENDR
+      @File L2 @Size 6746 @Out HELP\HLPF
+      @File M2 @Size 2403 @Out HELP\HLPFLAG
+      @File N2 @Size 4671 @Out HELP\HLPFSCRN
+      @File O2 @Size 1037 @Out HELP\HLPG
+      @File P2 @Size 1371 @Out HELP\HLPH
+      @File Q2 @Size 515 @Out HELP\HLPI
+      @File R2 @Size 3678 @Out HELP\HLPJ
+      @File S2 @Size 1945 @Out HELP\HLPK
+      @File T2 @Size 4632 @Out HELP\HLPL
+      @File U2 @Size 1247 @Out HELP\HLPLANG
+      @File V2 @Size 3303 @Out HELP\HLPM
+      @File W2 @Size 3935 @Out HELP\HLPN
+      @File X2 @Size 801 @Out HELP\HLPNEWS
+      @File Y2 @Size 1013 @Out HELP\HLPO
+      @File Z2 @Size 2343 @Out HELP\HLPOPEN
+      @File 03 @Size 997 @Out HELP\HLPP
+      @File 13 @Size 10855 @Out HELP\HLPQ
+      @File 23 @Size 2336 @Out HELP\HLPQWK
+      @File 33 @Size 25624 @Out HELP\HLPR
+      @File 43 @Size 2068 @Out HELP\HLPREG
+      @File 53 @Size 11271 @Out HELP\HLPREP
+      @File 63 @Size 1515 @Out HELP\HLPRM
+      @File 73 @Size 1564 @Out HELP\HLPS
+      @File 83 @Size 1746 @Out HELP\HLPSEC
+      @File 93 @Size 5879 @Out HELP\HLPSEL
+      @File A3 @Size 11881 @Out HELP\HLPSRCH
+      @File B3 @Size 1706 @Out HELP\HLPT
+      @File C3 @Size 1389 @Out HELP\HLPTEST
+      @File D3 @Size 1578 @Out HELP\HLPTS
+      @File E3 @Size 6064 @Out HELP\HLPU
+      @File F3 @Size 2712 @Out HELP\HLPUSERS
+      @File G3 @Size 5297 @Out HELP\HLPV
+      @File H3 @Size 1866 @Out HELP\HLPW
+      @File I3 @Size 1898 @Out HELP\HLPWHO
+      @File J3 @Size 1330 @Out HELP\HLPX
+      @File K3 @Size 4995 @Out HELP\HLPY
+      @File L3 @Size 8288 @Out HELP\HLPZ
+      @File N3 @Size 2 @Out MAIN\AREAS.IDX
+      @File O3 @Size 309 @Out MAIN\CNAMES
+      @File P3 @Size 12058 @Out MAIN\CNAMES.@@@@@@
+      @File Q3 @Size 5632 @Out MAIN\CNAMES.ADD
+      @File R3 @Size 63 @Out MAIN\CNAMES.IDX
+      @File S3 @Size 33 @Out MAIN\FSEC
+      @File T3 @Size 10 @Out MAIN\HOLIDAYS.CFG
+      @File MSGS @Size 768 @Out MAIN\MSGS
+      @File V3 @Size 64 @Out MAIN\MSGS.IDX
+      @File W3 @Size 198 @Out MAIN\PRIVATE
+      @File X3 @Size 199 @Out MAIN\PUBLIC
+      @File Y3 @Size 178 @Out MAIN\PWRD
+      @File Z3 @Size 225 @Out MAIN\TCAN
+
+      @File 64 @Size 18 @Out PCBCMPRS.BAT
+      @File A4 @Size 618 @Out PCBFILER.DEF
+      @File F4 @Size 2024 @Out PCBOARD.DAT
+      @File H4 @Size 72 @Out PCBQWK.BAT
+      @File I4 @Size 154 @Out PCBRB.BAT
+      @File J4 @Size 108 @Out PCBRH.BAT
+      @File K4 @Size 23 @Out PCBRZ.BAT
+      @File L4 @Size 160 @Out PCBSB.BAT
+
+      @File 0 @Size 325 @Out BOARD.BAT
+    @Endif
+
+    @If (a [= @Group || b [= @Group)
+      @File E0 @Size 214586 @Out FIDOUTIL.EXE
+      @File F0 @Size 34886 @Out FIXTEXT.EXE
+      @File M3 @Size 25092 @Out INIT.EXE
+      @File U @Size 27827 @Out DOORWAY.EXE
+      @File V @Size 11245 @Out ENCRYPT.EXE
+      @File 04 @Size 78452 @Out MAKEIDX.EXE
+      @File 14 @Size 32800 @Out MKPCBMNU.EXE
+      @File 24 @Size 62668 @Out MKPCBTXT.EXE
+      @File 34 @Size 69264 @Out MODEMS.DAT
+      @File 44 @Size 9318 @Out OVLSIZE.EXE
+      @File 54 @Size 23214 @Out PACKFIDO.EXE
+      @File 74 @Size 17214 @Out PCBDESC.EXE
+      @File 84 @Size 121802 @Out PCBDIAG.EXE
+      @File 94 @Size 119824 @Out PCBEDIT.EXE
+      @File B4 @Size 318992 @Out PCBFILER.EXE
+      @File C4 @Size 159462 @Out PCBMODEM.EXE
+      @File D4 @Size 34130 @Out PCBMONI.EXE
+      @File E4 @Size 301258 @Out PCBNLC.EXE
+      @File G4 @Size 67098 @Out PCBPACK.EXE
+      @File M4 @Out PCBSETUP.EXE
+    @Endif
+	@EndLib
+@EndDisk
+
+
+@DefineDisk
+@Label = "Disk #1"
+  @BeginLib PCBDISK.003
+    @If (a [= @Group || b [= @Group)
+      @File 0 @AppendTo PCBSETUP.EXE
+      @File 4 @Size 440328 @Out PCBSM.EXE
+      @File 5 @Size 284807 @Out PCBSM.HLP
+      @File 6 @Size 12696 @Out PCBSTATS.EXE
+      @File A @Size 6911 @Out RDPCBTXT.EXE
+      @File C @Size 2534 @Out TESTFILE.EXE
+      @File D @Size 7844 @Out UPGRADE.EXE
+      @File E @Size 12844 @Out USERNET.EXE
+      @File F @Size 266150 @Out UUIN.EXE
+      @File G @Size 139976 @Out UUOUT.EXE
+      @File H @Size 140194 @Out UUUTIL.EXE
+      @File I @Size 175478 @Out UUXFER.EXE
+      @File J @Size 2280 @Out VIEWARCH.COM
+      @File K @Size 8006 @Out VIEWZIP.EXE
+      @File L @Size 138398 @Out ZMRECV.EXE
+      @File M @Size 129310 @Out ZMSEND.EXE
+    @Endif
+
+    @If (a [= @Group)
+      @File 1 @Size 119 @Out PCBSH.BAT
+      @File 2 @Size 46 @Out PCBSM.CLR
+      @File 3 @Size 108 @Out PCBSM.CNF
+      @File 7 @Size 23 @Out PCBSZ.BAT
+      @File 8 @Size 487 @Out PCBTEST.BAT
+      @File 9 @Size 507 @Out PCBVIEW.BAT
+      @File B @Size 122 @Out REMOTE.SYS
+    @Endif
+	@EndLib
+
+  @If (c [= @Group)
+    @BeginLib COMMDRV.RED
+      @File COMMDV00.DRV @Size 1130 @Out COMMDRV\*.*
+      @File COMMDV01.DRV @Size 1115 @Out COMMDRV\*.*
+      @File COMMDV02.DRV @Size 2276 @Out COMMDRV\*.*
+      @File COMMDV03.DRV @Size 2686 @Out COMMDRV\*.*
+      @File COMMDV04.DRV @Size 2797 @Out COMMDRV\*.*
+      @File COMMDV06.DRV @Size 1662 @Out COMMDRV\*.*
+      @File COMMDV07.DRV @Size 1212 @Out COMMDRV\*.*
+      @File COMMDV08.DRV @Size 2284 @Out COMMDRV\*.*
+      @File COMMDV05.DRV @Size 4883 @Out COMMDRV\*.*
+      @File COMMDRV.EXE @Size 90827 @Out COMMDRV\*.*
+      @File COMMTSR.EXE @Size 64101 @Out COMMDRV\*.*
+      @File XABIOS.BIN @Size 2048 @Out COMMDRV\*.*
+      @File BOCA1610.BIN @Size 3228 @Out COMMDRV\*.*
+      @File XACOOK.BIN @Size 6144 @Out COMMDRV\*.*
+      @File MONITOR.BAT @Size 24 @Out COMMDRV\*.*
+      @File DRVSETUP.EXE @Size 29752 @Out COMMDRV\*.*
+      @File TEST.EXE @Size 16482 @Out COMMDRV\*.*
+      @File XACOMX.BIN @Size 6144 @Out COMMDRV\*.*
+      @If (a [= @Group)
+        @File ARNETSP4.DAT @Size 2053 @Out COMMDRV\*.*
+        @File ARNETSP8.DAT @Size 3397 @Out COMMDRV\*.*
+        @File DIGI4E.DAT @Size 2053 @Out COMMDRV\*.*
+        @File DIGI8E.DAT @Size 3397 @Out COMMDRV\*.*
+      @EndIf
+    @EndLib
+  @EndIf
+
+  @If (e [= @Group)
+    @BeginLib PCBMAIL.RED
+      @File PCBMAIL.EXE @Size 333312 @Out PCBMAIL\*.*
+      @File BWCC.DLL @Size 164928 @Out PCBMAIL\*.*
+      @File BC450RTL.DLL @Size 219648 @Out PCBMAIL\*.*
+      @File PCBMAIL.HLP @Size 759288 @Out PCBMAIL\*.*
+    @EndLib
+  @EndIf
+
+  @If (a [= @Group)
+    @BeginLib PCBCFGS.RED
+      @File 0 @Size 1139 @Out EMPLOYEE\BLT           @Group n
+      @File 1 @Size 240 @Out EMPLOYEE\BLT.LST        @Group n
+      @File 2 @Size 1344 @Out EMPLOYEE\DIR.LST       @Group n
+      @File 3 @Size 142 @Out EMPLOYEE\DIR13          @Group n
+      @File 4 @Size 240 @Out EMPLOYEE\DLPATH.LST     @Group n
+      @File 5 @Size 312 @Out EMPLOYEE\NEWS           @Group n
+      @File 6 @Size 142 @Out EMPLOYEE\PUBLIC         @Group n
+      @File 7 @Size 1083 @Out GEN\BLT                @Group n
+      @File 8 @Size 120 @Out GEN\BLT.LST             @Group n
+      @File 9 @Size 1957 @Out GEN\BLT1               @Group n
+      @File A @Size 692 @Out GEN\BLT2                @Group n
+      @File B @Size 2100 @Out GEN\BLT3               @Group n
+      @File C @Size 656 @Out GEN\BLT4                @Group n
+      @File D @Size 2631 @Out GEN\BRDM               @Group n
+      @File E @Size 3496 @Out GEN\BRDS               @Group n
+      @File F @Size 192 @Out GEN\DIR.LST             @Group n
+      @File G @Size 1388 @Out GEN\DIR1               @Group n
+      @File H @Size 142 @Out GEN\DIR2                @Group n
+      @File I @Size 67 @Out GEN\DLPATH.LST           @Group n
+      @File J @Size 312 @Out GEN\NEWS                @Group n
+      @File K @Size 1849 @Out MAIN\CNAMES            @Group n
+      @File L @Size 5482 @Out MAIN\CNAMES.@@@@@@     @Group n
+      @File M @Size 2560 @Out MAIN\CNAMES.ADD        @Group n
+      @File N @Size 252 @Out MAIN\CNAMES.IDX         @Group n
+      @File O @Size 1083 @Out PROD1\BLT              @Group n
+      @File P @Size 120 @Out PROD1\BLT.LST           @Group n
+      @File Q @Size 201 @Out PROD1\CHANGES           @Group n
+      @File R @Size 384 @Out PROD1\DIR.LST           @Group n
+      @File S @Size 142 @Out PROD1\DIR3              @Group n
+      @File T @Size 142 @Out PROD1\DIR4              @Group n
+      @File U @Size 78 @Out PROD1\DLPATH.LST         @Group n
+      @File V @Size 312 @Out PROD1\NEWS              @Group n
+      @File W @Size 142 @Out PROD1\PRIVATE           @Group n
+      @File X @Size 142 @Out PROD1\PUBLIC            @Group n
+      @File Y @Size 185 @Out PROD1\TECHTIPS          @Group n
+      @File Z @Size 1083 @Out PROD2\BLT              @Group n
+      @File 00 @Size 120 @Out PROD2\BLT.LST          @Group n
+      @File 10 @Size 201 @Out PROD2\CHANGES          @Group n
+      @File 20 @Size 384 @Out PROD2\DIR.LST          @Group n
+      @File 30 @Size 142 @Out PROD2\DIR3             @Group n
+      @File 40 @Size 142 @Out PROD2\DIR4             @Group n
+      @File 50 @Size 78 @Out PROD2\DLPATH.LST        @Group n
+      @File 60 @Size 312 @Out PROD2\NEWS             @Group n
+      @File 70 @Size 142 @Out PROD2\PRIVATE          @Group n
+      @File 80 @Size 142 @Out PROD2\PUBLIC           @Group n
+      @File 90 @Size 185 @Out PROD2\TECHTIPS         @Group n
+      @File A0 @Size 1083 @Out GEN\BLT               @Group o
+      @File B0 @Size 120 @Out GEN\BLT.LST            @Group o
+      @File C0 @Size 1957 @Out GEN\BLT1              @Group o
+      @File D0 @Size 692 @Out GEN\BLT2               @Group o
+      @File E0 @Size 472 @Out GEN\BLT3               @Group o
+      @File F0 @Size 656 @Out GEN\BLT4               @Group o
+      @File G0 @Size 2631 @Out GEN\BRDM              @Group o
+      @File H0 @Size 3496 @Out GEN\BRDS              @Group o
+      @File I0 @Size 288 @Out GEN\DIR.LST            @Group o
+      @File J0 @Size 142 @Out GEN\DIR1               @Group o
+      @File K0 @Size 208 @Out GEN\DIR2               @Group o
+      @File L0 @Size 142 @Out GEN\DIR3               @Group o
+      @File M0 @Size 67 @Out GEN\DLPATH.LST          @Group o
+      @File N0 @Size 312 @Out GEN\NEWS               @Group o
+      @File O0 @Size 1011 @Out MAIN\CNAMES           @Group o
+      @File P0 @Size 5482 @Out MAIN\CNAMES.@@@@@@    @Group o
+      @File Q0 @Size 2560 @Out MAIN\CNAMES.ADD       @Group o
+      @File R0 @Size 63 @Out MAIN\CNAMES.IDX         @Group o
+      @File S0 @Size 198 @Out MAIN\PRIVATE           @Group o
+      @File T0 @Size 198 @Out MAIN\PUBLIC            @Group o
+      @File U0 @Size 743 @Out ADMIN\BLT              @Group p
+      @File V0 @Size 60 @Out ADMIN\BLT.LST           @Group p
+      @File W0 @Size 2847 @Out ADMIN\BLT1            @Group p
+      @File X0 @Size 692 @Out ADMIN\BLT2             @Group p
+      @File Y0 @Size 2631 @Out ADMIN\BRDM            @Group p
+      @File Z0 @Size 96 @Out ADMIN\DIR.LST           @Group p
+      @File 01 @Size 142 @Out ADMIN\DIR1             @Group p
+      @File 11 @Size 36 @Out ADMIN\DLPATH.LST        @Group p
+      @File 21 @Size 312 @Out ADMIN\NEWS             @Group p
+      @File 31 @Size 142 @Out ADMIN\PRIVATE          @Group p
+      @File 41 @Size 142 @Out ADMIN\PUBLIC           @Group p
+      @File 51 @Size 743 @Out CUSTSRVC\BLT           @Group p
+      @File 61 @Size 60 @Out CUSTSRVC\BLT.LST        @Group p
+      @File 71 @Size 2631 @Out CUSTSRVC\BRDM         @Group p
+      @File 81 @Size 96 @Out CUSTSRVC\DIR.LST        @Group p
+      @File 91 @Size 142 @Out CUSTSRVC\\DIR1         @Group p
+      @File A1 @Size 42 @Out CUSTSRVC\DLPATH.LST     @Group p
+      @File B1 @Size 312 @Out CUSTSRVC\NEWS          @Group p
+      @File C1 @Size 142 @Out CUSTSRVC\PRIVATE       @Group p
+      @File D1 @Size 142 @Out CUSTSRVC\PUBLIC        @Group p
+      @File E1 @Size 2199 @Out EMPLOYEE\BRDM         @Group p
+      @File F1 @Size 650 @Out EMPLOYEE\INTRO         @Group p
+      @File G1 @Size 312 @Out EMPLOYEE\NEWS          @Group p
+      @File H1 @Size 743 @Out ENGINRNG\BLT           @Group p
+      @File I1 @Size 60 @Out ENGINRNG\BLT.LST        @Group p
+      @File J1 @Size 2631 @Out ENGINRNG\BRDM         @Group p
+      @File K1 @Size 96 @Out ENGINRNG\DIR.LST        @Group p
+      @File L1 @Size 142 @Out ENGINRNG\DIR1          @Group p
+      @File M1 @Size 42 @Out ENGINRNG\DLPATH.LST     @Group p
+      @File N1 @Size 312 @Out ENGINRNG\NEWS          @Group p
+      @File O1 @Size 142 @Out ENGINRNG\PRIVATE       @Group p
+      @File P1 @Size 142 @Out ENGINRNG\PUBLIC        @Group p
+      @File Q1 @Size 743 @Out GEN\BLT                @Group p
+      @File R1 @Size 60 @Out GEN\BLT.LST             @Group p
+      @File S1 @Size 2847 @Out GEN\BLT1              @Group p
+      @File T1 @Size 692 @Out GEN\BLT2               @Group p
+      @File U1 @Size 2631 @Out GEN\BRDM              @Group p
+      @File V1 @Size 3496 @Out GEN\BRDS              @Group p
+      @File W1 @Size 312 @Out GEN\NEWS               @Group p
+      @File X1 @Size 743 @Out HMNRSRC\BLT            @Group p
+      @File Y1 @Size 60 @Out HMNRSRC\BLT.LST         @Group p
+      @File Z1 @Size 2631 @Out HMNRSRC\BRDM          @Group p
+      @File 02 @Size 96 @Out HMNRSRC\DIR.LST         @Group p
+      @File 12 @Size 142 @Out HMNRSRC\DIR1           @Group p
+      @File 22 @Size 40 @Out HMNRSRC\DLPATH.LST      @Group p
+      @File 32 @Size 312 @Out HMNRSRC\NEWS           @Group p
+      @File 42 @Size 142 @Out HMNRSRC\PRIVATE        @Group p
+      @File 52 @Size 142 @Out HMNRSRC\PUBLIC         @Group p
+      @File 62 @Size 2744 @Out MAIN\CNAMES           @Group p
+      @File 72 @Size 5482 @Out MAIN\CNAMES.@@@@@@    @Group p
+      @File 82 @Size 2560 @Out MAIN\CNAMES.ADD       @Group p
+      @File 92 @Size 504 @Out MAIN\CNAMES.IDX        @Group p
+      @File A2 @Size 743 @Out MIS\BLT                @Group p
+      @File B2 @Size 60 @Out MIS\BLT.LST             @Group p
+      @File C2 @Size 2631 @Out MIS\BRDM              @Group p
+      @File D2 @Size 96 @Out MIS\DIR.LST             @Group p
+      @File E2 @Size 142 @Out MIS\DIR1               @Group p
+      @File F2 @Size 32 @Out MIS\DLPATH.LST          @Group p
+      @File G2 @Size 312 @Out MIS\NEWS               @Group p
+      @File H2 @Size 142 @Out MIS\PRIVATE            @Group p
+      @File I2 @Size 142 @Out MIS\PUBLIC             @Group p
+      @File J2 @Size 743 @Out SLSMKTNG\BLT           @Group p
+      @File K2 @Size 60 @Out SLSMKTNG\BLT.LST        @Group p
+      @File L2 @Size 2631 @Out SLSMKTNG\BRDM         @Group p
+      @File M2 @Size 96 @Out SLSMKTNG\DIR.LST        @Group p
+      @File N2 @Size 142 @Out SLSMKTNG\DIR1          @Group p
+      @File O2 @Size 42 @Out SLSMKTNG\DLPATH.LST     @Group p
+      @File P2 @Size 555 @Out SLSMKTNG\INTRO         @Group p
+      @File Q2 @Size 312 @Out SLSMKTNG\NEWS          @Group p
+      @File R2 @Size 142 @Out SLSMKTNG\PRIVATE       @Group p
+      @File S2 @Size 142 @Out SLSMKTNG\PUBLIC        @Group p
+      @File T2 @Size 672 @Out FILES\DIR.LST          @Group q
+      @File U2 @Size 142 @Out FILES\DIR1             @Group q
+      @File V2 @Size 142 @Out FILES\DIR2             @Group q
+      @File W2 @Size 142 @Out FILES\DIR3             @Group q
+      @File X2 @Size 142 @Out FILES\DIR4             @Group q
+      @File Y2 @Size 142 @Out FILES\DIR5             @Group q
+      @File Z2 @Size 142 @Out FILES\DIR6             @Group q
+      @File 03 @Size 142 @Out FILES\DIR7             @Group q
+      @File 13 @Size 149 @Out FILES\DLPATH.LST       @Group q
+      @File 23 @Size 142 @Out FILES\PRIVATE          @Group q
+      @File 33 @Size 142 @Out FILES\PUBLIC           @Group q
+      @File 43 @Size 1003 @Out GEN\BLT               @Group q
+      @File 53 @Size 60 @Out GEN\BLT.LST             @Group q
+      @File 63 @Size 2153 @Out GEN\BRDM              @Group q
+      @File 73 @Size 3496 @Out GEN\BRDS              @Group q
+      @File 83 @Size 96 @Out GEN\DIR.LST             @Group q
+      @File 93 @Size 888 @Out GEN\DIR1               @Group q
+      @File A3 @Size 41 @Out GEN\DLPATH.LST          @Group q
+      @File B3 @Size 300 @Out GEN\HISTORY            @Group q
+      @File C3 @Size 409 @Out GEN\NEWS               @Group q
+      @File D3 @Size 930 @Out GEN\RULES              @Group q
+      @File E3 @Size 288 @Out GRAPHICS\DIR.LST       @Group q
+      @File F3 @Size 142 @Out GRAPHICS\DIR1          @Group q
+      @File G3 @Size 142 @Out GRAPHICS\DIR2          @Group q
+      @File H3 @Size 142 @Out GRAPHICS\DIR3          @Group q
+      @File I3 @Size 78 @Out GRAPHICS\DLPATH.LST     @Group q
+      @File J3 @Size 142 @Out GRAPHICS\PRIVATE       @Group q
+      @File K3 @Size 142 @Out GRAPHICS\PUBLIC        @Group q
+      @File L3 @Size 1762 @Out MAIN\CNAMES           @Group q
+      @File M3 @Size 5482 @Out MAIN\CNAMES.@@@@@@    @Group q
+      @File N3 @Size 2560 @Out MAIN\CNAMES.ADD       @Group q
+      @File O3 @Size 252 @Out MAIN\CNAMES.IDX        @Group q
+      @File P3 @Size 198 @Out MAIN\PRIVATE           @Group q
+      @File Q3 @Size 199 @Out MAIN\PUBLIC            @Group q
+    @EndLib
+  @EndIf
+
+  @If (d [= @Group)
+    @BeginLib PPLC.RED
+      @File ACCNTDBF.PPE @Size 3691 @Out PPL\*.*
+      @File ACCNTDBF.PPS @Size 11656 @Out PPL\*.*
+      @File DBASE.PPE @Size 5703 @Out PPL\*.*
+      @File DBASE.PPS @Size 11563 @Out PPL\*.*
+      @File DOORS.PPE @Size 1575 @Out PPL\*.*
+      @File DOORS.PPS @Size 2597 @Out PPL\*.*
+      @File HAMURABI.PPE @Size 3872 @Out PPL\*.*
+      @File HAMURABI.PPS @Size 9613 @Out PPL\*.*
+      @File HELLO1.PPE @Size 544 @Out PPL\*.*
+      @File HELLO1.PPS @Size 119 @Out PPL\*.*
+      @File HELLO2.PPE @Size 561 @Out PPL\*.*
+      @File HELLO2.PPS @Size 118 @Out PPL\*.*
+      @File HELLO3.PPE @Size 546 @Out PPL\*.*
+      @File HELLO3.PPS @Size 178 @Out PPL\*.*
+      @File HELLO4.PPE @Size 553 @Out PPL\*.*
+      @File HELLO4.PPS @Size 203 @Out PPL\*.*
+      @File HELLO5.PPE @Size 548 @Out PPL\*.*
+      @File HELLO5.PPS @Size 137 @Out PPL\*.*
+      @File HELLO6.PPE @Size 669 @Out PPL\*.*
+      @File HELLO6.PPS @Size 364 @Out PPL\*.*
+      @File HELLO7.PPE @Size 848 @Out PPL\*.*
+      @File HELLO7.PPS @Size 507 @Out PPL\*.*
+      @File HOWTODBF.TXT @Size 14274 @Out DOC\*.*
+      @File KAL.PPE @Size 1400 @Out PPL\*.*
+      @File KAL.PPS @Size 3738 @Out PPL\*.*
+      @File LANGUAGE.PPE @Size 830 @Out PPL\*.*
+      @File LANGUAGE.PPS @Size 1500 @Out PPL\*.*
+      @File MORE.PPE @Size 1113 @Out PPL\*.*
+      @File MORE.PPS @Size 3667 @Out PPL\*.*
+      @File NODEFILE.PPE @Size 673 @Out PPL\*.*
+      @File NODEFILE.PPS @Size 1229 @Out PPL\*.*
+      @File OPPAGE.PPE @Size 2249 @Out PPL\*.*
+      @File OPPAGE.PPS @Size 4760 @Out PPL\*.*
+      @File ORDER.PPE @Size 2325 @Out PPL\*.*
+      @File ORDER.PPS @Size 3189 @Out PPL\*.*
+      @File PWRDWARN.PPE @Size 1075 @Out PPL\*.*
+      @File PWRDWARN.PPS @Size 2142 @Out PPL\*.*
+      @File RUN1.BAT @Size 771 @Out PPL\*.*
+      @File RUN2.BAT @Size 532 @Out PPL\*.*
+      @File START.PPE @Size 905 @Out PPL\*.*
+      @File START.PPS @Size 1119 @Out PPL\*.*
+      @File WELFIRST.PPE @Size 1506 @Out PPL\*.*
+      @File WELFIRST.PPS @Size 3785 @Out PPL\*.*
+      @File WHATSNEW.200 @Size 29980 @Out DOC\*.*
+      @File WHATSNEW.300 @Size 61965 @Out DOC\*.*
+      @File WHATSNEW.310 @Size 3845 @Out DOC\*.*
+    @EndLib
+  @Endif
+@EndDisk
+
+@If ((f [=     @Group))
+@DefineDisk
+@Label = "Disk #1"
+  @BeginLib PCBOARD2.RED
+    @File PCBCP.EXE @Size 94729
+    @File PCBCP.HLP @Size 89095
+    @File PCBMONI2.EXE @Size 70676
+    @File PCBTITLE.COM @Size 1962
+		@File PCBPACK2.EXE @Size 96794
+    @File SAMPLE.OS2 @Size 1374
+    @File USERNET2.EXE @Size 39440
+    @File PCBOARD2.EXE @Size 877627
+    @If (a [= @Group)
+      @File BOARD.CMD @Size 292
+      @File STARTOS2.CMD @Size 535
+    @Endif
+  @EndLib
+@EndDisk
+@Endif
+
+@SetConfig
+  @If ((a [=     @Group))
+    @Files = 25
+    @AskOverwrite
+  @EndIf
+@EndConfig
+
+@SetAutoexec
+  @If ((a [=     @Group))
+    @Path = "@OutDrive:@Subdir"
+    @AskOverwrite
+  @EndIf
+@EndAutoexec
+
+@If (@FileAttr("@OutDrive:@SubDir\\PCBOARD.EXE","r-") == 0)
+@Endif
+@If (@FileAttr("@OutDrive:@SubDir\\PCBOARDM.EXE","r-") == 0)
+@Endif
+@If (@FileAttr("@OutDrive:@SubDir\\PCBOARD2.EXE","r-") == 0)
+@Endif
+@If (@FileAttr("@OutDrive:@SubDir\\PCBMAIL\\*.*","r-") == 0)
+@Endif
+@Finish
+
+@ChDrive @OutDrive
+@ChDir "@SubDir"
+
+
+// New Install
+@If (a [= @Group)
+   @If (@Mkdir("@OutDrive:@SubDir\\WORK"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\CMDFILES"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\NODE1\\WORK"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\NODE2\\WORK"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\UUCP\\LOGS"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\UUCP\\SPOOL"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\UPLOAD"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\PRIVUPLD"))
+   @Endif
+   @If (@Mkdir("@OutDrive:@SubDir\\ATTACH"))
+   @Endif
+@Endif
+
+// Tech Support
+@If (n [= @Group)
+    @If (@MkDir("@OutDrive:@Subdir\\EMPLOYEE\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\EMPLOYEE\\PROMOS"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\EMPLOYEE\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES2"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD1\\FILES3"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD1\\FILES4"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD1\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD1\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD2\\FILES3"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD2\\FILES4"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD2\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PROD2\\UPLOAD"))
+   @Endif
+@EndIf
+
+// Sales
+@If (o [= @Group)
+    @If (@MkDir("@OutDrive:@Subdir\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES2"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES3"))
+   @Endif
+@EndIf
+
+// Corporate
+@If (p [= @Group)
+    @If (@MkDir("@OutDrive:@Subdir\\ADMIN\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ADMIN\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ADMIN\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ADMIN\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\CUSTSRVC\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\CUSTSRVC\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\CUSTSRVC\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\CUSTSRVC\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\EMPLOYEE\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ENGINRNG\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ENGINRNG\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ENGINRNG\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\ENGINRNG\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\HMNRSRC\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\HMNRSRC\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\HMNRSRC\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\HMNRSRC\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\MIS\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\MIS\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\MIS\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\MIS\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\SLSMKTNG\\ATTACH"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\SLSMKTNG\\FILES1"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\SLSMKTNG\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\SLSMKTNG\\UPLOAD"))
+   @Endif
+@EndIf
+
+// Hobby
+@If (q [= @Group)
+    @If (@MkDir("@OutDrive:@Subdir\\DL01"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL01"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL02"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL03"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL04"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL05"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL06"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\DL07"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\FILES\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\GRAPHICS\\DL01"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\GRAPHICS\\DL02"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\GRAPHICS\\DL03"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\GRAPHICS\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\GRAPHICS\\UPLOAD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\MESSAGES"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\PRIVUPLD"))
+   @Endif
+    @If (@MkDir("@OutDrive:@Subdir\\UPLOAD"))
+   @Endif
+@EndIf
+
+
+@If (@FileAttr("@OutDrive:@SubDir\\PCBOARD.EXE","r+") == 0)
+@Endif
+@If (@FileAttr("@OutDrive:@SubDir\\PCBOARDM.EXE","r+") == 0)
+@Endif
+@If (@FileAttr("@OutDrive:@SubDir\\PCBOARD2.EXE","r+") == 0)
+@Endif
+@If (@FileAttr("@OutDrive:@SubDir\\PCBMAIL\\*.*","r+") == 0)
+@Endif
+
+@If ((a [= @Group))
+
+    @If (@System("@OutDrive:@SubDir\\INIT.EXE @OutDrive:@Subdir\\ \"@Fname @Lname\" \"@CitySt\" \"@Pwd\"") == 0)
+    @EndIf
+
+    @Cls
+
+    We will now run PCBSetup so that you may make any configuration
+    changes desired before completing the install process.
+
+    One change you may wish to make at this time is to change the default
+    board name to reflect the name of your system.  Select Node
+    Configuration (option D) from the main menu and edit the board name.
+
+    If you do not wish to make any changes at this time, just press ESC
+    to exit PCBSetup.  You can run PCBSetup at any time by choosing that
+    option from the PCBoard Call Waiting screen.
+
+    @Pause
+
+    @If (@System("@OutDrive:@SubDir\\PCBSETUP.EXE /FULLSAVE") == 0)
+    @EndIf
+
+    @Cls
+
+    We will now run PCBModem so that you may configure a modem for use
+    with your system.  If you do not desire to do this at this time,
+    simply hit the Esc key from the main PCBModem menu without selecting
+    a manufacturer.
+
+    @Pause
+
+    @If (@System("@OutDrive:@SubDir\\PCBMODEM.EXE /FILE:@OutDrive:@SubDir\\PCBOARD.DAT /NODEBAT:@OutDrive:@SubDir\\NODE1.BAT") == 0)
+    @EndIf
+
+    @Cls
+
+    The following files are installed in the @OutDrive:@SubDir\DOC
+    directory for viewing after the install program finishes.
+
+    README.1ST        UUCP.DOC
+    ADDENDUM.DOC      FIDO.DOC
+    WHATSNEW          PCBCP.DOC
+    WHATSNEW.153
+
+    @Pause
+
+@EndIf
+
+@If ((d [=     @Group))
+
+    @Cls
+
+
+    The following files are installed in the @OutDrive:@SubDir\DOC
+    directory relating to the PCBoard Programming Language:
+
+    PPE_INFO
+    WHATSNEW.330
+
+    @Pause
+
+@EndIf
+
+@If (b [= @Group)
+    @ChDrive @OutDrive
+    @If (@DirExists("NODE1"))
+       @ChDir "@SubDir\\NODE1"
+    @Else
+       @ChDir "@SubDir"
+    @EndIf
+
+    @If (@System("@OutDrive:@SubDir\\UPGRADE.EXE @OutDrive:@Subdir\\") == 0)
+    @EndIf
+
+    @Cls
+
+    We will now run PCBSetup so that you may make any configuration
+    changes desired before completing the install process.
+    If you do not wish to make any changes at this time, just press ESC
+    to exit PCBSetup.  You can run PCBSetup at any time by choosing that
+    option from the PCBoard Call Waiting screen.
+
+    @Pause
+
+    @If (@System("@OutDrive:\\@SubDir\\PCBSETUP.EXE") == 0)
+    @EndIf
+@EndIf
+
+
+@Delete("@OutDrive:\\@SubDir\\INIT.EXE")
+@Delete("@OutDrive:\\@SubDir\\UPGRADE.EXE")
+@Delete("@OutDrive:\\@SubDir\\VTF.EXE")
+@Delete("@OutDrive:\\@SubDir\\PCBOS2")
+@Delete("@OutDrive:\\@SubDir\\PPLCODE")
+@Delete("@OutDrive:\\@SubDir\\PCBSER.BAK")
+
+@Cls
+
+           Installation of @Name is now finished.
+
+    1) Be sure to remove the install disk from your drive
+       if installing from floppy diskette.
+
+    2) If you elected to not automatically update CONFIG.SYS or
+       AUTOEXEC.BAT, be sure to make the appropriate changes.
+
+    3) Reboot your computer before running @Name for changes
+       to CONFIG.SYS and AUTOEXEC.BAT to take effect.
+
+    4) Run NODE1.BAT to load and run node 1 of your new PCBoard
+       Professional Bulletin Board System.
+
+Enjoy!
+
+@Pause
+
+@EndFinish
+
+/* end-of-file */
+

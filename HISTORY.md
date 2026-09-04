@@ -38,6 +38,17 @@ document uses explicit prefixes to avoid confusion:
   whole-project milestone labels used in this document's Timeline below.
 - **install v1.0 → install v1.7.2** — internal milestones of the installer
   subsystem arc, tracked in `pcb1541/install/dist/target/README.md`.
+- **install v1.8, v1.9** — docs consolidation & stub-hunt continuation
+  of the installer arc past the byte-perfect 481-file rebuild.
+- **install v1.10** — INSTALL.EXE completion arc: our C reimplementation
+  at `pcb1541/install/src/install.c` grows from a Phase 27 stub (7 of
+  60 @-directives) to full parity with Clark's `INSTALL.EXE`.
+- **pcbic v1.0 → v1.1** — byte-exact reconstruction of Clark's PCBIC 1.2
+  toolset (6 EXEs + RUNINET.PPE + TCP/IP menu screens + docs from the
+  1996 Salt Air distribution). Tracked in `pcb1541/pcbic12/ROADMAP.md`.
+  v1.0.x = per-target reconstructions; v1.1 = whole arc complete.
+  Naming: "PCBIC 1.2" (uppercase, no `v`) is Clark's product name;
+  "pcbic v1.0.x" (lowercase `v`) is our reconstruction phase.
 - **pcbdcom v1.1, v1.2** — the serial-driver rewrite subsystem's own
   numbering (tracked in `pcb154/pcbdcom/`).
 
@@ -324,7 +335,7 @@ artifact) removed from `docs/pcboard-internals/`.
 
 ## Cumulative totals (as of 2026-09-04)
 
-- **10,460 tracked files** in the repo
+- **10,520 tracked files** in the repo
 - **36+ programs shipped or ported**
 - **27+ bugs fixed** (11 pcbis + 6 pcbfoss + 9 qfront + 1 VIEWARCH.COM
   stub + numerous smaller ones)
@@ -333,6 +344,87 @@ artifact) removed from `docs/pcboard-internals/`.
 - **481-file PCBoard 15.41 install tree** byte-perfect
 - **6 .RED archives + 2 PCBDISK.* archives** fully understood and
   reproducible
+- **6 additional binaries + 30+ support files** landed for the pcbic
+  reference material (Clark's PCBIC 1.2 toolset — see pcbic v1.0 below)
+
+### pcbic v1.0.0 — PCBIC 1.2 reference material + restructure (Sep 4, 2026)
+
+**Commits `3c0dfb6..49525c1`** — new subsystem arc. Opens the
+byte-exact reconstruction of Clark's PCBoard InterCom (IC) toolset
+from the 1997-04-30 Salt Air distribution (`Pcbic12.zip`).
+
+Reference material landed:
+
+- **6 EXEs** in `pcb1541/pcbic12/bin/` (unlocked from
+  ZipCrypto-encrypted archive by external research effort;
+  delivered via Pcbic12d.zip upload):
+  - `Pcbic.exe` (313,310 B, MS-DOS MZ) — main IC binary
+  - `Pcbic2.exe` (217,111 B, OS/2 LX 386) — OS/2 sibling
+  - `PCBICCFG.EXE` (185,398 B, MS-DOS MZ) — config UI
+  - `PCBICEVT.EXE` (89,612 B, MS-DOS MZ) — event handler
+  - `TESTIC.EXE` (40,104 B, MS-DOS MZ) — ping test, smallest EXE
+  - `TESTIC2.EXE` (46,627 B, OS/2 LX 386) — OS/2 sibling of TESTIC
+- **RUNINET.PPE** (1,808 B, PPL 3.20 bytecode) + **RUNINET.PPS**
+  (3,895 B, decompiled source) — first byte-exact target; PPLC 3.20
+  compiler is in tree at `toolkit/pplc/3.20/PPLC320.EXE`.
+- **13 TCP/IP menu screens** in `bin/DATA/` (ANSI-decorated),
+  6 dial-up scripts in `bin/SCRIPTS/`, 3 docs in `bin/DOCS/`,
+  launcher batches + PCBIC.HLP.
+- **Pcbic12d.zip** (739 KB, unlocked archive) preserved at
+  `pcb1541/pcbic12/Pcbic12d.zip` as subsystem provenance.
+
+Structure: `bin/` (Clark's originals, read-only), `src/` (byte-exact
+reconstruction source), `/analysis/` at repo root (gitignored, local
+reverse-engineering scratch — one archive folder at a time, never
+tracked).
+
+Sub-phases queued (per `pcb1541/pcbic12/ROADMAP.md`):
+`v1.0.1` = RUNINET.PPE (source in hand, compile-diff loop),
+`v1.0.2` = TESTIC.EXE, `v1.0.3` = TESTIC2.EXE, `v1.0.4-1.0.7` =
+PCBICEVT/PCBICCFG/Pcbic/Pcbic2, `v1.1` = whole arc complete.
+
+### install v1.10 — INSTALL.EXE completion (Sep 4, 2026 → in progress)
+
+**Commits `TBD`** — installer arc's next phase: completing our C
+reimplementation of Clark's `INSTALL.EXE` in `pcb1541/install/src/`.
+
+The byte-perfect 481-file target tree already works via
+`rebuild_place.py` (v1.7.1 recovery); install v1.10 finishes the
+installer side — teaching `install.c` to run Clark's real
+`INSTALL.DAT` end-to-end and produce the same target tree.
+
+**Starting state**: `install.c` has 7 of 60 semantically distinct
+`@`-directives implemented (Phase 27 stub). Reference material for
+diffing landed in v1.10.0.
+
+Reference material added in v1.10.0:
+- `pcb1541/install/reference/INSTALL.DAT` (42,294 B, 72 raw / 60
+  case-folded @-directives, md5 `cca38d36`) — Clark's original
+  installer script, extracted once from `INSTALL.zip` for stable
+  diffing.
+- `pcb1541/install/reference/INSTALL.EXE` (338,548 B, NE format,
+  md5 `5239767b`) — Clark's original installer binary, for
+  disassembly parity checks against our C reimplementation.
+- `pcb1541/install/reference/README.md` — reference-material
+  provenance + use.
+- `docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md` — canonical
+  reference for all 60 unique @-directives, grown as each sub-phase
+  lands.
+
+Sub-phases:
+- **v1.10.0** — reference material lands + directive catalog (this ship)
+- **v1.10.1** — redx wire-up: `@BeginLib`/`@EndLib`/`@File`/`@Files`/
+  `@Copy`/`@Delete`/`@AppendTo`/`@FileAttr`. Logic lifted from the
+  working `rebuild_place.py`. Acceptance: install.c processes all 8
+  archives, places 481 files byte-matching the tracked target/ tree.
+- **v1.10.2** — variables + control flow + string ops
+- **v1.10.3** — filesystem + disk sequencing
+- **v1.10.4** — interactive menu (6-checkbox First-Time / Upgrade /
+  COMM-DRV / PPL / PCBMail / OS2 selector)
+- **v1.10.5** — system hooks + finish; end-to-end DOSBox-X run
+  landing a complete C:\PCB tree matching `dist/target/`
+- **v1.10.6** — disassembly parity check on `INSTALL.EXE`. Byte-exact
+  rebuild of INSTALL.EXE itself is deferred to install v1.11+.
 
 ---
 

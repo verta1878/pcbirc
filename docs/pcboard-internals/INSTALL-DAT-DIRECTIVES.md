@@ -1,0 +1,208 @@
+# INSTALL.DAT — canonical @-directive reference
+
+Reference for every `@`-directive used in Clark's `INSTALL.DAT`
+(the script Clark's `INSTALL.EXE` interprets, and that our C
+reimplementation at `pcb1541/install/src/install.c` must match).
+
+This document is grown as install v1.10.1 → v1.10.5 lands each
+directive's implementation. Entries marked **spec-only** haven't
+been coded yet; entries marked **v1.10.N** have been implemented in
+that sub-phase.
+
+## Source
+
+- Reference `INSTALL.DAT` at
+  `pcb1541/install/reference/INSTALL.DAT` (42,294 bytes,
+  md5 `cca38d36`)
+- 72 unique `@`-directives (60 after case-folding `Endif`/`EndIf`
+  and `Mkdir`/`MkDir` pairs — see "Case-fold pairs" below)
+
+## Categories
+
+### 1. Project metadata (v1.10.0 — parsed by existing stub)
+
+Frame the whole install: project name, version, output paths,
+system requirements.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@DefineProject` |  1 |    5 | parsed | Open the project-metadata block |
+| `@EndProject`    |  1 |   13 | parsed | Close it |
+| `@Name`          | 12 |    6 | parsed | Project name ("PCBoard") |
+| `@Version`       |  3 |    7 | parsed | Version string ("15.3") |
+| `@Subdir`        | 69 |    9 | parsed | Default subdir under output drive |
+| `@OutDrive`      |101 |   10 | parsed | Default output drive letter |
+| `@Requires`      |  1 |   12 | parsed | Prerequisite tests (used with `@HardDisk`) |
+| `@HardDisk`      |  1 |   12 | parsed | Predicate: is a hard disk available |
+
+### 2. Variable declarations (v1.10.2 planned)
+
+Establish user-input variables — first name, last name, city/state,
+password, reg code.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@DefineVars` |  1 |  15 | **spec-only** | Open the variable-declaration block |
+| `@EndVars`    |  1 |  21 | **spec-only** | Close it |
+| `@Qstring`    |  5 |  16 | **spec-only** | Declare a quoted-string variable |
+| `@Fname`      |  8 |  16 | **spec-only** | Storage for first name |
+| `@Lname`      |  8 |  17 | **spec-only** | Storage for last name |
+| `@CitySt`     |  6 |  18 | **spec-only** | Storage for city/state |
+| `@Pwd`        |  6 |  19 | **spec-only** | Storage for password |
+| `@RegCode`    |  1 |  20 | **spec-only** | Storage for registration code |
+| `@Set`        | 14 | 115 | **spec-only** | Set a variable's value inline |
+
+### 3. Output / display (v1.10.0 — parsed by existing stub)
+
+Screen output — messages to user, prompts, pauses, screen clears.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@Display`    |   7 |  23 | parsed | Open a text-block to display |
+| `@EndDisplay` |   7 |  43 | parsed | Close it |
+| `@Cls`        |  11 |  24 | parsed | Clear the screen |
+| `@Pause`      |  12 |  42 | parsed | Wait for keypress |
+| `@Prompt`     |   5 |  82 | **spec-only** | Prompt user for input |
+| `@Out`        | 570 |  10 | **spec-only** | Emit a single line of output (highest-frequency directive) |
+
+### 4. Interactive menu (v1.10.4 planned)
+
+The `@GetGroups`/`@CheckBox` block that opens the installer with the
+6-option selector (First-Time / Upgrade / COMM-DRV / PPL / PCBMail /
+OS2). Group state is later queried with `@If @Group X` to conditionally
+run install steps.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@GetOutDrive`  |   1 |  45 | **spec-only** | Ask user for output drive |
+| `@EndOutDrive`  |   1 |  64 | **spec-only** | Close it |
+| `@GetSubdir`    |   1 |  68 | **spec-only** | Ask user for subdirectory |
+| `@EndSubdir`    |   1 |  83 | **spec-only** | Close it |
+| `@GetString`    |   4 | 163 | **spec-only** | Ask user for a string value |
+| `@EndString`    |   4 | 166 | **spec-only** | Close it |
+| `@GetGroups`    |   2 |  91 | **spec-only** | Open the checkbox menu |
+| `@EndGroups`    |   2 | 122 | **spec-only** | Close it |
+| `@CheckBox`     |   1 |  92 | **spec-only** | Declare a checkbox option |
+| `@Group`        | 202 | 124 | **spec-only** | Reference a group by letter (a-f in the 6-group set) |
+| `@SetGroup`     |   1 | 288 | **spec-only** | Mark a group as selected |
+| `@ClearGroup`   |   2 | 155 | **spec-only** | Mark a group as unselected |
+| `@AskOverwrite` |   2 | 877 | **spec-only** | Prompt before overwriting existing file |
+
+### 5. Control flow (v1.10.2 planned)
+
+Conditional execution, jumps, labels.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@If`     | 126 |  85 | **spec-only** | Open a conditional block |
+| `@Else`   |   2 | 328 | **spec-only** | Alternative branch |
+| `@EndIf`  |  31 |  88 | **spec-only** | Close it (uppercase variant) |
+| `@Endif`  |  95 | 132 | **spec-only** | Close it (mixed-case variant — same as EndIf) |
+| `@Goto`   |  12 |  87 | **spec-only** | Jump to a label |
+| `@Label`  |   4 | 321 | **spec-only** | Define a jump target |
+| `@Abort`  |   1 | 245 | parsed | Terminate the install |
+
+### 6. String manipulation (v1.10.2 planned)
+
+String utilities — length, prefix, tokenize.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@StrLen`   | 9 |  85 | **spec-only** | Length of a string |
+| `@StrHead`  | 5 |  86 | **spec-only** | Prefix (first N chars) of a string |
+| `@StrToken` | 4 | 168 | **spec-only** | Tokenize a string |
+
+### 7. File / archive operations (v1.10.1 — highest priority)
+
+The actual file-placement engine. `@BeginLib`/`@EndLib` bracket an
+archive (`.RED` file); `@File` inside places one file with its
+`@Size` and `@Path`. Wire this to `pcb1541/install/archivers/redx/`
+and 481 files land byte-perfect.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@BeginLib`  |   8 | 323 | parsed (stubbed) | Open a `.RED` archive to extract from |
+| `@EndLib`    |   8 | 331 | parsed | Close it |
+| `@File`      | 491 | 324 | parsed (stubbed) | Place one file from the current archive |
+| `@Files`     |   1 | 876 | **spec-only** | Bulk file operation (context-dependent) |
+| `@Size`      | 476 | 339 | **spec-only** | Expected size of the current `@File` (verification) |
+| `@Path`      |   1 | 883 | **spec-only** | Path override for the current file |
+| `@Copy`      |   1 | 252 | **spec-only** | Copy a file (non-archive source) |
+| `@Delete`    |   6 |1158 | **spec-only** | Delete a file |
+| `@AppendTo`  |   1 | 559 | **spec-only** | Append content to a file |
+| `@FileAttr`  |   8 | 888 | **spec-only** | Set file attributes (read-only, hidden, etc.) |
+
+### 8. Disk sequencing (v1.10.3 planned)
+
+Physical install-disk handling — swap prompts, per-disk file sets.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@DefineDisk` | 4 | 320 | **spec-only** | Open a disk-scope block |
+| `@EndDisk`    | 4 | 333 | **spec-only** | Close it |
+
+### 9. Filesystem operations (v1.10.3 planned)
+
+Directory ops, path predicates, size queries.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@MkDir`     | 59 | 926 | **spec-only** | Create a directory (uppercase variant) |
+| `@Mkdir`     |  9 | 904 | **spec-only** | Create a directory (mixed-case — same as MkDir) |
+| `@ChDir`     |  3 | 899 | **spec-only** | Change working directory |
+| `@ChDrive`   |  2 | 898 | **spec-only** | Change current drive |
+| `@DirExists` |  1 |1134 | **spec-only** | Predicate: does a directory exist |
+| `@Exists`    |  3 | 134 | **spec-only** | Predicate: does a file exist |
+
+### 10. System hooks (v1.10.5 planned)
+
+Post-install system integration — AUTOEXEC.BAT edits, CONFIG.SYS
+edits, shell-out commands, wrap-up.
+
+| Directive | Uses | First line | Status | Purpose |
+|---|---:|---:|---|---|
+| `@System`      | 6 | 241 | **spec-only** | Shell out to DOS |
+| `@Finish`      | 1 | 896 | **spec-only** | Open the finish-block |
+| `@EndFinish`   | 1 |1185 | **spec-only** | Close it |
+| `@SetAutoexec` | 1 | 881 | **spec-only** | Open an AUTOEXEC.BAT edit-block |
+| `@EndAutoexec` | 1 | 886 | **spec-only** | Close it |
+| `@SetConfig`   | 1 | 874 | **spec-only** | Open a CONFIG.SYS edit-block |
+| `@EndConfig`   | 1 | 879 | **spec-only** | Close it |
+
+## Case-fold pairs
+
+Two directive names have both uppercase-`I` and lowercase-`i`
+variants that Clark's parser treats as identical:
+
+- `@EndIf` (31 uses) / `@Endif` (95 uses) — same semantics
+- `@MkDir` (59 uses) / `@Mkdir` (9 uses) — same semantics
+
+Case-folding reduces 72 unique names to 60 semantically distinct
+directives.
+
+## Implementation progress
+
+Running total of directives coded in `pcb1541/install/src/install.c`
+(out of 60 semantically distinct):
+
+| Phase | Directives | Cumulative | Notes |
+|---|---:|---:|---|
+| v1.10.0 | 12 | 12 | Existing Phase 27 stub — project metadata + basic display |
+| v1.10.1 |  8 | 20 | File/archive operations (redx wire-up) |
+| v1.10.2 |  ? |  ? | Vars + control flow + string ops |
+| v1.10.3 |  ? |  ? | Filesystem + disk sequencing |
+| v1.10.4 |  ? |  ? | Interactive menu |
+| v1.10.5 |  ? |  ? | System hooks + finish |
+| v1.10.6 | disassembly parity — no new directives, semantic verification only |
+
+## See also
+
+- `pcb1541/install/reference/README.md` — the reference files
+  themselves
+- `pcb1541/install/src/install.c` — our C reimplementation
+- `pcb1541/install/dist/target/rebuild_place.py` — Python reference
+  implementation for the `@File`/`@BeginLib` logic (proven to
+  reconstruct 481 files byte-perfect)
+- `pcb1541/install/RUNTIME-DEPS.md` — external dependencies
+
+--install v1.10.0, 2026-09-04
