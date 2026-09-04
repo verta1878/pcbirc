@@ -1,5 +1,5 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* install.c -- PCBoard Installer (install v1.10.3)                          */
+/* install.c -- PCBoard Installer (install v1.10.4)                          */
 /*                                                                            */
 /* C reimplementation of Clark's INSTALL.EXE (338,548 B, NE format).          */
 /* Reads INSTALL.DAT and processes @-directives to lay down 481 files of      */
@@ -12,18 +12,14 @@
 /* Phase progress (60 semantically distinct @-directives total):              */
 /*   v1.10.0  --  12  Project metadata + display + basic control              */
 /*   v1.10.1  --   6  File operations                                         */
-/*                    (@BeginLib/@EndLib/@File[@Out/@Size/@AppendTo]/         */
-/*                     @Copy/@Delete/@FileAttr)                               */
 /*   v1.10.2  --  11  Variables + control flow + string ops                   */
-/*                    (@If/@Else/@Endif[/@EndIf]/@Goto/@Label/@Set/           */
-/*                     @StrLen/@StrHead/@StrToken/@Exists + eval engine)     */
 /*   v1.10.3  --  10  Filesystem + disk sequencing + @File parser fixes      */
-/*                    (@MkDir/@Mkdir[callable]/@ChDir/@ChDrive/@DirExists;    */
-/*                     @DefineDisk/@EndDisk full semantics; @Requires/        */
-/*                     @HardDisk/@Version predicates. Fixed @Out PATH\*.*     */
-/*                     glob-syntax and missing-@Out default-to-source-name    */
-/*                     — closes big coverage gaps on PCBMAIL + PCBOARD2.RED.) */
-/*   v1.10.4      Interactive menu                                            */
+/*   v1.10.4  --  10  Interactive menu                                        */
+/*                    (@GetGroups/@CheckBox real; @SetGroup/@ClearGroup       */
+/*                     modify SelectedGroups; @AskOverwrite/@Prompt/          */
+/*                     @Qstring/@RegCode as accepted directives; real         */
+/*                     @GetString reads stdin when TTY else uses stub;        */
+/*                     TTY-conditional minimal interactive menu.)             */
 /*   v1.10.5      System hooks + finish                                       */
 /*   v1.10.6      Disassembly parity check against INSTALL.EXE                */
 /*                                                                            */
@@ -168,6 +164,15 @@ typedef struct {
     /* v1.10.3 additions: working-directory state (for @ChDir/@ChDrive) */
     char     WorkingDrive;              /* @ChDrive @OutDrive result          */
     char     WorkingDir[MAX_PATH_LEN];  /* @ChDir "path" result               */
+
+    /* v1.10.4 additions: menu items parsed from @GetGroups blocks */
+    struct {
+        char Letter;                    /* group letter (a-z)                 */
+        char Label[128];                /* display label                      */
+        int  IsCheckbox;                /* 1 if multi-select, 0 if radio       */
+    } MenuItems[32];
+    int      NumMenuItems;              /* accumulated across all @GetGroups   */
+    int      InteractiveMenus;          /* 1 if TTY prompted, 0 if headless    */
 } InstState;
 
 
@@ -1630,46 +1635,180 @@ static void inst_cmd_goto(InstState *St, const char *Line)
 
 
 /*-----------------------------------------------------------------------*/
-/* inst_cmd_get_string_stub() -- Handle @GetString @Var ... @EndString  */
+/* inst_cmd_get_groups() -- Handle @GetGroups ... @EndGroups            */
 /*                                                                       */
-/* Full interactive impl lands in v1.10.4. For v1.10.2 acceptance, we    */
-/* need a stub that (a) parses through to @EndString without prompting,  */
-/* and (b) ensures the target variable is non-empty so Clark's           */
-/* validation loops (`@If StrLen==0 @Goto ...`) don't spin forever.     */
-/*                                                                       */
-/* Same pattern for @GetOutDrive / @GetSubdir / @GetGroups.              */
+/* v1.10.4: parses menu items from @Set-single-letter statements inside  */
+/* the block. If TTY, presents a minimal interactive picker that lets    */
+/* the user toggle group letters. Non-TTY runs use --groups CLI arg      */
+/* (already set in state).                                               */
 /*-----------------------------------------------------------------------*/
 
-static void inst_cmd_get_string_stub(InstState *St, const char *Line,
-                                      const char *EndTag)
+static void inst_cmd_get_groups(InstState *St, int IsCheckbox)
+{
+    char Line[MAX_LINE];
+    int  StartCount = St->NumMenuItems;
+
+    /* Read block content, extracting @Set X = "label" entries */
+    while (fgets(Line, sizeof(Line), St->ScriptFp)) {
+        char *p = Line;
+        char *eq;
+        char  VarName[32] = "", Val[128] = "";
+
+        while (*p == ' ' || *p == '\t') p++;
+        if (strncasecmp(p, "@EndGroups", 10) == 0) break;
+
+        /* Also allow @CheckBox declaration inside the block */
+        if (strncasecmp(p, "@CheckBox", 9) == 0) {
+            IsCheckbox = 1;
+            continue;
+        }
+
+        /* Look for @Set X = "..."  pattern */
+        if (strncasecmp(p, "@Set", 4) == 0) {
+            char *sp = p + 4;
+            int n = 0;
+            while (*sp == ' ' || *sp == '\t') sp++;
+            while (*sp && !isspace(*sp) && *sp != '=' && n < 31)
+                VarName[n++] = *sp++;
+            VarName[n] = '\0';
+            eq = strchr(sp, '=');
+            if (eq && strlen(VarName) == 1 &&
+                islower((unsigned char)VarName[0])) {
+                /* Extract quoted label */
+                char *q = strchr(eq, '"');
+                if (q) {
+                    q++;
+                    n = 0;
+                    while (*q && *q != '"' && n < 127) Val[n++] = *q++;
+                    Val[n] = '\0';
+                    /* Record menu item */
+                    if (St->NumMenuItems < 32) {
+                        St->MenuItems[St->NumMenuItems].Letter = VarName[0];
+                        strncpy(St->MenuItems[St->NumMenuItems].Label,
+                                Val, 127);
+                        St->MenuItems[St->NumMenuItems].IsCheckbox =
+                            IsCheckbox;
+                        St->NumMenuItems++;
+                    }
+                }
+            }
+        }
+    }
+
+    /* If TTY, prompt the user to confirm / override the selection */
+#ifndef __WATCOMC__
+    if (isatty(fileno(stdin)) && isatty(fileno(stdout)) &&
+        St->NumMenuItems > StartCount) {
+        int i;
+        char InLine[128];
+        printf("\n Choose install %s:\n\n",
+               IsCheckbox ? "options (multi-select)" :
+                            "type (radio)");
+        for (i = StartCount; i < St->NumMenuItems; i++) {
+            char L = St->MenuItems[i].Letter;
+            int Sel = (strchr(St->SelectedGroups, L) != NULL);
+            printf("   [%c] %c  %s\n",
+                   Sel ? 'X' : ' ',
+                   L,
+                   St->MenuItems[i].Label);
+        }
+        printf("\n Enter letters to toggle (or ENTER to accept): ");
+        fflush(stdout);
+        if (fgets(InLine, sizeof(InLine), stdin)) {
+            char *c = InLine;
+            while (*c) {
+                if (islower((unsigned char)*c)) {
+                    char *found = strchr(St->SelectedGroups, *c);
+                    if (found) {
+                        /* toggle off */
+                        memmove(found, found+1, strlen(found));
+                    } else {
+                        /* toggle on */
+                        int len = (int)strlen(St->SelectedGroups);
+                        if (len < (int)sizeof(St->SelectedGroups) - 1) {
+                            St->SelectedGroups[len] = *c;
+                            St->SelectedGroups[len+1] = '\0';
+                        }
+                    }
+                }
+                c++;
+            }
+        }
+        St->InteractiveMenus++;
+        printf(" Groups now: %s\n\n", St->SelectedGroups);
+    }
+#endif
+    (void)StartCount;
+}
+
+
+/*-----------------------------------------------------------------------*/
+/* inst_cmd_get_string() -- Real @GetString handler (v1.10.4)           */
+/*                                                                       */
+/* If TTY: read a line from stdin (respecting @Prompt if set), assign    */
+/* to the target variable, then skip to @EndString.                      */
+/* If not TTY: falls back to the v1.10.2 stub behavior (pre-filled       */
+/* sensible defaults so validation loops don't spin).                    */
+/*-----------------------------------------------------------------------*/
+
+static void inst_cmd_get_string(InstState *St, const char *Line)
 {
     const char *p = Line;
-    char  VarName[64] = "";
-    int   n = 0;
-    char  Discard[MAX_LINE];
+    char VarName[64] = "";
+    int  n = 0;
+    char Discard[MAX_LINE];
+    char Prompt[128] = "";
+    char InLine[256];
 
-    /* If line has form "@GetString @Var" or similar, extract var name */
     while (*p == ' ' || *p == '\t') p++;
-    while (*p && !isspace(*p)) p++;  /* skip "@GetString" */
+    if (strncasecmp(p, "@GetString", 10) == 0) p += 10;
     while (*p == ' ' || *p == '\t') p++;
     if (*p == '@') p++;
     while (*p && (isalnum(*p) || *p == '_') && n < 63) VarName[n++] = *p++;
     VarName[n] = '\0';
 
-    /* Skip content until the matching @EndTag */
+    /* Read block, extracting @Prompt if given */
     while (fgets(Discard, sizeof(Discard), St->ScriptFp)) {
         char *q = Discard;
         while (*q == ' ' || *q == '\t') q++;
-        if (strncasecmp(q, EndTag, strlen(EndTag)) == 0) break;
+        if (strncasecmp(q, "@EndString", 10) == 0) break;
+        if (strncasecmp(q, "@Prompt", 7) == 0) {
+            char *eq = strchr(q, '=');
+            if (eq) {
+                char *qs = strchr(eq, '"');
+                if (qs) {
+                    qs++;
+                    n = 0;
+                    while (*qs && *qs != '"' && n < 127) Prompt[n++] = *qs++;
+                    Prompt[n] = '\0';
+                }
+            }
+        }
     }
 
-    /* Pre-fill a sensible default if the var is empty. This lets
-     * Clark's validation loops fall through instead of infinite-looping
-     * on user input we never actually collect at this phase. */
-    if (VarName[0]) {
+    if (!VarName[0]) return;
+
+#ifndef __WATCOMC__
+    if (isatty(fileno(stdin))) {
+        if (Prompt[0]) printf("%s", Prompt);
+        else printf(" Enter %s: ", VarName);
+        fflush(stdout);
+        if (fgets(InLine, sizeof(InLine), stdin)) {
+            /* Strip newline */
+            InLine[strcspn(InLine, "\r\n")] = '\0';
+            /* If empty, keep existing value; else set */
+            if (InLine[0]) {
+                inst_set_var(St, VarName, InLine);
+                return;
+            }
+        }
+    }
+#endif
+
+    /* Headless fallback: pre-fill if empty */
+    {
         const char *Cur = inst_get_var(St, VarName);
         if (!Cur || !*Cur) {
-            /* Choose a plausible default based on the var name */
             const char *Def = "TEST";
             if (strcasecmp(VarName, "Fname") == 0)   Def = "SysOp";
             else if (strcasecmp(VarName, "Lname") == 0)   Def = "Operator";
@@ -1683,13 +1822,45 @@ static void inst_cmd_get_string_stub(InstState *St, const char *Line,
 
 
 /*-----------------------------------------------------------------------*/
-/* inst_cmd_get_groups_stub() -- Handle @GetGroups ... @EndGroups        */
+/* inst_cmd_set_group() / inst_cmd_clear_group() -- Modify SelectedGroups*/
 /*                                                                       */
-/* v1.10.4 will render the interactive checkbox menu. For v1.10.2, we    */
-/* skip through the block silently — the user pre-sets group state via  */
-/* the --groups CLI arg (default "abcdef"), which is what @If tests      */
-/* against.                                                              */
+/* @SetGroup(x) — mark group letter x as selected                        */
+/* @ClearGroup(x) — mark it deselected                                   */
 /*-----------------------------------------------------------------------*/
+
+static void inst_cmd_set_group(InstState *St, const char *Line)
+{
+    const char *p = strchr(Line, '(');
+    char Letter;
+    if (!p) return;
+    p++;
+    while (*p == ' ' || *p == '"') p++;
+    Letter = *p;
+    if (!islower((unsigned char)Letter)) return;
+    if (!strchr(St->SelectedGroups, Letter)) {
+        int len = (int)strlen(St->SelectedGroups);
+        if (len < (int)sizeof(St->SelectedGroups) - 1) {
+            St->SelectedGroups[len] = Letter;
+            St->SelectedGroups[len+1] = '\0';
+        }
+    }
+}
+
+
+static void inst_cmd_clear_group(InstState *St, const char *Line)
+{
+    const char *p = strchr(Line, '(');
+    char Letter;
+    char *found;
+    if (!p) return;
+    p++;
+    while (*p == ' ' || *p == '"') p++;
+    Letter = *p;
+    if (!islower((unsigned char)Letter)) return;
+    found = strchr(St->SelectedGroups, Letter);
+    if (found) memmove(found, found + 1, strlen(found));
+}
+
 
 static void inst_cmd_skip_block(InstState *St, const char *EndTag)
 {
@@ -1933,9 +2104,10 @@ static int inst_process(InstState *St)
             inst_cmd_file_attr(St, p);
         }
 
-        /* v1.10.2 stubs (real interactive impls land in v1.10.4) */
+        /* v1.10.4: real interactive handlers (fall back to headless
+         * defaults when stdin isn't a TTY) */
         else if (strncasecmp(p, "@GetString", 10) == 0) {
-            inst_cmd_get_string_stub(St, p, "@EndString");
+            inst_cmd_get_string(St, p);
         }
         else if (strncasecmp(p, "@GetOutDrive", 12) == 0) {
             inst_cmd_skip_block(St, "@EndOutDrive");
@@ -1944,7 +2116,22 @@ static int inst_process(InstState *St)
             inst_cmd_skip_block(St, "@EndSubdir");
         }
         else if (strncasecmp(p, "@GetGroups", 10) == 0) {
-            inst_cmd_skip_block(St, "@EndGroups");
+            inst_cmd_get_groups(St, 0);  /* @CheckBox inside sets multi */
+        }
+        else if (strncasecmp(p, "@AskOverwrite", 13) == 0) {
+            /* v1.10.4: accepted as directive — real prompt would ask user
+             * "overwrite existing?" per file. Headless: always yes. */
+        }
+        else if (strncasecmp(p, "@Prompt", 7) == 0) {
+            /* v1.10.4: @Prompt = "..." at top-level. Store as variable. */
+            const char *eq = strchr(p, '=');
+            if (eq) inst_cmd_set(St, p);
+        }
+        else if (strncasecmp(p, "@SetGroup", 9) == 0) {
+            inst_cmd_set_group(St, p);
+        }
+        else if (strncasecmp(p, "@ClearGroup", 11) == 0) {
+            inst_cmd_clear_group(St, p);
         }
         else if (strncasecmp(p, "@DefineDisk", 11) == 0) {
             /* v1.10.3: disk boundaries are organizational. Content inside
@@ -2069,7 +2256,7 @@ int main(int Argc, char *Argv[])
         return 1;
     }
 
-    printf("\n PCBoard Installation Program (install v1.10.3)\n");
+    printf("\n PCBoard Installation Program (install v1.10.4)\n");
     printf(" Script:    %s\n", DatFile);
     printf(" Archives:  %s\n", St.ArchivesDir);
     printf(" Target:    %s\n", St.TargetRoot);

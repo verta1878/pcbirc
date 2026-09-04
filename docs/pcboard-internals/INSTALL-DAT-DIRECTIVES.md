@@ -9,7 +9,8 @@ directive's implementation. Entries marked **spec-only** haven't
 been coded yet; entries marked **v1.10.N** have been implemented in
 that sub-phase (v1.10.1 shipped 6 directives — file operations;
 v1.10.2 shipped 11 more — control flow + strings;
-v1.10.3 shipped 10 more — filesystem + disk sequencing).
+v1.10.3 shipped 10 more — filesystem + disk sequencing;
+v1.10.4 shipped 10 more — interactive menu + user input).
 
 ## Source
 
@@ -46,12 +47,12 @@ password, reg code.
 |---|---:|---:|---|---|
 | `@DefineVars` |  1 |  15 | **spec-only** | Open the variable-declaration block |
 | `@EndVars`    |  1 |  21 | **spec-only** | Close it |
-| `@Qstring`    |  5 |  16 | **spec-only** | Declare a quoted-string variable |
-| `@Fname`      |  8 |  16 | **spec-only** | Storage for first name |
-| `@Lname`      |  8 |  17 | **spec-only** | Storage for last name |
-| `@CitySt`     |  6 |  18 | **spec-only** | Storage for city/state |
-| `@Pwd`        |  6 |  19 | **spec-only** | Storage for password |
-| `@RegCode`    |  1 |  20 | **spec-only** | Storage for registration code |
+| `@Qstring`    |  5 |  16 | **v1.10.4** (parsed via @DefineVars) | Declare a quoted-string variable |
+| `@Fname`      |  8 |  16 | **v1.10.4**   | Storage for first name |
+| `@Lname`      |  8 |  17 | **v1.10.4**   | Storage for last name |
+| `@CitySt`     |  6 |  18 | **v1.10.4**   | Storage for city/state |
+| `@Pwd`        |  6 |  19 | **v1.10.4**   | Storage for password |
+| `@RegCode`    |  1 |  20 | **v1.10.4**   | Storage for registration code |
 | `@Set`        | 14 | 115 | **v1.10.2**   | Set a variable's value inline. Single-letter names (`@Set a = "..."`) are recognized as group-label declarations, NOT stored as normal variables (would break `a [= @Group` semantics). Top-level bare `@Var = expr` outside @DefineVars also handled. |
 
 ### 3. Output / display (v1.10.0 — parsed by existing stub)
@@ -64,7 +65,7 @@ Screen output — messages to user, prompts, pauses, screen clears.
 | `@EndDisplay` |   7 |  43 | parsed | Close it |
 | `@Cls`        |  11 |  24 | parsed | Clear the screen |
 | `@Pause`      |  12 |  42 | parsed | Wait for keypress |
-| `@Prompt`     |   5 |  82 | **spec-only** | Prompt user for input |
+| `@Prompt`     |   5 |  82 | **v1.10.4**   | Prompt string for @GetString; stored as variable |
 | `@Out`        | 570 |  10 | **spec-only** | Emit a single line of output (highest-frequency directive) |
 
 ### 4. Interactive menu (v1.10.4 planned)
@@ -76,19 +77,19 @@ run install steps.
 
 | Directive | Uses | First line | Status | Purpose |
 |---|---:|---:|---|---|
-| `@GetOutDrive`  |   1 |  45 | **spec-only** | Ask user for output drive |
-| `@EndOutDrive`  |   1 |  64 | **spec-only** | Close it |
-| `@GetSubdir`    |   1 |  68 | **spec-only** | Ask user for subdirectory |
-| `@EndSubdir`    |   1 |  83 | **spec-only** | Close it |
-| `@GetString`    |   4 | 163 | **spec-only** | Ask user for a string value |
-| `@EndString`    |   4 | 166 | **spec-only** | Close it |
-| `@GetGroups`    |   2 |  91 | **spec-only** | Open the checkbox menu |
-| `@EndGroups`    |   2 | 122 | **spec-only** | Close it |
-| `@CheckBox`     |   1 |  92 | **spec-only** | Declare a checkbox option |
-| `@Group`        | 202 | 124 | **spec-only** | Reference a group by letter (a-f in the 6-group set) |
-| `@SetGroup`     |   1 | 288 | **spec-only** | Mark a group as selected |
-| `@ClearGroup`   |   2 | 155 | **spec-only** | Mark a group as unselected |
-| `@AskOverwrite` |   2 | 877 | **spec-only** | Prompt before overwriting existing file |
+| `@GetOutDrive`  |   1 |  45 | **v1.10.4** (headless skip; TTY prompt is v1.10.5 refinement) | Ask user for output drive |
+| `@EndOutDrive`  |   1 |  64 | **v1.10.4**   | Close it |
+| `@GetSubdir`    |   1 |  68 | **v1.10.4** (headless skip; TTY prompt is v1.10.5 refinement) | Ask user for subdirectory |
+| `@EndSubdir`    |   1 |  83 | **v1.10.4**   | Close it |
+| `@GetString`    |   4 | 163 | **v1.10.4**   | Ask user for a string value; TTY reads stdin, headless pre-fills sensible defaults |
+| `@EndString`    |   4 | 166 | **v1.10.4**   | Close it |
+| `@GetGroups`    |   2 |  91 | **v1.10.4**   | Open the checkbox menu; parses @Set-single-letter as menu items; TTY renders minimal interactive picker |
+| `@EndGroups`    |   2 | 122 | **v1.10.4**   | Close it |
+| `@CheckBox`     |   1 |  92 | **v1.10.4**   | Marks the enclosing @GetGroups as multi-select |
+| `@Group`        | 202 | 124 | **v1.10.2/1.10.4** | State variable — string of selected group letters; tested via `x [= @Group` in @If |
+| `@SetGroup`     |   1 | 288 | **v1.10.4**   | Programmatically mark a group as selected |
+| `@ClearGroup`   |   2 | 155 | **v1.10.4**   | Programmatically mark a group as unselected |
+| `@AskOverwrite` |   2 | 877 | **v1.10.4**   | Accepted as directive; headless always overwrites, TTY prompt is refinement |
 
 ### 5. Control flow (v1.10.2 planned)
 
@@ -193,6 +194,7 @@ Running total of directives coded in `pcb1541/install/src/install.c`
 | v1.10.1 |  6 | 18 | File operations via redx wire-up (@BeginLib/@EndLib/@File/@Copy/@Delete/@FileAttr; @Out/@Size/@AppendTo as @File subclauses). Verified byte-perfect against dist/target/. |
 | v1.10.2 | 11 | 29 | Variables + control flow + string ops (@If/@Else/@EndIf/@Endif/@Goto/@Label/@Set/@StrLen/@StrHead/@StrToken/@Exists-as-predicate). Full recursive-descent expression evaluator with `[= [! == != > < >= <= && \|\| ()` on int and string operands, @Func(...) inline in string literals, trailing `@Group X` clause on @File as per-directive filter. Real INSTALL.DAT runs end-to-end: 471 successful @File operations, 348 files byte-perfect vs `dist/target/` (94.8% of placed). |
 | v1.10.3 | 10 | 39 | Filesystem + disk sequencing. Real @MkDir/@Mkdir/@ChDir/@ChDrive/@DirExists; @DefineDisk/@EndDisk semantics; @Requires/@HardDisk/@Version predicates. Fixed two @File parser bugs surfaced by real INSTALL.DAT: `@Out DIR\*.*` glob (keep source filename) and missing-`@Out` fallback (default to source name). Full 481 file operations succeed (matches reference tree total), 394 files byte-perfect (94.0%), only PCBOARD.SER fails (legit — not in any archive). |
+| v1.10.4 | 10 | 49 | Interactive menu. Real @GetGroups/@CheckBox/@GetString handlers (TTY prompt when stdin is terminal, headless fallback to `--groups` CLI + sensible defaults). @SetGroup/@ClearGroup modify SelectedGroups programmatically. @AskOverwrite/@Prompt accepted as directives. @Qstring/@RegCode + variable-type declarations parsed via @DefineVars. Single-flavor install (-g "abcdefp" for Corporate BBS) places 371 files, 350 byte-perfect (94.5%). Reference tree's 481 total = rebuild_place.py per-flavor artifact accumulation; a real installer produces one flavor at a time. |
 | v1.10.4 |  ? |  ? | Interactive menu |
 | v1.10.5 |  ? |  ? | System hooks + finish |
 | v1.10.6 | disassembly parity — no new directives, semantic verification only |

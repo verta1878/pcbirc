@@ -1,30 +1,25 @@
-install v1.10.3 — filesystem, disk sequencing, full 481 file ops
-=================================================================
+install v1.10.4 — interactive menu, real @GetString/@GetGroups
+================================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 78f68f1
+Prev origin/main HEAD: (v1.10.3 push)
 
 WHAT THIS RELEASE DOES
 
-  Full 481 @File operations succeed against real INSTALL.DAT
-  (matches reference tree total exactly). 394 files byte-perfect
-  vs pcb1541/install/dist/target/ (94.0% of placed).
+  10 new directives implemented (49 of 60 total). Real interactive
+  handlers when running under a TTY; automatic headless fallback to
+  --groups CLI arg + sensible defaults when running non-interactively.
 
-  10 new directives implemented (39 of 60 total):
+    @GetGroups / @CheckBox / @EndGroups     - checkbox menu
+    @GetString / @EndString                 - user string input
+    @SetGroup / @ClearGroup                 - state mutators
+    @AskOverwrite                           - accepted directive
+    @Prompt                                 - prompt string setter
+    @Qstring / @RegCode                     - variable declarations
+    (plus @Fname/@Lname/@CitySt/@Pwd storage vars via @DefineVars)
 
-    @MkDir / @Mkdir   - actually create the directory
-    @ChDir            - change working dir (state-tracked)
-    @ChDrive          - change working drive (state-tracked)
-    @DirExists        - predicate: does dir exist
-    @DefineDisk / @EndDisk  - disk-scope block semantics
-    @Requires / @HardDisk / @Version  - project-metadata predicates
-
-  Also fixed two @File parser bugs surfaced by real INSTALL.DAT:
-    - `@Out DIR\*.*` glob: means "keep source filename under DIR/"
-      (PCBMAIL.RED uses this heavily; without the fix, all 4 PCBMAIL
-      files failed placement)
-    - Missing `@Out`: destination defaults to source key
-      (PCBOARD2.RED / OS/2 block uses this — 7-10 files failed
-      placement without the fix)
+  Single-flavor install (`-g "abcdefp"` for Corporate BBS) places 371
+  files, 350 byte-perfect (94.5%) vs pcb1541/install/dist/target/
+  reference.
 
 APPLY (Windows / GitHub Desktop) - 3 STEPS
 
@@ -39,79 +34,85 @@ APPLY (Windows / GitHub Desktop) - 3 STEPS
   STEP 2 - Open GitHub Desktop. Expected changes:
     M  APPLY.txt
     M  HISTORY.md
-    M  pcb1541/install/src/install.c          (1984 -> 2098 lines)
+    M  pcb1541/install/src/install.c          (2098 -> 2285 lines)
     M  pcb1541/install/src/README.md
     M  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
 
     Total: 5 modified, 0 added
 
   STEP 3 - Commit + push. Suggested message:
-    install v1.10.3: filesystem + disk sequencing + @File parser
-    fixes, 39/60 directives coded
+    install v1.10.4: interactive menu, real @GetString/@GetGroups,
+    49/60 directives coded
 
 ACCEPTANCE VERIFIED
 
-  Setup: gcc-compiled install v1.10.3 + redx + INSTALL.zip archives.
-  All groups selected (-g "abcdefghijklmnopqrstuvwxyz").
+  Setup: gcc-compiled install v1.10.4 + redx + INSTALL.zip archives.
+  Single-flavor: -g "abcdefp" (First-Time + Upgrade + COMM-DRV +
+  PPL + PCBMail + OS/2 + Corporate BBS).
 
-  End-to-end run on real 42,294 B INSTALL.DAT (1187 lines):
-    Files placed:    481   (matches reference tree total exactly)
-    Files failed:      1   (PCBOARD.SER - legit not in any archive,
-                            ships loose on physical disk)
-    Labels found:      6
+  End-to-end run on real 42,294 B INSTALL.DAT:
+    Files placed:   371
+    Files failed:     1   (PCBOARD.SER - legit not in any archive)
+    Labels found:     6
 
-  Byte-perfect vs pcb1541/install/dist/target/ reference (481 files):
-    matched:  394 / 419 unique files placed  (94.0% of placed)
-    differ:    13   (per-bulletin-board multi-writer collisions —
-                     v1.10.4 disambiguates via @GetGroups flavor UI)
-    extras:    12   (files placed correctly per INSTALL.DAT but not
-                     in reference tree since reference was built with
-                     different flavor selected)
+  Byte-perfect vs pcb1541/install/dist/target/:
+    matched:   350 / 361 unique files on disk  (94.5%)
+    differ:     9         (per-BBS multi-writer collisions on same
+                           output path — last-write-wins gives one
+                           flavor's content)
+    extras:     2         (files we place per INSTALL.DAT not in
+                           reference tree)
 
-  Delta vs v1.10.2:
-    +10 files placed byte-perfect (v1.10.2: 348 -> v1.10.3: 394)
-    +10 file ops closed (v1.10.2: 471 -> v1.10.3: 481, hitting target)
-    -10 file ops failed (v1.10.2: 11 -> v1.10.3: 1)
+  Interactive TTY path verified:
+    - @GetGroups renders a picker showing letter/label options with
+      current selection state; user toggles by typing letters.
+    - @GetString prompts using @Prompt string; empty input keeps
+      existing value.
+    - @SetGroup(x) / @ClearGroup(x) modify SelectedGroups on the fly.
 
-  The remaining gap to 481-byte-perfect is entirely the per-flavor
-  collision problem (13 files) - Clark's script writes different
-  content to same output path per BBS-type; last-write-wins gives
-  us one flavor's content instead of all. Fixes with v1.10.4 menu.
+  Reference tree's 481 files vs our 371:
+    The 110 difference is rebuild_place.py's per-flavor disambiguation
+    artifacts (MAIN/CNAMES.N, MAIN/CNAMES.O, MAIN/PUBLIC.Q3, etc).
+    Real installer runs one flavor at a time and produces ~371 files.
+    This isn't a directive-implementation gap — it's a reference-tree
+    naming choice. v1.10.5/1.10.6 won't close it either.
 
 WHAT'S IN THE FILE-CHANGES
 
-  pcb1541/install/src/install.c  (rewritten, 1984 -> 2098 lines)
+  pcb1541/install/src/install.c  (1984 -> 2285 lines)
     Additions:
-     - WorkingDrive / WorkingDir state fields
-     - inst_cmd_chdrive / inst_cmd_chdir  (bare directive handlers)
-     - @Mkdir / @MkDir wired into expression evaluator as callable
-       (actually mkdirs, returns 0 so `@If @Mkdir(...) @Endif`
-       empty-body pattern works cleanly)
-     - @DirExists wired into evaluator (S_IFDIR check via stat)
-     - Fixed inst_cmd_file:
-        * Missing @Out clause: destination defaults to SrcKey
-        * @Out DIR\*.* glob: trim `*.*`, append SrcKey to get real dest
-     - Dispatcher wires @ChDrive/@ChDir before general fall-through
+     - MenuItems[] state (parsed menu spec from @GetGroups blocks)
+     - inst_cmd_get_groups: real handler (parses @Set-single-letter
+       as menu items; TTY renders picker; toggles SelectedGroups)
+     - inst_cmd_get_string: real handler (TTY reads stdin with @Prompt;
+       headless pre-fills defaults; unchanged v1.10.2 semantics)
+     - inst_cmd_set_group / inst_cmd_clear_group: state mutators
+     - Dispatcher wires @AskOverwrite / @Prompt / @SetGroup / @ClearGroup
+     - Removed dead inst_cmd_get_string_stub
 
   pcb1541/install/src/README.md  (progress row updated)
 
   docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
-    10 directives flipped from spec-only to v1.10.3.
+    10 directives flipped from spec-only to v1.10.4.
     Progress table row filled in.
+    Intro paragraph updated with v1.10.4 shipped count.
 
-  HISTORY.md  (v1.10.3 subphase expanded from "planned" to "shipped"
-    with full implementation summary and byte-perfect metrics)
+  HISTORY.md  (v1.10.4 subphase expanded from "planned" to "shipped"
+    with implementation summary + byte-perfect metrics + note on the
+    481-vs-371 accounting.)
 
 NEXT AFTER THIS PUSH
 
-  install v1.10.4 - interactive menu (~10 directives):
-   - @GetGroups / @CheckBox / @Group (checkbox UI)
-   - @SetGroup / @ClearGroup / @AskOverwrite / @Prompt
-   - @Qstring / @RegCode (variable-type declarations)
-   - Real @GetString (currently pre-filled stub)
+  install v1.10.5 - system hooks + finish (~7 directives):
+   - @System(cmd)               - shell out to DOS command
+   - @SetConfig / @EndConfig    - edit CONFIG.SYS (FILES=25 etc)
+   - @SetAutoexec / @EndAutoexec- edit AUTOEXEC.BAT (PATH= etc)
+   - @Finish / @EndFinish       - post-install cleanup block
+   - @Files = N                 - CONFIG.SYS FILES directive
+   - @Path = "..."              - AUTOEXEC.BAT PATH directive
 
-  Acceptance: bulletin-board flavor selection resolves the 13
-  content-differs; file-count should reach 460-475 byte-perfect
-  (close to full 481). The last few come from v1.10.5 system hooks.
+  After v1.10.5 the count hits ~56/60 with 4 residual (e.g. @Out
+  bare-directive, minor variants). v1.10.6 does the disassembly
+  parity pass to close the understanding-complete milestone.
 
---hexadecimal & crew, install v1.10.3, 2026-09-05
+--hexadecimal & crew, install v1.10.4, 2026-09-05

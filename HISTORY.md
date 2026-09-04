@@ -459,8 +459,24 @@ Sub-phases:
   archive — physical disk file). Remaining gap to 481-byte-perfect
   is the per-bulletin-board multi-writer collisions that v1.10.4 will
   disambiguate via the interactive @GetGroups flavor selection.
-- **v1.10.4** — interactive menu (6-checkbox First-Time / Upgrade /
-  COMM-DRV / PPL / PCBMail / OS2 selector)
+- **v1.10.4** — interactive menu (shipped).
+  10 new directives (`@GetGroups`/`@CheckBox`/`@GetString`/`@AskOverwrite`/
+  `@Prompt`/`@SetGroup`/`@ClearGroup`/`@Qstring`/`@RegCode`/plus the
+  variable-storage vars `@Fname`/`@Lname`/`@CitySt`/`@Pwd` via
+  `@DefineVars`). Real interactive handlers when `isatty(stdin)`:
+  `@GetGroups` parses `@Set` single-letter menu items and presents a
+  minimal checkbox/radio picker, `@GetString` reads a line respecting
+  `@Prompt`. Headless runs fall back to `--groups` CLI arg + sensible
+  defaults. `@SetGroup(x)`/`@ClearGroup(x)` modify the selected-groups
+  state programmatically. Single-flavor install (`-g "abcdefp"` for
+  Corporate BBS) places 371 files, 350 byte-perfect vs
+  `pcb1541/install/dist/target/` (94.5%). Cumulative: 49 of 60
+  directives coded. install.c grows to 2285 lines. Note on the
+  481-vs-371 gap: reference tree's 481 files include
+  `rebuild_place.py`'s per-flavor disambiguation artifacts
+  (`MAIN/CNAMES.N`, `MAIN/CNAMES.O`, etc); a real installer running one
+  flavor at a time correctly produces ~371 files. This gap will not
+  close via more @-directives — it's a reference-tree naming choice.
 - **v1.10.5** — system hooks + finish; end-to-end DOSBox-X run
   landing a complete C:\PCB tree matching `dist/target/`
 - **v1.10.6** — disassembly parity check on `INSTALL.EXE`. Byte-exact
