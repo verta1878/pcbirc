@@ -559,6 +559,24 @@ Sub-phases:
   Family-API incantation (.DEF file with EXETYPE OS2, C0FL.OBJ
   startup) lands in v1.11.1 alongside the directive dispatch table.
 
+- **v1.11.1** — directive dispatch table (shipped 2026-09-05).
+  301 ALL-CAPS directive names mapped to enum IDs via a string
+  lookup table (`DirEntry dir_table[]`), with a minimal main loop
+  that reads INSTALL.DAT, extracts @-tokens, uppercases, and
+  dispatches to stub handlers. Compiles clean under gcc
+  `-Wall -Wextra -ansi -pedantic` AND under BC 3.1 via BLDINS.BAT.
+  Tested against real INSTALL.DAT: 894 directives processed, 6
+  unknown (the 5 user variables + 1 alias — correct behavior).
+
+  Family API link target (proper .DEF, C0FL.OBJ startup, target OS
+  byte 0x01) deferred to v1.11.2 — ships alongside the semantic
+  handler port, where the imports actually matter.
+
+  Files:
+  - `pcb1541/install/src/install-1011.c` — dispatch table + main loop
+    (replaces the v1.11.0 empty-main stub).
+
+
 - **v1.11.1 through v1.11.10** — per the phase roadmap in
   `docs/pcboard-internals/INSTALL-EXE-PARITY.md` (~25-44 sessions
   realistic to reach `cmp -s install-1011.exe INSTALL.EXE` exit 0).

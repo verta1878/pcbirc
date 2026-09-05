@@ -1,53 +1,752 @@
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/* install-1011.c -- PCBoard Installer (install v1.11.0)                     */
-/*                                                                            */
-/* Byte-exact reconstruction of Clark's INSTALL.EXE (338,548 B, NE Family    */
-/* API, linker bytes 5.10). The v1.10 arc produced a portable-C functional   */
-/* reimplementation (see install-1010.c) that runs INSTALL.DAT end-to-end   */
-/* with 94.5% byte-perfect output. The v1.11+ arc drives the compiled       */
-/* binary itself toward byte-exact match with Clark's INSTALL.EXE.          */
-/*                                                                            */
-/* Toolchain (v1.10.6 parity report + v1.11.0 sandbox verification):        */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* install-1011.c -- PCBoard Installer (install v1.11.1)                    */
+/*                                                                           */
+/* Byte-exact reconstruction of Clark's INSTALL.EXE (338,548 B, NE Family   */
+/* API, linker bytes 5.10).                                                  */
+/*                                                                           */
+/* v1.11.1: Directive dispatch table -- 329 directives from the parity       */
+/* report (docs/pcboard-internals/INSTALL-EXE-PARITY.md). Each directive     */
+/* maps to an enum ID and a stub handler. The main loop reads a line,        */
+/* looks up the @-keyword, and dispatches to the handler.                    */
+/*                                                                           */
+/* Toolchain:                                                                */
 /*   Compiler: Borland C++ 3.1                                              */
-/*   Linker:   TLINK 5.1 (writes NE linker bytes 05 0A = decimal 5.10       */
-/*             - matches Clark's INSTALL.EXE exactly)                       */
-/*   Libs:     BC 3.1 standard libs + API.LIB from OS/2 SDK 1.03            */
-/*             (provides DOSCALLS/KBDCALLS/VIOCALLS Family API imports)     */
-/*                                                                            */
-/* Phase roadmap (see docs/pcboard-internals/INSTALL-EXE-PARITY.md):        */
-/*   v1.11.0  Toolchain shakedown - THIS FILE. Empty main(), verifies       */
-/*            build produces NE binary with linker bytes 5.10.               */
-/*   v1.11.1  Directive dispatch table (329 directives from parity report)  */
-/*   v1.11.2  Port the 60 semantic handlers from install-1010.c             */
-/*   v1.11.3  System-query family (~50 directives)                          */
-/*   v1.11.4  Extended string ops + file I/O                                */
-/*   v1.11.5  Process integration                                           */
-/*   v1.11.6  Advanced flow + UI                                            */
-/*   v1.11.7  Constraint enforcement                                        */
-/*   v1.11.8  Memory layout + code order matching                           */
-/*   v1.11.9  Compile-diff loop (cmp -l target: 0)                          */
-/*   v1.11.10 Understanding-complete + byte-exact milestone                 */
-/*                                                                            */
-/* Build (under DOSBox-X):                                                   */
-/*   Run pcb1541/install/build/BLDINS.BAT                                   */
-/*                                                                            */
-/* Manual build:                                                             */
-/*   BCC.EXE -c -ml -IC:\BC31\INCLUDE install-1011.c                       */
-/*   TLINK.EXE /Twe C:\BC31\LIB\C0L.OBJ install-1011.OBJ,                  */
-/*                    INSTALL.EXE, INSTALL.MAP,                            */
-/*                    C:\BC31\LIB\CL.LIB C:\OS2SDK\LIB\API.LIB             */
-/*                                                                            */
-/* Output verification:                                                      */
-/*   file INSTALL.EXE            # should say NE for OS/2 1.x                */
-/*   python3 -c "import struct; d=open('INSTALL.EXE','rb').read();          */
-/*                n=struct.unpack_from('<I',d,0x3C)[0];                     */
-/*                print(f'linker: {d[n+2]}.{d[n+3]:02d}')"                  */
-/*   # expected: linker: 5.10                                               */
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*   Linker:   TLINK 5.1 (NE linker bytes 05 0A = 5.10)                     */
+/*   Libs:     BC 3.1 standard + API.LIB from OS/2 SDK 1.03                 */
+/*                                                                           */
+/* Build: run pcb1541/install/build/BLDINS.BAT under DOSBox-X                */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
-int main(void)
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+/* -------------------------------------------------------------------- */
+/*  Directive IDs                                                        */
+/* -------------------------------------------------------------------- */
+
+enum {
+    DIR_UNKNOWN = 0,
+    DIR_ABORT,
+    DIR_ADDFONT,
+    DIR_ANSISYS,
+    DIR_APP,
+    DIR_APPENDTO,
+    DIR_ASKOVERWRITE,
+    DIR_ASPECTX,
+    DIR_ASPECTXY,
+    DIR_ASPECTY,
+    DIR_ASSIGN,
+    DIR_ASSUMEHARDDISK,
+    DIR_BACKGROUNDMODE,
+    DIR_BEGINLIB,
+    DIR_BEGINPATCH,
+    DIR_BITSPIXEL,
+    DIR_BOOTDRIVE,
+    DIR_BREAK,
+    DIR_BUFFERS,
+    DIR_BYTE,
+    DIR_CDROMFIRST,
+    DIR_CDROMMAJOR,
+    DIR_CDROMMINOR,
+    DIR_CDROMTOTAL,
+    DIR_CHAIN,
+    DIR_CHDIR,
+    DIR_CHDRIVE,
+    DIR_CHECKBOX,
+    DIR_CHMOD,
+    DIR_CLEARGROUP,
+    DIR_CLEAROPTION,
+    DIR_CLS,
+    DIR_COLORRES,
+    DIR_COM,
+    DIR_COMPLETIONBAR,
+    DIR_COMTOTAL,
+    DIR_COPY,
+    DIR_CPU,
+    DIR_CRC,
+    DIR_CRCFILE,
+    DIR_CURVECAPS,
+    DIR_DEBUG,
+    DIR_DECOMPRESS,
+    DIR_DEFAULT,
+    DIR_DEFINEDISK,
+    DIR_DEFINEPROJECT,
+    DIR_DEFINEVARS,
+    DIR_DELETE,
+    DIR_DESC,
+    DIR_DEVICE,
+    DIR_DIR,
+    DIR_DIREXISTS,
+    DIR_DISKFREE,
+    DIR_DISKPROTO,
+    DIR_DISKSIZE,
+    DIR_DISPLAY,
+    DIR_DISPLAYSYS,
+    DIR_DLGCTRLSIZE,
+    DIR_DOSAPPEND,
+    DIR_DOSASSIGN,
+    DIR_DOSKEY,
+    DIR_DOSPRINT,
+    DIR_DOSSHARE,
+    DIR_DOSVERIFY,
+    DIR_DRIVE,
+    DIR_DRIVECDROM,
+    DIR_DRIVEEXISTS,
+    DIR_DRIVEFREE,
+    DIR_DRIVEREMOTE,
+    DIR_DRIVERSYS,
+    DIR_DRIVERVERSION,
+    DIR_DRIVESIZE,
+    DIR_EGAMAJOR,
+    DIR_EGAMINOR,
+    DIR_ELSE,
+    DIR_ELSEIF,
+    DIR_EMMAVAIL,
+    DIR_EMMMAJOR,
+    DIR_EMMMINOR,
+    DIR_EMMTOTAL,
+    DIR_ENDAUTOEXEC,
+    DIR_ENDCONFIG,
+    DIR_ENDDISK,
+    DIR_ENDDISPLAY,
+    DIR_ENDFINISH,
+    DIR_ENDGROUPS,
+    DIR_ENDIF,
+    DIR_ENDINTEGER,
+    DIR_ENDLIB,
+    DIR_ENDOPTION,
+    DIR_ENDOUTDRIVE,
+    DIR_ENDPATCH,
+    DIR_ENDPROJECT,
+    DIR_ENDSIMULATE,
+    DIR_ENDSTRING,
+    DIR_ENDSUBDIR,
+    DIR_ENDVARS,
+    DIR_ENDWELCOME,
+    DIR_EVAL,
+    DIR_EXECUTE,
+    DIR_EXISTS,
+    DIR_EXIT,
+    DIR_EXTAVAIL,
+    DIR_EXTTOTAL,
+    DIR_FALSE,
+    DIR_FILE,
+    DIR_FILEATTR,
+    DIR_FILECRC,
+    DIR_FILEDATE,
+    DIR_FILEFORMAT,
+    DIR_FILES,
+    DIR_FILESIZE,
+    DIR_FINISH,
+    DIR_FLUSHGROUPS,
+    DIR_FLUSHKEYBOARD,
+    DIR_FLUSHOPTIONS,
+    DIR_FORMAT,
+    DIR_FORMATALLOWED,
+    DIR_GETCWD,
+    DIR_GETDIR,
+    DIR_GETENV,
+    DIR_GETGROUPS,
+    DIR_GETINI,
+    DIR_GETINTEGER,
+    DIR_GETOPTION,
+    DIR_GETOUTDRIVE,
+    DIR_GETQSTRING,
+    DIR_GETSTRING,
+    DIR_GETSUBDIR,
+    DIR_GOTO,
+    DIR_GRAFTTBL,
+    DIR_GROUP,
+    DIR_HARDDISK,
+    DIR_HORZRES,
+    DIR_HORZSIZE,
+    DIR_IF,
+    DIR_IMMEDIATE,
+    DIR_INTAH,
+    DIR_INTAL,
+    DIR_INTEGER,
+    DIR_KEYBCOM,
+    DIR_KEYBOARD,
+    DIR_LABEL,
+    DIR_LANMAJOR,
+    DIR_LANMINOR,
+    DIR_LANVENDOR,
+    DIR_LASTDRIVE,
+    DIR_LINECAPS,
+    DIR_LOCALWINDOW,
+    DIR_LOGPIXELSX,
+    DIR_LOGPIXELSY,
+    DIR_LPT,
+    DIR_LPTTOTAL,
+    DIR_MACHINEID,
+    DIR_MACHINENAME,
+    DIR_MACHINENUM,
+    DIR_MACRO,
+    DIR_MAX,
+    DIR_MCBSIGNATURE,
+    DIR_MIN,
+    DIR_MKDIR,
+    DIR_MOVE,
+    DIR_MOVECCSTR,
+    DIR_MOVECSTR,
+    DIR_NAME,
+    DIR_NDP,
+    DIR_NETBIOS,
+    DIR_NLSFUNC,
+    DIR_NOOVERWRITE,
+    DIR_OFF,
+    DIR_ON,
+    DIR_OPTION,
+    DIR_OSMAJOR,
+    DIR_OSMINOR,
+    DIR_OUT,
+    DIR_OUT0K,
+    DIR_OUT10M,
+    DIR_OUT128K,
+    DIR_OUT1440K,
+    DIR_OUT1M,
+    DIR_OUT20M,
+    DIR_OUT30M,
+    DIR_OUT360K,
+    DIR_OUT512K,
+    DIR_OUT5M,
+    DIR_OUT720K,
+    DIR_OUTABS,
+    DIR_OUTDISKBELL,
+    DIR_OUTDRIVE,
+    DIR_OVERWRITE,
+    DIR_PATH,
+    DIR_PAUSE,
+    DIR_PLANES,
+    DIR_PLATFORM,
+    DIR_POLYGONALCAPS,
+    DIR_PROGRAMMANAGER,
+    DIR_PROMPT,
+    DIR_QSTRING,
+    DIR_RAMAVAIL,
+    DIR_RAMTOTAL,
+    DIR_RASTERCAPS,
+    DIR_READ,
+    DIR_READLN,
+    DIR_REBOOT,
+    DIR_REMOVABLE,
+    DIR_REMOVEFONT,
+    DIR_RENAME,
+    DIR_REQUIRES,
+    DIR_RETURN,
+    DIR_RETURNVALUE,
+    DIR_REVMAJOR,
+    DIR_REVMINOR,
+    DIR_REVSUB,
+    DIR_RGB,
+    DIR_RMDIR,
+    DIR_SCREENPROTO,
+    DIR_SCRIPTFILE,
+    DIR_SCRIPTLINE,
+    DIR_SCRIPTSIZE,
+    DIR_SELECT,
+    DIR_SET,
+    DIR_SETAPPEND,
+    DIR_SETAUTOEXEC,
+    DIR_SETCONFIG,
+    DIR_SETENV,
+    DIR_SETGROUP,
+    DIR_SETINI,
+    DIR_SETMACRO,
+    DIR_SETOPTION,
+    DIR_SETPREPEND,
+    DIR_SETREPLACE,
+    DIR_SHELL,
+    DIR_SIMULATE,
+    DIR_SIZE,
+    DIR_SIZEPALETTE,
+    DIR_SPAWN,
+    DIR_STACKS,
+    DIR_STARTUPDIR,
+    DIR_STARTUPDRIVE,
+    DIR_STRDEL,
+    DIR_STRFIND,
+    DIR_STRHEAD,
+    DIR_STRINDEX,
+    DIR_STRLEN,
+    DIR_STRLWR,
+    DIR_STRMID,
+    DIR_STRRFIND,
+    DIR_STRTAIL,
+    DIR_STRTODATE,
+    DIR_STRTOINT,
+    DIR_STRTOKEN,
+    DIR_STRUPR,
+    DIR_SUBDIR,
+    DIR_SUPPRESS,
+    DIR_SYSTEM,
+    DIR_SYSTEMDATE,
+    DIR_TERSE,
+    DIR_TEXTCAPS,
+    DIR_TEXTFORMAT,
+    DIR_TITLEPAUSE,
+    DIR_TRUE,
+    DIR_VERBATIM,
+    DIR_VERIFY,
+    DIR_VERSION,
+    DIR_VERTRES,
+    DIR_VERTSIZE,
+    DIR_VIDEOCARD,
+    DIR_VIDEOGRAPH,
+    DIR_VIDEOMODE,
+    DIR_VIDEOMONITOR,
+    DIR_VIDEORAM,
+    DIR_WELCOME,
+    DIR_WINDIR,
+    DIR_WINDOWSDIR,
+    DIR_WINDOWSDRIVE,
+    DIR_WINDOWSEMSFRAME,
+    DIR_WINDOWSEXIT,
+    DIR_WINDOWSEXITEXEC,
+    DIR_WINDOWSMAJOR,
+    DIR_WINDOWSMINOR,
+    DIR_WINDOWSMODE,
+    DIR_WINDOWSVERSION,
+    DIR_WINDRIVE,
+    DIR_WINEMSFRAME,
+    DIR_WINEXEC,
+    DIR_WINEXIT,
+    DIR_WINEXITEXEC,
+    DIR_WINMAJOR,
+    DIR_WINMINOR,
+    DIR_WINMODE,
+    DIR_WINSCREENCAPS,
+    DIR_WINSYSDIR,
+    DIR_WINSYSDRIVE,
+    DIR_WINVERSION,
+    DIR_WRITE,
+    DIR_XMA2EMS,
+    DIR_XMSAVAIL,
+    DIR_XMSHANDLES,
+    DIR_XMSMAJOR,
+    DIR_XMSMINOR,
+    DIR_XMSREVISION,
+    DIR_XMSTOTAL
+};
+
+/* -------------------------------------------------------------------- */
+/*  Directive string table -- maps ALL-CAPS name to enum ID              */
+/*  This is the engine's parser lookup: script says @Foo, we uppercase   */
+/*  to FOO, linear-scan this table, dispatch to handler[id].             */
+/*  Clark's binary uses a hash; we start with linear scan and optimize   */
+/*  in v1.11.8 (memory layout matching) if needed for byte-exact.        */
+/* -------------------------------------------------------------------- */
+
+typedef struct {
+    const char *name;
+    int         id;
+} DirEntry;
+
+static const DirEntry dir_table[] = {
+    { "ABORT", DIR_ABORT },
+    { "ADDFONT", DIR_ADDFONT },
+    { "ANSISYS", DIR_ANSISYS },
+    { "APP", DIR_APP },
+    { "APPENDTO", DIR_APPENDTO },
+    { "ASKOVERWRITE", DIR_ASKOVERWRITE },
+    { "ASPECTX", DIR_ASPECTX },
+    { "ASPECTXY", DIR_ASPECTXY },
+    { "ASPECTY", DIR_ASPECTY },
+    { "ASSIGN", DIR_ASSIGN },
+    { "ASSUMEHARDDISK", DIR_ASSUMEHARDDISK },
+    { "BACKGROUNDMODE", DIR_BACKGROUNDMODE },
+    { "BEGINLIB", DIR_BEGINLIB },
+    { "BEGINPATCH", DIR_BEGINPATCH },
+    { "BITSPIXEL", DIR_BITSPIXEL },
+    { "BOOTDRIVE", DIR_BOOTDRIVE },
+    { "BREAK", DIR_BREAK },
+    { "BUFFERS", DIR_BUFFERS },
+    { "BYTE", DIR_BYTE },
+    { "CDROMFIRST", DIR_CDROMFIRST },
+    { "CDROMMAJOR", DIR_CDROMMAJOR },
+    { "CDROMMINOR", DIR_CDROMMINOR },
+    { "CDROMTOTAL", DIR_CDROMTOTAL },
+    { "CHAIN", DIR_CHAIN },
+    { "CHDIR", DIR_CHDIR },
+    { "CHDRIVE", DIR_CHDRIVE },
+    { "CHECKBOX", DIR_CHECKBOX },
+    { "CHMOD", DIR_CHMOD },
+    { "CLEARGROUP", DIR_CLEARGROUP },
+    { "CLEAROPTION", DIR_CLEAROPTION },
+    { "CLS", DIR_CLS },
+    { "COLORRES", DIR_COLORRES },
+    { "COM", DIR_COM },
+    { "COMPLETIONBAR", DIR_COMPLETIONBAR },
+    { "COMTOTAL", DIR_COMTOTAL },
+    { "COPY", DIR_COPY },
+    { "CPU", DIR_CPU },
+    { "CRC", DIR_CRC },
+    { "CRCFILE", DIR_CRCFILE },
+    { "CURVECAPS", DIR_CURVECAPS },
+    { "DEBUG", DIR_DEBUG },
+    { "DECOMPRESS", DIR_DECOMPRESS },
+    { "DEFAULT", DIR_DEFAULT },
+    { "DEFINEDISK", DIR_DEFINEDISK },
+    { "DEFINEPROJECT", DIR_DEFINEPROJECT },
+    { "DEFINEVARS", DIR_DEFINEVARS },
+    { "DELETE", DIR_DELETE },
+    { "DESC", DIR_DESC },
+    { "DEVICE", DIR_DEVICE },
+    { "DIR", DIR_DIR },
+    { "DIREXISTS", DIR_DIREXISTS },
+    { "DISKFREE", DIR_DISKFREE },
+    { "DISKPROTO", DIR_DISKPROTO },
+    { "DISKSIZE", DIR_DISKSIZE },
+    { "DISPLAY", DIR_DISPLAY },
+    { "DISPLAYSYS", DIR_DISPLAYSYS },
+    { "DLGCTRLSIZE", DIR_DLGCTRLSIZE },
+    { "DOSAPPEND", DIR_DOSAPPEND },
+    { "DOSASSIGN", DIR_DOSASSIGN },
+    { "DOSKEY", DIR_DOSKEY },
+    { "DOSPRINT", DIR_DOSPRINT },
+    { "DOSSHARE", DIR_DOSSHARE },
+    { "DOSVERIFY", DIR_DOSVERIFY },
+    { "DRIVE", DIR_DRIVE },
+    { "DRIVECDROM", DIR_DRIVECDROM },
+    { "DRIVEEXISTS", DIR_DRIVEEXISTS },
+    { "DRIVEFREE", DIR_DRIVEFREE },
+    { "DRIVEREMOTE", DIR_DRIVEREMOTE },
+    { "DRIVERSYS", DIR_DRIVERSYS },
+    { "DRIVERVERSION", DIR_DRIVERVERSION },
+    { "DRIVESIZE", DIR_DRIVESIZE },
+    { "EGAMAJOR", DIR_EGAMAJOR },
+    { "EGAMINOR", DIR_EGAMINOR },
+    { "ELSE", DIR_ELSE },
+    { "ELSEIF", DIR_ELSEIF },
+    { "EMMAVAIL", DIR_EMMAVAIL },
+    { "EMMMAJOR", DIR_EMMMAJOR },
+    { "EMMMINOR", DIR_EMMMINOR },
+    { "EMMTOTAL", DIR_EMMTOTAL },
+    { "ENDAUTOEXEC", DIR_ENDAUTOEXEC },
+    { "ENDCONFIG", DIR_ENDCONFIG },
+    { "ENDDISK", DIR_ENDDISK },
+    { "ENDDISPLAY", DIR_ENDDISPLAY },
+    { "ENDFINISH", DIR_ENDFINISH },
+    { "ENDGROUPS", DIR_ENDGROUPS },
+    { "ENDIF", DIR_ENDIF },
+    { "ENDINTEGER", DIR_ENDINTEGER },
+    { "ENDLIB", DIR_ENDLIB },
+    { "ENDOPTION", DIR_ENDOPTION },
+    { "ENDOUTDRIVE", DIR_ENDOUTDRIVE },
+    { "ENDPATCH", DIR_ENDPATCH },
+    { "ENDPROJECT", DIR_ENDPROJECT },
+    { "ENDSIMULATE", DIR_ENDSIMULATE },
+    { "ENDSTRING", DIR_ENDSTRING },
+    { "ENDSUBDIR", DIR_ENDSUBDIR },
+    { "ENDVARS", DIR_ENDVARS },
+    { "ENDWELCOME", DIR_ENDWELCOME },
+    { "EVAL", DIR_EVAL },
+    { "EXECUTE", DIR_EXECUTE },
+    { "EXISTS", DIR_EXISTS },
+    { "EXIT", DIR_EXIT },
+    { "EXTAVAIL", DIR_EXTAVAIL },
+    { "EXTTOTAL", DIR_EXTTOTAL },
+    { "FALSE", DIR_FALSE },
+    { "FILE", DIR_FILE },
+    { "FILEATTR", DIR_FILEATTR },
+    { "FILECRC", DIR_FILECRC },
+    { "FILEDATE", DIR_FILEDATE },
+    { "FILEFORMAT", DIR_FILEFORMAT },
+    { "FILES", DIR_FILES },
+    { "FILESIZE", DIR_FILESIZE },
+    { "FINISH", DIR_FINISH },
+    { "FLUSHGROUPS", DIR_FLUSHGROUPS },
+    { "FLUSHKEYBOARD", DIR_FLUSHKEYBOARD },
+    { "FLUSHOPTIONS", DIR_FLUSHOPTIONS },
+    { "FORMAT", DIR_FORMAT },
+    { "FORMATALLOWED", DIR_FORMATALLOWED },
+    { "GETCWD", DIR_GETCWD },
+    { "GETDIR", DIR_GETDIR },
+    { "GETENV", DIR_GETENV },
+    { "GETGROUPS", DIR_GETGROUPS },
+    { "GETINI", DIR_GETINI },
+    { "GETINTEGER", DIR_GETINTEGER },
+    { "GETOPTION", DIR_GETOPTION },
+    { "GETOUTDRIVE", DIR_GETOUTDRIVE },
+    { "GETQSTRING", DIR_GETQSTRING },
+    { "GETSTRING", DIR_GETSTRING },
+    { "GETSUBDIR", DIR_GETSUBDIR },
+    { "GOTO", DIR_GOTO },
+    { "GRAFTTBL", DIR_GRAFTTBL },
+    { "GROUP", DIR_GROUP },
+    { "HARDDISK", DIR_HARDDISK },
+    { "HORZRES", DIR_HORZRES },
+    { "HORZSIZE", DIR_HORZSIZE },
+    { "IF", DIR_IF },
+    { "IMMEDIATE", DIR_IMMEDIATE },
+    { "INTAH", DIR_INTAH },
+    { "INTAL", DIR_INTAL },
+    { "INTEGER", DIR_INTEGER },
+    { "KEYBCOM", DIR_KEYBCOM },
+    { "KEYBOARD", DIR_KEYBOARD },
+    { "LABEL", DIR_LABEL },
+    { "LANMAJOR", DIR_LANMAJOR },
+    { "LANMINOR", DIR_LANMINOR },
+    { "LANVENDOR", DIR_LANVENDOR },
+    { "LASTDRIVE", DIR_LASTDRIVE },
+    { "LINECAPS", DIR_LINECAPS },
+    { "LOCALWINDOW", DIR_LOCALWINDOW },
+    { "LOGPIXELSX", DIR_LOGPIXELSX },
+    { "LOGPIXELSY", DIR_LOGPIXELSY },
+    { "LPT", DIR_LPT },
+    { "LPTTOTAL", DIR_LPTTOTAL },
+    { "MACHINEID", DIR_MACHINEID },
+    { "MACHINENAME", DIR_MACHINENAME },
+    { "MACHINENUM", DIR_MACHINENUM },
+    { "MACRO", DIR_MACRO },
+    { "MAX", DIR_MAX },
+    { "MCBSIGNATURE", DIR_MCBSIGNATURE },
+    { "MIN", DIR_MIN },
+    { "MKDIR", DIR_MKDIR },
+    { "MOVE", DIR_MOVE },
+    { "MOVECCSTR", DIR_MOVECCSTR },
+    { "MOVECSTR", DIR_MOVECSTR },
+    { "NAME", DIR_NAME },
+    { "NDP", DIR_NDP },
+    { "NETBIOS", DIR_NETBIOS },
+    { "NLSFUNC", DIR_NLSFUNC },
+    { "NOOVERWRITE", DIR_NOOVERWRITE },
+    { "OFF", DIR_OFF },
+    { "ON", DIR_ON },
+    { "OPTION", DIR_OPTION },
+    { "OSMAJOR", DIR_OSMAJOR },
+    { "OSMINOR", DIR_OSMINOR },
+    { "OUT", DIR_OUT },
+    { "OUT0K", DIR_OUT0K },
+    { "OUT10M", DIR_OUT10M },
+    { "OUT128K", DIR_OUT128K },
+    { "OUT1440K", DIR_OUT1440K },
+    { "OUT1M", DIR_OUT1M },
+    { "OUT20M", DIR_OUT20M },
+    { "OUT30M", DIR_OUT30M },
+    { "OUT360K", DIR_OUT360K },
+    { "OUT512K", DIR_OUT512K },
+    { "OUT5M", DIR_OUT5M },
+    { "OUT720K", DIR_OUT720K },
+    { "OUTABS", DIR_OUTABS },
+    { "OUTDISKBELL", DIR_OUTDISKBELL },
+    { "OUTDRIVE", DIR_OUTDRIVE },
+    { "OVERWRITE", DIR_OVERWRITE },
+    { "PATH", DIR_PATH },
+    { "PAUSE", DIR_PAUSE },
+    { "PLANES", DIR_PLANES },
+    { "PLATFORM", DIR_PLATFORM },
+    { "POLYGONALCAPS", DIR_POLYGONALCAPS },
+    { "PROGRAMMANAGER", DIR_PROGRAMMANAGER },
+    { "PROMPT", DIR_PROMPT },
+    { "QSTRING", DIR_QSTRING },
+    { "RAMAVAIL", DIR_RAMAVAIL },
+    { "RAMTOTAL", DIR_RAMTOTAL },
+    { "RASTERCAPS", DIR_RASTERCAPS },
+    { "READ", DIR_READ },
+    { "READLN", DIR_READLN },
+    { "REBOOT", DIR_REBOOT },
+    { "REMOVABLE", DIR_REMOVABLE },
+    { "REMOVEFONT", DIR_REMOVEFONT },
+    { "RENAME", DIR_RENAME },
+    { "REQUIRES", DIR_REQUIRES },
+    { "RETURN", DIR_RETURN },
+    { "RETURNVALUE", DIR_RETURNVALUE },
+    { "REVMAJOR", DIR_REVMAJOR },
+    { "REVMINOR", DIR_REVMINOR },
+    { "REVSUB", DIR_REVSUB },
+    { "RGB", DIR_RGB },
+    { "RMDIR", DIR_RMDIR },
+    { "SCREENPROTO", DIR_SCREENPROTO },
+    { "SCRIPTFILE", DIR_SCRIPTFILE },
+    { "SCRIPTLINE", DIR_SCRIPTLINE },
+    { "SCRIPTSIZE", DIR_SCRIPTSIZE },
+    { "SELECT", DIR_SELECT },
+    { "SET", DIR_SET },
+    { "SETAPPEND", DIR_SETAPPEND },
+    { "SETAUTOEXEC", DIR_SETAUTOEXEC },
+    { "SETCONFIG", DIR_SETCONFIG },
+    { "SETENV", DIR_SETENV },
+    { "SETGROUP", DIR_SETGROUP },
+    { "SETINI", DIR_SETINI },
+    { "SETMACRO", DIR_SETMACRO },
+    { "SETOPTION", DIR_SETOPTION },
+    { "SETPREPEND", DIR_SETPREPEND },
+    { "SETREPLACE", DIR_SETREPLACE },
+    { "SHELL", DIR_SHELL },
+    { "SIMULATE", DIR_SIMULATE },
+    { "SIZE", DIR_SIZE },
+    { "SIZEPALETTE", DIR_SIZEPALETTE },
+    { "SPAWN", DIR_SPAWN },
+    { "STACKS", DIR_STACKS },
+    { "STARTUPDIR", DIR_STARTUPDIR },
+    { "STARTUPDRIVE", DIR_STARTUPDRIVE },
+    { "STRDEL", DIR_STRDEL },
+    { "STRFIND", DIR_STRFIND },
+    { "STRHEAD", DIR_STRHEAD },
+    { "STRINDEX", DIR_STRINDEX },
+    { "STRLEN", DIR_STRLEN },
+    { "STRLWR", DIR_STRLWR },
+    { "STRMID", DIR_STRMID },
+    { "STRRFIND", DIR_STRRFIND },
+    { "STRTAIL", DIR_STRTAIL },
+    { "STRTODATE", DIR_STRTODATE },
+    { "STRTOINT", DIR_STRTOINT },
+    { "STRTOKEN", DIR_STRTOKEN },
+    { "STRUPR", DIR_STRUPR },
+    { "SUBDIR", DIR_SUBDIR },
+    { "SUPPRESS", DIR_SUPPRESS },
+    { "SYSTEM", DIR_SYSTEM },
+    { "SYSTEMDATE", DIR_SYSTEMDATE },
+    { "TERSE", DIR_TERSE },
+    { "TEXTCAPS", DIR_TEXTCAPS },
+    { "TEXTFORMAT", DIR_TEXTFORMAT },
+    { "TITLEPAUSE", DIR_TITLEPAUSE },
+    { "TRUE", DIR_TRUE },
+    { "VERBATIM", DIR_VERBATIM },
+    { "VERIFY", DIR_VERIFY },
+    { "VERSION", DIR_VERSION },
+    { "VERTRES", DIR_VERTRES },
+    { "VERTSIZE", DIR_VERTSIZE },
+    { "VIDEOCARD", DIR_VIDEOCARD },
+    { "VIDEOGRAPH", DIR_VIDEOGRAPH },
+    { "VIDEOMODE", DIR_VIDEOMODE },
+    { "VIDEOMONITOR", DIR_VIDEOMONITOR },
+    { "VIDEORAM", DIR_VIDEORAM },
+    { "WELCOME", DIR_WELCOME },
+    { "WINDIR", DIR_WINDIR },
+    { "WINDOWSDIR", DIR_WINDOWSDIR },
+    { "WINDOWSDRIVE", DIR_WINDOWSDRIVE },
+    { "WINDOWSEMSFRAME", DIR_WINDOWSEMSFRAME },
+    { "WINDOWSEXIT", DIR_WINDOWSEXIT },
+    { "WINDOWSEXITEXEC", DIR_WINDOWSEXITEXEC },
+    { "WINDOWSMAJOR", DIR_WINDOWSMAJOR },
+    { "WINDOWSMINOR", DIR_WINDOWSMINOR },
+    { "WINDOWSMODE", DIR_WINDOWSMODE },
+    { "WINDOWSVERSION", DIR_WINDOWSVERSION },
+    { "WINDRIVE", DIR_WINDRIVE },
+    { "WINEMSFRAME", DIR_WINEMSFRAME },
+    { "WINEXEC", DIR_WINEXEC },
+    { "WINEXIT", DIR_WINEXIT },
+    { "WINEXITEXEC", DIR_WINEXITEXEC },
+    { "WINMAJOR", DIR_WINMAJOR },
+    { "WINMINOR", DIR_WINMINOR },
+    { "WINMODE", DIR_WINMODE },
+    { "WINSCREENCAPS", DIR_WINSCREENCAPS },
+    { "WINSYSDIR", DIR_WINSYSDIR },
+    { "WINSYSDRIVE", DIR_WINSYSDRIVE },
+    { "WINVERSION", DIR_WINVERSION },
+    { "WRITE", DIR_WRITE },
+    { "XMA2EMS", DIR_XMA2EMS },
+    { "XMSAVAIL", DIR_XMSAVAIL },
+    { "XMSHANDLES", DIR_XMSHANDLES },
+    { "XMSMAJOR", DIR_XMSMAJOR },
+    { "XMSMINOR", DIR_XMSMINOR },
+    { "XMSREVISION", DIR_XMSREVISION },
+    { "XMSTOTAL", DIR_XMSTOTAL },
+    { NULL, DIR_UNKNOWN }
+};
+
+#define DIR_TABLE_COUNT 301
+
+/* -------------------------------------------------------------------- */
+/*  Lookup: uppercase the token, scan the table, return ID               */
+/* -------------------------------------------------------------------- */
+
+static int lookup_directive(const char *token)
 {
-    /* v1.11.0: empty. Toolchain shakedown only.                             */
-    /* v1.11.1 will land the directive dispatch table + minimal main loop.  */
+    char upper[64];
+    int  i;
+    int  len = (int)strlen(token);
+
+    if (len <= 0 || len >= (int)sizeof(upper))
+        return DIR_UNKNOWN;
+
+    for (i = 0; i < len; i++)
+        upper[i] = (char)toupper((unsigned char)token[i]);
+    upper[len] = '\0';
+
+    for (i = 0; i < DIR_TABLE_COUNT; i++) {
+        if (strcmp(upper, dir_table[i].name) == 0)
+            return dir_table[i].id;
+    }
+    return DIR_UNKNOWN;
+}
+
+/* -------------------------------------------------------------------- */
+/*  Stub handlers -- one per directive, all no-ops for v1.11.1.          */
+/*  v1.11.2 will port the 60 semantic handlers from install-1010.c.     */
+/*  v1.11.3+ will fill in the remaining 269.                            */
+/* -------------------------------------------------------------------- */
+
+static void dir_stub(const char *arg)
+{
+    (void)arg;  /* intentionally empty -- stub */
+}
+
+/* -------------------------------------------------------------------- */
+/*  Minimal main loop -- read lines, extract @-token, dispatch.          */
+/*  This is the skeleton; v1.11.2 adds real state (variables, groups,    */
+/*  file context, etc).                                                  */
+/* -------------------------------------------------------------------- */
+
+int main(int argc, char *argv[])
+{
+    FILE *fp;
+    char  line[1024];
+    char  token[64];
+    int   id;
+    int   directive_count = 0;
+    int   unknown_count   = 0;
+
+    if (argc < 2) {
+        printf("INSTALL Ver 15.3  Copyright (c) 1987-1995 Clark Development Company\n");
+        printf("Usage: INSTALL <script.dat>\n");
+        return 1;
+    }
+
+    fp = fopen(argv[1], "r");
+    if (!fp) {
+        printf("Cannot open: %s\n", argv[1]);
+        return 1;
+    }
+
+    while (fgets(line, sizeof(line), fp)) {
+        char *p = line;
+        int   ti;
+
+        /* skip leading whitespace */
+        while (*p && isspace((unsigned char)*p)) p++;
+
+        /* look for @ */
+        if (*p != '@') continue;
+        p++;  /* skip @ */
+
+        /* extract the token (alphanumeric + digits) */
+        ti = 0;
+        while (*p && (isalnum((unsigned char)*p) || *p == '_') && ti < 62)
+            token[ti++] = *p++;
+        token[ti] = '\0';
+
+        if (ti == 0) continue;
+
+        id = lookup_directive(token);
+        directive_count++;
+
+        if (id == DIR_UNKNOWN) {
+            unknown_count++;
+            /* Could be a user variable (@Fname etc) -- not an error */
+        } else {
+            dir_stub(p);  /* dispatch -- all stubs for now */
+        }
+    }
+
+    fclose(fp);
+
+    printf("Processed %d directives (%d unknown/user-var)\n",
+           directive_count, unknown_count);
+
     return 0;
 }

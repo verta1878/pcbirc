@@ -1,125 +1,67 @@
-install v1.11.0 — byte-exact INSTALL.EXE arc opens
-====================================================
+install v1.11.1 — directive dispatch table
+==========================================
 Date: 2026-09-05
-Prev origin/main HEAD: 74b377a (update devtools)
+Prev origin/main HEAD: afb4906 (install phase updated. devtools.)
 
 WHAT THIS RELEASE DOES
 
-  1. Opens the install v1.11 arc: byte-exact reconstruction of Clark's
-     INSTALL.EXE binary (338,548 B, NE Family API, linker bytes 5.10).
+  Lands the 301-directive dispatch table in install-1011.c, replacing
+  the v1.11.0 empty-main() stub. This is the skeleton of the entire
+  INSTALL.EXE engine: every @-directive in Clark's binary maps to an
+  enum ID via a string lookup table, with a minimal main loop that
+  reads INSTALL.DAT, extracts @-tokens, uppercases, and dispatches.
 
-  2. Preserves the v1.10 functional reimplementation as
-     `install-1010.c` (previously `install.c`) - still runs INSTALL.DAT
-     end-to-end with 94.5% byte-perfect output.
+  All handlers are stubs (dir_stub) — v1.11.2 will port the 60 real
+  semantic handlers from install-1010.c.
 
-  3. Lands the v1.11.0 starter:
-     - `install-1011.c` - empty main() that compiles under BC 3.1
-     - `pcb1541/install/build/BLDINS.BAT` - install-scoped build script
-     - `pcb1541/install/build/README.md` - explains scope vs MAIN/
+  Family API link target (.DEF file, C0FL.OBJ startup, target OS byte
+  0x01) deferred to v1.11.2 — ships alongside the semantic handler
+  port, where the Family API imports actually matter.
 
-  4. Corrects `devtools/COMPILERS.md`. Earlier draft speculated
-     Microsoft C 5.1 was Clark's toolchain (wrong). Sandbox
-     verification proved: Borland C++ 3.1 + TLINK 5.1 writes the
-     linker bytes 5.10 that Clark's INSTALL.EXE has.
+APPLY (Windows / GitHub Desktop) — 2 STEPS
 
-  DOES NOT touch MAIN/build/scripts/ - that dir is scoped to the
-  pwa153 SDK library matrix (PCBKBC/PCBKIT/PCBKMS), not to per-binary
-  builds. install/ has its own scoped build tree at ./build/.
-
-APPLY (Windows / GitHub Desktop) - 3 STEPS
-
-  STEP 1a - MANUALLY delete the old install.c BEFORE extracting:
-      In File Explorer: navigate to pcb1541\install\src\
-      Delete: install.c
-      (This file is being replaced with install-1010.c which has the
-      same code + updated header comment. GitHub Desktop can't do
-      cross-name renames automatically via zip extraction.)
-
-  STEP 1b - Extract this release zip INTO your repo root.
-
-    Adds:
-      pcb1541/install/src/install-1010.c   (renamed from install.c + header updated)
-      pcb1541/install/src/install-1011.c   (v1.11.0 starter)
-      pcb1541/install/build/BLDINS.BAT     (install-scoped build script)
-      pcb1541/install/build/README.md      (scope explanation)
+  STEP 1 — Extract this release zip INTO your repo root.
 
     Modifies:
-      HISTORY.md                           (v1.11.0 entry added)
       APPLY.txt
-      devtools/COMPILERS.md                (corrects v1.11 toolchain section)
-      pcb1541/install/src/README.md        (adds v1.11 section)
+      HISTORY.md                              (v1.11.1 entry added)
+      CHECKSUMS.md5                           (regenerated)
+      CHECKSUMS.sha256                        (regenerated)
+      CHECKSUMS.txt                           (regenerated)
+      pcb1541/install/src/install-1011.c      (dispatch table replaces stub)
 
-    NO changes to MAIN/build/scripts/BUILD.BAT or any MAIN/ file.
+    NO additions. NO deletions.
 
-  STEP 2 - Open GitHub Desktop. Expected changes:
+  STEP 2 — Open GitHub Desktop. Expected changes:
 
-    D  pcb1541/install/src/install.c
-    A  pcb1541/install/src/install-1010.c
-    A  pcb1541/install/src/install-1011.c
-    A  pcb1541/install/build/BLDINS.BAT
-    A  pcb1541/install/build/README.md
     M  APPLY.txt
     M  HISTORY.md
-    M  devtools/COMPILERS.md
-    M  pcb1541/install/src/README.md
+    M  CHECKSUMS.md5
+    M  CHECKSUMS.sha256
+    M  CHECKSUMS.txt
+    M  pcb1541/install/src/install-1011.c
 
-    Total: 4 modified, 4 added, 1 deleted.
+    Total: 6 modified, 0 added, 0 deleted.
 
-  STEP 3 - Commit + push. Suggested message:
-    install v1.11.0: byte-exact INSTALL.EXE arc opens
-    (BC 3.1 + TLINK 5.1 + API.LIB toolchain confirmed)
+  Commit + push. Suggested message:
+    install v1.11.1: directive dispatch table (301 directives)
 
 ACCEPTANCE
 
-  Verified in sandbox with DOSBox-X + BC 3.1 + API.LIB:
+  Verified in sandbox:
+  - gcc -Wall -Wextra -ansi -pedantic: CLEAN (zero warnings)
+  - Ran against real INSTALL.DAT: 894 directives processed,
+    6 unknown (5 user variables @Fname/@Lname/@CitySt/@Pwd/@RegCode
+    + 1 alias — correct behavior, these are runtime-declared names
+    not engine directives)
+  - md5 of install-1011.c in zip matches source: verified
 
-    File                                       linker bytes
-    ------------------------------------------------------------
-      Clark's INSTALL.EXE (reference)           5.10  <- target
-      BWCC.DLL (in pcb1541/install/dist/...)    5.10
-      BC 3.1's TLINK.EXE (own NE header)        5.10
-      v1.11.0's install-1011.c -> INSTALL.EXE   5.10
+NEXT AFTER PUSH: v1.11.2
 
-  v1.11.0's built INSTALL.EXE is a 5,984-byte NE binary:
-    - Linker version bytes: 05 0A (5.10) - MATCHES CLARK
-    - Segments: 3
-    - Imports: 0 modules (Family API imports come with v1.11.1)
-    - Target OS byte: 0x02 (Windows) - v1.11.1 will switch to 0x01
+  Port the 60 semantic handlers from install-1010.c into the dispatch
+  framework. Switch to Family API link target (.DEF + C0FL.OBJ +
+  target OS byte 0x01). At end of v1.11.2 the binary runs INSTALL.DAT
+  end-to-end with real file placement, same as install-1010.c does
+  today, but compiled under BC 3.1 targeting NE Family API.
 
-TOOLCHAIN CORRECTION - WHY
-
-  Earlier this session I posited Microsoft C 5.1 was Clark's toolchain
-  based on the linker "5.10" bytes in INSTALL.EXE's NE header matching
-  what I thought was MS LINK's version. That was WRONG.
-
-  Investigation with the archives + DOSBox-X sandbox:
-    - MSC 5.1's LINK stamps NE outputs with bytes 05 01 (=5.01) per
-      its banner. Same for OS/2 SDK 1.03's LINK (md5-identical).
-    - BC 3.1's TLINK stamps 05 0A (=5.10). Its banner says "5.1" but
-      Borland encodes minor 1 as byte 0x0A (10). Microsoft encodes it
-      as 0x01. Different conventions, same version-number string.
-    - BWCC.DLL (Borland's Windows Custom Controls DLL) shipped in
-      Clark's install output tree at
-      pcb1541/install/dist/target/PCBMAIL/BWCC.DLL also has linker
-      bytes 5.10 - another confirmation.
-
-  So: BC 3.1 (in devtools/BC31.zip since forever) is Clark's compiler
-  + linker. API.LIB (from OS2SDK103.zip) is the OS/2 Family API
-  imports. Full toolchain identified + all archives on origin.
-
-NEXT AFTER PUSH: v1.11.1 - directive dispatch table
-
-  Scope:
-   - Deeper INSTALL.EXE disassembly (segment analysis, function
-     boundaries)
-   - Identify the 329-directive dispatch table (name-string ->
-     handler-fn mapping)
-   - Understand tokenizer: case-fold rule, keyword vs runtime lookup,
-     hash function if any
-   - Implement scanner + dispatcher in install-1011.c
-   - Wire in 5-10 simplest directives as a smoke test
-   - Also: switch link target to Family API (proper .DEF, C0FL.OBJ
-     startup, target OS byte 0x01/0x04)
-  Estimated: 2-3 sessions.
-
---hexadecimal & crew, install v1.11.0, 2026-09-05
+--hexadecimal, install v1.11.1, 2026-09-05

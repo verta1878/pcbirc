@@ -2,46 +2,20 @@
 #
 # This directory has three files:
 #
-#   CHECKSUMS.md5      — MD5 hashes,    md5sum -c compatible
-#   CHECKSUMS.sha256   — SHA256 hashes, sha256sum -c compatible
-#   CHECKSUMS.txt      — this file (README + summary)
+#   CHECKSUMS.md5       MD5 hashes,    md5sum -c compatible
+#   CHECKSUMS.sha256    SHA256 hashes, sha256sum -c compatible
+#   CHECKSUMS.txt       this file (README + summary)
 #
 # ==================================================================
 # VERIFY EVERY TRACKED FILE (Linux / Mac / WSL)
-# ==================================================================
 #
-#     cd /path/to/pcbirc
-#     md5sum -c CHECKSUMS.md5           # fast, ~15 sec
-#     sha256sum -c CHECKSUMS.sha256     # slower, ~40 sec, stronger
+#   cd /path/to/pcbirc
+#   md5sum -c CHECKSUMS.md5
+#   sha256sum -c CHECKSUMS.sha256
 #
-# Both should print "OK" for every listed file. Any "FAILED" line
-# means the file's content differs from what was hashed at generation
-# time — either the file was modified, or the download was corrupted.
+# Both should report all OK with no mismatches.
 #
 # ==================================================================
-# VERIFY A SINGLE FILE
+# LAST REGENERATED: 2026-09-05 (install v1.11.1)
+# TRACKED FILES:    10471
 # ==================================================================
-#
-#   Linux / Mac / WSL:
-#     md5sum path/to/file       # compare against CHECKSUMS.md5
-#     sha256sum path/to/file    # compare against CHECKSUMS.sha256
-#
-#   Windows (PowerShell, no download needed — built into Windows 10+):
-#     (Get-FileHash path\to\file -Algorithm MD5).Hash.ToLower()
-#     (Get-FileHash path\to\file -Algorithm SHA256).Hash.ToLower()
-#
-#   Windows (CertUtil, works on ALL Windows since XP):
-#     certutil -hashfile path\to\file MD5
-#     certutil -hashfile path\to\file SHA256
-#
-# ==================================================================
-# METADATA
-# ==================================================================
-#
-# Generated: 2026-09-03 22:55 UTC
-# At commit: b785a982ff9df43ddb424e3dc5950abfe9f809ab
-# Files:     10506 git-tracked entries
-#
-# Untracked files (build outputs, .obj/.exe/.map/.tmp/etc.) are
-# excluded per .gitignore rules and are NOT in these manifests.
-# See .gitignore for the exact exclusion set.
