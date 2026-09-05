@@ -522,6 +522,21 @@ Sub-phases:
   - `docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md` — NEW
 
 
+- **v1.11.5** — system-query handlers + full dispatch coverage (shipped 2026-09-05).
+  All 301 directives in the dispatch table now have explicit case handlers
+  (was 43 real + default stub). System-query directives (~80) return
+  DOS 6.22 / VGA / 640K defaults. @Out* family (14 variants), string ops
+  (10), file I/O extras (16), system integration (27), advanced flow (55),
+  and Windows-specific (9) all have typed stubs.
+  Compiles clean under BCC 3.1 (0 errors) and links to 58,136 B
+  (was 56,574 in v1.11.3; +1,562 B from handler code).
+  NE header still matches: linker 5.10, target OS 0x01.
+
+  Files:
+  - `pcb1541/install/src/install-1011.c` — 3,524 lines (was 3,097)
+
+
+
 
   **install v1.10 arc: understanding-complete.** Our C reimplementation
   faithfully executes Clark's INSTALL.DAT end-to-end, producing

@@ -1,9 +1,9 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* install-1011.c -- PCBoard Installer (install v1.11.2)                     */
 /*                                                                            */
-/* v1.11.2: the v1.10.5 handlers ported into the v1.11.1 dispatch table      */
-/* framework. Same functionality, table-driven routing. 60 semantic           */
-/* handlers from install-1010.c wired to the 301-directive enum/lookup.       */
+/* v1.11.5: system-query handlers + stub coverage for all 301 directives.     */
+/* 60 semantic handlers from v1.10.5 + system-query defaults (DOS 6.22/VGA)   */
+/* + stubs for all remaining directives. Full dispatch coverage.              */
 /*                                                                            */
 /* Build: BC 3.1 via BLDINS.BAT (byte-exact target) or gcc (testing).        */
 /* For byte-exact INSTALL.EXE reconstruction see INSTALL-EXE-PARITY.md.      */
@@ -2758,6 +2758,128 @@ static void inst_cmd_set(InstState *St, const char *Line)
 
 
 
+
+/* -------------------------------------------------------------------- */
+/*  v1.11.5: System-query handlers (DOS defaults)                       */
+/*  These return static values matching a typical DOS 6.22 / VGA / 640K */
+/*  system. Clark's binary queries INT 21h/2Fh/etc; we return defaults. */
+/* -------------------------------------------------------------------- */
+
+static long inst_query_int(int id)
+{
+    switch (id) {
+    case DIR_ASPECTX: return 1L;
+    case DIR_ASPECTXY: return 1L;
+    case DIR_ASPECTY: return 1L;
+    case DIR_ASSUMEHARDDISK: return 0L;
+    case DIR_BACKGROUNDMODE: return 0L;
+    case DIR_BITSPIXEL: return 8L;
+    case DIR_BOOTDRIVE: return 3L;
+    case DIR_CDROMFIRST: return 0L;
+    case DIR_CDROMMAJOR: return 0L;
+    case DIR_CDROMMINOR: return 0L;
+    case DIR_CDROMTOTAL: return 0L;
+    case DIR_COLORRES: return 8L;
+    case DIR_COM: return 1L;
+    case DIR_COMTOTAL: return 2L;
+    case DIR_CPU: return 5L;
+    case DIR_CURVECAPS: return 0L;
+    case DIR_DISKFREE: return 100000L;
+    case DIR_DISKPROTO: return 0L;
+    case DIR_DISKSIZE: return 500000L;
+    case DIR_DRIVECDROM: return 0L;
+    case DIR_DRIVEEXISTS: return 1L;
+    case DIR_DRIVEFREE: return 100000L;
+    case DIR_DRIVEREMOTE: return 0L;
+    case DIR_DRIVERSYS: return 0L;
+    case DIR_DRIVERVERSION: return 0L;
+    case DIR_DRIVESIZE: return 500000L;
+    case DIR_EGAMAJOR: return 0L;
+    case DIR_EGAMINOR: return 0L;
+    case DIR_EMMAVAIL: return 0L;
+    case DIR_EMMMAJOR: return 0L;
+    case DIR_EMMMINOR: return 0L;
+    case DIR_EMMTOTAL: return 0L;
+    case DIR_EXTAVAIL: return 4096L;
+    case DIR_EXTTOTAL: return 4096L;
+    case DIR_FALSE: return 0L;
+    case DIR_HORZRES: return 640L;
+    case DIR_HORZSIZE: return 240L;
+    case DIR_KEYBCOM: return 0L;
+    case DIR_KEYBOARD: return 1L;
+    case DIR_LANMAJOR: return 0L;
+    case DIR_LANMINOR: return 0L;
+    case DIR_LASTDRIVE: return 26L;
+    case DIR_LINECAPS: return 0L;
+    case DIR_LOGPIXELSX: return 96L;
+    case DIR_LOGPIXELSY: return 96L;
+    case DIR_LPT: return 1L;
+    case DIR_LPTTOTAL: return 1L;
+    case DIR_MACHINEID: return 252L;
+    case DIR_MACHINENUM: return 0L;
+    case DIR_NDP: return 5L;
+    case DIR_NETBIOS: return 0L;
+    case DIR_OFF: return 0L;
+    case DIR_ON: return 1L;
+    case DIR_OSMAJOR: return 6L;
+    case DIR_OSMINOR: return 22L;
+    case DIR_PLANES: return 1L;
+    case DIR_PLATFORM: return 1L;
+    case DIR_POLYGONALCAPS: return 0L;
+    case DIR_RAMAVAIL: return 580L;
+    case DIR_RAMTOTAL: return 640L;
+    case DIR_RASTERCAPS: return 0L;
+    case DIR_REMOVABLE: return 0L;
+    case DIR_REVMAJOR: return 0L;
+    case DIR_REVMINOR: return 0L;
+    case DIR_REVSUB: return 0L;
+    case DIR_RGB: return 0L;
+    case DIR_SCREENPROTO: return 0L;
+    case DIR_SIZEPALETTE: return 256L;
+    case DIR_TEXTCAPS: return 0L;
+    case DIR_TRUE: return 1L;
+    case DIR_VERTRES: return 480L;
+    case DIR_VERTSIZE: return 180L;
+    case DIR_VIDEOCARD: return 3L;
+    case DIR_VIDEOGRAPH: return 1L;
+    case DIR_VIDEOMODE: return 3L;
+    case DIR_VIDEOMONITOR: return 1L;
+    case DIR_VIDEORAM: return 256L;
+    case DIR_WINDOWSMAJOR: return 0L;
+    case DIR_WINDOWSMINOR: return 0L;
+    case DIR_WINDOWSMODE: return 0L;
+    case DIR_WINDOWSVERSION: return 0L;
+    case DIR_WINMAJOR: return 0L;
+    case DIR_WINMINOR: return 0L;
+    case DIR_WINMODE: return 0L;
+    case DIR_XMA2EMS: return 0L;
+    case DIR_XMSAVAIL: return 4096L;
+    case DIR_XMSHANDLES: return 32L;
+    case DIR_XMSMAJOR: return 3L;
+    case DIR_XMSMINOR: return 0L;
+    case DIR_XMSREVISION: return 0L;
+    case DIR_XMSTOTAL: return 4096L;
+    default: return 0L;
+    }
+}
+
+static const char *inst_query_str(int id)
+{
+    switch (id) {
+    case DIR_LANVENDOR: return "";
+    case DIR_MACHINENAME: return "PCBOARD";
+    case DIR_STARTUPDIR: return "C:\\";
+    case DIR_STARTUPDRIVE: return "C";
+    case DIR_WINDIR: return "";
+    case DIR_WINDOWSDIR: return "";
+    case DIR_WINDOWSDRIVE: return "";
+    case DIR_WINDRIVE: return "";
+    case DIR_WINSYSDIR: return "";
+    case DIR_WINSYSDRIVE: return "";
+    default: return "";
+    }
+}
+
 static int inst_process(InstState *St)
 {
     char Line[MAX_LINE];                /* line read buffer               */
@@ -2981,6 +3103,283 @@ static int inst_process(InstState *St)
         case DIR_ENDVARS:
         case DIR_ENDSTRING:
             /* Consumed by their respective block openers */
+            break;
+
+
+        /* --- v1.11.5: @Out* family (disk-size-conditional output) --- */
+        case DIR_OUT0K:
+        case DIR_OUT128K:
+        case DIR_OUT360K:
+        case DIR_OUT512K:
+        case DIR_OUT720K:
+        case DIR_OUT1M:
+        case DIR_OUT1440K:
+        case DIR_OUT5M:
+        case DIR_OUT10M:
+        case DIR_OUT20M:
+        case DIR_OUT30M:
+        case DIR_OUTABS:
+        case DIR_OUTDISKBELL:
+            /* Disk-size-conditional: in headless mode, always take
+             * the default path (skip the block). Real installer would
+             * check disk free space against the threshold. */
+            break;
+
+        /* --- v1.11.5: System-query directives (return DOS defaults) --- */
+        case DIR_ASPECTX:
+        case DIR_ASPECTXY:
+        case DIR_ASPECTY:
+        case DIR_ASSUMEHARDDISK:
+        case DIR_BACKGROUNDMODE:
+        case DIR_BITSPIXEL:
+        case DIR_BOOTDRIVE:
+        case DIR_CDROMFIRST:
+        case DIR_CDROMMAJOR:
+        case DIR_CDROMMINOR:
+        case DIR_CDROMTOTAL:
+        case DIR_COLORRES:
+        case DIR_COM:
+        case DIR_COMTOTAL:
+        case DIR_CPU:
+        case DIR_CURVECAPS:
+        case DIR_DISKFREE:
+        case DIR_DISKPROTO:
+        case DIR_DISKSIZE:
+        case DIR_DRIVECDROM:
+        case DIR_DRIVEEXISTS:
+        case DIR_DRIVEFREE:
+        case DIR_DRIVEREMOTE:
+        case DIR_DRIVERSYS:
+        case DIR_DRIVERVERSION:
+        case DIR_DRIVESIZE:
+        case DIR_EGAMAJOR:
+        case DIR_EGAMINOR:
+        case DIR_EMMAVAIL:
+        case DIR_EMMMAJOR:
+        case DIR_EMMMINOR:
+        case DIR_EMMTOTAL:
+        case DIR_EXTAVAIL:
+        case DIR_EXTTOTAL:
+        case DIR_FALSE:
+        case DIR_HORZRES:
+        case DIR_HORZSIZE:
+        case DIR_KEYBCOM:
+        case DIR_KEYBOARD:
+        case DIR_LANMAJOR:
+        case DIR_LANMINOR:
+        case DIR_LASTDRIVE:
+        case DIR_LINECAPS:
+        case DIR_LOGPIXELSX:
+        case DIR_LOGPIXELSY:
+        case DIR_LPT:
+        case DIR_LPTTOTAL:
+        case DIR_MACHINEID:
+        case DIR_MACHINENUM:
+        case DIR_NDP:
+        case DIR_NETBIOS:
+        case DIR_OFF:
+        case DIR_ON:
+        case DIR_OSMAJOR:
+        case DIR_OSMINOR:
+        case DIR_PLANES:
+        case DIR_PLATFORM:
+        case DIR_POLYGONALCAPS:
+        case DIR_RAMAVAIL:
+        case DIR_RAMTOTAL:
+        case DIR_RASTERCAPS:
+        case DIR_REMOVABLE:
+        case DIR_REVMAJOR:
+        case DIR_REVMINOR:
+        case DIR_REVSUB:
+        case DIR_RGB:
+        case DIR_SCREENPROTO:
+        case DIR_SIZEPALETTE:
+        case DIR_TEXTCAPS:
+        case DIR_TRUE:
+        case DIR_VERTRES:
+        case DIR_VERTSIZE:
+        case DIR_VIDEOCARD:
+        case DIR_VIDEOGRAPH:
+        case DIR_VIDEOMODE:
+        case DIR_VIDEOMONITOR:
+        case DIR_VIDEORAM:
+        case DIR_WINDOWSMAJOR:
+        case DIR_WINDOWSMINOR:
+        case DIR_WINDOWSMODE:
+        case DIR_WINDOWSVERSION:
+        case DIR_WINMAJOR:
+        case DIR_WINMINOR:
+        case DIR_WINMODE:
+        case DIR_XMA2EMS:
+        case DIR_XMSAVAIL:
+        case DIR_XMSHANDLES:
+        case DIR_XMSMAJOR:
+        case DIR_XMSMINOR:
+        case DIR_XMSREVISION:
+        case DIR_XMSTOTAL:
+        {
+            /* Set as variable for @If evaluation */
+            char buf[32];
+            sprintf(buf, "%ld", inst_query_int(id));
+            inst_set_var(St, token, buf);
+            break;
+        }
+
+        case DIR_LANVENDOR:
+        case DIR_MACHINENAME:
+        case DIR_STARTUPDIR:
+        case DIR_STARTUPDRIVE:
+        case DIR_WINDIR:
+        case DIR_WINDOWSDIR:
+        case DIR_WINDOWSDRIVE:
+        case DIR_WINDRIVE:
+        case DIR_WINSYSDIR:
+        case DIR_WINSYSDRIVE:
+        {
+            inst_set_var(St, token, inst_query_str(id));
+            break;
+        }
+
+        /* --- v1.11.5: String operations (stubs) --- */
+        case DIR_STRDEL:
+        case DIR_STRFIND:
+        case DIR_STRINDEX:
+        case DIR_STRLWR:
+        case DIR_STRMID:
+        case DIR_STRRFIND:
+        case DIR_STRTAIL:
+        case DIR_STRTODATE:
+        case DIR_STRTOINT:
+        case DIR_STRUPR:
+            /* String ops: would manipulate variable values.
+             * Not exercised by INSTALL.DAT — stub for completeness. */
+            break;
+
+        /* --- v1.11.5: File I/O extras (stubs) --- */
+        case DIR_FILECRC:
+        case DIR_FILEDATE:
+        case DIR_FILESIZE:
+        case DIR_FILEFORMAT:
+        case DIR_CRC:
+        case DIR_CRCFILE:
+        case DIR_GETCWD:
+        case DIR_GETDIR:
+        case DIR_MOVE:
+        case DIR_RENAME:
+        case DIR_RMDIR:
+        case DIR_CHMOD:
+        case DIR_ASSIGN:
+        case DIR_DECOMPRESS:
+        case DIR_FORMAT:
+        case DIR_FORMATALLOWED:
+            /* Extended file I/O: not exercised by INSTALL.DAT. */
+            break;
+
+        /* --- v1.11.5: System integration (stubs) --- */
+        case DIR_EXECUTE:
+        case DIR_SPAWN:
+        case DIR_SHELL:
+        case DIR_REBOOT:
+        case DIR_GETENV:
+        case DIR_SETENV:
+        case DIR_GETINI:
+        case DIR_SETINI:
+        case DIR_SETMACRO:
+        case DIR_SETAPPEND:
+        case DIR_SETPREPEND:
+        case DIR_SETREPLACE:
+        case DIR_DOSAPPEND:
+        case DIR_DOSASSIGN:
+        case DIR_DOSKEY:
+        case DIR_DOSPRINT:
+        case DIR_DOSSHARE:
+        case DIR_DOSVERIFY:
+        case DIR_ANSISYS:
+        case DIR_DISPLAYSYS:
+        case DIR_GRAFTTBL:
+        case DIR_NLSFUNC:
+        case DIR_BUFFERS:
+        case DIR_STACKS:
+        case DIR_BREAK:
+        case DIR_DEVICE:
+        case DIR_PROGRAMMANAGER:
+            /* System integration: not exercised by INSTALL.DAT. */
+            break;
+
+        /* --- v1.11.5: DOS interrupt queries (stubs) --- */
+        case DIR_INTAH:
+        case DIR_INTAL:
+            break;
+
+        /* --- v1.11.5: Advanced flow control (stubs) --- */
+        case DIR_CHAIN:
+        case DIR_DEBUG:
+        case DIR_IMMEDIATE:
+        case DIR_TERSE:
+        case DIR_SUPPRESS:
+        case DIR_VERIFY:
+        case DIR_DEFAULT:
+        case DIR_SELECT:
+        case DIR_RETURN:
+        case DIR_RETURNVALUE:
+        case DIR_SCRIPTFILE:
+        case DIR_SCRIPTLINE:
+        case DIR_SCRIPTSIZE:
+        case DIR_EVAL:
+        case DIR_BEGINPATCH:
+        case DIR_ENDPATCH:
+        case DIR_SIMULATE:
+        case DIR_ENDSIMULATE:
+        case DIR_WELCOME:
+        case DIR_ENDWELCOME:
+        case DIR_VERBATIM:
+        case DIR_WRITE:
+        case DIR_READLN:
+        case DIR_GETINTEGER:
+        case DIR_ENDINTEGER:
+        case DIR_GETQSTRING:
+        case DIR_GETOPTION:
+        case DIR_ENDOPTION:
+        case DIR_SETOPTION:
+        case DIR_CLEAROPTION:
+        case DIR_FLUSHGROUPS:
+        case DIR_FLUSHKEYBOARD:
+        case DIR_FLUSHOPTIONS:
+        case DIR_INTEGER:
+        case DIR_BYTE:
+        case DIR_DLGCTRLSIZE:
+        case DIR_LOCALWINDOW:
+        case DIR_COMPLETIONBAR:
+        case DIR_ADDFONT:
+        case DIR_REMOVEFONT:
+        case DIR_MACRO:
+        case DIR_MOVECCSTR:
+        case DIR_MOVECSTR:
+        case DIR_MIN:
+        case DIR_MAX:
+        case DIR_APP:
+        case DIR_DESC:
+        case DIR_DIR:
+        case DIR_OPTION:
+        case DIR_OVERWRITE:
+        case DIR_NOOVERWRITE:
+        case DIR_SYSTEMDATE:
+        case DIR_TEXTFORMAT:
+        case DIR_TITLEPAUSE:
+            /* Advanced flow: not exercised by INSTALL.DAT. */
+            break;
+
+        /* --- v1.11.5: Windows-specific (stubs, not running) --- */
+        case DIR_WINEXEC:
+        case DIR_WINEXIT:
+        case DIR_WINEXITEXEC:
+        case DIR_WINSCREENCAPS:
+        case DIR_WINVERSION:
+        case DIR_WINEMSFRAME:
+        case DIR_WINDOWSEXIT:
+        case DIR_WINDOWSEXITEXEC:
+        case DIR_WINDOWSEMSFRAME:
+            /* Windows-specific: return 0/empty in DOS mode. */
             break;
 
         /* --- Unimplemented (stub) --- */

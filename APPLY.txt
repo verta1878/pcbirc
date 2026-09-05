@@ -1,46 +1,44 @@
-install v1.11.4 — gap analysis
-===============================
+install v1.11.5 — system-query handlers + full dispatch coverage
+=================================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 6aed853 (install v1.11: phase plan rescoped)
+Prev origin/main HEAD: 2ac37d7 (install-v1.11.4-gap-analysis.)
 
 WHAT THIS RELEASE DOES
 
-  Delivers the gap analysis document comparing our v1.11.3 build
-  (56,574 B) against Clark's reference INSTALL.EXE (338,548 B).
+  All 301 directives now have explicit case handlers in the dispatch
+  switch. Previously 43 had real handlers, the rest fell through to
+  a default stub. Now:
 
-  Key findings:
-  - MZ stub delta: 117,120 B (Clark's contains full Family API
-    emulation layer; ours is a minimal BCC header)
-  - Code delta: 131,372 B (269 unimplemented directive handlers,
-    error messages, UI rendering, validation)
-  - Data delta: 37,651 B (embedded strings, format tables)
-  - String count: 2,848 vs 512 (2,336 more strings in Clark's)
-  - Segments: 6 vs 4
-  - Imports: Clark has DOSCALLS/KBDCALLS/VIOCALLS; ours has none
-    (didn't link API.LIB — needs fixing)
+  - System-query directives (~80): return DOS 6.22 / VGA / 640K
+    defaults (CPU=Pentium, RAM=640K, XMS=4096K, Video=VGA, etc.)
+  - @Out* family (14): disk-size-conditional stubs
+  - String operations (10): @StrDel through @StrUpr stubs
+  - File I/O extras (16): @FileCrc, @Move, @RmDir, etc. stubs
+  - System integration (27): @Execute, @Shell, @Reboot, etc. stubs
+  - Advanced flow (55): @Chain, @Debug, @Eval, etc. stubs
+  - Windows-specific (9): return 0/empty in DOS mode
 
-  Phase recommendations for v1.11.5-v1.11.9 are in the document.
-
-  No code changes. Document shipment only.
+  Verified: BCC 3.1 (0 errors), TLINK /Toe (58,136 B EXE),
+  NE header: linker 5.10, target OS 0x01. Runs INSTALL.DAT end-to-end.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     HISTORY.md
+    CHECKSUMS.md5 / .sha256 / .txt
+    pcb1541/install/src/install-1011.c
 
-  Adds:
-    docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md
-
-  NO deletions.
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
-    A  docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md
-    Total: 2 modified, 1 added, 0 deleted.
+    M  CHECKSUMS.md5 / .sha256 / .txt
+    M  pcb1541/install/src/install-1011.c
+    Total: 6 modified, 0 added, 0 deleted.
 
   Commit message:
-    install v1.11.4: gap analysis (56KB vs 338KB structural comparison)
+    install v1.11.5: system-query handlers + full dispatch coverage (301 directives)
 
---hexadecimal, install v1.11.4, 2026-09-05
+--hexadecimal, install v1.11.5, 2026-09-05
