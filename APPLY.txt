@@ -1,35 +1,46 @@
-install v1.11 — phase plan rescope (doc-only)
-===============================================
+install v1.11.4 — gap analysis
+===============================
 Date: 2026-09-05
-Prev origin/main HEAD: ded9185 (Install v1.11.3)
+Prev origin/main HEAD: 6aed853 (install v1.11: phase plan rescoped)
 
 WHAT THIS RELEASE DOES
 
-  Updates four documents to reflect the actual v1.11 path taken
-  (original 10-phase plan retired; v1.11.2 collapsed phases 1-5;
-  v1.11.4 redefined as gap analysis document; v1.11.5-9 undefined
-  until gap analysis lands; byte-exact rebuild deferred to v1.12).
+  Delivers the gap analysis document comparing our v1.11.3 build
+  (56,574 B) against Clark's reference INSTALL.EXE (338,548 B).
 
-  No code changes. No build changes. Doc-only.
+  Key findings:
+  - MZ stub delta: 117,120 B (Clark's contains full Family API
+    emulation layer; ours is a minimal BCC header)
+  - Code delta: 131,372 B (269 unimplemented directive handlers,
+    error messages, UI rendering, validation)
+  - Data delta: 37,651 B (embedded strings, format tables)
+  - String count: 2,848 vs 512 (2,336 more strings in Clark's)
+  - Segments: 6 vs 4
+  - Imports: Clark has DOSCALLS/KBDCALLS/VIOCALLS; ours has none
+    (didn't link API.LIB — needs fixing)
 
-APPLY — extract into repo root (overwrite).
+  Phase recommendations for v1.11.5-v1.11.9 are in the document.
+
+  No code changes. Document shipment only.
+
+APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     HISTORY.md
-    docs/pcboard-internals/INSTALL-EXE-PARITY.md
-    pcb1541/install/src/README.md
 
-  NO additions. NO deletions.
+  Adds:
+    docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md
+
+  NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
-    M  docs/pcboard-internals/INSTALL-EXE-PARITY.md
-    M  pcb1541/install/src/README.md
-    Total: 4 modified, 0 added, 0 deleted.
+    A  docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md
+    Total: 2 modified, 1 added, 0 deleted.
 
   Commit message:
-    install v1.11: phase plan rescoped (original 10-phase retired, gap analysis next)
+    install v1.11.4: gap analysis (56KB vs 338KB structural comparison)
 
---hexadecimal, 2026-09-05
+--hexadecimal, install v1.11.4, 2026-09-05

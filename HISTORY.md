@@ -511,6 +511,18 @@ Sub-phases:
   script uses). Full parity report at
   `docs/pcboard-internals/INSTALL-EXE-PARITY.md`.
 
+- **v1.11.4** — gap analysis (shipped 2026-09-05).
+  Structural comparison of our 56,574 B build vs Clark's 338,548 B
+  reference. MZ stub delta 117 KB (Family API emulation layer),
+  code delta 131 KB (269 unimplemented handlers), 2,336 more strings
+  in Clark's binary. Phase recommendations for v1.11.5-v1.11.9.
+  Document only, no code changes.
+
+  Files:
+  - `docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md` — NEW
+
+
+
   **install v1.10 arc: understanding-complete.** Our C reimplementation
   faithfully executes Clark's INSTALL.DAT end-to-end, producing
   byte-perfect output on 94.5% of placed files (350/361 unique on
