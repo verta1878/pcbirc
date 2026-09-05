@@ -6,5 +6,5 @@
 #
 #   cd /path/to/pcbirc && md5sum -c CHECKSUMS.md5
 #
-# LAST REGENERATED: 2026-09-05 (install v1.11.2)
-# TRACKED FILES:    10471
+# LAST REGENERATED: 2026-09-05 (install v1.11.3)
+# TRACKED FILES:    10472

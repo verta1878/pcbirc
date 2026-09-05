@@ -1,0 +1,15 @@
+; INSTALL.DEF — module definition for Family API NE link
+;
+; Target: NE binary matching Clark's INSTALL.EXE header:
+;   Linker 5.10, Target OS 0x01 (OS/2), Flags 0x0002 (MULTIPLEDATA)
+;   Imports: DOSCALLS, KBDCALLS, VIOCALLS (Family API)
+;   6 segments, stack 8000
+;
+; Used by TLINK 5.1 via: TLINK /Twe ... , ... , ... , ... , INSTALL.DEF
+
+NAME INSTALL WINDOWCOMPAT
+DESCRIPTION 'PCBoard Install'
+EXETYPE OS/2
+PROTMODE
+STACKSIZE 8192
+HEAPSIZE 0

@@ -593,6 +593,24 @@ Sub-phases:
   Files:
   - `pcb1541/install/src/install-1011.c` — 3,097 lines (was 752).
 
+- **v1.11.3** — Family API link target (shipped 2026-09-05).
+  BLDINS.BAT now produces a proper NE Family API binary matching
+  Clark's INSTALL.EXE header:
+  - C0FL.OBJ (Family API startup) replaces C0L.OBJ (DOS)
+  - TLINK /Toe (OS/2 target byte 0x01) replaces /Twe (Windows 0x02)
+  - INSTALL.DEF module definition added (EXETYPE OS/2, PROTMODE,
+    STACKSIZE 8192)
+  - Target imports: DOSCALLS, KBDCALLS, VIOCALLS (Family API)
+
+  Clark's reference NE header (at offset 0x1CA00 in INSTALL.EXE):
+    Linker 5.10, Target OS 0x01, Flags 0x0002 (MULTIPLEDATA),
+    6 segments, stack 8000, imports DOSCALLS+KBDCALLS+VIOCALLS.
+
+  Files:
+  - `pcb1541/install/build/INSTALL.DEF` — NEW
+  - `pcb1541/install/build/BLDINS.BAT` — updated link line
+
+
 
 
 - **v1.11.1 through v1.11.10** — per the phase roadmap in

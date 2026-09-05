@@ -1,6 +1,6 @@
 5bea69327739d8d4377af44b56fc6a0e  .gitattributes
 66155117d12149be62f5ff1632c50828  .gitignore
-bc441b9a06e0f16456658e01e29a0e0d  APPLY.txt
+f11c1a8ee3106659f4173553d24059c3  APPLY.txt
 7480eb0ef5c83de266c87c8fe9128551  BUILD_DOS.BAT
 e8367ab93c8d5bf6fb5ae2a5219fa045  BUILD_OS2.CMD
 0e6e62099001481e81a3bf1bd29cb086  BUILD_OS2_OW.SH
@@ -8,7 +8,7 @@ fbe3bb4baf86735d5a467f2b0329a554  CONTENTS.txt
 d3836109340c8c9018e68eb65e44229f  DOSBOXX.ZIP
 96a60e568c0e0ef9fafdf9a321f5cded  FILE_ID.ANS
 198f7898da2ce18cb89a36d71a3681f8  FILE_ID.DIZ
-3aaa5079b92df9a17fac46e7cdf952c8  HISTORY.md
+92350bcfdf522aed1dd552fa102792e2  HISTORY.md
 1d2bb16bb28ec6c0535a00701a93eb93  LICENSE
 03ea3e072ae028ab3a9a4bb40090c38e  MAIN/DELTA-MODEL.md
 c98ca4a7b15e0d0b8004ef4bb80603e3  MAIN/README.md
@@ -5382,7 +5382,7 @@ c6146b1c7ce24409abfac5d7060fed98  pcb1541/install/archivers/redx/refwork/pairs/C
 54eaf2c5962851fe5f9f8d13ebc0fd62  pcb1541/install/archivers/redx/refwork/pairs/COMMDV07.DRV.payload
 d67c5091d7aa4070e4f5d67e299f4e27  pcb1541/install/archivers/redx/refwork/pairs/COMMDV08.DRV.oracle
 f18fd17787591665bc15eb235b2bf97f  pcb1541/install/archivers/redx/refwork/pairs/COMMDV08.DRV.payload
-6ce116eacdf7b51a6027a648d2bc9114  pcb1541/install/build/BLDINS.BAT
+e150c938211b2c27e1388183a6e29d23  pcb1541/install/build/BLDINS.BAT
 2ed6d9b902ccb9bc967e53203a9ec5b4  pcb1541/install/build/README.md
 5ceada369943f6246cac283294928eaa  pcb1541/install/dist/DISK1_FILE_ID.DIZ
 90f14f7b2d8d7ca6787cb768b3e0a28b  pcb1541/install/dist/DISK2_FILE_ID.DIZ
@@ -10466,3 +10466,4 @@ bd53dfd4564106fe95cddb10aad647e9  toolkit/pwa154/pcbdcom/src/rocket_backend.c
 1222af0c1f890a7ca5e244a5070257f9  toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
 f5b258efeeb6909ca1a5f9e5968c06b5  toolkit/pwa154/pcbdcom/src/uart.c
 20b6e720a1b3b2c71e81818fd6f37766  toolkit/pwa154/pcbdcom/src/uart_backend.c
+a6526606b0051d3d2e0e4d7d58703553  pcb1541/install/build/INSTALL.DEF

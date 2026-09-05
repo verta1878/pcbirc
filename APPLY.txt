@@ -1,21 +1,21 @@
-install v1.11.2 — semantic handler port
-========================================
+install v1.11.3 — Family API link target
+=========================================
 Date: 2026-09-05
-Prev origin/main HEAD: 7c1fc6c (Update README.md)
+Prev origin/main HEAD: 13593c7 (Merge branch 'main')
 
 WHAT THIS RELEASE DOES
 
-  Ports all 60 semantic handlers from install-1010.c (v1.10.5) into the
-  v1.11.1 dispatch table framework. The strncasecmp if/else chain is
-  replaced with switch(lookup_directive(token)). Same functionality,
-  table-driven routing.
+  Switches the INSTALL.EXE build from a DOS/Windows NE target to the
+  correct OS/2 Family API NE target, matching Clark's original binary.
 
-  Runs Clark's INSTALL.DAT end-to-end: project metadata, variables,
-  control flow, file operations, interactive menu, system hooks,
-  filesystem state, finish block — all through the 301-directive
-  enum/lookup.
+  Three changes:
+  - C0FL.OBJ (Family API startup) replaces C0L.OBJ (plain DOS)
+  - TLINK /Toe (target OS byte 0x01 = OS/2) replaces /Twe (0x02)
+  - INSTALL.DEF added (EXETYPE OS/2, PROTMODE, STACKSIZE 8192)
 
-  Family API link target (.DEF + C0FL.OBJ) deferred to v1.11.3.
+  Clark's INSTALL.EXE (verified at NE offset 0x1CA00): linker 5.10,
+  target OS 0x01 (OS/2), flags 0x0002 (MULTIPLEDATA), 6 segments,
+  stack 8000, imports DOSCALLS + KBDCALLS + VIOCALLS.
 
 APPLY (Windows / GitHub Desktop) — 2 STEPS
 
@@ -23,13 +23,16 @@ APPLY (Windows / GitHub Desktop) — 2 STEPS
 
     Modifies:
       APPLY.txt
-      HISTORY.md                              (v1.11.2 entry added)
+      HISTORY.md                              (v1.11.3 entry added)
       CHECKSUMS.md5                           (regenerated)
       CHECKSUMS.sha256                        (regenerated)
       CHECKSUMS.txt                           (regenerated)
-      pcb1541/install/src/install-1011.c      (semantic handlers ported)
+      pcb1541/install/build/BLDINS.BAT        (C0FL + /Toe + .DEF ref)
 
-    NO additions. NO deletions.
+    Adds:
+      pcb1541/install/build/INSTALL.DEF       (module definition)
+
+    NO deletions.
 
   STEP 2 — Open GitHub Desktop. Expected changes:
 
@@ -38,22 +41,22 @@ APPLY (Windows / GitHub Desktop) — 2 STEPS
     M  CHECKSUMS.md5
     M  CHECKSUMS.sha256
     M  CHECKSUMS.txt
-    M  pcb1541/install/src/install-1011.c
+    M  pcb1541/install/build/BLDINS.BAT
+    A  pcb1541/install/build/INSTALL.DEF
 
-    Total: 6 modified, 0 added, 0 deleted.
+    Total: 6 modified, 1 added, 0 deleted.
 
   Commit + push. Suggested message:
-    install v1.11.2: semantic handler port (60 handlers, table-driven dispatch)
+    install v1.11.3: Family API link target (C0FL + /Toe + INSTALL.DEF)
 
 ACCEPTANCE
 
-  Verified in sandbox:
-  - gcc -Wall -Wextra: 7 warnings (all pre-existing snprintf truncation
-    from install-1010.c), zero errors
-  - Ran against real INSTALL.DAT: processes all directives, runs through
-    all 8 archives, handles @If/@Else/@Endif branches, @SetConfig/
-    @SetAutoexec blocks, menu groups, and completes with installation
-    summary. MISS warnings expected (redx not available in sandbox).
-  - md5 of install-1011.c verified consistent across source/zip/checksums
+  Cannot fully test in this sandbox (needs BC 3.1 TLINK under DOSBox-X).
+  Verified:
+  - INSTALL.DEF syntax correct for TLINK 5.1 NE linking
+  - BLDINS.BAT link line references C0FL.OBJ, /Toe, and INSTALL.DEF
+  - Clark's reference header parsed and documented (NE at 0x1CA00)
+  - Full acceptance under DOSBox-X: build INSTALL.EXE, dump NE header,
+    verify target OS = 0x01 and imports = DOSCALLS+KBDCALLS+VIOCALLS
 
---hexadecimal, install v1.11.2, 2026-09-05
+--hexadecimal, install v1.11.3, 2026-09-05
