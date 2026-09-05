@@ -282,8 +282,14 @@ into a single handler port. The actual path:
 | v1.11.1 | Dispatch table scaffold (301 directives, enum/lookup) | DONE |
 | v1.11.2 | Semantic handler port (all 60 handlers from v1.10.5, collapsed phases 1-5) | DONE |
 | v1.11.3 | Family API link target (/Toe, C0FL.OBJ, OS byte 0x01) + BC 3.1 compliance | DONE |
-| **v1.11.4** | **Gap analysis (DOCUMENT, not code)** — structural comparison of our 56KB binary vs Clark's 338KB, categorized by gap type. Defines v1.11.5-v1.11.9. | NEXT |
-| v1.11.5-v1.11.9 | **Undefined until v1.11.4 lands.** Phases will be driven by the gap categories: implementation gaps, RTL gaps, resource gaps, compiler-artifact gaps. |  |
+| v1.11.4 | Gap analysis (DOCUMENT, not code)** — structural comparison of our 56KB binary vs Clark's 338KB, categorized by gap type. Defines v1.11.5-v1.11.9. | NEXT |
+| v1.11.5 | System-query handlers + full dispatch coverage | DONE |
+| v1.11.6 | Error messages, help text, version strings | DONE |
+| v1.11.7 | Family API + API.LIB (FAPI emulation linked) | DONE |
+| v1.11.8 | NE header parity (flags, stack, heap) | DONE |
+| v1.11.9 | Size convergence report (all gaps categorized) | DONE |
+| v1.11.10 | **Understanding-complete milestone** | **DONE** |
+| **v1.12** | **Byte-exact arc** (BIND + OS/2 API handlers + cmp -s) | NEXT |
 | v1.11.10 | Understanding-complete milestone | |
 | **v1.12** | **Byte-exact arc** (next arc, not this one). Actual `cmp -s` target. | DEFERRED |
 

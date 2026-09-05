@@ -130,10 +130,14 @@ control flow, which is v1.10.2 territory). That's the arc.
 | v1.11.1 | Dispatch table scaffold (301 directives) | DONE |
 | v1.11.2 | 60 semantic handlers ported (collapsed phases 1-5) | DONE |
 | v1.11.3 | Family API (/Toe + C0FL.OBJ + BC 3.1 compliance) | DONE |
-| v1.11.4 | Gap analysis (document, not code) | NEXT |
-| v1.11.5-9 | TBD from gap analysis categories | |
-| v1.11.10 | Understanding-complete | |
-| v1.12 | Byte-exact arc (next arc) | DEFERRED |
+| v1.11.4 | Gap analysis (document, not code) | DONE |
+| v1.11.5 | System-query handlers + full dispatch | DONE |
+| v1.11.6 | Error messages + version strings | DONE |
+| v1.11.7 | Family API + API.LIB | DONE |
+| v1.11.8 | NE header parity | DONE |
+| v1.11.9 | Size convergence report | DONE |
+| v1.11.10 | **Understanding-complete** | **DONE** |
+| **v1.12** | **Byte-exact arc** | **NEXT** |
 
 Original 10-phase plan (one directive bucket per phase) was retired
 after v1.11.2 collapsed all six buckets into one shot. Downstream

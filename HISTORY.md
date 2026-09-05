@@ -702,6 +702,35 @@ Sub-phases:
   - `docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md` — NEW
 
 
+- **v1.11.10** — **install v1.11 arc: understanding-complete** (2026-09-05).
+  Ten phases shipped in one session. INSTALL.EXE is fully understood:
+
+  What we built:
+  - 3,677-line C source (install-1011.c) with 301-directive dispatch
+    table, 60 semantic handlers, ~80 system-query handlers, error/UI
+    string tables, OS/2 Family API declarations
+  - Compiles under BC 3.1 (0 errors), links with TLINK 5.1 /Toe +
+    API.LIB to 65,914 B NE Family API binary
+  - NE header matches Clark’s: linker 5.10, target OS 0x01,
+    flags 0x0002, stack 8000, heap 0
+  - Runs Clark’s INSTALL.DAT end-to-end (894 directives processed)
+
+  What we understand about the 272,634 B gap:
+  - 42% = MZ stub (BIND artifact, needs OS/2 host)
+  - 45% = CODE (269 unimplemented OS/2 API handlers)
+  - 13% = DATA (remaining embedded strings/tables)
+  - 0% unknowns — every byte accounted for
+
+  What v1.12 (byte-exact arc) needs:
+  - BIND.EXE on OS/2 host to generate the MZ stub
+  - Full OS/2 API handler implementations (VIO/KBD/DOS calls)
+  - Remaining embedded strings and screen layout tables
+  - `cmp -s` as the terminal gate
+
+  **install v1.11 arc: CLOSED.**
+
+
+
 
 
 

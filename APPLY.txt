@@ -1,17 +1,27 @@
-install v1.11.9 — RTL coverage + size convergence
-===================================================
+install v1.11.10 — understanding-complete milestone
+=====================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 665173d (install-v1.11.8-ne-header.)
+Prev origin/main HEAD: a144c1c (v1.11.9-convergence.)
 
 WHAT THIS RELEASE DOES
 
-  Size convergence report: all 272,634 bytes of gap accounted for.
-  - 42% = MZ stub (BIND artifact, deferred to v1.12)
-  - 45% = CODE (269 unimplemented handlers, OS/2 API calls)
-  - 13% = DATA (remaining strings/tables)
-  - No unknowns — every gap categorized
+  Closes the install v1.11 arc. Ten phases shipped in one session:
+    v1.11.0  toolchain shakedown
+    v1.11.1  dispatch table scaffold (301 directives)
+    v1.11.2  60 semantic handlers ported
+    v1.11.3  Family API + BC 3.1 compliance (verified DOSBox-X)
+    v1.11.4  gap analysis document
+    v1.11.5  system-query handlers + full dispatch coverage
+    v1.11.6  error messages + version strings
+    v1.11.7  Family API + API.LIB linked
+    v1.11.8  NE header parity (flags/stack/heap match Clark's)
+    v1.11.9  size convergence report (all gaps categorized)
+    v1.11.10 THIS — understanding-complete milestone
 
-  No code changes. Document shipment.
+  Result: 65,914 B binary, every byte of the 272,634 B gap to
+  Clark's 338,548 B reference is categorized. No unknowns.
+
+  Next: v1.12 = byte-exact arc (BIND + OS/2 API handlers + cmp -s).
 
 APPLY — extract into repo root.
 
@@ -19,18 +29,20 @@ APPLY — extract into repo root.
     APPLY.txt
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
+    docs/pcboard-internals/INSTALL-EXE-PARITY.md
+    pcb1541/install/src/README.md
 
-  Adds:
-    docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    A  docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md
-    Total: 5 modified, 1 added, 0 deleted.
+    M  docs/pcboard-internals/INSTALL-EXE-PARITY.md
+    M  pcb1541/install/src/README.md
+    Total: 7 modified, 0 added, 0 deleted.
 
   Commit message:
-    install v1.11.9: size convergence report (all gaps categorized)
+    install v1.11.10: understanding-complete (v1.11 arc CLOSED)
 
---hexadecimal, install v1.11.9, 2026-09-05
+--hexadecimal, install v1.11.10, 2026-09-05
