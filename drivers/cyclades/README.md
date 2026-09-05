@@ -18,7 +18,7 @@ build/test integration for pcbirc — see roadmap below.
 
 License: **GPLv3** (per the bundle's `LICENSE.TXT` and `SOURCE/`).
 
-## Contents (`cyclades-1.0.0-bin/`)
+## Contents (`cyclades.zip`)
 
 | Path | What it holds |
 |------|---------------|
