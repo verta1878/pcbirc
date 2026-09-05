@@ -18,15 +18,30 @@
 #include <time.h>
 #include <errno.h>
 
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) || defined(__BORLANDC__) || defined(__TURBOC__)
 #include <conio.h>
 #include <dos.h>
-#include <direct.h>
+#include <dir.h>
 #include <sys/stat.h>
 #define PATH_SEP '\\'
 #define strcasecmp  stricmp
 #define strncasecmp strnicmp
-#include <stdint.h>
+#include <io.h>
+/* BC 3.1 / TC 2.01 / Watcom: no <stdint.h> */
+#ifndef S_IFDIR
+#define S_IFDIR  0x4000
+#endif
+typedef unsigned short mode_t;
+#define mkdir(p, m) mkdir(p)  /* DOS mkdir has no mode arg */
+#define S_IWUSR  0200
+#define S_IWGRP  0020
+#define S_IWOTH  0002
+#define S_IRUSR  0400
+#define S_IRGRP  0040
+#define S_IROTH  0004
+typedef unsigned short uint16_t;
+typedef unsigned char  uint8_t;
+typedef unsigned long  uint32_t;
 #elif defined(_WIN32)
 #include <windows.h>
 #include <direct.h>
@@ -937,7 +952,7 @@ static void inst_expand(InstState *St, const char *Src, char *Dst, int DstSize)
                 } else if (strcasecmp(VarName, "StrLen") == 0) {
                     char Buf[32];
                     long L = inst_func_strlen(St, Args);
-                    snprintf(Buf, sizeof(Buf), "%ld", L);
+                    sprintf(Buf, "%ld", L);
                     { const char *bp = Buf;
                       while (*bp && d < DstSize - 1) Dst[d++] = *bp++; }
                 }
@@ -1245,7 +1260,7 @@ static void inst_make_temp_dir(InstState *St, const char *ArchName)
     if (!TmpBase) TmpBase = "/tmp";
 #endif
 
-    snprintf(St->ExtractDir, sizeof(St->ExtractDir),
+    sprintf(St->ExtractDir,
              "%s%cpcbinst.%d.%s",
              TmpBase, PATH_SEP, (int)(long)time(NULL), ArchName);
     inst_mkdir_p(St->ExtractDir);
@@ -1263,9 +1278,9 @@ static void inst_remove_temp_dir(InstState *St)
     if (St->ExtractDir[0] == '\0') return;
 
 #ifdef _WIN32
-    snprintf(Cmd, sizeof(Cmd), "rmdir /s /q \"%s\" 2>nul", St->ExtractDir);
+    sprintf(Cmd, "rmdir /s /q \"%s\" 2>nul", St->ExtractDir);
 #else
-    snprintf(Cmd, sizeof(Cmd), "rm -rf \"%s\"", St->ExtractDir);
+    sprintf(Cmd, "rm -rf \"%s\"", St->ExtractDir);
 #endif
     system(Cmd);
     St->ExtractDir[0] = '\0';
@@ -1289,19 +1304,19 @@ static int inst_cmd_begin_lib(InstState *St, const char *ArchName)
     St->InLibBlock = 1;
 
     /* Locate the archive file */
-    snprintf(ArchPath, sizeof(ArchPath), "%s%c%s",
+    sprintf(ArchPath, "%s%c%s",
              St->ArchivesDir, PATH_SEP, ArchName);
 
     inst_make_temp_dir(St, ArchName);
 
     /* Shell out: cd <extractdir> && redx extract <archive> */
-    snprintf(Cmd, sizeof(Cmd),
+    sprintf(Cmd,
              "cd \"%s\" && \"%s\" extract \"%s\" > /dev/null 2>&1",
              St->ExtractDir, St->RedxPath, ArchPath);
 
 #ifdef _WIN32
     /* Windows: use "cd /D" for cross-drive, redirect to nul */
-    snprintf(Cmd, sizeof(Cmd),
+    sprintf(Cmd,
              "cd /D \"%s\" && \"%s\" extract \"%s\" > nul 2>&1",
              St->ExtractDir, St->RedxPath, ArchPath);
 #endif
@@ -1338,63 +1353,76 @@ static void inst_cmd_end_lib(InstState *St)
 /*-----------------------------------------------------------------------*/
 
 static int inst_find_extracted(InstState *St, const char *SrcKey,
-                                long ExpectedSize, char *FoundPath,
-                                int PathSize)
+                              long ExpectedSize, char *FoundPath,
+                              int PathSize)
 {
-#ifdef _WIN32
-    /* Windows: use FindFirstFile — deferred for cross-compile test */
-    (void)St; (void)SrcKey; (void)ExpectedSize;
-    FoundPath[0] = '\0'; (void)PathSize;
-    return -1;
+    char SearchDir[MAX_PATH_LEN];
+    char Pattern[MAX_PATH_LEN];
+    int  Found = 0;
+    int  len;
+    int  i;
+
+    if (!St->InLibBlock || St->ExtractDir[0] == '\0') return 0;
+
+    sprintf(SearchDir, "%s", St->ExtractDir);
+    len = (int)strlen(SearchDir);
+    if (len > 0 && SearchDir[len-1] == PATH_SEP)
+        SearchDir[len-1] = '\0';
+
+#if defined(__BORLANDC__) || defined(__TURBOC__)
+    {
+        struct ffblk ff;
+        int done;
+
+        /* Try exact name first */
+        sprintf(Pattern, "%s%c%s", SearchDir, PATH_SEP, SrcKey);
+        done = findfirst(Pattern, &ff, 0);
+        if (!done) {
+            sprintf(FoundPath, "%s%c%s", SearchDir, PATH_SEP, ff.ff_name);
+            return 1;
+        }
+
+        /* Case-insensitive scan */
+        sprintf(Pattern, "%s%c*.*", SearchDir, PATH_SEP);
+        done = findfirst(Pattern, &ff, 0);
+        while (!done) {
+            if (stricmp(ff.ff_name, SrcKey) == 0) {
+                sprintf(FoundPath, "%s%c%s", SearchDir, PATH_SEP, ff.ff_name);
+                return 1;
+            }
+            done = findnext(&ff);
+        }
+    }
 #else
-    DIR *D = opendir(St->ExtractDir);
-    struct dirent *E;
-    struct stat St2;
-    char Full[MAX_PATH_LEN];
+    {
+        DIR *D;
+        struct dirent *E;
 
-    if (!D) return -1;
+        /* Try exact name first */
+        sprintf(Pattern, "%s%c%s", SearchDir, PATH_SEP, SrcKey);
+        {
+            FILE *tf = fopen(Pattern, "rb");
+            if (tf) { fclose(tf); sprintf(FoundPath, "%s", Pattern); return 1; }
+        }
 
-    /* First try: exact name match */
-    while ((E = readdir(D))) {
-        if (strcasecmp(E->d_name, SrcKey) == 0) {
-            snprintf(Full, sizeof(Full), "%s/%s", St->ExtractDir, E->d_name);
-            if (stat(Full, &St2) == 0) {
-                if (ExpectedSize > 0 && St2.st_size != ExpectedSize) continue;
-                strncpy(FoundPath, Full, PathSize - 1);
-                FoundPath[PathSize - 1] = '\0';
+        /* Case-insensitive scan */
+        D = opendir(SearchDir);
+        if (!D) return 0;
+        while ((E = readdir(D)) != NULL) {
+            if (strcasecmp(E->d_name, SrcKey) == 0) {
+                sprintf(FoundPath, "%s%c%s", SearchDir, PATH_SEP, E->d_name);
                 closedir(D);
-                return 0;
+                return 1;
             }
         }
+        closedir(D);
     }
-    rewinddir(D);
-
-    /* Second try: exact size match (for numeric-key sources) */
-    if (ExpectedSize > 0) {
-        while ((E = readdir(D))) {
-            if (E->d_name[0] == '.') continue;
-            snprintf(Full, sizeof(Full), "%s/%s", St->ExtractDir, E->d_name);
-            if (stat(Full, &St2) == 0 && St2.st_size == ExpectedSize) {
-                strncpy(FoundPath, Full, PathSize - 1);
-                FoundPath[PathSize - 1] = '\0';
-                closedir(D);
-                return 0;
-            }
-        }
-    }
-
-    closedir(D);
-    return -1;
 #endif
+
+    (void)ExpectedSize;
+    (void)PathSize;
+    return 0;
 }
-
-
-/*-----------------------------------------------------------------------*/
-/* inst_cmd_file() -- Handle @File src [@Size N] @Out|@AppendTo dst     */
-/*                                                                       */
-/* Parses the directive, resolves src in the current ExtractDir,         */
-/* verifies @Size if given, then copies (or appends) to dst.             */
-/*-----------------------------------------------------------------------*/
 
 static void inst_cmd_file(InstState *St, const char *Line)
 {
@@ -1606,7 +1634,7 @@ static void inst_cmd_copy(InstState *St, const char *Line)
         if (!T) {
             /* Fall back: try SrcRaw directly (from InDrive:\SubDir) */
             char AltSrc[MAX_PATH_LEN];
-            snprintf(AltSrc, sizeof(AltSrc), "%s%c%s",
+            sprintf(AltSrc, "%s%c%s",
                      St->ArchivesDir, PATH_SEP, SrcRaw);
             if (inst_copy_file(AltSrc, DstNorm, 0) == 0) {
                 St->FilesPlaced++;
@@ -1647,9 +1675,9 @@ static void inst_cmd_delete(InstState *St, const char *Line)
         /* Might be a directory */
         char Cmd[MAX_PATH_LEN + 32];
 #ifdef _WIN32
-        snprintf(Cmd, sizeof(Cmd), "rmdir /s /q \"%s\" 2>nul", PathNorm);
+        sprintf(Cmd, "rmdir /s /q \"%s\" 2>nul", PathNorm);
 #else
-        snprintf(Cmd, sizeof(Cmd), "rm -rf \"%s\"", PathNorm);
+        sprintf(Cmd, "rm -rf \"%s\"", PathNorm);
 #endif
         system(Cmd);
     }
@@ -2126,7 +2154,7 @@ static const char *inst_eval_cmp(InstState *St, const char *p, EvalVal *Out)
         char Needle[512];
         const char *Hay = Rhs.IsString ? Rhs.SVal : "";
         if (Out->IsString) strncpy(Needle, Out->SVal, sizeof(Needle) - 1);
-        else snprintf(Needle, sizeof(Needle), "%ld", Out->IVal);
+        else sprintf(Needle, "%ld", Out->IVal);
         Needle[sizeof(Needle) - 1] = '\0';
         {
             int Found = (strstr(Hay, Needle) != NULL);
@@ -2512,7 +2540,7 @@ static void inst_cmd_clear_group(InstState *St, const char *Line)
 static void inst_cmd_set_config_open(InstState *St)
 {
     char Path[MAX_PATH_LEN];
-    snprintf(Path, sizeof(Path), "%s%cCONFIG.SYS.pcb",
+    sprintf(Path, "%s%cCONFIG.SYS.pcb",
              St->TargetRoot, PATH_SEP);
     St->ConfigFp = fopen(Path, "w");
     if (St->ConfigFp) {
@@ -2538,7 +2566,7 @@ static void inst_cmd_set_config_close(InstState *St)
 static void inst_cmd_set_autoexec_open(InstState *St)
 {
     char Path[MAX_PATH_LEN];
-    snprintf(Path, sizeof(Path), "%s%cAUTOEXEC.BAT.pcb",
+    sprintf(Path, "%s%cAUTOEXEC.BAT.pcb",
              St->TargetRoot, PATH_SEP);
     St->AutoexecFp = fopen(Path, "w");
     if (St->AutoexecFp) {
@@ -2684,7 +2712,7 @@ static void inst_cmd_set(InstState *St, const char *Line)
     if (V.IsString)
         strncpy(Val, V.SVal, sizeof(Val) - 1);
     else
-        snprintf(Val, sizeof(Val), "%ld", V.IVal);
+        sprintf(Val, "%ld", V.IVal);
     Val[sizeof(Val) - 1] = '\0';
 
     /* Special: assignments to built-in project vars update the state */

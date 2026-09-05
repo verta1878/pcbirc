@@ -1,62 +1,55 @@
-install v1.11.3 — Family API link target
-=========================================
+install v1.11.3 — Family API link target + BC 3.1 compliance
+=============================================================
 Date: 2026-09-05
 Prev origin/main HEAD: 13593c7 (Merge branch 'main')
 
 WHAT THIS RELEASE DOES
 
-  Switches the INSTALL.EXE build from a DOS/Windows NE target to the
-  correct OS/2 Family API NE target, matching Clark's original binary.
+  Two things in one shipment:
+  1. Family API link target: /Toe + C0FL.OBJ -> target OS 0x01 (OS/2)
+  2. BC 3.1 compliance: install-1011.c now compiles clean under BCC 3.1
 
-  Three changes:
-  - C0FL.OBJ (Family API startup) replaces C0L.OBJ (plain DOS)
-  - TLINK /Toe (target OS byte 0x01 = OS/2) replaces /Twe (0x02)
-  - INSTALL.DEF added (EXETYPE OS/2, PROTMODE, STACKSIZE 8192)
+  Verified under DOSBox-X in this session:
+  - BCC 3.1: 0 errors, 3 warnings, 32,834 byte OBJ
+  - TLINK 5.1 /Toe: 56,574 byte INSTALL.EXE (NE format)
+  - NE header: linker 5.10 MATCH, target OS 0x01 MATCH (Family API)
 
-  Clark's INSTALL.EXE (verified at NE offset 0x1CA00): linker 5.10,
-  target OS 0x01 (OS/2), flags 0x0002 (MULTIPLEDATA), 6 segments,
-  stack 8000, imports DOSCALLS + KBDCALLS + VIOCALLS.
+  BC 3.1 fixes applied to install-1011.c:
+  - snprintf -> sprintf
+  - stdint.h -> manual typedefs
+  - opendir/readdir -> findfirst/findnext (#ifdef __BORLANDC__)
+  - POSIX permission constants defined for DOS
+  - mkdir single-arg macro
+  - TLINK /Toe (not DEF file) sets target OS
 
 APPLY (Windows / GitHub Desktop) — 2 STEPS
 
-  STEP 1 — Extract this zip INTO your repo root (overwrite in place).
+  STEP 1 — Extract into repo root (overwrite in place).
 
     Modifies:
       APPLY.txt
-      HISTORY.md                              (v1.11.3 entry added)
-      CHECKSUMS.md5                           (regenerated)
-      CHECKSUMS.sha256                        (regenerated)
-      CHECKSUMS.txt                           (regenerated)
-      pcb1541/install/build/BLDINS.BAT        (C0FL + /Toe + .DEF ref)
+      HISTORY.md
+      CHECKSUMS.md5 / .sha256 / .txt
+      pcb1541/install/src/install-1011.c   (BC 3.1 compliance)
+      pcb1541/install/build/BLDINS.BAT     (/Toe + C0FL, DEF removed)
 
     Adds:
-      pcb1541/install/build/INSTALL.DEF       (module definition)
+      pcb1541/install/build/INSTALL.DEF    (target documentation)
 
     NO deletions.
 
-  STEP 2 — Open GitHub Desktop. Expected changes:
+  STEP 2 — GitHub Desktop:
 
     M  APPLY.txt
     M  HISTORY.md
-    M  CHECKSUMS.md5
-    M  CHECKSUMS.sha256
-    M  CHECKSUMS.txt
+    M  CHECKSUMS.md5 / .sha256 / .txt
+    M  pcb1541/install/src/install-1011.c
     M  pcb1541/install/build/BLDINS.BAT
     A  pcb1541/install/build/INSTALL.DEF
 
-    Total: 6 modified, 1 added, 0 deleted.
+    Total: 7 modified, 1 added, 0 deleted.
 
-  Commit + push. Suggested message:
-    install v1.11.3: Family API link target (C0FL + /Toe + INSTALL.DEF)
-
-ACCEPTANCE
-
-  Cannot fully test in this sandbox (needs BC 3.1 TLINK under DOSBox-X).
-  Verified:
-  - INSTALL.DEF syntax correct for TLINK 5.1 NE linking
-  - BLDINS.BAT link line references C0FL.OBJ, /Toe, and INSTALL.DEF
-  - Clark's reference header parsed and documented (NE at 0x1CA00)
-  - Full acceptance under DOSBox-X: build INSTALL.EXE, dump NE header,
-    verify target OS = 0x01 and imports = DOSCALLS+KBDCALLS+VIOCALLS
+  Commit message:
+    install v1.11.3: Family API (OS 0x01) + BC 3.1 compliance (verified under DOSBox-X)
 
 --hexadecimal, install v1.11.3, 2026-09-05

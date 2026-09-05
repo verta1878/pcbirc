@@ -32,7 +32,7 @@ BCC.EXE -c -ml -IC:\BC31\INCLUDE -IC:\OS2SDK\INCLUDE -oC:\OUT\install\install-10
 if errorlevel 1 goto :FAIL
 
 echo   [2/2] Link install-1011.OBJ -^> INSTALL.EXE (NE Family API, OS/2 target)
-TLINK.EXE /Toe C:\BC31\LIB\C0FL.OBJ C:\OUT\install\install-1011.OBJ, C:\OUT\install\INSTALL.EXE, C:\OUT\install\INSTALL.MAP, C:\BC31\LIB\CL.LIB C:\OS2SDK\LIB\API.LIB, C:\PCBIRC\pcb1541\install\build\INSTALL.DEF
+TLINK.EXE /Toe C:\BC31\LIB\C0FL.OBJ C:\OUT\install\install-1011.OBJ, C:\OUT\install\INSTALL.EXE, C:\OUT\install\INSTALL.MAP, C:\BC31\LIB\CL.LIB C:\OS2SDK\LIB\API.LIB
 if errorlevel 1 goto :FAIL
 
 echo.
