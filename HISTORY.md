@@ -652,6 +652,25 @@ Sub-phases:
   - `pcb1541/install/build/os2sdk/API.LIB` — NEW (OS/2 SDK 1.03)
 
 
+- **v1.11.8** — NE header parity (shipped 2026-09-05).
+  Flags, stack, and heap now match Clark's reference:
+  - Flags: 0x0002 (was 0x000A — cleared PROTMODEONLY bit)
+  - Stack: 8000 (was 0)
+  - Heap: 0 (was 4096)
+  INSTALL.DEF accepted by TLINK (needed CRLF line endings — TLINK
+  5.1's parser rejects LF-only). HEAPSIZE applied from DEF; flags
+  and stack require post-link fixup (ne-fixup.py) because TLINK /Toe
+  forces PROTMODEONLY and zeroes stack.
+
+  Segment count (4 vs Clark's 6) is a code-size artifact — TLINK
+  creates more segments as code grows. Will converge in v1.12.
+
+  Files:
+  - `pcb1541/install/build/ne-fixup.py` — NEW, post-link NE fixup
+  - `pcb1541/install/build/INSTALL.DEF` — updated (CRLF, HEAPSIZE 0)
+
+
+
 
 - **v1.11.3** — Family API link target (shipped 2026-09-05).
   BLDINS.BAT now produces a proper NE Family API binary matching

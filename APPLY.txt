@@ -1,21 +1,22 @@
-install v1.11.7 — Family API + API.LIB
-========================================
+install v1.11.8 — NE header parity
+====================================
 Date: 2026-09-05
-Prev origin/main HEAD: f0b306f (install-v1.11.5-system-query)
+Prev origin/main HEAD: 46bc22c (install-v1.11.7-family-api-lib)
 
 WHAT THIS RELEASE DOES
 
-  Links OS/2 SDK 1.03 API.LIB into the build. This embeds the Family
-  API DOS emulation code (FAPI wrappers for DosBeep, VioWrtTTY,
-  KbdCharIn). Binary grew from 60 KB to 65 KB.
+  NE header fields now match Clark's reference:
+  - Flags: 0x0002 (cleared PROTMODEONLY, matches Clark's MULTIPLEDATA)
+  - Stack: 8000 (matches Clark's)
+  - Heap: 0 (matches Clark's)
 
-  OS/2 API declarations added to install-1011.c with volatile-pointer
-  references forcing TLINK to pull FAPI code from API.LIB.
+  Two mechanisms:
+  - INSTALL.DEF (CRLF line endings — TLINK rejects LF-only): sets
+    HEAPSIZE 0 at link time
+  - ne-fixup.py: post-link script patches flags and stack (TLINK /Toe
+    forces PROTMODEONLY and zeroes stack, no way to override at link)
 
-  NE import records (DOSCALLS/KBDCALLS/VIOCALLS) and MZ stub expansion
-  require BIND.EXE — deferred to v1.12 (byte-exact arc, needs OS/2 host).
-
-  Verified: BCC 3.1 (0 errors), TLINK + API.LIB (65,914 B), NE: 5.10/0x01.
+  Segment count (4 vs 6) is code-size-dependent — converges in v1.12.
 
 APPLY — extract into repo root.
 
@@ -23,11 +24,10 @@ APPLY — extract into repo root.
     APPLY.txt
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    pcb1541/install/src/install-1011.c
-    pcb1541/install/build/BLDINS.BAT
+    pcb1541/install/build/INSTALL.DEF
 
   Adds:
-    pcb1541/install/build/os2sdk/API.LIB
+    pcb1541/install/build/ne-fixup.py
 
   NO deletions.
 
@@ -35,12 +35,11 @@ APPLY — extract into repo root.
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  pcb1541/install/src/install-1011.c
-    M  pcb1541/install/build/BLDINS.BAT
-    A  pcb1541/install/build/os2sdk/API.LIB
-    Total: 7 modified, 1 added, 0 deleted.
+    M  pcb1541/install/build/INSTALL.DEF
+    A  pcb1541/install/build/ne-fixup.py
+    Total: 6 modified, 1 added, 0 deleted.
 
   Commit message:
-    install v1.11.7: Family API + API.LIB (FAPI emulation linked, 65KB)
+    install v1.11.8: NE header parity (flags 0x0002, stack 8000, heap 0)
 
---hexadecimal, install v1.11.7, 2026-09-05
+--hexadecimal, install v1.11.8, 2026-09-05
