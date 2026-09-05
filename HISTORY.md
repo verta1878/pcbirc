@@ -690,6 +690,19 @@ Sub-phases:
   - `pcb1541/install/build/BLDINS.BAT` — updated link line
 
 
+- **v1.11.9** — RTL coverage + size convergence report (shipped 2026-09-05).
+  Structural analysis of the 272,634 B gap between our build (65,914 B)
+  and Clark's reference (338,548 B). All bytes accounted for:
+  - 42% = MZ stub (BIND artifact, needs OS/2 host, deferred v1.12)
+  - 45% = CODE (269 unimplemented OS/2 API handlers)
+  - 13% = DATA (remaining embedded strings/tables)
+  No unknowns remain. Every gap categorized by type and phase.
+
+  Files:
+  - `docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md` — NEW
+
+
+
 
 
   **Original v1.11.1–v1.11.10 phase plan retired.** v1.11.2 collapsed

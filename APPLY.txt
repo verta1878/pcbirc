@@ -1,22 +1,17 @@
-install v1.11.8 — NE header parity
-====================================
+install v1.11.9 — RTL coverage + size convergence
+===================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 46bc22c (install-v1.11.7-family-api-lib)
+Prev origin/main HEAD: 665173d (install-v1.11.8-ne-header.)
 
 WHAT THIS RELEASE DOES
 
-  NE header fields now match Clark's reference:
-  - Flags: 0x0002 (cleared PROTMODEONLY, matches Clark's MULTIPLEDATA)
-  - Stack: 8000 (matches Clark's)
-  - Heap: 0 (matches Clark's)
+  Size convergence report: all 272,634 bytes of gap accounted for.
+  - 42% = MZ stub (BIND artifact, deferred to v1.12)
+  - 45% = CODE (269 unimplemented handlers, OS/2 API calls)
+  - 13% = DATA (remaining strings/tables)
+  - No unknowns — every gap categorized
 
-  Two mechanisms:
-  - INSTALL.DEF (CRLF line endings — TLINK rejects LF-only): sets
-    HEAPSIZE 0 at link time
-  - ne-fixup.py: post-link script patches flags and stack (TLINK /Toe
-    forces PROTMODEONLY and zeroes stack, no way to override at link)
-
-  Segment count (4 vs 6) is code-size-dependent — converges in v1.12.
+  No code changes. Document shipment.
 
 APPLY — extract into repo root.
 
@@ -24,22 +19,18 @@ APPLY — extract into repo root.
     APPLY.txt
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    pcb1541/install/build/INSTALL.DEF
 
   Adds:
-    pcb1541/install/build/ne-fixup.py
-
-  NO deletions.
+    docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  pcb1541/install/build/INSTALL.DEF
-    A  pcb1541/install/build/ne-fixup.py
-    Total: 6 modified, 1 added, 0 deleted.
+    A  docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md
+    Total: 5 modified, 1 added, 0 deleted.
 
   Commit message:
-    install v1.11.8: NE header parity (flags 0x0002, stack 8000, heap 0)
+    install v1.11.9: size convergence report (all gaps categorized)
 
---hexadecimal, install v1.11.8, 2026-09-05
+--hexadecimal, install v1.11.9, 2026-09-05
