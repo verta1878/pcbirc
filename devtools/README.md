@@ -21,6 +21,9 @@ family maps to PCBKBC/PCBKIT/PCBKMS, decompression recipe), see
 | Archive (here) | Extracted / curated form | Notes |
 |---|---|---|
 | `TURBOC201.zip` | root `TC201BT.ZIP` (build subset) | Turbo C 2.01 → PCBKIT |
+| `MSC51.zip` | not yet extracted — install v1.11 use | **MS C 5.1** — 14 floppy images (5.25"). Ships **LINK 5.01.21** (Microsoft Segmented-Executable Linker), MS OS/2 Libraries (API.LIB with DOSCALLS/KBDCALLS/VIOCALLS), CodeView for OS/2. Candidate toolchain for install v1.11 (byte-exact rebuild of Clark's INSTALL.EXE which has linker version bytes 5.10 in its NE header). |
+| `MSC60A.zip` | not yet extracted — install v1.11 use | **MS C 6.0a** — 6 floppy images (5.25" HD). Contains newer LINK.EX$ (SZ-compressed, decompresses during Setup). Also targets DOS + OS/2. Backup candidate if MSC 5.1's LINK version doesn't match Clark's 5.10 exactly. |
+| `OS2SDK103.zip` | not yet extracted — install v1.11 use | **MS OS/2 SDK 1.03** — 11 floppy images (3.5"). Contains same LINK.EXE as MSC 5.1 (identical md5), plus PM SDK, Petzold sample code, toolkit binaries. Provides OS/2 host environment for running the MSC 5.1 or MSC 6.0a linker. |
 | `MSC70-retail.7z` | root `MSC70BT.ZIP` (packaged) | MS C 7.0 retail disks → PCBKMS |
 | `C7OS2.zip` | folded into `MSC70BT.ZIP` | C7 OS/2 hosted add-on (the DPMI unlock) |
 | `MSC70-patches.7z` | applied during build | LINK/LIB/PWB/CV fixes |
