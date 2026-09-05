@@ -122,6 +122,25 @@ control flow, which is v1.10.2 territory). That's the arc.
 
 ## install v1.11 — byte-exact INSTALL.EXE reconstruction
 
+### v1.11 arc progress (actual path taken)
+
+| Phase | What | Status |
+|---|---|---|
+| v1.11.0 | Toolchain shakedown | DONE |
+| v1.11.1 | Dispatch table scaffold (301 directives) | DONE |
+| v1.11.2 | 60 semantic handlers ported (collapsed phases 1-5) | DONE |
+| v1.11.3 | Family API (/Toe + C0FL.OBJ + BC 3.1 compliance) | DONE |
+| v1.11.4 | Gap analysis (document, not code) | NEXT |
+| v1.11.5-9 | TBD from gap analysis categories | |
+| v1.11.10 | Understanding-complete | |
+| v1.12 | Byte-exact arc (next arc) | DEFERRED |
+
+Original 10-phase plan (one directive bucket per phase) was retired
+after v1.11.2 collapsed all six buckets into one shot. Downstream
+phases are now defined by the gap analysis output, not the original
+plan. See `docs/pcboard-internals/INSTALL-EXE-PARITY.md`.
+
+
 Files:
 - `install-1010.c` — the v1.10 functional reimplementation
   (previously `install.c`). Portable C, runs INSTALL.DAT end-to-end

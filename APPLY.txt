@@ -1,55 +1,35 @@
-install v1.11.3 — Family API link target + BC 3.1 compliance
-=============================================================
+install v1.11 — phase plan rescope (doc-only)
+===============================================
 Date: 2026-09-05
-Prev origin/main HEAD: 13593c7 (Merge branch 'main')
+Prev origin/main HEAD: ded9185 (Install v1.11.3)
 
 WHAT THIS RELEASE DOES
 
-  Two things in one shipment:
-  1. Family API link target: /Toe + C0FL.OBJ -> target OS 0x01 (OS/2)
-  2. BC 3.1 compliance: install-1011.c now compiles clean under BCC 3.1
+  Updates four documents to reflect the actual v1.11 path taken
+  (original 10-phase plan retired; v1.11.2 collapsed phases 1-5;
+  v1.11.4 redefined as gap analysis document; v1.11.5-9 undefined
+  until gap analysis lands; byte-exact rebuild deferred to v1.12).
 
-  Verified under DOSBox-X in this session:
-  - BCC 3.1: 0 errors, 3 warnings, 32,834 byte OBJ
-  - TLINK 5.1 /Toe: 56,574 byte INSTALL.EXE (NE format)
-  - NE header: linker 5.10 MATCH, target OS 0x01 MATCH (Family API)
+  No code changes. No build changes. Doc-only.
 
-  BC 3.1 fixes applied to install-1011.c:
-  - snprintf -> sprintf
-  - stdint.h -> manual typedefs
-  - opendir/readdir -> findfirst/findnext (#ifdef __BORLANDC__)
-  - POSIX permission constants defined for DOS
-  - mkdir single-arg macro
-  - TLINK /Toe (not DEF file) sets target OS
+APPLY — extract into repo root (overwrite).
 
-APPLY (Windows / GitHub Desktop) — 2 STEPS
+  Modifies:
+    APPLY.txt
+    HISTORY.md
+    docs/pcboard-internals/INSTALL-EXE-PARITY.md
+    pcb1541/install/src/README.md
 
-  STEP 1 — Extract into repo root (overwrite in place).
+  NO additions. NO deletions.
 
-    Modifies:
-      APPLY.txt
-      HISTORY.md
-      CHECKSUMS.md5 / .sha256 / .txt
-      pcb1541/install/src/install-1011.c   (BC 3.1 compliance)
-      pcb1541/install/build/BLDINS.BAT     (/Toe + C0FL, DEF removed)
-
-    Adds:
-      pcb1541/install/build/INSTALL.DEF    (target documentation)
-
-    NO deletions.
-
-  STEP 2 — GitHub Desktop:
-
+  GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
-    M  CHECKSUMS.md5 / .sha256 / .txt
-    M  pcb1541/install/src/install-1011.c
-    M  pcb1541/install/build/BLDINS.BAT
-    A  pcb1541/install/build/INSTALL.DEF
-
-    Total: 7 modified, 1 added, 0 deleted.
+    M  docs/pcboard-internals/INSTALL-EXE-PARITY.md
+    M  pcb1541/install/src/README.md
+    Total: 4 modified, 0 added, 0 deleted.
 
   Commit message:
-    install v1.11.3: Family API (OS 0x01) + BC 3.1 compliance (verified under DOSBox-X)
+    install v1.11: phase plan rescoped (original 10-phase retired, gap analysis next)
 
---hexadecimal, install v1.11.3, 2026-09-05
+--hexadecimal, 2026-09-05

@@ -268,21 +268,55 @@ Detection of running environment:
 
 ## What's not in this arc
 
-Byte-exact reconstruction of the `INSTALL.EXE` binary itself is
-**v1.11+**. That requires:
+## install v1.11 arc — byte-exact INSTALL.EXE reconstruction
 
-1. Implementing all 329 directives (269 more than we cover)
-2. Enforcing all constraints (`@Goto`-exits-`@Finish` scope check,
-   `@Size`/`@Requires` incompatibility, `@Outxxx` ascending-order
-   check, etc.)
-3. Matching Clark's memory layout, code order, string literal placement,
-   and calling conventions
-4. Compiling with vintage Borland C++ 4.5 or 5.0 targeting OS/2
-   Family API (`_M_I86` model), linker version 5.10
-5. Byte-diffing the resulting `INSTALL.EXE` against reference
+### What actually happened (v1.11.0 through v1.11.3)
 
-That's a materially larger scope. install v1.10 wraps here with
-functional parity for the actual `INSTALL.DAT` in use.
+The original 10-phase plan (v1.11.1 through v1.11.10, one directive
+bucket per phase) was **retired after v1.11.2 collapsed phases 1-5**
+into a single handler port. The actual path:
+
+| Phase | What | Status |
+|---|---|---|
+| v1.11.0 | Toolchain shakedown (empty main, NE binary, linker 5.10) | DONE |
+| v1.11.1 | Dispatch table scaffold (301 directives, enum/lookup) | DONE |
+| v1.11.2 | Semantic handler port (all 60 handlers from v1.10.5, collapsed phases 1-5) | DONE |
+| v1.11.3 | Family API link target (/Toe, C0FL.OBJ, OS byte 0x01) + BC 3.1 compliance | DONE |
+| **v1.11.4** | **Gap analysis (DOCUMENT, not code)** — structural comparison of our 56KB binary vs Clark's 338KB, categorized by gap type. Defines v1.11.5-v1.11.9. | NEXT |
+| v1.11.5-v1.11.9 | **Undefined until v1.11.4 lands.** Phases will be driven by the gap categories: implementation gaps, RTL gaps, resource gaps, compiler-artifact gaps. |  |
+| v1.11.10 | Understanding-complete milestone | |
+| **v1.12** | **Byte-exact arc** (next arc, not this one). Actual `cmp -s` target. | DEFERRED |
+
+### What v1.11.4 (gap analysis) must produce
+
+`docs/pcboard-internals/INSTALL-EXE-GAP-ANALYSIS.md` containing:
+
+1. NE segment table dump — both binaries side by side
+2. Code / data / resource segment size deltas
+3. Import / export table entry counts — both sides
+4. String table extraction (`strings` both sides, diffed)
+5. Categorized gap inventory:
+   - **Implementation gap** — Clark's binary handles something we
+     stubbed (directive branches, screen rendering, error messages)
+   - **RTL gap** — Clark links against BC 3.1 full C runtime; we may
+     be missing overlay manager, extended file I/O, math library
+   - **Resource gap** — Clark embeds strings/tables/screens we rebuild
+     at runtime or load from disk
+   - **Compiler-artifact gap** — optimization settings, debug info,
+     dead-code elimination, NE alignment padding
+6. Phase recommendations — what v1.11.5-v1.11.9 should be, based on
+   the categories
+
+The category matters for phasing: implementation gaps become handler
+work. Resource gaps become an embedded-strings phase. RTL gaps become
+a linker-config phase. Compiler-artifact gaps might close for free
+with the right BC 3.1 flags.
+
+### Note on the 56KB vs 338KB framing
+
+Don't assume byte-for-byte parity is the goal at v1.11. Understanding
+parity is. Clark's 338KB may include debug symbols, resource fork
+padding, NE-format alignment gaps. Byte-exact rebuild is v1.12.
 
 ## See also
 

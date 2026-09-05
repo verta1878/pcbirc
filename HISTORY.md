@@ -613,9 +613,13 @@ Sub-phases:
 
 
 
-- **v1.11.1 through v1.11.10** — per the phase roadmap in
-  `docs/pcboard-internals/INSTALL-EXE-PARITY.md` (~25-44 sessions
-  realistic to reach `cmp -s install-1011.exe INSTALL.EXE` exit 0).
+  **Original v1.11.1–v1.11.10 phase plan retired.** v1.11.2 collapsed
+  phases 1–5 (all 60 handlers ported in one shot). New plan:
+  v1.11.4 = gap analysis (document, not code), which defines
+  v1.11.5–v1.11.9 based on categorized gaps (implementation / RTL /
+  resource / compiler-artifact). v1.11.10 = understanding-complete.
+  Byte-exact rebuild deferred to v1.12 arc. See updated
+  `docs/pcboard-internals/INSTALL-EXE-PARITY.md`.
 
 ---
 
