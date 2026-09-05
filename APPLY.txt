@@ -1,34 +1,33 @@
-install v1.11.1 — directive dispatch table
-==========================================
+install v1.11.2 — semantic handler port
+========================================
 Date: 2026-09-05
-Prev origin/main HEAD: afb4906 (install phase updated. devtools.)
+Prev origin/main HEAD: 7c1fc6c (Update README.md)
 
 WHAT THIS RELEASE DOES
 
-  Lands the 301-directive dispatch table in install-1011.c, replacing
-  the v1.11.0 empty-main() stub. This is the skeleton of the entire
-  INSTALL.EXE engine: every @-directive in Clark's binary maps to an
-  enum ID via a string lookup table, with a minimal main loop that
-  reads INSTALL.DAT, extracts @-tokens, uppercases, and dispatches.
+  Ports all 60 semantic handlers from install-1010.c (v1.10.5) into the
+  v1.11.1 dispatch table framework. The strncasecmp if/else chain is
+  replaced with switch(lookup_directive(token)). Same functionality,
+  table-driven routing.
 
-  All handlers are stubs (dir_stub) — v1.11.2 will port the 60 real
-  semantic handlers from install-1010.c.
+  Runs Clark's INSTALL.DAT end-to-end: project metadata, variables,
+  control flow, file operations, interactive menu, system hooks,
+  filesystem state, finish block — all through the 301-directive
+  enum/lookup.
 
-  Family API link target (.DEF file, C0FL.OBJ startup, target OS byte
-  0x01) deferred to v1.11.2 — ships alongside the semantic handler
-  port, where the Family API imports actually matter.
+  Family API link target (.DEF + C0FL.OBJ) deferred to v1.11.3.
 
 APPLY (Windows / GitHub Desktop) — 2 STEPS
 
-  STEP 1 — Extract this release zip INTO your repo root.
+  STEP 1 — Extract this zip INTO your repo root (overwrite in place).
 
     Modifies:
       APPLY.txt
-      HISTORY.md                              (v1.11.1 entry added)
+      HISTORY.md                              (v1.11.2 entry added)
       CHECKSUMS.md5                           (regenerated)
       CHECKSUMS.sha256                        (regenerated)
       CHECKSUMS.txt                           (regenerated)
-      pcb1541/install/src/install-1011.c      (dispatch table replaces stub)
+      pcb1541/install/src/install-1011.c      (semantic handlers ported)
 
     NO additions. NO deletions.
 
@@ -44,24 +43,17 @@ APPLY (Windows / GitHub Desktop) — 2 STEPS
     Total: 6 modified, 0 added, 0 deleted.
 
   Commit + push. Suggested message:
-    install v1.11.1: directive dispatch table (301 directives)
+    install v1.11.2: semantic handler port (60 handlers, table-driven dispatch)
 
 ACCEPTANCE
 
   Verified in sandbox:
-  - gcc -Wall -Wextra -ansi -pedantic: CLEAN (zero warnings)
-  - Ran against real INSTALL.DAT: 894 directives processed,
-    6 unknown (5 user variables @Fname/@Lname/@CitySt/@Pwd/@RegCode
-    + 1 alias — correct behavior, these are runtime-declared names
-    not engine directives)
-  - md5 of install-1011.c in zip matches source: verified
+  - gcc -Wall -Wextra: 7 warnings (all pre-existing snprintf truncation
+    from install-1010.c), zero errors
+  - Ran against real INSTALL.DAT: processes all directives, runs through
+    all 8 archives, handles @If/@Else/@Endif branches, @SetConfig/
+    @SetAutoexec blocks, menu groups, and completes with installation
+    summary. MISS warnings expected (redx not available in sandbox).
+  - md5 of install-1011.c verified consistent across source/zip/checksums
 
-NEXT AFTER PUSH: v1.11.2
-
-  Port the 60 semantic handlers from install-1010.c into the dispatch
-  framework. Switch to Family API link target (.DEF + C0FL.OBJ +
-  target OS byte 0x01). At end of v1.11.2 the binary runs INSTALL.DAT
-  end-to-end with real file placement, same as install-1010.c does
-  today, but compiled under BC 3.1 targeting NE Family API.
-
---hexadecimal, install v1.11.1, 2026-09-05
+--hexadecimal, install v1.11.2, 2026-09-05

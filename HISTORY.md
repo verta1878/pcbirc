@@ -576,6 +576,24 @@ Sub-phases:
   - `pcb1541/install/src/install-1011.c` — dispatch table + main loop
     (replaces the v1.11.0 empty-main stub).
 
+- **v1.11.2** — semantic handler port (shipped 2026-09-05).
+  60 semantic handlers from install-1010.c (v1.10.5) ported into the
+  v1.11.1 dispatch table framework. switch(lookup_directive()) replaces
+  the strncasecmp chain. Runs Clark's INSTALL.DAT end-to-end: project
+  metadata, variable/control flow, file operations (@BeginLib/@File/
+  @Copy/@Delete/@FileAttr), interactive menu (@GetGroups/@GetString/
+  @SetGroup/@ClearGroup), system hooks (@SetConfig/@SetAutoexec/
+  @Finish/@System), and filesystem state (@ChDrive/@ChDir). All routing
+  through the 301-directive enum/lookup.
+
+  Family API link target (.DEF + C0FL.OBJ + target OS byte 0x01)
+  deferred to v1.11.3 — needs testing under DOSBox-X with the NE
+  Family API loader.
+
+  Files:
+  - `pcb1541/install/src/install-1011.c` — 3,097 lines (was 752).
+
+
 
 - **v1.11.1 through v1.11.10** — per the phase roadmap in
   `docs/pcboard-internals/INSTALL-EXE-PARITY.md` (~25-44 sessions

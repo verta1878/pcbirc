@@ -1,21 +1,10 @@
 # CHECKSUMS — verify repository integrity
 #
-# This directory has three files:
-#
 #   CHECKSUMS.md5       MD5 hashes,    md5sum -c compatible
 #   CHECKSUMS.sha256    SHA256 hashes, sha256sum -c compatible
-#   CHECKSUMS.txt       this file (README + summary)
+#   CHECKSUMS.txt       this file
 #
-# ==================================================================
-# VERIFY EVERY TRACKED FILE (Linux / Mac / WSL)
+#   cd /path/to/pcbirc && md5sum -c CHECKSUMS.md5
 #
-#   cd /path/to/pcbirc
-#   md5sum -c CHECKSUMS.md5
-#   sha256sum -c CHECKSUMS.sha256
-#
-# Both should report all OK with no mismatches.
-#
-# ==================================================================
-# LAST REGENERATED: 2026-09-05 (install v1.11.1)
+# LAST REGENERATED: 2026-09-05 (install v1.11.2)
 # TRACKED FILES:    10471
-# ==================================================================
