@@ -620,6 +620,20 @@ Sub-phases:
   Files:
   - `pcb1541/install/src/install-1011.c` — 3,097 lines (was 752).
 
+
+- **v1.11.6** — error messages, help text, version strings (shipped 2026-09-05).
+  Clark's embedded strings added for binary parity: version/logfile
+  strings ($Logfile, $Revision, copyright banner), 12-entry installer
+  error table, 13-entry DOS INT 24h critical error table, 14-entry
+  OS/2 Family API error table, UI prompt strings (PRESS ANY KEY,
+  Enter Text, etc.), format strings for file/path/date operations.
+  BCC 3.1: 0 errors. TLINK: 60,276 B (was 58,136; +2,140 B from
+  embedded strings). NE header: 5.10 / 0x01.
+
+  Files:
+  - `pcb1541/install/src/install-1011.c` — 3,626 lines (was 3,524)
+
+
 - **v1.11.3** — Family API link target (shipped 2026-09-05).
   BLDINS.BAT now produces a proper NE Family API binary matching
   Clark's INSTALL.EXE header:

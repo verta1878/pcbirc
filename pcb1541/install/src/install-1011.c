@@ -1,9 +1,9 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 /* install-1011.c -- PCBoard Installer (install v1.11.2)                     */
 /*                                                                            */
-/* v1.11.5: system-query handlers + stub coverage for all 301 directives.     */
-/* 60 semantic handlers from v1.10.5 + system-query defaults (DOS 6.22/VGA)   */
-/* + stubs for all remaining directives. Full dispatch coverage.              */
+/* v1.11.6: error messages, help text, version strings, UI prompts.           */
+/* Full dispatch coverage + Clark's embedded strings for binary parity.        */
+/* Error table, DOS/OS2 error messages, UI prompts, format strings.           */
 /*                                                                            */
 /* Build: BC 3.1 via BLDINS.BAT (byte-exact target) or gcc (testing).        */
 /* For byte-exact INSTALL.EXE reconstruction see INSTALL-EXE-PARITY.md.      */
@@ -2765,6 +2765,108 @@ static void inst_cmd_set(InstState *St, const char *Line)
 /*  system. Clark's binary queries INT 21h/2Fh/etc; we return defaults. */
 /* -------------------------------------------------------------------- */
 
+
+/* -------------------------------------------------------------------- */
+/*  v1.11.6: Error messages, help text, version strings                 */
+/*  These match Clark's embedded strings for binary parity.             */
+/* -------------------------------------------------------------------- */
+
+/* Clark's original version strings (from binary) */
+static const char inst_logfile[] =
+    "       $Logfile:   W:/master/install/main.c_v  $";
+static const char inst_revision[] =
+    "      $Revision:   1.19  $";
+static const char inst_version[] =
+    "INSTALL Ver 15.3  Copyright (c) 1987-1995 Clark Development Company, Inc.";
+static const char inst_banner[] =
+    "All Rights Reserved.";
+
+/* Error message table — matches Clark's embedded error strings.
+ * These are referenced by error code from the installer engine.
+ * Not all are reachable from INSTALL.DAT; they exist for binary parity. */
+static const char *inst_errors[] = {
+    /* 0 */ "Cannot make directory",
+    /* 1 */ "Cannot use @Goto to exit the @Finish block",
+    /* 2 */ "@Size commands cannot be used when @Requires is specified",
+    /* 3 */ "Cannot complete file operation (out of input)",
+    /* 4 */ "Disk Drive Controller Failed.",
+    /* 5 */ "Disk Drive Reset Failed.",
+    /* 6 */ "Disk Drive Seek Error.",
+    /* 7 */ "Disk Drive Status Error.",
+    /* 8 */ "Data CRC error",
+    /* 9 */ "Date or time invalid",
+    /* 10 */ "Decompression operation aborted",
+    /* 11 */ "Aborting installation",
+    NULL
+};
+
+/* UI prompt strings */
+static const char inst_press_any[]   = " PRESS ANY KEY ";
+static const char inst_press_cont[]  = "Press any key to continue ...";
+static const char inst_press_exit[]  = "Press any key to exit ...";
+static const char inst_press_esc[]   = "Press ESCape";
+static const char inst_enter_text[]  = " Enter Text: ";
+static const char inst_enter_num[]   = "Enter number:";
+static const char inst_enter_sub[]   = " Please Enter The Subdirectory Name: ";
+static const char inst_input_disk[]  = "Please select the INPUT disk drive:";
+static const char inst_installing[]  = "Installing Files - ";
+static const char inst_skipping[]    = "      Skipping: %s";
+static const char inst_reboot_msg[]  = "INSTALL will now reboot your machine.";
+
+/* Format strings for file/path operations */
+static const char inst_fmt_drive[]   = "%c:\\%s";
+static const char inst_fmt_path[]    = "%c:%s%s";
+static const char inst_fmt_file[]    = "%c:%s\\%s.%s";
+static const char inst_fmt_date[]    = "%d/%02d/%02d %02d:%02d:%02d";
+static const char inst_fmt_toohi[]   = "%ld is too high for %s -- number may be at most %ld";
+static const char inst_fmt_toolo[]   = "%ld is too low for %s -- number must be at least %ld";
+static const char inst_fmt_config[]  = " The following changes need to be incorporated into: %s";
+static const char inst_fmt_disktype[] = "  Please select the disk type of output disk %c:";
+
+/* DOS error messages (INT 24h critical error table — Clark embeds the full set) */
+static const char *inst_dos_errors[] = {
+    "Write-protect error",
+    "Unknown unit",
+    "Drive not ready",
+    "Unknown command",
+    "Data CRC error",
+    "Bad request structure length",
+    "Seek error",
+    "Unknown media type",
+    "Sector not found",
+    "Printer out of paper",
+    "Write fault",
+    "Read fault",
+    "General failure",
+    NULL
+};
+
+/* OS/2 Family API error messages (embedded in Clark's MZ stub) */
+static const char *inst_os2_errors[] = {
+    "Cannot create another TCB",
+    "Cannot create logical keyboard",
+    "Cannot find COUNTRY.SYS file",
+    "Cannot get keyboard focus",
+    "Cannot lock screen",
+    "Cannot open COUNTRY.SYS file",
+    "Cannot seek on pipe or device",
+    "Cannot seek to negative offset",
+    "Cannot shrink DosSubSet() segment",
+    "Cannot shrink ring 2 stack",
+    "Code page load failed",
+    "No selectors requested",
+    "Not a GDT selector",
+    "Not enough GDT selectors available",
+    NULL
+};
+
+static void inst_print_error(int code)
+{
+    if (code >= 0 && inst_errors[code] != NULL)
+        printf("  ERROR: %s\n", inst_errors[code]);
+}
+
+
 static long inst_query_int(int id)
 {
     switch (id) {
@@ -2986,7 +3088,7 @@ static int inst_process(InstState *St)
             printf("\033[2J\033[H");
             break;
         case DIR_PAUSE:
-            printf("\n PRESS ANY KEY ");
+            printf("\n%s", inst_press_any);
             fflush(stdout);
 #ifdef __WATCOMC__
             getch();

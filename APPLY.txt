@@ -1,25 +1,19 @@
-install v1.11.5 — system-query handlers + full dispatch coverage
-=================================================================
+install v1.11.6 — error messages, help text, version strings
+==============================================================
 Date: 2026-09-05
-Prev origin/main HEAD: 2ac37d7 (install-v1.11.4-gap-analysis.)
+Prev origin/main HEAD: f0b306f (install-v1.11.5-system-query)
 
 WHAT THIS RELEASE DOES
 
-  All 301 directives now have explicit case handlers in the dispatch
-  switch. Previously 43 had real handlers, the rest fell through to
-  a default stub. Now:
+  Adds Clark's embedded strings for binary parity:
+  - Version/logfile: $Logfile, $Revision, copyright banner
+  - 12-entry installer error table
+  - 13-entry DOS INT 24h critical error table
+  - 14-entry OS/2 Family API error table
+  - UI prompts: PRESS ANY KEY, Enter Text, Enter number, etc.
+  - Format strings: file paths, dates, range errors, config changes
 
-  - System-query directives (~80): return DOS 6.22 / VGA / 640K
-    defaults (CPU=Pentium, RAM=640K, XMS=4096K, Video=VGA, etc.)
-  - @Out* family (14): disk-size-conditional stubs
-  - String operations (10): @StrDel through @StrUpr stubs
-  - File I/O extras (16): @FileCrc, @Move, @RmDir, etc. stubs
-  - System integration (27): @Execute, @Shell, @Reboot, etc. stubs
-  - Advanced flow (55): @Chain, @Debug, @Eval, etc. stubs
-  - Windows-specific (9): return 0/empty in DOS mode
-
-  Verified: BCC 3.1 (0 errors), TLINK /Toe (58,136 B EXE),
-  NE header: linker 5.10, target OS 0x01. Runs INSTALL.DAT end-to-end.
+  Verified: BCC 3.1 (0 errors), TLINK (60,276 B), NE: 5.10/0x01.
 
 APPLY — extract into repo root.
 
@@ -39,6 +33,6 @@ APPLY — extract into repo root.
     Total: 6 modified, 0 added, 0 deleted.
 
   Commit message:
-    install v1.11.5: system-query handlers + full dispatch coverage (301 directives)
+    install v1.11.6: error messages + version strings (binary parity)
 
---hexadecimal, install v1.11.5, 2026-09-05
+--hexadecimal, install v1.11.6, 2026-09-05
