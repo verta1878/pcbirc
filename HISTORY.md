@@ -525,6 +525,44 @@ Sub-phases:
   toolchain: Borland C++ 4.5/5.0 targeting OS/2 Family API, linker
   version 5.10).
 
+
+### install v1.11 — byte-exact INSTALL.EXE reconstruction (arc opens)
+
+- **v1.11.0** — toolchain shakedown (shipped 2026-09-05).
+  Confirmed Clark's toolchain via sandbox verification: **Borland C++
+  3.1 (already in `devtools/BC31.zip`) + TLINK 5.1 + API.LIB from
+  Microsoft OS/2 SDK 1.03 (`devtools/OS2SDK103.zip`)**. TLINK's banner
+  says "Version 5.1" but its NE header stamp is bytes `05 0A` (=5.10)
+  — matches Clark's `INSTALL.EXE` exactly (verified across BWCC.DLL,
+  TLINK's own header, fresh Hello World, and v1.11.0's stub build).
+  Earlier speculation this session that Microsoft C 5.1 was the
+  toolchain was wrong — corrected in `devtools/COMPILERS.md`.
+
+  Files:
+  - Renamed `pcb1541/install/src/install.c` → `install-1010.c`
+    (preserved byte-for-byte + updated header comment).
+  - New `pcb1541/install/src/install-1011.c` — empty-main() starter
+    for the byte-exact rebuild.
+  - New `pcb1541/install/build/BLDINS.BAT` + `README.md` — install-
+    scoped build script. Deliberately NOT in `MAIN/build/scripts/`
+    (that dir is for the pwa153 SDK library matrix, not one-off
+    binary builds — different scope entirely).
+  - `devtools/COMPILERS.md` — "install v1.11 toolchain — CONFIRMED"
+    section with full verification chain, correcting prior draft.
+  - `pcb1541/install/src/README.md` — v1.11 section added.
+
+  Acceptance: install-1011.c stub compiles under BC 3.1, links with
+  TLINK 5.1 + API.LIB, produces a NE binary with linker version bytes
+  05 0A (5.10) — same bytes as Clark's INSTALL.EXE. Target OS byte
+  currently 0x02 (Windows) not 0x01 (OS/2 Family) because v1.11.0
+  uses standard Windows-target flags for the shakedown; correct
+  Family-API incantation (.DEF file with EXETYPE OS2, C0FL.OBJ
+  startup) lands in v1.11.1 alongside the directive dispatch table.
+
+- **v1.11.1 through v1.11.10** — per the phase roadmap in
+  `docs/pcboard-internals/INSTALL-EXE-PARITY.md` (~25-44 sessions
+  realistic to reach `cmp -s install-1011.exe INSTALL.EXE` exit 0).
+
 ---
 
 ## For future contributors

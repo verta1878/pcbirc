@@ -1,136 +1,125 @@
-install v1.10.6 — disassembly parity, arc complete
+install v1.11.0 — byte-exact INSTALL.EXE arc opens
 ====================================================
 Date: 2026-09-05
-Prev origin/main HEAD: (v1.10.5 push)
+Prev origin/main HEAD: 74b377a (update devtools)
 
 WHAT THIS RELEASE DOES
 
-  No new code. Semantic verification of our C reimplementation vs
-  Clark's compiled INSTALL.EXE binary. Closes the install v1.10 arc.
+  1. Opens the install v1.11 arc: byte-exact reconstruction of Clark's
+     INSTALL.EXE binary (338,548 B, NE Family API, linker bytes 5.10).
 
-  Key finding: INSTALL.EXE supports 329 total @-directives.
-  Clark's PCBoard INSTALL.DAT uses 60. We implement those 60.
-  The other 269 are engine capabilities unexercised by this script
-  (system-query family for OS/Windows/CD-ROM/memory/video/drives/
-  machine, extra string ops, file I/O @Write/@ReadLn, process
-  spawning @Execute/@Spawn/@Shell, INI file ops, disk-size-conditional
-  @Out variants @Out0K through @OutAbs, etc).
+  2. Preserves the v1.10 functional reimplementation as
+     `install-1010.c` (previously `install.c`) - still runs INSTALL.DAT
+     end-to-end with 94.5% byte-perfect output.
 
-  install v1.10 arc: UNDERSTANDING-COMPLETE.
+  3. Lands the v1.11.0 starter:
+     - `install-1011.c` - empty main() that compiles under BC 3.1
+     - `pcb1541/install/build/BLDINS.BAT` - install-scoped build script
+     - `pcb1541/install/build/README.md` - explains scope vs MAIN/
 
-  Byte-exact rebuild of INSTALL.EXE itself is v1.11+ (separate arc —
-  requires all 329 directives, all constraints, and vintage Borland
-  C++ 4.5/5.0 toolchain targeting OS/2 Family API with linker 5.10).
+  4. Corrects `devtools/COMPILERS.md`. Earlier draft speculated
+     Microsoft C 5.1 was Clark's toolchain (wrong). Sandbox
+     verification proved: Borland C++ 3.1 + TLINK 5.1 writes the
+     linker bytes 5.10 that Clark's INSTALL.EXE has.
+
+  DOES NOT touch MAIN/build/scripts/ - that dir is scoped to the
+  pwa153 SDK library matrix (PCBKBC/PCBKIT/PCBKMS), not to per-binary
+  builds. install/ has its own scoped build tree at ./build/.
 
 APPLY (Windows / GitHub Desktop) - 3 STEPS
 
-  STEP 1 - Extract this release zip INTO your repo root.
-    Overwrites:
-      HISTORY.md
-      pcb1541/install/src/README.md
-      docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
-      APPLY.txt
+  STEP 1a - MANUALLY delete the old install.c BEFORE extracting:
+      In File Explorer: navigate to pcb1541\install\src\
+      Delete: install.c
+      (This file is being replaced with install-1010.c which has the
+      same code + updated header comment. GitHub Desktop can't do
+      cross-name renames automatically via zip extraction.)
+
+  STEP 1b - Extract this release zip INTO your repo root.
+
     Adds:
-      docs/pcboard-internals/INSTALL-EXE-PARITY.md
+      pcb1541/install/src/install-1010.c   (renamed from install.c + header updated)
+      pcb1541/install/src/install-1011.c   (v1.11.0 starter)
+      pcb1541/install/build/BLDINS.BAT     (install-scoped build script)
+      pcb1541/install/build/README.md      (scope explanation)
+
+    Modifies:
+      HISTORY.md                           (v1.11.0 entry added)
+      APPLY.txt
+      devtools/COMPILERS.md                (corrects v1.11 toolchain section)
+      pcb1541/install/src/README.md        (adds v1.11 section)
+
+    NO changes to MAIN/build/scripts/BUILD.BAT or any MAIN/ file.
 
   STEP 2 - Open GitHub Desktop. Expected changes:
+
+    D  pcb1541/install/src/install.c
+    A  pcb1541/install/src/install-1010.c
+    A  pcb1541/install/src/install-1011.c
+    A  pcb1541/install/build/BLDINS.BAT
+    A  pcb1541/install/build/README.md
     M  APPLY.txt
     M  HISTORY.md
+    M  devtools/COMPILERS.md
     M  pcb1541/install/src/README.md
-    M  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md
-    +  docs/pcboard-internals/INSTALL-EXE-PARITY.md   (new, ~230 lines)
 
-    Total: 4 modified, 1 added
-
-  Note: no changes to pcb1541/install/src/install.c — v1.10.6 is
-  verification only, not code.
+    Total: 4 modified, 4 added, 1 deleted.
 
   STEP 3 - Commit + push. Suggested message:
-    install v1.10.6: disassembly parity, install v1.10 arc complete
+    install v1.11.0: byte-exact INSTALL.EXE arc opens
+    (BC 3.1 + TLINK 5.1 + API.LIB toolchain confirmed)
 
-WHAT'S IN THE FILE-CHANGES
+ACCEPTANCE
 
-  docs/pcboard-internals/INSTALL-EXE-PARITY.md  (new)
-    Full parity report vs Clark's compiled INSTALL.EXE. Contents:
-     - Reference binary metadata (NE format, Family API, linker 5.10,
-       imports DOSCALLS/KBDCALLS/VIOCALLS)
-     - The 329-vs-60 finding
-     - Verification of all 60 directives we cover (54 confirmed in
-       binary string table + 1 scanner keyword + 5 user variables)
-     - Semantic surprises discovered:
-        * Constraint: @Goto cannot exit @Finish block (we don't enforce
-          but Clark's script doesn't trigger)
-        * Constraint: @Size incompatible with @Requires (doesn't fire
-          on @Requires @HardDisk which is what the script uses)
-        * @OutXXX family: 14 disk-size-conditional output-path variants
-        * @Option: parallel selection mechanism to @Group
-        * @Dir: directory-path variable type alongside @QString
-        * @Verbatim/@Write/@ReadLn: file I/O directives
-     - Categorized listing of the 269 unused directives
-     - Understanding-complete acceptance declaration
+  Verified in sandbox with DOSBox-X + BC 3.1 + API.LIB:
 
-  HISTORY.md  (modified)
-    v1.10.6 sub-phase expanded from "planned" to "shipped" with
-    the parity findings and arc-complete milestone. Explicit note
-    that byte-exact INSTALL.EXE rebuild is a separate v1.11+ arc.
+    File                                       linker bytes
+    ------------------------------------------------------------
+      Clark's INSTALL.EXE (reference)           5.10  <- target
+      BWCC.DLL (in pcb1541/install/dist/...)    5.10
+      BC 3.1's TLINK.EXE (own NE header)        5.10
+      v1.11.0's install-1011.c -> INSTALL.EXE   5.10
 
-  pcb1541/install/src/README.md  (modified)
-    Progress table row for v1.10.6 filled in (arc COMPLETE marker).
+  v1.11.0's built INSTALL.EXE is a 5,984-byte NE binary:
+    - Linker version bytes: 05 0A (5.10) - MATCHES CLARK
+    - Segments: 3
+    - Imports: 0 modules (Family API imports come with v1.11.1)
+    - Target OS byte: 0x02 (Windows) - v1.11.1 will switch to 0x01
 
-  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md  (modified)
-    v1.10.6 progress row added. Intro paragraph extended to note
-    arc completion. See-also section links to the new parity doc.
+TOOLCHAIN CORRECTION - WHY
 
-VERIFICATION ARTIFACTS
+  Earlier this session I posited Microsoft C 5.1 was Clark's toolchain
+  based on the linker "5.10" bytes in INSTALL.EXE's NE header matching
+  what I thought was MS LINK's version. That was WRONG.
 
-  Referenced binary:
-    Path: pcb1541/install/reference/INSTALL.EXE
-    Size: 338,548 bytes
-    md5:  5239767bfced0689a1da961799a0f79c
+  Investigation with the archives + DOSBox-X sandbox:
+    - MSC 5.1's LINK stamps NE outputs with bytes 05 01 (=5.01) per
+      its banner. Same for OS/2 SDK 1.03's LINK (md5-identical).
+    - BC 3.1's TLINK stamps 05 0A (=5.10). Its banner says "5.1" but
+      Borland encodes minor 1 as byte 0x0A (10). Microsoft encodes it
+      as 0x01. Different conventions, same version-number string.
+    - BWCC.DLL (Borland's Windows Custom Controls DLL) shipped in
+      Clark's install output tree at
+      pcb1541/install/dist/target/PCBMAIL/BWCC.DLL also has linker
+      bytes 5.10 - another confirmation.
 
-  329 directives extracted from binary strings; 60 verified as our
-  coverage set. All checks documented in INSTALL-EXE-PARITY.md.
+  So: BC 3.1 (in devtools/BC31.zip since forever) is Clark's compiler
+  + linker. API.LIB (from OS2SDK103.zip) is the OS/2 Family API
+  imports. Full toolchain identified + all archives on origin.
 
-  End-to-end acceptance (unchanged from v1.10.5):
-    Files placed:   371   (matches real single-flavor install)
-    Files failed:     1   (PCBOARD.SER - legit not in archives)
-    Byte-perfect:   350 / 361 unique (94.5% of placed)
+NEXT AFTER PUSH: v1.11.1 - directive dispatch table
 
-  CONFIG.SYS.pcb + AUTOEXEC.BAT.pcb generated correctly. @Finish
-  cleanup semantics verified under --run-finish.
+  Scope:
+   - Deeper INSTALL.EXE disassembly (segment analysis, function
+     boundaries)
+   - Identify the 329-directive dispatch table (name-string ->
+     handler-fn mapping)
+   - Understand tokenizer: case-fold rule, keyword vs runtime lookup,
+     hash function if any
+   - Implement scanner + dispatcher in install-1011.c
+   - Wire in 5-10 simplest directives as a smoke test
+   - Also: switch link target to Family API (proper .DEF, C0FL.OBJ
+     startup, target OS byte 0x01/0x04)
+  Estimated: 2-3 sessions.
 
-INSTALL v1.10 ARC RETROSPECTIVE
-
-  Phase timeline:
-    v1.10.0 - reference material lands  (Sep 5)
-    v1.10.1 - redx wire-up, 6 file ops  (Sep 5)
-    v1.10.2 - control flow, 11 more     (Sep 5)
-    v1.10.3 - filesystem, 10 more       (Sep 5)
-    v1.10.4 - menu, 10 more             (Sep 5)
-    v1.10.5 - system hooks, 7 more      (Sep 5)
-    v1.10.6 - parity check              (Sep 5)  [THIS RELEASE]
-
-  Total: 60 directives implemented, ~2443 lines of install.c.
-  install.c grows from 518 lines (Phase 27 stub) to 2443 lines
-  (full v1.10.5 reimplementation).
-
-  Real INSTALL.DAT (42 KB, 1187 lines, Clark's original) executes
-  end-to-end, producing 371 files that byte-match 350 of Clark's
-  intended output tree with only per-flavor-collision drift.
-
-NEXT: INSTALL.EXE BYTE-EXACT REBUILD (v1.11+)
-
-  Materially larger scope than v1.10. Requires:
-   1. Implementing all 329 directives (269 more than we cover)
-   2. Enforcing all constraints (@Goto/@Finish scope, @Size/@Requires
-      incompatibility, @Outxxx ascending-order, etc.)
-   3. Matching Clark's memory layout, code order, string literal
-      placement, and calling conventions
-   4. Compiling with vintage Borland C++ 4.5 or 5.0 targeting OS/2
-      Family API (_M_I86 model), linker version 5.10
-   5. Byte-diffing the resulting INSTALL.EXE against reference
-
-  This is a separate multi-session arc. install v1.10 wraps here
-  with functional parity for the actual INSTALL.DAT in use.
-
---hexadecimal & crew, install v1.10.6, 2026-09-05
+--hexadecimal & crew, install v1.11.0, 2026-09-05

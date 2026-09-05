@@ -118,3 +118,23 @@ control flow, which is v1.10.2 territory). That's the arc.
   archivers)
 - `../../../docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.md` —
   canonical @-directive reference
+
+
+## install v1.11 — byte-exact INSTALL.EXE reconstruction
+
+Files:
+- `install-1010.c` — the v1.10 functional reimplementation
+  (previously `install.c`). Portable C, runs INSTALL.DAT end-to-end
+  with 94.5% byte-perfect output. Preserved for reference.
+- `install-1011.c` — v1.11 byte-exact rebuild starter (v1.11.0 stub).
+  Compiled with BC 3.1 + TLINK 5.1 under DOSBox-X to produce a NE
+  Family API binary that will eventually byte-diff against Clark's
+  reference `INSTALL.EXE`.
+
+Build v1.11: run `../build/BLDINS.BAT` under DOSBox-X.
+
+See:
+- `docs/pcboard-internals/INSTALL-EXE-PARITY.md` — full phase list
+- `devtools/COMPILERS.md` "install v1.11 toolchain — CONFIRMED" —
+  toolchain determination + verification chain
+- `../build/README.md` — build script details + scope
