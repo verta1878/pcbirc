@@ -1,19 +1,21 @@
-install v1.11.6 — error messages, help text, version strings
-==============================================================
+install v1.11.7 — Family API + API.LIB
+========================================
 Date: 2026-09-05
 Prev origin/main HEAD: f0b306f (install-v1.11.5-system-query)
 
 WHAT THIS RELEASE DOES
 
-  Adds Clark's embedded strings for binary parity:
-  - Version/logfile: $Logfile, $Revision, copyright banner
-  - 12-entry installer error table
-  - 13-entry DOS INT 24h critical error table
-  - 14-entry OS/2 Family API error table
-  - UI prompts: PRESS ANY KEY, Enter Text, Enter number, etc.
-  - Format strings: file paths, dates, range errors, config changes
+  Links OS/2 SDK 1.03 API.LIB into the build. This embeds the Family
+  API DOS emulation code (FAPI wrappers for DosBeep, VioWrtTTY,
+  KbdCharIn). Binary grew from 60 KB to 65 KB.
 
-  Verified: BCC 3.1 (0 errors), TLINK (60,276 B), NE: 5.10/0x01.
+  OS/2 API declarations added to install-1011.c with volatile-pointer
+  references forcing TLINK to pull FAPI code from API.LIB.
+
+  NE import records (DOSCALLS/KBDCALLS/VIOCALLS) and MZ stub expansion
+  require BIND.EXE — deferred to v1.12 (byte-exact arc, needs OS/2 host).
+
+  Verified: BCC 3.1 (0 errors), TLINK + API.LIB (65,914 B), NE: 5.10/0x01.
 
 APPLY — extract into repo root.
 
@@ -22,17 +24,23 @@ APPLY — extract into repo root.
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
     pcb1541/install/src/install-1011.c
+    pcb1541/install/build/BLDINS.BAT
 
-  NO additions. NO deletions.
+  Adds:
+    pcb1541/install/build/os2sdk/API.LIB
+
+  NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  pcb1541/install/src/install-1011.c
-    Total: 6 modified, 0 added, 0 deleted.
+    M  pcb1541/install/build/BLDINS.BAT
+    A  pcb1541/install/build/os2sdk/API.LIB
+    Total: 7 modified, 1 added, 0 deleted.
 
   Commit message:
-    install v1.11.6: error messages + version strings (binary parity)
+    install v1.11.7: Family API + API.LIB (FAPI emulation linked, 65KB)
 
---hexadecimal, install v1.11.6, 2026-09-05
+--hexadecimal, install v1.11.7, 2026-09-05

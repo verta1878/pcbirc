@@ -634,6 +634,25 @@ Sub-phases:
   - `pcb1541/install/src/install-1011.c` — 3,626 lines (was 3,524)
 
 
+- **v1.11.7** — Family API link target + API.LIB (shipped 2026-09-05).
+  OS/2 SDK 1.03 API.LIB (74,752 B) linked into INSTALL.EXE. This embeds
+  the Family API DOS emulation code (DosBeep, VioWrtTTY, KbdCharIn
+  wrappers). Binary grew from 60 KB to 65 KB. OS/2 API declarations
+  added to install-1011.c with volatile-pointer references to force
+  TLINK to pull FAPI code from API.LIB.
+
+  NE import records (DOSCALLS/KBDCALLS/VIOCALLS) require BIND.EXE
+  (OS/2-only tool) to generate — deferred to v1.12 (byte-exact arc).
+  The MZ stub expansion (117 KB in Clark's binary) is also a BIND
+  artifact.
+
+  Files:
+  - `pcb1541/install/src/install-1011.c` — 3,677 lines (was 3,626)
+  - `pcb1541/install/build/BLDINS.BAT` — added API.LIB to link
+  - `pcb1541/install/build/os2sdk/API.LIB` — NEW (OS/2 SDK 1.03)
+
+
+
 - **v1.11.3** — Family API link target (shipped 2026-09-05).
   BLDINS.BAT now produces a proper NE Family API binary matching
   Clark's INSTALL.EXE header:

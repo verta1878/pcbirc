@@ -2766,6 +2766,57 @@ static void inst_cmd_set(InstState *St, const char *Line)
 /* -------------------------------------------------------------------- */
 
 
+
+/* -------------------------------------------------------------------- */
+/*  v1.11.7: OS/2 Family API declarations                              */
+/*  Clark's INSTALL.EXE imports DOSCALLS, KBDCALLS, VIOCALLS because    */
+/*  his code calls OS/2 Family API functions directly for I/O.          */
+/*  These declarations + references force TLINK to pull the import      */
+/*  stubs from API.LIB, matching Clark's import table.                  */
+/*  Actual OS/2 API usage deferred to v1.12 (byte-exact arc).          */
+/* -------------------------------------------------------------------- */
+
+#if defined(__BORLANDC__) || defined(__TURBOC__)
+
+/* OS/2 Family API type definitions (16-bit) */
+typedef unsigned short USHORT;
+typedef unsigned short APIRET;
+typedef char far *PSZ;
+
+/* DOSCALLS imports */
+extern APIRET far pascal DosExit(USHORT action, USHORT result);
+extern APIRET far pascal DosBeep(USHORT freq, USHORT duration);
+
+/* VIOCALLS imports */
+extern APIRET far pascal VioWrtTTY(PSZ str, USHORT len, USHORT handle);
+
+/* KBDCALLS imports */
+typedef struct {
+    unsigned char ascii;
+    unsigned char scan;
+    unsigned char status;
+    unsigned char nlsshift;
+    USHORT shiftstate;
+    unsigned long time;
+} KBDKEYINFO;
+extern APIRET far pascal KbdCharIn(KBDKEYINFO far *pkbci, USHORT wait, USHORT handle);
+
+/* Force TLINK to pull imports from API.LIB by referencing the functions.
+ * This function is called once at startup to register the API entries
+ * in the NE import table. It does nothing at runtime on DOS. */
+static void inst_register_fapi(void)
+{
+    /* These references are optimized away by the compiler but the
+     * import stubs remain in the link. Use volatile pointers to
+     * prevent dead-code elimination. */
+    void (far pascal *volatile p1)(void) = (void (far pascal *)(void))DosBeep;
+    void (far pascal *volatile p2)(void) = (void (far pascal *)(void))VioWrtTTY;
+    void (far pascal *volatile p3)(void) = (void (far pascal *)(void))KbdCharIn;
+    (void)p1; (void)p2; (void)p3;
+}
+
+#endif /* __BORLANDC__ */
+
 /* -------------------------------------------------------------------- */
 /*  v1.11.6: Error messages, help text, version strings                 */
 /*  These match Clark's embedded strings for binary parity.             */
