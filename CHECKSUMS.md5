@@ -1,6 +1,6 @@
 5bea69327739d8d4377af44b56fc6a0e  .gitattributes
 5948289009635ef927645f8d3f9ce126  .gitignore
-869c802614178f55bfb2f059cb4d3354  APPLY.txt
+0e3e47a40c783ba20c116a9ef577a07a  APPLY.txt
 7480eb0ef5c83de266c87c8fe9128551  BUILD_DOS.BAT
 e8367ab93c8d5bf6fb5ae2a5219fa045  BUILD_OS2.CMD
 0e6e62099001481e81a3bf1bd29cb086  BUILD_OS2_OW.SH
@@ -8,7 +8,7 @@ fbe3bb4baf86735d5a467f2b0329a554  CONTENTS.txt
 d3836109340c8c9018e68eb65e44229f  DOSBOXX.ZIP
 96a60e568c0e0ef9fafdf9a321f5cded  FILE_ID.ANS
 198f7898da2ce18cb89a36d71a3681f8  FILE_ID.DIZ
-0463588fa593033dbd07bdfe886af766  HISTORY.md
+b8630fe6d17e6a74409ea7ea92fd12bb  HISTORY.md
 1d2bb16bb28ec6c0535a00701a93eb93  LICENSE
 03ea3e072ae028ab3a9a4bb40090c38e  MAIN/DELTA-MODEL.md
 c98ca4a7b15e0d0b8004ef4bb80603e3  MAIN/README.md
@@ -10471,3 +10471,5 @@ bd53dfd4564106fe95cddb10aad647e9  toolkit/pwa154/pcbdcom/src/rocket_backend.c
 1222af0c1f890a7ca5e244a5070257f9  toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
 f5b258efeeb6909ca1a5f9e5968c06b5  toolkit/pwa154/pcbdcom/src/uart.c
 20b6e720a1b3b2c71e81818fd6f37766  toolkit/pwa154/pcbdcom/src/uart_backend.c
+1c67e4529a4b10bcde5daa7b0031cfa6  docs/pcboard-internals/PPL-COMPILER.md
+13ef401665fd110d1429ed96059a5137  todo/pcb-libchain-build.md

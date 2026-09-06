@@ -744,6 +744,18 @@ Sub-phases:
   Once PPLC320.EXE is placed at toolkit/pplc/3.20/PPLC320.EXE and
   committed, one compile closes this phase.
 
+
+  Scope expanded (2026-09-06): PPLC links against 7 PCBoard support
+  libraries (countryl.386, dos_l.386, screen_l.386, etc.) that must be
+  built from `pcb153/SOURCE/` first. This is the full PCBoard build
+  chain — 591 source files, 18 directories. Unlocks not just PPLC but
+  PCBOARD.EXE, all utilities, and the entire 19-binary rebuild list.
+  See `todo/pcb-libchain-build.md` and `docs/pcboard-internals/PPL-COMPILER.md`.
+
+  Patches needed:
+  - `patches/pwa153-libchain.patch` (15.3 support libs)
+  - `patches/delta154-libchain.patch` (15.4 delta)
+
   Files:
   - `pcb1541/pcbic12/src/RUNINET.3.30.PPE` — 3.30 output (2,261 B, proof)
   - `.gitignore` — updated (allow toolkit/pplc/ EXEs)

@@ -1,41 +1,45 @@
-PPL doc reality check — fix stale claims across 4 repo docs
-=============================================================
+PPL docs + lib chain build plan
+================================
 Date: 2026-09-06
-Prev origin/main HEAD: b78d954 (Update netfosdlv1.zip)
+Prev origin/main HEAD: 76f0eca (PPL doc reality check)
 
 WHAT THIS RELEASE DOES
 
-  Fixes stale documentation that claimed PPLC 3.20 was "in tree"
-  or "in hand" when the binary was never committed. Updates all
-  docs to reflect reality:
+  Moves two draft documents into proper repo locations:
 
-  - PPLC source is at pcb153/SOURCE/PPL/ (v3.30 codebase)
-  - Shipped PPLC binaries ARE in repo inside
-    reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP
-  - Decision: build PPLC 3.20 from source, not use shipped binary
-  - v1.0.1 blocker is decompiled source (63 vs 39 variables),
-    NOT the compiler
+  1. docs/pcboard-internals/PPL-COMPILER.md — canonical PPL reference
+     (source locations, version story, build dependencies, v1.0.1
+     root cause, PPLC as a multiplier)
+
+  2. todo/pcb-libchain-build.md — plan for building the 7 PCBoard
+     support libraries from pcb153/SOURCE/ (591 files, 18 dirs).
+     This unlocks PPLC, PCBOARD.EXE, and all utilities from source.
+     Documents patches needed (pwa153-libchain, delta154-libchain).
+
+  Also updates HISTORY.md with the lib chain scope expansion.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     HISTORY.md
-    toolkit/pplc/README.md
-    pcb1541/pcbic12/ROADMAP.md
-    pcb1541/pcbic12/RECONSTRUCTION.md
+    CHECKSUMS.md5 / .sha256 / .txt
 
-  NO additions. NO deletions.
+  Adds:
+    docs/pcboard-internals/PPL-COMPILER.md
+    todo/pcb-libchain-build.md
+
+  NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
-    M  toolkit/pplc/README.md
-    M  pcb1541/pcbic12/ROADMAP.md
-    M  pcb1541/pcbic12/RECONSTRUCTION.md
-    Total: 5 modified, 0 added, 0 deleted.
+    M  CHECKSUMS.md5 / .sha256 / .txt
+    A  docs/pcboard-internals/PPL-COMPILER.md
+    A  todo/pcb-libchain-build.md
+    Total: 5 modified, 2 added, 0 deleted.
 
   Commit message:
-    docs: PPL reality check (fix stale PPLC claims, document source path)
+    docs: PPL compiler reference + lib chain build plan
 
 --hexadecimal, 2026-09-06
