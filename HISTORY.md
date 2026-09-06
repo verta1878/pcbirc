@@ -366,7 +366,9 @@ Reference material landed:
   - `TESTIC2.EXE` (46,627 B, OS/2 LX 386) — OS/2 sibling of TESTIC
 - **RUNINET.PPE** (1,808 B, PPL 3.20 bytecode) + **RUNINET.PPS**
   (3,895 B, decompiled source) — first byte-exact target; PPLC 3.20
-  compiler is in tree at `toolkit/pplc/3.20/PPLC320.EXE`.
+  compiler: build from `pcb153/SOURCE/PPL/` source (change
+  `CUR_PPE_VER` to 320). Shipped binary in
+  `reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`.
 - **13 TCP/IP menu screens** in `bin/DATA/` (ANSI-decorated),
   6 dial-up scripts in `bin/SCRIPTS/`, 3 docs in `bin/DOCS/`,
   launcher batches + PCBIC.HLP.
@@ -735,7 +737,9 @@ Sub-phases:
   1,808 B (compiled with PPLC 3.20). Header identical through byte 42;
   divergence is bytecode format, not source. No source changes needed.
 
-  BLOCKER: PPLC320.EXE not on disk (.gitignore excluded *.EXE).
+  BLOCKER: decompiled PPS has 63 implicit variables vs Clark’s 39.
+  Both PPLC 3.20 and 3.30 produce 2,261 B from this source.
+  Decision: build PPLC 3.20 from `pcb153/SOURCE/PPL/` source.
   Fix shipped: .gitignore now allows toolkit/pplc/**/*.EXE.
   Once PPLC320.EXE is placed at toolkit/pplc/3.20/PPLC320.EXE and
   committed, one compile closes this phase.

@@ -1,42 +1,41 @@
-pcbic v1.0.1 progress + gitignore fix
-=======================================
+PPL doc reality check — fix stale claims across 4 repo docs
+=============================================================
 Date: 2026-09-06
-Prev origin/main HEAD: a474d9f (pcbic-path-fix.zip.)
+Prev origin/main HEAD: b78d954 (Update netfosdlv1.zip)
 
 WHAT THIS RELEASE DOES
 
-  1. gitignore fix: allows toolkit/pplc/**/*.EXE to be tracked
-     (unblocks PPLC320.EXE commit for byte-exact compile)
+  Fixes stale documentation that claimed PPLC 3.20 was "in tree"
+  or "in hand" when the binary was never committed. Updates all
+  docs to reflect reality:
 
-  2. pcbic v1.0.1 progress: RUNINET.PPS compiles clean under PPLC 3.30
-     (2,261 B output at pcb1541/pcbic12/src/RUNINET.3.30.PPE). Source is
-     correct — only the compiler version (3.30 vs 3.20) blocks byte-exact.
-     PPLC 3.20 produces the target 1,808 B.
-
-  After applying: place PPLC320.EXE (222,176 B) at
-  toolkit/pplc/3.20/PPLC320.EXE and commit. Then one compile
-  closes v1.0.1.
+  - PPLC source is at pcb153/SOURCE/PPL/ (v3.30 codebase)
+  - Shipped PPLC binaries ARE in repo inside
+    reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP
+  - Decision: build PPLC 3.20 from source, not use shipped binary
+  - v1.0.1 blocker is decompiled source (63 vs 39 variables),
+    NOT the compiler
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     HISTORY.md
-    CHECKSUMS.md5 / .sha256 / .txt
-    .gitignore
+    toolkit/pplc/README.md
+    pcb1541/pcbic12/ROADMAP.md
+    pcb1541/pcbic12/RECONSTRUCTION.md
 
-  Adds:
-    pcb1541/pcbic12/src/RUNINET.3.30.PPE
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
-    M  CHECKSUMS.md5 / .sha256 / .txt
-    M  .gitignore
-    A  pcb1541/pcbic12/src/RUNINET.3.30.PPE
-    Total: 6 modified, 1 added, 0 deleted.
+    M  toolkit/pplc/README.md
+    M  pcb1541/pcbic12/ROADMAP.md
+    M  pcb1541/pcbic12/RECONSTRUCTION.md
+    Total: 5 modified, 0 added, 0 deleted.
 
   Commit message:
-    pcbic v1.0.1: source compiles (PPLC 3.30), gitignore fix for PPLC EXEs
+    docs: PPL reality check (fix stale PPLC claims, document source path)
 
 --hexadecimal, 2026-09-06

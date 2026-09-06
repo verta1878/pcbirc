@@ -21,30 +21,38 @@ after. Every phase has a byte-exact acceptance test.
 
 ## Phase 1 — RUNINET.PPE (pcbic v1.0.1)
 
-**Status**: 90% there. See `RECONSTRUCTION.md` for the full trail.
+**Status**: BLOCKED on source optimization (decompiled PPS, not compiler).
 
 - **Target**: `bin/RUNINET.PPE` (1,808 bytes, PPL 3.20 bytecode)
-- **Source**: `bin/RUNINET.PPS` (3,895 bytes — decompiled, not
-  original)
-- **Compiler**: `toolkit/pplc/3.20/PPLC320.EXE` (in tree, works under
-  DOSBox-X)
-- **Current build**: 2,261 bytes when we compile RUNINET.PPS with
-  PPLC 3.20 — 453 bytes bigger than target
+- **Source**: `src/RUNINET.PPS` (3,895 bytes — decompiled, not
+  Clark's original)
+- **Compiler**: build PPLC 3.20 from `pcb153/SOURCE/PPL/` source
+  (change `CUR_PPE_VER` to 320 in `NEWSCR.CPP`, compile with BC 3.1).
+  Shipped PPLC binaries also in repo at
+  `reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`.
+- **Current build**: 2,261 bytes — same output from BOTH PPLC 3.20
+  and PPLC 3.30. Confirms this is a source problem, not compiler.
 
-**Gap**: source drift. The decompiled PPS emits valid PPL that
-recompiles to correct behavior, but different bytecode. Every
-whitespace / statement-order / declaration-order choice by the
-decompiler shows up in the compiled output.
+**Root cause**: the decompiled PPS creates 63 implicit variables;
+Clark’s original source had 39. PPE header byte 48 = variable count
+(ours: 0x3F = 63, Clark’s: 0x27 = 39). The 24 extra temporaries from
+the decompiler account for the 453-byte difference.
 
-**Approach**: iterative source tweaking with cheap compile-diff loop.
+**Approach (two steps)**:
 
-    for tweak in whitespace, ordering, style:
-        edit bin/RUNINET.PPS      # ← actually copy to a working file, don't touch bin/
-        PPLC320 RUNINET.PPS
-        cmp our.PPE bin/RUNINET.PPE
-        # note delta trend; keep tweaks that shrink, revert those that grow
+1. **Build PPLC from source** (Path B) — compile `pcb153/SOURCE/PPL/`
+   with BC 3.1 under DOSBox-X, changing `#defines` to 3.20. This
+   gives us the compiler end-to-end and lets us study `SCRCOMP.CPP`
+   to understand how variables are counted and temporaries allocated.
 
-**Estimate**: 4-8 focused sessions. Tractable — we have all tools.
+2. **Refactor PPS** (Path A) — with that understanding, reduce the
+   implicit variable count from 63 to 39 by inlining expressions the
+   decompiler expanded. Iterate: edit → compile → check byte 48 →
+   repeat.
+
+**Alternative**: find Clark’s original RUNINET.PPS (not decompiled).
+Look in `reference/roysac/CSBACKUP.ARJ` (22M, unexplored) or the
+main `pcb15everything` archive.
 
 **Acceptance**: `cmp -s <built.PPE> bin/RUNINET.PPE` exits 0.
 

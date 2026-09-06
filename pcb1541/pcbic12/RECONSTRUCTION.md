@@ -7,7 +7,7 @@ originals in `bin/`. Fix bugs only AFTER byte-exact restoration.
 
 | Component     | Original    | Version tag | Status |
 |---|---|---|---|
-| RUNINET.PPE   |   1,808 B   | pcbic v1.0.1 | PPLC 3.20 in hand; source is decompiled (see below) |
+| RUNINET.PPE   |   1,808 B   | pcbic v1.0.1 | BLOCKED — source is decompiled (63 vs 39 variables, see below) |
 | TESTIC.EXE    |  40,104 B   | pcbic v1.0.2 | disassembly pending — smallest, easiest warm-up |
 | TESTIC2.EXE   |  46,627 B   | pcbic v1.0.3 | OS/2 LX sibling — compare to TESTIC to isolate delta |
 | PCBICEVT.EXE  |  89,612 B   | pcbic v1.0.4 | no source yet |
@@ -28,11 +28,19 @@ should reproduce `bin/RUNINET.PPE` (1,808 bytes) byte-for-byte.
 - `pcb153/upd154/PPLC` = 3.40 (15.4) → 2,286 B output
 - `toolkit/pplc/3.20/PPLC320.EXE`   → **2,261 B** output (correct compiler, wrong source)
 
+**Root cause (found 2026-09-06):** PPE header byte 48 = variable count.
+Ours: 0x3F (63 variables). Clark's: 0x27 (39 variables). The decompiler
+created 24 extra implicit temporaries by expanding inline expressions
+into named variables. This accounts for the entire 453-byte gap.
+The fix is source refactoring, not compiler changes.
+
 To match byte-for-byte we needed **PPLC 3.20** — and we have it.
 
 ### PPLC 3.20 located and tested
 
-**PPLC 3.20 is in the tree** at `toolkit/pplc/3.20/PPLC320.EXE`
+**PPLC 3.20**: build from `pcb153/SOURCE/PPL/` source (change
+`CUR_PPE_VER` to 320 in `NEWSCR.CPP`). Shipped binary also in repo at
+`reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`
 (222 KB, extracted from `reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`,
 md5 `2a23e7686f79ea07bbb3c4d04e064a75`, identifies as "PPLC Version
 3.20 - Copyright (C) 1993-95, Clark Development Company, Inc.").

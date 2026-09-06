@@ -1,64 +1,73 @@
 # toolkit/pplc — PCBoard Programming Language Compilers
 
-Three PPL compilers staged as ready-to-use binaries. Each version has
-its own `out/` directory for the `.PPE` files it compiles, so
-byte-exact comparisons across versions are trivial (compile the same
-`.PPS` with each PPLC, diff the outputs).
+## Source code
 
-## Versions
+The PPLC compiler source (Clark's C++) lives in the PWA branches:
+
+| Location | Version | Era |
+|---|---|---|
+| `pcb153/SOURCE/PPL/` | 3.30 | PCBoard 15.3 (pwa153) |
+| `pcb153/upd154/SOURCE/PPL/` | 3.40 | PCBoard 15.4 update |
+| `pcb154/MAIN/SOURCE/PPL/` | 3.40 | PCBoard 15.4 (pwa154) |
+
+Key file: `NEWSCR.CPP` — contains the version `#define`s:
+```
+#define HDR_TXT "PCBoard Programming Language Executable  3.30\x0D\x0A\x1A"
+#define CUR_PPE_VER  330
+```
+
+To build any PPLC version, change these two defines and compile with
+BC 3.1 under DOSBox-X via `pcb153/153/PPLC.MAK`.
+
+Written by Scott Dale Robison. Copyright (C) 1993-96 Clark Development.
+
+Note: `pcb1541/PPL/pplengine/pplc/` is a **Rust rewrite** for the
+15.41 IRC fork — not Clark's C++ source.
+
+## Shipped binaries (reference)
+
+Three shipped PPLC binaries are in the repo inside
+`reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`
+(sub-path `CSBACKUP-Clean/PCB/PPLC3??.EXE`, dated 1997-08-01):
 
 | Version | Binary | Size | MD5 |
 |---------|--------|-----:|-----|
-| 3.00 | `3.00/PPLC300.EXE` | 121 558 | `86325a0f3ff8006c5a19763fb8e1c267` |
-| 3.10 | `3.10/PPLC310.EXE` | 118 328 | `18409677b4a40497001c2848e0616ce2` |
-| 3.20 | `3.20/PPLC320.EXE` | 222 176 | `2a23e7686f79ea07bbb3c4d04e064a75` |
+| 3.00 | PPLC300.EXE | 121,558 | `86325a0f3ff8006c5a19763fb8e1c267` |
+| 3.10 | PPLC310.EXE | 118,328 | `18409677b4a40497001c2848e0616ce2` |
+| 3.20 | PPLC320.EXE | 222,176 | `2a23e7686f79ea07bbb3c4d04e064a75` |
 
-## Provenance
+Also on the build image (installed by PCBoard):
 
-All three extracted from
-`reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`
-(sub-path `CSBACKUP-Clean/PCB/PPLC3??.EXE`, dated 1997-08-01).
-This is Roy SAC's clean backup of a PCBoard 15.22-era Clark Support
-board install; the three PPLCs shipped side-by-side inside `PCB/` on
-that BBS's binary tree.
+| Version | Location | Size |
+|---------|----------|-----:|
+| 1.00 | `pcb1541/install/dist/target/PPLC100.EXE` | 67,786 |
+| 3.30 | `pcb1541/install/dist/target/PPLC330.EXE` | 191,918 |
 
-## Why three versions
+**Decision:** build PPLC from source rather than extract the shipped
+binaries. We own the compiler end-to-end from Clark's source.
 
-- **PPLC 3.00** — PCBoard 15.0 era. Earliest PPL compiler we have.
-- **PPLC 3.10** — PCBoard 15.1 era. Middle version, useful when a PPE
-  header reports PPL 3.10.
-- **PPLC 3.20** — PCBoard 15.22 era. **The IC byte-exact target.**
-  Clark's `RUNINET.PPE` header reports PPL 3.20; compiling
-  `RUNINET.PPS` with this produces the 1808-byte binary we want.
-  See `pcb1541/pcbic12/RECONSTRUCTION.md`.
+## Output directories
 
-Our newer PPLCs (3.30 = 15.3, 3.40 = 15.4) live under the toolkit
-version they belong to (`toolkit/pwa153/`, etc.) — they're not staged
-here because they produce a different bytecode shape and don't match
-Clark's 15.22 shipped PPEs byte-for-byte.
+Each version has an `out/` directory for compiled `.PPE` files:
+- `3.00/out/` — PPEs compiled with PPLC 3.00
+- `3.10/out/` — PPEs compiled with PPLC 3.10
+- `3.20/out/` — PPEs compiled with PPLC 3.20
 
-## Running them
+This makes byte-exact comparisons across compiler versions trivial:
+compile the same `.PPS` with each version, diff the outputs.
 
-These are DOS EXEs. Under DOSBox-X:
+## Building PPLC from source
 
 ```
-mount c /path/to/pcbirc
-c:
-cd \toolkit\pplc\3.20
-PPLC320 mysource.pps
+# Under DOSBox-X with BC 3.1:
+# 1. Edit pcb153/SOURCE/PPL/NEWSCR.CPP:
+#    HDR_TXT → "...  3.20\x0D\x0A\x1A"
+#    CUR_PPE_VER → 320
+# 2. Run:
+MAKE -f PPLC.MAK
 ```
 
-The compiled `.PPE` lands next to the `.PPS` by default. Move it into
-`out/` (or redirect the compile there) to keep per-version outputs
-tidy.
-
-## Building PPLC from source (future)
-
-The PPL compiler *source* also exists — see
-`reference/pcball/pcboard/pcb-main/SOURCE/{PPL,COMPILER}/` and
-`reference/pcball/pcboard/pcb-main/153/PPLC.MAK`. Rebuilding PPLC
-from that source is a separate project; the binaries here are for
-immediate use.
+Same build root as INSTALL.EXE (BC 3.1, TLINK 5.1, DOSBox-X).
 
 ## Samples
 
@@ -68,10 +77,5 @@ immediate use.
 
 These serve two purposes:
 - **Tutorial** — HELLO1-7 walk through the language progressively.
-- **Round-trip parity target** — when PPLC clean-room compilers are
-  ready, recompiling each `.PPS` should produce a `.PPE` byte-perfect
-  against Clark's originals in `samples/`.
-
-The same files also live at `pcb1541/install/dist/target/PPL/` as the
-installer parity target. Both locations are byte-identical.
-
+- **Round-trip parity target** — recompiling each `.PPS` should produce
+  a `.PPE` byte-perfect against Clark's originals in `samples/`.
