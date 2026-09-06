@@ -1,22 +1,18 @@
-PPL docs + lib chain build plan
-================================
+pcbsrc v0.1.0 — lib chain phased plan + version label
+========================================================
 Date: 2026-09-06
-Prev origin/main HEAD: 76f0eca (PPL doc reality check)
+Prev origin/main HEAD: 43c1dd8 (ppl-docs-libchain)
 
 WHAT THIS RELEASE DOES
 
-  Moves two draft documents into proper repo locations:
+  Replaces the unphased todo/pcb-libchain-build.md with a proper
+  phased plan (pcbsrc v0.1, 10 phases, acceptance gates). Adds
+  version label to HISTORY.md. Documents the -P flag discovery
+  and PWA source dependency in PPL-COMPILER.md.
 
-  1. docs/pcboard-internals/PPL-COMPILER.md — canonical PPL reference
-     (source locations, version story, build dependencies, v1.0.1
-     root cause, PPLC as a multiplier)
-
-  2. todo/pcb-libchain-build.md — plan for building the 7 PCBoard
-     support libraries from pcb153/SOURCE/ (591 files, 18 dirs).
-     This unlocks PPLC, PCBOARD.EXE, and all utilities from source.
-     Documents patches needed (pwa153-libchain, delta154-libchain).
-
-  Also updates HISTORY.md with the lib chain scope expansion.
+  Key info preserved: without PCBoard_15_3_source_code_v0_014.zip
+  and the -P flag (compile .C as C++), the lib chain cannot be
+  built. This info was lost between sessions before.
 
 APPLY — extract into repo root.
 
@@ -24,22 +20,20 @@ APPLY — extract into repo root.
     APPLY.txt
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-
-  Adds:
-    docs/pcboard-internals/PPL-COMPILER.md
     todo/pcb-libchain-build.md
+    docs/pcboard-internals/PPL-COMPILER.md
 
-  NO deletions.
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    A  docs/pcboard-internals/PPL-COMPILER.md
-    A  todo/pcb-libchain-build.md
-    Total: 5 modified, 2 added, 0 deleted.
+    M  todo/pcb-libchain-build.md
+    M  docs/pcboard-internals/PPL-COMPILER.md
+    Total: 7 modified, 0 added, 0 deleted.
 
   Commit message:
-    docs: PPL compiler reference + lib chain build plan
+    pcbsrc v0.1.0: lib chain phased plan (10 phases, -P flag documented)
 
 --hexadecimal, 2026-09-06

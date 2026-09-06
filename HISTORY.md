@@ -27,6 +27,7 @@ photos, license transferred via POB — the German distributor — upgraded
 ---
 
 ## Version labels used in this document
+- **pcbsrc v0.1** — PCBoard source library chain build
 
 Different subsystems use their own version numbering. Where relevant, this
 document uses explicit prefixes to avoid confusion:
@@ -755,6 +756,18 @@ Sub-phases:
   Patches needed:
   - `patches/pwa153-libchain.patch` (15.3 support libs)
   - `patches/delta154-libchain.patch` (15.4 delta)
+
+
+### pcbsrc v0.1 — PCBoard source library chain build
+
+- **v0.1.0** — prerequisites staged (2026-09-06).
+  PWA source (`PCBoard_15_3_source_code_v0_014.zip`) uploaded.
+  Clark’s build flags discovered: `-P` (compile .C as C++),
+  response file `+CFG` approach. First 5 DOS library files compile
+  clean under DOSBox-X with BC 3.1. Headers from `LIB/H/` (112 files)
+  + `MAIN/SOURCE/H/` (54 files) resolve all include dependencies.
+  See `todo/pcb-libchain-build.md` for the 10-phase plan.
+
 
   Files:
   - `pcb1541/pcbic12/src/RUNINET.3.30.PPE` — 3.30 output (2,261 B, proof)

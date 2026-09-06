@@ -59,7 +59,15 @@ Plus BC 3.1 standard (cl.lib, mathl.lib, emu.lib, overlay.lib) and
 CodeBase (c4base.lib, dBASE file support).
 
 Building these libraries requires the full PCBoard source tree
-(591 files, 18 directories). See `todo/pcb-libchain-build.md`.
+from the PWA archive (`PCBoard_15_3_source_code_v0_014.zip`).
+
+**Critical build flag: `-P`** (compile .C files as C++). Clark
+compiled everything in C++ mode. Without `-P`, `TYPES.HPP` fails
+because it uses C++ constructor-style casts. This is documented in
+`todo/pcb-libchain-build.md` (the phased build plan, pcbsrc v0.1).
+
+Compiler config: `LIB/CFG/BC31/PCBOARD.CFG` + `ALL.RES` (Clark's
+exact flags). Use response file: `BCC.EXE +COMPILE.CFG <file>.C`.
 
 ## 2. Shipped Binaries (Reference)
 
