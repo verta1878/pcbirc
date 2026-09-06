@@ -1,53 +1,42 @@
-APPLY — pcbic path fix (stale references, 3 files)
-====================================================
+pcbic v1.0.1 progress + gitignore fix
+=======================================
+Date: 2026-09-06
+Prev origin/main HEAD: a474d9f (pcbic-path-fix.zip.)
 
-Fixes three orphan docs still pointing at the old pcbic path
-(pcb1541/pcbic/RECONSTRUCTION.md).  The actual doc is at
-pcb1541/pcbic12/RECONSTRUCTION.md — the arc restructured the
-directory during pcbic v1.0.0 (commits 3c0dfb6..49525c1).
+WHAT THIS RELEASE DOES
 
-Doc-only, no code, no build impact.  Every other reference in the
-tree is already correct.
+  1. gitignore fix: allows toolkit/pplc/**/*.EXE to be tracked
+     (unblocks PPLC320.EXE commit for byte-exact compile)
 
-What's in the zip
------------------
-    APPLY.txt                                       (this file)
-    toolkit/pplc/README.md                          (1 line changed)
-    toolkit/PWA1522-FUTURE.md                       (1 line changed)
-    docs/pcboard-internals/PLANNED-FEATURES.md      (1 line changed)
+  2. pcbic v1.0.1 progress: RUNINET.PPS compiles clean under PPLC 3.30
+     (2,261 B output at pcb1541/pcbic12/src/RUNINET.3.30.PPE). Source is
+     correct — only the compiler version (3.30 vs 3.20) blocks byte-exact.
+     PPLC 3.20 produces the target 1,808 B.
 
-Change in every file: `pcb1541/pcbic/RECONSTRUCTION.md`
-                    → `pcb1541/pcbic12/RECONSTRUCTION.md`
+  After applying: place PPLC320.EXE (222,176 B) at
+  toolkit/pplc/3.20/PPLC320.EXE and commit. Then one compile
+  closes v1.0.1.
 
-Md5 (post-edit):
-    1e67b200e0ee26793837a517f7c8f72f  toolkit/pplc/README.md
-    bb05af4ae925a1c7961b421c57b07aaf  toolkit/PWA1522-FUTURE.md
-    b6f2878961f75358e72d7b1be30b2136  docs/pcboard-internals/PLANNED-FEATURES.md
+APPLY — extract into repo root.
 
-Apply
------
-1. Extract into the repo root (Windows: right-click zip → Extract Here,
-   overwrite when prompted).
-2. GitHub Desktop should show exactly 3 modified files, 1 line each.
-3. Commit message:
+  Modifies:
+    APPLY.txt
+    HISTORY.md
+    CHECKSUMS.md5 / .sha256 / .txt
+    .gitignore
 
-       docs: fix stale pcbic path (pcbic → pcbic12) in 3 orphan refs
+  Adds:
+    pcb1541/pcbic12/src/RUNINET.3.30.PPE
 
-4. Push.
+  GitHub Desktop:
+    M  APPLY.txt
+    M  HISTORY.md
+    M  CHECKSUMS.md5 / .sha256 / .txt
+    M  .gitignore
+    A  pcb1541/pcbic12/src/RUNINET.3.30.PPE
+    Total: 6 modified, 1 added, 0 deleted.
 
-Acceptance
-----------
-After apply, from repo root:
+  Commit message:
+    pcbic v1.0.1: source compiles (PPLC 3.30), gitignore fix for PPLC EXEs
 
-    grep -rn "pcbic/RECONSTRUCTION" --include="*.md" .
-
-Should return zero matches.
-
-Deletes
--------
-None.
-
-Notes
------
-No CHECKSUMS regen needed for a 3-line doc fix.  The next code
-shipment will refresh CHECKSUMS as part of its normal flow.
+--hexadecimal, 2026-09-06

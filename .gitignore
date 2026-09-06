@@ -10,6 +10,8 @@
 !pcb1541/pcbic12/bin/*.EXE
 !pcb1541/pcbic12/bin/*.exe
 !pcb1541/install/reference/*.EXE
+!toolkit/pplc/**/*.EXE
+!toolkit/pplc/**/*.exe
 
 # Local reverse-engineering scratch — one working folder at repo root,
 # named by archive under /analysis/<archive>/. Never tracked.

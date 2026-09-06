@@ -729,6 +729,22 @@ Sub-phases:
 
   **install v1.11 arc: CLOSED.**
 
+### pcbic v1.0.1 — RUNINET.PPE byte-exact (in progress, 2026-09-06)
+
+  Source compiles clean under PPLC 3.30: 2,261 B output. Target is
+  1,808 B (compiled with PPLC 3.20). Header identical through byte 42;
+  divergence is bytecode format, not source. No source changes needed.
+
+  BLOCKER: PPLC320.EXE not on disk (.gitignore excluded *.EXE).
+  Fix shipped: .gitignore now allows toolkit/pplc/**/*.EXE.
+  Once PPLC320.EXE is placed at toolkit/pplc/3.20/PPLC320.EXE and
+  committed, one compile closes this phase.
+
+  Files:
+  - `pcb1541/pcbic12/src/RUNINET.3.30.PPE` — 3.30 output (2,261 B, proof)
+  - `.gitignore` — updated (allow toolkit/pplc/ EXEs)
+
+
 
 
 
