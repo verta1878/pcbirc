@@ -30,7 +30,7 @@ that BBS's binary tree.
 - **PPLC 3.20** — PCBoard 15.22 era. **The IC byte-exact target.**
   Clark's `RUNINET.PPE` header reports PPL 3.20; compiling
   `RUNINET.PPS` with this produces the 1808-byte binary we want.
-  See `pcb1541/pcbic/RECONSTRUCTION.md`.
+  See `pcb1541/pcbic12/RECONSTRUCTION.md`.
 
 Our newer PPLCs (3.30 = 15.3, 3.40 = 15.4) live under the toolkit
 version they belong to (`toolkit/pwa153/`, etc.) — they're not staged

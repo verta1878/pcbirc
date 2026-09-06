@@ -218,7 +218,7 @@ source cannot.
    `PROCEDURE`/`FUNCTION` source constructs (not literal opcode
    names, which would produce invalid `.PPS`).
 3. The RUNINET.PPE byte-exact rebuild effort under
-   `pcb1541/pcbic/RECONSTRUCTION.md` benefits from this — some of
+   `pcb1541/pcbic12/RECONSTRUCTION.md` benefits from this — some of
    the source-drift gap between our 2,261 byte build and Clark's
    1,808 byte target may be procedure/function opcode emission
    differences.

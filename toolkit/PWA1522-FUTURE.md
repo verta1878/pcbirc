@@ -24,7 +24,7 @@ that can be dropped in as `toolkit/pwa1522/`. What we DO now have:
   `reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`. This unlocks the IC
   RUNINET.PPE byte-exact reconstruction immediately — that goal no
   longer waits on Carsten or on a 15.22 distribution hunt. See
-  `pcb1541/pcbic/RECONSTRUCTION.md`.
+  `pcb1541/pcbic12/RECONSTRUCTION.md`.
 - **PPLC 3.00 and 3.10** binaries also staged in `toolkit/pplc/`
   alongside 3.20 (same provenance) for the version ladder.
 

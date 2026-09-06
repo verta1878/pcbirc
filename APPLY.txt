@@ -1,48 +1,53 @@
-install v1.11.10 — understanding-complete milestone
-=====================================================
-Date: 2026-09-05
-Prev origin/main HEAD: a144c1c (v1.11.9-convergence.)
+APPLY — pcbic path fix (stale references, 3 files)
+====================================================
 
-WHAT THIS RELEASE DOES
+Fixes three orphan docs still pointing at the old pcbic path
+(pcb1541/pcbic/RECONSTRUCTION.md).  The actual doc is at
+pcb1541/pcbic12/RECONSTRUCTION.md — the arc restructured the
+directory during pcbic v1.0.0 (commits 3c0dfb6..49525c1).
 
-  Closes the install v1.11 arc. Ten phases shipped in one session:
-    v1.11.0  toolchain shakedown
-    v1.11.1  dispatch table scaffold (301 directives)
-    v1.11.2  60 semantic handlers ported
-    v1.11.3  Family API + BC 3.1 compliance (verified DOSBox-X)
-    v1.11.4  gap analysis document
-    v1.11.5  system-query handlers + full dispatch coverage
-    v1.11.6  error messages + version strings
-    v1.11.7  Family API + API.LIB linked
-    v1.11.8  NE header parity (flags/stack/heap match Clark's)
-    v1.11.9  size convergence report (all gaps categorized)
-    v1.11.10 THIS — understanding-complete milestone
+Doc-only, no code, no build impact.  Every other reference in the
+tree is already correct.
 
-  Result: 65,914 B binary, every byte of the 272,634 B gap to
-  Clark's 338,548 B reference is categorized. No unknowns.
+What's in the zip
+-----------------
+    APPLY.txt                                       (this file)
+    toolkit/pplc/README.md                          (1 line changed)
+    toolkit/PWA1522-FUTURE.md                       (1 line changed)
+    docs/pcboard-internals/PLANNED-FEATURES.md      (1 line changed)
 
-  Next: v1.12 = byte-exact arc (BIND + OS/2 API handlers + cmp -s).
+Change in every file: `pcb1541/pcbic/RECONSTRUCTION.md`
+                    → `pcb1541/pcbic12/RECONSTRUCTION.md`
 
-APPLY — extract into repo root.
+Md5 (post-edit):
+    1e67b200e0ee26793837a517f7c8f72f  toolkit/pplc/README.md
+    bb05af4ae925a1c7961b421c57b07aaf  toolkit/PWA1522-FUTURE.md
+    b6f2878961f75358e72d7b1be30b2136  docs/pcboard-internals/PLANNED-FEATURES.md
 
-  Modifies:
-    APPLY.txt
-    HISTORY.md
-    CHECKSUMS.md5 / .sha256 / .txt
-    docs/pcboard-internals/INSTALL-EXE-PARITY.md
-    pcb1541/install/src/README.md
+Apply
+-----
+1. Extract into the repo root (Windows: right-click zip → Extract Here,
+   overwrite when prompted).
+2. GitHub Desktop should show exactly 3 modified files, 1 line each.
+3. Commit message:
 
-  NO additions. NO deletions.
+       docs: fix stale pcbic path (pcbic → pcbic12) in 3 orphan refs
 
-  GitHub Desktop:
-    M  APPLY.txt
-    M  HISTORY.md
-    M  CHECKSUMS.md5 / .sha256 / .txt
-    M  docs/pcboard-internals/INSTALL-EXE-PARITY.md
-    M  pcb1541/install/src/README.md
-    Total: 7 modified, 0 added, 0 deleted.
+4. Push.
 
-  Commit message:
-    install v1.11.10: understanding-complete (v1.11 arc CLOSED)
+Acceptance
+----------
+After apply, from repo root:
 
---hexadecimal, install v1.11.10, 2026-09-05
+    grep -rn "pcbic/RECONSTRUCTION" --include="*.md" .
+
+Should return zero matches.
+
+Deletes
+-------
+None.
+
+Notes
+-----
+No CHECKSUMS regen needed for a 3-line doc fix.  The next code
+shipment will refresh CHECKSUMS as part of its normal flow.
