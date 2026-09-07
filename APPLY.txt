@@ -1,40 +1,36 @@
-PPE encryption + v0.1.9 PPLC from source + v1.0.1 root cause
-==============================================================
+pcbsrcv diff results + vtable finding
+=======================================
 Date: 2026-09-07
-Prev origin/main HEAD: ee09acf (pplc-link-deps.)
+Prev origin/main HEAD: f680b84 (Session Summary)
 
 WHAT THIS RELEASE DOES
 
-  1. PPL-COMPILER.md: adds PPE encryption section (two layers,
-     deterministic, MISC.H API, decryption tool spec, investigation
-     trail). Updates v1.0.1 section with root cause (3.30 code gen
-     vs 3.20) and path forward (diff pcbsrcv snapshots).
+  Updates PPL-COMPILER.md section 5 (v1.0.1 Problem) with:
+  - pcbsrcv diff results: SCRCOMP.CPP identical across all snapshots,
+    no 3.20-era source exists, diff path closed
+  - 12-byte vtable finding: cVARVAL serialization artifact, bytecode
+    is IDENTICAL, only C++ vtable pointers differ (26 × 12 = 312 bytes)
+  - Revised acceptance: bytecode match or functional equivalence
 
-  2. HISTORY.md: v0.1.9 entry (PPLC links from source, 112,660 B)
-     and PPE encryption discovery.
-
-  3. pcb-libchain-build.md: v0.1.9 marked DONE.
+  Also fixes step 4 in "How we learned this" to reflect the vtable
+  finding instead of the stale "code generators are different" claim.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
-    HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
     docs/pcboard-internals/PPL-COMPILER.md
-    todo/pcb-libchain-build.md
 
   NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
-    M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  docs/pcboard-internals/PPL-COMPILER.md
-    M  todo/pcb-libchain-build.md
-    Total: 7 modified, 0 added, 0 deleted.
+    Total: 4 modified, 0 added, 0 deleted.
 
   Commit message:
-    docs: PPE encryption, v0.1.9 PPLC from source, v1.0.1 root cause
+    docs: pcbsrcv diff results + vtable finding (code gen proven correct)
 
 --hexadecimal, 2026-09-07

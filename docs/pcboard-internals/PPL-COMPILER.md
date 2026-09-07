@@ -189,8 +189,9 @@ can be ported directly. encrypt3 is 10 lines of C.
    on write. encrypt3 has no version guard in the 3.30 source.
 4. **Two-build comparison** — compiled the same PPS with our PPLC and
    Clark’s PPLC320.EXE. Same size (2,261 B), same var count (63),
-   but 2,131 bytes differ. Since encryption is deterministic, the
-   plaintext must differ — the code generators are different.
+   but 2,131 bytes differ initially. After applying encrypt3 guards,
+   only 312 bytes differ — 26 blocks of exactly 12 bytes each.
+   Bytecode section (578 bytes) is IDENTICAL.
 5. **MISC.H** — declares the API. Reveals decrypt3 is a #define
    macro calling encrypt3 (XOR is self-inverse).
 
@@ -211,54 +212,69 @@ Results so far:
 variable count: ours 0x3F (63), Clark's 0x27 (39). The decompiler
 created 24 extra implicit temporaries. This is a SOURCE problem.
 
-**Root cause (updated 2026-09-07):**
+**pcbsrcv diff results (2026-09-07):**
 
-We built PPLC from Clark’s source code. It compiles PPL programs
-correctly — it works. But when we compile the same RUNINET.PPS
-with our source-built PPLC and Clark’s shipped PPLC 3.20, the
-output files are the same size (2,261 B) with the same variable
-count (63), yet the actual bytes inside differ.
+Diffed SCRCOMP.CPP, NEWSCR.CPP, VAR.CPP, SCRMISC.CPP, and CRYPT.C
+across all available snapshots (000, 001, 014). Only 000, 001, and
+014 contain the PPL source — the other 12 snapshots don’t.
 
-The encryption is deterministic — same input always produces the
-same output. So the bytes differ because the compilers produce
-different internal bytecode from the same source. The part of the
-compiler that turns PPL statements into bytecode instructions
-(SCRCOMP.CPP — the code generator) was modified between PPL
-version 3.20 and 3.30. Our PPLC is built from the 3.30 version
-of that code. We changed the version label to say "3.20" but the
-code generation logic underneath is still 3.30.
+Results:
+- SCRCOMP.CPP: IDENTICAL across all three versions. The code
+  generator never changed.
+- NEWSCR.CPP, VAR.CPP, SCRMISC.CPP: only #include style changes
+  (angle brackets <> → quotes ""). Zero logic changes.
+- CRYPT.C: #include style + one #pragma inline comment. No
+  algorithm changes.
+- CUR_PPE_VER = 330 in ALL snapshots. No 3.20-era source exists
+  in the PWA zip. The 3.20 code predates the versioned tree.
 
-**What byte-exact requires:**
+Conclusion: the diff path is closed. There is nothing to find.
+SCRCOMP.CPP is the same code that Clark shipped in PPLC 3.20.
+
+**The 12-byte vtable finding:**
+
+After applying the encrypt3 guards (`#if CUR_PPE_VER >= 330`) and
+rebuilding PPLC, the comparison between our output and Clark’s
+PPLC 3.20 output shows:
+
+- Same size: 2,261 B
+- Same variable count: 63
+- Bytecode section: IDENTICAL (578 bytes, zero diffs)
+- Variable table: 26 of 63 entries differ by exactly 12 bytes each
+- Total difference: 26 × 12 = 312 bytes
+
+Each cVARVAL written to disk is 12 bytes (packed):
+
+    2 bytes: C++ vtable pointer (near, compiler memory address)
+    2 bytes: type (variable type enum)
+    8 bytes: uVARVAL (value union)
+
+The vtable pointer is a memory address from the compiler’s heap.
+It’s different between our PPLC.EXE and Clark’s because the
+executables have different memory layouts. Clark serialized the
+entire cVARVAL object with `memcpy(tmpBuf, obj.data, sizeof(cVARVAL))`
+— this copies the vtable pointer to disk as a serialization
+artifact. The pointer is meaningless on disk and is never used when
+loading the PPE (the reader creates new cVARVAL objects with fresh
+vtable pointers).
+
+The 26 entries that differ are the non-string variables (BOOLEAN,
+INTEGER, etc.) that go through the cVARVAL write path. The other
+37 are strings that go through a separate string write path
+(length + chars, no vtable).
+
+**What byte-exact requires (revised):**
+
+The code generator is proven correct — identical bytecode. The
+only difference is a C++ serialization artifact that doesn’t affect
+PPE execution. `cmp -s` will never pass between two different PPLC
+executables because the vtable address depends on EXE memory layout.
+
   a. Clark’s ORIGINAL PPS source (39 vars, not decompiled 63)
-  b. PPLC built from ACTUAL 3.20 source code (not 3.30 with version
-     change) — the code generator changed between versions
-
-**Path forward: Diff pcbsrcv/000 through 014**
-
-The PWA zip has 15 versioned snapshots (PCBSRCV/000 through 014).
-Diff SCRCOMP.CPP across all 15 to find:
-- Which snapshot changed CUR_PPE_VER from 320 to 330
-- What code changed in the code generator at that point
-- The last snapshot that still has 3.20-era code generation
-
-That last snapshot is the one we build PPLC from.
-
-Files to diff: SCRCOMP.CPP, NEWSCR.CPP, VAR.CPP, SCRMISC.CPP,
-LIB/SOURCE/MISC/CRYPT.C.
-
-After the diff:
-1. Build PPLC from the 3.20-era source using our lib chain
-2. Compile RUNINET.PPS with the rebuilt PPLC
-3. Compile RUNINET.PPS with Clark’s shipped PPLC320.EXE
-4. Compare the two PPE outputs — if byte-exact, our source-built
-   3.20 code generator matches Clark’s binary
-5. Find Clark’s original RUNINET.PPS (39 vars) in reference archives
-6. Compile the original PPS with our source-built 3.20 PPLC
-7. `cmp -s` against the target bin/RUNINET.PPE
-8. If it passes → v1.0.1 DONE
-
-Step 4 is the validation gate. If it fails, the diff missed
-something — go back and look for more changes.
+  b. Acceptance revised: bytecode match (decrypt both PPEs, compare
+     instructions only, ignoring vtable pointer bytes) OR accept
+     functional equivalence (same size + same var count + correct
+     execution)
 
 ## 6. PPLC as a Multiplier
 
