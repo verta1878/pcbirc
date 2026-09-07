@@ -778,6 +778,23 @@ Sub-phases:
   built from source.
 
 
+- **v0.1.2** — countryl.lib built (2026-09-07). 12/12 clean, 5,632 B, 3 modules.
+- **v0.1.3** — doscls_l.lib built (2026-09-07). 1/1 clean, 11,264 B, 1 module.
+- **v0.1.4** — misc_l.lib built (2026-09-07). 85/88 clean, 29,184 B, 41 modules.
+  3 failures (CPUTYPE, DMATH, VIRTUAL1) not in Clark’s TLIB list.
+- **v0.1.5** — screen_l.lib built (2026-09-07). 36/38 clean, 15,360 B, 23 modules.
+  SETFONT failed (conio.h conflict), not blocking. Contains print/println/newline.
+- **v0.1.6** — scrnio_l.lib built (2026-09-07). 20/20 clean, 4,096 B.
+- **v0.1.7** — system_l.lib built (2026-09-07). 4/7 clean, 2,048 B, 3 modules.
+  KBD/SESSION/THREADS failed, not in Clark’s TLIB list.
+- **v0.1.8** — toolkit_l.lib built (2026-09-07). 38/45 clean, 6,656 B, 3 modules.
+
+  **All 8 PCBoard support libraries built from source.** ~112 KB total.
+  Every failed file checked against Clark’s MAKEFILEs — none of the
+  failures are modules Clark includes in the libraries.
+
+
+
 
   Files:
   - `pcb1541/pcbic12/src/RUNINET.3.30.PPE` — 3.30 output (2,261 B, proof)

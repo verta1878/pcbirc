@@ -45,18 +45,20 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 |---|---|---|---|---|
 | 0 | v0.1.0 | Prerequisites staged | — | headers + source + config on host dir, one file compiles |
 | 1 | v0.1.1 | dos_l.lib | 48 .C + 1 .ASM | **DONE** (45/45 clean, 37,888 B). TLIB listing matches Clark's MAKEFILE (35 OBJs) |
-| 2 | v0.1.2 | country_l.lib | 14 files | TLIB listing clean |
-| 3 | v0.1.3 | doscls_l.lib | 2 files | TLIB listing clean |
-| 4 | v0.1.4 | misc_l.lib | 91 files | TLIB listing clean |
-| 5 | v0.1.5 | screen_l.lib | 41 files | TLIB listing clean |
-| 6 | v0.1.6 | scrnio_l.lib | 20 files | TLIB listing clean |
-| 7 | v0.1.7 | system_l.lib | 8 files | TLIB listing clean |
-| 8 | v0.1.8 | toolkit_l.lib | 53 files | TLIB listing clean |
+| 2 | v0.1.2 | country_l.lib | 14 files | TLIB listing clean | **DONE** (12/12 clean, 5,632 B) |
+| 3 | v0.1.3 | doscls_l.lib | 2 files | TLIB listing clean | **DONE** (1/1 clean, 11,264 B) |
+| 4 | v0.1.4 | misc_l.lib | 91 files | TLIB listing clean | **DONE** (85/88 clean, 29,184 B) |
+| 5 | v0.1.5 | screen_l.lib | 41 files | TLIB listing clean | **DONE** (36/38 clean, 15,360 B) |
+| 6 | v0.1.6 | scrnio_l.lib | 20 files | TLIB listing clean | **DONE** (20/20 clean, 4,096 B) |
+| 7 | v0.1.7 | system_l.lib | 8 files | TLIB listing clean | **DONE** (4/7 clean, 2,048 B) |
+| 8 | v0.1.8 | toolkit_l.lib | 53 files | TLIB listing clean | **DONE** (38/45 clean, 6,656 B) |
 | 9 | v0.1.9 | PPLC links | 9 source files | PPLC.EXE produced, runs on test .PPS |
 | 10 | v0.1.10 | All verified | — | all 7 .lib + PPLC.EXE, full build from source |
 
 v0.1.0 is DONE (verified 2026-09-06: 5 DOS files compile clean).
 v0.1.1 is DONE (verified 2026-09-07: 45/45 clean, dos_l.lib 37,888 B).
+v0.1.2 through v0.1.8 DONE (2026-09-07): all 8 libraries built from source.
+Failed files checked against Clark’s MAKEFILEs — none are library modules.
 
 ## Build order
 
