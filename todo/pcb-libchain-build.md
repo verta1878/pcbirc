@@ -44,7 +44,7 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 | Phase | Version | Target | Files | Acceptance |
 |---|---|---|---|---|
 | 0 | v0.1.0 | Prerequisites staged | — | headers + source + config on host dir, one file compiles |
-| 1 | v0.1.1 | dos_l.lib | 48 .C + 1 .ASM | TLIB listing matches Clark's MAKEFILE (35 OBJs) |
+| 1 | v0.1.1 | dos_l.lib | 48 .C + 1 .ASM | **DONE** (45/45 clean, 37,888 B). TLIB listing matches Clark's MAKEFILE (35 OBJs) |
 | 2 | v0.1.2 | country_l.lib | 14 files | TLIB listing clean |
 | 3 | v0.1.3 | doscls_l.lib | 2 files | TLIB listing clean |
 | 4 | v0.1.4 | misc_l.lib | 91 files | TLIB listing clean |
@@ -56,6 +56,7 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 | 10 | v0.1.10 | All verified | — | all 7 .lib + PPLC.EXE, full build from source |
 
 v0.1.0 is DONE (verified 2026-09-06: 5 DOS files compile clean).
+v0.1.1 is DONE (verified 2026-09-07: 45/45 clean, dos_l.lib 37,888 B).
 
 ## Build order
 

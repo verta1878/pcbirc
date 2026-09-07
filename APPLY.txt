@@ -1,18 +1,16 @@
-pcbsrc v0.1.0 — lib chain phased plan + version label
-========================================================
-Date: 2026-09-06
-Prev origin/main HEAD: 43c1dd8 (ppl-docs-libchain)
+pcbsrc v0.1.1 — dos_l.lib built from source
+=============================================
+Date: 2026-09-07
+Prev origin/main HEAD: eed53f9 (pcbsrc-v0.1.0-libchain-plan.)
 
 WHAT THIS RELEASE DOES
 
-  Replaces the unphased todo/pcb-libchain-build.md with a proper
-  phased plan (pcbsrc v0.1, 10 phases, acceptance gates). Adds
-  version label to HISTORY.md. Documents the -P flag discovery
-  and PWA source dependency in PPL-COMPILER.md.
+  First PCBoard support library built from Clark's source.
+  45/45 .C files compiled clean with Clark's exact flags under
+  DOSBox-X. TLIB created dos_l.lib (37,888 B, 45 modules).
 
-  Key info preserved: without PCBoard_15_3_source_code_v0_014.zip
-  and the -P flag (compile .C as C++), the lib chain cannot be
-  built. This info was lost between sessions before.
+  Build artifacts (.OBJ, .LIB) are gitignored — this release
+  ships the documentation updates only.
 
 APPLY — extract into repo root.
 
@@ -21,7 +19,6 @@ APPLY — extract into repo root.
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
     todo/pcb-libchain-build.md
-    docs/pcboard-internals/PPL-COMPILER.md
 
   NO additions. NO deletions.
 
@@ -30,10 +27,9 @@ APPLY — extract into repo root.
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  todo/pcb-libchain-build.md
-    M  docs/pcboard-internals/PPL-COMPILER.md
-    Total: 7 modified, 0 added, 0 deleted.
+    Total: 5 modified, 0 added, 0 deleted.
 
   Commit message:
-    pcbsrc v0.1.0: lib chain phased plan (10 phases, -P flag documented)
+    pcbsrc v0.1.1: dos_l.lib built (45/45 clean, first PCBoard lib from source)
 
---hexadecimal, 2026-09-06
+--hexadecimal, 2026-09-07

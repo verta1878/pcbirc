@@ -769,6 +769,16 @@ Sub-phases:
   See `todo/pcb-libchain-build.md` for the 10-phase plan.
 
 
+- **v0.1.1** — dos_l.lib built (2026-09-07).
+  45/45 .C files compiled clean under DOSBox-X with Clark’s exact
+  flags (-P -ml -3 -ff, response file approach). TLIB created
+  dos_l.lib (37,888 B, 45 modules). One symbol clash warning
+  (SHOWERR/SHOWERR2 both export showerror — cosmetic).
+  INT24HND.ASM skipped (needs TASM). First PCBoard support library
+  built from source.
+
+
+
   Files:
   - `pcb1541/pcbic12/src/RUNINET.3.30.PPE` — 3.30 output (2,261 B, proof)
   - `.gitignore` — updated (allow toolkit/pplc/ EXEs)
