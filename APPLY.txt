@@ -1,31 +1,40 @@
-PCBKIT-LIB.md — add PPLC link dependencies (no stubs)
-=======================================================
+PPE encryption + v0.1.9 PPLC from source + v1.0.1 root cause
+==============================================================
 Date: 2026-09-07
-Prev origin/main HEAD: dca733c (pcbkit-investigation)
+Prev origin/main HEAD: ee09acf (pplc-link-deps.)
 
 WHAT THIS RELEASE DOES
 
-  Adds "PPLC link dependencies" section to PCBKIT-LIB.md documenting
-  the 13 functions currently stubbed in the PPLC build. All must be
-  replaced with real code from the PWA source. No stubs in the final
-  build. Byte-exact means byte-exact.
+  1. PPL-COMPILER.md: adds PPE encryption section (two layers,
+     deterministic, MISC.H API, decryption tool spec, investigation
+     trail). Updates v1.0.1 section with root cause (3.30 code gen
+     vs 3.20) and path forward (diff pcbsrcv snapshots).
+
+  2. HISTORY.md: v0.1.9 entry (PPLC links from source, 112,660 B)
+     and PPE encryption discovery.
+
+  3. pcb-libchain-build.md: v0.1.9 marked DONE.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
+    HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    docs/pcboard-internals/PCBKIT-LIB.md
+    docs/pcboard-internals/PPL-COMPILER.md
+    todo/pcb-libchain-build.md
 
   NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
+    M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  docs/pcboard-internals/PCBKIT-LIB.md
-    Total: 4 modified, 0 added, 0 deleted.
+    M  docs/pcboard-internals/PPL-COMPILER.md
+    M  todo/pcb-libchain-build.md
+    Total: 7 modified, 0 added, 0 deleted.
 
   Commit message:
-    docs: PPLC link deps — 13 functions, all from source, no stubs
+    docs: PPE encryption, v0.1.9 PPLC from source, v1.0.1 root cause
 
 --hexadecimal, 2026-09-07

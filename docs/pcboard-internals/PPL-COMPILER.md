@@ -108,7 +108,93 @@ binaries. Requires building the PCBoard support library chain first.
 | 3.30 | 15.3 | pcb153/SOURCE/PPL/ | 330 |
 | 3.40 | 15.4 | pcb153/upd154/SOURCE/PPL/ | 340 |
 
-## 4. The v1.0.1 Problem (RUNINET.PPE byte-exact)
+
+## 4. PPE Encryption
+
+PPE files are encrypted after compilation. Both encryption layers
+are deterministic — same plaintext always produces the same output.
+
+### Two layers
+
+- **encrypt2** (PPL 3.01+): seed 0xDB24, XOR/ROR chain. Each 16-bit
+  word is XORed with the seed and previous word, then rotated. The
+  key chains through the data — every byte depends on all previous bytes.
+- **encrypt3** (PPL 3.30 only): XOR with "DECOMPILERS SUCK!" — a
+  17-byte key that repeats. Clark obfuscated the key as hex bytes in
+  the source: `{0x8C,0x53,0xB8,...}` to hide it from hex dumps.
+
+Source: `LIB/SOURCE/MISC/CRYPT.C` (encrypt2 line 213, encrypt3 line 364)
+
+For PPL 3.20 output, only encrypt2 applies. For 3.30, encrypt3 is
+applied first, then encrypt2. Our fix: guard encrypt3 calls in
+NEWSCR.CPP save() with `#if CUR_PPE_VER >= 330`.
+
+### MISC.H — the encryption API
+
+MISC.H is the authoritative API for Clark’s encryption library.
+CRYPT.C has the implementation, PPLD.C has the reverse-engineering,
+but MISC.H is where Clark defined the interface. Anyone building
+the decryption tool includes this header.
+
+`LIB/H/MISC.H` line 153-165 declares all four functions:
+
+    void LIBENTRY decrypt2(char *Str, int Len);
+    #define decrypt3(Str,Len) encrypt3(Str,Len)
+    void LIBENTRY encrypt2(char *Str, int Len);
+    void LIBENTRY encrypt3(char *Str, int Len);
+
+decrypt2 already exists as a complete function in CRYPT.C — it uses
+ROL (rotate left) to reverse encrypt2’s ROR (rotate right). No new
+code needed.
+
+decrypt3 does not exist as a separate function. It’s a #define macro
+in MISC.H that calls encrypt3. This is not broken or missing — it
+works correctly because encrypt3 uses XOR, which is its own inverse
+(A XOR B XOR B = A). Calling encrypt3 a second time IS the
+decryption. No new code needed here either.
+
+### Decryption tool (needed)
+
+A tool to decrypt PPE files to raw plaintext bytecode. This lets us
+compare the ACTUAL instructions between two PPEs regardless of
+encryption differences.
+
+The PPLD decompiler (`pcb1541/PPL/ppld/`) already decrypts PPE files —
+it has to, in order to decompile them. We used PPLD to decompile
+RUNINET.PPE into the RUNINET.PPS we’ve been working with.
+
+What we need is a STANDALONE decryption tool that outputs the raw
+decrypted bytecode WITHOUT decompiling it. PPLD goes all the way
+from encrypted PPE to PPL source. We need to stop at the
+intermediate step: encrypted PPE → decrypted bytecode. That way
+we can hex-diff the raw instructions between two PPEs.
+
+Source for the algorithm:
+- decrypt2: `PPLD.C` line 1726 (inline ASM, reverse-engineered)
+- decrypt2: `CRYPT.C` line 213 (Clark’s source, OS/2 version readable)
+- decrypt3: `CRYPT.C` line 364 (XOR with obfuscated key)
+- Layer order on read: decrypt3 first, then decrypt2 (`NEWSCR.CPP` line 1350-1352)
+
+Can be written as a small C program or Python script. The OS/2
+version of encrypt2 in CRYPT.C is plain C — no inline ASM — and
+can be ported directly. encrypt3 is 10 lines of C.
+
+### How we learned this
+
+1. **PPLD.C** — the decompiler source in our repo has the decrypt2
+   algorithm in inline ASM (line 1726). This was reverse-engineered.
+2. **CRYPT.C** — Clark’s source confirms both encrypt2 and encrypt3.
+   The comment on line 360: `// static char *Suck = "DECOMPILERS SUCK!";`
+3. **NEWSCR.CPP save()** — shows both layers applied unconditionally
+   on write. encrypt3 has no version guard in the 3.30 source.
+4. **Two-build comparison** — compiled the same PPS with our PPLC and
+   Clark’s PPLC320.EXE. Same size (2,261 B), same var count (63),
+   but 2,131 bytes differ. Since encryption is deterministic, the
+   plaintext must differ — the code generators are different.
+5. **MISC.H** — declares the API. Reveals decrypt3 is a #define
+   macro calling encrypt3 (XOR is self-inverse).
+
+## 5. The v1.0.1 Problem (RUNINET.PPE byte-exact)
 
 **Target:** `pcb1541/pcbic12/bin/RUNINET.PPE` (1,808 B, PPL 3.20)
 **Source:** `pcb1541/pcbic12/src/RUNINET.PPS` (3,895 B, DECOMPILED)
@@ -125,12 +211,56 @@ Results so far:
 variable count: ours 0x3F (63), Clark's 0x27 (39). The decompiler
 created 24 extra implicit temporaries. This is a SOURCE problem.
 
-**Path forward:**
-1. Build PPLC from source (requires lib chain — see `todo/pcb-libchain-build.md`)
-2. Refactor RUNINET.PPS (reduce variables from 63 to 39)
-3. Alternative: find Clark's original PPS (check reference/roysac/)
+**Root cause (updated 2026-09-07):**
 
-## 5. PPLC as a Multiplier
+We built PPLC from Clark’s source code. It compiles PPL programs
+correctly — it works. But when we compile the same RUNINET.PPS
+with our source-built PPLC and Clark’s shipped PPLC 3.20, the
+output files are the same size (2,261 B) with the same variable
+count (63), yet the actual bytes inside differ.
+
+The encryption is deterministic — same input always produces the
+same output. So the bytes differ because the compilers produce
+different internal bytecode from the same source. The part of the
+compiler that turns PPL statements into bytecode instructions
+(SCRCOMP.CPP — the code generator) was modified between PPL
+version 3.20 and 3.30. Our PPLC is built from the 3.30 version
+of that code. We changed the version label to say "3.20" but the
+code generation logic underneath is still 3.30.
+
+**What byte-exact requires:**
+  a. Clark’s ORIGINAL PPS source (39 vars, not decompiled 63)
+  b. PPLC built from ACTUAL 3.20 source code (not 3.30 with version
+     change) — the code generator changed between versions
+
+**Path forward: Diff pcbsrcv/000 through 014**
+
+The PWA zip has 15 versioned snapshots (PCBSRCV/000 through 014).
+Diff SCRCOMP.CPP across all 15 to find:
+- Which snapshot changed CUR_PPE_VER from 320 to 330
+- What code changed in the code generator at that point
+- The last snapshot that still has 3.20-era code generation
+
+That last snapshot is the one we build PPLC from.
+
+Files to diff: SCRCOMP.CPP, NEWSCR.CPP, VAR.CPP, SCRMISC.CPP,
+LIB/SOURCE/MISC/CRYPT.C.
+
+After the diff:
+1. Build PPLC from the 3.20-era source using our lib chain
+2. Compile RUNINET.PPS with the rebuilt PPLC
+3. Compile RUNINET.PPS with Clark’s shipped PPLC320.EXE
+4. Compare the two PPE outputs — if byte-exact, our source-built
+   3.20 code generator matches Clark’s binary
+5. Find Clark’s original RUNINET.PPS (39 vars) in reference archives
+6. Compile the original PPS with our source-built 3.20 PPLC
+7. `cmp -s` against the target bin/RUNINET.PPE
+8. If it passes → v1.0.1 DONE
+
+Step 4 is the validation gate. If it fails, the diff missed
+something — go back and look for more changes.
+
+## 6. PPLC as a Multiplier
 
 Owning the PPL compiler from source means every PPE in the PCBoard
 distribution becomes a one-compile target. Three PPLC binaries closed
@@ -139,7 +269,7 @@ by changing #defines. Plus the tool that builds all PPE files.
 The PCBoard support lib chain unlocks not just PPLC but PCBOARD.EXE
 itself and all 207 utilities in SOURCE/UTIL/.
 
-## 6. Related Tools
+## 7. Related Tools
 
 | Tool | Location | Purpose |
 |---|---|---|
@@ -151,4 +281,4 @@ itself and all 207 utilities in SOURCE/UTIL/.
 
 ---
 
-*hexadecimal, 2026-09-06*
+*hexadecimal, 2026-09-07*

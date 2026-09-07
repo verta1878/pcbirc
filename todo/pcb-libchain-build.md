@@ -53,7 +53,7 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 | 7 | v0.1.7 | system_l.lib | 8 files | TLIB listing clean | **DONE** (4/7 clean, 2,048 B) |
 | 8 | v0.1.8 | toolkit_l.lib | 53 files | TLIB listing clean | **DONE** (38/45 clean, 6,656 B) |
 | 8b | — | Rebuild pcbkit_l.lib | merge 8 libs | TLIB merge of all 8 into pcbkit_l.lib |
-| 9 | v0.1.9 | PPLC links | 9 source files | PPLC.EXE produced, runs on test .PPS |
+| 9 | v0.1.9 | PPLC links | 9 source files | PPLC.EXE produced, runs on test .PPS | **DONE** (112,660 B, compiles PPL correctly) |
 | 10 | v0.1.10 | All verified | — | all 7 .lib + PPLC.EXE, full build from source |
 
 v0.1.0 is DONE (verified 2026-09-06: 5 DOS files compile clean).
