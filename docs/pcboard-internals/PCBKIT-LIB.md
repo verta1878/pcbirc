@@ -89,6 +89,53 @@ sources), not in the 8 lib directories:
 If these are unresolved with Option B, we'll need to compile those
 specific modules from MAIN/SOURCE/ or stub them.
 
+
+## PPLC link dependencies — compile from source, no stubs
+
+PPLC must be byte-exact with Clark’s original. ALL functions must be
+Clark’s real code from the PWA source. No stubs. The source for every
+function is in `PCBoard_15_3_source_code_v0_014.zip`.
+
+Temporary stubs were used to test the link (v0.1.9). These must ALL
+be replaced with real code compiled from the source:
+
+### Globals (need real declarations from source)
+
+| Global | Source location in PWA zip |
+|---|---|
+| Scrn_Rtrc | PCBSRCV/014/LIB/SOURCE/SCREEN/ |
+| Scrn_Addr | PCBSRCV/014/LIB/SOURCE/SCREEN/ |
+| Status | PCBSRCV/014/MAIN/SOURCE/ |
+| commInKey | PCBSRCV/014/MAIN/SOURCE/ |
+| turnOnXmit | PCBSRCV/014/MAIN/SOURCE/ |
+
+### Functions (need real implementations from source)
+
+| Function | Source location in PWA zip |
+|---|---|
+| makepcboardsys() | PCBSRCV/014/MAIN/SOURCE/ |
+| logsystext() | PCBSRCV/014/MAIN/SOURCE/ |
+| displaypcbtext() | PCBSRCV/014/MAIN/SOURCE/ |
+| openmodem() | PCBSRCV/014/MAIN/SOURCE/ |
+| sendbyte() | PCBSRCV/014/MAIN/SOURCE/ |
+| GETTIMER() | PCBSRCV/014/MAIN/SOURCE/ASM/ |
+| SETTIMER() | PCBSRCV/014/MAIN/SOURCE/ASM/ |
+| strnchr() | PCBSRCV/014/LIB/SOURCE/DOS/STRNCHR.C |
+
+### How to fill them
+
+1. Find which MAIN/SOURCE/ .C files define each function
+2. Compile those files with the same flags (-P -ml -3 -D___COMP___)
+3. Link them into PPLC alongside the 8 libs
+4. Remove STUBS.C entirely
+
+This is the same pattern as building the 8 libs — sweep the source,
+compile, link. Nothing is missing from the PWA zip.
+
+When pcbkit_l.lib is rebuilt (Option C), all these modules are included
+automatically. STUBS.C goes away. PPLC links against the single rebuilt
+pcbkit_l.lib like Clark’s MAKEFILE expects. Byte-exact means byte-exact.
+
 ---
 
 *hexadecimal, 2026-09-07*

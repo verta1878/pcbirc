@@ -1,6 +1,6 @@
 5bea69327739d8d4377af44b56fc6a0e  .gitattributes
 5948289009635ef927645f8d3f9ce126  .gitignore
-d90f32c508574fed3b96f3e0ce6f56e4  APPLY.txt
+e6ee680de12a8d03949b19754ab2393d  APPLY.txt
 7480eb0ef5c83de266c87c8fe9128551  BUILD_DOS.BAT
 e8367ab93c8d5bf6fb5ae2a5219fa045  BUILD_OS2.CMD
 0e6e62099001481e81a3bf1bd29cb086  BUILD_OS2_OW.SH
@@ -680,6 +680,7 @@ d795061d86108fb1447de6ad5da5a02a  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.
 ac4a7a94cc4ff76aebee9718e97c2137  docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md
 7c435ed596925d4bdd008d901f416cb6  docs/pcboard-internals/MCI-CODES.md
 23c7275f58cb033e459ec156e12a9969  docs/pcboard-internals/PCBDCOM-CARDS.md
+7c7887ada96da4044b3f0e62e96a8ac4  docs/pcboard-internals/PCBKIT-LIB.md
 8840213de1b3e1737401df97a76c4945  docs/pcboard-internals/PCBOARD-LINKOUT.md
 990d32c29b2e055bceaec8b71141a722  docs/pcboard-internals/PCBTEXT-CODES.md
 b6f2878961f75358e72d7b1be30b2136  docs/pcboard-internals/PLANNED-FEATURES.md
@@ -10473,4 +10474,3 @@ bd53dfd4564106fe95cddb10aad647e9  toolkit/pwa154/pcbdcom/src/rocket_backend.c
 1222af0c1f890a7ca5e244a5070257f9  toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
 f5b258efeeb6909ca1a5f9e5968c06b5  toolkit/pwa154/pcbdcom/src/uart.c
 20b6e720a1b3b2c71e81818fd6f37766  toolkit/pwa154/pcbdcom/src/uart_backend.c
-b03739fe64cfb53d1d09d19c783a9d08  docs/pcboard-internals/PCBKIT-LIB.md

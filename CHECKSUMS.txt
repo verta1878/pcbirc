@@ -1,3 +1,3 @@
 # CHECKSUMS — verify repository integrity
-# LAST REGENERATED: 2026-09-07 (pcbkit investigation)
+# LAST REGENERATED: 2026-09-07 (PPLC link deps)
 # TRACKED FILES:    10479

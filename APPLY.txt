@@ -1,44 +1,31 @@
-pcbkit_l.lib investigation — stale mega-lib documented
-========================================================
+PCBKIT-LIB.md — add PPLC link dependencies (no stubs)
+=======================================================
 Date: 2026-09-07
-Prev origin/main HEAD: f571688 (pcbsrc-v0.1.2-v0.1.8-all-libs.)
+Prev origin/main HEAD: dca733c (pcbkit-investigation)
 
 WHAT THIS RELEASE DOES
 
-  Documents the pcbkit_l.lib investigation. The pre-built pcbkit_l.lib
-  (241 KB) in the PWA zip is stale — built from Clark's dev machine
-  (D:\tc\) with different headers and symbol decoration. It cannot be
-  linked against our -P compiled OBJs (name decoration mismatch).
-
-  Decision: move stale pcbkit_l.lib to attic/ when extracting PWA
-  source. Rebuild from our 8 individual libs. Link PPLC against
-  individual libs first (Option B), then merge into fresh pcbkit_l.lib
-  (Option C) for MAKEFILE compatibility.
+  Adds "PPLC link dependencies" section to PCBKIT-LIB.md documenting
+  the 13 functions currently stubbed in the PPLC build. All must be
+  replaced with real code from the PWA source. No stubs in the final
+  build. Byte-exact means byte-exact.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
-    HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    todo/pcb-libchain-build.md
-    docs/pcboard-internals/PPL-COMPILER.md
-
-  Adds:
     docs/pcboard-internals/PCBKIT-LIB.md
 
-  NO deletions.
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
-    M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  todo/pcb-libchain-build.md
-    M  docs/pcboard-internals/PPL-COMPILER.md
-    A  docs/pcboard-internals/PCBKIT-LIB.md
-    Total: 7 modified, 1 added, 0 deleted.
+    M  docs/pcboard-internals/PCBKIT-LIB.md
+    Total: 4 modified, 0 added, 0 deleted.
 
   Commit message:
-    docs: pcbkit_l.lib investigation (stale, rebuild from 8 libs)
+    docs: PPLC link deps — 13 functions, all from source, no stubs
 
 --hexadecimal, 2026-09-07
