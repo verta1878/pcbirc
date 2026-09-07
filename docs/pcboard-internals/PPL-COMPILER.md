@@ -51,6 +51,12 @@ support library chain:
 | dos_l.386 | SOURCE/DOS/ | DOS abstraction layer |
 | screen_l.386 | SOURCE/DISPLAY/ | Screen output (print/println/newline) |
 | pcb_l.386 | SOURCE/MAIN/ | PCBoard core support |
+
+**Note on pcbkit_l.lib:** Clark's MAKEFILEs reference pcbkit_l.lib,
+a mega-library combining all individual libs plus main modules. The
+pre-built version in the PWA zip is STALE (built from Clark's dev
+machine with different headers). Must be rebuilt from our 8 individual
+libs. See `docs/pcboard-internals/PCBKIT-LIB.md`.
 | misc_l.386 | SOURCE/MISC/ | Misc utilities (fileexist, etc) |
 | system_l.386 | SOURCE/SUPPORT/ | System-level support |
 | doscls_l.386 | SOURCE/DOS/ | DOS class wrappers |

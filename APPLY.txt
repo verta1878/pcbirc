@@ -1,25 +1,19 @@
-pcbsrc v0.1.2-v0.1.8 — all 8 PCBoard support libraries built
-================================================================
+pcbkit_l.lib investigation — stale mega-lib documented
+========================================================
 Date: 2026-09-07
-Prev origin/main HEAD: 877e183 (pcbsrc-v0.1.1-dos-lib)
+Prev origin/main HEAD: f571688 (pcbsrc-v0.1.2-v0.1.8-all-libs.)
 
 WHAT THIS RELEASE DOES
 
-  Seven more libraries built from Clark's source in one sweep:
-    countryl.lib   5,632 B   (12/12 clean, 3 modules)
-    doscls_l.lib  11,264 B   (1/1 clean, 1 module)
-    misc_l.lib    29,184 B   (85/88 clean, 41 modules)
-    screen_l.lib  15,360 B   (36/38 clean, 23 modules)
-    scrnio_l.lib   4,096 B   (20/20 clean, 20 modules)
-    system_l.lib   2,048 B   (4/7 clean, 3 modules)
-    toolkit_l.lib  6,656 B   (38/45 clean, 3 modules)
+  Documents the pcbkit_l.lib investigation. The pre-built pcbkit_l.lib
+  (241 KB) in the PWA zip is stale — built from Clark's dev machine
+  (D:\tc\) with different headers and symbol decoration. It cannot be
+  linked against our -P compiled OBJs (name decoration mismatch).
 
-  Combined with v0.1.1 (dos_l.lib 37,888 B): ~112 KB total.
-  All 8 PCBoard support libraries built from source.
-  Every failed file checked against Clark's MAKEFILEs — none
-  are modules Clark includes in the libraries.
-
-  v0.1.9 NEXT: link PPLC against these libraries.
+  Decision: move stale pcbkit_l.lib to attic/ when extracting PWA
+  source. Rebuild from our 8 individual libs. Link PPLC against
+  individual libs first (Option B), then merge into fresh pcbkit_l.lib
+  (Option C) for MAKEFILE compatibility.
 
 APPLY — extract into repo root.
 
@@ -28,17 +22,23 @@ APPLY — extract into repo root.
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
     todo/pcb-libchain-build.md
+    docs/pcboard-internals/PPL-COMPILER.md
 
-  NO additions. NO deletions.
+  Adds:
+    docs/pcboard-internals/PCBKIT-LIB.md
+
+  NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  todo/pcb-libchain-build.md
-    Total: 5 modified, 0 added, 0 deleted.
+    M  docs/pcboard-internals/PPL-COMPILER.md
+    A  docs/pcboard-internals/PCBKIT-LIB.md
+    Total: 7 modified, 1 added, 0 deleted.
 
   Commit message:
-    pcbsrc v0.1.2-v0.1.8: all 8 PCBoard support libraries built (~112KB)
+    docs: pcbkit_l.lib investigation (stale, rebuild from 8 libs)
 
 --hexadecimal, 2026-09-07

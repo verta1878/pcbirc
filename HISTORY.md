@@ -794,6 +794,18 @@ Sub-phases:
   failures are modules Clark includes in the libraries.
 
 
+- **pcbkit_l.lib investigation** (2026-09-07).
+  Pre-built pcbkit_l.lib (241 KB) at PCBSRC/ is STALE — built from
+  Clark’s dev machine (D:\tc\) with different headers and symbol
+  decoration (plain pascal vs our C++ mangled names). Name decoration
+  mismatch blocks PPLC link. Decision: move stale pcbkit_l.lib to
+  attic/, rebuild from our 8 individual libs. Link PPLC against
+  individual libs first (Option B), then merge into fresh pcbkit_l.lib
+  (Option C) for MAKEFILE compatibility.
+  See `docs/pcboard-internals/PCBKIT-LIB.md`.
+
+
+
 
 
   Files:

@@ -52,6 +52,7 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 | 6 | v0.1.6 | scrnio_l.lib | 20 files | TLIB listing clean | **DONE** (20/20 clean, 4,096 B) |
 | 7 | v0.1.7 | system_l.lib | 8 files | TLIB listing clean | **DONE** (4/7 clean, 2,048 B) |
 | 8 | v0.1.8 | toolkit_l.lib | 53 files | TLIB listing clean | **DONE** (38/45 clean, 6,656 B) |
+| 8b | — | Rebuild pcbkit_l.lib | merge 8 libs | TLIB merge of all 8 into pcbkit_l.lib |
 | 9 | v0.1.9 | PPLC links | 9 source files | PPLC.EXE produced, runs on test .PPS |
 | 10 | v0.1.10 | All verified | — | all 7 .lib + PPLC.EXE, full build from source |
 
@@ -74,6 +75,21 @@ Failed files checked against Clark’s MAKEFILEs — none are library modules.
 
 Each directory has a MAKEFILE from Clark showing which OBJs
 go into TLIB.
+
+## pcbkit_l.lib — stale, must rebuild
+
+The pre-built `pcbkit_l.lib` (241 KB) at `PCBSRC/` in the PWA zip
+is STALE. It was built on Clark's dev machine (`D:\tc\`) with
+different headers (extern "C" active) and possibly without `-P`.
+Its symbol decoration (plain UPPERCASE pascal) does not match our
+OBJs (C++ mangled `@name$params`).
+
+**Decision:** move stale pcbkit_l.lib to `attic/` when extracting
+PWA source to repo. Rebuild from our 8 individual libs using TLIB.
+See `docs/pcboard-internals/PCBKIT-LIB.md` for the full investigation.
+
+Link PPLC against individual libs first (Option B), then rebuild
+pcbkit_l.lib (Option C) for MAKEFILE compatibility.
 
 ## What goes wrong without this document
 
