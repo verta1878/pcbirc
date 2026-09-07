@@ -836,6 +836,18 @@ Sub-phases:
   that no longer exists. The 39-var original is lost.
 
 
+- **39-var PPE decoded** (2026-09-07).
+  All 39 variables from Clark’s original RUNINET.PPE recovered
+  using ppedecrypt.c — missing for two decades. Contains Clark’s
+  original pcbIC12 strings: .SLP/.PPP extensions, OPEN SLIP/PPP
+  commands, $$LOGON.BAT/CMD, PATH, log messages, FileInPath().
+  The 24 extra variables in the 63-var decompiled version are all
+  temporaries (empty strings, FALSE, zeroed integers). Both versions
+  produce identical bytecode (scriptSize=642). Broken Python tool
+  replaced with working C tool (ppedecrypt.c).
+
+
+
 
 
 

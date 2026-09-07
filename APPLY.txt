@@ -1,22 +1,19 @@
-PPE byte-exact match + decryption tool + Clark's PPS recovered
-================================================================
+39-var PPE decoded + ppedecrypt.c tool
+========================================
 Date: 2026-09-07
-Prev origin/main HEAD: 1b45a83 (pcbsrc-v0.1.10-arc-complete)
+Prev origin/main HEAD: bc75662 (ppe-byteexact-tool.)
 
 WHAT THIS RELEASE DOES
 
-  1. Decryption tool (toolkit/pplc/ppedecrypt.py) — decrypts PPE
-     files to raw plaintext bytecode. Implements Clark's encrypt2
-     (seed 0xDB24) and encrypt3 ("DECOMPILERS SUCK!" key).
-     Supports --compare mode for byte-level PPE comparison.
+  1. All 39 variables from Clark's original RUNINET.PPE decoded —
+     missing for two decades. Contains pcbIC12 internals: .SLP/.PPP
+     extensions, OPEN SLIP/PPP commands, $$LOGON files, log messages.
 
-  2. Documents byte-exact PPE match between our source-built PPLC
-     and Clark's shipped PPLC 3.20 binary.
+  2. Broken ppedecrypt.py replaced with working ppedecrypt.c. Uses
+     per-chunk decryption (fresh seed per sVARINFO/string/cVARVAL),
+     correct type numbering from VAR.HPP (vtSTRING=7).
 
-  3. Documents Clark's PPS recovery (known-plaintext attack on
-     password-protected pcbic12 zip) and finding that the shipped
-     PPS IS a decompilation — identical to ours. The 39-var
-     original source is lost.
+  3. PPL-COMPILER.md updated with 39-var discovery and analysis.
 
 APPLY — extract into repo root.
 
@@ -27,19 +24,21 @@ APPLY — extract into repo root.
     docs/pcboard-internals/PPL-COMPILER.md
 
   Adds:
-    toolkit/pplc/ppedecrypt.py
+    toolkit/pplc/ppedecrypt.c
 
-  NO deletions.
+  Deletes:
+    toolkit/pplc/ppedecrypt.py
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  docs/pcboard-internals/PPL-COMPILER.md
-    A  toolkit/pplc/ppedecrypt.py
-    Total: 6 modified, 1 added, 0 deleted.
+    A  toolkit/pplc/ppedecrypt.c
+    D  toolkit/pplc/ppedecrypt.py
+    Total: 6 modified, 1 added, 1 deleted.
 
   Commit message:
-    v1.0.1: PPE byte-exact match proven + ppedecrypt.py tool
+    39-var PPE decoded (2 decades) + ppedecrypt.c replaces broken .py
 
 --hexadecimal, 2026-09-07

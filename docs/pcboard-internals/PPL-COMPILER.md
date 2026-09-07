@@ -295,6 +295,101 @@ the source that no longer exists.
 Clark’s binary. The 39-var vs 63-var gap is a lost-source problem,
 not a build problem. The original 39-var PPS does not exist.
 
+**39-var PPE decoded (2026-09-07):**
+
+All 39 variables from Clark’s original RUNINET.PPE recovered using
+`ppedecrypt.c` (at `toolkit/pplc/ppedecrypt.c`). Missing for two
+decades. These are Clark’s original pcbIC12 Internet Connection
+PPE internals:
+
+- `.SLP` / `.PPP` — language extensions that trigger SLIP/PPP doors
+- `OPEN SLIP` / `OPEN PPP` — COMMAND() calls to launch the doors
+- `$$LOGON.BAT` / `$$LOGON.CMD` — logon batch files searched for
+- `/LOGON` — command line switch passed to the batch
+- `PATH` — environment variable checked by FileInPath()
+- `": User logged off for no internet access."` — sysop log message
+- `"RUNINET.PPE - Detecting SLIP/PPP Language Selection."` — banner
+- FileInPath() function (args=2, vars=7, start=470)
+
+The 63-var version (from decompilation) contains the same 39
+variables plus 24 decompiler temporaries: 10 empty strings,
+6 FALSE booleans, 4 zeroed integers, 2 uninitialized dates.
+These are intermediate variables the decompiler created for
+expressions Clark wrote inline. Both versions produce identical
+bytecode (scriptSize=642 bytes).
+
+The full 63-var table (from ppedecrypt.c):
+
+    [ 0] id= 63 STRING     = "\""
+    [ 1] id= 62 STRING     = ".\""
+    [ 2] id= 61 BOOLEAN    = FALSE
+    [ 3] id= 60 SWORD      (returnCode)
+    [ 4] id= 59 STRING     = ""
+    [ 5] id= 58 STRING     = ""
+    [ 6] id= 57 INTEGER    = 0
+    [ 7] id= 56 STRING     = ""
+    [ 8] id= 55 STRING     = ""
+    [ 9] id= 54 STRING     = "disconnecting you so that you can pick another language."
+    [10] id= 53 STRING     = "If you see this message, you do not have Internet Access..."
+    [11] id= 52 STRING     = ": User logged off for no internet access."
+    [12] id= 51 STRING     = "OPEN PPP"
+    [13] id= 50 STRING     = "OPEN SLIP"
+    [14] id= 49 STRING     = "$$LOGON.BAT"
+    [15] id= 48 STRING     = ""
+    [16] id= 47 INTEGER    = 1
+    [17] id= 46 INTEGER    = 2
+    [18] id= 45 STRING     = "$$LOGON.CMD"
+    [19] id= 44 STRING     = "PATH"
+    [20] id= 43 STRING     = ": Simulated $$LOGON processing"
+    [21] id= 42 STRING     = "/LOGON"
+    [22] id= 41 STRING     = ": User did not select PPP or SLIP or was local"
+    [23] id= 40 INTEGER    = 0
+    [24] id= 39 INTEGER    = 9
+    [25] id= 38 STRING     = "" (box drawing)
+    [26] id= 37 STRING     = "" (box drawing)
+    [27] id= 36 INTEGER    = 49
+    [28] id= 35 STRING     = " Installed at: "
+    [29] id= 34 STRING     = "RUNINET.PPE - Detecting SLIP/PPP Language Selection."
+    [30] id= 33 STRING     = "" (box drawing)
+    [31] id= 32 STRING     = ".PPP"
+    [32] id= 31 STRING     = ".SLP"
+    [33] id= 30 SWORD      (function returnCode)
+    [34] id= 29 STRING     = ""
+    [35] id= 28 BOOLEAN    = FALSE  (foundCMD)
+    [36] id= 27 BOOLEAN    = FALSE  (PPPSelected)
+    [37] id= 26 BOOLEAN    = FALSE  (SLIPSelected)
+    [38] id= 25 FUNCTION   args=2 vars=7 start=470  (FileInPath)
+    --- 24 decompiler temporaries below ---
+    [39] id= 24 INTEGER    = 0
+    [40] id= 23 DATE
+    [41] id= 22 STRING     = ""
+    [42] id= 21 STRING     = ""
+    [43] id= 20 STRING     = ""
+    [44] id= 19 STRING     = ""
+    [45] id= 18 BOOLEAN    = FALSE
+    [46] id= 17 BOOLEAN    = FALSE
+    [47] id= 16 BOOLEAN    = FALSE
+    [48] id= 15 STRING     = ""
+    [49] id= 14 STRING     = ""
+    [50] id= 13 STRING     = ""
+    [51] id= 12 STRING     = ""
+    [52] id= 11 STRING     = ""
+    [53] id= 10 STRING     = ""
+    [54] id=  9 STRING     = ""
+    [55] id=  8 INTEGER    = 0
+    [56] id=  7 INTEGER    = 0
+    [57] id=  6 INTEGER    = 0
+    [58] id=  5 DATE
+    [59] id=  4 BOOLEAN    = FALSE
+    [60] id=  3 BOOLEAN    = FALSE
+    [61] id=  2 BOOLEAN    = FALSE
+    [62] id=  1 BOOLEAN    = FALSE
+
+Decoded by reading NEWSCR.CPP open() line by line for the exact
+PPE file format, with per-chunk decrypt2 (fresh seed 0xDB24 per
+sVARINFO/string/cVARVAL) and correct type numbering from VAR.HPP
+(vtSTRING=7).
+
 
 ## 6. PPLC as a Multiplier
 
