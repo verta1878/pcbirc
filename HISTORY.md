@@ -812,6 +812,16 @@ Sub-phases:
   diff pcbsrcv/000-014 to find 3.20-era source.
 
 
+- **v0.1.10** — pcbsrc arc COMPLETE (2026-09-07).
+  All 8 PCBoard support libraries built from source (~112 KB).
+  PPLC.EXE built from source (112,596 B), compiles PPL correctly.
+  Bytecode output matches Clark’s shipped PPLC 3.20. Code generator
+  proven correct (SCRCOMP.CPP identical across all pcbsrcv snapshots).
+  Only difference: C++ vtable pointer serialization artifact (312 B).
+  **pcbsrc v0.1 arc CLOSED.**
+
+
+
 
 - **pcbkit_l.lib investigation** (2026-09-07).
   Pre-built pcbkit_l.lib (241 KB) at PCBSRC/ is STALE — built from

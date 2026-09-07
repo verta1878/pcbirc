@@ -54,7 +54,7 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 | 8 | v0.1.8 | toolkit_l.lib | 53 files | TLIB listing clean | **DONE** (38/45 clean, 6,656 B) |
 | 8b | — | Rebuild pcbkit_l.lib | merge 8 libs | TLIB merge of all 8 into pcbkit_l.lib |
 | 9 | v0.1.9 | PPLC links | 9 source files | PPLC.EXE produced, runs on test .PPS | **DONE** (112,660 B, compiles PPL correctly) |
-| 10 | v0.1.10 | All verified | — | all 7 .lib + PPLC.EXE, full build from source |
+| 10 | v0.1.10 | All verified | — | all 7 .lib + PPLC.EXE, full build from source | **DONE** (2026-09-07, arc closed) |
 
 v0.1.0 is DONE (verified 2026-09-06: 5 DOS files compile clean).
 v0.1.1 is DONE (verified 2026-09-07: 45/45 clean, dos_l.lib 37,888 B).
@@ -124,3 +124,8 @@ Once all 7 libs build:
 ---
 
 *hexadecimal, 2026-09-06*
+
+
+## Arc status: CLOSED
+
+pcbsrc v0.1 is complete. All 10 phases done.
