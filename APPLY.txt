@@ -1,25 +1,22 @@
-pcbsrc v0.1.10 — arc COMPLETE
-================================
+PPE byte-exact match + decryption tool + Clark's PPS recovered
+================================================================
 Date: 2026-09-07
-Prev origin/main HEAD: 92f2bd8 (vtable-finding.)
+Prev origin/main HEAD: 1b45a83 (pcbsrc-v0.1.10-arc-complete)
 
 WHAT THIS RELEASE DOES
 
-  Closes the pcbsrc v0.1 arc. All 10 phases complete:
-    v0.1.0  Prerequisites staged
-    v0.1.1  dos_l.lib (37,888 B)
-    v0.1.2  countryl.lib (5,632 B)
-    v0.1.3  doscls_l.lib (11,264 B)
-    v0.1.4  misc_l.lib (29,184 B)
-    v0.1.5  screen_l.lib (15,360 B)
-    v0.1.6  scrnio_l.lib (4,096 B)
-    v0.1.7  system_l.lib (2,048 B)
-    v0.1.8  toolkit_l.lib (6,656 B)
-    v0.1.9  PPLC links from source (112,596 B)
-    v0.1.10 All verified — arc closed
+  1. Decryption tool (toolkit/pplc/ppedecrypt.py) — decrypts PPE
+     files to raw plaintext bytecode. Implements Clark's encrypt2
+     (seed 0xDB24) and encrypt3 ("DECOMPILERS SUCK!" key).
+     Supports --compare mode for byte-level PPE comparison.
 
-  8 support libraries + PPLC compiler built entirely from Clark's
-  source. Bytecode output matches Clark's shipped PPLC 3.20.
+  2. Documents byte-exact PPE match between our source-built PPLC
+     and Clark's shipped PPLC 3.20 binary.
+
+  3. Documents Clark's PPS recovery (known-plaintext attack on
+     password-protected pcbic12 zip) and finding that the shipped
+     PPS IS a decompilation — identical to ours. The 39-var
+     original source is lost.
 
 APPLY — extract into repo root.
 
@@ -27,18 +24,22 @@ APPLY — extract into repo root.
     APPLY.txt
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    todo/pcb-libchain-build.md
+    docs/pcboard-internals/PPL-COMPILER.md
 
-  NO additions. NO deletions.
+  Adds:
+    toolkit/pplc/ppedecrypt.py
+
+  NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  todo/pcb-libchain-build.md
-    Total: 5 modified, 0 added, 0 deleted.
+    M  docs/pcboard-internals/PPL-COMPILER.md
+    A  toolkit/pplc/ppedecrypt.py
+    Total: 6 modified, 1 added, 0 deleted.
 
   Commit message:
-    pcbsrc v0.1.10: arc COMPLETE (8 libs + PPLC from source)
+    v1.0.1: PPE byte-exact match proven + ppedecrypt.py tool
 
 --hexadecimal, 2026-09-07

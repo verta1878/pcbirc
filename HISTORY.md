@@ -821,6 +821,22 @@ Sub-phases:
   **pcbsrc v0.1 arc CLOSED.**
 
 
+- **PPE byte-exact match** (2026-09-07).
+  Source-built PPLC produces bit-for-bit identical PPE output to
+  Clark’s shipped PPLC 3.20 binary. Proven with ppedecrypt.py
+  (decryption tool at `toolkit/pplc/ppedecrypt.py`). Decrypted
+  plaintext matches exactly. encrypt3 guards applied
+  (`#if CUR_PPE_VER >= 330`).
+
+- **Clark’s PPS is a decompilation** (2026-09-07).
+  The RUNINET.PPS in the pcbic12 distribution (recovered from
+  password-protected zip via known-plaintext attack) is identical
+  to our decompiled version. Both produce 63 vars. The shipped
+  PPE (39 vars) was compiled from an earlier version of the source
+  that no longer exists. The 39-var original is lost.
+
+
+
 
 
 - **pcbkit_l.lib investigation** (2026-09-07).

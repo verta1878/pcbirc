@@ -276,6 +276,26 @@ executables because the vtable address depends on EXE memory layout.
      functional equivalence (same size + same var count + correct
      execution)
 
+
+**Byte-exact match ACHIEVED (2026-09-07):**
+
+After applying encrypt3 guards (`#if CUR_PPE_VER >= 330`), our
+source-built PPLC produces bit-for-bit identical PPE output to
+Clark’s shipped PPLC 3.20 binary. Verified with `ppedecrypt.py`
+(at `toolkit/pplc/ppedecrypt.py`) — decrypted plaintext matches
+exactly, and the encrypted files are byte-for-byte identical.
+
+Clark’s shipped RUNINET.PPS (recovered from password-protected
+pcbic12 zip via known-plaintext attack using bkcrack) is identical
+to our decompiled version. Both produce 63 vars with any PPLC 3.20.
+The shipped PPE (39 vars) was compiled from an earlier version of
+the source that no longer exists.
+
+**v1.0.1 status:** compiler proven correct. PPE output matches
+Clark’s binary. The 39-var vs 63-var gap is a lost-source problem,
+not a build problem. The original 39-var PPS does not exist.
+
+
 ## 6. PPLC as a Multiplier
 
 Owning the PPL compiler from source means every PPE in the PCBoard
