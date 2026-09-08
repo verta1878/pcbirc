@@ -1,11 +1,11 @@
 5bea69327739d8d4377af44b56fc6a0e  .gitattributes
 800216ad4c4dcea83b46c814af1d6d56  .gitignore
-6142b36441847cad6fa4efa3e1579cd7  APPLY.txt
+1160c71aef64d2e9988efaab3ccf92bc  APPLY.txt
 7480eb0ef5c83de266c87c8fe9128551  BUILD_DOS.BAT
 e8367ab93c8d5bf6fb5ae2a5219fa045  BUILD_OS2.CMD
 0e6e62099001481e81a3bf1bd29cb086  BUILD_OS2_OW.SH
 fbe3bb4baf86735d5a467f2b0329a554  CONTENTS.txt
-d3836109340c8c9018e68eb65e44229f  DOSBOXX.ZIP
+9b61d1006a752e77c37f2fe3296c7a80  DOSBOXX.ZIP
 96a60e568c0e0ef9fafdf9a321f5cded  FILE_ID.ANS
 198f7898da2ce18cb89a36d71a3681f8  FILE_ID.DIZ
 08191940580abbf475a49bf18eeccfe3  HISTORY.md
@@ -594,6 +594,7 @@ ce2e1063a4c57ce5f8d355378b121eaa  devtools/Md5.zip
 988cf299597c52b8717aa65fa90200ca  devtools/Toolkit3.zip
 6e9c8a7c396454031abdf586fa55b70f  devtools/cwsdpmi.zip
 371d1ac1d422309e922583e241d5f1e7  devtools/d32a.7z
+90ec2cc3b10ad7b437ed99fdfa81cd96  devtools/dosbox-x-src-patched.7z
 eee7787ad505d5e6a98c87b17d20e460  devtools/freedos/COMMAND.COM
 163caf42bede1ba41a86f59f689f8260  devtools/freedos/FDCONFIG.SYS
 46fb743decc30064c1b146c28cdfad00  devtools/freedos/KERNEL.SYS
@@ -655,6 +656,7 @@ e454b932c5632b6f4d56d63ba589c374  docs/RED_ARCHIVES_COVERAGE.md
 2bbf8e825b7b406a4b661cbb4cf926b9  docs/SYSOP_154.TXT
 c66bc2d7f11be705937e0a0277b4f8f7  docs/SaltAir_Bulletins.ZIP
 2f6387629d0cfec4bf88bd07c332b88b  docs/calguide.zip
+a9bc27983cefe01bfef40f941872a7a1  docs/dosboxx-bugfixed-features.md
 f44f2679248180e9ae7c8a1f06ce3fbc  docs/fido/FIDO.DOC
 c30829c9bca9101ba7354bd52e496843  docs/fido/FIDOHUB.DOC
 6bc008fdf741c56e320acebb314fed4b  docs/fido/FIDONET.DOC
@@ -1349,7 +1351,7 @@ de58a7dd1e1dcf458e0dd1ceefdd1ee9  pcb153/SOURCE/PPL/LABEL.CPP
 c62eba0d5631ecaa7a90f49a00166a9d  pcb153/SOURCE/PPL/LRAND.CPP
 2369c31137d9acebc15f8667a7ecaa28  pcb153/SOURCE/PPL/MENU.CPP
 f43d6e4539c9d006ce97acf7e519046a  pcb153/SOURCE/PPL/MSGSTUB.CPP
-1bc800104124ea25881acac59ae1f211  pcb153/SOURCE/PPL/NEWSCR.CPP
+2d0da2e5914a699c800f8f86dbf83637  pcb153/SOURCE/PPL/NEWSCR.CPP
 c97ab6ee40f60c462e7779408104bf70  pcb153/SOURCE/PPL/OLDVAR.CPP
 33f10b6a377f7f510b23ad5498b4f840  pcb153/SOURCE/PPL/PCBMISC.CPP
 7db6a8fb3b7adabf9a98e4939414e658  pcb153/SOURCE/PPL/PCBMSGS.CPP
@@ -10477,4 +10479,3 @@ bd53dfd4564106fe95cddb10aad647e9  toolkit/pwa154/pcbdcom/src/rocket_backend.c
 1222af0c1f890a7ca5e244a5070257f9  toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
 f5b258efeeb6909ca1a5f9e5968c06b5  toolkit/pwa154/pcbdcom/src/uart.c
 20b6e720a1b3b2c71e81818fd6f37766  toolkit/pwa154/pcbdcom/src/uart_backend.c
-a9bc27983cefe01bfef40f941872a7a1  docs/dosboxx-bugfixed-features.md

@@ -1,43 +1,33 @@
-pcbsrc v0.2.0 + v0.2.1 + DOSBox-X build requirements
-=======================================================
+encrypt3 guards applied to repo source
+=========================================
 Date: 2026-09-08
-Prev origin/main HEAD: e8af53c (added pwas source code to reference.)
+Prev origin/main HEAD: e6998b2
 
 WHAT THIS RELEASE DOES
 
-  1. pcbkit_l.lib rebuilt from source: 272,896 bytes, 130/130 modules.
-     v0.2.0: 8 libs merged (107,520 B, 114 modules)
-     v0.2.1: All 130 modules rebuilt (272,896 B)
+  Applies encrypt3 guards to pcb153/SOURCE/PPL/NEWSCR.CPP in the
+  repo (5 guards: 4 encrypt3 + 1 decrypt3). Both repo and DOSBOXX.ZIP
+  now have matching source.
 
-  2. DOSBox-X build requirements documented in
-     docs/dosboxx-bugfixed-features.md: PATH, PPLC.CFG, TOOLKIT
-     compile flags, TASM flags, encrypt3 guards, plus NE2000 loopback
-     fix status and CPU emulation bug (ENTER/LEAVE INT 6).
+  Without these guards, PPLC applies 3.30 encryption to 3.20 PPE
+  files. Clark's real PPLC 3.20 only applies encrypt2.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
-    HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    todo/pcb-libchain-build.md
-    docs/pcboard-internals/PCBKIT-LIB.md
+    pcb153/SOURCE/PPL/NEWSCR.CPP
 
-  Adds:
-    docs/dosboxx-bugfixed-features.md
-
-  NO deletions.
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
-    M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  todo/pcb-libchain-build.md
-    M  docs/pcboard-internals/PCBKIT-LIB.md
-    A  docs/dosboxx-bugfixed-features.md
-    Total: 7 modified, 1 added, 0 deleted.
+    M  pcb153/SOURCE/PPL/NEWSCR.CPP
+    Total: 4 modified, 0 added, 0 deleted.
 
   Commit message:
-    pcbsrc v0.2.0+v0.2.1: pcbkit_l.lib rebuilt + DOSBox-X build docs
+    fix: encrypt3 guards in pcb153/SOURCE/PPL/NEWSCR.CPP (repo + DOSBOXX in sync)
 
 --hexadecimal, 2026-09-08
