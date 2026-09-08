@@ -205,3 +205,21 @@ original D:\tc\ build environment. Does not affect functionality.
 
 Repo is master. DOSBOXX.ZIP mirrors it. Both must stay in sync.
 
+
+
+## v0.2.2 verified: PPLC links against rebuilt pcbkit_l.lib (2026-09-08)
+
+PPLC2.EXE: 221,644 bytes (Clark’s: 222,176 — 532 B difference).
+Compiles RUNINET.PPS correctly: 2,261 B, 63 vars.
+
+PPE output vs Clark’s PPLC320.EXE: 313 byte diffs in 27 blocks
+(26 × 12-byte vtable pointer blocks + 1 single byte). Bytecode is
+identical. Only C++ vtable addresses differ due to different EXE size.
+
+**CUR_PPE_VER fix:** changed from 330 to 320 in NEWSCR.CPP. Without
+this, encrypt3 guards evaluate TRUE (330 >= 330) and encrypt3 is
+applied to 3.20 PPE files. With 320, guards evaluate FALSE and
+only encrypt2 is applied — matching Clark’s PPLC 3.20 behavior.
+
+**RLE fix:** doRLE module added back to pcbkit_l.lib. Was removed
+during the 47-module trim but PPLC needs it for script compression.

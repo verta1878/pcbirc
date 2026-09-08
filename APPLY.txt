@@ -1,33 +1,39 @@
-Source sync rule added to build docs
-======================================
+v0.2.2: PPLC links against pcbkit_l.lib + CUR_PPE_VER fix
+============================================================
 Date: 2026-09-08
-Prev origin/main HEAD: (encrypt3 guards)
 
 WHAT THIS RELEASE DOES
 
-  Adds source code sync rule to three build docs: fixes must apply
-  to BOTH repo (pcb153/ master) AND DOSBOXX.ZIP.
+  1. CUR_PPE_VER changed from 330 to 320 in pcb153/SOURCE/PPL/NEWSCR.CPP.
+     Without this, encrypt3 is applied to 3.20 PPE files.
+
+  2. v0.2.2 marked DONE — PPLC links against rebuilt pcbkit_l.lib
+     (221,644 B). PPE output matches Clark's (vtable-only diffs).
+
+  3. PCBKIT-LIB.md updated with v0.2.2 verification results.
+
+  4. DOSBOXX.ZIP updated (CUR_PPE_VER=320 + all prior fixes).
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     CHECKSUMS.md5 / .sha256 / .txt
+    pcb153/SOURCE/PPL/NEWSCR.CPP
     todo/pcb-libchain-build.md
     docs/pcboard-internals/PCBKIT-LIB.md
-    docs/pcboard-internals/PPL-COMPILER.md
 
   NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  CHECKSUMS.md5 / .sha256 / .txt
+    M  pcb153/SOURCE/PPL/NEWSCR.CPP
     M  todo/pcb-libchain-build.md
     M  docs/pcboard-internals/PCBKIT-LIB.md
-    M  docs/pcboard-internals/PPL-COMPILER.md
     Total: 6 modified, 0 added, 0 deleted.
 
   Commit message:
-    docs: source sync rule (repo master + DOSBOXX.ZIP mirror)
+    v0.2.2: PPLC links + CUR_PPE_VER 330→320 fix (repo+DOSBOXX synced)
 
 --hexadecimal, 2026-09-08

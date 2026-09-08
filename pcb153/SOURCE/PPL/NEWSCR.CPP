@@ -69,7 +69,7 @@
 #define HDR_TXT "PCBoard Programming Language Executable  3.30\x0D\x0A\x1A"
 #define HDR_SIZ 48
 
-#define CUR_PPE_VER 	 330   // For PCB 15.23 and 15.3 the ppl version is 3.30
+#define CUR_PPE_VER 	 320   // For PCB 15.23 and 15.3 the ppl version is 3.20 (changed from 3.30)
 #define MAX_PPE_VER 	9999
 
 /******************************************************************************/

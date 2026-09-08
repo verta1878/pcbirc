@@ -1,6 +1,6 @@
 5bea69327739d8d4377af44b56fc6a0e  .gitattributes
 800216ad4c4dcea83b46c814af1d6d56  .gitignore
-a964f41dce638c0552f326f54ae2f9e4  APPLY.txt
+d17ddc097e1404d24c4b0627c8c8749c  APPLY.txt
 7480eb0ef5c83de266c87c8fe9128551  BUILD_DOS.BAT
 e8367ab93c8d5bf6fb5ae2a5219fa045  BUILD_OS2.CMD
 0e6e62099001481e81a3bf1bd29cb086  BUILD_OS2_OW.SH
@@ -682,11 +682,11 @@ d795061d86108fb1447de6ad5da5a02a  docs/pcboard-internals/INSTALL-DAT-DIRECTIVES.
 ac4a7a94cc4ff76aebee9718e97c2137  docs/pcboard-internals/INSTALL-EXE-SIZE-CONVERGENCE.md
 7c435ed596925d4bdd008d901f416cb6  docs/pcboard-internals/MCI-CODES.md
 23c7275f58cb033e459ec156e12a9969  docs/pcboard-internals/PCBDCOM-CARDS.md
-ef5eb848cb5e25a0e02657fcd408daa6  docs/pcboard-internals/PCBKIT-LIB.md
+cc00ac765292f56e38424751325b5571  docs/pcboard-internals/PCBKIT-LIB.md
 8840213de1b3e1737401df97a76c4945  docs/pcboard-internals/PCBOARD-LINKOUT.md
 990d32c29b2e055bceaec8b71141a722  docs/pcboard-internals/PCBTEXT-CODES.md
 b6f2878961f75358e72d7b1be30b2136  docs/pcboard-internals/PLANNED-FEATURES.md
-63a75d10341c29f44c7a44e954dfed37  docs/pcboard-internals/PPL-COMPILER.md
+16383aadf3b5ec95455ea49f2bb6437e  docs/pcboard-internals/PPL-COMPILER.md
 ee4315291df91fcb852d769b81f54300  docs/pcbtutor-3.zip
 471949226ce02509ba055231255669d3  docs/ppldevelopmentkit.pdf
 190754b1e7741ab3a167c8206250d676  docs/reference/directio/DIRECTIO.C
@@ -1351,7 +1351,7 @@ de58a7dd1e1dcf458e0dd1ceefdd1ee9  pcb153/SOURCE/PPL/LABEL.CPP
 c62eba0d5631ecaa7a90f49a00166a9d  pcb153/SOURCE/PPL/LRAND.CPP
 2369c31137d9acebc15f8667a7ecaa28  pcb153/SOURCE/PPL/MENU.CPP
 f43d6e4539c9d006ce97acf7e519046a  pcb153/SOURCE/PPL/MSGSTUB.CPP
-1bc800104124ea25881acac59ae1f211  pcb153/SOURCE/PPL/NEWSCR.CPP
+7b2704393c869b04c51079f76a53dfb4  pcb153/SOURCE/PPL/NEWSCR.CPP
 c97ab6ee40f60c462e7779408104bf70  pcb153/SOURCE/PPL/OLDVAR.CPP
 33f10b6a377f7f510b23ad5498b4f840  pcb153/SOURCE/PPL/PCBMISC.CPP
 7db6a8fb3b7adabf9a98e4939414e658  pcb153/SOURCE/PPL/PCBMSGS.CPP
@@ -8863,7 +8863,7 @@ af8fe3c7c562c6ebe3ae05b68110f134  todo/WHATSNEW.md
 bba228209fd2e71ccc13a2d83328902e  todo/cleanup.bat
 986497539bf9bb7fe6c46ea67c74ceb7  todo/dosboxx-dpmi-failures.md
 7b97c0f98e83cea9d44e121c85d898d0  todo/hexadecimal-phase-update.md
-45ad5fd162e2594300301620b6941de8  todo/pcb-libchain-build.md
+b99614f552b6ceb296f682b2f34f290c  todo/pcb-libchain-build.md
 fa102eac1a648e598c406cc353b37df1  todo/pcb1541-cleanup.bat
 6faf50a05edad419c8c5ddd973a14e03  todo/pcbdcom-clean-room-plan.md
 78e77d4cb4a03bfc9df675b062f90626  todo/pcbis.md
