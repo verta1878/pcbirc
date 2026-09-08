@@ -1,17 +1,18 @@
-pcbsrc v0.2.0 + v0.2.1 — pcbkit_l.lib rebuilt from source
-============================================================
+pcbsrc v0.2.0 + v0.2.1 + DOSBox-X build requirements
+=======================================================
 Date: 2026-09-08
 Prev origin/main HEAD: e8af53c (added pwas source code to reference.)
 
 WHAT THIS RELEASE DOES
 
-  pcbkit_l.lib rebuilt from source: 272,896 bytes, 130/130 modules.
-  Clark's original: 241,144 bytes. All module sources identified and
-  compiled: 8 sub-libs + 28 MAIN/SOURCE + 16 LIB/SOURCE + 4 UTIL +
-  7 ASM (TASM) + 6 Borland CRTL. Symbol clashes resolved.
+  1. pcbkit_l.lib rebuilt from source: 272,896 bytes, 130/130 modules.
+     v0.2.0: 8 libs merged (107,520 B, 114 modules)
+     v0.2.1: All 130 modules rebuilt (272,896 B)
 
-  v0.2.0: 8 libs merged (107,520 B, 114 modules)
-  v0.2.1: All 130 modules rebuilt (272,896 B)
+  2. DOSBox-X build requirements documented in
+     docs/dosboxx-bugfixed-features.md: PATH, PPLC.CFG, TOOLKIT
+     compile flags, TASM flags, encrypt3 guards, plus NE2000 loopback
+     fix status and CPU emulation bug (ENTER/LEAVE INT 6).
 
 APPLY — extract into repo root.
 
@@ -22,7 +23,10 @@ APPLY — extract into repo root.
     todo/pcb-libchain-build.md
     docs/pcboard-internals/PCBKIT-LIB.md
 
-  NO additions. NO deletions.
+  Adds:
+    docs/dosboxx-bugfixed-features.md
+
+  NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
@@ -30,9 +34,10 @@ APPLY — extract into repo root.
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  todo/pcb-libchain-build.md
     M  docs/pcboard-internals/PCBKIT-LIB.md
-    Total: 6 modified, 0 added, 0 deleted.
+    A  docs/dosboxx-bugfixed-features.md
+    Total: 7 modified, 1 added, 0 deleted.
 
   Commit message:
-    pcbsrc v0.2.0+v0.2.1: pcbkit_l.lib rebuilt (130/130 modules)
+    pcbsrc v0.2.0+v0.2.1: pcbkit_l.lib rebuilt + DOSBox-X build docs
 
 --hexadecimal, 2026-09-08
