@@ -1,16 +1,17 @@
-pcbsrc v0.2 — pcbkit_l.lib rebuild phase added
-=================================================
-Date: 2026-09-07
-Prev origin/main HEAD: 05c974f (39var-decoded.)
+pcbsrc v0.2.0 + v0.2.1 — pcbkit_l.lib rebuilt from source
+============================================================
+Date: 2026-09-08
+Prev origin/main HEAD: e8af53c (added pwas source code to reference.)
 
 WHAT THIS RELEASE DOES
 
-  Adds pcbsrc v0.2 phase to pcb-libchain-build.md. Four sub-phases
-  to rebuild pcbkit_l.lib from source: merge 8 libs, add MAIN/SOURCE
-  modules, link full PPLC (~222 KB), verify MAKEFILEs.
+  pcbkit_l.lib rebuilt from source: 272,896 bytes, 130/130 modules.
+  Clark's original: 241,144 bytes. All module sources identified and
+  compiled: 8 sub-libs + 28 MAIN/SOURCE + 16 LIB/SOURCE + 4 UTIL +
+  7 ASM (TASM) + 6 Borland CRTL. Symbol clashes resolved.
 
-  pcbkit_l.lib is needed by ALL PCBoard programs. The stale version
-  was moved to attic/. This arc rebuilds it from our source.
+  v0.2.0: 8 libs merged (107,520 B, 114 modules)
+  v0.2.1: All 130 modules rebuilt (272,896 B)
 
 APPLY — extract into repo root.
 
@@ -19,6 +20,7 @@ APPLY — extract into repo root.
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
     todo/pcb-libchain-build.md
+    docs/pcboard-internals/PCBKIT-LIB.md
 
   NO additions. NO deletions.
 
@@ -27,9 +29,10 @@ APPLY — extract into repo root.
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
     M  todo/pcb-libchain-build.md
-    Total: 5 modified, 0 added, 0 deleted.
+    M  docs/pcboard-internals/PCBKIT-LIB.md
+    Total: 6 modified, 0 added, 0 deleted.
 
   Commit message:
-    pcbsrc v0.2: pcbkit_l.lib rebuild phase (4 sub-phases)
+    pcbsrc v0.2.0+v0.2.1: pcbkit_l.lib rebuilt (130/130 modules)
 
---hexadecimal, 2026-09-07
+--hexadecimal, 2026-09-08

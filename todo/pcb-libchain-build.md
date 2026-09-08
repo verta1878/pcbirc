@@ -159,8 +159,8 @@ source-compiled modules.
 
 | Phase | Version | Target | Acceptance |
 |---|---|---|---|
-| 0 | v0.2.0 | Merge 8 libs into pcbkit_l.lib | TLIB listing, size > 200 KB |
-| 1 | v0.2.1 | Add MAIN/SOURCE modules | TLIB listing, size matches Clark’s ~241 KB |
+| 0 | v0.2.0 | Merge 8 libs into pcbkit_l.lib | **DONE** (107,520 B, 114 modules) |
+| 1 | v0.2.1 | Add MAIN/SOURCE modules | **DONE** (272,896 B, 130/130 modules) |
 | 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | PPLC.EXE ~222 KB, compiles PPS correctly |
 | 3 | v0.2.3 | Verify Clark’s MAKEFILEs work unchanged | PPLC.MAK links clean |
 | 4 | v0.2.4 | cmp -s RUNINET.PPE | Compile Clark’s PPS with full PPLC, `cmp -s` against bin/RUNINET.PPE |

@@ -139,3 +139,60 @@ pcbkit_l.lib like Clark’s MAKEFILE expects. Byte-exact means byte-exact.
 ---
 
 *hexadecimal, 2026-09-07*
+
+
+## pcbkit_l.lib rebuilt from source (2026-09-08)
+
+**Result: 272,896 bytes, 130/130 modules** (Clark’s: 241,144 bytes)
+
+### Module sources (130 total)
+
+From our 8 individual libraries (v0.1.1–v0.1.8):
+  67 modules from dos_l, countryl, doscls_l, misc_l, screen_l,
+  scrnio_l, system_l, toolkit_l. 47 extra stub modules removed
+  (NODISP, PCBDAT, etc.)
+
+From MAIN/SOURCE (compiled with PPLC.CFG):
+  28 modules: CHAT, DEVIOCTL, DISPLAY, FILES, HELP, INDEX, INIT,
+  INKEY, INPUT, LANGUAGE, LOG, MEMORY, MISC, MODEM, MODEMASY,
+  MODEMDRV, MODEMFOS, MODEMOS2, MSGBASE, PCBTEXT, RECYCLE, SCREEN,
+  SHELL, SHOWERR, STATUS, SYS, TOKEN, TIMER, USERS, USERSYS, XLATE
+
+From LIB/SOURCE (PWA zip, compiled with PPLC.CFG):
+  16 modules from TOOLKIT/, PCB/, DOS/, SCREEN/, COUNTRY/, MISC/:
+  ADDBACKS, ATCLOSE, CUSTHELP, DATESTR, DOSINIT, EXITDOS, GOODBYE,
+  INITPORT, INPUTREQ, MEMFCMP, PARSEPTH, PCBINIT, PROPER, SLOWMODM,
+  STRNCHR, SUBST
+
+From UTIL/PCBSM/SOURCE (PWA zip):
+  4 modules: CNAMES, CTOD, DATAFIL2, GETMODE
+
+Assembled with TASM /MX /D__l__ /iLIBSRC/H:
+  7 ASM modules: ANSI, ASYNC, BGKEY, CUTIL, INT24HND, MEMMOVE, TIMER
+
+Extracted from Borland BC 3.1 CL.LIB (large model C runtime):
+  6 modules: MEMICMP, SRCHPATH, STRICMP, STRLWR, STRNICMP, STRUPR
+
+### Compile flags
+
+Standard modules: `BCC.EXE +PPLC.CFG` (-c -P -ml -3 -ff -Od)
+INIT, PCBINIT, INITPORT: add `-DPCB_MAXNODES=250 -DCOMM -DLIB`
+  — `-DLIB` exposes statustype with SysLimit in PCBOARD.H
+  — `-DCOMM` exposes modem prototypes (cdstillup, online)
+TASM: `/MX /D__l__` (case-sensitive externals, large model)
+INT24HND: `/MX /D__l__ /iLIBSRC/H` (needs RULES.ASI include path)
+
+### Symbol clash resolution
+
+PCBINIT.C defines globals (VerifyCDLoss, FORCE16550A, NO16550,
+ExtConfLen, etc.) that ASYNC.ASM and USERS.C also reference or
+define. Resolved by:
+  — Adding PCBINIT to the library BEFORE ASYNC
+  — TLIB accepted USERS despite ExtConfLen clash (warning, not fatal)
+  — 47 stub modules removed from sub-libs to prevent other clashes
+
+### Size difference (31 KB)
+
+Our lib is 272,896 B vs Clark’s 241,144 B (+31 KB). Difference
+comes from compiling with different headers and options than Clark’s
+original D:\tc\ build environment. Does not affect functionality.

@@ -29,6 +29,10 @@ photos, license transferred via POB — the German distributor — upgraded
 ## Version labels used in this document
 - **pcbsrc v0.1** — PCBoard source library chain build
 - **pcbsrc v0.2** — pcbkit_l.lib rebuild from source
+  v0.2.0: 8 libs merged (107,520 B, 114 modules). v0.2.1: all 130
+  modules rebuilt (272,896 B). Sources: 8 sub-libs + 28 MAIN + 16
+  LIB/SOURCE + 4 UTIL + 7 ASM + 6 Borland CRTL.
+
 
 Different subsystems use their own version numbering. Where relevant, this
 document uses explicit prefixes to avoid confusion:
