@@ -422,3 +422,19 @@ itself and all 207 utilities in SOURCE/UTIL/.
 
 Repo is master. DOSBOXX.ZIP mirrors it. Both must stay in sync.
 
+
+
+## Clark’s compile flags (from PPLC.MAK v0.2.3 analysis)
+
+Clark’s PPLC build uses `CD = -DLIB;COMM;___COMP___` in the
+makefile plus 8 additional defines in PPLC.CFG: OSDRIVER, FOSSIL,
+BIGNDX, ___USE_VAR___, S4ERROR_HOOK, DBASE, MG, TOSSCLASS.
+
+The `-DLIB` and `-DCOMM` flags are added by the MAK’s CD variable,
+NOT by PPLC.CFG. They apply to ALL source files compiled by the MAK.
+For standalone TOOLKIT modules (INIT, PCBINIT, INITPORT), use
+`-DPCB_MAXNODES=250 -DCOMM -DLIB` explicitly.
+
+The compiler flags `-K` (unsigned char) and `-f` (no FP emulation)
+in Clark’s CFG change function prototypes and require the entire
+library chain to be compiled with matching flags. Deferred to v0.2.6.

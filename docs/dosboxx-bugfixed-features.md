@@ -221,7 +221,7 @@ If it still hangs, add `fprintf(stderr)` tracing to `write_cr()` and
 ## Patch File
 
 Saved at `docs/ne2000_loopback.patch` in the repo. Also applied to
-`toolchain/dosbox-x-src-patched.7z`.
+`devtools/dosbox-x-src-patched.7z`.
 
 ## Diagnostic Tools (need creating)
 
@@ -262,8 +262,21 @@ Compiler config at `LIBSRC/CFG/PPLC.CFG` must include:
     -DPCB152
     -DPCB153
     -D___COMP___
+    -DOSDRIVER
+    -DFOSSIL
+    -DBIGNDX
+    -D___USE_VAR___
+    -DS4ERROR_HOOK
+    -DDBASE
+    -DMG
+    -DTOSSCLASS
+    -d
 
 `-IC:\PPLC\SRC` is for H2NAME.H (needed by SCOMP.CPP).
+The 8 extra `-D` defines and `-d` (merge strings) match Clark’s
+`PPLC.CFG` from `PCBSRCV/014/MAIN/153/`. Clark also uses `-K`
+(unsigned char) and `-f` (no FP emulation) but those require the
+entire library chain to be recompiled with matching flags.
 
 ### 3. Additional flags for TOOLKIT modules
 

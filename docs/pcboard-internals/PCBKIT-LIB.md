@@ -223,3 +223,37 @@ only encrypt2 is applied — matching Clark’s PPLC 3.20 behavior.
 
 **RLE fix:** doRLE module added back to pcbkit_l.lib. Was removed
 during the 47-module trim but PPLC needs it for script compression.
+
+
+## v0.2.3: Clark’s PPLC.MAK analyzed (2026-09-08)
+
+**Source:** `PCBSRCV/014/MAIN/153/PPLC.MAK` + `PCBSRCV/014/MAIN/153/PPLC.CFG`
+
+Clark’s MAK confirms: `CD = -DLIB;COMM;___COMP___`. OBJLST matches
+our 9 files. LIBLST includes countryl, dos_l, misc_l, system_l,
+pcbkit_l, mathl, emu, cl.
+
+### Missing defines (in Clark’s, not ours)
+
+- `-DOSDRIVER` — OS/2 device driver code paths
+- `-DFOSSIL` — FOSSIL serial driver support
+- `-DBIGNDX` — extended message index formats
+- `-D___USE_VAR___` — variable expression evaluator in PPL runtime
+- `-DS4ERROR_HOOK` — Softbridge S4 (dBASE) error hooks
+- `-DDBASE` — dBASE/Xbase database support (DOPEN, DCLOSE, etc.)
+- `-DMG` — message group support
+- `-DTOSSCLASS` — FidoNet toss class for echomail
+
+### Missing compiler flags
+
+- `-f` — no FP emulation (uses hardware FPU). Requires matching lib rebuild.
+- `-K` — default char unsigned. Changes prototypes; requires matching lib rebuild.
+- `-Y` — overlay support
+- `-d` — merge duplicate strings. Reduces EXE size.
+
+### Impact
+
+Adding `-d` and the 8 `-D` defines changed PPLC2.EXE from 221,644 to
+221,116 bytes (Clark’s: 222,176). PPE output unchanged: 2,261 B,
+313 vtable-only diffs. `-K` and `-f` require the entire library chain
+to be recompiled with matching flags (deferred to v0.2.6).

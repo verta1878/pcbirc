@@ -1,39 +1,29 @@
-v0.2.2: PPLC links against pcbkit_l.lib + CUR_PPE_VER fix
-============================================================
+v0.2.3: Clark's MAK analyzed + PPLC.CFG updated with Clark's flags
+====================================================================
 Date: 2026-09-08
 
 WHAT THIS RELEASE DOES
 
-  1. CUR_PPE_VER changed from 330 to 320 in pcb153/SOURCE/PPL/NEWSCR.CPP.
-     Without this, encrypt3 is applied to 3.20 PPE files.
+  1. Clark's PPLC.MAK analyzed: 8 missing -D defines and 4 missing
+     compiler flags identified. PPLC.CFG updated with safe flags.
 
-  2. v0.2.2 marked DONE — PPLC links against rebuilt pcbkit_l.lib
-     (221,644 B). PPE output matches Clark's (vtable-only diffs).
+  2. v0.2.3 marked DONE in build phases.
 
-  3. PCBKIT-LIB.md updated with v0.2.2 verification results.
+  3. All 4 build docs updated with Clark's flag discovery.
 
-  4. DOSBOXX.ZIP updated (CUR_PPE_VER=320 + all prior fixes).
+  4. DOSBOXX.ZIP PPLC.CFG updated to match (source sync rule).
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     CHECKSUMS.md5 / .sha256 / .txt
-    pcb153/SOURCE/PPL/NEWSCR.CPP
     todo/pcb-libchain-build.md
     docs/pcboard-internals/PCBKIT-LIB.md
-
-  NO additions. NO deletions.
-
-  GitHub Desktop:
-    M  APPLY.txt
-    M  CHECKSUMS.md5 / .sha256 / .txt
-    M  pcb153/SOURCE/PPL/NEWSCR.CPP
-    M  todo/pcb-libchain-build.md
-    M  docs/pcboard-internals/PCBKIT-LIB.md
-    Total: 6 modified, 0 added, 0 deleted.
+    docs/dosboxx-bugfixed-features.md
+    docs/pcboard-internals/PPL-COMPILER.md
 
   Commit message:
-    v0.2.2: PPLC links + CUR_PPE_VER 330→320 fix (repo+DOSBOXX synced)
+    v0.2.3: Clark's MAK analyzed, 8 defines + 4 flags identified
 
 --hexadecimal, 2026-09-08
