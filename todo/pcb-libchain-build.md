@@ -163,6 +163,7 @@ source-compiled modules.
 | 1 | v0.2.1 | Add MAIN/SOURCE modules | TLIB listing, size matches Clark’s ~241 KB |
 | 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | PPLC.EXE ~222 KB, compiles PPS correctly |
 | 3 | v0.2.3 | Verify Clark’s MAKEFILEs work unchanged | PPLC.MAK links clean |
+| 4 | v0.2.4 | cmp -s RUNINET.PPE | Compile Clark’s PPS with full PPLC, `cmp -s` against bin/RUNINET.PPE |
 
 ## What this unlocks
 
