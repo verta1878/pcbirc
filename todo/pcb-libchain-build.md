@@ -162,7 +162,7 @@ source-compiled modules.
 | 0 | v0.2.0 | Merge 8 libs into pcbkit_l.lib | **DONE** (107,520 B, 114 modules) |
 | 1 | v0.2.1 | Add MAIN/SOURCE modules | **DONE** (272,896 B, 130/130 modules) |
 | 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | **DONE** (221,644 B, PPE 2,261 B, vtable-only diffs) |
-| 3 | v0.2.3 | Verify Clark’s MAKEFILEs work unchanged | **DONE** (MAK analyzed, flags identified) |
+| 3 | v0.2.3 | Verify Clark’s MAKEFILEs work unchanged | **DONE** (9/9 OBJs compile, PPE 2,261 B vtable-only) |
 | 4 | v0.2.4 | cmp -s RUNINET.PPE | Compile Clark’s PPS with full PPLC, `cmp -s` against bin/RUNINET.PPE |
 
 ## What this unlocks

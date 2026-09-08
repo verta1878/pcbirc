@@ -1,17 +1,13 @@
-v0.2.3: Clark's MAK analyzed + PPLC.CFG updated with Clark's flags
-====================================================================
+v0.2.3 complete: Clark's MAK runs, 9/9 OBJs compile
+======================================================
 Date: 2026-09-08
 
 WHAT THIS RELEASE DOES
 
-  1. Clark's PPLC.MAK analyzed: 8 missing -D defines and 4 missing
-     compiler flags identified. PPLC.CFG updated with safe flags.
-
-  2. v0.2.3 marked DONE in build phases.
-
-  3. All 4 build docs updated with Clark's flag discovery.
-
-  4. DOSBOXX.ZIP PPLC.CFG updated to match (source sync rule).
+  Clark's PPLC.MAK tested: 9/9 OBJs compile with zero errors.
+  Link needs path adaptation. PPE from MAK OBJs matches Clark's
+  (vtable-only diffs). OBJ size differences documented (___USE_VAR___
+  adds 2.9 KB to SCRMISC alone).
 
 APPLY — extract into repo root.
 
@@ -20,10 +16,8 @@ APPLY — extract into repo root.
     CHECKSUMS.md5 / .sha256 / .txt
     todo/pcb-libchain-build.md
     docs/pcboard-internals/PCBKIT-LIB.md
-    docs/dosboxx-bugfixed-features.md
-    docs/pcboard-internals/PPL-COMPILER.md
 
   Commit message:
-    v0.2.3: Clark's MAK analyzed, 8 defines + 4 flags identified
+    v0.2.3 complete: Clark's MAK compiles 9/9, PPE vtable-only diffs
 
 --hexadecimal, 2026-09-08

@@ -257,3 +257,24 @@ Adding `-d` and the 8 `-D` defines changed PPLC2.EXE from 221,644 to
 221,116 bytes (Clark’s: 222,176). PPE output unchanged: 2,261 B,
 313 vtable-only diffs. `-K` and `-f` require the entire library chain
 to be recompiled with matching flags (deferred to v0.2.6).
+
+
+### MAK run results
+
+Clark’s PPLC.MAK compiles all 9 OBJs unchanged (zero errors) when
+headers (.H, .HPP, .EXT) are in `source/h/` and `source/compiler/`.
+Link needs path adaptation (Clark’s relative `..\..\b\c31\lib` paths)
+and permissive `/x` flag (Clark’s `/yx+` deletes EXE on any undefined).
+
+OBJ size differences (MAK vs our manual build):
+
+    SCRMISC: +2,936 B (___USE_VAR___ expression evaluator)
+    SCRCOMP: +1,622 B (DBASE/FOSSIL/MG code paths)
+    NEWSCR:  +1,150 B (additional encryption/compression paths)
+    VAR:       +540 B (variable type handling)
+    SCOMP:     -171 B (no -Od = smaller optimized code)
+    PCBMISC:   -238 B (no -Od)
+
+PPE from MAK OBJs: 2,261 B, 313 vtable-only diffs. Bytecode identical
+to Clark’s PPLC320. The MAK OBJs are closer to Clark’s original
+build than our manual OBJs.
