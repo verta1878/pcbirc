@@ -71,3 +71,15 @@ pristine originals they came from.
 
 Nothing in devtools/ should be edited. If a curated form needs changing,
 change the copy, not the archive of record.
+
+
+## dosbox-x-src-patched.7z
+
+Custom DOSBox-X source with NE2000 loopback fix applied. Two code
+changes in `src/hardware/ne2000.cpp` (CR.stop save/restore + MAC
+filtering bypass during loopback).
+
+**Status:** NE2000 fix confirmed working. CPU emulation bug (INT 6
+on 286+ instructions) still open — needs Ubuntu physfs patch ported.
+
+**See:** `docs/dosboxx-bugfixed-features.md` for full details.
