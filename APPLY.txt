@@ -1,19 +1,16 @@
-39-var PPE decoded + ppedecrypt.c tool
-========================================
+pcbsrc v0.2 — pcbkit_l.lib rebuild phase added
+=================================================
 Date: 2026-09-07
-Prev origin/main HEAD: bc75662 (ppe-byteexact-tool.)
+Prev origin/main HEAD: 05c974f (39var-decoded.)
 
 WHAT THIS RELEASE DOES
 
-  1. All 39 variables from Clark's original RUNINET.PPE decoded —
-     missing for two decades. Contains pcbIC12 internals: .SLP/.PPP
-     extensions, OPEN SLIP/PPP commands, $$LOGON files, log messages.
+  Adds pcbsrc v0.2 phase to pcb-libchain-build.md. Four sub-phases
+  to rebuild pcbkit_l.lib from source: merge 8 libs, add MAIN/SOURCE
+  modules, link full PPLC (~222 KB), verify MAKEFILEs.
 
-  2. Broken ppedecrypt.py replaced with working ppedecrypt.c. Uses
-     per-chunk decryption (fresh seed per sVARINFO/string/cVARVAL),
-     correct type numbering from VAR.HPP (vtSTRING=7).
-
-  3. PPL-COMPILER.md updated with 39-var discovery and analysis.
+  pcbkit_l.lib is needed by ALL PCBoard programs. The stale version
+  was moved to attic/. This arc rebuilds it from our source.
 
 APPLY — extract into repo root.
 
@@ -21,24 +18,18 @@ APPLY — extract into repo root.
     APPLY.txt
     HISTORY.md
     CHECKSUMS.md5 / .sha256 / .txt
-    docs/pcboard-internals/PPL-COMPILER.md
+    todo/pcb-libchain-build.md
 
-  Adds:
-    toolkit/pplc/ppedecrypt.c
-
-  Deletes:
-    toolkit/pplc/ppedecrypt.py
+  NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  HISTORY.md
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  docs/pcboard-internals/PPL-COMPILER.md
-    A  toolkit/pplc/ppedecrypt.c
-    D  toolkit/pplc/ppedecrypt.py
-    Total: 6 modified, 1 added, 1 deleted.
+    M  todo/pcb-libchain-build.md
+    Total: 5 modified, 0 added, 0 deleted.
 
   Commit message:
-    39-var PPE decoded (2 decades) + ppedecrypt.c replaces broken .py
+    pcbsrc v0.2: pcbkit_l.lib rebuild phase (4 sub-phases)
 
 --hexadecimal, 2026-09-07

@@ -129,3 +129,44 @@ Once all 7 libs build:
 ## Arc status: CLOSED
 
 pcbsrc v0.1 is complete. All 10 phases done.
+
+
+---
+
+# pcbsrc v0.2 — pcbkit_l.lib rebuild from source
+
+## Why
+
+pcbkit_l.lib is the single link target for ALL PCBoard programs
+except PCBOARD.EXE itself. PPLC, PCBSETUP, utilities — they all
+link against it. Clark’s pre-built version (241 KB at PCBSRC/)
+was stale and moved to attic/. We need to rebuild it from our
+source-compiled modules.
+
+## What goes into it
+
+1. Our 8 individual libraries (built in v0.1.1–v0.1.8):
+   dos_l, countryl, doscls_l, misc_l, screen_l, scrnio_l,
+   system_l, toolkit_l
+
+2. MAIN/SOURCE modules — the PCBoard runtime functions that
+   standalone tools need (display, modem, screen, pcbtext,
+   status, sys, timer, etc.). 105 already compiled in v0.1.9.
+
+3. Assembly modules (TIMER.ASM — already assembled in v0.1.9)
+
+## Phase table
+
+| Phase | Version | Target | Acceptance |
+|---|---|---|---|
+| 0 | v0.2.0 | Merge 8 libs into pcbkit_l.lib | TLIB listing, size > 200 KB |
+| 1 | v0.2.1 | Add MAIN/SOURCE modules | TLIB listing, size matches Clark’s ~241 KB |
+| 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | PPLC.EXE ~222 KB, compiles PPS correctly |
+| 3 | v0.2.3 | Verify Clark’s MAKEFILEs work unchanged | PPLC.MAK links clean |
+
+## What this unlocks
+
+- Full-size PPLC from source (matching Clark’s 222 KB)
+- All utility builds via Clark’s MAKEFILEs
+- PCBOARD.EXE build (future)
+- v1.0.1 cmp -s gate (correct source + correct compiler)

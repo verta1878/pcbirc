@@ -28,6 +28,7 @@ photos, license transferred via POB — the German distributor — upgraded
 
 ## Version labels used in this document
 - **pcbsrc v0.1** — PCBoard source library chain build
+- **pcbsrc v0.2** — pcbkit_l.lib rebuild from source
 
 Different subsystems use their own version numbering. Where relevant, this
 document uses explicit prefixes to avoid confusion:
