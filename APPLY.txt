@@ -1,13 +1,20 @@
-v0.2.3 complete: Clark's MAK runs, 9/9 OBJs compile
-======================================================
+v0.2.3 progress: lib chain findings + 17 modules added back
+==============================================================
 Date: 2026-09-08
 
 WHAT THIS RELEASE DOES
 
-  Clark's PPLC.MAK tested: 9/9 OBJs compile with zero errors.
-  Link needs path adaptation. PPE from MAK OBJs matches Clark's
-  (vtable-only diffs). OBJ size differences documented (___USE_VAR___
-  adds 2.9 KB to SCRMISC alone).
+  v0.2.3 library chain investigation:
+  - Key discovery: -P flag must NOT be used for lib modules (LIBENTRY
+    pascal produces uppercase symbols; C++ mangling produces lowercase)
+  - MAIN modules need -DCOMM without -DLIB (#ifndef LIB guards)
+  - TOOLKIT modules (INIT, PCBINIT, INITPORT) need -DCOMM -DLIB
+  - 17 sub-lib modules added back (real code, not stubs)
+  - 144 undefined remain (39 globals + 105 transitive runtime)
+  - USERS/USERSYS ConfFlags clash documented
+  - MODEMDRV blocker: needs external COMM-DRV SDK (comm.h)
+  - Two compile configs needed: PPLC.CFG (with -P) and LIB.CFG (no -P)
+  - v0.2.6 updated: full lib recompile + remove -P + match -K -f -d
 
 APPLY — extract into repo root.
 
@@ -16,8 +23,9 @@ APPLY — extract into repo root.
     CHECKSUMS.md5 / .sha256 / .txt
     todo/pcb-libchain-build.md
     docs/pcboard-internals/PCBKIT-LIB.md
+    docs/dosboxx-bugfixed-features.md
 
   Commit message:
-    v0.2.3 complete: Clark's MAK compiles 9/9, PPE vtable-only diffs
+    v0.2.3: lib chain flags, 17 modules back, USERS/USERSYS clash
 
 --hexadecimal, 2026-09-08

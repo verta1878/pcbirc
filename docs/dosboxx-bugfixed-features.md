@@ -309,3 +309,27 @@ All encrypt3/decrypt3 calls in NEWSCR.CPP must be wrapped:
 Without this, PPLC applies 3.30 encryption (encrypt3 + encrypt2)
 to 3.20 PPE files. Clark's real PPLC 3.20 only applies encrypt2.
 These guards are lost when source is re-extracted from the PWA zip.
+
+
+### Two compile configs required
+
+- **PPLC.CFG** — for the 9 PPLC source files (.CPP). Includes `-P`
+  (C++ mode), `-c`, `-ml`, `-3`, plus all `-D` defines.
+- **LIB.CFG** — for pcbkit_l.lib modules (.C). Same as PPLC.CFG but
+  WITHOUT `-P`. Also needs `-DMULTIPORT -DCOMMDRV` for modem modules.
+  Clark compiled lib modules as plain C, producing uppercase PASCAL
+  symbols. Using `-P` produces wrong symbol names.
+
+
+### MAIN vs TOOLKIT compile flag differences
+
+MAIN modules: `-DCOMM -DPCB_MAXNODES=250` (NO `-DLIB`).
+TOOLKIT modules (INIT, PCBINIT, INITPORT): `-DCOMM -DLIB -DPCB_MAXNODES=250`.
+
+The `#ifndef LIB` guards in USERS.C and other MAIN modules hide
+runtime functions (getuserrecord, putuserrecord, etc.) when `-DLIB`
+is set. These functions must be in pcbkit_l.lib for PPLC to link.
+
+Missing: `comm.h` header from external COMM-DRV SDK. Required by
+MODEMDRV.C (`#if defined(COMM) && defined(MULTIPORT) && defined(COMMDRV)`).
+Clark’s pre-built lib had this module; we cannot compile it.

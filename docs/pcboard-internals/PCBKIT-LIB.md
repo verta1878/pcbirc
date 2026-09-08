@@ -278,3 +278,120 @@ OBJ size differences (MAK vs our manual build):
 PPE from MAK OBJs: 2,261 B, 313 vtable-only diffs. Bytecode identical
 to Clark’s PPLC320. The MAK OBJs are closer to Clark’s original
 build than our manual OBJs.
+
+
+### MAK OBJ link result
+
+PPLCMAK.EXE from MAK OBJs: 231,276 bytes (Clark’s: 222,176 —
+9,100 byte gap). PPE: 2,261 B, 313 vtable-only diffs. The 9 KB gap
+comes from our pcbkit_l.lib being 273 KB vs Clark’s 241 KB —
+our lib modules were compiled with different headers and without
+Clark’s full flags (-K, -f, -d).
+
+**Path to byte-exact:** full library chain recompile with Clark’s
+exact flags: `-K` (unsigned char), `-f` (no FP emulation), `-d`
+(merge strings), plus all 8 `-D` defines. Every module in
+pcbkit_l.lib must be recompiled with matching flags so the OBJ sizes
+match Clark’s originals. This shrinks the lib from 273 KB toward
+241 KB, which shrinks the EXE toward 222 KB, which puts the vtable
+at the same address as Clark’s.
+
+
+### MAK OBJ link result (full flags)
+
+PPLCMAK.EXE: 231,276 B (Clark: 222,176 — 9,100 B gap). The gap comes
+from pcbkit_l.lib being 273 KB vs Clark’s 241 KB. Our lib modules
+were compiled with different headers/flags than Clark’s D:\tc\ build.
+
+Remaining undefined symbols from pcbkit_l.lib transitive deps:
+waitforempty(), writeusersysfile(), readusersysfile(), _CDSTILLUP,
+openmodem(), toggleprinter(), showfile(), flagfiles(), calculatebalance(),
+parse(), and ~90 more from MAIN modules (FILES, RECYCLE, SHELL, XLATE,
+INKEY, DISPLAY, etc.). These are PCBOARD.EXE runtime functions that
+pcbkit_l.lib modules reference but PPLC doesn’t call.
+
+To close the gap: full library chain recompile with Clark’s exact
+flags (-K, -f, -d, all -D defines) so module sizes match. This is
+v0.2.6 scope.
+
+
+### MAK OBJ link result
+
+PPLCMAK.EXE: 231,276 bytes (Clark’s: 222,176 — 9,100 B gap).
+PPE output: 2,261 B, 313 vtable-only diffs. The 9 KB gap comes from
+our pcbkit_l.lib (273 KB) being larger than Clark’s (241 KB) because
+our modules were compiled with different headers and without Clark’s
+`-K` (unsigned char) and `-f` (no FP emulation) flags.
+
+Closing the gap requires the full library chain recompiled with
+Clark’s exact flags: `-K -f -d` plus all 8 `-D` defines, applied
+consistently across all 130 pcbkit_l.lib modules. This is v0.2.6.
+
+
+### Key discovery: -P flag (C++ mode) must NOT be used for lib modules
+
+Clark compiled pcbkit_l.lib modules as C (no `-P`), producing uppercase
+PASCAL-convention symbols (GETUSERRECORD, PUTUSERRECORD). We compiled
+them as C++ (`-P`), producing lowercase mangled symbols (getuserrecord,
+putuserrecord). This is why 25 functions appear "missing" — they’re
+in the lib but with wrong symbol names.
+
+Two compile configs needed:
+- **PPLC source** (9 .CPP files): `-P` (C++ mode) via PPLC.CFG
+- **Library modules** (130 .C files): NO `-P` (plain C) via separate LIB.CFG
+
+Clark’s MODEMDRV module is 2,257 B vs our 212 B because it needs
+`-DMULTIPORT -DCOMMDRV` in addition to `-DCOMM -DLIB`. The library
+was built with MORE defines than the PPLC MAK.
+
+
+### Compile flag rules by module type
+
+**MAIN modules** (CHAT, DISPLAY, FILES, HELP, INDEX, INKEY, INPUT,
+LANGUAGE, MEMORY, MISC, MODEM, MODEMASY, MODEMFOS, MODEMOS2, MSGBASE,
+PCBTEXT, RECYCLE, SCREEN, SHELL, SHOWERR, STATUS, SYS, TOKEN, USERS,
+XLATE):
+  `-DCOMM -DPCB_MAXNODES=250` (NO `-DLIB`)
+  USERS.C has `#ifndef LIB` guards around getuserrecord, putuserrecord,
+  usersdealloc, convertdatatoread. With `-DLIB` these are compiled OUT.
+
+**TOOLKIT modules** (INIT, PCBINIT, INITPORT):
+  `-DCOMM -DLIB -DPCB_MAXNODES=250`
+  Need `-DLIB` for statustype with SysLimit in PCBOARD.H.
+
+**MODEMDRV**: requires `comm.h` from external COMM-DRV SDK. Cannot
+compile without it. Clark’s pre-built pcbkit_l.lib had MODEMDRV at
+2,257 B with COMMDRV_* functions. We skip it.
+
+**LIB/SOURCE modules** (ADDBACKS, ATCLOSE, CUSTHELP, etc.):
+  Standard PPLC.CFG flags. No special defines needed.
+
+
+### v0.2.3 library chain progress (2026-09-08)
+
+**17 modules added back** from sub-libs that were removed during the
+47-module trim. These are real code, not stubs. They resolve transitive
+dependencies from MAIN modules compiled without `-DLIB`:
+  BOXCLS, BUILDSTR, CHANGE, CLSBOX, DCOMMA, DOSDUP, FASTPUTC,
+  FINDNAME, FULLNAME, READSCR2, SETATT, TIMESTEN, PRNTCNTR,
+  PRNTMOVE, SYSDATE, SYSTIME, ISOPEN
+
+**144 remaining undefined symbols:**
+- 39 runtime globals (ACCOUNTRATES, FRONTEND, MASK_*, etc.) — exist
+  only in PCBOARD.EXE BSS/DATA segment, not in any library
+- 105 transitive runtime functions — pulled in by MAIN modules but
+  belong to the full PCBOARD.EXE runtime, not the compiler library
+
+**USERS/USERSYS ConfFlags clash:** Both modules define `_ConfFlags`.
+USERS.C defines it under `#ifndef LIB` (line 107). USERSYS.C from
+TOOLKIT also defines it. Clark’s lib has both without clash — his
+USERS module does NOT have `_ConfFlags` in its exports. This means
+Clark compiled USERS.C from a different source version or with a
+flag/header that makes ConfFlags extern in USERS.C.
+
+**MODEMDRV blocker:** requires `comm.h` from external COMM-DRV SDK.
+Clark’s pre-built MODEMDRV has COMMDRV_* functions (2,257 B). We
+cannot compile without the SDK header.
+
+**EXE status:** 227,516 B (Clark: 222,176 — 5,340 B gap). PPE output
+correct: 2,261 B, 313 vtable-only diffs.
