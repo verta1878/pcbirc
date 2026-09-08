@@ -43,8 +43,8 @@ OS2TK/
 codebase-dbf/
 
 # Large archives (available separately)
-pcb153src0014.zip
-pcb15everything.zip
+#pcb153src0014.zip
+#pcb15everything.zip
 
 # IDE/editor
 .vscode/
