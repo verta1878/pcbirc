@@ -1,31 +1,18 @@
-v0.2.3 progress: lib chain findings + 17 modules added back
-==============================================================
+v0.2 phase table restructured (9 phases)
+==========================================
 Date: 2026-09-08
 
 WHAT THIS RELEASE DOES
 
-  v0.2.3 library chain investigation:
-  - Key discovery: -P flag must NOT be used for lib modules (LIBENTRY
-    pascal produces uppercase symbols; C++ mangling produces lowercase)
-  - MAIN modules need -DCOMM without -DLIB (#ifndef LIB guards)
-  - TOOLKIT modules (INIT, PCBINIT, INITPORT) need -DCOMM -DLIB
-  - 17 sub-lib modules added back (real code, not stubs)
-  - 144 undefined remain (39 globals + 105 transitive runtime)
-  - USERS/USERSYS ConfFlags clash documented
-  - MODEMDRV blocker: needs external COMM-DRV SDK (comm.h)
-  - Two compile configs needed: PPLC.CFG (with -P) and LIB.CFG (no -P)
-  - v0.2.6 updated: full lib recompile + remove -P + match -K -f -d
-
-APPLY — extract into repo root.
-
-  Modifies:
-    APPLY.txt
-    CHECKSUMS.md5 / .sha256 / .txt
-    todo/pcb-libchain-build.md
-    docs/pcboard-internals/PCBKIT-LIB.md
-    docs/dosboxx-bugfixed-features.md
+  Phase table restructured:
+  - v0.2.3 marked DONE (MAK verified)
+  - v0.2.4 NEW: find real source in PWA (no stubs)
+  - v0.2.5 NEW: recompile library chain with matching flags
+  - v0.2.6: diff delta vs PWA base (moved from v0.2.5)
+  - v0.2.7: eliminate vtable diff (moved from v0.2.6)
+  - v0.2.8: cmp -s 39-var PPE (blocked, moved from v0.2.4)
 
   Commit message:
-    v0.2.3: lib chain flags, 17 modules back, USERS/USERSYS clash
+    v0.2 phases restructured: 9 phases, lib chain = v0.2.4+v0.2.5
 
 --hexadecimal, 2026-09-08

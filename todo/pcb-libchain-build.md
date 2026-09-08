@@ -43,6 +43,15 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 
 | Phase | Version | Target | Files | Acceptance |
 |---|---|---|---|---|
+| 0 | v0.2.0 | Merge 8 libs into pcbkit_l.lib | **DONE** (107,520 B, 114 modules) |
+| 1 | v0.2.1 | Add MAIN/SOURCE modules (130/130) | **DONE** (272,896 B, 130/130 modules) |
+| 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | **DONE** (221,644 B, vtable-only diffs) |
+| 3 | v0.2.3 | Verify Clark’s MAKEFILEs | **DONE** (9/9 OBJs, flags identified) |
+| 4 | v0.2.4 | Find real source in PWA for all lib modules (no stubs) | Find code for 144 undefined, resolve USERS/USERSYS clash, locate comm.h |
+| 5 | v0.2.5 | Recompile library chain with matching flags | MAIN: -DCOMM, TK: -DCOMM -DLIB, match -K -f -d |
+| 6 | v0.2.6 | Diff delta vs PWA base | Compare upd154/SOURCE/ against pcb153/SOURCE/ |
+| 7 | v0.2.7 | Eliminate vtable diff | Byte-exact EXE match |
+| 8 | v0.2.8 | cmp -s RUNINET.PPE (39-var) | Blocked — original source lost |
 | 0 | v0.1.0 | Prerequisites staged | — | headers + source + config on host dir, one file compiles |
 | 1 | v0.1.1 | dos_l.lib | 48 .C + 1 .ASM | **DONE** (45/45 clean, 37,888 B). TLIB listing matches Clark's MAKEFILE (35 OBJs) |
 | 2 | v0.1.2 | country_l.lib | 14 files | TLIB listing clean | **DONE** (12/12 clean, 5,632 B) |
@@ -159,11 +168,6 @@ source-compiled modules.
 
 | Phase | Version | Target | Acceptance |
 |---|---|---|---|
-| 0 | v0.2.0 | Merge 8 libs into pcbkit_l.lib | **DONE** (107,520 B, 114 modules) |
-| 1 | v0.2.1 | Add MAIN/SOURCE modules | **DONE** (272,896 B, 130/130 modules) |
-| 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | **DONE** (221,644 B, PPE 2,261 B, vtable-only diffs) |
-| 3 | v0.2.3 | Verify Clark’s MAKEFILEs work unchanged | **IN PROGRESS** (MAK 9/9, 17 modules added back, 144 undef remain) |
-| 4 | v0.2.4 | cmp -s RUNINET.PPE | Compile Clark’s PPS with full PPLC, `cmp -s` against bin/RUNINET.PPE |
 
 ## What this unlocks
 
