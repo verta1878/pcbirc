@@ -196,3 +196,12 @@ define. Resolved by:
 Our lib is 272,896 B vs Clark’s 241,144 B (+31 KB). Difference
 comes from compiling with different headers and options than Clark’s
 original D:\tc\ build environment. Does not affect functionality.
+
+---
+
+**RULE:** Source code fixes apply to BOTH locations:
+- **Repo:** `pcb153/` (master), `pcb154/`, or `pcb1541/` — whichever version
+- **DOSBOXX.ZIP:** matching version under `pcbirc/BUILDROOT/`
+
+Repo is master. DOSBOXX.ZIP mirrors it. Both must stay in sync.
+

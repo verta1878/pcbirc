@@ -1,3 +1,3 @@
 # CHECKSUMS — verify repository integrity
-# LAST REGENERATED: 2026-09-08 (encrypt3 guards)
+# LAST REGENERATED: 2026-09-08 (source sync rule)
 # TRACKED FILES:    10484

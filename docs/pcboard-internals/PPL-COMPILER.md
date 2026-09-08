@@ -413,3 +413,12 @@ itself and all 207 utilities in SOURCE/UTIL/.
 ---
 
 *hexadecimal, 2026-09-07*
+
+---
+
+**RULE:** Source code fixes apply to BOTH locations:
+- **Repo:** `pcb153/` (master), `pcb154/`, or `pcb1541/` — whichever version
+- **DOSBOXX.ZIP:** matching version under `pcbirc/BUILDROOT/`
+
+Repo is master. DOSBOXX.ZIP mirrors it. Both must stay in sync.
+

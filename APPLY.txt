@@ -1,33 +1,33 @@
-encrypt3 guards applied to repo source
-=========================================
+Source sync rule added to build docs
+======================================
 Date: 2026-09-08
-Prev origin/main HEAD: e6998b2
+Prev origin/main HEAD: (encrypt3 guards)
 
 WHAT THIS RELEASE DOES
 
-  Applies encrypt3 guards to pcb153/SOURCE/PPL/NEWSCR.CPP in the
-  repo (5 guards: 4 encrypt3 + 1 decrypt3). Both repo and DOSBOXX.ZIP
-  now have matching source.
-
-  Without these guards, PPLC applies 3.30 encryption to 3.20 PPE
-  files. Clark's real PPLC 3.20 only applies encrypt2.
+  Adds source code sync rule to three build docs: fixes must apply
+  to BOTH repo (pcb153/ master) AND DOSBOXX.ZIP.
 
 APPLY — extract into repo root.
 
   Modifies:
     APPLY.txt
     CHECKSUMS.md5 / .sha256 / .txt
-    pcb153/SOURCE/PPL/NEWSCR.CPP
+    todo/pcb-libchain-build.md
+    docs/pcboard-internals/PCBKIT-LIB.md
+    docs/pcboard-internals/PPL-COMPILER.md
 
   NO additions. NO deletions.
 
   GitHub Desktop:
     M  APPLY.txt
     M  CHECKSUMS.md5 / .sha256 / .txt
-    M  pcb153/SOURCE/PPL/NEWSCR.CPP
-    Total: 4 modified, 0 added, 0 deleted.
+    M  todo/pcb-libchain-build.md
+    M  docs/pcboard-internals/PCBKIT-LIB.md
+    M  docs/pcboard-internals/PPL-COMPILER.md
+    Total: 6 modified, 0 added, 0 deleted.
 
   Commit message:
-    fix: encrypt3 guards in pcb153/SOURCE/PPL/NEWSCR.CPP (repo + DOSBOXX in sync)
+    docs: source sync rule (repo master + DOSBOXX.ZIP mirror)
 
 --hexadecimal, 2026-09-08

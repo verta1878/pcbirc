@@ -171,3 +171,12 @@ source-compiled modules.
 - All utility builds via Clark’s MAKEFILEs
 - PCBOARD.EXE build (future)
 - v1.0.1 cmp -s gate (correct source + correct compiler)
+
+---
+
+**RULE:** Source code fixes apply to BOTH locations:
+- **Repo:** `pcb153/` (master), `pcb154/`, or `pcb1541/` — whichever version
+- **DOSBOXX.ZIP:** matching version under `pcbirc/BUILDROOT/`
+
+Repo is master. DOSBOXX.ZIP mirrors it. Both must stay in sync.
+
