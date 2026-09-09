@@ -47,8 +47,8 @@ Library:  `TLIB <libname>.lib + <obj1> + <obj2> + ...`
 | 1 | v0.2.1 | Add MAIN/SOURCE modules (130/130) | **DONE** (272,896 B, 130/130 modules) |
 | 2 | v0.2.2 | Link PPLC against rebuilt pcbkit_l.lib | **DONE** (221,644 B, vtable-only diffs) |
 | 3 | v0.2.3 | Verify Clark’s MAKEFILEs | **DONE** (9/9 OBJs, flags identified) |
-| 4 | v0.2.4 | Find real source in PWA for all lib modules (no stubs) | Find code for 144 undefined, resolve USERS/USERSYS clash, locate comm.h |
-| 5 | v0.2.5 | Recompile library chain with matching flags | MAIN: -DCOMM, TK: -DCOMM -DLIB, match -K -f -d |
+| 4 | v0.2.4 | Find real source in PWA for all lib modules (no stubs) | **IN PROGRESS** (USERS clash resolved, 130 transitive undef remain) |
+| 5 | v0.2.5 | Recompile library chain with matching flags | **IN PROGRESS** (compile NO*.C stubs, link with stubs, verify vs Toolkit3, target 21 undef) |
 | 6 | v0.2.6 | Diff delta vs PWA base | Compare upd154/SOURCE/ against pcb153/SOURCE/ |
 | 7 | v0.2.7 | Eliminate vtable diff | Byte-exact EXE match |
 | 8 | v0.2.8 | cmp -s RUNINET.PPE (39-var) | Blocked — original source lost |
