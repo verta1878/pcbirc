@@ -1,3 +1,1 @@
-3752ab86ab50058d71308bace44ae925  ./docs/pcboard-internals/pcbkit-module-comparison.md
-bf56a9f162d5ce2d8fadce5c3288f0e2  ./toolkit/pwa154/pcbdcom/inc/pcbdcom.h
-532291aa3d409580bf7450ad78bc2b5a  ./toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
+6ed5acf0945b15ec01955f69a435bdf8  patches/15.4-toolkit.patch

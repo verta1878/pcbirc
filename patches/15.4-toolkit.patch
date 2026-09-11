@@ -1,6 +1,27 @@
 # 15.4 Toolkit Patch
 # Part 1: pwa153 → pwa154 (pcbtools.h + pcbdcom)
 
+diff -ruN toolkit/pwa153/CFG/BC31/PPLC.CFG toolkit/pwa154/CFG/BC31/PPLC.CFG
+--- toolkit/pwa153/CFG/BC31/PPLC.CFG	2026-09-11 20:55:20.720404659 +0000
++++ toolkit/pwa154/CFG/BC31/PPLC.CFG	1970-01-01 00:00:00.000000000 +0000
+@@ -1,17 +0,0 @@
+--c
+--P
+--ml
+--3
+--ff
+--d
+--Od
+--IC:\LIBSRC\H
+--IC:\MAINSRC\H
+--IC:\PPLC\SRC
+--IC:\BC31\INCLUDE
+--DPCBOARD
+--DPCBCOMM
+--DNDEBUG
+--DPCB152
+--DPCB153
+--D___COMP___
 diff -ruN toolkit/pwa153/H/pcbtools.h toolkit/pwa154/H/pcbtools.h
 --- toolkit/pwa153/H/pcbtools.h	2026-09-11 00:24:32.477327732 +0000
 +++ toolkit/pwa154/H/pcbtools.h	2026-09-11 00:24:32.495331782 +0000
@@ -46,6 +67,312 @@ diff -ruN toolkit/pwa153/README.md toolkit/pwa154/README.md
 +    -I C:\TOOLKIT\PWA154\H
 +
 +See pcb153/upd154/build/BLDUPD154.BAT.
+diff -ruN toolkit/pwa153/SOURCE/PPLC/PCBGLOB.C toolkit/pwa154/SOURCE/PPLC/PCBGLOB.C
+--- toolkit/pwa153/SOURCE/PPLC/PCBGLOB.C	2026-09-11 20:55:20.720404659 +0000
++++ toolkit/pwa154/SOURCE/PPLC/PCBGLOB.C	1970-01-01 00:00:00.000000000 +0000
+@@ -1,19 +0,0 @@
+-/* PCBGLOB.C - runtime globals for PPLC link */
+-#include "types.hpp"
+-#include "pcboard.h"
+-
+-/* Simple globals */
+-int CtrlBreak = 0;
+-int ErrorLevel = 0;
+-unsigned ExtConfLen = 0;
+-int ForceUpdate = 0;
+-int LocalOn = 0;
+-unsigned MsgPtrLen = 0;
+-char PcbDir[80] = {0};
+-int UseAnsi = 0;
+-int UsersFile = 0;
+-char UsersData[4096] = {0};
+-
+-/* Status and PcbData — proper types */
+-statustype Status;
+-pcbdattype PcbData;
+diff -ruN toolkit/pwa153/SOURCE/PPLC/PPLC.LNK toolkit/pwa154/SOURCE/PPLC/PPLC.LNK
+--- toolkit/pwa153/SOURCE/PPLC/PPLC.LNK	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/pwa154/SOURCE/PPLC/PPLC.LNK	1970-01-01 00:00:00.000000000 +0000
+@@ -1,31 +0,0 @@
+-C:\BC31\LIB\C0L.OBJ+
+-C:\OUT\PPLC\SCOMP.OBJ+
+-C:\OUT\PPLC\NEWSCR.OBJ+
+-C:\OUT\PPLC\SCRCOMP.OBJ+
+-C:\OUT\PPLC\SCRMISC.OBJ+
+-C:\OUT\PPLC\PCBMISC.OBJ+
+-C:\OUT\PPLC\VAR.OBJ+
+-C:\OUT\PPLC\LABEL.OBJ+
+-C:\OUT\PPLC\CEH.OBJ+
+-C:\OUT\PPLC\H2NAME.OBJ+
+-C:\OUT\STUBS\NOANSI.OBJ+
+-C:\OUT\STUBS\NOCHAT.OBJ+
+-C:\OUT\STUBS\NODISP.OBJ+
+-C:\OUT\STUBS\NOHELP.OBJ+
+-C:\OUT\STUBS\NOINPUT.OBJ+
+-C:\OUT\STUBS\NOLANG.OBJ+
+-C:\OUT\STUBS\NOLOG.OBJ+
+-C:\OUT\STUBS\NOMEMORY.OBJ+
+-C:\OUT\STUBS\NOPCBSYS.OBJ+
+-C:\OUT\STUBS\NOPRINT.OBJ+
+-C:\OUT\STUBS\NOSCREEN.OBJ+
+-C:\OUT\STUBS\NOSHELL.OBJ+
+-C:\OUT\STUBS\NOSTATUS.OBJ+
+-C:\OUT\STUBS\NOSYS.OBJ+
+-C:\OUT\STUBS\NOTXT.OBJ+
+-C:\OUT\STUBS\NOUPDSYS.OBJ+
+-C:\OUT\STUBS\NOXLATE.OBJ
+-C:\OUT\PPLC\PPLC.EXE
+-
+-C:\OUT\PCBKIT_L.LIB+
+-C:\BC31\LIB\MATHL.LIB C:\BC31\LIB\EMU.LIB C:\BC31\LIB\CL.LIB
+diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NODISP.C toolkit/pwa154/SOURCE/TOOLKIT/NODISP.C
+--- toolkit/pwa153/SOURCE/TOOLKIT/NODISP.C	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/pwa154/SOURCE/TOOLKIT/NODISP.C	2026-09-11 00:24:32.506578320 +0000
+@@ -34,6 +34,8 @@
+ }
+ 
+ #pragma argsused
++void LIBENTRY print(char *Str) {
++}
+ 
+ void LIBENTRY printcls(void) {
+ }
+@@ -42,11 +44,15 @@
+ void LIBENTRY moreprompt(int Type) {
+ }
+ 
++void LIBENTRY newline(void) {
++}
+ 
+ void LIBENTRY freshline(void) {
+ }
+ 
+ #pragma argsused
++void LIBENTRY println(char *Str) {
++}
+ 
+ #pragma argsused
+ void LIBENTRY printcolor(int ColorNum) {
+diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOPCBSYS.C toolkit/pwa154/SOURCE/TOOLKIT/NOPCBSYS.C
+--- toolkit/pwa153/SOURCE/TOOLKIT/NOPCBSYS.C	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/pwa154/SOURCE/TOOLKIT/NOPCBSYS.C	2026-09-11 00:24:32.506578320 +0000
+@@ -14,4 +14,8 @@
+ 
+ #include <pcbtools.h>
+ 
++void LIBENTRY makepcboardsys(void) {
++}
+ 
++void LIBENTRY readpcboardsys(void) {
++}
+diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOUPDSYS.C toolkit/pwa154/SOURCE/TOOLKIT/NOUPDSYS.C
+--- toolkit/pwa153/SOURCE/TOOLKIT/NOUPDSYS.C	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/pwa154/SOURCE/TOOLKIT/NOUPDSYS.C	2026-09-11 00:24:32.506578320 +0000
+@@ -126,5 +126,192 @@
+ 
+ 
+ void LIBENTRY readpcboardsys(void) {
+-}
++  systype Sys;
++  char    Str[60];
++  DOSFILE File;
++  int     BytesRead;
++  #if ! (defined(PCB_DEMO) || defined(LIB))
++  char    *p;
++  #endif
++
++  strcpy(Str,PcbDir);
++  strcat(Str,"PCBOARD.SYS");
++  if (fileexist(Str) == 255) {
++    puts("WARNING Could not find:");
++    puts(Str);
++    goto readusersys;
++  }
++  if (dosfopen(Str,OPEN_READ|OPEN_DENYNONE,&File) == -1)
++    goto readusersys;
++
++  BytesRead = dosfread(&Sys,sizeof(systype),&File);
++  if (BytesRead != sizeof(systype) && BytesRead != 128) { /* bad format? */
++    dosfclose(&File);
++    goto readusersys;
++  }
++
++  Control.Screen   = (bool) ascii2bool(Sys.Screen);
++  Status.PrintLog  = (bool) (ascii2bool(Sys.PrintLog) && (PcbData.ParallelPortNum != 0));
++  Status.Alarm     = (bool) ascii2bool(Sys.Alarm);
++
++  #ifndef LIB
++    Status.PageBell  = ascii2bool(Sys.PageBell);
++    Status.PackFlag  = ' ';             /* default to off */
++  #endif
++
++  Status.UserRecNo = 0;
++  Status.SysopFlag = Sys.SysopFlag;
++  if (Status.SysopFlag != 'X' && Status.SysopFlag != 'N')  /* make sure it */
++    Status.SysopFlag = ' ';                                /* is valid     */
++
++  if (BytesRead < sizeof(systype)) {
++    Sys.UseAnsi = FALSE;
++  }
++
++  if (Control.Screen)
++    Status.ForceScreenOff = FALSE;
++  else {
++    Status.ForceScreenOff = TRUE;
++    turndisplayoff(FALSE);  /* FALSE so that it doesn't make another pcboard.sys */
++  }
++
++  if (Sys.GraphicsMode != ' ' && Sys.FirstName[0] != ' ' &&
++      Sys.GraphicsMode != 0   && Sys.FirstName[0] != 0) {
++    #ifndef LIB
++      if (Sys.UserRecNo <= 0 || Sys.UserRecNo > numrecs(UsersFile,sizeof(UsersRead))) {
++        displaypcbtext(TXT_USERRECNUMISBAD,NEWLINE|LFBEFORE|LOGIT);
++        dosfclose(&File);
++        goto readusersys;
++      }
++      #if defined(PCB_NETWORK) && ! defined(PCB_X)
++        if (PcbData.Network && Sys.NodeNum != PcbData.NodeNum) {
++          sprintf(Str,"Sys Node: %d",Sys.NodeNum);
++          writelog(Str,SPACERIGHT);
++        }
++      #endif
++      Status.BackFromDoor = TRUE;  /* getuserrecord() needs to know this */
++    #endif
++
++    Status.UserRecNo = Sys.UserRecNo;
++
++    #ifndef LIB
++      Status.PackFlag  = Sys.PackFlag;  /* but if there's a user get real status */
++      Status.TerseMode = Sys.Reserve.TerseMode;
++
++      #ifdef PCB_NETWORK
++        Status.Available = (Sys.UserNetStatus == 'A');
++      #endif
++    #endif
++
++    Asy.Telnet              = (bool) Sys.Reserve.Telnet;
++    Asy.DataBits            = (char) (Sys.GraphicsMode == '7' ? 7 : 8);
++    Control.GraphicsMode    = (bool) (Sys.GraphicsMode == 'Y');
++    UseAnsi                 = (bool) (Sys.GraphicsMode == 'Y' ? TRUE : Sys.UseAnsi);
++    Asy.ErrorCorrected      = (bool) ascii2bool(Sys.ErrorCorrected);
++    Status.LogonMinute      = Sys.LogonMinute;
+ 
++    #ifndef LIB
++    Status.MaxKBytesAllowed = Sys.MaxKBytesAllowed;
++    #endif
++
++    Status.Conference       = (BytesRead < sizeof(systype) ? Sys.Conference : Sys.Conference2);
++    Status.ConfAddTime      = Sys.ConfAddTime;
++/*  Status.CreditMinutes    = Sys.CreditMinutes; */
++
++    #ifndef LIB
++      fmemcpy(&ConfFlags[JOINED ],Sys.ConfJoined ,sizeof(Sys.ConfJoined));
++      fmemcpy(&ConfFlags[SCANNED],Sys.ConfScanned,sizeof(Sys.ConfScanned));
++
++      #ifndef PCB_DEMO
++        if (PcbData.NumAreas > 40 && BytesRead > 128) {
++          if ((p = malloc(ExtConfLen*2)) != NULL) {
++            dosfread(p,ExtConfLen*2,&File);
++            fmemcpy(&ConfFlags[JOINED+5],p,ExtConfLen);
++            fmemcpy(&ConfFlags[SCANNED+5],p+ExtConfLen,ExtConfLen);
++            free(p);
++          }
++        }
++      #endif
++    #endif
++
++    Str[5] = 0;
++    memcpy(Str,Sys.ModemSpeed,5);
++    Asy.ModemSpeed = atol(Str);
++    if (Asy.ModemSpeed == 11520)
++      Asy.ModemSpeed = 115200L;
++
++    if (Sys.CarrierSpeed[0] == 'L' || Asy.ComPortNumber == 0) {
++      Asy.CarrierSpeed = Asy.ConnectSpeed = Asy.ModemSpeed;
++      Asy.Online = LOCAL;
++      #ifndef LIB
++        if (Sys.CarrierSpeed[1] == 'O') /* "LOCAL" = LocalOn, "Local" does not */
++          LocalOn = TRUE;
++      #endif
++    } else {
++      memcpy(Str,Sys.CarrierSpeed,5);
++      Asy.CarrierSpeed = atol(Str);
++      if (Asy.CarrierSpeed == 11520)
++        Asy.CarrierSpeed = 115200L;
++      Asy.ConnectSpeed = (Asy.ErrorCorrected && Asy.CarrierSpeed >= 9600 ? Asy.ModemSpeed : Asy.CarrierSpeed);
++      Asy.Online = REMOTE;
++    }
++
++    #ifndef LIB
++      getuserrecord(TRUE,FALSE);
++      Status.BackFromDoor = FALSE;  /* no longer needed after calling getuserrecord() */
++    #endif
++
++    #ifdef LIB
++      addtime(Sys.MinutesLeft * 60L,NEWTIME);
++    #endif
++    addtime(Sys.CreditMinutes * 60L,CREDTIME);
++
++    memcpy(Status.LogonTime,Sys.LogonTime,5);
++    memcpy(&Status.LogonTime[5],":00",4);
++    Status.LogonMinute = (short) strtominutes(Status.LogonTime);
++    datestr(Status.LogonDate);
++    Status.JulianLogonDate = datetojulian(Status.LogonDate);
++    if (currentminute() < Status.LogonMinute) {
++      Status.JulianLogonDate--;
++      strcpy(Status.LogonDate,juliantodate(Status.JulianLogonDate));
++    }
++
++    #ifndef LIB
++      Status.CtodLogonDate = ctod(Status.LogonDate);
++    #endif
++
++    memcpy(Status.MultiLangExt,Sys.MultiLangExt,4);
++    Status.MultiLangExt[4] = 0;
++    stripright(Status.MultiLangExt,' ');
++    if (Status.MultiLangExt[0] != 0)
++      readpcbtextfile(Status.MultiLangExt,PROGRAM);
++
++    #ifndef LIB
++      Status.MemorizeNum = bassngltolong(Sys.MemorizeNum);
++    #endif
++    settimer(1,Control.KbdTimer);
++    dosfclose(&File);
++    return;
++  }
++  dosfclose(&File);
++
++readusersys:;
++  #ifndef LIB
++    #ifndef PCB_DEMO
++      if (fileexist("USERS.SYS") != 255) {
++        Status.UserRecNo = 0;
++        getuserrecord(TRUE,TRUE);
++        if (Status.UserRecNo != 0)
++          putuserrecord(IGNOREDIRTY);
++        unlink("USERS.SYS");
++        Status.UserRecNo = 0;
++        memset(&UsersData,0,sizeof(UsersData));
++        fmemset(MsgReadPtr,0,MsgPtrLen);
++        fmemset(ConfFlags,0,ConfByteLen * 2);
++        fmemset(ConfReg,0,ConfByteLen * 6);
++        Status.Logoff = NLOGOFF;  /* cause $$LOGOFF.BAT to be run */
++        recycle();
++      }
++    #endif
++  #endif
++}
+diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOXLATE.C toolkit/pwa154/SOURCE/TOOLKIT/NOXLATE.C
+--- toolkit/pwa153/SOURCE/TOOLKIT/NOXLATE.C	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/pwa154/SOURCE/TOOLKIT/NOXLATE.C	2026-09-11 00:24:32.506578320 +0000
+@@ -14,4 +14,6 @@
+ 
+ #include "pcbtools.h"
+ 
+-/* printxlated removed - defined in PCBMISC.CPP */
++void LIBENTRY printxlated(char *Str) {
++  print(Str);
++}
 diff -ruN toolkit/pwa153/pcbdcom/README.md toolkit/pwa154/pcbdcom/README.md
 --- toolkit/pwa153/pcbdcom/README.md	1970-01-01 00:00:00.000000000 +0000
 +++ toolkit/pwa154/pcbdcom/README.md	2026-09-11 00:24:32.510727362 +0000
@@ -357,14 +684,14 @@ diff -ruN toolkit/pwa153/pcbdcom/inc/compat.h toolkit/pwa154/pcbdcom/inc/compat.
 +#endif  /* PCBDCOM_COMPAT_H */
 diff -ruN toolkit/pwa153/pcbdcom/inc/pcbdcom.h toolkit/pwa154/pcbdcom/inc/pcbdcom.h
 --- toolkit/pwa153/pcbdcom/inc/pcbdcom.h	1970-01-01 00:00:00.000000000 +0000
-+++ toolkit/pwa154/pcbdcom/inc/pcbdcom.h	2026-09-11 00:24:32.512262609 +0000
-@@ -0,0 +1,50 @@
++++ toolkit/pwa154/pcbdcom/inc/pcbdcom.h	2026-09-11 21:17:36.704333280 +0000
+@@ -0,0 +1,166 @@
 +/* ============================================================================
-+ * PCBDCOM.H — pcbdcom SDK public API
++ * PCBDCOM.H  pcbdcom SDK public API
 + *
-+ * For applications that link against PCBDCOM.OBJ as a drop-in replacement
-+ * for WCSC's COMMDRV.OBJ. Provides the 13-function ser_rs232_* API used by
-+ * PCBoard's MODEMDRV.C and other COMM-DRV-aware software.
++ * Drop-in replacement for WCSC's COMMDRV.OBJ. Provides the ser_rs232_*
++ * API used by PCBoard's MODEMDRV.C. All structs, constants, and function
++ * signatures match COMMDRV for binary compatibility.
 + *
 + * License: GPLv3.
 + * ==========================================================================*/
@@ -375,21 +702,137 @@ diff -ruN toolkit/pwa153/pcbdcom/inc/pcbdcom.h toolkit/pwa154/pcbdcom/inc/pcbdco
 +extern "C" {
 +#endif
 +
++/* -------- Error codes -------- */
 +#define RS232ERR_NONE   0
 +#define RS232ERR_BUSY   1
 +#define RS232ERR_PARAM  2
 +#define RS232ERR_NOPORT 3
 +
++/* -------- Baud rate divisors (1.8432 MHz / 16 / baud) -------- */
++#define BAUD300    384
++#define BAUD1200    96
++#define BAUD2400    48
++#define BAUD4800    24
++#define BAUD9600    12
++#define BAUD19200    6
++#define BAUD38400    3
++#define BAUD57600    2
++#define BAUD115200   1
++
++/* -------- Data length -------- */
++#define LENGTH_7  7
++#define LENGTH_8  8
++
++/* -------- Parity -------- */
++#define PARITY_NONE  0
++#define PARITY_ODD   1
++#define PARITY_EVEN  2
++
++/* -------- Flow control protocol -------- */
++#define PROT_RTSRTS   1
++#define PROT_XONXOFF  2
++
++/* -------- Card types -------- */
++#define CARD_8250      0
++#define CARD_BOCA      1
++#define CARD_CYCLOM    2
++#define CARD_DIGPCXE   3
++#define CARD_DIGCXI    4
++#define CARD_ROCKET    5
++#define CARD_EASYIO    6
++#define CARD_ARNET     7
++
++/* -------- Open Port Control Block (opcb_type) -------- */
++/* MODEMDRV.C accesses opcb->msr_reg, opcb->inbuf_count,
++ * opcb->outbuf_count, opcb->cardtype, opcb->flag */
++typedef struct {
++    unsigned char  msr_reg;        /* modem status register shadow      */
++    unsigned char  flag;           /* state flags (XMTOFF_STATE etc.)   */
++    unsigned char  cardtype;       /* CARD_* constant                   */
++    unsigned char  reserved1;
++    unsigned int   inbuf_count;    /* bytes available in RX buffer      */
++    unsigned int   outbuf_count;   /* bytes pending in TX buffer        */
++    unsigned char  padding[24];
++} opcb_type;
++
++/* -------- Auxiliary Port Control Block (auxpcb_type) -------- */
++/* MODEMDRV.C reads aux_frmint, aux_ovrint, aux_parint for error stats */
++typedef struct {
++    int aux_frmint;    /* framing error count   */
++    int aux_ovrint;    /* overrun error count   */
++    int aux_parint;    /* parity error count    */
++} auxpcb_type;
++
++/* -------- Port Parameters (port_param) -------- */
++/* Binary-compatible with COMMDRV. MODEMDRV.C accesses all fields. */
 +struct port_param {
-+    unsigned int  baud;
-+    unsigned char parity;
-+    unsigned char data_bits;
-+    unsigned char stop_bits;
-+    unsigned char flow;
-+    unsigned int  buf_size;
-+    unsigned char misc[16];
++    unsigned int   baud;           /* baud rate divisor (BAUD* constant) */
++    unsigned char  parity;         /* PARITY_* constant                  */
++    unsigned char  data_bits;      /* 5..8                               */
++    unsigned char  stop_bits;      /* 1 or 2                             */
++    unsigned char  flow;           /* 0=none, 1=RTS/CTS, 2=XON/XOFF     */
++    unsigned int   buf_size;       /* RX buffer size                     */
++    unsigned char  lngth;          /* LENGTH_7 or LENGTH_8               */
++    unsigned char  cardtype;       /* CARD_* constant                    */
++    unsigned char  protocol;       /* PROT_* constant                    */
++    int            error;          /* last error code                    */
++    unsigned int   outbuf_len;     /* TX buffer size                     */
++    unsigned int   inbuf_len;      /* RX buffer size                     */
++    unsigned char  block[4];       /* block mode flags                   */
++    opcb_type     *opcb;           /* pointer to open port control block */
++    auxpcb_type   *auxpcb;         /* pointer to aux control block       */
++    unsigned char  misc[16];       /* reserved                           */
 +};
 +
++/* -------- pcbdcom internal port state -------- */
++/* Forward-declared for backend.h; full definition here. */
++
++#define PCBDCOM_MAX_PORTS  32
++#define PCBDCOM_RX_RING   4096
++#define PCBDCOM_TX_RING   2048
++#define PCBDCOM_BUF_SIZE  PCBDCOM_RX_RING
++
++struct pcbdcom_backend;  /* forward */
++
++typedef struct pcbdcom_port {
++    /* Hardware */
++    unsigned int   base;           /* I/O base address                  */
++    unsigned char  irq;            /* IRQ number                        */
++    unsigned char  subport;        /* sub-port on multiport card        */
++    unsigned char  chip;           /* UART chip type (8250/16550)       */
++    unsigned char  open;           /* port is open flag                 */
++    unsigned char  lcr;            /* line control register shadow      */
++
++    /* Serial parameters */
++    unsigned long  baud;
++    unsigned char  parity;
++    unsigned char  data_bits;
++    unsigned char  stop_bits;
++    unsigned char  flow;
++    unsigned int   buf_size;
++
++    /* Ring buffers (pointers set by pcbdcom.c from static arenas) */
++    unsigned char *rx_buf;
++    unsigned int   rx_head;
++    unsigned int   rx_tail;
++    unsigned int   rx_size;
++    unsigned char *tx_buf;
++    unsigned int   tx_head;
++    unsigned int   tx_tail;
++    unsigned int   tx_size;
++
++    /* Backend */
++    const struct pcbdcom_backend *backend;
++    void          *backend_data;   /* per-backend private state          */
++    void          *card_state;     /* per-card shared state              */
++    void          *isr;            /* saved ISR vector                   */
++
++    /* COMMDRV compatibility — populated by shim for MODEMDRV.C access */
++    opcb_type      compat_opcb;    /* embedded opcb for this port        */
++    auxpcb_type    compat_auxpcb;  /* embedded auxpcb for this port      */
++} pcbdcom_port_t;
++
++/* -------- API functions -------- */
 +int  ser_rs232_init(void);
 +int  ser_rs232_setup(unsigned int port, struct port_param *pp);
 +int  ser_rs232_getport(unsigned int port, struct port_param *pp);
@@ -408,7 +851,7 @@ diff -ruN toolkit/pwa153/pcbdcom/inc/pcbdcom.h toolkit/pwa154/pcbdcom/inc/pcbdco
 +}
 +#endif
 +
-+#endif
++#endif /* PCBDCOM_SDK_H */
 diff -ruN toolkit/pwa153/pcbdcom/inc/uart.h toolkit/pwa154/pcbdcom/inc/uart.h
 --- toolkit/pwa153/pcbdcom/inc/uart.h	1970-01-01 00:00:00.000000000 +0000
 +++ toolkit/pwa154/pcbdcom/inc/uart.h	2026-09-11 00:24:32.512262609 +0000
@@ -3261,10 +3704,10 @@ diff -ruN toolkit/pwa153/pcbdcom/src/rocket_backend.c toolkit/pwa154/pcbdcom/src
 + * ---------------------------------------------------------------------- */
 diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
 --- toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c	1970-01-01 00:00:00.000000000 +0000
-+++ toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c	2026-09-11 00:24:32.512558037 +0000
-@@ -0,0 +1,229 @@
++++ toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c	2026-09-11 21:17:36.704333280 +0000
+@@ -0,0 +1,224 @@
 +/* ============================================================================
-+ * ser_rs232_shim.c — pcbdcom drop-in replacement for COMMDRV.OBJ
++ * ser_rs232_shim.c  pcbdcom drop-in replacement for COMMDRV.OBJ
 + *
 + * Exports the 13-function ser_rs232_* API that PCBoard's MODEMDRV.C links
 + * against. Enables link-time substitution: link PCBoard with pcbdcom.OBJ
@@ -3272,19 +3715,6 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 + *
 + * Calling convention (Pascal, callee-cleans, uppercase symbols) matches
 + * what COMM-DRV shipped — MODEMDRV.C sees no difference.
-+ *
-+ * API surface (all functions from PCBoard MODEMDRV.C):
-+ *   ser_rs232_init          — one-time driver init
-+ *   ser_rs232_setup         — configure Port using port_param struct
-+ *   ser_rs232_getport       — read current port_param
-+ *   ser_rs232_getbyte       — read 1 byte (blocking-ish)
-+ *   ser_rs232_putbyte       — write 1 byte
-+ *   ser_rs232_getpacket     — read N bytes (or 0 = flush counters)
-+ *   ser_rs232_putpacket     — write N bytes (or NULL = flush TX)
-+ *   ser_rs232_viewpacket    — peek RX buffer without consuming
-+ *   ser_rs232_flush         — flush queues (0=RX, 1=TX, 2=both)
-+ *   ser_rs232_dtr_on/_off   — DTR control
-+ *   ser_rs232_rts_on/_off   — RTS control
 + *
 + * License: GPLv3
 + * ==========================================================================*/
@@ -3302,25 +3732,6 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +# define SHIM_IN(port)       (unsigned char)inp((port))
 +#endif
 +
-+/* Return codes matching COMM-DRV public API */
-+#define RS232ERR_NONE   0
-+#define RS232ERR_BUSY   1
-+#define RS232ERR_PARAM  2
-+#define RS232ERR_NOPORT 3
-+
-+/* port_param struct matching COMM-DRV's public layout.
-+ * Field order preserved for binary compatibility with existing PCBoard
-+ * MODEMDRV.C code that uses this struct. */
-+struct port_param {
-+    unsigned int  baud;
-+    unsigned char parity;      /* 'N', 'E', 'O', 'M', 'S' */
-+    unsigned char data_bits;   /* 5..8 */
-+    unsigned char stop_bits;   /* 1 or 2 */
-+    unsigned char flow;        /* 0=none, 1=RTS/CTS, 2=XON/XOFF */
-+    unsigned int  buf_size;
-+    unsigned char misc[16];    /* reserved for future / card-specific */
-+};
-+
 +/* External port table from pcbdcom.c */
 +extern pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
 +extern int g_n_ports;
@@ -3330,6 +3741,19 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +    if (port_num == 0 || port_num > (unsigned int)g_n_ports)
 +        return NULL;
 +    return &g_ports[port_num - 1];
++}
++
++/* Update compat_opcb from current port state */
++static void update_opcb(pcbdcom_port_t *p)
++{
++    unsigned int rx_avail = (p->rx_head - p->rx_tail) & (p->rx_size - 1);
++    unsigned int tx_pend  = (p->tx_head - p->tx_tail) & (p->tx_size - 1);
++
++    p->compat_opcb.inbuf_count  = rx_avail;
++    p->compat_opcb.outbuf_count = tx_pend;
++    /* Read MSR from hardware if port is open */
++    if (p->open && p->base)
++        p->compat_opcb.msr_reg = SHIM_IN(p->base + 6);
 +}
 +
 +/* -------- API functions -------- */
@@ -3345,11 +3769,14 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +    pcbdcom_port_t *p = port_by_num(port);
 +    if (!p || !pp) return RS232ERR_PARAM;
 +
-+    p->baud      = (long)pp->baud;
++    p->baud      = (unsigned long)pp->baud;
 +    p->parity    = pp->parity;
 +    p->data_bits = pp->data_bits;
 +    p->stop_bits = pp->stop_bits;
 +    p->flow      = pp->flow;
++
++    /* Store COMMDRV-compatible fields */
++    p->compat_opcb.cardtype = pp->cardtype;
 +
 +    if (p->backend && p->backend->init)
 +        return (p->backend->init(p) == 0) ? RS232ERR_NONE : RS232ERR_PARAM;
@@ -3361,12 +3788,34 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +    pcbdcom_port_t *p = port_by_num(port);
 +    if (!p || !pp) return RS232ERR_PARAM;
 +
++    /* Update opcb from current state */
++    update_opcb(p);
++
++    /* Basic serial parameters */
 +    pp->baud      = (unsigned int)p->baud;
 +    pp->parity    = p->parity;
 +    pp->data_bits = p->data_bits;
 +    pp->stop_bits = p->stop_bits;
 +    pp->flow      = p->flow;
-+    pp->buf_size  = PCBDCOM_BUF_SIZE;
++    pp->buf_size  = p->rx_size;
++
++    /* COMMDRV-compatible fields */
++    pp->lngth      = (p->data_bits == 8) ? LENGTH_8 : LENGTH_7;
++    pp->cardtype   = p->compat_opcb.cardtype;
++    pp->protocol   = (p->flow == 1) ? PROT_RTSRTS :
++                     (p->flow == 2) ? PROT_XONXOFF : 0;
++    pp->error      = RS232ERR_NONE;
++    pp->outbuf_len = p->tx_size;
++    pp->inbuf_len  = p->rx_size;
++    pp->block[0]   = 0;
++    pp->block[1]   = 0;
++    pp->block[2]   = 0;
++    pp->block[3]   = 0;
++
++    /* Pointers to embedded compat structs */
++    pp->opcb   = &p->compat_opcb;
++    pp->auxpcb = &p->compat_auxpcb;
++
 +    return RS232ERR_NONE;
 +}
 +
@@ -3393,20 +3842,15 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +    if (!p) return RS232ERR_PARAM;
 +    if (!p->backend || !p->backend->read) return RS232ERR_NOPORT;
 +
-+    /* n == 0 with buf != NULL: refresh state, return buffered count in
-+     * the first byte of buf (MODEMDRV.C convention). */
++    /* n == 0: refresh state (MODEMDRV.C convention) */
 +    if (n == 0) {
-+        unsigned char tmp;
-+        (void)p->backend->read(p, &tmp, 0);
++        update_opcb(p);
 +        return RS232ERR_NONE;
 +    }
 +
 +    /* n == 32767 with NULL buf: flush RX buffer (MODEMDRV.C convention) */
 +    if (n == 32767 && buf == NULL) {
-+        unsigned char scratch[64];
-+        int rem = 32767;
-+        while (rem > 0 && (got = p->backend->read(p, scratch, 64)) > 0)
-+            rem -= got;
++        p->rx_head = p->rx_tail = 0;
 +        return RS232ERR_NONE;
 +    }
 +
@@ -3438,9 +3882,9 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +
 +    /* Peek RX buffer without consuming */
 +    {
-+        unsigned int avail = (p->rx_head - p->rx_tail) & (PCBDCOM_RX_RING - 1);
++        unsigned int avail = (p->rx_head - p->rx_tail) & (p->rx_size - 1);
 +        for (i = 0; i < n && i < avail; i++)
-+            buf[i] = p->rx_buf[(p->rx_tail + i) & (PCBDCOM_RX_RING - 1)];
++            buf[i] = p->rx_buf[(p->rx_tail + i) & (p->rx_size - 1)];
 +    }
 +    return RS232ERR_NONE;
 +}
@@ -3459,9 +3903,7 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +{
 +    pcbdcom_port_t *p = port_by_num(port);
 +    if (!p) return RS232ERR_PARAM;
-+    /* MCR bit 0 = DTR */
-+    SHIM_OUT(p->base + 4,
-+                     SHIM_IN(p->base + 4) | 0x01);
++    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) | 0x01);
 +    return RS232ERR_NONE;
 +}
 +
@@ -3469,8 +3911,7 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +{
 +    pcbdcom_port_t *p = port_by_num(port);
 +    if (!p) return RS232ERR_PARAM;
-+    SHIM_OUT(p->base + 4,
-+                     SHIM_IN(p->base + 4) & ~0x01);
++    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) & ~0x01);
 +    return RS232ERR_NONE;
 +}
 +
@@ -3478,9 +3919,7 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +{
 +    pcbdcom_port_t *p = port_by_num(port);
 +    if (!p) return RS232ERR_PARAM;
-+    /* MCR bit 1 = RTS */
-+    SHIM_OUT(p->base + 4,
-+                     SHIM_IN(p->base + 4) | 0x02);
++    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) | 0x02);
 +    return RS232ERR_NONE;
 +}
 +
@@ -3488,8 +3927,7 @@ diff -ruN toolkit/pwa153/pcbdcom/src/ser_rs232_shim.c toolkit/pwa154/pcbdcom/src
 +{
 +    pcbdcom_port_t *p = port_by_num(port);
 +    if (!p) return RS232ERR_PARAM;
-+    SHIM_OUT(p->base + 4,
-+                     SHIM_IN(p->base + 4) & ~0x02);
++    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) & ~0x02);
 +    return RS232ERR_NONE;
 +}
 diff -ruN toolkit/pwa153/pcbdcom/src/uart.c toolkit/pwa154/pcbdcom/src/uart.c
@@ -3925,6 +4363,27 @@ diff -ruN toolkit/pwa153/CFG/BC31/PCBOARD.CFG toolkit/delta154/CFG/BC31/PCBOARD.
 -
 --DMG
 --DTOSSCLASS
+diff -ruN toolkit/pwa153/CFG/BC31/PPLC.CFG toolkit/delta154/CFG/BC31/PPLC.CFG
+--- toolkit/pwa153/CFG/BC31/PPLC.CFG	2026-09-11 20:55:20.720404659 +0000
++++ toolkit/delta154/CFG/BC31/PPLC.CFG	1970-01-01 00:00:00.000000000 +0000
+@@ -1,17 +0,0 @@
+--c
+--P
+--ml
+--3
+--ff
+--d
+--Od
+--IC:\LIBSRC\H
+--IC:\MAINSRC\H
+--IC:\PPLC\SRC
+--IC:\BC31\INCLUDE
+--DPCBOARD
+--DPCBCOMM
+--DNDEBUG
+--DPCB152
+--DPCB153
+--D___COMP___
 diff -ruN toolkit/pwa153/H/CNAMEIDX.H toolkit/delta154/H/CNAMEIDX.H
 --- toolkit/pwa153/H/CNAMEIDX.H	2026-09-11 00:24:32.477182020 +0000
 +++ toolkit/delta154/H/CNAMEIDX.H	2026-09-11 00:24:32.442778350 +0000
@@ -27670,6 +28129,64 @@ diff -ruN toolkit/pwa153/SOURCE/PCB/DATA120.C toolkit/delta154/SOURCE/PCB/DATA12
 -  MiniBBS = inkey(&MiniBBS,NOCLOCK);
 +  { char ext; MiniBBS = inkey(&ext,NOCLOCK); }
  }
+diff -ruN toolkit/pwa153/SOURCE/PPLC/PCBGLOB.C toolkit/delta154/SOURCE/PPLC/PCBGLOB.C
+--- toolkit/pwa153/SOURCE/PPLC/PCBGLOB.C	2026-09-11 20:55:20.720404659 +0000
++++ toolkit/delta154/SOURCE/PPLC/PCBGLOB.C	1970-01-01 00:00:00.000000000 +0000
+@@ -1,19 +0,0 @@
+-/* PCBGLOB.C - runtime globals for PPLC link */
+-#include "types.hpp"
+-#include "pcboard.h"
+-
+-/* Simple globals */
+-int CtrlBreak = 0;
+-int ErrorLevel = 0;
+-unsigned ExtConfLen = 0;
+-int ForceUpdate = 0;
+-int LocalOn = 0;
+-unsigned MsgPtrLen = 0;
+-char PcbDir[80] = {0};
+-int UseAnsi = 0;
+-int UsersFile = 0;
+-char UsersData[4096] = {0};
+-
+-/* Status and PcbData — proper types */
+-statustype Status;
+-pcbdattype PcbData;
+diff -ruN toolkit/pwa153/SOURCE/PPLC/PPLC.LNK toolkit/delta154/SOURCE/PPLC/PPLC.LNK
+--- toolkit/pwa153/SOURCE/PPLC/PPLC.LNK	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/delta154/SOURCE/PPLC/PPLC.LNK	1970-01-01 00:00:00.000000000 +0000
+@@ -1,31 +0,0 @@
+-C:\BC31\LIB\C0L.OBJ+
+-C:\OUT\PPLC\SCOMP.OBJ+
+-C:\OUT\PPLC\NEWSCR.OBJ+
+-C:\OUT\PPLC\SCRCOMP.OBJ+
+-C:\OUT\PPLC\SCRMISC.OBJ+
+-C:\OUT\PPLC\PCBMISC.OBJ+
+-C:\OUT\PPLC\VAR.OBJ+
+-C:\OUT\PPLC\LABEL.OBJ+
+-C:\OUT\PPLC\CEH.OBJ+
+-C:\OUT\PPLC\H2NAME.OBJ+
+-C:\OUT\STUBS\NOANSI.OBJ+
+-C:\OUT\STUBS\NOCHAT.OBJ+
+-C:\OUT\STUBS\NODISP.OBJ+
+-C:\OUT\STUBS\NOHELP.OBJ+
+-C:\OUT\STUBS\NOINPUT.OBJ+
+-C:\OUT\STUBS\NOLANG.OBJ+
+-C:\OUT\STUBS\NOLOG.OBJ+
+-C:\OUT\STUBS\NOMEMORY.OBJ+
+-C:\OUT\STUBS\NOPCBSYS.OBJ+
+-C:\OUT\STUBS\NOPRINT.OBJ+
+-C:\OUT\STUBS\NOSCREEN.OBJ+
+-C:\OUT\STUBS\NOSHELL.OBJ+
+-C:\OUT\STUBS\NOSTATUS.OBJ+
+-C:\OUT\STUBS\NOSYS.OBJ+
+-C:\OUT\STUBS\NOTXT.OBJ+
+-C:\OUT\STUBS\NOUPDSYS.OBJ+
+-C:\OUT\STUBS\NOXLATE.OBJ
+-C:\OUT\PPLC\PPLC.EXE
+-
+-C:\OUT\PCBKIT_L.LIB+
+-C:\BC31\LIB\MATHL.LIB C:\BC31\LIB\EMU.LIB C:\BC31\LIB\CL.LIB
 diff -ruN toolkit/pwa153/SOURCE/SCREEN/ANSI.C toolkit/delta154/SOURCE/SCREEN/ANSI.C
 --- toolkit/pwa153/SOURCE/SCREEN/ANSI.C	2026-09-11 00:24:32.484580521 +0000
 +++ toolkit/delta154/SOURCE/SCREEN/ANSI.C	2026-09-11 00:24:32.456526625 +0000
@@ -30406,34 +30923,6 @@ diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/INIT.C toolkit/delta154/SOURCE/TOOLKIT/I
    #endif
  
    SystemCountry = Country;
-diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NODISP.C toolkit/delta154/SOURCE/TOOLKIT/NODISP.C
---- toolkit/pwa153/SOURCE/TOOLKIT/NODISP.C	2026-09-11 00:24:32.488489141 +0000
-+++ toolkit/delta154/SOURCE/TOOLKIT/NODISP.C	2026-09-11 19:48:28.987479926 +0000
-@@ -34,8 +34,6 @@
- }
- 
- #pragma argsused
--void LIBENTRY print(char *Str) {
--}
- 
- void LIBENTRY printcls(void) {
- }
-@@ -44,15 +42,11 @@
- void LIBENTRY moreprompt(int Type) {
- }
- 
--void LIBENTRY newline(void) {
--}
- 
- void LIBENTRY freshline(void) {
- }
- 
- #pragma argsused
--void LIBENTRY println(char *Str) {
--}
- 
- #pragma argsused
- void LIBENTRY printcolor(int ColorNum) {
 diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOINPUT.C toolkit/delta154/SOURCE/TOOLKIT/NOINPUT.C
 --- toolkit/pwa153/SOURCE/TOOLKIT/NOINPUT.C	2026-09-11 00:24:32.488489141 +0000
 +++ toolkit/delta154/SOURCE/TOOLKIT/NOINPUT.C	2026-09-11 00:24:32.459921358 +0000
@@ -30459,225 +30948,14 @@ diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOINPUT.C toolkit/delta154/SOURCE/TOOLKI
  }
  #pragma warn +rvl
  #pragma warn +par
-diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOPCBSYS.C toolkit/delta154/SOURCE/TOOLKIT/NOPCBSYS.C
---- toolkit/pwa153/SOURCE/TOOLKIT/NOPCBSYS.C	2026-09-11 00:24:32.488489141 +0000
-+++ toolkit/delta154/SOURCE/TOOLKIT/NOPCBSYS.C	2026-09-11 19:48:29.002073242 +0000
-@@ -14,8 +14,4 @@
- 
- #include <pcbtools.h>
- 
--void LIBENTRY makepcboardsys(void) {
--}
- 
--void LIBENTRY readpcboardsys(void) {
--}
-diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOUPDSYS.C toolkit/delta154/SOURCE/TOOLKIT/NOUPDSYS.C
---- toolkit/pwa153/SOURCE/TOOLKIT/NOUPDSYS.C	2026-09-11 00:24:32.488489141 +0000
-+++ toolkit/delta154/SOURCE/TOOLKIT/NOUPDSYS.C	2026-09-11 19:48:29.041023711 +0000
-@@ -126,192 +126,5 @@
- 
- 
- void LIBENTRY readpcboardsys(void) {
--  systype Sys;
--  char    Str[60];
--  DOSFILE File;
--  int     BytesRead;
--  #if ! (defined(PCB_DEMO) || defined(LIB))
--  char    *p;
--  #endif
--
--  strcpy(Str,PcbDir);
--  strcat(Str,"PCBOARD.SYS");
--  if (fileexist(Str) == 255) {
--    puts("WARNING Could not find:");
--    puts(Str);
--    goto readusersys;
--  }
--  if (dosfopen(Str,OPEN_READ|OPEN_DENYNONE,&File) == -1)
--    goto readusersys;
--
--  BytesRead = dosfread(&Sys,sizeof(systype),&File);
--  if (BytesRead != sizeof(systype) && BytesRead != 128) { /* bad format? */
--    dosfclose(&File);
--    goto readusersys;
--  }
--
--  Control.Screen   = (bool) ascii2bool(Sys.Screen);
--  Status.PrintLog  = (bool) (ascii2bool(Sys.PrintLog) && (PcbData.ParallelPortNum != 0));
--  Status.Alarm     = (bool) ascii2bool(Sys.Alarm);
--
--  #ifndef LIB
--    Status.PageBell  = ascii2bool(Sys.PageBell);
--    Status.PackFlag  = ' ';             /* default to off */
--  #endif
--
--  Status.UserRecNo = 0;
--  Status.SysopFlag = Sys.SysopFlag;
--  if (Status.SysopFlag != 'X' && Status.SysopFlag != 'N')  /* make sure it */
--    Status.SysopFlag = ' ';                                /* is valid     */
--
--  if (BytesRead < sizeof(systype)) {
--    Sys.UseAnsi = FALSE;
--  }
--
--  if (Control.Screen)
--    Status.ForceScreenOff = FALSE;
--  else {
--    Status.ForceScreenOff = TRUE;
--    turndisplayoff(FALSE);  /* FALSE so that it doesn't make another pcboard.sys */
--  }
--
--  if (Sys.GraphicsMode != ' ' && Sys.FirstName[0] != ' ' &&
--      Sys.GraphicsMode != 0   && Sys.FirstName[0] != 0) {
--    #ifndef LIB
--      if (Sys.UserRecNo <= 0 || Sys.UserRecNo > numrecs(UsersFile,sizeof(UsersRead))) {
--        displaypcbtext(TXT_USERRECNUMISBAD,NEWLINE|LFBEFORE|LOGIT);
--        dosfclose(&File);
--        goto readusersys;
--      }
--      #if defined(PCB_NETWORK) && ! defined(PCB_X)
--        if (PcbData.Network && Sys.NodeNum != PcbData.NodeNum) {
--          sprintf(Str,"Sys Node: %d",Sys.NodeNum);
--          writelog(Str,SPACERIGHT);
--        }
--      #endif
--      Status.BackFromDoor = TRUE;  /* getuserrecord() needs to know this */
--    #endif
--
--    Status.UserRecNo = Sys.UserRecNo;
--
--    #ifndef LIB
--      Status.PackFlag  = Sys.PackFlag;  /* but if there's a user get real status */
--      Status.TerseMode = Sys.Reserve.TerseMode;
--
--      #ifdef PCB_NETWORK
--        Status.Available = (Sys.UserNetStatus == 'A');
--      #endif
--    #endif
--
--    Asy.Telnet              = (bool) Sys.Reserve.Telnet;
--    Asy.DataBits            = (char) (Sys.GraphicsMode == '7' ? 7 : 8);
--    Control.GraphicsMode    = (bool) (Sys.GraphicsMode == 'Y');
--    UseAnsi                 = (bool) (Sys.GraphicsMode == 'Y' ? TRUE : Sys.UseAnsi);
--    Asy.ErrorCorrected      = (bool) ascii2bool(Sys.ErrorCorrected);
--    Status.LogonMinute      = Sys.LogonMinute;
--
--    #ifndef LIB
--    Status.MaxKBytesAllowed = Sys.MaxKBytesAllowed;
--    #endif
--
--    Status.Conference       = (BytesRead < sizeof(systype) ? Sys.Conference : Sys.Conference2);
--    Status.ConfAddTime      = Sys.ConfAddTime;
--/*  Status.CreditMinutes    = Sys.CreditMinutes; */
--
--    #ifndef LIB
--      fmemcpy(&ConfFlags[JOINED ],Sys.ConfJoined ,sizeof(Sys.ConfJoined));
--      fmemcpy(&ConfFlags[SCANNED],Sys.ConfScanned,sizeof(Sys.ConfScanned));
--
--      #ifndef PCB_DEMO
--        if (PcbData.NumAreas > 40 && BytesRead > 128) {
--          if ((p = malloc(ExtConfLen*2)) != NULL) {
--            dosfread(p,ExtConfLen*2,&File);
--            fmemcpy(&ConfFlags[JOINED+5],p,ExtConfLen);
--            fmemcpy(&ConfFlags[SCANNED+5],p+ExtConfLen,ExtConfLen);
--            free(p);
--          }
--        }
--      #endif
--    #endif
--
--    Str[5] = 0;
--    memcpy(Str,Sys.ModemSpeed,5);
--    Asy.ModemSpeed = atol(Str);
--    if (Asy.ModemSpeed == 11520)
--      Asy.ModemSpeed = 115200L;
--
--    if (Sys.CarrierSpeed[0] == 'L' || Asy.ComPortNumber == 0) {
--      Asy.CarrierSpeed = Asy.ConnectSpeed = Asy.ModemSpeed;
--      Asy.Online = LOCAL;
--      #ifndef LIB
--        if (Sys.CarrierSpeed[1] == 'O') /* "LOCAL" = LocalOn, "Local" does not */
--          LocalOn = TRUE;
--      #endif
--    } else {
--      memcpy(Str,Sys.CarrierSpeed,5);
--      Asy.CarrierSpeed = atol(Str);
--      if (Asy.CarrierSpeed == 11520)
--        Asy.CarrierSpeed = 115200L;
--      Asy.ConnectSpeed = (Asy.ErrorCorrected && Asy.CarrierSpeed >= 9600 ? Asy.ModemSpeed : Asy.CarrierSpeed);
--      Asy.Online = REMOTE;
--    }
--
--    #ifndef LIB
--      getuserrecord(TRUE,FALSE);
--      Status.BackFromDoor = FALSE;  /* no longer needed after calling getuserrecord() */
--    #endif
--
--    #ifdef LIB
--      addtime(Sys.MinutesLeft * 60L,NEWTIME);
--    #endif
--    addtime(Sys.CreditMinutes * 60L,CREDTIME);
--
--    memcpy(Status.LogonTime,Sys.LogonTime,5);
--    memcpy(&Status.LogonTime[5],":00",4);
--    Status.LogonMinute = (short) strtominutes(Status.LogonTime);
--    datestr(Status.LogonDate);
--    Status.JulianLogonDate = datetojulian(Status.LogonDate);
--    if (currentminute() < Status.LogonMinute) {
--      Status.JulianLogonDate--;
--      strcpy(Status.LogonDate,juliantodate(Status.JulianLogonDate));
--    }
--
--    #ifndef LIB
--      Status.CtodLogonDate = ctod(Status.LogonDate);
--    #endif
--
--    memcpy(Status.MultiLangExt,Sys.MultiLangExt,4);
--    Status.MultiLangExt[4] = 0;
--    stripright(Status.MultiLangExt,' ');
--    if (Status.MultiLangExt[0] != 0)
--      readpcbtextfile(Status.MultiLangExt,PROGRAM);
--
--    #ifndef LIB
--      Status.MemorizeNum = bassngltolong(Sys.MemorizeNum);
--    #endif
--    settimer(1,Control.KbdTimer);
--    dosfclose(&File);
--    return;
--  }
--  dosfclose(&File);
--
--readusersys:;
--  #ifndef LIB
--    #ifndef PCB_DEMO
--      if (fileexist("USERS.SYS") != 255) {
--        Status.UserRecNo = 0;
--        getuserrecord(TRUE,TRUE);
--        if (Status.UserRecNo != 0)
--          putuserrecord(IGNOREDIRTY);
--        unlink("USERS.SYS");
--        Status.UserRecNo = 0;
--        memset(&UsersData,0,sizeof(UsersData));
--        fmemset(MsgReadPtr,0,MsgPtrLen);
--        fmemset(ConfFlags,0,ConfByteLen * 2);
--        fmemset(ConfReg,0,ConfByteLen * 6);
--        Status.Logoff = NLOGOFF;  /* cause $$LOGOFF.BAT to be run */
--        recycle();
--      }
--    #endif
--  #endif
- }
-+
 diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/NOXLATE.C toolkit/delta154/SOURCE/TOOLKIT/NOXLATE.C
---- toolkit/pwa153/SOURCE/TOOLKIT/NOXLATE.C	2026-09-11 00:24:32.488489141 +0000
-+++ toolkit/delta154/SOURCE/TOOLKIT/NOXLATE.C	2026-09-11 19:48:29.016079505 +0000
-@@ -14,6 +14,3 @@
+--- toolkit/pwa153/SOURCE/TOOLKIT/NOXLATE.C	2026-09-11 20:55:20.724177282 +0000
++++ toolkit/delta154/SOURCE/TOOLKIT/NOXLATE.C	2026-09-11 20:55:20.720404659 +0000
+@@ -14,4 +14,3 @@
  
  #include "pcbtools.h"
  
--void LIBENTRY printxlated(char *Str) {
--  print(Str);
--}
+-/* printxlated removed - defined in PCBMISC.CPP */
 diff -ruN toolkit/pwa153/SOURCE/TOOLKIT/PCBINIT.C toolkit/delta154/SOURCE/TOOLKIT/PCBINIT.C
 --- toolkit/pwa153/SOURCE/TOOLKIT/PCBINIT.C	2026-09-11 00:24:32.489361800 +0000
 +++ toolkit/delta154/SOURCE/TOOLKIT/PCBINIT.C	2026-09-11 00:24:32.460687538 +0000

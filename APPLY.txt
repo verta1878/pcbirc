@@ -1,34 +1,11 @@
-pcbdcom: COMMDRV drop-in complete — all gaps filled
+15.4-toolkit.patch regenerated after pcbdcom drop-in
 =====================================================
 Date: 2026-09-11
 
-WHAT THIS RELEASE DOES
-
-  pcbdcom.h rewritten for full COMMDRV binary compatibility:
-  - opcb_type struct (msr_reg, inbuf_count, outbuf_count, cardtype, flag)
-  - auxpcb_type struct (aux_frmint, aux_ovrint, aux_parint)
-  - port_param expanded with all MODEMDRV.C fields
-  - pcbdcom_port_t defined (was missing — 24 internal fields + compat structs)
-  - Baud/length/parity/protocol/card constants
-  - PCBDCOM_MAX_PORTS, PCBDCOM_RX_RING, PCBDCOM_TX_RING
-
-  ser_rs232_shim.c updated:
-  - Removed duplicate port_param (now in pcbdcom.h)
-  - getport() populates opcb/auxpcb/cardtype/outbuf_len from port state
-  - update_opcb() reads MSR from hardware, updates buffer counts
-  - getpacket(n==0) refreshes opcb state (MODEMDRV.C convention)
-
-  MODEMDRV.C can now compile against pcbdcom.h instead of COMM.H.
-  15.4+ builds use pcbdcom as the comm driver.
-
-APPLY — extract into repo root.
-
-  Modifies:
-    toolkit/pwa154/pcbdcom/inc/pcbdcom.h
-    toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
-    docs/pcboard-internals/pcbkit-module-comparison.md
+Regenerated against cleaned source with pcbdcom.h and
+ser_rs232_shim.c updates. 276 files, 40,205 lines.
 
   Commit message:
-    pcbdcom: full COMMDRV drop-in, all gaps filled
+    patches: 15.4-toolkit.patch regenerated (pcbdcom update)
 
 --hexadecimal, 2026-09-11
