@@ -1,1 +1,3 @@
-85ddd962d1d1d55d3476cba0ef261d2f36aaf6dbd0e4909a5dbca804838deaf9  patches/15.4-toolkit.patch
+eac81dfc24ca04c103892fc7014e5131ea65f1d75fde76b84c53bdf7e7269269  docs/pcboard-internals/pcbkit-module-comparison.md
+7b23b84836bb4c7149125970deaab0438b2456f9693ebac4ff933794c58c9595  pcb1541/pcbic12/src/RUNINET.PPS
+7b23b84836bb4c7149125970deaab0438b2456f9693ebac4ff933794c58c9595  pcb1541/pcbic12/bin/RUNINET.PPS

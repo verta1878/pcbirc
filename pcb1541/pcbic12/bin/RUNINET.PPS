@@ -1,8 +1,8 @@
-*****************************************************************************
-* RUNINET.PPE - This program is used to launch a user into the SLIP or PPP  *
-* door if they selected the corresponding language.  FYI, the SLP language  *
-* is associated with the SLIP door and the PPP language with the PPP door.  *
-*****************************************************************************
+;****************************************************************************
+; RUNINET.PPE - This program is used to launch a user into the SLIP or PPP  *
+; door if they selected the corresponding language.  FYI, the SLP language  *
+; is associated with the SLIP door and the PPP language with the PPP door.  *
+;****************************************************************************
 
 DECLARE FUNCTION FileInPath(STRING environVar, STRING filename)
 
@@ -87,7 +87,7 @@ PRINTLN "If you see this message, you do not have Internet Access.  We are now"
 PRINTLN "disconnecting you so that you can pick another language."
 HANGUP
 
-***************************** Functions **************************************
+;**************************** Functions **************************************
 
 FUNCTION FileInPath(STRING environ, STRING filename) INTEGER
 

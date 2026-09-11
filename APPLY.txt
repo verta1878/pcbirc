@@ -1,11 +1,18 @@
-15.4-toolkit.patch regenerated after pcbdcom drop-in
-=====================================================
+v0.2.8: RUNINET.PPS fixed — 19/19 tests pass
+==============================================
 Date: 2026-09-11
 
-Regenerated against cleaned source with pcbdcom.h and
-ser_rs232_shim.c updates. 276 files, 40,205 lines.
+RUNINET.PPS failed because repo file had UNIX line endings (LF).
+PPLC needs DOS line endings (CR+LF). Also * comments changed to ;.
+
+NOT a compiler bug. NOT a v3.20 feature issue. Just line endings.
+
+Result: RUNINET.PPE compiles to 2,261 bytes. 19/19 ALL tests pass.
+
+  Modifies:
+    docs/pcboard-internals/pcbkit-module-comparison.md
 
   Commit message:
-    patches: 15.4-toolkit.patch regenerated (pcbdcom update)
+    v0.2.8: RUNINET fixed (line endings), 19/19 tests pass
 
 --hexadecimal, 2026-09-11

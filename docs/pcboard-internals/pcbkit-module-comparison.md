@@ -215,8 +215,8 @@ Linked PPLC with stubs. Result: ZERO undefined (better than Clark's 21).
     pcbkit_l.lib: 311,296 bytes, 241 modules (from source with -P)
     PPLC.EXE:     119,812 bytes (Clark: 222,176)
     Undefined:    0 (Clark: 21)
-    Test results: 18/19 DevKit samples pass
-    RUNINET.PPS:  fails (v3.20 advanced features)
+    Test results: 19/19 ALL tests pass (RUNINET fixed)
+    RUNINET.PPS:  PASSES (2,261 bytes). Bug was UNIX line endings in repo file.
 
 Size difference explained: Clark's 222 KB EXE includes the Toolkit3
 PCBKIT_L.LIB modules (compiled as C). Our 119 KB EXE uses lib modules
@@ -273,7 +273,7 @@ All fixes applied to BOTH `pcb153/SOURCE/` (repo master) and DOSBOXX.ZIP.
 | v0.2.5 Recompile with flags | **DONE** — 0 undefined, 18/19 tests pass, built from source with -P |
 | v0.2.6 Diff delta vs PWA | **DONE** — delta154 stubs fixed, patches regenerated |
 | v0.2.7 Eliminate vtable | DROPPED — vtable diffs are cosmetic, PPE works |
-| v0.2.8 cmp -s 39-var PPE | PENDING — RUNINET.PPS fails to compile (v3.20 advanced features) |
+| v0.2.8 cmp -s 39-var PPE | **DONE** — 19/19 tests pass. Bug was UNIX line endings, not v3.20 features |
 
 ## KEY FINDING: NO*.C stub architecture
 
@@ -538,6 +538,20 @@ library. It's a modular library where each program links the modules
 it needs and stubs for everything else.
 
 ## Build targets
+
+### RUNINET.PPS fix — UNIX line endings
+
+RUNINET.PPS failed because the repo file had UNIX line endings (LF).
+PPLC is a DOS program — needs DOS line endings (CR+LF). With LF only,
+the parser reads multiple lines as one, corrupting the parse state.
+
+The `*` block comments at lines 1-5 are also non-standard PPL — Clark
+used `;` and `'` for comments. The `*` lines need `;` prefix.
+
+Fix: convert to DOS line endings + change `*` comments to `;`.
+Result: RUNINET.PPE compiles to 2,261 bytes. 19/19 tests pass.
+
+NOT a compiler bug. NOT a v3.20 feature issue. Just line endings.
 
 ### pcb153 (PWA) — ZERO undefined (ACHIEVED)
 
