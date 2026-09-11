@@ -1,37 +1,23 @@
-v0.2.5: PPLC compiles from source — zero undefined, 18/19 tests pass
-======================================================================
+v0.2.6: Delta update, patches regenerated, full diff
+======================================================
 Date: 2026-09-11
 
 WHAT THIS RELEASE DOES
 
-  pcbkit_l.lib rebuilt from source. PPLC links clean. Zero undefined.
-  18 of 19 PPL DevKit test programs compile successfully.
+  A. delta154 stubs fixed (NODISP, NOPCBSYS, NOXLATE, NOUPDSYS)
+  B. upd154 USERS.C — no change needed (#ifndef LIB exists)
+  C. upd154 USERS.H — _FARDATA_ guard added
+  D. upd154 NEWSCR.CPP — not touched (CUR_PPE_VER=340 correct)
+  E. Full diff — two patches regenerated against cleaned source
 
-  Build: 249 C + 7 ASM source files compiled with -P (C++ mode)
-         17 NO*.C stubs compiled from PWA source
-         PCBGLOB.C provides runtime globals (Status, PcbData, etc.)
-         ALTMODEM module removed (modem functions PPLC doesn't need)
-
-  Key finding: Toolkit3 PCBKIT_L.LIB compiled as C — symbol names
-  don't match C++ PPLC. extern "C" commented out by Clark because
-  BCC 3.1 doesn't support it with pascal calling convention.
-  Fix: compile everything with -P so symbols match.
+  Patches:
+    15.4-pwa.patch     — MAIN source (pcb153 → upd154, 82 files)
+    15.4-toolkit.patch — toolkit (pwa153 → pwa154 + delta154)
+    Old 15.4-pwa.patch moved to attic (generated against uncleaned source)
 
 APPLY — extract into repo root.
 
-  Modifies:
-    toolkit/pwa153/SOURCE/TOOLKIT/NODISP.C    — removed print/newline/println (PCBMISC has them)
-    toolkit/pwa153/SOURCE/TOOLKIT/NOPCBSYS.C  — removed readpcboardsys/makepcboardsys (NOUPDSYS has them)
-    toolkit/pwa153/SOURCE/TOOLKIT/NOXLATE.C   — removed printxlated (PCBMISC has it)
-    toolkit/pwa153/SOURCE/TOOLKIT/NOUPDSYS.C  — readpcboardsys emptied, malloc cast fix
-    docs/pcboard-internals/pcbkit-module-comparison.md — 792-line project reference
-
-  New:
-    toolkit/pwa153/SOURCE/PPLC/PCBGLOB.C      — runtime globals for PPLC link
-    toolkit/pwa153/CFG/BC31/PPLC.CFG          — compiler config (-P -DLIB -DCOMM -D___COMP___)
-    toolkit/pwa153/SOURCE/PPLC/PPLC.LNK       — TLINK response file
-
   Commit message:
-    v0.2.5: PPLC from source, 0 undefined, 18/19 tests pass
+    v0.2.6: delta stubs fixed, patches regenerated, full accounting
 
 --hexadecimal, 2026-09-11

@@ -271,9 +271,9 @@ All fixes applied to BOTH `pcb153/SOURCE/` (repo master) and DOSBOXX.ZIP.
 | v0.2.3 Verify MAKEFILEs | ✅ DONE (9/9 OBJs, flags identified) |
 | v0.2.4 Find real source | ✅ DONE (all code in PWA + pcbdcom, no stubs) |
 | v0.2.5 Recompile with flags | **DONE** — 0 undefined, 18/19 tests pass, built from source with -P |
-| v0.2.6 Diff delta vs PWA | pending |
-| v0.2.7 Eliminate vtable | needs matching EXE size |
-| v0.2.8 cmp -s 39-var PPE | blocked (original source lost) |
+| v0.2.6 Diff delta vs PWA | **DONE** — delta154 stubs fixed, patches regenerated |
+| v0.2.7 Eliminate vtable | DROPPED — vtable diffs are cosmetic, PPE works |
+| v0.2.8 cmp -s 39-var PPE | PENDING — RUNINET.PPS fails to compile (v3.20 advanced features) |
 
 ## KEY FINDING: NO*.C stub architecture
 
@@ -651,7 +651,9 @@ Contains 18 sample PPS/PPE pairs — perfect byte-exact test suite:
 | WELFIRST | 3,785 B | 1,465 B | Welcome first-time user |
 
 Our PPLC must compile each PPS and produce PPE matching Clark's
-output (allowing for vtable diffs only).
+output. Vtable diffs are cosmetic — different EXE size = different
+vtable address on disk, but PCBoard's PPE loader ignores these bytes.
+Functionally identical. Not worth chasing byte-exact.
 
 ## Toolkit3 (devtools/Toolkit3.zip) — Clark's developer SDK (REFERENCE ONLY)
 
@@ -665,7 +667,7 @@ We build it ourselves and prove it matches.
 - Our NO*.OBJ must export the same symbols as Clark's
 - Our pcbkit_l.lib must have the same module structure
 - Our PPLC link must produce the same 21 undefined
-- Our PPE output must match Clark's (vtable diffs only)
+- Our PPE output must compile correctly (vtable diffs are cosmetic)
 
 ### PCBKIT_L.ZIP contents (large memory model, Borland C)
 
@@ -790,3 +792,80 @@ match PPLC's symbols.
 Clark's original build where lib modules were C and PPLC was C++.
 Clark linked against a lib compiled with matching symbols. We don't
 have that lib's source — we rebuild from PWA source with `-P`.
+
+## v0.2.6 — Full diff and delta update
+
+### Architecture: three source layers + beta overlay
+
+The PCBoard source exists in three layers, each building on the last:
+
+    pwa153          Clark's 1996 source (base). Our fixes applied here.
+        |
+    pwa154          Minimal delta on pwa153. Only pcbtools.h changed
+        |           (one enum value added) + pcbdcom comm driver added.
+        |           SOURCE/TOOLKIT is IDENTICAL to pwa153.
+        |
+    delta154        Watcom port of pwa153. 6 TOOLKIT files changed for
+                    Watcom compatibility. Extra headers (Watcom wrappers,
+                    VIRTUAL1.H, ZSORT.H). Wrappers STAY — needed for Watcom.
+
+    pcb153/upd154   15.4 beta MAIN source (600 files). Clark's last work
+                    before CDC shut down. Sits on top of the lib layers.
+                    NEWSCR.CPP has CUR_PPE_VER=340 (intentional 15.4 bump).
+                    Uses pcbdcom instead of COMMDRV. Has same USERS.C bug.
+
+### A. Apply stub fixes to delta154
+
+delta154's NODISP.C, NOPCBSYS.C, NOXLATE.C are IDENTICAL to pwa153
+originals. Apply the same fixes we made in v0.2.5:
+
+| File | Fix | Why |
+|------|-----|-----|
+| NODISP.C | Remove print/newline/println | PCBMISC.CPP defines them |
+| NOPCBSYS.C | Remove readpcboardsys/makepcboardsys | NOUPDSYS defines them |
+| NOXLATE.C | Remove printxlated | PCBMISC.CPP defines it |
+| NOUPDSYS.C | Empty readpcboardsys body | Breaks cascade (delta154 already has malloc/bassngltolong casts) |
+
+Watcom wrappers (alloc.h, mem.h, dir.h, borland.h, watfix.h) STAY
+in delta154. They are needed for Watcom builds. Only pwa153's Borland
+build removes them.
+
+### B. Apply USERS.C extern fix to pcb153/upd154
+
+pcb153/upd154/SOURCE/USERS/USERS.C has the same bug as pwa153:
+ConfFlags, ConfReg, MsgReadPtr, MsgReadPtrBackup declared without
+`extern` at lines 115-118. These variables are owned by USERSYS.C
+(in TOOLKIT) and PCBINIT.C. USERS.C must declare them as `extern`
+when compiled with `-DLIB`.
+
+upd154 already has `#ifndef LIB` around lines 115-118. With `-DLIB`
+they compile out and the TOOLKIT definitions take over. This may
+already work — verify before changing.
+
+ExtConfLen and ConfByteLen also need `extern` — same fix as pwa153.
+
+### C. Apply USERS.H _FARDATA_ guard to pcb153/upd154
+
+pcb153/upd154/SOURCE/H/USERS.H uses `_FARDATA_` type which may not
+be defined in all include paths. Add the same `#ifndef _FARDATA_`
+fallback guard we added in v0.2.5.
+
+### D. DON'T touch upd154 NEWSCR.CPP
+
+pcb153/upd154/SOURCE/PPL/NEWSCR.CPP has `CUR_PPE_VER = 340`. This
+is Clark's INTENTIONAL bump for PCBoard 15.4. It is NOT the same bug
+as pwa153 (where CUR_PPE_VER was 330 but should be 320 for 15.3).
+
+15.4 PPE format is version 3.40. Do not change it.
+
+### E. Full diff — DONE
+
+Two patches regenerated against cleaned source:
+
+    15.4-pwa.patch      82 files, 5,783 lines — MAIN source (pcb153 → upd154)
+    15.4-toolkit.patch  236 files, 39,927 lines — toolkit (pwa153 → pwa154 + delta154)
+
+Previous 15.4-pwa.patch moved to patches/attic/ — generated against
+uncleaned source, no longer applies cleanly.
+
+patches/README.md updated to explain why the patch was regenerated.

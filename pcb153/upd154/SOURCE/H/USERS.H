@@ -374,6 +374,14 @@ typedef struct {
 } rectype;
 #pragma pack()
 
+#ifndef _FARDATA_
+  #ifdef __LARGE__
+    #define _FARDATA_ far
+  #else
+    #define _FARDATA_
+  #endif
+#endif
+
 extern UData          _FARDATA_ UsersData;
 extern URead          _FARDATA_ UsersRead;
 extern addresstype    _FARDATA_ AddrRec;

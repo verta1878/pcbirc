@@ -14,8 +14,4 @@
 
 #include <pcbtools.h>
 
-void LIBENTRY makepcboardsys(void) {
-}
 
-void LIBENTRY readpcboardsys(void) {
-}
