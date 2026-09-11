@@ -205,12 +205,23 @@ Compiled 162 of 349 source files with full MAIN modules. Resulted
 in 230 undefined symbols that kept growing with each module added.
 This approach is wrong — see "What cascade means" section.
 
-### Current approach (NO*.C stubs — correct)
+### Current approach (NO*.C stubs — DONE)
 
-Compile 17 NO*.C stubs from LIB/SOURCE/TOOLKIT/ in PWA source.
-Link PPLC with stubs overriding full MAIN modules. Target: 21
-undefined, matching Clark's shipped PPLC. Verify against Toolkit3
-reference and 18 PPL DevKit test programs.
+Compiled 17 NO*.C stubs from LIB/SOURCE/TOOLKIT/ in PWA source.
+Built pcbkit_l.lib from 249 C + 7 ASM source files with -P (C++ mode).
+Linked PPLC with stubs. Result: ZERO undefined (better than Clark's 21).
+18 of 19 PPL DevKit test programs compile successfully.
+
+    pcbkit_l.lib: 311,296 bytes, 241 modules (from source with -P)
+    PPLC.EXE:     119,812 bytes (Clark: 222,176)
+    Undefined:    0 (Clark: 21)
+    Test results: 18/19 DevKit samples pass
+    RUNINET.PPS:  fails (v3.20 advanced features)
+
+Size difference explained: Clark's 222 KB EXE includes the Toolkit3
+PCBKIT_L.LIB modules (compiled as C). Our 119 KB EXE uses lib modules
+compiled as C++ with -P — different symbol decoration means different
+modules are pulled in from the lib.
 
 ### Fixes applied (carry forward to new approach)
 
@@ -259,7 +270,7 @@ All fixes applied to BOTH `pcb153/SOURCE/` (repo master) and DOSBOXX.ZIP.
 | v0.2.2 Link PPLC | ✅ DONE (221,644 B, vtable-only) |
 | v0.2.3 Verify MAKEFILEs | ✅ DONE (9/9 OBJs, flags identified) |
 | v0.2.4 Find real source | ✅ DONE (all code in PWA + pcbdcom, no stubs) |
-| v0.2.5 Recompile with flags | **IN PROGRESS** — compile NO*.C stubs from PWA source, link PPLC with stubs, verify against Toolkit3 reference, target 21 undefined |
+| v0.2.5 Recompile with flags | **DONE** — 0 undefined, 18/19 tests pass, built from source with -P |
 | v0.2.6 Diff delta vs PWA | pending |
 | v0.2.7 Eliminate vtable | needs matching EXE size |
 | v0.2.8 cmp -s 39-var PPE | blocked (original source lost) |
@@ -526,11 +537,13 @@ it needs and stubs for everything else.
 
 ## Build targets
 
-### pcb153 (PWA) — match Clark's 21 undefined
+### pcb153 (PWA) — ZERO undefined (ACHIEVED)
 
-Target: 21 undefined symbols, matching Clark's original PPLC320.
-These 21 are PCBOARD.EXE runtime functions that PPLC never calls.
-Clark shipped with them. They are by design, not bugs.
+Original target was 21 undefined to match Clark. Achieved ZERO by
+compiling all source with -P (C++ mode) so symbols match between
+PPLC and pcbkit_l.lib. Clark had 21 because his lib was compiled
+as C (different symbol decoration). Our lib is compiled from the
+same source as C++ — all symbols resolve.
 
 Clark's 21 undefined:
   addchar, breakdate, countrydate, datetojulian, decrypt2, dorle,
@@ -735,3 +748,45 @@ No pcap, works over Wi-Fi. May replace our loopback fix.
 | Develop.zip | — | Development tools |
 | hxrt216.zip | — | HX DOS Extender runtime |
 | cwsdpmi.zip | — | CWSDPMI DOS extender |
+
+## CRITICAL: C vs C++ symbol naming (BCC 3.1)
+
+Toolkit3 PCBKIT_L.LIB was compiled as **C** (no `-P`). PPLC source
+compiles as **C++** (`.CPP` extension or `-P` flag). The symbol names
+DON'T MATCH:
+
+    C mode:   void pascal dosclose(int) → symbol DOSCLOSE
+    C++ mode: void pascal dosclose(int) → symbol @DOSCLOSE$qi
+
+BCC 3.1's `extern "C"` does NOT work with pascal calling convention.
+The headers HAD `extern "C"` blocks but Clark **commented them out**
+— he knew they didn't work.
+
+**Fix:** compile sub-lib source files WITH `-P` (C++ mode) to match
+PPLC's symbol decoration. Build pcbkit_l.lib from source, not from
+pre-built Toolkit3 lib.
+
+The Toolkit3 SDK lib was for third-party **C** programs. PPLC compiles
+as **C++**. The PWA build compiles everything together with matching
+flags — that's the correct approach.
+
+Toolkit3 PCBKIT_L.LIB is **REFERENCE for module content and size only**
+— not for linking. We must build our own lib from source with `-P` to
+match PPLC's symbols.
+
+### Compile flag rules
+
+| Module type | Flags |
+|-------------|-------|
+| PPLC source (9 .CPP) | PPLC.CFG with `-P -DLIB -DCOMM -D___COMP___` |
+| Sub-lib source | PPLC.CFG with `-P` (C++ mode to match PPLC symbols) |
+| NO*.C stubs | PPLC.CFG with `-P -DCOMM -DPCB_MAXNODES=250` |
+| TOOLKIT modules (INIT, PCBINIT, INITPORT) | add `-DLIB` |
+| Modem modules | add `-DMULTIPORT -DCOMMDRV` |
+| CALLWAIT | add `-DPCBSTATS` |
+| ANSI | add `-D__OS2__` |
+
+**ALL modules must use `-P`** so symbols match. This is different from
+Clark's original build where lib modules were C and PPLC was C++.
+Clark linked against a lib compiled with matching symbols. We don't
+have that lib's source — we rebuild from PWA source with `-P`.

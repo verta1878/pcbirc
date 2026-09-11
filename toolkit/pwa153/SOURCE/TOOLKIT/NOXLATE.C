@@ -14,6 +14,4 @@
 
 #include "pcbtools.h"
 
-void LIBENTRY printxlated(char *Str) {
-  print(Str);
-}
+/* printxlated removed - defined in PCBMISC.CPP */

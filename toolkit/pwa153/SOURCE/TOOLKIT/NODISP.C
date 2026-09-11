@@ -34,8 +34,6 @@ int LIBENTRY sendtoprinter(char *Str, int StrLen) {
 }
 
 #pragma argsused
-void LIBENTRY print(char *Str) {
-}
 
 void LIBENTRY printcls(void) {
 }
@@ -44,15 +42,11 @@ void LIBENTRY printcls(void) {
 void LIBENTRY moreprompt(int Type) {
 }
 
-void LIBENTRY newline(void) {
-}
 
 void LIBENTRY freshline(void) {
 }
 
 #pragma argsused
-void LIBENTRY println(char *Str) {
-}
 
 #pragma argsused
 void LIBENTRY printcolor(int ColorNum) {

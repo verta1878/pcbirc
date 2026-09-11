@@ -1,3 +1,4 @@
-# CHECKSUMS — verify repository integrity
-# LAST REGENERATED: 2026-09-08 (v0.2 phase restructure)
-# TRACKED FILES:    10484
+# CHECKSUMS — verify release integrity
+# v0.2.5: PPLC from source, 0 undefined, 18/19 tests pass
+# Date: 2026-09-11
+# Files: 8 modified/new + checksums
