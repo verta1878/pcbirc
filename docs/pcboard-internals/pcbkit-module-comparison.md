@@ -325,20 +325,6 @@ The cascade happened because we linked full MAIN modules into a lib
 designed for stubs. Each full module references dozens of other full
 modules. The stubs break the chain.
 
-## COMMDRV vs pcbdcom
-
-Two comm driver versions for two build targets:
-
-| | pcb153 (PWA) | pcb154 (delta) |
-|---|---|---|
-| Comm driver | COMMDRV (original WCS) | pcbdcom (GPLv3 replacement) |
-| Header | Reconstructed COMM.H | toolkit/pwa154/pcbdcom/inc/pcbdcom.h |
-| MODEMDRV.C | Links against COMMDRV API | Links against pcbdcom (drop-in) |
-| Build type | Full (original architecture) | Two versions: full + lightweight |
-
-COMM.H (reconstructed from MODEMDRV.C usage) stays for pcb153.
-pcbdcom.h is the drop-in replacement for pcb154 only.
-
 ## Full PWA archive catalog (5,414 files)
 
 ### Top-level structure
@@ -412,40 +398,56 @@ PCBPACK, PCBSETUP, PCBSM, PCBSTATS, PCBTEXT, PCBUTILS
 
 FIDOUTIL, HELP, IDX, MD5, USERNET, UUCP, WAITFILE, ZMODEM
 
-### pcbdcom drop-in status
+## COMMDRV vs pcbdcom
 
-pcbdcom is INTENDED as a drop-in COMMDRV replacement but is NOT yet
-fully compatible. Our reconstructed COMM.H exposes the gaps:
+Two comm driver versions for two build targets:
+
+| | pcb153 (PWA) | pcb154 (delta) |
+|---|---|---|
+| Comm driver | COMMDRV (original WCS) | pcbdcom (GPLv3 replacement) |
+| Header | Reconstructed COMM.H | toolkit/pwa154/pcbdcom/inc/pcbdcom.h |
+| MODEMDRV.C | Links against COMMDRV API | Links against pcbdcom (drop-in) |
+| Build type | Full (original architecture) | Two versions: full + lightweight |
+
+COMM.H (reconstructed from MODEMDRV.C usage) stays for pcb153.
+pcbdcom.h is the drop-in replacement for pcb154 only.
+
+### pcbdcom drop-in status — DONE
+
+pcbdcom.h updated to full COMMDRV compatibility. All gaps filled.
 
 | COMMDRV feature | pcbdcom.h | Status |
 |-----------------|-----------|--------|
-| struct port_param (basic) | Has baud, parity, data_bits, stop_bits, flow, buf_size | Done |
-| port_param.opcb (port control block) | Missing | Need to add |
-| port_param.auxpcb (aux control block) | Missing | Need to add |
-| port_param.cardtype | Missing | Need to add |
-| port_param.lngth | Missing | Need to add |
-| port_param.protocol | Missing | Need to add |
-| port_param.block[] | Missing | Need to add |
-| port_param.outbuf_len / inbuf_len | Missing | Need to add |
-| port_param.error | Missing | Need to add |
-| opcb_type.msr_reg | Missing | Need to add |
-| opcb_type.inbuf_count / outbuf_count | Missing | Need to add |
-| auxpcb_type (framing/overrun/parity) | Missing | Need to add |
-| BAUD constants (BAUD300-BAUD115200) | Missing | Need to add |
-| LENGTH_8, LENGTH_7 | Missing | Need to add |
-| PARITY_NONE, PARITY_EVEN, PARITY_ODD | Missing | Need to add |
-| PROT_RTSRTS, PROT_XONXOFF | Missing | Need to add |
-| RS232ERR_NONE/BUSY/PARAM/NOPORT | Has | Done |
-| 13 ser_rs232_* functions (basic) | Has | Done |
-| ser_rs232_flush (2 args) | Has 1 arg | Need 2-arg version |
-| ser_rs232_getpacket (COMMDRV calling) | Different signature | Need to match |
-| ser_rs232_viewpacket | Missing | Need to add |
-| ser_rs232_putbyte (pointer arg) | Different signature | Need to match |
-| ser_rs232_init (no args) | Has 1 arg | Need 0-arg version |
-| ser_rs232_getport (port_param out) | Missing | Need to add |
-| ser_rs232_dtr_on/off | Missing | Need to add |
-| ser_rs232_rts_on/off | Missing | Need to add |
-| ser_rs232_xmit_on | Missing | Need to add |
+| struct port_param (basic) | baud, parity, data_bits, stop_bits, flow, buf_size | Done |
+| port_param.opcb (port control block) | opcb_type pointer | Done |
+| port_param.auxpcb (aux control block) | auxpcb_type pointer | Done |
+| port_param.cardtype | CARD_* constant | Done |
+| port_param.lngth | LENGTH_7 / LENGTH_8 | Done |
+| port_param.protocol | PROT_* constant | Done |
+| port_param.block[] | unsigned char[4] | Done |
+| port_param.outbuf_len / inbuf_len | unsigned int | Done |
+| port_param.error | int | Done |
+| opcb_type.msr_reg | unsigned char (read from hardware) | Done |
+| opcb_type.inbuf_count / outbuf_count | unsigned int (from ring buffer) | Done |
+| opcb_type.cardtype / flag | unsigned char | Done |
+| auxpcb_type (framing/overrun/parity) | int aux_frmint/ovrint/parint | Done |
+| BAUD constants (BAUD300-BAUD115200) | 9 divisor constants | Done |
+| LENGTH_8, LENGTH_7 | defined | Done |
+| PARITY_NONE, PARITY_EVEN, PARITY_ODD | defined | Done |
+| PROT_RTSRTS, PROT_XONXOFF | defined | Done |
+| CARD_* constants (8250-ARNET) | 8 card types | Done |
+| RS232ERR_NONE/BUSY/PARAM/NOPORT | defined | Done |
+| 13 ser_rs232_* functions | all present | Done |
+| ser_rs232_flush (2 args) | (port, which) | Done |
+| ser_rs232_getpacket (COMMDRV calling) | (port, n, buf) matches MODEMDRV.C | Done |
+| ser_rs232_viewpacket | peek without consuming | Done |
+| ser_rs232_putbyte (pointer arg) | (port, unsigned char *b) | Done |
+| ser_rs232_init (no args) | ser_rs232_init(void) | Done |
+| ser_rs232_getport (port_param out) | populates all fields + opcb/auxpcb | Done |
+| ser_rs232_dtr_on/off | MCR bit 0 | Done |
+| ser_rs232_rts_on/off | MCR bit 1 | Done |
+| pcbdcom_port_t | 24 fields + compat_opcb + compat_auxpcb | Done (was missing) |
+| PCBDCOM_MAX_PORTS / RX_RING / TX_RING | 32 / 4096 / 2048 | Done (was missing) |
 
 Our reconstructed COMM.H fills these gaps for pcb153 (PWA build).
 For pcb154 (delta), pcbdcom.h itself needs to be updated to include

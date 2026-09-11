@@ -1,23 +1,34 @@
-v0.2.6: Delta update, patches regenerated, full diff
-======================================================
+pcbdcom: COMMDRV drop-in complete — all gaps filled
+=====================================================
 Date: 2026-09-11
 
 WHAT THIS RELEASE DOES
 
-  A. delta154 stubs fixed (NODISP, NOPCBSYS, NOXLATE, NOUPDSYS)
-  B. upd154 USERS.C — no change needed (#ifndef LIB exists)
-  C. upd154 USERS.H — _FARDATA_ guard added
-  D. upd154 NEWSCR.CPP — not touched (CUR_PPE_VER=340 correct)
-  E. Full diff — two patches regenerated against cleaned source
+  pcbdcom.h rewritten for full COMMDRV binary compatibility:
+  - opcb_type struct (msr_reg, inbuf_count, outbuf_count, cardtype, flag)
+  - auxpcb_type struct (aux_frmint, aux_ovrint, aux_parint)
+  - port_param expanded with all MODEMDRV.C fields
+  - pcbdcom_port_t defined (was missing — 24 internal fields + compat structs)
+  - Baud/length/parity/protocol/card constants
+  - PCBDCOM_MAX_PORTS, PCBDCOM_RX_RING, PCBDCOM_TX_RING
 
-  Patches:
-    15.4-pwa.patch     — MAIN source (pcb153 → upd154, 82 files)
-    15.4-toolkit.patch — toolkit (pwa153 → pwa154 + delta154)
-    Old 15.4-pwa.patch moved to attic (generated against uncleaned source)
+  ser_rs232_shim.c updated:
+  - Removed duplicate port_param (now in pcbdcom.h)
+  - getport() populates opcb/auxpcb/cardtype/outbuf_len from port state
+  - update_opcb() reads MSR from hardware, updates buffer counts
+  - getpacket(n==0) refreshes opcb state (MODEMDRV.C convention)
+
+  MODEMDRV.C can now compile against pcbdcom.h instead of COMM.H.
+  15.4+ builds use pcbdcom as the comm driver.
 
 APPLY — extract into repo root.
 
+  Modifies:
+    toolkit/pwa154/pcbdcom/inc/pcbdcom.h
+    toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c
+    docs/pcboard-internals/pcbkit-module-comparison.md
+
   Commit message:
-    v0.2.6: delta stubs fixed, patches regenerated, full accounting
+    pcbdcom: full COMMDRV drop-in, all gaps filled
 
 --hexadecimal, 2026-09-11
