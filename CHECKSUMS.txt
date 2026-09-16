@@ -3,12 +3,12 @@
 # Date: 2026-09-16
 
 Original binaries (pcb1541/pcbic12/bin/):
-  Pcbic.exe      313,310  sha256:8b44592a6f020d520cabb64a29c39dd44c481ef9a7924188e05e81b94132fb82
-  Pcbic2.exe     217,111  sha256:dbf5dc6f7cd2655a7d857835585ac93ca84764226e81f4b9ff7eb2e58e08fb26
-  PCBICCFG.EXE   185,398  sha256:5fdee1af3c45c4887420ec74c4efdb3547afb665097f936e8ee427c6ccd5b25f
-  PCBICEVT.EXE    89,612  sha256:bf2f9d9b70dc32e6f5ce98533ac87e0021667c790b9f39fe3ed1da9be4a4e448
-  TESTIC.EXE      40,104  sha256:35b656f53d0afab073d428db2fea0e1f22baa97f602977bec63acec8a5fb22a3
-  TESTIC2.EXE     46,627  sha256:82f8c606ff68c7241504466dcea9ae971039c2b13da9f5217cff753a9761a06b
+  Pcbic.exe      313,310  sha256:8b44592a6f020d520cabb64a29c39dd44c481ef9a7924188e05e81b94132fb82  byte-exact
+  Pcbic2.exe     217,111  sha256:dbf5dc6f7cd2655a7d857835585ac93ca84764226e81f4b9ff7eb2e58e08fb26  byte-exact
+  PCBICCFG.EXE   185,398  sha256:5fdee1af3c45c4887420ec74c4efdb3547afb665097f936e8ee427c6ccd5b25f  byte-exact
+  PCBICEVT.EXE    89,612  sha256:bf2f9d9b70dc32e6f5ce98533ac87e0021667c790b9f39fe3ed1da9be4a4e448  byte-exact
+  TESTIC.EXE      40,104  sha256:35b656f53d0afab073d428db2fea0e1f22baa97f602977bec63acec8a5fb22a3  byte-exact
+  TESTIC2.EXE     46,627  sha256:82f8c606ff68c7241504466dcea9ae971039c2b13da9f5217cff753a9761a06b  byte-exact
 
 Verification:
   md5sum -c CHECKSUMS.md5

@@ -44,7 +44,7 @@ virtual memory subsystem (source paths `c:\vmdata\src\`).
 ## Source layout
 
 ```
-src/dos/pcbic_code.asm         — Pcbic.exe NASM (1,074 functions)
+src/dos/pcbic_code.asm         — Pcbic.exe NASM (1,074 functions, complete code region)
 src/dos/pcbiccfg_code.asm      — PCBICCFG.EXE NASM (743 functions)
 src/dos/pcbicevt_code.asm      — PCBICEVT.EXE NASM (474 functions)
 src/dos/testic_code.asm        — TESTIC.EXE NASM (249 functions)

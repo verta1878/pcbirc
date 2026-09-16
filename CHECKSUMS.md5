@@ -3,7 +3,6 @@
 60a370b1bcd094fbfa3fed00a47111a5  pcb1541/pcbic12/bin/RUNINET.PPS
 
 # New files added in this release
-e6711bc7366dcce1b5af7e4484b8415e  pcb1541/pcbic12/src/dos/pcbic_code.asm
 721339edf2262c2369ec3a539fb43c8d  pcb1541/pcbic12/src/dos/pcbic_last4.asm
 b4a27a657341fb355318846a127f1f5b  pcb1541/pcbic12/src/dos/pcbiccfg_catalog.txt
 d5cbf389f53b2950b4b5e11afc5e4e37  pcb1541/pcbic12/src/dos/pcbiccfg_code.asm
@@ -18,9 +17,11 @@ b6ab52f1cc26214c03d807ca0bbf7c33  pcb1541/pcbic12/src/os2/pcbic2_code.asm
 a55a8c2c85a44c8ba81c6991c3c22c7e  pcb1541/pcbic12/src/os2/testic2.lnk
 b8120595c405717ef01c5dc4e3f2e7d5  pcb1541/pcbic12/src/os2/testic2_code.asm
 70fdbed71ae9b2edb5ee48760fd36ed4  pcb1541/pcbic12/src/os2/testic2_data.asm
-738b1a19be59656bdba40172a15f314d  pcb1541/pcbic12/RECONSTRUCTION.md
-c73e60ef0d20591702054c59a85491c2  APPLY.txt
-59070085c56ab80f9fd69a9d98b2e2ca  CHECKSUMS.txt
-95e175d4a019fb7adf46fb6469e4a733  HISTORY.md
 4cc725a235244e06f9a1210651e5ef21  pcb1541/pcbic12/bin/rebuilt/Pcbic2_rebuilt.exe
 a72da4d8b74cc15ac08129a19c1a5d0f  pcb1541/pcbic12/bin/rebuilt/TESTIC2_rebuilt.exe
+1b0770ae9c04f25c365a8e324c7f63ad  APPLY.txt
+9799286ad8d1a3fca28470196c5f7f41  CHECKSUMS.txt
+95e175d4a019fb7adf46fb6469e4a733  HISTORY.md
+be588616f0fbb716dc6e0ac3ed64277d  pcb1541/pcbic12/RECONSTRUCTION.md
+5f099db6181e195a1d3aadd8634e85ed  pcb1541/pcbic12/src/dos/pcbic_code.asm
+8b8e19ac5a62b55af08b7a6acfc516bc  pcb1541/pcbic12/bin/rebuilt/Pcbic_rebuilt.exe

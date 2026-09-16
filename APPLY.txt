@@ -7,14 +7,14 @@ v1.2 (1996) have been byte-exact reconstructed with NASM source and
 SHA256 verified checksums.
 
   DOS (BCC 3.1 large model):
-    Pcbic.exe      313,310B  1,074 functions
-    PCBICCFG.EXE   185,398B    743 functions
-    PCBICEVT.EXE    89,612B    474 functions
-    TESTIC.EXE      40,104B    249 functions
+    Pcbic.exe      313,310B  1,074 functions  ✓ byte-exact
+    PCBICCFG.EXE   185,398B    743 functions  ✓ byte-exact
+    PCBICEVT.EXE    89,612B    474 functions  ✓ byte-exact
+    TESTIC.EXE      40,104B    249 functions  ✓ byte-exact
 
   OS/2 (BC++ 2.0, 32-bit LX):
-    Pcbic2.exe     217,111B  1,090 functions + 212 import calls (110 unique)
-    TESTIC2.EXE     46,627B    258 functions +  76 import calls (48 unique)
+    Pcbic2.exe     217,111B  1,090 functions + 212 import calls (110 unique)  ✓ byte-exact
+    TESTIC2.EXE     46,627B    258 functions +  76 import calls (48 unique)   ✓ byte-exact
 
   OS/2 cross-compilation proven: NASM + OpenWatcom wlink on Linux.
   No OS/2 VM required for code verification.
@@ -36,6 +36,9 @@ SHA256 verified checksums.
     pcb1541/pcbic12/src/os2/testic2_data.asm
     pcb1541/pcbic12/src/os2/testic2.lnk
     pcb1541/pcbic12/src/README.md
+    pcb1541/pcbic12/bin/rebuilt/Pcbic_rebuilt.exe
+    pcb1541/pcbic12/bin/rebuilt/Pcbic2_rebuilt.exe
+    pcb1541/pcbic12/bin/rebuilt/TESTIC2_rebuilt.exe
 
   Modifies:
     pcb1541/pcbic12/RECONSTRUCTION.md
