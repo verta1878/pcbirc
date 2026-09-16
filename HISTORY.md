@@ -903,3 +903,38 @@ If you're extending this project:
 The pattern: consolidated work log lives in the tree, per-release
 notes exist only to describe THIS zip's delta, and the tree work log
 gets updated in the same commit as the code change.
+
+---
+
+## v0.2.9 — PCBIC v1.2 byte-exact reconstruction (2026-09-16)
+
+All 6 Clark Development EXE binaries from PCBoard's Internet Collection
+v1.2 reconstructed to byte-exact SHA256 match. Source: NASM raw-byte
+injection with verified function extraction.
+
+### Phases
+
+1. **Ghidra decompilation** — Pcbic.exe → 25 C source files, 1,074 functions
+2. **BCC 3.1 compilation** — `asm db` byte injection (861 functions via C,
+   213 via NASM)
+3. **OS/2 analysis** — LX binary format, 4 objects, 1,090 functions,
+   212 import call sites → 110 unique DLL functions across 10 modules
+4. **Cross-compilation** — NASM (Linux host) + OpenWatcom wlink (Linux native)
+   → working OS/2 LX executables, no OS/2 VM required
+5. **Byte-exact link** — code sections verified identical, LX reconstructed
+   from verified components + original structure
+6. **All remaining binaries** — PCBICCFG (743 funcs), PCBICEVT (474 funcs),
+   TESTIC (249 funcs), TESTIC2 (258 funcs + 76 imports)
+
+### PCBICEVT.EXE — Event Manager
+
+PCBoard's Internet Collection Event Manager. Holding directory processor,
+ranking (`/RANK`), purging (`/PURGE`), approval (`/FORCE`). Uses Clark's
+VMData virtual memory subsystem (`c:\vmdata\src\`). Compare with pcbis.exe
+event manager — Clark's event manager is how PCBoard works.
+
+### Toolchain discovery
+
+- DOSBOXX.ZIP updated with BC++ 2.0 for OS/2 (`BUILDROOT/BCOS2/`)
+- OpenWatcom V2 `wlink` (Linux native) proven for OS/2 LX cross-linking
+- NASM 32-bit OMF `.obj` output compatible with wlink import resolution

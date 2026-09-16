@@ -1,3 +1,26 @@
 0baf2150b959db8d4611c78e336c862e  docs/pcboard-internals/pcbkit-module-comparison.md
 60a370b1bcd094fbfa3fed00a47111a5  pcb1541/pcbic12/src/RUNINET.PPS
 60a370b1bcd094fbfa3fed00a47111a5  pcb1541/pcbic12/bin/RUNINET.PPS
+
+# New files added in this release
+e6711bc7366dcce1b5af7e4484b8415e  pcb1541/pcbic12/src/dos/pcbic_code.asm
+721339edf2262c2369ec3a539fb43c8d  pcb1541/pcbic12/src/dos/pcbic_last4.asm
+b4a27a657341fb355318846a127f1f5b  pcb1541/pcbic12/src/dos/pcbiccfg_catalog.txt
+d5cbf389f53b2950b4b5e11afc5e4e37  pcb1541/pcbic12/src/dos/pcbiccfg_code.asm
+7c2ea543af2b8dffee0b09a312db77d0  pcb1541/pcbic12/src/dos/pcbicevt_catalog.txt
+cf6355d22d81e9988dfb5dcd9738f46b  pcb1541/pcbic12/src/dos/pcbicevt_code.asm
+006fdd78874d1cb2ad407b99ca453b76  pcb1541/pcbic12/src/dos/testic_code.asm
+df7c68da0d5590f05ff85c819b6aff74  pcb1541/pcbic12/src/os2/lx_structure.txt
+a043f1fad31a97075ccea9b0ed8c835b  pcb1541/pcbic12/src/os2/pcbic2.lnk
+2b4837c439ba029384f144a4f11f7bd8  pcb1541/pcbic12/src/os2/pcbic2_catalog.txt
+b6ab52f1cc26214c03d807ca0bbf7c33  pcb1541/pcbic12/src/os2/pcbic2_code.asm
+12f5276a881bedefbc958ccf35580fc9  pcb1541/pcbic12/src/os2/pcbic2_data.asm
+a55a8c2c85a44c8ba81c6991c3c22c7e  pcb1541/pcbic12/src/os2/testic2.lnk
+b8120595c405717ef01c5dc4e3f2e7d5  pcb1541/pcbic12/src/os2/testic2_code.asm
+70fdbed71ae9b2edb5ee48760fd36ed4  pcb1541/pcbic12/src/os2/testic2_data.asm
+738b1a19be59656bdba40172a15f314d  pcb1541/pcbic12/RECONSTRUCTION.md
+c73e60ef0d20591702054c59a85491c2  APPLY.txt
+59070085c56ab80f9fd69a9d98b2e2ca  CHECKSUMS.txt
+95e175d4a019fb7adf46fb6469e4a733  HISTORY.md
+4cc725a235244e06f9a1210651e5ef21  pcb1541/pcbic12/bin/rebuilt/Pcbic2_rebuilt.exe
+a72da4d8b74cc15ac08129a19c1a5d0f  pcb1541/pcbic12/bin/rebuilt/TESTIC2_rebuilt.exe

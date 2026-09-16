@@ -1,0 +1,54 @@
+format os2 lx
+name /tmp/testic_build/testic2_rebuilt.exe
+file /tmp/testic_build/testic2_code.obj
+file /tmp/testic_build/testic2_data.obj
+option map=/tmp/testic_build/testic2.map
+
+import _imp_DOSCALLS_224 DOSCALLS.224
+import _imp_DOSCALLS_234 DOSCALLS.234
+import _imp_DOSCALLS_256 DOSCALLS.256
+import _imp_DOSCALLS_281 DOSCALLS.281
+import _imp_DOSCALLS_282 DOSCALLS.282
+import _imp_DOSCALLS_299 DOSCALLS.299
+import _imp_DOSCALLS_300 DOSCALLS.300
+import _imp_DOSCALLS_301 DOSCALLS.301
+import _imp_DOSCALLS_304 DOSCALLS.304
+import _imp_DOSCALLS_305 DOSCALLS.305
+import _imp_DOSCALLS_306 DOSCALLS.306
+import _imp_DOSCALLS_312 DOSCALLS.312
+import _imp_DOSCALLS_331 DOSCALLS.331
+import _imp_DOSCALLS_334 DOSCALLS.334
+import _imp_DOSCALLS_335 DOSCALLS.335
+import _imp_DOSCALLS_354 DOSCALLS.354
+import _imp_DOSCALLS_355 DOSCALLS.355
+import _imp_DOSCALLS_356 DOSCALLS.356
+import _imp_DOSCALLS_357 DOSCALLS.357
+import _imp_DOSCALLS_362 DOSCALLS.362
+import _imp_DOSCALLS_363 DOSCALLS.363
+import _imp_DOSCALLS_378 DOSCALLS.378
+import _imp_DOSCALLS_382 DOSCALLS.382
+import _imp_DOSCALLS_418 DOSCALLS.418
+import _imp_so32dll_1 so32dll.1
+import _imp_so32dll_2 so32dll.2
+import _imp_so32dll_3 so32dll.3
+import _imp_so32dll_4 so32dll.4
+import _imp_so32dll_6 so32dll.6
+import _imp_so32dll_9 so32dll.9
+import _imp_so32dll_10 so32dll.10
+import _imp_so32dll_11 so32dll.11
+import _imp_so32dll_12 so32dll.12
+import _imp_so32dll_13 so32dll.13
+import _imp_so32dll_14 so32dll.14
+import _imp_so32dll_15 so32dll.15
+import _imp_so32dll_16 so32dll.16
+import _imp_so32dll_17 so32dll.17
+import _imp_so32dll_20 so32dll.20
+import _imp_so32dll_26 so32dll.26
+import _imp_so32dll_30 so32dll.30
+import _imp_tcp32dll_3 tcp32dll.3
+import _imp_tcp32dll_4 tcp32dll.4
+import _imp_tcp32dll_5 tcp32dll.5
+import _imp_tcp32dll_10 tcp32dll.10
+import _imp_tcp32dll_11 tcp32dll.11
+import _imp_tcp32dll_12 tcp32dll.12
+import _imp_tcp32dll_44 tcp32dll.44

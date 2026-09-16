@@ -1,18 +1,51 @@
-v0.2.8: RUNINET.PPS fixed — 19/19 tests pass
-==============================================
-Date: 2026-09-11
+v0.2.9: PCBIC v1.2 — all 6 binaries byte-exact reconstructed
+=============================================================
+Date: 2026-09-16
 
-RUNINET.PPS failed because repo file had UNIX line endings (LF).
-PPLC needs DOS line endings (CR+LF). Also * comments changed to ;.
+All 6 Clark Development EXE binaries from PCBoard's Internet Collection
+v1.2 (1996) have been byte-exact reconstructed with NASM source and
+SHA256 verified checksums.
 
-NOT a compiler bug. NOT a v3.20 feature issue. Just line endings.
+  DOS (BCC 3.1 large model):
+    Pcbic.exe      313,310B  1,074 functions
+    PCBICCFG.EXE   185,398B    743 functions
+    PCBICEVT.EXE    89,612B    474 functions
+    TESTIC.EXE      40,104B    249 functions
 
-Result: RUNINET.PPE compiles to 2,261 bytes. 19/19 ALL tests pass.
+  OS/2 (BC++ 2.0, 32-bit LX):
+    Pcbic2.exe     217,111B  1,090 functions + 212 import calls (110 unique)
+    TESTIC2.EXE     46,627B    258 functions +  76 import calls (48 unique)
+
+  OS/2 cross-compilation proven: NASM + OpenWatcom wlink on Linux.
+  No OS/2 VM required for code verification.
+
+  New files:
+    pcb1541/pcbic12/src/dos/pcbic_code.asm
+    pcb1541/pcbic12/src/dos/pcbic_last4.asm
+    pcb1541/pcbic12/src/dos/pcbiccfg_code.asm
+    pcb1541/pcbic12/src/dos/pcbiccfg_catalog.txt
+    pcb1541/pcbic12/src/dos/pcbicevt_code.asm
+    pcb1541/pcbic12/src/dos/pcbicevt_catalog.txt
+    pcb1541/pcbic12/src/dos/testic_code.asm
+    pcb1541/pcbic12/src/os2/pcbic2_code.asm
+    pcb1541/pcbic12/src/os2/pcbic2_data.asm
+    pcb1541/pcbic12/src/os2/pcbic2.lnk
+    pcb1541/pcbic12/src/os2/pcbic2_catalog.txt
+    pcb1541/pcbic12/src/os2/lx_structure.txt
+    pcb1541/pcbic12/src/os2/testic2_code.asm
+    pcb1541/pcbic12/src/os2/testic2_data.asm
+    pcb1541/pcbic12/src/os2/testic2.lnk
+    pcb1541/pcbic12/src/README.md
 
   Modifies:
-    docs/pcboard-internals/pcbkit-module-comparison.md
+    pcb1541/pcbic12/RECONSTRUCTION.md
+    CHECKSUMS.txt
+    CHECKSUMS.md5
+    CHECKSUMS.sha256
+    APPLY.txt
+    HISTORY.md
 
   Commit message:
-    v0.2.8: RUNINET fixed (line endings), 19/19 tests pass
+    v0.2.9: PCBIC v1.2 — all 6 binaries byte-exact, NASM source
 
---hexadecimal, 2026-09-11
+--sysop/0, 2026-09-16
