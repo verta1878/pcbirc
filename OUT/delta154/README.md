@@ -28,6 +28,35 @@ The crew's 15.4 Delta rebuild, compiled with **OpenWatcom** from
 
 SHA256 sums in `CHECKSUMS.sha256`.
 
+`bins/` holds SDK example binaries, not program EXEs, and is empty for
+this branch — the delta154 SDK has not been built.
+
+## 13 binaries the root README claims that are not here
+
+Checked 2026-09-17 against the filesystem. `README.md` describes **28**
+`_W` binaries across two tables; this directory holds **15**. Missing:
+
+- **PCBTEXT_W.EXE** (listed at 39 KB) — was never in `bin/watcom/`
+  either, so it was never recovered because it was never committed.
+- **The entire "Clark Utilities — Phase 0" table (12).** PCBSTATS_W,
+  PCBPACK_W, MSETUP_W, PCBMODEM_W, PCBEDIT_W, PCBMONI_W, PCBDIAG_W,
+  PCBFILER_W, PCBNLC_W, OFFLINE_W, WAITBU_W, PCBTITLE_W. None of these
+  are in this directory and none were in `bin/watcom/`.
+
+Also **MKPCBTXT_W.EXE** is listed at 86 KB; the file here is 27,506 B.
+
+An earlier revision of this file said "two entries do not match." That
+undercounted — it compared against only the first table. The real gap is
+13 of 28, and one whole table of the root README describes work whose
+output is not in the repo.
+
+What that means is genuinely open and should not be guessed at: either
+those 12 utilities were built and the binaries were lost the same way
+the other 15 nearly were, or the table describes intended work that was
+recorded as done. Resolving it needs the same blob-hash search through
+history that recovered these 15 — filename matching is not enough,
+because the point is that files were moved and renamed.
+
 ## Provenance — recovered 2026-09-16
 
 These were committed to `bin/watcom/` in `7f6e9f3` (2026-08-08,
@@ -48,18 +77,10 @@ beta binaries in the same commit (see `OUT/clark-original/README.md`).
 
 Recovered here from `e4181e5^`.
 
-## Caveats
-
-Two entries in the root `README.md` table do not match these files:
-
-- `MKPCBTXT_W.EXE` is listed at 86 KB; this one is 27,506 B.
-- `PCBTEXT_W.EXE` (39 KB) is listed but was never in `bin/watcom/` and
-  is not in this set.
-
-So the README table likely describes a **later** build than the
-2026-08-08 binaries recovered here. If a newer set exists outside the
-repo, it should replace these. Until then these are the only Watcom
-15.4 binaries that survive anywhere.
+Because the recovery came from the 2026-08-08 commit, these are that
+build, not necessarily the newest one. If a later Watcom set exists
+outside the repo it should replace these. Until then these are the only
+Watcom 15.4 binaries that survive anywhere.
 
 ## Rebuilding
 

@@ -194,7 +194,7 @@ or the 10-second timeout does the right thing on its own.
    steps) into `OUT\LIB\PWA153\msc70\OBJ\<model>\`.
 3. Run `MKLIB` (or use the `MS??.RSP` response files) to assemble the
    four libraries: `PCBKMS{S,M,C,L}.LIB`.
-4. Drop them in `OUT/lib/pwa153/` — the 12-library SDK matrix is complete.
+4. Drop them in `toolkit/pwa153/msc70/` — the 12-library SDK matrix is complete.
 
 ## Validation already done (2026-08-26)
 

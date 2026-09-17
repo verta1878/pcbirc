@@ -11,35 +11,186 @@ Goal: build all four toolkits into their .LIB form (the SDK).
 
 ## Naming
 
-| Branch | Compiler | Main lib | Stub lib |
-|---|---|---|---|
-| pwa153 | Borland | PCBTK_pwa153.LIB | PCBTKL_pwa153.LIB |
-| pwa154 | Borland | PCBTK_pwa154.LIB | PCBTKL_pwa154.LIB |
-| delta154 | Watcom | PCBTK_delta154.LIB | — |
-| irc1541 | ow2irc | PCBTK_irc1541.LIB | — |
+Clark's own names, one family per compiler, four memory models each:
 
-Output: `OUT/lib/<branch>/`
+| Family | Compiler | Libraries |
+|---|---|---|
+| PCBKBC | Borland C++ 3.1 | PCBKBC{S,M,C,L}.LIB |
+| PCBKIT | Turbo C 2.01 | PCBKIT{S,M,C,L}.LIB |
+| PCBKMS | Microsoft C 7.0 | PCBKMS{S,M,C,L}.LIB |
+
+The `PCBTK_*` / `PCBTKL_*` names used in earlier revisions of this
+document were invented, not Clark's. Do not reintroduce them.
+
+Output: `toolkit/<branch>/<compiler>/`  (OUT/lib/ was deleted 2026-09-17)
 
 ## Progress
 
-### pwa153 — PARTIAL (PCBKBC, all 4 models) ⚠️  NOT COMPLETE
-CORRECTED to match Clark's actual SDK structure:
-- Naming: Clark's PCBKBC (Borland C++ 3.1), NOT invented PCBTK names
-- 4 memory models: PCBKBC{S,M,C,L}.LIB (113 main modules each)
-- Loose override OBJs in obj/ (ALTMODEM, NO*, PCBDAT, SMALLERR) —
-  shipped alongside, linked selectively (NOT a second library)
-- PCBoard itself uses the MEDIUM model (PCBKBCM)
-- Output: OUT/lib/pwa153/
-- INCOMPLETE: 113/118 modules vs Clark's PCBKITL.LIB; missing 96
-  functions (INITDOOR, OPENMODEM, ASYNC_*, etc). Manifest came from
-  only 8 makefiles' lib: targets, not all 286 toolkit sources.
-  See OUT/lib/pwa153/STATUS.md.
+### pwa153 — PCBKBC BUILT ✅ 2026-09-17
+
+**PCBKBC{S,C,M,L}.LIB — 152 modules, all four memory models.**
+Output: `toolkit/pwa153/bc31/lib/`. Build script:
+`MAIN/build/scripts/BLDKBC.BAT`. Full account:
+`toolkit/pwa153/bc31/README.md`.
+
+    PCBKBCS.LIB   245,760 B   small
+    PCBKBCC.LIB   258,560 B   compact
+    PCBKBCM.LIB   252,928 B   medium     <- PCBoard itself uses medium
+    PCBKBCL.LIB   265,216 B   large
+
+All four hold the same 152 modules. SHA256/MD5 alongside the libraries.
+
+**Verified by linking, not by counting.** Six of Clark's seven sample
+doors compile and link clean against the library in medium and large;
+the binaries are committed to `OUT/pwa153/bins/`. Against Clark's
+shipped `TOOLKIT/OTHER/QUICKREF`: **150 of 150** documented door
+functions — 139 under their own names, the other 11 as the `ASYNC_*`
+entry points the header maps them to.
+
+**Nothing is unresolved.** Small and compact link-fail every sample with
+`Segment _TEXT exceeds 64K` — a 64K single-code-segment limit, not a
+library defect; those models are for doors using a small slice of the
+toolkit. `SAMPLES/INPUTREQ.C` fails with `Undefined symbol _MAIN`; it is
+a replacement-module example, meant to be compiled into a door rather
+than linked standalone. Both are documented in
+`OUT/pwa153/bins/README.md` and neither is shipped as a binary.
+
+### The three config changes that made it build
+
+Clark shipped no door-SDK config — `LIB/CFG/BC31/PCBOARD.CFG` is the
+PCBOARD.EXE config. The SDK config is that, plus `-DLIB`, minus two
+switches. Both removals were established by experiment:
+
+- **`-Y` (overlay generation).** Borland: *"Overlays only supported in
+  medium, large, and huge memory models."* This — **not** far pointers
+  or `_FARDATA_` — was the small/compact blocker recorded below. With
+  `-Y` gone, small and compact go from 6/130 to 130/130.
+- **`-DPCBCOMM`.** Guards PCBoard-internal branches that read
+  `Status.TerseMode`; under `-DLIB`, `PCBOARD.H` selects the reduced
+  door-visible `statustype`, which has no `TerseMode`. All four
+  combinations of `-DPCBOARD`/`-DPCBCOMM` were tested: dropping
+  `-DPCBCOMM` is necessary and sufficient.
+
+Everything else is Clark's, unchanged — including `-P` (mandatory),
+`-V -Vmp -Vmd`, `-3`, and `-D_FARDATA_=_FAR_` (do not drop it; it sets
+the struct layout a door shares with PCBOARD.EXE at runtime).
+
+### Manifest: 154 modules, not 130
+
+The 130-module figure below came from Clark's `PCBKIT_L.LIB`. That
+library is **not the SDK** — it is the PPLC/utility link target, built
+without `-DLIB`, and `docs/pcboard-internals/PCBKIT-LIB.md` already
+records it as stale. Using it as the SDK manifest produced three kinds
+of error, all found by building and linking:
+
+**Dual-tree collisions** (the entry below was right about CNAMES and
+about the rule; two more were wrong in the manifest):
+
+| Module | Manifest had | Correct for the SDK |
+|---|---|---|
+| CNAMES | `LIB/SOURCE/PCB/CNAMES.C` | `LIB/SOURCE/TOOLKIT/CNAMES.C` |
+| HELP | `LIB/SOURCE/SCRNIO/HELP.C` | `LIB/SOURCE/TOOLKIT/HELP.C` |
+| ANSI | `LIB/SOURCE/SCREEN/ANSI.C` | `MAIN/SOURCE/ASM/ANSI.ASM` |
+
+ANSI is worth remembering. `MAIN/SOURCE/DISPLAY/ANSI.C` looks correct
+— it defines `agotoxy`, `asetcolor`, `awherex`, `awherey`, `curcolor` —
+but does not compile under `-DLIB`, and the linker wants those symbols
+**uppercase** (`AWHEREX`). They come from `ANSI.ASM`, assembled
+`tasm /m3` (uppercasing), not `/mx`. Same casing split as
+`OUT/pwa153/BUILD-RECIPE.md` records for PPLC.
+
+**22 absent modules**, each traced from a linker "Undefined symbol":
+BUILDSTR, CHANGE, DOSDUP, FASTPUTC, INDEX, TICDELAY, BOX, BOXCLS,
+CLSBOX, PRNTCNTR, PRNTMOVE, TIMECHNG, WHEREX, DCOMMA, DOSFIND,
+GETDRIVE, GETPATH, SETDRIVE, ISOPEN, SYSDATE, SYSTIME, BGETKEY,
+PRINTER.
+
+**2 modules removed.** `SCRNIO/GETKEY.C` and `DOS/SHOWERR.C` are
+PCBSETUP-side, not door-side — in `pcbkit_l` because PCBSETUP links it.
+The toolkit already ships the door-side replacements (`SMALLERR.C`,
+`NOINPUT.C`).
+
+**One duplicate symbol.** `ansicolors` is defined at file scope in both
+`SCREEN/ANSI.C` and `TOOLKIT/INIT.C`; TLIB refuses the second. Made
+`static` in `INIT.C`. The crew's toolkit tree already carries this fix;
+the archive copy does not.
+
+### Resolved: the 5 externals that were unresolved
+
+`_BC386BUG`, `_COLORS`, `_KBDSTATUS`, `_SHOWCLOCK`, `_UPDATEKBDSTATUS`
+are gone — by two changes, not by stubbing anything:
+
+- **Dropped `/DCPU386`.** Only `pcb153/SOURCE/H/BUG.H` reads it, to route
+  `timerexpired()` through a `long BC386BUG` that lives in
+  `SOURCE/MAIN/PCBOARD.C` — a file no door can link. Without it the
+  macro uses the direct form. `-3` stays, so the code is still 386.
+- **Removed `SCRNIO/GETKEY.C` and `DOS/SHOWERR.C`.** Both PCBSETUP-side,
+  needing host globals (`Colors[]`, `_KBDSTATUS`, `_SHOWCLOCK`,
+  `_UPDATEKBDSTATUS`) no door provides. This also answers the SCRNIO
+  question that was open here: GETKEY does not belong in the door SDK.
+
+### Two DOS traps, both of which cost time
+
+- **The 127-byte command line.** TLINK silently truncates past it. The
+  symptom is misleading: the **C runtime** appears undefined (`_exit`,
+  `__stklen`) because the library field never got read. Use response
+  files for TLINK as well as TLIB.
+- **TLINK `/L` takes no space**: `/LC:\BC31\LIB`, not
+  `/L C:\BC31\LIB`, or the path is linked as an object file.
+- **8.3 truncation.** Writing `CALLBACKS.EXE` and `CALLBACKL.EXE` from
+  one loop silently gives you `CALLBACK.EXE` twice. Put each memory
+  model in its own directory rather than suffixing filenames.
+
+---
+
+## Superseded — prior pwa153 assessment (kept for the record)
+
+### pwa153 — NOT BUILT  ⚠️
+
+**Corrected 2026-09-17: no SDK library has ever been produced.** No
+.LIB exists in toolkit/pwa153/{bc31,tc201,msc70}/ or in the deleted
+OUT/lib/. Earlier "DONE" / "COMPLETE" claims in this file, in the root
+README and in the removed OUT/lib/pwa153/STATUS.md were wrong — the
+work was done in a scratch directory and never landed.
+
+The manifest is known: Clark's shipped PCBKIT_L.LIB lists **130
+modules** (TLIB listing, not a guess), all 130 located in the source —
+101 in the toolkit tree, 29 in MAIN/SOURCE.
+
+### What is established
+
+- **Manifest: 130 modules.** From a TLIB listing of Clark's shipped
+  `PCBSRC/PCBKIT_L.LIB`, not from makefile `lib:` targets. All 130 are
+  located in our source: 101 in `toolkit/pwa153/SOURCE`, 29 in
+  `pcb153` MAIN/SOURCE. The toolkit library legitimately pulls modules
+  from the main source tree — that was the piece earlier attempts
+  missed, when the manifest came from only 8 makefiles.
+- **11 modules exist in both trees** (ANSI, DOSCLOSE, DOSOPEN, DOSREAD,
+  DOSWRITE, HELP, INDEX, INIT, RECYCLE, SHOWERR, USERSYS). Prefer the
+  toolkit copy; CNAMES specifically must be TOOLKIT/CNAMES.C (the
+  `-DLIB int getconfrecord` version), not PCB/CNAMES.C.
+- **Loose override OBJs** (NO*, PCBDAT, SMALLERR) ship alongside the
+  library and are linked selectively — they are not a second library.
+- **PCBoard itself uses the MEDIUM model.** Clark's own shipped
+  PCBKIT_L.LIB is LARGE only.
+- **ALTMODEM is not a library module.** Its source is a standalone
+  modem test utility with its own main() that stubs out toolkit
+  functions so it links by itself.
+
+### Known obstacle: small and compact models  — RESOLVED, see above
+
+A trial build (2026-09-17, headless dosbox-x + Clark's BC 3.1) produced
+126/130 objects for **medium** and **large**, but only **6/130** for
+small and compact. The toolkit uses far pointers and `_FARDATA_`
+throughout; small and compact need their own configuration, not just a
+`-m` flag swap. A genuine 4-model matrix is more work than a re-run —
+plan for 2 models first, or solve the model config deliberately.
 
 Compiler families:
-- PCBKBC (Borland C++ 3.1) — DONE, all 4 models. **Buildable under
+- PCBKBC (Borland C++ 3.1) — **BUILT 2026-09-17**, all 4 models (see above).
   DOSBox-X** with `[dos] zero unused int 68h=true` + `HDPMI16 -r`
   (see `todo/dosboxx-dpmi-failures.md` Failure #5).
-- PCBKIT (Turbo C 2.01) — DONE, all 4 models. Real-mode, no DPMI
+- PCBKIT (Turbo C 2.01) — NOT BUILT. Real-mode, no DPMI
   needed.
 - PCBKMS (Microsoft C 7.0) — Route A **VERIFIED 2026-08-29**: MSC7
   CL under DOSBox-X + HDPMI32 produces valid OMF (proof:
@@ -192,7 +343,7 @@ manifest through TCC for all 4 models.
 ## Step 2 — PCBKIT COMPLETE ✅ (2026-08-25)
 
 All 4 PCBKIT (Turbo C 2.01) libraries built, verified (119 modules,
-key door functions present), and installed to OUT/lib/pwa153/. PCBKBC
+key door functions present), and installed to toolkit/pwa153/bc31/. PCBKBC
 rebuilt with the shared updated headers — identical sizes, confirming
 the compiler guards are behavior-preserving.
 
@@ -236,7 +387,7 @@ Distribution:
 
 Also cleaned stray build scratch from the repo root (empty TCC/TCS/
 TCM/TCL dirs and OC/OL/OM/OS/TCOBJ obj dirs) - real objects are
-preserved in OUT/lib/pwa153/pcbkit-obj + pcbkbc-obj.
+preserved in toolkit/pwa153/bc31/pcbkit-obj + pcbkbc-obj.
 
 ## Step 2 — PCBKMS (Microsoft C 7.0): toolchain extracted, DPMI blocker
 

@@ -1,107 +1,118 @@
+# v0.3.2 — ROOT names the branch; paths match our layout (2026-09-17)
+#
+# Where a path appears in both the v0.3.2 and the v0.3.1 section, the
+# v0.3.2 line is the current one. HISTORY.md, APPLY.txt and .gitignore
+# all changed again in this release.
+
+# Modified again in v0.3.2 (these supersede the v0.3.1 lines below for the same path)
+cb0af655a3edd8d885f8ee297d1ada48  .gitignore
+ff1181eaf54048db9b49342f2d997e98  APPLY.txt
+e8b0a5e72b25cb7233e08a4129671774  HISTORY.md
+fa789cabd5b93ff9d7106cca22a67b1a  MAIN/build/CLARK-DRIVE-LAYOUT.md
+
+857fa9cdf39ff67b3300d227d2449c9a  todo/toolkit.md
+
+87d90dcf4f98de6c70174f11314ac27c  pcb153/SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK
+
+67f17754271c9cc1198641d08144616d  pcb153/SOURCE/MISC/MD5/README.md
+
+9889268c9c971d58539a39993a6909b1  pcb153/SOURCE/MISC/MD5/FILE_ID.DIZ
+
+
+197a4c28d16f2b7c9f9a4463b21c5d53  pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md
+
+b95f2b31ddc8295c22db40d650d236df  todo/PCBIC-PWA-BUILD-DRAFT.md
+
+2f540b44e076da73693e5469a9e7e493  OUT/README.md
+ff12ab23f113033f470c243457e7f8ae  toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C
+
+# New in v0.3.2
+4d9df2e4185bb007dea01463f3dd9396  MAIN/build/scripts/normalize-case.sh
+bd8016f075cc9907e0003acf8dc8377e  pcb153/SOURCE/MISC/MD5/MD5.ASM
+df65abb47c5187661fbb9cae18573c12  pcb153/SOURCE/MISC/MD5/MD5.TXT
+7b4cd49ad19fd5de225997e9cfc65c5a  pcb153/SOURCE/MISC/MD5/RFC1321.TXT
+f1a07b4adb486c3497f338d37a55a9e6  pcb153/SOURCE/MISC/MD5/RFC1725.TXT
+f72bba6c996faf932fdec642371865c7  pcb153/SOURCE/MISC/MD5/OS2/MD5.OBJ
+3bb48d7f1b7dcc7ffecb67ddfffb11c2  toolkit/pwa153/H/VMDATA.H
+236659b6c5b1190169685615710fdb36  toolkit/pwa153/H/vmavl.h
+46e327513080275a5fcbe60c7194a1f9  toolkit/pwa153/SOURCE/VMAVL.C
+3de76e3a080d81fdfda50a13c33cfb78  toolkit/pwa153/SOURCE/VMFUNCS.C
+521947f8ad247a488b15d5c838ee6ff7  OUT/pwa153/PCBOARD.EXE
+
+# Makefiles repointed in v0.3.2 (13 files)
+54be57f57a71e6aa842912050e96db9e  pcb153/153/PCBOARD.MAK
+c6c5f77d6d55be06cc792ff09c3d0469  pcb153/153/PCBOARD2.MAK
+c2459c70224dd55151a94dbe62d33874  pcb153/153/PPLC.MAK
+7e0cf14b16d83a23f40ceb4cb3edab72  pcb153/SOURCE/MISC/IDX/MAKEIDX.MAK
+e1592e301eaa8919f056d4c61b5ac13f  pcb153/SOURCE/MISC/USERNET/USERNET.MAK
+0b435d0fcd89169b14e29249af8d7eba  pcb153/SOURCE/UTIL/PCBSETUP/PCBSETUP.MAK
+22cee8c8c20bff2d4f13c5ef05c2ddef  pcb153/SOURCE/UTIL/PCBSM/PCBSM.MAK
+e556a03a8cbd80bcb64ab954fdc646ee  pcb153/SOURCE/UTIL/PCBTEXT/MKPCBTXT.MAK
+b23fa1613e7aff8703d34576ee5fde9b  pcb153/SOURCE/UUCP/UUIN/UUIN.MAK
+d5fa559f421f612c58df2f8f10d1743f  pcb153/SOURCE/UUCP/UUOUT/UUOUT.MAK
+51224510d6d60f6870b231fe307bf548  pcb153/SOURCE/UUCP/UUUTIL/UUUTIL.MAK
+029eb0e4f126df3d5128c441e586e58e  pcb153/SOURCE/UUCP/UUXFER/UUXFER.MAK
+
+# v0.3.1 — pwa153 door SDK built and verified by linking (2026-09-17)
+# NOTE: OUT/README.md and toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C were
+# listed here in v0.3.1 but changed again in v0.3.2, so their entries
+# moved to the v0.3.2 section above. Their v0.3.1 hashes are recorded
+# in that release's APPLY.txt, not repeated here.
+
 # Modified in this release
-5dee653b38fd0b5552cd6558a4ac4ad9  .gitignore
-4bf0c2fe313333c867c2ba7d864979c3  HISTORY.md
-0dc66acef2d36c842e1fe322e41b79f7  MAIN/DELTA-MODEL.md
-09399a6ec1df445410f3e4e3fc4ee584  MAIN/README.md
-93a586954f0e8b265d428f3cadc44cea  MAIN/build/IC-TOOLKIT-SDK-BUILD-PLAN.md
-b103da360753347ca247feb3555ba21a  OUT/README.md
-907bb302a324cbd61329d7ba85144092  README.md
-40fc68b99ed61f8b9f5db9ae348a33cf  pcb154/DOCS/DELTA154-CHANGES.md
-31d62017eeb5fef2be1ec43df10ee9c8  pcb154/DOCS/SYSOP_154.TXT
-a008c4a2fb9be8026765f1e43d5e6307  pcb1541/pcbic12/src/RUNINET.md
+ee7835a71a1ebef45e11265d972ad2dc  .gitignore
+7da78113e6322ca33e2b02b79ee8c735  APPLY.txt
+3591e0c6af2b6e79e665a266f9c71e1e  HISTORY.md
+d42565b498e73f9f0139f5bb067bb752  MAIN/build/SDK-BUILD-STATUS.md
+8bfbbfe612def7241ef1940db85cacd5  MAIN/build/scripts/BLDKBC.BAT
+037e134d07c055fcd9cf483cd1514a7c  OUT/delta154/README.md
+73a5a27617020d750b24ccebcd5690ca  todo/pcb-libchain-build.md
+65d52450e236bb1aeff30a7a86f6194e  todo/toolkit.md
 
-# New — PCB/IC source on the 15.4 PWA leg
-8dd64401bb105e0ca3208f8457011e1c  pcb153/upd154/SOURCE/IC/README.md
-e7ba824005bf6d49c42692e5f855f8e6  pcb153/upd154/SOURCE/IC/RUNINET.3.30.PPE
-60a370b1bcd094fbfa3fed00a47111a5  pcb153/upd154/SOURCE/IC/RUNINET.PPS
-a008c4a2fb9be8026765f1e43d5e6307  pcb153/upd154/SOURCE/IC/RUNINET.md
-5f099db6181e195a1d3aadd8634e85ed  pcb153/upd154/SOURCE/IC/dos/pcbic_code.asm
-721339edf2262c2369ec3a539fb43c8d  pcb153/upd154/SOURCE/IC/dos/pcbic_last4.asm
-b4a27a657341fb355318846a127f1f5b  pcb153/upd154/SOURCE/IC/dos/pcbiccfg_catalog.txt
-d5cbf389f53b2950b4b5e11afc5e4e37  pcb153/upd154/SOURCE/IC/dos/pcbiccfg_code.asm
-7c2ea543af2b8dffee0b09a312db77d0  pcb153/upd154/SOURCE/IC/dos/pcbicevt_catalog.txt
-cf6355d22d81e9988dfb5dcd9738f46b  pcb153/upd154/SOURCE/IC/dos/pcbicevt_code.asm
-006fdd78874d1cb2ad407b99ca453b76  pcb153/upd154/SOURCE/IC/dos/testic_code.asm
-df7c68da0d5590f05ff85c819b6aff74  pcb153/upd154/SOURCE/IC/os2/lx_structure.txt
-a043f1fad31a97075ccea9b0ed8c835b  pcb153/upd154/SOURCE/IC/os2/pcbic2.lnk
-2b4837c439ba029384f144a4f11f7bd8  pcb153/upd154/SOURCE/IC/os2/pcbic2_catalog.txt
-b6ab52f1cc26214c03d807ca0bbf7c33  pcb153/upd154/SOURCE/IC/os2/pcbic2_code.asm
-12f5276a881bedefbc958ccf35580fc9  pcb153/upd154/SOURCE/IC/os2/pcbic2_data.asm
-a55a8c2c85a44c8ba81c6991c3c22c7e  pcb153/upd154/SOURCE/IC/os2/testic2.lnk
-b8120595c405717ef01c5dc4e3f2e7d5  pcb153/upd154/SOURCE/IC/os2/testic2_code.asm
-70fdbed71ae9b2edb5ee48760fd36ed4  pcb153/upd154/SOURCE/IC/os2/testic2_data.asm
-cbe5faf64929ba409c5c0c47f09038ff  pcb153/upd154/SOURCE/IC/pcbic.c
+# Restored from e4181e5^ (deleted 2026-08-25, never re-added)
+eb237a4475c59e5dce25c4272fdef514  DOSBOX.CFG
+2205273d376d9a66f3134b58eb5d7b5a  toolkit/pwa153/H/PCB153FX.H
 
-# New — PCB/IC binaries (15.4 PWA output)
-092a895b9dcc7e8b84cb1cea46adeccd  OUT/pwa153/upd154/PCBICCFG.EXE
-45bcc0367c6d7e9a51ea1323ba7248f9  OUT/pwa153/upd154/PCBICEVT.EXE
-8b8e19ac5a62b55af08b7a6acfc516bc  OUT/pwa153/upd154/Pcbic.exe
-44e459deeaa901cad575472f91dd3943  OUT/pwa153/upd154/Pcbic2.exe
-985bf3f06b7ce592cf718667697be7b1  OUT/pwa153/upd154/TESTIC.EXE
-bfb0e052edebcf5abeb56139ee9f700c  OUT/pwa153/upd154/TESTIC2.EXE
+# New in this release
+22fae1abbf3950662f9888029ad24f67  MAIN/build/scripts/KBCC.RSP
+7aa429cb7a861cb3a9e09e7f1c43b0a7  MAIN/build/scripts/KBCL.RSP
+9f6b9bfa8d734e75e0220a8d460e078c  MAIN/build/scripts/KBCM.RSP
+bb70d3b35f84cb1247812a1050d02613  MAIN/build/scripts/KBCS.RSP
+0dbf86720ed32a3557f0717b68651645  MAIN/build/scripts/PCBKBC.CFG
+26cc1b7dc2182ae5f9d2a58ec0981eb5  OUT/pwa153/bins/CHECKSUMS.sha256
+d75fc19f94ce785913b83e811c4ed88f  OUT/pwa153/bins/README.md
+92a8df089d528f95bb81c8cbc08ac4d6  OUT/pwa153/bins/large/CALLBACK.EXE
+e4fa389b268775ade531a1ac651fe7b4  OUT/pwa153/bins/large/COPYBIN1.EXE
+d021f8dccf02c9e000dc7e72f2238104  OUT/pwa153/bins/large/COPYBIN2.EXE
+90c940f28dda3d18ffb245a2da275740  OUT/pwa153/bins/large/COPYTEXT.EXE
+efcd36926f8b5d3e238e8acb94ab72a2  OUT/pwa153/bins/large/HELLO.EXE
+e9b65af0894850806652893da9ea236f  OUT/pwa153/bins/large/UPGRADE.EXE
+21fc0d7a224b54231f1f9e780b18bc10  OUT/pwa153/bins/medium/CALLBACK.EXE
+b10b78c0199985f99cfb6ed7165df62b  OUT/pwa153/bins/medium/COPYBIN1.EXE
+324970fb503a3cb4fab7554d7b7a2a28  OUT/pwa153/bins/medium/COPYBIN2.EXE
+100a19410652fab50868d85135f642c7  OUT/pwa153/bins/medium/COPYTEXT.EXE
+2106102ae0787e783ca6548c01897765  OUT/pwa153/bins/medium/HELLO.EXE
+4ff6d97931f522de0762bcf653830f53  OUT/pwa153/bins/medium/UPGRADE.EXE
+89aee0e731871f6dc0578753c68d7feb  toolkit/pwa153/bc31/README.md
+188f6a869eebbe7946d223daf8b99656  toolkit/pwa153/bc31/lib/CHECKSUMS.md5
+8c0c4c5932c13a4b2a44c69cc128a133  toolkit/pwa153/bc31/lib/CHECKSUMS.sha256
+eec13b69dd13d7b1ae9feeeecd5aa908  toolkit/pwa153/bc31/lib/COUNTRYL.LIB
+e019cd899f2931854f2fb6d6ff2d2b81  toolkit/pwa153/bc31/lib/DOSCLS_L.LIB
+e7ac0b83fdb6cd17cbe920221453484d  toolkit/pwa153/bc31/lib/DOS_L.LIB
+7fda4ec64ca269454fc6c4900561aded  toolkit/pwa153/bc31/lib/MISC_L.LIB
+dd0d6ed030781cffc5c6e3bc174caac8  toolkit/pwa153/bc31/lib/PCBKBCC.LIB
+228e6fa591a6f010d58dfd2a8ba42d39  toolkit/pwa153/bc31/lib/PCBKBCC.LST
+26ddb7b5a7bda9cbef5d071c6399a1ea  toolkit/pwa153/bc31/lib/PCBKBCL.LIB
+e76d07652d3d83f05075bbb68c3d377c  toolkit/pwa153/bc31/lib/PCBKBCL.LST
+b34e0069be1a6cf2237d9ebf8b434299  toolkit/pwa153/bc31/lib/PCBKBCM.LIB
+862906d29558fe647e80cdb3523c4ec7  toolkit/pwa153/bc31/lib/PCBKBCM.LST
+7dc6844db1069b79911feea7099239f1  toolkit/pwa153/bc31/lib/PCBKBCS.LIB
+b72cf4689da46e6371794b52187d7731  toolkit/pwa153/bc31/lib/PCBKBCS.LST
+927898ee5be0b91ac7fdd4ff54e9ba82  toolkit/pwa153/bc31/lib/PCB_L.LIB
+951a5e77c548ec47034129b02eafebc3  toolkit/pwa153/bc31/lib/SCREEN_L.LIB
+f3bfd5d7fe4399a75a7209da62f0622b  toolkit/pwa153/bc31/lib/SCRNIO_L.LIB
+4ca97cedf71dd6e7b2a6901c17cfc83b  toolkit/pwa153/bc31/lib/SYSTEM_L.LIB
+998c5ce390d7fc53cd67e61bd0d02d7a  toolkit/pwa153/bc31/lib/TOOLKITL.LIB
 
-# New — PCB/IC data files
-b709046691512b45924b93ab24d55df5  OUT/data/ic12/DATA/FING
-649e73b96d8f3d5e742a73dc975bc831  OUT/data/ic12/DATA/FTP
-bd62b603cd580c6b1246fb2328e77887  OUT/data/ic12/DATA/FTPSCRN
-e0617ba65f4c6d4b41f2e8b59b205eda  OUT/data/ic12/DATA/GOPH
-cee40bf3b28d21d03bd83378897c3d40  OUT/data/ic12/DATA/ICPROFS.DAT
-87dba450b74d80d999f2357605032ebb  OUT/data/ic12/DATA/MENU
-d057d6433a465f1fda54269aa0775605  OUT/data/ic12/DATA/MENU.DAT
-d016ad1dd0266ef93d4118b2d8eb43b9  OUT/data/ic12/DATA/PING
-2f1d2dfe0faef47a4f37d8fd0a88734d  OUT/data/ic12/DATA/PPP
-6e51ef9cefbc5551d36d21d2335461c1  OUT/data/ic12/DATA/RLOG
-ed5d94d2a16c4487b69b7bf88efa9590  OUT/data/ic12/DATA/SLIP
-8b336eeca8aee72edc89c4a35b88685b  OUT/data/ic12/DATA/TCPTEXT
-91d728bcde201f7b10f38087ab6af78a  OUT/data/ic12/DATA/TELN
-b3155f14d17858adb0f9ed3bf2d4b55f  OUT/data/ic12/DATA/TROU
-a89d24f14c12e69bce0f98f0d8e61b01  OUT/data/ic12/DATA/WHO
-2bbe7d1819c88d8f0dbd078be86d96f8  OUT/data/ic12/DOCS/PCBIC.DOC
-94074cc143554793d6df407d472107ca  OUT/data/ic12/DOCS/PCBIC.PDF
-de106334ab6a80ad81ce0002dc189cac  OUT/data/ic12/DOCS/README.1ST
-b0b243085d07a22f0c359d1d73e19d32  OUT/data/ic12/FILE_ID.DIZ
-d748fee7acef8c005e7fe68cfe499717  OUT/data/ic12/PCBIC.HLP
-32116780b9264f5e39bbe6db430e4ea5  OUT/data/ic12/RUNINET.PPE
-60a370b1bcd094fbfa3fed00a47111a5  OUT/data/ic12/RUNINET.PPS
-630f55f1b2f62b631b95b6f1f260f393  OUT/data/ic12/SCRIPTS/OS2SLIP.CMD
-a3be3e260e9254342f2e0ac7964fe6a9  OUT/data/ic12/SCRIPTS/OS2SLIP.TXT
-9666c2b82e547dc6d3789faf96c304b0  OUT/data/ic12/SCRIPTS/WIN31PPP.SCP
-014ea182e7030ed918210645ca927e44  OUT/data/ic12/SCRIPTS/WIN31PPP.TXT
-83466d6e44157dd267e745787501fcc6  OUT/data/ic12/SCRIPTS/WIN95PPP.SCP
-59ab243e914046ed569b44dafeb21f98  OUT/data/ic12/SCRIPTS/WIN95PPP.TXT
-5822dd3ddcc04f6a54753470f4325a31  OUT/data/ic12/root/PCBIC
-ce14c07789c552db34ae908482ec2b21  OUT/data/ic12/root/PPP
-a626d0258ca97dd22de272b8840aa27e  OUT/data/ic12/root/SLIP
-ac5535fcbec9a7313f89c3b9c2b4284e  OUT/data/ic12/root/TPA.BAT
-
-# New — Clark's shipped 15.4 beta binaries (recovered reference)
-3effd447b1e9fa6b97f2eb7a9cf6428b  OUT/clark-original/CHECKSUMS.sha256
-d790b2725176804720e3771f4663ade5  OUT/clark-original/DOS/LOCAL.EXE
-3566f9fb626b5de62593301febdf276d  OUT/clark-original/DOS/MKPCBTXT.EXE
-88763782508c44ee4a574c1799c82890  OUT/clark-original/DOS/PCBOARD.EXE
-44887f8c5ccf1f91550b7bd7355a0bb4  OUT/clark-original/DOS/PCBOARDM.EXE
-61d9513116718a6dedd140eb4f7975d9  OUT/clark-original/DOS/PCBSETUP.EXE
-a522430a314858a7dfd4dd3ecafa75c6  OUT/clark-original/DOS/PCBSM.EXE
-6359db0b2b9f160b2b535954c472ffa4  OUT/clark-original/DOS/PPLC.EXE
-dd0de3e9d3df3790db75664e3d478e57  OUT/clark-original/DOS/UUIN.EXE
-c6015ba89520bb0ef246556bd0349b43  OUT/clark-original/DOS/UUOUT.EXE
-0f26c017d08a77e899b53ce3a9c93df8  OUT/clark-original/DOS/UUUTIL.EXE
-79449c0063da2d5071ca0c3340967da6  OUT/clark-original/DOS/UUXFER.EXE
-38e4935dd28ebc5029c33e798cfd1b07  OUT/clark-original/OS2/PCBOARD2.EXE
-67447b5650e08e4b9778d9b6f21cd1b9  OUT/clark-original/README.md
-062dd7672bf7a95cea0410d0e71d2654  OUT/clark-original/beta-patched/LOCAL.EXE
-6cb31b2f8e05dea66445e545da3dd7d5  OUT/clark-original/beta-patched/PCBOARD.EXE
-5506687729c0c0b3e7ee9c5f9c13ae40  OUT/clark-original/beta-patched/PCBOARDM.EXE
-e8723634b5806246eb1c55a421e1344c  OUT/clark-original/docs/HISTORY
-c54de523c0ec8cbbd751eb424df06adf  OUT/clark-original/docs/PCBOARD.SER
-113ee2e1bb028ef99134763f8a5c3ff4  OUT/clark-original/docs/README.1ST
-ac1788327476e0f388595845ef2ac714  OUT/clark-original/docs/REPORT.TXT
-4b2848a66c8b6595e1c47c43f85a22f4  OUT/clark-original/docs/WHATSNEW
-
-# New — PCBIC v1.1 reference package
-5087e225e27178daeab4eecdd747b211  reference/pcball/pcboard/Pcbic11   05-28-96.zip
-28889bd753216bcb78b647ebcdfb06bd  reference/pcball/pcboard/Pcbic11.md
-
-# Release metadata (self-referential: APPLY.txt and CHECKSUMS.txt)
-21c777e0a3c9e847d8dfa294fb8421a2  APPLY.txt
-0d680bd988b401c73f4f82c47066806e  CHECKSUMS.txt
+# Moved this release: OUT/pwa153/lib/*.LIB -> toolkit/pwa153/bc31/lib/
+# (content unchanged; the 9 old copies still need deleting by hand)

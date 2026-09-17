@@ -32,7 +32,10 @@
 VERSION = 153
 ROOT    = ..
 PROJ    = $(ROOT)\MAIN
-LIBDIR  = $(ROOT)\LIB\BCDOS\$(BCCOMPILER)
+# Library path: our layout is <branch>\LIB\<compiler>\lib, not Clark's
+# LIB\BCDOS\<compiler>. Repointed 2026-09-17 to match the repo
+# (toolkit/<branch>/<compiler>/lib) rather than bridge it with copies.
+LIBDIR  = $(ROOT)\LIB\$(BCCOMPILER)\lib
 OBJ     = OBJ\$(BCCOMPILER)
 
 CFG     = $(VERSION)\PCBOARD.CFG

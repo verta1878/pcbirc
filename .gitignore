@@ -44,6 +44,28 @@
 !OUT/delta154/*.EXE
 !OUT/delta154/*.exe
 
+# Exception: OUT/pwa153 — the 15.3 PWA build (Borland C++ 3.1).
+# Built from source 2026-09-16 via Clark's own COMPILE.BAT/PCBOARD.MAK.
+# Released artifacts; see OUT/pwa153/BUILD-RECIPE.md.
+!OUT/pwa153/*.EXE
+!OUT/pwa153/*.exe
+
+# Exception: the SDK and category libraries.
+# *.LIB is ignored as build output above, but these are released SDK /
+# link-input artifacts and must stay visible to git. OUT/lib/ was deleted
+# on 2026-09-17 and its rules removed with it. Both the SDK and the
+# category libraries now live under toolkit/<branch>/<compiler>/lib/ —
+# they come from the same tree and the same compiler. OUT/pwa153/lib/
+# was retired on 2026-09-17; do not recreate it.
+#
+# Keep these visible. Twice now, artifacts have been lost because an
+# ignore rule hid their absence from git: Clark's 15.4 beta binaries and
+# the 15 Watcom _W builds, both in the 2026-08-25 restructure.
+!toolkit/**/lib/*.LIB
+!toolkit/**/lib/*.lib
+!toolkit/**/lib/*.LST
+!toolkit/**/lib/*.386
+
 # Local reverse-engineering scratch — one working folder at repo root,
 # named by archive under /analysis/<archive>/. Never tracked.
 # Explicit patterns cover the dir + everything under it (belt-and-suspenders).
@@ -114,3 +136,54 @@ codebase-dbf/
 #  which would otherwise silently drop BLT.LST, DIR.LST, DLPATH.LST files)
 !pcb1541/install/dist/target/**/*.LST
 !pcb1541/install/dist/target/**/*.lst
+
+# ===========================================================================
+# LAST WORD — tracked artifacts, re-asserted at the end of the file.
+#
+# In .gitignore the LAST matching rule wins. Exceptions written next to the
+# thing they describe are fragile: a later broad rule silently re-ignores
+# them, and this file is long enough that nobody notices. That is how the
+# project lost Clark's 15.4 beta binaries and the 15 Watcom _W builds in a
+# single commit.
+#
+# Everything that must stay visible to git is repeated HERE, after every
+# ignore rule in the file. Add new exceptions here, not only inline.
+# ===========================================================================
+
+# Clark's shipped 15.4 beta binaries (reference, not our output)
+!OUT/clark-original/**/*.EXE
+!OUT/clark-original/**/*.exe
+
+# 15.3 PWA build output
+!OUT/pwa153/*.EXE
+!OUT/pwa153/*.exe
+
+# PCBIC v1.2 binaries on the 15.4 PWA leg
+!OUT/pwa153/upd154/*.EXE
+!OUT/pwa153/upd154/*.exe
+
+# 15.4 Delta Watcom build (_W suffix)
+!OUT/delta154/*.EXE
+!OUT/delta154/*.exe
+
+# SDK example doors under <version>/bins/ — Clark's own samples linked
+# against the PCBKBC libraries, the proof the SDK builds end to end.
+# NOT shipping binaries; program EXEs sit at the version top level.
+!OUT/*/bins/**/*.EXE
+!OUT/*/bins/**/*.exe
+
+# Toolkit libraries: the PCBKBC/PCBKIT/PCBKMS SDK and the category
+# libraries, plus their TLIB module listings (*.LST — otherwise caught by
+# the `*.lst` scratch rule above).
+!toolkit/**/lib/*.LIB
+!toolkit/**/lib/*.lib
+!toolkit/**/lib/*.LST
+!toolkit/**/lib/*.lst
+!toolkit/**/lib/*.386
+
+# Clark's prebuilt MD5 object for the OS/2 build. PCBOARD2.MAK has
+# referenced md5.obj since forever while the object existed nowhere in the
+# tree; recovered 2026-09-17 from devtools/Md5.zip. Source material, not
+# build output, so *.OBJ must not hide it.
+!pcb153/SOURCE/MISC/MD5/OS2/*.OBJ
+!pcb153/SOURCE/MISC/MD5/OS2/*.obj

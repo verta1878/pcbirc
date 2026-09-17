@@ -56,13 +56,6 @@ moving. OpenWatcom. Ongoing.
 **15.41 IRC** — our work beyond 15.4: new programs, restored binaries,
 FidoNet/TCP/RIP additions, the openwatcom2irc port.
 
-**PCB/IC** — Clark's internet upgrade belongs to **15.4 PWA**: source in
-`pcb153/upd154/SOURCE/IC/`, binaries in `OUT/pwa153/upd154/`, data in
-`OUT/data/ic12/`. 15.3 has no IC. 15.4 Delta inherits it but ships
-Clark's 6 IC binaries unchanged — they are Borland output with no
-surviving C source, so Watcom cannot rebuild them; RUNINET.PPE, the docs
-and the data are inherited properly. See `pcb154/DOCS/SYSOP_154.TXT` §8.
-
 See `MAIN/DELTA-MODEL.md` for the full version model, and `patches/`
 for the 15.3 -> 15.4 PWA patch.
 
@@ -77,17 +70,12 @@ base. Four toolkit versions now live under `toolkit/`. See
 pcb153/                 15.3 PWA source (the base)
   pcb153/upd154/        15.4 PWA = Clark's 15.4 upgrade, in source form
                         (an update layered on 15.3, with its own build/)
-    .../SOURCE/IC/      PCB/IC - the 15.4 internet upgrade
 pcb154/                 15.4 Delta source (crew's OpenWatcom work)
 pcb1541/                15.41 IRC source (our new work)
 toolkit/                toolkits by branch: pwa153 pwa154 delta154 irc1541
 OUT/                    binaries by version: pwa153 delta154 irc1541
   OUT/pwa153/upd154/    the 15.4 PWA upgrade binaries (parallel to pwa153)
-  OUT/clark-original/   Clark's own shipped 15.4 beta binaries - the
-                        byte-match reference, NOT our output
-  OUT/data/             installer data files by program (ic12, commdrv,
-                        help, doc, ppl, gen, fido, ...) - no EXEs
-  OUT/lib/pwa153/       the built SDK library matrix
+  toolkit/<branch>/<compiler>/   the SDK library matrix (not yet built)
   OUT/support/          shared PCBoard runtime data
 devtools/               shared dev-tool + compiler archives
 patches/                15.4-pwa.patch = the 15.3 -> 15.4 PWA delta
@@ -98,13 +86,6 @@ Each version owns its source, toolkit, and binaries in parallel
 top-level dirs. See `toolkit/README.md` for the toolkit layout and
 `OUT/README.md` for the binary layout.
 
-Two directories under `OUT/` are not any one version's output:
-`clark-original/` is Clark's own material (never overwrite it), and
-`data/` holds the data files the installer ships, grouped by program
-rather than by version. `bins/` inside a version directory means SDK
-example binaries, not program EXEs — program EXEs sit at the version
-top level.
-
 ## Toolkit
 
 Clark's shared library the PCBoard programs link against (screen I/O,
@@ -113,9 +94,9 @@ version has a matching toolkit under `toolkit/`. The 15.3 -> 15.4
 toolkit difference is tiny — one enum value (SPACERIGHTAT, for @x color
 codes). Everything else Clark's 15.4 added lived in the main source.
 
-Built libraries live in `OUT/lib/pwa153/` as the SDK matrix: Clark's
+The SDK matrix lives in `toolkit/pwa153/<compiler>/`: Clark's
 toolkit compiled by three compilers × four memory models. Layout is
-compiler-first (`OUT/lib/pwa153/bc31/`, `.../tc201/`, `.../msc70/`),
+compiler-first (`toolkit/pwa153/bc31/`, `.../tc201/`, `.../msc70/`),
 with the four `.LIB` files at each compiler root and `OBJ/` +
 `loose-obj/` beside them. Status: PCBKBC (Borland) and PCBKIT (Turbo)
 built; PCBKMS (Microsoft C 7.0) pending a DPMI host — needs 386MAX
@@ -195,7 +176,6 @@ WATCOMPAT.H bridges Borland-to-Watcom differences.
 | 15.4 PWA | BC31 | features present; build-fix pass pending (STATS OBJ, headers) |
 | 15.4 Delta toolkit | wcc | DOS 267/267 (100%) once 22 Watcom fixes ported from irc1541 |
 | 15.41 IRC toolkit | wcc | 267/273 DOS 100%; 6 OS/2 on OS/2 target |
-| PCB/IC v1.2 | BC31 / BC++ 2.0 OS/2 | 6/6 binaries byte-exact (v0.2.9); not buildable by Watcom |
 
 ## The Crew
 

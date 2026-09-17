@@ -31,8 +31,16 @@
 .CACHEAUTODEPEND
 
 VERSION = 153
-ROOT    = \PROJ
-PROJ    = $(ROOT)\PCB
+# ROOT names this branch. Was \PROJ until 2026-09-17: neither
+# \PROJ (Clark, one product) nor \PCBSRC named a branch, and this
+# tree is one of four. Guarded so a build can still override it:
+#     MAKE -f<this>.MAK -DROOT=\DELTA154
+# Borland MAKE lets a makefile definition beat -D, so the !ifndef is
+# required for the override to take effect.
+!ifndef ROOT
+ROOT    = \PWA153
+!endif
+PROJ    = $(ROOT)
 LIBROOT = $(ROOT)\LIB
 LIBDIR  = $(LIBROOT)\BCOS2
 SOURCE  = $(PROJ)\SOURCE
@@ -181,7 +189,7 @@ EXE_DEPENDENCIES =  \
  blt.obj \
  ansi.obj \
  account.obj \
- $(ROOT)\md5\os2\md5.obj
+ $(ROOT)\SOURCE\MISC\MD5\OS2\md5.obj
 
 #=============================================================
 #               Explicit Rules
@@ -300,7 +308,7 @@ $(OBJ)\chat.obj+
 $(OBJ)\capture.obj+
 $(OBJ)\blt.obj+
 $(OBJ)\account.obj+
-$(ROOT)\md5\os2\md5.obj
+$(ROOT)\SOURCE\MISC\MD5\OS2\md5.obj
 $(OBJ)\pcboard2
                 # no map file
 $(LIBSDIR)\codebase\os2bor1\b4.lib+

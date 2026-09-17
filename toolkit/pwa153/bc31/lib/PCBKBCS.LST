@@ -1,0 +1,674 @@
+Publics by module
+
+ADDBACKS	size = 51
+	addbackslash(unsigned char near*,int)
+
+ADDCHAR 	size = 29
+	addchar(unsigned char near*,unsigned char)
+
+ANSI    	size = 479
+	ansi_clear()                      ansi_clearbox(unsigned char,unsigned char,unsigned char,unsigned char,unsigned char)
+	ansi_clearcolor(unsigned char)    ansi_color(int)
+	ansi_print(unsigned char near*)   ansi_rest()
+	ansi_save()                       _ansicolors
+
+ANSIASM 	size = 2121
+	AGOTOXY                           ANSI
+	ASETCOLOR                         AWHEREX
+	AWHEREY                           COLORSTR
+	CURCOLOR                          DOESCCODES
+	GETTAGGED                         NOESCCODES
+	REENABLESCROLL                    SCROLLOFF
+	SCROLLON                          SETLIMITS
+	TAGEM                             TOGGLEOFF
+	TOGGLEON                          VIEWBUFF
+
+ASCII   	size = 127
+	ascii(unsigned char near*,int)    asciispace(unsigned char near*,int)
+	lascii(unsigned char near*,long)
+
+ASYNC   	size = 2383
+	ASYNC_CDSTILLUP                   ASYNC_CGETBUF
+	ASYNC_CGETSTR                     ASYNC_CHECKCOMM
+	ASYNC_CLEARINBUF                  ASYNC_CLEAROUTBUF
+	ASYNC_CLOSECOM                    ASYNC_COMMGO
+	ASYNC_COMMINKEY                   ASYNC_COMMPAUSE
+	ASYNC_COMMSTOP                    ASYNC_CSENDBYTE
+	ASYNC_CSENDSTR                    ASYNC_INIT
+	ASYNC_ONLINE                      ASYNC_OPENCOM
+	ASYNC_SETPORT                     ASYNC_TURNOFFDTR
+	ASYNC_TURNOFFRTS                  ASYNC_TURNONDTR
+	ASYNC_TURNONFIFO                  ASYNC_TURNONRTS
+	ASYNC_TURNONXMIT                  _B16550
+	_B16550A                          _B16650
+	_B8250                            _CDOKAY
+	_CDUP                             _INBUFFER
+	_INREADPTR                        _INWRITEPTR
+	_OUTBUFFER                        _OUTREADPTR
+	_OUTWRITEPTR                      _RTSOFF
+	__CTSOKAY                         __FRAMINGERRORS
+	__INBYTES                         __OUTBYTES
+	__OVERRUNERRORS                   __PARITYERRORS
+	__RINGDETECT                    
+
+ATCLOSE 	size = 5
+	atclosing()                     
+
+BD_LONG 	size = 352
+	basdbletolong(unsigned char near*)  basdbletoulong(unsigned char near*)
+
+BGETKEY 	size = 66
+	bgetkey(unsigned char)            getkbdstatus()
+	setkbdstatus(unsigned int)      
+
+BGKEY   	size = 37
+	BGETKEY2                        
+
+BOX     	size = 286
+	box(int,int,int,int,unsigned char,boxlinetype)
+
+BOXCLS  	size = 64
+	boxcls(unsigned char,unsigned char,unsigned char,unsigned char,unsigned char,boxlinetype)
+
+BS_LONG 	size = 217
+	bassngltolong(unsigned char near*)
+
+BUILDSTR	size = 66
+	buildstr(unsigned char near*,...)
+
+CHANGE  	size = 32
+	change(unsigned char near*,unsigned char,unsigned char)
+
+CHAT    	size = 668
+	sysopchat()                     
+
+CHKAPPEN	size = 62
+	dosappendcheck(unsigned char near*,int)
+
+CHKCREAT	size = 65
+	doscreatecheck(unsigned char near*,int,unsigned int)
+
+CHKLOCK 	size = 95
+	doslockcheck(int,long,long)     
+
+CHKOPEN 	size = 62
+	dosopencheck(unsigned char near*,int)
+
+CHKREAD 	size = 118
+	readcheck(int,void near*,unsigned int)
+
+CHKWRITE	size = 106
+	writecheck(int,void near*,unsigned int)
+
+CLS     	size = 49
+	cls()                           
+
+CLSBOX  	size = 121
+	clsbox(unsigned char,unsigned char,unsigned char,unsigned char,unsigned char)
+
+CNAMES  	size = 772
+	closecnames()                     getconfrecord(unsigned int,pcbconftype near*)
+	opencnames()                      putconfrecord(unsigned int,pcbconftype near*)
+
+COMMA   	size = 169
+	comma(unsigned char near*,long)   commastr(unsigned char near*,unsigned char)
+	ucomma(unsigned char near*,unsigned long)
+
+COUNTRY 	size = 1561
+	getcountryspecs(int,int)          _CodePage
+	_Collate                          _Country
+	_CurrentCountry                   _LowerCase
+	_Table                            _UpperCase
+
+CRYPT   	size = 322
+	decrypt(unsigned char near*,int)  decrypt2(unsigned char near*,int)
+	encrypt(unsigned char near*,int)  encrypt2(unsigned char near*,int)
+	encrypt3(unsigned char near*,int)
+
+CTOD    	size = 395
+	ctod(unsigned char near*)       
+
+CURSOR  	size = 148
+	getcursor()                       setcursor(int)
+	_Cursors                        
+
+CUSTHELP	size = 7
+	customhelp(int)                 
+
+CUTIL   	size = 2884
+	CHECKSTACK                        CRITERIA
+	FINDTOKEN                         MAKEIDXNAME
+	WILDMATCH                         XMODEM
+	_FINDTOKENATTR                    _FINDTOKENCOLOR
+	_FINDTOKENEND                     _FINDTOKENSTART
+	_STACKCHECK                     
+
+DATAFIL2	size = 2957
+	readdatfile()                   
+
+DATE    	size = 428
+	countrydate(unsigned char near*)  countrydate2(unsigned char near*)
+	dateformat()                      dateformat2()
+	uncountrydate(unsigned char near*)  uncountrydate2(unsigned char near*)
+
+DATESTR 	size = 91
+	datestr(unsigned char near*)    
+
+DCOMMA  	size = 137
+	dcomma(unsigned char near*,double)
+
+DELAY   	size = 123
+	setdelay()                        MYDELAY
+
+DEVIOCTL	size = 170
+	callioctrl(int)                   devioctl(int,int,void far*,void far*)
+	getioctrl(int,void far*)          setioctrl(int,void far*)
+	setioctrlhandle(int)            
+
+DISPLAY 	size = 1527
+	backup(int)                       backupcleareol(int)
+	backupdestructive(int)            checkdisplaystatus()
+	checkforansi()                    cleareol()
+	forward(int)                      freshline()
+	moreprompt(moretype)              movecursor(int,int)
+	newline()                         pagebreak(int)
+	print(unsigned char near*)        printcls()
+	printcolor(int)                   printcom(unsigned char near*)
+	printdefcolor()                   println(unsigned char near*)
+	printnow(unsigned char near*)     sendtoprinter(unsigned char near*,int)
+	showactivity(acttype)             showmessage(int)
+	startdisplay(startdisplaytype)    BELL
+
+DOSAPPEN	size = 221
+	dosappend(unsigned char near*,int)
+
+DOSCLOSE	size = 125
+	closedosopenfiles()               dosclose(int)
+	setdosclosecallback(void(near*)(unsigned char near*,int,int))
+
+DOSCOMIT	size = 47
+	doscommit(int)                  
+
+DOSCREAT	size = 100
+	doscreate(unsigned char near*,int,int)  setdoscreatecallback(void(near*)(unsigned char near*,int,int,int,int))
+
+DOSDUP  	size = 149
+	dosdup(int)                       setdosdupcallback(void(near*)(unsigned char near*,int,int,int))
+
+DOSERROR	size = 1186
+	doserror(unsigned char near*,int)  _DosExtendedErrorStr
+
+DOSFCLOS	size = 167
+	closedosfopenfiles()              dosfclose(dosfile near*)
+
+DOSFGETS	size = 512
+	dosfgets(unsigned char near*,unsigned int,dosfile near*)
+
+DOSFIND 	size = 193
+	dosfindfirst(unsigned char near*,ffblk near*,int,int near*)  dosfindnext(ffblk near*,int near*)
+
+DOSFLUSH	size = 84
+	dosflush(dosfile near*)         
+
+DOSFOPEN	size = 383
+	dosfopen(unsigned char near*,int,dosfile near*)  _FileBuffers
+
+DOSFPUTS	size = 202
+	dosfputs(unsigned char near*,dosfile near*)
+
+DOSFREAD	size = 221
+	dosfread(void near*,unsigned int,dosfile near*)
+
+DOSFSEEK	size = 210
+	dosfseek(dosfile near*,long,unsigned char)
+
+DOSFTRUN	size = 43
+	dosftrunc(dosfile near*,long)   
+
+DOSFWRIT	size = 188
+	dosfwrite(void near*,unsigned int,dosfile near*)
+
+DOSINIT 	size = 24
+	dosinit()                       
+
+DOSLSEEK	size = 40
+	doslseek(int,long,unsigned char)
+
+DOSOPEN 	size = 1859
+	dosopen(unsigned char near*,int)  setdosopencallback(void(near*)(unsigned char near*,int,int,int))
+	_OpenFileNames                  
+
+DOSREAD 	size = 107
+	dosread(int,void near*,unsigned int)  setdosreadcallback(void(near*)(unsigned char near*,int,unsigned int,int))
+
+DOSREWIN	size = 81
+	dosrewind(dosfile near*)        
+
+DOSSTBUF	size = 134
+	dossetbuf(dosfile near*,unsigned int)
+
+DOSTRUNC	size = 55
+	dostrunc(int,long)              
+
+DOSWRITE	size = 104
+	doswrite(int,void near*,unsigned int)  setdoswritecallback(void(near*)(unsigned char near*,int,unsigned int,int))
+
+DTOC    	size = 174
+	dtoc(int,unsigned char near*)   
+
+EXIST   	size = 74
+	fileexist(unsigned char near*)    _DTA
+
+EXITDOS 	size = 82
+	errorexittodos(unsigned char near*)
+
+EXTENDED	size = 39
+	getextendederror()                _ExtendedAction
+	_ExtendedClass                    _ExtendedError
+	_ExtendedLocus                  
+
+FASTPUTC	size = 100
+	fastputc(int,unsigned char)       fastputch(int,unsigned char,unsigned char)
+	xyvalue(int,int)                
+
+FILES   	size = 1556
+	checkenvfileexist(unsigned char near*,int)  displayfile(unsigned char near*,int)
+	getalternatename(unsigned char near*,int,int)  substenvinfile(unsigned char near*,int)
+
+FMEMCPY 	size = 32
+	farmemcpy(void far*,void far*,int)
+
+FMEMSET 	size = 30
+	fmemset(void far*,unsigned char,unsigned int)
+
+GETDRIVE	size = 11
+	dosgetcurdrive()                
+
+GETMODE 	size = 536
+	getmode()                         getvideotype()
+	_Scrn_24Hour                      _Scrn_Adapter
+	_Scrn_Addr                        _Scrn_BottomRow
+	_Scrn_Box                         _Scrn_ColorCard
+	_Scrn_DateSeparator               _Scrn_EGA
+	_Scrn_Mode                        _Scrn_Rtrc
+	_Scrn_Size16                      _Scrn_Size32
+	_Scrn_SizeBytes                 
+
+GETPATH 	size = 47
+	dosgetcurpath(unsigned int,unsigned char near*,int)
+
+GIVEUP  	size = 465
+	checkmultitaskers()               GIVEUP
+	_DisableGiveup                    _Int15
+	_Int28                            _MosVect
+	_Novell                           _Tasker
+
+GOODBYE 	size = 189
+	goodbye(unsigned char)          
+
+GOTOXY  	size = 19
+	gotoxy(int,int)                 
+
+HANDLERS	size = 213
+	installhandlers()                 reinstallhandlers()
+	uninstallhandlers()               _oldbiosctrlbreak
+	_oldctrlbreak                     _oldint24hnd
+
+HELP    	size = 88
+	displayhelpfile(int)            
+
+HEXTOI  	size = 81
+	hextoint(unsigned char near*)   
+
+INDEX   	size = 1121
+	finduser(unsigned char near*)   
+
+INIT    	size = 2066
+	closedoor(unsigned char)          initdoor(unsigned char near*,int,int,openstatus)
+	setkbdtimer(int)                  _Asy
+	_Control                          _CtrlBreak
+	_Display                          _DoorName
+	_DoorParams                       _ErrorLevel
+	_ForceUpdate                      _NoChar
+	_NoGraphics                       _NoLanguage
+	_NoSecurity                       _ScrnColors
+	_Status                           _SystemCountry
+	_SystemNoChar                     _SystemYesChar
+	_UseAnsi                          _UserSys
+	_UserSysHdr                       _YesChar
+	_mask_alphanum                    _mask_atoz
+	_mask_more                        _mask_num
+	_mask_systemyesno                 _mask_yesno
+	_pcbcolors                      
+
+INITPORT	size = 112
+	initport()                        openport()
+
+INKEY   	size = 3657
+	checkstatus()                     checktime()
+	cinkey()                          clearkbdbuffer()
+	commportinkey()                   initkbdbuffers()
+	kbdhit(kbdhittype)                kbdinkey()
+	renewkbdtimer()                   stuffbuffer(int)
+	turnkbdtimeron()                  warntime()
+	watchsystemfunctions()          
+
+INPUT   	size = 3715
+	inputfield(unsigned char near*,int,int,int,int,unsigned char near*)  inputfieldint(int,unsigned char near*,int,int,int,int)
+	inputfieldlong(long,unsigned char near*,int,int,int,int)  inputfieldstr(unsigned char near*,unsigned char near*,int,int,int,int,unsigned char near*)
+	wordbackward(unsigned char near*,int)  wordforward(unsigned char near*,int,int)
+	_ExtKeyXlat                       _Redisplay
+
+INPUTREQ	size = 134
+	inputfieldreqstr(unsigned char near*,unsigned char near*,int,int,int,int,int,unsigned char near*)
+
+INT24HND	size = 53
+	_INT23HND                         _INT24ERROR
+	_INT24FLAGS                       _INT24HND
+
+ISOPEN  	size = 119
+	fileisopen(unsigned char near*)   getopenfilename(int)
+
+ISSET   	size = 34
+	isset(void far*,int)            
+
+JULIAN  	size = 752
+	breakdate(unsigned short near*,unsigned char near*)  datetojulian(unsigned char near*)
+	getjuliandate()                   juliantodate(unsigned short)
+	_Days                           
+
+LANGUAGE	size = 968
+	getdefaultlanguage()              getlanguagespecifics()
+	getsystemlanguage()               setlanguage(int)
+
+LASTCHAR	size = 45
+	lastcharinstr(unsigned char near*,unsigned char)
+
+LOG     	size = 647
+	closecallerlog()                  openlog()
+	repositionlogpointer()            writedebugrecord(unsigned char near*)
+	writelog(unsigned char near*,padtype)  _CallersLog
+
+LONG_BD 	size = 307
+	longtobasdble(unsigned char near*,long)  ulongtobasdble(unsigned char near*,unsigned long)
+
+LONG_BS 	size = 191
+	longtobassngl(unsigned char near*,long)
+
+MEMFCMP 	size = 66
+	memfcmp(const void near*,const void near*,unsigned int)
+
+MEMICMP 	size = 74
+	_memicmp                        
+
+MEMMOVE 	size = 38
+	FMEMCPY                         
+
+MEMORY  	size = 1334
+	bfree(void near*)                 bfreeall()
+	bmalloc(unsigned int)             brealloc(void near*,unsigned int)
+	fbfree(void far*)                 fbfreeall()
+	fbmalloc(long)                    initbmalloc()
+
+MISC    	size = 941
+	addtime(long,timereasontype)      checkmalloc(unsigned int,unsigned char near*)
+	checkpagelen()                    minutesleft()
+	minutesonline()                   openfile(unsigned char near*)
+	subtime(long,timereasontype)    
+
+MODEM   	size = 899
+	clearandwaitformodemempty()       closemodem(unsigned char)
+	initializemodem(showtype)         openmodem(showtype)
+	sendbyte(unsigned char)           sendstr(unsigned char near*,int)
+	waitforempty(int)                 _ModemFixupsDone
+	_ModemOffHook                     _ModemOpened
+	_OutBufSize                     
+
+MODEMASY	size = 839
+	async_ctsokay()                   async_dofixups()
+	async_framingerrors()             async_inbytes()
+	async_openmodem(showtype)         async_outbytes()
+	async_overrunerrors()             async_parityerrors()
+	async_reopenport()                async_ringdetect()
+	ASYNC_BAUDDIVISOR                 ASYNC_DISCONNECTMODEM
+	_bauddivisor                      _cdstillup
+	_cgetbuf                          _cgetstr
+	_checkcomm                        _clearinbuf
+	_clearoutbuf                      _commgo
+	_comminkey                        _commpause
+	_commstop                         _csendbyte
+	_csendstr                         _ctsokay
+	_disconnectmodem                  _framingerrors
+	_inbytes                          _online
+	_outbytes                         _overrunerrors
+	_parityerrors                     _reopenport
+	_ringdetect                       _setport
+	_turnoffdtr                       _turnoffrts
+	_turnondtr                        _turnonrts
+	_turnonxmit                     
+
+MODEMDRV	size = 0
+
+MODEMFOS	size = 1797
+	fossil_bauddivisor(long)          fossil_cdstillup()
+	fossil_cgetbuf(unsigned char near*,int)  fossil_cgetstr(unsigned char near*,int)
+	fossil_checkcomm()                fossil_clearinbuf()
+	fossil_clearoutbuf()              fossil_commgo()
+	fossil_comminkey()                fossil_commpause()
+	fossil_commstop()                 fossil_csendbyte(unsigned char)
+	fossil_csendstr(unsigned char near*,int)  fossil_ctsokay()
+	fossil_disconnectmodem()          fossil_dofixups()
+	fossil_framingerrors()            fossil_inbytes()
+	fossil_online()                   fossil_openmodem(showtype)
+	fossil_outbytes()                 fossil_overrunerrors()
+	fossil_parityerrors()             fossil_reopenport()
+	fossil_ringdetect()               fossil_setport(int,int)
+	fossil_turnoffdtr()               fossil_turnoffrts()
+	fossil_turnondtr()                fossil_turnonrts()
+	fossil_turnonxmit()             
+
+MODEMOS2	size = 2192
+	istelnetviavmodem()               isvmodem()
+	osdriver_dofixups()               osdriver_openmodem(showtype)
+	osdriver_pcbhandle()            
+
+MSGBASE 	size = 3326
+	buildextheader(exthdrtype,unsigned char near*,unsigned char)  buildgenextheader(unsigned char near*,unsigned char near*)
+	checkextendedheaders(exthdrtype,unsigned char near*)  closemessagebase(msgbasetype near*)
+	freehdrs()                        getextendedheader(exthdrtype,unsigned char near*)
+	getmessageheader(long,msgbasetype near*,long near*,newindextype near*)  getmsgbasestats(msgbasestattype near*,unsigned char near*)
+	loadextendedheaders(unsigned char near*)  lockmessagebase(int,msgbasestattype near*)
+	makemsgheader(msgheadertype near*,unsigned char,unsigned short,unsigned char near*,unsigned char near*,unsigned char near*,long  openedmsgbasestats(int,msgbasestattype near*)
+	openedmsgbasestreamstats(dosfile near*,msgbasestattype near*)  openmessagebase(unsigned short,pcbconftype near*,msgbasetype near*,openmsgtype)
+	removeexthdr(exthdrtype,unsigned char)  savetomsgbase(unsigned short,pcbconftype near*,msgbasetype near*,msgheadertypc near*)
+	skipextendedheader(unsigned char near*)  unlockmessagebase(int,msgbasestattype near*)
+	updateoldindex(pcbconftype near*,long,long,long)  _CreateReceipt
+	_ExtHdr                           _ExtHdrFunctions
+	_ExtendedStatus                   _NumExtHdrs
+
+MSTRCPY 	size = 50
+	maxstrcpy(unsigned char near*,unsigned char near*,int)
+
+PADSTR  	size = 45
+	padstr(unsigned char near*,unsigned char,int)
+
+PARSEPTH	size = 102
+	parsepaths(unsigned char near*) 
+
+PCBINIT 	size = 4743
+	pcbinit()                         _Allow16650
+	_ComSpec                          _ConfByteLen
+	_DatFile                          _DebugLevel
+	_ExtConfLen                       _FORCE16550A
+	_LineSeparator                    _NO16550
+	_OldIndex                         _PcbData
+	_PcbDir                           _VerifyCDLoss
+
+PCBTEXT 	size = 1306
+	closepcbtext()                    displaypcbtext(int,int)
+	getpcbtext(int,pcbtexttype near*)  getsystext(int,pcbtexttype near*)
+	logsystext(int,padtype)           pcbtextspaces(int)
+	readpcbtextfile(unsigned char near*,callfromtype)
+
+PRINT   	size = 80
+	fastprint(int,int,unsigned char near*,unsigned char)
+
+PRINTER 	size = 48
+	openprinter()                     _prn
+
+PRNREADY	size = 19
+	printerready(int)               
+
+PRNTCNTR	size = 36
+	fastcenter(int,unsigned char near*,unsigned char)
+
+PRNTMOVE	size = 45
+	fastprintmove(int,int,unsigned char near*,unsigned char)
+
+PROPER  	size = 255
+	proper(unsigned char near*)     
+
+RECYCLE 	size = 150
+	loguseroff(logtype)               recycle()
+
+SAVEREST	size = 116
+	RESTORESCREEN                     SAVESCREEN
+
+SAVERST2	size = 401
+	memfreeallscreens()               memfreescreen(int)
+	memrestorescreen(int,savefreetype)  memsavescreen()
+	memscreenptr(int)               
+
+SCREEN  	size = 911
+	initdisplay()                     restscrnbuffer()
+	savescrnbuffer()                  turndisplayoff(unsigned char)
+	turndisplayon(unsigned char)    
+
+SETBIT  	size = 33
+	setbit(void far*,int)           
+
+SETDRIVE	size = 26
+	dossetcurdrive(unsigned int)    
+
+SHELL   	size = 1555
+	performshell(unsigned char near*,unsigned char near*,shelltype,int,unsigned char,unsigned char,int)  restorepath()
+	savepath()                        shelltodos()
+	spawndos(unsigned char near*,unsigned char near*,shelltype,int,unsigned char,unsigned char,int)
+
+SLOWMODM	size = 330
+	modemcommand(unsigned char near*,modemverifytype)  showmodem(unsigned char near*,int,modemverifytype)
+	slowsendtomodem(unsigned char near*)
+
+SOUND   	size = 43
+	beep()                            mysound(int,int)
+
+SRCHPATH	size = 149
+	srchpath(unsigned char near*)   
+
+STATUS  	size = 2312
+	redisplaystatusline()             showstatusline()
+
+STRICMP 	size = 49
+	_stricmp                        
+
+STRIPL  	size = 62
+	stripleft(unsigned char near*,unsigned char)
+
+STRIPR  	size = 59
+	stripright(unsigned char near*,unsigned char)
+
+STRLWR  	size = 50
+	_strlwr                           _tolower
+
+STRNCHR 	size = 36
+	strnchr(unsigned char near*,unsigned char,int)
+
+STRNICMP	size = 54
+	_strnicmp                       
+
+STRUPR  	size = 47
+	_strupr                           _toupper
+
+SUBST   	size = 206
+	substitute(unsigned char near*,unsigned char near*,unsigned char near*,int)
+
+SYS     	size = 1879
+	makepcboardsys()                  readpcboardsys()
+
+SYSDATE 	size = 29
+	getsysdate(sysdatetype near*)   
+
+SYSTIME 	size = 27
+	getsystime(systimetype near*)   
+
+TICDELAY	size = 64
+	tickdelay(int)                  
+
+TIME    	size = 152
+	currentminute()                   exacttime()
+	strtominutes(unsigned char near*)
+
+TIME1   	size = 91
+	timestr1(unsigned char near*)   
+
+TIME2   	size = 77
+	timestr2(unsigned char near*)   
+
+TIMECHNG	size = 26
+	timechanged()                   
+
+TIMER   	size = 228
+	GETTICKS                          GETTIMER
+	SETTIMER                        
+
+TOKEN   	size = 498
+	getnexttoken()                    peekatnexttoken(unsigned char near*,int)
+	restoretokenpointer(unsigned char near*near*)  savetokenpointer(unsigned char near*near*)
+	tokenize(unsigned char near*)     tokenizestr(unsigned char near*)
+
+UNSETBIT	size = 35
+	unsetbit(void far*,int)         
+
+USERS   	size = 7747
+	closeusersfile()                  closeusersinffile()
+	decryptusersrec(uread near*)      encryptusersrec(uread near*)
+	numrecs(const int,const ...       openusersfile()
+	openusersinffile()                putmessagewaiting(unsigned int,long)
+	strtoyymmdd(unsigned char near*,unsigned char near*)  tempuseralloc(unsigned char)
+	tempuserdealloc()                 usercity()
+	validateinfoffset(long,unsigned char near*)  _Account
+	_AccountOffset                    _AccountSupport
+	_AddrRec                          _AddressOffset
+	_AddressSupport                   _AliasOffset
+	_AliasSupport                     _DosUsersInfFile
+	_Hdr                              _InfHeaderSize
+	_MsgPtrLen                        _NotesOffset
+	_NotesRec                         _NotesSupport
+	_PasswordOffset                   _PasswordSupport
+	_PwrdRec                          _QwkConfig
+	_QwkOffset                        _QwkSupport
+	_ReadAlias                        _ReadVerify
+	_StatsOffset                      _StatsRec
+	_StatsSupport                     _TempData
+	_TempInfRec                       _TempMsgPtr
+	_TempRead                         _TempReg
+	_UsersData                        _UsersFile
+	_UsersInfFile                     _UsersRead
+	_UsersRec                         _VerifyOffset
+	_VerifySupport                  
+
+USERSYS 	size = 2437
+	readusersysfile(openstatus)       writeusersysfile()
+	_ConfFlags                        _ConfReg
+	_MsgReadPtr                       _SysName
+	_TPAdynamic                       _TPAstatic
+
+WHEREX  	size = 13
+	wherex()                        
+
+WHEREY  	size = 13
+	wherey()                        
+
+XLATE   	size = 2186
+	printxlated(unsigned char near*)  strlenminuscolorcodes(unsigned char near*)
+	xlatetext(unsigned char near*,unsigned char near*)

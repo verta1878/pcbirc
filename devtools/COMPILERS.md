@@ -6,17 +6,28 @@ compiled three ways.
 
 | SDK prefix | Compiler | Status | Build-tools archive | Source archive |
 |---|---|---|---|---|
-| PCBKBC | Borland C++ 3.1 | BUILT 4/4 | PCB153BT.ZIP / DOSBOXX.ZIP | (bundled) |
-| PCBKIT | Turbo C 2.01 | BUILT 4/4 | TC201BT.ZIP / DOSBOXX.ZIP | devtools/TURBOC201.zip |
+| PCBKBC | Borland C++ 3.1 | **BUILT 4/4, 2026-09-17** | PCB153BT.ZIP / DOSBOXX.ZIP | (bundled) |
+| PCBKIT | Turbo C 2.01 | **NOT BUILT** | TC201BT.ZIP / DOSBOXX.ZIP | devtools/TURBOC201.zip |
 | PCBKMS | Microsoft C 7.0 | toolchain + OS/2 host ready | MSC70BT.ZIP | devtools/MSC70-retail.7z + C7OS2.zip |
+
+That table is for the **pwa153** toolkit. The other branches have no SDK
+at all yet — in particular **delta154's toolkit has not been converted to
+OpenWatcom**, so there is no PCBKxx-equivalent for the Watcom branch.
+Building it is separate work from the Delta *program* build.
 
 ## Status detail
 
-- **PCBKBC (Borland C++ 3.1)** — DONE. All 4 memory models in
-  OUT/lib/pwa153/ (PCBKBC_S/M/C/L.LIB) + loose override OBJs.
-- **PCBKIT (Turbo C 2.01)** — DONE. All 4 models (PCBKIT_S/M/C/L.LIB),
-  119 modules each. Built via MAIN/build/scripts (BLDKIT + MKLIB), C-mode
-  guarded headers, 8.3 response files.
+- **PCBKBC (Borland C++ 3.1)** — BUILT 2026-09-17. All 4 memory models
+  at `toolkit/pwa153/bc31/lib/`, 152 modules each, verified by linking 6
+  of Clark's sample doors (`OUT/pwa153/bins/`). See
+  `toolkit/pwa153/bc31/README.md`.
+- **PCBKIT (Turbo C 2.01)** — **NOT BUILT.** This entry previously read
+  "DONE. All 4 models ... 119 modules each". No PCBKIT library was ever
+  committed — `toolkit/pwa153/tc201/` holds only a `.gitkeep`. The
+  119-module manifest it refers to is also the superseded one: the
+  corrected PCBKBC build needed 152 modules, 3 of them from a different
+  source tree. Re-run against the corrected manifest and config, not the
+  old ones.
 - **PCBKMS (Microsoft C 7.0)** — retail toolchain + OS/2 Hosted
   Add-on both extracted to MSC70/ and packaged as MSC70BT.ZIP. The
   OS/2 add-on gives a real-16-bit, no-DPMI compiler (route B below), so

@@ -131,8 +131,11 @@ CD = $(CD);PCB152
 
 
 
+# Library path: our layout is <branch>\LIB\<compiler>\lib, not Clark's
+# LIB\BCDOS\<compiler>. Repointed 2026-09-17 to match the repo
+# (toolkit/<branch>/<compiler>/lib) rather than bridge it with copies.
 LIBPTH = $(LIBPTH)..\..\b\c31\lib
-LIBPTH = $(LIBPTH);..\lib\bcdos\bc31
+LIBPTH = $(LIBPTH);..\lib\bc31\lib
 
 ################################################################################
 

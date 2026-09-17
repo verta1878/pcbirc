@@ -23,19 +23,30 @@
 
 PROGNAME = UUUTIL
 
-ROOT     = \PROJ
+# ROOT names this branch. Was \PROJ until 2026-09-17: neither
+# \PROJ (Clark, one product) nor \PCBSRC named a branch, and this
+# tree is one of four. Guarded so a build can still override it:
+#     MAKE -f<this>.MAK -DROOT=\DELTA154
+# Borland MAKE lets a makefile definition beat -D, so the !ifndef is
+# required for the override to take effect.
+!ifndef ROOT
+ROOT     = \PWA153
+!endif
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+# Library path: our layout is <branch>\LIB\<compiler>\lib, not Clark's
+# LIB\BCDOS\<compiler>. Repointed 2026-09-17 to match the repo
+# (toolkit/<branch>/<compiler>/lib) rather than bridge it with copies.
+LIBLIB   = $(LIBROOT)\$(BCCOMPILER)\lib
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(ROOT)\SOURCE\H;\LIBS\VMDATA
 
 #=============================================================
 

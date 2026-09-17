@@ -1005,6 +1005,445 @@ existed, and both read as completed work. A binary set went missing for
 three weeks because the ignore rule that hid it also hid its deletion.
 Worth checking assertions against the filesystem before trusting them.
 
+### v0.3.1 — the pwa153 door SDK, built and verified by linking (Sep 17, 2026)
+
+The first SDK library this project has produced. `PCBKBC{S,C,M,L}.LIB`,
+152 modules, all four memory models, in `toolkit/pwa153/bc31/lib/`, with
+6 of Clark's own sample doors linked against it in `OUT/pwa153/bins/` as
+the proof.
+
+**The method mattered more than the result.** Every finding below came
+from building and linking, not from reading. The inherited manifest and
+flag set had been marked DONE twice before; both were wrong, and reading
+them again would not have shown it.
+
+**Three config switches had to come out.** Clark shipped no door-SDK
+config — `LIB/CFG/BC31/PCBOARD.CFG` is the PCBOARD.EXE config, and the
+SDK config is that plus `-DLIB` minus three things:
+
+- `-Y` (overlay generation). Borland: *"Overlays only supported in
+  medium, large, and huge memory models."* `SDK-BUILD-STATUS.md` had
+  recorded the small/compact failure as a far-pointer and `_FARDATA_`
+  problem needing per-model configuration, and predicted a genuine
+  4-model matrix was "more work than a re-run." It was one switch:
+  6/130 objects became 130/130.
+- `-DPCBCOMM`. Guards PCBoard-internal branches that read
+  `Status.TerseMode` — which does not exist in the reduced, door-visible
+  `statustype` that `-DLIB` selects. All four `-DPCBOARD`/`-DPCBCOMM`
+  combinations were compiled to find which one mattered.
+- `/DCPU386`. Only `BUG.H` reads it, to route `timerexpired()` through a
+  `long BC386BUG` global that lives in `MAIN/SOURCE/MAIN/PCBOARD.C` — a
+  file no door can link. `-3` stays, so the code is still 386.
+
+`-D_FARDATA_=_FAR_` and `-P` stay. The previous `BLDKBC.BAT` omitted
+both along with `-V -Vmp -Vmd`; a library built that way would have
+handed doors a struct layout disagreeing with `PCBOARD.EXE` at runtime,
+and nothing would have reported it.
+
+**`pcbkit_l.lib` is not the SDK.** The 119/130-module manifest came from
+it. It is the PPLC/utility link target — PCBSETUP links it too — built
+without `-DLIB`, and `docs/pcboard-internals/PCBKIT-LIB.md` had already
+recorded it as stale. Using its module list cost:
+
+- **3 wrong-tree picks.** CNAMES and HELP must come from
+  `SOURCE/TOOLKIT/`, not `SOURCE/PCB/` and `SOURCE/SCRNIO/`. ANSI is the
+  instructive one: `pcb153/SOURCE/DISPLAY/ANSI.C` *looks* correct — it
+  defines `agotoxy`, `asetcolor`, `awherex`, `awherey`, `curcolor` — but
+  does not compile under `-DLIB`, and the linker wants those symbols
+  **uppercase**. They come from `ASM/ANSI.ASM`, assembled `tasm /m3`.
+  Same casing split `OUT/pwa153/BUILD-RECIPE.md` records for PPLC.
+- **22 absent modules**, each traced from a linker "Undefined symbol"
+  rather than guessed.
+- **2 modules that had to come out.** `SCRNIO/GETKEY.C` and
+  `DOS/SHOWERR.C` are PCBSETUP-side, needing host globals (`Colors[]`,
+  `_KBDSTATUS`, `_SHOWCLOCK`, `_UPDATEKBDSTATUS`) no door supplies. The
+  toolkit already ships the door-side replacements, `SMALLERR.C` and
+  `NOINPUT.C`.
+
+Result: **150 of 150** functions in Clark's shipped
+`TOOLKIT/OTHER/QUICKREF` are present — 139 by name, the other 11 as the
+`ASYNC_*` entry points the headers map them to. Nothing unresolved.
+
+**Two limits, neither a defect.** Small and compact fail every sample
+with `Segment _TEXT exceeds 64K`: one code segment, and `initdoor`'s
+closure is larger than that alone. Those libraries are for doors using a
+small slice of the toolkit, which is why Clark shipped four models.
+`SAMPLES/INPUTREQ.C` fails with `Undefined symbol _MAIN` — a
+replacement-module example meant to be compiled into a door, not linked
+standalone; TLINK emits an invalid `.EXE`, so it is not shipped.
+
+**Category libraries moved.** The 9 `*_L.LIB` moved from
+`OUT/pwa153/lib/` into `toolkit/pwa153/bc31/lib/` beside the SDK. Same
+source tree, same compiler, and Clark kept his in `LIB/BCDOS/BC31/` —
+inside the library tree, not an output directory. They are **not** built
+by `BLDKBC.BAT`, which builds only the SDK; they come from Clark's
+per-directory MAKEFILEs via `COMPILE.BAT` -> `PCBOARD.MAK`.
+
+**e4181e5 audited to the end.** The 2026-08-25 restructure deleted 32
+files. 28 were the binary sets already recovered in v0.3.0 (13 Clark
+originals, 15 Watcom `_W`). Two were `&1` shell-redirect junk, correctly
+dropped — though `toolkit/pwa153/SOURCE/MISC/&1` is still in the tree.
+Three were real and had never come back, verified by blob hash:
+
+- `toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C` — the **original Borland**
+  version. Four other `VIRTUAL1.C` survive (delta154, irc1541, pcb154,
+  reference) but none is byte-identical: they carry Watcom port fixes
+  (`__WATCOMC__` guards, `(char *)` and `(void*)` casts). pwa153 is the
+  frozen preservation base, so it had lost the only unmodified copy and
+  kept only derivatives.
+- `toolkit/pwa153/H/PCB153FX.H` — the BCC 3.1 compat header for the
+  `AUTO`/`NOTBLANK` = 32768 enum overflow.
+- `DOSBOX.CFG` — the repo-root build-environment config.
+
+All three restored. Also established: the 12 `_W` utilities in the root
+README's "Clark Utilities — Phase 0" table, plus `PCBTEXT_W.EXE`, were
+**never committed at any point in history** — they were not lost in
+e4181e5 or anywhere else. `OUT/delta154/README.md` had said "two entries
+do not match"; the real gap is 13 of the 28 binaries the root README
+describes, and one whole table documents output that is not in the repo.
+Corrected there rather than quietly.
+
+**Corrections to prior claims.** `SDK-BUILD-STATUS.md` said PCBKBC and
+PCBKIT were "DONE, all 4 models" — neither library was ever committed;
+`toolkit/pwa153/{tc201,msc70}/` hold only a `.gitkeep`. The
+`pcb-libchain-build.md` arc is marked CLOSED with byte sizes and module
+counts for output that does not exist in the repo; noted in place. That
+document also plans to rebuild `pcbkit_l.lib` "for MAKEFILE
+compatibility" — true for `PPLC.MAK`, not for PCBoard, whose
+`PCBOARD.MAK` links the 7 category libraries directly and some objects
+straight from disk.
+
+**`.gitignore`.** `!toolkit/**/lib/*.LIB` and `!OUT/*/bins/**/*.EXE`
+added; the dead `OUT/lib/` and `OUT/pwa153/lib/` rules removed. Without
+the first two, everything this release produced would have been
+invisible to git — the mechanism that lost Clark's binaries and the
+Watcom set in the first place.
+
+**Still not built.** `OUT/pwa153/` holds `PCBOARDM.EXE` only; the draft
+plan calls for 37 root EXEs plus COMMDRV, PCBMAIL and PCBOS2 sets.
+`OUT/pwa153/upd154/` holds the 6 IC binaries only. PCBKIT (Turbo C 2.01)
+and PCBKMS (MSC 7.0) remain unbuilt, and now need re-running against the
+corrected manifest and config rather than the old ones.
+
+**Lesson.** A count is not a verification. "130/130 modules" and "DONE,
+all 4 models" were both recorded in good faith and both wrong, because
+nothing had tried to *use* the output. Linking one sample door found a
+misidentified source tree, 22 missing modules, two modules that did not
+belong, and a config that would have produced silently incompatible
+structs. Build the smallest real consumer of an artifact before
+believing the artifact is finished.
+
+
+### v0.3.2 — ROOT names the branch; makefiles repointed to our layout (Sep 17, 2026)
+
+Thirteen makefiles in `pcb153` now say which branch they belong to and
+point at the directory shape this repo actually uses. Clark wrote
+`ROOT = \PROJ` for a company with one product; this tree is one of four.
+
+**`ROOT` now names the branch.** All eleven makefiles that declared a
+root are `\PWA153`, each wrapped in a guard:
+
+```
+!ifndef ROOT
+ROOT     = \PWA153
+!endif
+```
+
+The guard is not decoration. **Borland MAKE lets a makefile definition
+beat `-D`** — the opposite of GNU make — so `MAKE -DROOT=\DELTA154`
+silently does nothing without it. Tested both ways before and after:
+without the guard the override is ignored; with it, default is `\PWA153`
+and `-DROOT=\DELTA154` takes. So each file names its own branch *and*
+a build can still retarget it.
+
+**Library paths repointed to our layout.** `LIBLIB` in ten utility
+makefiles, `LIBDIR` in `PCBOARD.MAK`, and a hardcoded relative path in
+`PPLC.MAK`:
+
+```
+$(LIBROOT)\BCDOS\$(BCCOMPILER)   ->  $(LIBROOT)\$(BCCOMPILER)\lib
+```
+
+`BCCOMPILER` is already `bc31`, so this resolves to
+`\PWA153\LIB\bc31\lib` — exactly `toolkit/pwa153/bc31/lib/`, where the
+category libraries moved in v0.3.1. The alternative was bridging the
+difference with copies at build time; matching the layout is cleaner and
+the layout is the intended one.
+
+**Verified byte-for-byte, not assumed.** Rebuilt PCBOARD against the
+repointed paths: `b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45`,
+955,904 B — identical to the pre-change binary. The repoint changes
+where the linker looks, not what it emits.
+
+Three makefiles were left alone. `153/PCBOARD.MAK` had `ROOT = ..` —
+already branch-neutral by being relative, and arguably the better
+pattern; changing it would be a regression. `PPLC.MAK` and
+`USERNET2.MAK` declare no `ROOT` at all.
+
+### Two divergences this uncovered
+
+**`PCBSM.MAK` and `MKPCBTXT.MAK` had already been rewritten, unrecorded.**
+They said `ROOT = \PCBSRC`, not Clark's `\PROJ`. Diffed against the
+originals in `PCBSRCV/000/`: 221 and 48 differing lines. They use
+`$(ROOT)\MAIN\SOURCE\H` where the other nine use `$(ROOT)\PCB\SOURCE\H`,
+they dropped the `\LIBS\VMDATA` include path, and **MKPCBTXT was changed
+from small to large memory model**. Nothing in this file or any README
+mentioned it. Only the root name was normalised here; the rest was left
+as found, because reverting work whose reason is unknown is worse than
+recording it. Three makefiles still disagree about whether the program
+source sits under `PCB`, `MAIN`, or neither — unresolved.
+
+**`OUT/pwa153/PCBOARDM.EXE` and `PCBOARD.EXE` were built from the wrong
+tree.** Both came from the archive (`PCBSRCV/014`), not from
+`pcb153/SOURCE`. Comparing all 27 MAIN files:
+
+- The repo is **LF**, the archive **CRLF** — that accounts for almost the
+  whole size difference (CALLWAIT.C: 1900 lines, 1902 bytes). BCC 3.1
+  handles LF fine, so this part is harmless.
+- **`CALLWAIT.C` line 1460 differs in content:** archive
+  `logsystext(TXT_MODEM,SPACERIGHTAT)` vs repo `...,SPACERIGHT)`.
+  `SPACERIGHTAT` is the 15.4 enum — the single 15.3->15.4 toolkit change
+  `todo/toolkit.md` documents. The archive's v0.014 carries a 15.4 leak;
+  the repo back-ported it out, which is correct per the stated rule that
+  15.3 stays pure.
+- Six files exist only in the repo: `MD5IMPL.CPP` (the 15.4 MD5LOGIN
+  work, PCBSRCV revision 025) and five OS/2 stubs. The repo's
+  `PCBOARD.MAK` builds `md5impl.obj`; the archive's does not — a 4-line
+  difference between the two makefiles.
+
+So those binaries are real and they link, but they are **not this repo's
+output**: built from a tree that is not pure 15.3 and missing MD5IMPL.
+They should be rebuilt from `pcb153/SOURCE` before anyone treats them as
+the 15.3 reference. Recorded rather than quietly replaced.
+
+### The PCB level removed from the paths
+
+`ROOT` names the branch, and the branch is already PCBoard — so
+`$(ROOT)\PCB\SOURCE` said "pcb" twice and named a directory that does
+not exist in this repo. Ten makefiles, 35 paths:
+
+```
+$(ROOT)\PCB\SOURCE      ->  $(ROOT)\SOURCE
+$(ROOT)\MAIN\SOURCE     ->  $(ROOT)\SOURCE
+$(ROOT)\PCBSM\SOURCE    ->  $(ROOT)\SOURCE\UTIL\PCBSM\SOURCE
+```
+
+plus 13 hardcoded `\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\` rewritten to
+`$(ROOT)\SOURCE\UTIL\PCBSM\BC31\`. `\PCBSRC` was not Clark's and named
+nothing either; it had been introduced in an earlier unrecorded edit.
+The result is that every path in these makefiles now resolves inside the
+repo as it is laid out, with no bridging copies.
+
+### VMData: found, and it was ours
+
+`CLARK-DRIVE-LAYOUT.md` called VMData "missing everywhere" and named it
+the gate on most of the 15.3 utility set. That was wrong — and wrong in
+an interesting direction.
+
+The source was in `pcb154/LIB/`: `VMAVL.C`, `VMFUNCS.C`, `VMDATA.H`,
+`vmavl.h`. It is **not Clark's code**. `VMAVL.C` and `vmavl.h` are
+clean-room GPLv3 work by **sysop/0**; `VMFUNCS.C` is **hexadecimal
+v0.036**. The crew had already written a replacement for the missing
+library and nothing said so.
+
+Copied into `toolkit/pwa153/{SOURCE,H}` — checked first for
+`__WATCOMC__` guards and Watcom-port casts, of which there are none, so
+the Borland build takes it unmodified. What is still not done is
+building `VMDATA.LIB` from it. Seven utilities stay blocked until that
+happens, but the blocker is now a build step rather than a missing file.
+
+Clark's own VMData — the `c:\vmdata\src\` that `PCBICEVT` referenced —
+is still absent and may never have left his machine.
+
+### md5\os2\md5.obj recovered; packfido is simply gone
+
+`PCBOARD2.MAK` has referenced `$(ROOT)\md5\os2\md5.obj` since forever
+against an object that existed nowhere in the tree — `PCBSRCV/000/MISC/MD5/`
+has the RFCs and `MD5.TXT` and two **empty** `DOS/` and `OS2/`
+directories.
+
+It was in `devtools/Md5.zip` (30,803 B) the whole time. Recovered to
+`pcb153/SOURCE/MISC/MD5/`:
+
+```
+MD5.ASM        14,773   MASM 6.0, public domain (RSA reference port)
+OS2/MD5.OBJ     1,492   OMF, THEADR "md5.asm"
+MD5.TXT        11,226
+RFC1321.TXT / RFC1725.TXT
+README.md               provenance
+```
+
+The `OS2/` placement is not a guess. `MD5.ASM` itself is OS-neutral —
+zero INT 21h, zero `Dos*` calls — but it exports `DoThunk32to16` and
+`FlatToSel`. 32↔16-bit thunking and selector conversion are OS/2
+constructs; DOS has no use for either. The object belongs under `OS2/`,
+which is exactly where `PCBOARD2.MAK` looks. `PCBOARD2.MAK` repointed
+at the new path (2 references).
+
+`FILE_ID.DIZ` came across too, because it says in the author's own words
+what the package is: source and text describing the **"Shared Secret"
+method of password exchange for use on BBSes**, based on MD5. That is
+the 15.4 MD5LOGIN feature, which is why Clark had it at all.
+
+`ARSENAL.LIB` was the seventh file in the zip and was **not** copied.
+1,577 bytes of plain ASCII containing no object code — a redistribution
+notice from Arsenal Computer Services, a BBS CD-ROM distributor, of the
+"this file has been triple inspected for virus infection" variety. `.LIB`
+there is the BBS file-area convention for a label file, not a linker
+library. The original stays intact in `devtools/Md5.zip`.
+
+**`packfido.c` cannot be fixed, but it now has an address.**
+`FIDOUTIL.MAK` builds `packfido.obj` from `$(ROOT)\packfido\packfido.c`
+— and that path is the clue. It is a **top-level directory under
+`\PROJ`**, a sibling of `\PROJ\md5\`. Across `FIDOUTIL.MAK` and
+`PCBOARD2.MAK`, those two were the *only* dependencies living outside
+`$(ROOT)\source`; everything else resolves inside the source tree. That
+is what made them the two missing directories, and it says what they
+were: external drops Clark kept beside the project rather than modules
+he wrote. `md5` proved to be exactly that — a public-domain package from
+a BBS file area. `packfido` is very likely the same kind of thing.
+
+The file itself is gone. `packfido` appears in exactly one place across
+the whole archive and repo, and that place is the makefile: no header,
+no prototype, no call site, no object, and — unlike `md5` — not even an
+empty directory stub in `PCBSRCV/000/`. `SOURCE/FIDO/PACKMSG.CPP` was
+checked and ruled out: similar name, but it is an include-fragment, a
+bare statement body with no function wrapper, not something that
+compiles to an object.
+
+So the path was repointed anyway, to `$(ROOT)\source\packfido.c` —
+`pcb153/SOURCE/packfido.c`. It is one loose file, so it gets a loose
+file's home rather than a directory holding a single `.c`; the note on
+what is missing and what was ruled out lives with the only consumer, at
+`pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md`. A recovered file drops
+straight in with no further edits.
+`FIDOUTIL.EXE` cannot link until then — and it fails at compile rather
+than at link, which is the better failure, since the error names the
+file.
+
+### normalize-case.sh
+
+`pcb154/normalize_case.sh` covered `LIB/H`, `MAIN/SOURCE/H` and
+`MAIN/SOURCE/H/H` — three directories in one branch, and no toolkit tree
+at all, so `toolkit/<branch>/H` had never been normalised by anything.
+Since the OpenWatcom Linux-native build is how delta154 and irc1541 are
+meant to be built, and Linux is case-sensitive while
+`#include <vmdata.h>` meets a file called `VMDATA.H`, that gap mattered.
+
+`MAIN/build/scripts/normalize-case.sh` replaces it: all four toolkit
+branches plus the program trees (12 directories), a `--check` dry run
+that writes nothing, and clash detection that exits 2 when two files
+differ only in filename case **and** in content — because on a
+case-insensitive checkout only one of them exists at all, and the other
+is silently stale. Tested: 60 copies from 67 headers, idempotent on a
+second run, clash correctly caught.
+
+The copies are build output. The header says so twice. Committing them
+doubles every header in git and leaves two files to keep in sync.
+
+### .gitignore: the same mistake, twice, by me
+
+The `.gitignore` LAST WORD block from v0.3.1 — the exception list that
+makes the SDK libraries and the sample doors visible to git — was lost
+**twice this session**, both times because I committed `.gitignore` from
+a staged copy that predated my own edit to it. The second time it
+silently reverted a fix I had made an hour earlier, and the 12 sample
+door binaries went invisible again.
+
+That is the exact mechanism that lost Clark's binaries and the Watcom
+set in the first place, reproduced by the person documenting it.
+
+`device_stage_files` returns a point-in-time snapshot. Staging a file,
+editing the staged copy, and committing it back is only safe if nothing
+else wrote to that file in between — and "nothing else" includes an
+earlier commit in the same session. It was caught by simulating the
+ignore rules against a list of paths that *should* be visible, not by
+reading the file, which had looked plausible both times.
+
+Rebuilt from the live 6,212-byte file, with the MD5 object added as an
+exception (`*.OBJ` would otherwise have hidden it — source material, not
+build output). 13 representative paths simulated, 0 hidden.
+
+**Rule going in:** after committing any file that governs what gets
+committed, re-read it from the device and verify the rules, not the
+bytes.
+
+### VIRTUAL1.C: v0.3.1's "original Borland version" was not original
+
+v0.3.1 restored `toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C` from `e4181e5^`
+and recorded it as "the ORIGINAL Borland version… the only unmodified
+copy," on the grounds that the four surviving copies in delta154,
+irc1541, pcb154 and reference all carry Watcom port fixes. The
+restoration was right; the claim was not. Diffed against Clark's own
+copy in the archive (`PCBSRCV/000/LIB/SOURCE/MISC/VIRTUAL1.C`), the
+restored file differs by exactly one line:
+
+```
+-#include <stat.h>
++#include <sys/stat.h>
+```
+
+A port fix, smaller than the others but a fix all the same. **All five
+copies in the repo were modified.** Clark's original survives only in
+the archive. Replaced 2026-09-17 with the archive file, CRLF converted
+to LF to match the rest of the toolkit tree (6,432 -> 6,207 B); content
+byte-identical to Clark's otherwise.
+
+**They are not duplicates of each other**, which was the question that
+started this. `VIRTUAL.C` and `VIRTUAL1.C` implement the same
+seven-function API with incompatible signatures:
+
+| | VIRTUAL.C | VIRTUAL1.C |
+|---|---|---|
+| pointers | `VirType huge *` | `VirType *` (near) |
+| record counts | `long` | `unsigned` |
+| cache | `findincache` / `insertincache` | none |
+| error hook | `virtualerror(void)` | `virtualerror(int Code)` |
+
+Identical symbol names, so a program links one or the other, never both.
+
+What *is* a near-duplicate is the repo's own
+`toolkit/pwa153/SOURCE/MISC/VIRTUAL.C` (14,610 B): an earlier session
+**merged both implementations into one file** behind `#define
+VIRTUAL_HUGE`, and merged the headers the same way. Its huge-pointer
+half is byte-identical to Clark's `VIRTUAL.C`; its near-pointer half is
+`VIRTUAL1.C` with the same `sys/stat.h` change. That merge is a crew
+modification sitting in what is supposed to be the frozen preservation
+base, and it is recorded here rather than reverted — the merged header
+still serves the restored `VIRTUAL1.C` correctly, since without
+`VIRTUAL_HUGE` defined it yields exactly VIRTUAL1's ABI.
+
+### FIDOUTIL.EXE was never actually blocked
+
+`packfido.obj` supplies one symbol, `do_pack()`. Every occurrence of it
+in the entire archive:
+
+```
+MISC/FIDOUTIL/SOURCE/CONVERT.CPP:53    void do_pack(void);
+MISC/FIDOUTIL/SOURCE/CONVERT.CPP:124     //do_pack();
+```
+
+A declaration and a commented-out call. Checked against all eleven of
+FIDOUTIL's inputs; `CONVERT.CPP` is the only file that mentions it. The
+object contributed nothing to the linked image, so `packfido.obj` was
+dropped from `EXE_DEPENDENCIES` and from the linker response list, and
+the build rule commented out rather than deleted. FIDOUTIL.EXE is
+buildable today with all ten of its real modules.
+
+`PACKFIDO.EXE` — the standalone program in the ship list — is a
+different matter and remains unbuildable: no makefile, no source, and
+nothing to work from beyond the prototype `void do_pack(void)`.
+
+**Lesson, again.** Every problem in this release was a path or a tree
+that nobody had checked against the thing it claimed to describe —
+`\PROJ` naming nothing, `\PCBSRC` appearing from nowhere, `BCDOS\BC31`
+pointing where the libraries no longer are, and a binary built from the
+wrong source that compiled perfectly, `\LIBS\VMDATA` called missing
+when the crew had written a replacement, an `md5.obj` reference that
+resolved to nothing for thirty years, and a `.gitignore` I broke myself
+by trusting a stale copy. None of it announced itself.
+
+
 ---
 
 ## For future contributors

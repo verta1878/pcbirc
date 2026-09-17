@@ -1,150 +1,358 @@
-v0.3.0: PCB/IC on the 15.4 PWA leg + Clark's 15.4 beta binaries recovered
-==========================================================================
-Date: 2026-09-16
+v0.3.2: ROOT names the branch; paths match our layout; three recoveries
+=======================================================================
+Date: 2026-09-17
 
-Two things. IC was placed on the branch it belongs to (Phase A), and
-Clark's own shipped 15.4 beta binaries — the byte-match reference the
-15.4 PWA rebuild has to reproduce — were recovered after being lost for
-three weeks without anyone noticing.
+Thirteen makefiles in pcb153 now say which branch they belong to and
+point at directories that exist in this repo.  Plus three things that
+were recorded as missing and were not.
 
-PHASE A — IC placed on 15.4 PWA
--------------------------------
-IC is Clark's 15.4 internet upgrade, so it belongs to PWA 15.4.  It had
-been sitting in pcb1541 (the IRC tree) as a staging spot for the
-reconstruction work.  Originals in pcb1541/pcbic12/ are untouched.
+ROOT NAMES THE BRANCH
+---------------------
+Clark wrote `ROOT = \PROJ` for a company with one product.  This tree is
+one of four.  All eleven makefiles that declared a root now say:
 
-  Source  -> pcb153/upd154/SOURCE/IC/   20 files (dos/ + os2/ preserved)
-  Binaries-> OUT/pwa153/upd154/          6 files
-  Data    -> OUT/data/ic12/             32 files
+    !ifndef ROOT
+    ROOT     = \PWA153
+    !endif
 
-  OUT/data/ic12/ mirrors Clark's subdirectories rather than flattening
-  them.  A flat layout is impossible: bin/PPP (150B) and bin/SLIP (151B)
-  are different files from bin/DATA/PPP and bin/DATA/SLIP (377B each).
-  Mirroring also removes the README.1ST conflict — it only gets renamed
-  at install time.
+The guard is not decoration.  Borland MAKE 3.6 lets a MAKEFILE
+definition beat a `-D` command-line macro -- the opposite of GNU make --
+so `MAKE -DROOT=\DELTA154` silently does nothing without it.  Tested
+both ways, before and after.
 
-  Not staged into ic12/: bin/rebuilt/*.exe — reconstruction comparison
-  artifacts, they stay in pcb1541/pcbic12/bin/rebuilt/.
+Left alone on purpose: 153/PCBOARD.MAK had `ROOT = ..`, already
+branch-neutral by being relative and arguably the better pattern.
+PPLC.MAK and USERNET2.MAK declare no ROOT at all.
 
-  Delta 15.4 inherits IC but ships Clark's 6 binaries unchanged: they are
-  Borland C++ 3.1 (DOS) and BC++ 2.0 OS/2 output with no surviving C
-  source, and the reconstruction is raw NASM db bytes Watcom cannot
-  compile.  RUNINET.PPE (real PPL source), the docs and the data ARE
-  inherited properly.  Recorded in pcb154/DOCS/SYSOP_154.TXT section 8,
-  alongside PCBSETUP and LOCAL which are shipped-binary for the same
-  reason.
-
-CLARK'S 15.4 BETA BINARIES RECOVERED
-------------------------------------
-OUT/README.md referenced a clark-original/ directory that did not exist.
-The binaries had lived at OUT/DOS/ and OUT/OS2/, were deleted in e4181e5
-(2026-08-25, "Session Summary - Toolkit Restructure + Cleanup") and never
-re-added.  Nothing flagged the absence because .gitignore's *.EXE rule
-meant git could no longer see them.  There was never an OUT/pwa154/ slot.
-
-Recovered from e4181e5^ and cross-verified against the original 1997
-distribution (PCB154B inside a Team GLoW release dated 04/28/97, archived
-as pcb-metaworlds on the Internet Archive).
-
-  9 of 12 EXEs byte-identical between the two sources.  PCBOARD.SER
-  identical.  The 4 documents identical once line endings are ignored —
-  the repo copies had been normalized CRLF->LF.
-
-  3 differed by exactly ONE BYTE each, at the beta date check:
-
-      ... 26 2b 07 89 46 fe 83 7e fe 1e [76|EB] ...
-           \__ Terry's signature __/     76 = JBE (check intact)
-                                         EB = JMP (check bypassed)
-
-      LOCAL.EXE     0x03249B    76 -> EB
-      PCBOARD.EXE   0x03D45B    76 -> EB
-      PCBOARDM.EXE  0x03CBE3    76 -> EB
-
-  That byte pattern is the signature David Terry published in June 1997
-  for disabling the 30-day beta timer (reference/pcb-1997-06-16-terry.txt).
-  The repo copies were patched; the 1997 originals are not.  This matters:
-  a faithful rebuild emits 76, so verifying against a patched reference
-  would report three one-byte failures that are not reconstruction errors.
-
-  OUT/clark-original/ therefore holds the UNPATCHED 1997 binaries.  The
-  patched variants are kept in OUT/clark-original/beta-patched/, not
-  discarded.
-
-  Kept at OUT/ top level, not under a version directory: these are
-  Clark's originals, not any one build leg's output.
-
-  Known gaps: no .HLP files for 15.4 in any known copy, and no
-  PCBUUCP.ZIP, though README.1ST refers to both.
-
-PCBIC v1.1 ADDED TO REFERENCE
+PATHS REPOINTED TO OUR LAYOUT
 -----------------------------
-reference/pcball/pcboard/ held v1.2 only.  v1.1 (05-28-96) recovered from
-the same GLoW release and added beside it.  Diffing the two shows only
-three binaries actually changed between releases (PCBIC.EXE, PCBIC2.EXE,
-PCBICCFG.EXE).  PCBIC.HLP, PCBIC.DOC, PCBIC.PDF, PCBICEVT.EXE, TESTIC.EXE
-and TESTIC2.EXE are byte-identical across both — which settles open
-question 1: PCBIC.HLP is a shipped data file, not something the build
-compiles.
+  $(LIBROOT)\BCDOS\$(BCCOMPILER)  ->  $(LIBROOT)\$(BCCOMPILER)\lib
+      12 references.  BCCOMPILER is already bc31, so this resolves to
+      toolkit/pwa153/bc31/lib/ -- where the category libraries moved in
+      v0.3.1.
 
-  v1.1 also carries RUNINET.DOC (5,986B) and W95PPP.SCP (922B), neither of
-  which exists in the v1.2 set or anywhere in this repo's history.
+  $(ROOT)\PCB\SOURCE              ->  $(ROOT)\SOURCE
+  $(ROOT)\MAIN\SOURCE             ->  $(ROOT)\SOURCE
+  $(ROOT)\PCBSM\SOURCE            ->  $(ROOT)\SOURCE\UTIL\PCBSM\SOURCE
+      35 paths across 10 makefiles.  ROOT already names a PCBoard
+      branch; \PCB said it twice and named nothing.  \PCBSRC, which
+      appeared in two makefiles, was not Clark's and named nothing
+      either.
 
-DOCUMENTATION CORRECTIONS
--------------------------
-  - OUT/README.md: OUT/ is no longer binaries-only (data/ and
-    clark-original/ added); bins/ documented as SDK examples, not program
-    EXEs; clark-original status corrected.
-  - MAIN/DELTA-MODEL.md: clark-original path; removed the claim that an
-    OUT/pwa154/ slot was "retired" (it never existed); added a PCB/IC
-    section; added the pcb153=PWA / pcb154=Delta / pcb1541=IRC shorthand.
-  - MAIN/README.md: OUT/ layout, PCB/IC paragraph, IC build-status row.
-  - MAIN/build/IC-TOOLKIT-SDK-BUILD-PLAN.md: decision 3 superseded (IC was
-    completed ahead of the toolkit/SDK order and never needed it);
-    decision 4 amended ("OUT/ = binaries only" no longer true).
-  - README.md: OUT/ map, clark-original path, binaries dated 1997 not
-    1996, new PCB/IC section distinguishing it from pcbis.
-  - pcb1541/pcbic12/src/RUNINET.md: removed the claim that PPLC320.EXE is
-    at toolkit/pplc/3.20/.  It never was and does not belong there —
-    <ver>/out/ is for compiled .PPE output.  Per toolkit/pplc/README.md
-    the decision is to build PPLC from Clark's source.
-  - .gitignore: OUT/clark-original/ and OUT/pwa153/upd154/ EXEs
-    whitelisted (they are reference material, not build output); the
-    toolkit/pplc/**/*.EXE whitelist removed as it covered a location no
-    compiler binary should occupy.
+Verified by rebuild, not by inspection.  PCBOARD.EXE after the repoint:
+955,904 B, sha256 b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45
+-- byte-identical to the pre-change binary.  The repoint changes where
+the linker looks, not what it emits.
 
-  New files:
-    pcb153/upd154/SOURCE/IC/          20 files
-    OUT/pwa153/upd154/                 6 files
-    OUT/data/ic12/                    32 files
-    OUT/clark-original/               22 files
-    reference/pcball/pcboard/Pcbic11   05-28-96.zip
-    reference/pcball/pcboard/Pcbic11.md
+THREE RECOVERIES
+----------------
+VMData -- CLARK-DRIVE-LAYOUT.md called it "missing everywhere" and named
+it the gate on most of the 15.3 utility set.  The source was in
+pcb154/LIB/ and it is not Clark's: VMAVL.C and vmavl.h are clean-room
+GPLv3 by sysop/0, VMFUNCS.C is hexadecimal v0.036.  The crew had written
+a replacement and nothing said so.  Copied to
+toolkit/pwa153/{SOURCE,H} -- zero Watcom markers, so Borland takes it
+unmodified.  VMDATA.LIB still needs building; 7 utilities stay blocked
+until it is, but the blocker is a build step now, not a missing file.
 
-  Modifies:
-    .gitignore
-    README.md
-    MAIN/README.md
-    MAIN/DELTA-MODEL.md
-    MAIN/build/IC-TOOLKIT-SDK-BUILD-PLAN.md
-    OUT/README.md
-    pcb154/DOCS/SYSOP_154.TXT
-    pcb154/DOCS/DELTA154-CHANGES.md
-    pcb1541/pcbic12/src/RUNINET.md
-    CHECKSUMS.txt
-    CHECKSUMS.md5
-    CHECKSUMS.sha256
-    APPLY.txt
-    HISTORY.md
+md5\os2\md5.obj -- referenced by PCBOARD2.MAK against an object that
+existed nowhere.  It was in devtools/Md5.zip.  Recovered to
+pcb153/SOURCE/MISC/MD5/ with MD5.ASM, MD5.TXT and the RFCs.  OS2/ is not
+a guess: MD5.ASM has zero INT 21h and zero Dos* calls but exports
+DoThunk32to16 and FlatToSel -- 32<->16-bit thunking, which DOS has no
+use for.  PCBOARD2.MAK repointed.  ARSENAL.LIB from the same zip was NOT
+copied; it is a text advertisement with a .LIB extension.
 
-  Still open for Phase B:
-    RUNINET.PPE is not byte-exact.  Clark used PPLC 3.20 (1,808B); our
-    3.30 build is 2,261B and 3.40 is 2,286B.  Header matches through
-    byte 42.  TWO blockers, not one: build PPLC 3.20 from source per
-    toolkit/pplc/README.md, AND close the implicit-variable gap — the
-    decompiled PPS has 63 implicit variables vs Clark's 39, and both
-    3.20 and 3.30 emit 2,261B from it (HISTORY.md, pcbic v1.0.1).
+packfido.c -- cannot be fixed.  FIDOUTIL.MAK builds packfido.obj and the
+string `packfido` appears in exactly one place across the whole archive
+and repo: that makefile.  There is nothing to repoint to.  Recorded as a
+real gap.
 
-  Commit message:
-    v0.3.0: PCB/IC placed on 15.4 PWA; Clark's 15.4 beta binaries recovered
+normalize-case.sh
+-----------------
+  MAIN/build/scripts/normalize-case.sh   (new)
 
---2026-09-16
+Supersedes pcb154/normalize_case.sh, which covered three directories in
+one branch and no toolkit tree at all -- so toolkit/<branch>/H had never
+been normalised by anything, while the OpenWatcom Linux build is how
+delta154 and irc1541 are meant to be built.  The new one covers all four
+branches plus the program trees, has a --check dry run, and exits 2 on a
+case clash where two files differ only in filename case AND content.
+
+THE COPIES IT MAKES ARE BUILD OUTPUT.  Run it against a staged build
+root, not the repo you commit from.
+
+.gitignore
+----------
+  + !pcb153/SOURCE/MISC/MD5/OS2/*.OBJ    (source material, not output)
+
+and the v0.3.1 LAST WORD block restored -- it was lost twice this
+session, both times by committing .gitignore from a staged copy that
+predated an edit to it.  The second loss silently reverted a fix made an
+hour earlier and put the 12 sample doors back out of git's sight: the
+same mechanism that lost Clark's binaries in the first place.
+Rebuilt from the live file; 13 paths simulated against the rules, 0
+hidden.
+
+TWO DIVERGENCES THIS UNCOVERED
+------------------------------
+PCBSM.MAK and MKPCBTXT.MAK had already been rewritten, unrecorded --
+`ROOT = \PCBSRC`, 221 and 48 lines differing from the PCBSRCV/000
+originals, the \LIBS\VMDATA include dropped, and MKPCBTXT changed from
+small to LARGE memory model.  Only the root name was normalised here;
+the rest was left as found.  Reverting work whose reason is unknown is
+worse than recording it.
+
+OUT/pwa153/PCBOARDM.EXE and PCBOARD.EXE were built from the ARCHIVE
+tree (PCBSRCV/014), not from pcb153/SOURCE.  They link and they run, but
+the archive carries a 15.4 leak (CALLWAIT.C:1460 SPACERIGHTAT vs the
+repo's SPACERIGHT) and lacks MD5IMPL.CPP, which the repo's PCBOARD.MAK
+builds.  They are real binaries but they are not this repo's output.
+Flagged, not quietly replaced.
+
+VIRTUAL1.C -- v0.3.1's "ORIGINAL" WAS NOT ORIGINAL
+--------------------------------------------------
+v0.3.1 restored toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C and called it the
+only unmodified copy.  It carried one port fix:
+
+    -#include <stat.h>
+    +#include <sys/stat.h>
+
+All five copies in the repo were modified; Clark's original survives only
+in the archive.  Replaced with PCBSRCV/000/LIB/SOURCE/MISC/VIRTUAL1.C,
+CRLF -> LF to match the tree (6,432 -> 6,207 B), content otherwise
+byte-identical.
+
+VIRTUAL.C is NOT touched.  Note what it is, though: the repo's copy
+(14,610 B) is a crew-MERGED file carrying both implementations behind
+#define VIRTUAL_HUGE, with the headers merged the same way.  Its
+huge-pointer half is byte-identical to Clark's VIRTUAL.C.  That merge
+sits in what is supposed to be the frozen preservation base.  Recorded,
+not reverted -- and the merged header still serves the restored
+VIRTUAL1.C correctly, since undefined VIRTUAL_HUGE yields VIRTUAL1's ABI.
+
+VIRTUAL.C and VIRTUAL1.C are NOT duplicates of each other: same
+seven-function API, incompatible signatures (huge/long/cached vs
+near/unsigned/uncached), identical symbol names, so a program links one
+or the other.
+
+FIDOUTIL.EXE WAS NEVER ACTUALLY BLOCKED
+---------------------------------------
+Its missing 11th module, packfido.obj, supplies one symbol -- do_pack().
+Every occurrence of do_pack in the entire archive:
+
+    MISC/FIDOUTIL/SOURCE/CONVERT.CPP:53    void do_pack(void);
+    MISC/FIDOUTIL/SOURCE/CONVERT.CPP:124     //do_pack();
+
+A declaration and a commented-out call.  Checked against all eleven
+inputs; CONVERT.CPP is the only file that mentions it.  The object
+contributed nothing to the linked image.  Dropped from EXE_DEPENDENCIES
+and the linker response list; build rule commented, not deleted.
+FIDOUTIL builds today with its ten real modules.
+
+THE 37-EXE TARGET, AUDITED
+--------------------------
+todo/PCBIC-PWA-BUILD-DRAFT.md now carries the breakdown.  Four numbers
+were being conflated:
+
+    37  shipped by the 15.3 installer
+    24  have a makefile somewhere
+    11  present in the packaged build root
+     2  actually built
+
+Tier 2 is the cheap win: PCBOARD, PCBOARDM, PCBOARD2, PPLC100, PPLC330
+are blocked only because BUILDROOT/PCB153/ has no 153\ directory --
+COMPILE.BAT is there, the makefiles it invokes are not.  Fixing
+DOSBOXX.ZIP unblocks five binaries including the main one.
+
+Tier 3 is 13 utilities whose source and makefiles sit in PCBSRCV/000/
+and were never imported.  A copy, not a recovery.
+
+Tier 4 is 13 with no source AND no binary.  Every Clark binary the repo
+holds was inventoried: 18 of them, and not one is a Tier 4 target.
+Nothing in that tier can be decompiled until a 15.3 distribution turns
+up.  One of the 13, DOORWAY.EXE, is Marshall Dudley's third-party door
+driver and was never Clark's to begin with.
+
+Also flagged: the OUT/data/ layout the draft describes across ~15
+sections is a plan, not a state.  OUT/data/ contains ic12/ and nothing
+else.
+
+LESSON
+------
+Everything wrong in this release was a path or a claim nobody had
+checked against the thing it described.  \PROJ named nothing, \PCBSRC
+came from nowhere, BCDOS\BC31 pointed where the libraries no longer are,
+VMData was "missing" while sitting in pcb154, md5.obj was referenced for
+thirty years against an empty directory, FIDOUTIL was blocked on a module
+nothing calls, a restored "original" carried a port fix, and a .gitignore
+got broken by the person documenting how .gitignore breaks things.
+
+After committing any file that governs what gets committed: re-read it
+from disk and verify the RULES, not the bytes.
+
+
+v0.3.1: the pwa153 door SDK, built and verified by linking
+===========================================================
+Date: 2026-09-17
+
+The first SDK library this project has produced, plus the sample doors
+that prove it works, plus corrections to what earlier sessions recorded
+as finished.
+
+PCBKBC — THE DOOR SDK
+---------------------
+  toolkit/pwa153/bc31/lib/   PCBKBC{S,C,M,L}.LIB
+                             152 modules, 4 memory models
+                             + .LST listings, CHECKSUMS.sha256/.md5
+
+  OUT/pwa153/bins/medium/    6 sample doors, linked against PCBKBCM.LIB
+  OUT/pwa153/bins/large/     6 sample doors, linked against PCBKBCL.LIB
+                             HELLO, CALLBACK, COPYTEXT, COPYBIN1,
+                             COPYBIN2, UPGRADE  (Clark's own samples)
+
+  MAIN/build/scripts/        BLDKBC.BAT (replaced), PCBKBC.CFG,
+                             KBC{S,C,M,L}.RSP
+
+150 of 150 functions in Clark's shipped TOOLKIT/OTHER/QUICKREF are
+present -- 139 by name, 11 as the ASYNC_* entry points the headers map
+them to.  Nothing unresolved.
+
+THE CONFIG: THREE SWITCHES OUT, PLUS -DLIB
+------------------------------------------
+Clark shipped no door-SDK config.  LIB/CFG/BC31/PCBOARD.CFG is the
+PCBOARD.EXE config.  The SDK config is that, plus -DLIB, minus:
+
+  -Y          overlay generation.  Borland only allows overlays in
+              medium/large/huge.  This -- not far pointers, not
+              _FARDATA_ -- was the small/compact blocker that
+              SDK-BUILD-STATUS.md had called "more work than a re-run".
+              6/130 objects became 130/130.
+
+  -DPCBCOMM   guards PCBoard-internal branches reading Status.TerseMode,
+              which does not exist in the door-visible statustype that
+              -DLIB selects.  All four -DPCBOARD/-DPCBCOMM combinations
+              were compiled to find which one mattered.
+
+  /DCPU386    only BUG.H reads it, to reach a long BC386BUG global in
+              MAIN/SOURCE/MAIN/PCBOARD.C -- a file no door can link.
+              -3 stays; the code is still 386.
+
+KEEP -D_FARDATA_=_FAR_ and -P.  The previous BLDKBC.BAT omitted both,
+along with -V -Vmp -Vmd.  A library built that way hands doors a struct
+layout that disagrees with PCBOARD.EXE at runtime, silently.
+
+MANIFEST: pcbkit_l.lib IS NOT THE SDK
+-------------------------------------
+The inherited 119/130-module manifest came from pcbkit_l.lib.  That is
+the PPLC/utility link target (PCBSETUP links it too), built WITHOUT
+-DLIB, and docs/pcboard-internals/PCBKIT-LIB.md already recorded it as
+stale.  Cost of using it:
+
+  3 wrong-tree picks   CNAMES, HELP -> SOURCE/TOOLKIT/
+                       ANSI -> pcb153/SOURCE/ASM/ANSI.ASM, tasm /m3.
+                       Not either ANSI.C: the DISPLAY one looks right
+                       but will not compile under -DLIB, and the linker
+                       wants those symbols UPPERCASE.
+  22 absent modules    each traced from a linker "Undefined symbol"
+  2 modules removed    SCRNIO/GETKEY.C and DOS/SHOWERR.C are
+                       PCBSETUP-side.  The door-side replacements
+                       (SMALLERR.C, NOINPUT.C) already ship.
+
+TWO LIMITS, NEITHER A DEFECT
+----------------------------
+  Small and compact fail every sample with "Segment _TEXT exceeds 64K".
+  One code segment; initdoor's closure is bigger on its own.  Those
+  libraries are for doors using a small slice of the toolkit -- which is
+  why Clark shipped four models.  No S/C binaries in bins/.
+
+  SAMPLES/INPUTREQ.C fails with "Undefined symbol _MAIN".  It is a
+  replacement-module example, meant to be compiled into a door rather
+  than linked standalone.  TLINK emits an invalid .EXE, so it is not
+  shipped.
+
+CATEGORY LIBRARIES MOVED
+------------------------
+  OUT/pwa153/lib/*.LIB  ->  toolkit/pwa153/bc31/lib/
+
+Same source tree, same compiler, and Clark kept his in LIB/BCDOS/BC31/ --
+inside the library tree, not an output directory.  They are NOT built by
+BLDKBC.BAT (which builds only the SDK); they come from Clark's
+per-directory MAKEFILEs via COMPILE.BAT -> PCBOARD.MAK.
+
+  The old OUT/pwa153/lib/ copies must be deleted by hand -- this
+  session could not delete on the local machine.  Contents verified
+  byte-identical (SHA256) before the copy.
+
+e4181e5 AUDITED TO THE END
+--------------------------
+The 2026-08-25 restructure deleted 32 files.  28 were the binary sets
+already recovered in v0.3.0.  Two were `&1` shell-redirect junk,
+correctly dropped (though toolkit/pwa153/SOURCE/MISC/&1 is still in the
+tree).  Three were real and had never returned -- verified by blob hash,
+not filename -- and are restored here:
+
+  toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C
+      the ORIGINAL Borland version.  Four other VIRTUAL1.C survive
+      (delta154, irc1541, pcb154, reference) but none byte-identical:
+      they carry Watcom port fixes (__WATCOMC__ guards, (char *) and
+      (void*) casts).  pwa153 is the frozen preservation base, so it had
+      lost the only unmodified copy and kept only derivatives.
+
+  toolkit/pwa153/H/PCB153FX.H
+      BCC 3.1 compat header for the AUTO/NOTBLANK = 32768 enum overflow.
+
+  DOSBOX.CFG
+      repo-root build-environment config.
+
+Also established: the 12 _W utilities in the root README's "Clark
+Utilities - Phase 0" table, plus PCBTEXT_W.EXE, were NEVER committed at
+any point in history.  They were not lost -- they never existed here.
+OUT/delta154/README.md said "two entries do not match"; the real gap is
+13 of the 28 binaries the root README describes.  Corrected there.
+
+CORRECTIONS TO PRIOR CLAIMS
+---------------------------
+  SDK-BUILD-STATUS.md    PCBKBC and PCBKIT were marked "DONE, all 4
+                         models".  Neither was ever committed;
+                         toolkit/pwa153/{tc201,msc70}/ hold a .gitkeep.
+
+  pcb-libchain-build.md  arc marked CLOSED with byte sizes and module
+                         counts for output that is not in the repo.
+                         Noted in place.  It also plans to rebuild
+                         pcbkit_l.lib "for MAKEFILE compatibility" --
+                         true for PPLC.MAK, not for PCBoard, whose
+                         PCBOARD.MAK links the 7 category libraries
+                         directly and some objects straight from disk.
+
+  todo/PCBIC-PWA-BUILD-DRAFT.md
+                         the repo copy was still the uncorrected
+                         original (16,550 B).  Synced (21,135 B).
+
+.gitignore
+----------
+  + !toolkit/**/lib/*.LIB  *.lib  *.LST  *.386
+  + !OUT/*/bins/**/*.EXE  *.exe
+  - the dead OUT/lib/ and OUT/pwa153/lib/ rules
+
+Without the first two, everything this release produced would have been
+invisible to git -- the mechanism that lost Clark's binaries and the
+Watcom set in the first place.
+
+STILL NOT BUILT
+---------------
+  OUT/pwa153/          PCBOARDM.EXE only.  The draft plan calls for 37
+                       root EXEs plus COMMDRV, PCBMAIL and PCBOS2 sets.
+  OUT/pwa153/upd154/   the 6 IC binaries only.
+  PCBKIT, PCBKMS       unbuilt, and now need re-running against the
+                       corrected manifest and config, not the old ones.
+
+LESSON
+------
+A count is not a verification.  "130/130 modules" and "DONE, all 4
+models" were both recorded in good faith and both wrong, because nothing
+had tried to USE the output.  Linking one sample door found a
+misidentified source tree, 22 missing modules, two modules that did not
+belong, and a config that would have produced silently incompatible
+structs.  Build the smallest real consumer of an artifact before
+believing the artifact is finished.

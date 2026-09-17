@@ -146,7 +146,8 @@ compiled binaries to a **`bins/` folder under the version's OUT tree**:
     OUT/irc1541/bins/        (15.41 IRC)
 
 This keeps SDK example outputs beside the version's other build outputs,
-separate from the toolkit libraries in OUT/lib/. Each SDK build script
+separate from the toolkit libraries in toolkit/<branch>/<compiler>/.
+Each SDK build script
 writes its sample .EXE (and any .PPE examples) there, so "did the SDK
 still build end to end" is answered by looking in one place per version.
 

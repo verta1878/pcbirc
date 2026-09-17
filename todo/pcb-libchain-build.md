@@ -135,9 +135,40 @@ Once all 7 libs build:
 *hexadecimal, 2026-09-06*
 
 
-## Arc status: CLOSED
+## Arc status: CLOSED — but read this before trusting the outputs
 
 pcbsrc v0.1 is complete. All 10 phases done.
+
+**Correction, 2026-09-17.** The arc was marked CLOSED but its output was
+never committed and is gone. The libraries and binaries the phase table
+reports as DONE (with byte sizes and module counts) do not exist in the
+repo. They were built in a scratch directory and never landed — the same
+pattern recorded in `MAIN/build/SDK-BUILD-STATUS.md`.
+
+What exists now, built from scratch and committed:
+
+- `toolkit/pwa153/bc31/lib/` — the 9 category libraries, and the PCBKBC
+  SDK (152 modules x 4 memory models)
+- `OUT/pwa153/PCBOARDM.EXE` — recipe in `OUT/pwa153/BUILD-RECIPE.md`
+- `OUT/pwa153/bins/` — 6 of Clark's sample doors linked against the SDK
+
+Treat the sizes and module counts in the phase table above as a record of
+what a past session measured, not as a description of files you can open.
+
+**`PCBOARD.MAK` does not use `pcbkit_l.lib` at all.** The section below
+plans to rebuild `pcbkit_l.lib` "for MAKEFILE compatibility". That is
+true for `PPLC.MAK` and the standalone utilities, but not for PCBoard
+itself: `153/PCBOARD.MAK` links the **7 category libraries directly**,
+and additionally links some objects **straight from disk** at Clark's
+`OBJDIR` layout (e.g. `..\lib\bcdos\bc31\misc\large.386\swap.obj`)
+rather than from any `.LIB`. Building `pcbkit_l.lib` is therefore not on
+the path to `PCBOARD.EXE`. See `OUT/pwa153/BUILD-RECIPE.md`.
+
+One more thing the SDK build established: `pcbkit_l.lib` is also **not**
+the door SDK. It is the PPLC/utility link target, built without `-DLIB`,
+so it carries PCBSETUP-side modules a door cannot link. Using its module
+list as an SDK manifest costs 22 missing modules and 3 wrong-tree picks —
+see `toolkit/pwa153/bc31/README.md`.
 
 
 ---

@@ -1,0 +1,6 @@
+Source code and text files describing the
+implementation and theory of the "Shared
+Secret" method of password exchange for use
+on BBSes.  This is based on the MD5 (Message
+Digest 5) algorithm as described in the
+included Internet RFC documents.

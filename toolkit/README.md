@@ -58,20 +58,21 @@ devkit and develop9 revisions of DEVELOP.ZIP — the struct specs).
 
 ## Building
 
-Each toolkit compiles into a per-compiler SDK matrix under `OUT/lib/`.
+Each toolkit compiles into a per-compiler SDK matrix under its own
+`toolkit/<branch>/<compiler>/` directory.
 For each compiler, four `.LIB` files (one per memory model: small,
 medium, compact, large) sit at the compiler root, next to `OBJ/` and
 `loose-obj/`:
 
 ```
-OUT/lib/pwa153/
+toolkit/pwa153/
   bc31/   PCBKBC{S,M,C,L}.LIB   Borland C++ 3.1
   tc201/  PCBKIT{S,M,C,L}.LIB   Turbo C 2.01
   msc70/  PCBKMS{S,M,C,L}.LIB   Microsoft C 7.0
 ```
 
 = 3 compilers × 4 memory models = 12-library SDK matrix per toolkit
-version. See `OUT/lib/README.md` for the library architecture and
+version. See `MAIN/build/SDK-BUILD-STATUS.md` for build state and
 `MAIN/build/scripts/README.md` for the full layout inside each
 compiler root.
 
