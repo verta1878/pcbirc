@@ -31,8 +31,8 @@
 
 # Exception: PCBIC v1.2 binaries in the 15.4 PWA output slot.
 # Byte-exact reconstruction, kept as the released reference.
-!OUT/pwa153/upd154/*.EXE
-!OUT/pwa153/upd154/*.exe
+!OUT/upd154/*.EXE
+!OUT/upd154/*.exe
 
 # Exception: OUT/delta154 — the 15.4 Delta Watcom build (_W suffix).
 # Released artifacts, tracked deliberately: they were committed at
