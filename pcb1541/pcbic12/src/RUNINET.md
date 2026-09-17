@@ -3,6 +3,37 @@
 Our rebuilds from source, for comparison against the shipped originals
 in ../bin/.
 
+## STATUS: byte-exactness DEFERRED (decided 2026-09-16, v0.3.0)
+
+RUNINET.PPE is **accepted as functionally equivalent, not byte-exact.**
+Clark's is 1,808 B; ours is 2,261 B (PPLC 3.30) / 2,286 B (3.40). The
+program is correct and runs; the header matches through byte 42 and the
+divergence is bytecode encoding, not behaviour.
+
+Two blockers, only one of them solvable:
+
+1. **Compiler version** — Clark used PPLC 3.20. Solvable: build it from
+   source (below). The 15.3 library chain this needs is already done
+   (pcbsrc v0.1, arc closed 2026-09-07).
+2. **The source itself** — Clark's original `.PPS` is lost. Ours was
+   decompiled from the PPE and carries 63 implicit variables against
+   Clark's 39. `todo/pcb-libchain-build.md` v0.2.8 records both PPLC
+   3.20 and 3.30 emitting 2,261 B from it, and marks the phase
+   "Blocked — original source lost."
+
+So building PPLC 3.20 alone cannot reach 1,808 B. Closing the gap would
+mean recovering the 39-variable form from Clark's PPE bytecode by hand
+and rewriting the PPS to match — a separate piece of work, not a build
+step.
+
+**Decision: leave it here for now; revisit later.** This does not block
+Phase B or the IC release — RUNINET.PPE ships as Clark's original 1,808 B
+binary from `OUT/data/ic12/`, exactly as it always has. What is deferred
+is only our ability to *reproduce* it from source.
+
+Everything below is the standing detail on how that reproduction would
+work when someone picks it up.
+
 ## RUNINET.3.30.PPE
 
 RUNINET.PPS compiled with PPLC 3.30 (from pcb1541/install/dist/target/).

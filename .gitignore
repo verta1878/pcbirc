@@ -34,6 +34,16 @@
 !OUT/pwa153/upd154/*.EXE
 !OUT/pwa153/upd154/*.exe
 
+# Exception: OUT/delta154 — the 15.4 Delta Watcom build (_W suffix).
+# Released artifacts, tracked deliberately: they were committed at
+# bin/watcom/ from 2026-08-08, deleted in the 2026-08-25 restructure
+# (e4181e5) and never re-added, while DELTA154-CHANGES.md went on
+# claiming "15 EXEs in OUT/delta154/". Nothing flagged it because the
+# *.EXE rule hid the absence — the same way Clark's binaries were lost
+# in the same commit. Keep them visible to git.
+!OUT/delta154/*.EXE
+!OUT/delta154/*.exe
+
 # Local reverse-engineering scratch — one working folder at repo root,
 # named by archive under /analysis/<archive>/. Never tracked.
 # Explicit patterns cover the dir + everything under it (belt-and-suspenders).
