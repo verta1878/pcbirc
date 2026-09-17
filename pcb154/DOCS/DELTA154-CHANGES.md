@@ -41,6 +41,34 @@ HANDLERS, DELAY, GIVEUP, THREADS, COUNTRY, TEST.
 15 EXEs in OUT/delta154/ (Watcom, _W suffix).
 Verified executing under DOSBox-X.
 
+## PCB/IC — inherited, not rebuilt
+
+IC was missing for 20 years and is being restored on both 15.4 legs.
+Delta inherits it, but only partly as source:
+
+- **The 6 IC programs ship as Clark's own binaries**, unchanged.
+  Borland C++ 3.1 (DOS) and BC++ 2.0 for OS/2 — no C source survives.
+  The reconstruction in `pcb153/upd154/SOURCE/IC/` is byte-exact NASM
+  `db` output (3,888 functions), which rebuilds Clark's EXEs exactly
+  but cannot be compiled by Watcom or modified. They are standalone
+  programs launched by RUNINET.PPE, not linked into PCBOARD.EXE, so
+  they run on a Delta system as-is.
+- **RUNINET.PPE is inherited as real source** — `RUNINET.PPS`,
+  121 lines of PPL, compiled by Delta's own PPLC. Not yet byte-exact
+  against Clark's 1,808 B: he used PPLC 3.20, our 3.30 build is
+  2,261 B and 3.40 is 2,286 B. `toolkit/pplc/3.20/PPLC320.EXE` should
+  close it.
+- **PCBIC.DOC, PCBIC.PDF and the 32 IC data files** ship from
+  `OUT/data/ic12/`.
+
+Making IC patchable means writing C for the six from the disassembly —
+a project on the scale of the PCBIC reconstruction itself, not a patch
+revision. Recorded in SYSOP_154.TXT section 8 alongside PCBSETUP and
+LOCAL, which are shipped-binary for the same reason.
+
+IC belongs to PWA 15.4 (`pcb153/upd154/`); Clark's originals are the
+reference in `OUT/clark-original/`.
+
 ## Version
 
 15.4 Delta reports v15.4 (DEFINES.H VERSION_MINOR = "4").

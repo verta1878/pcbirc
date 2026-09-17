@@ -1,27 +1,107 @@
-0baf2150b959db8d4611c78e336c862e  docs/pcboard-internals/pcbkit-module-comparison.md
-60a370b1bcd094fbfa3fed00a47111a5  pcb1541/pcbic12/src/RUNINET.PPS
-60a370b1bcd094fbfa3fed00a47111a5  pcb1541/pcbic12/bin/RUNINET.PPS
+# Modified in this release
+5dee653b38fd0b5552cd6558a4ac4ad9  .gitignore
+4bf0c2fe313333c867c2ba7d864979c3  HISTORY.md
+0dc66acef2d36c842e1fe322e41b79f7  MAIN/DELTA-MODEL.md
+09399a6ec1df445410f3e4e3fc4ee584  MAIN/README.md
+93a586954f0e8b265d428f3cadc44cea  MAIN/build/IC-TOOLKIT-SDK-BUILD-PLAN.md
+b103da360753347ca247feb3555ba21a  OUT/README.md
+907bb302a324cbd61329d7ba85144092  README.md
+40fc68b99ed61f8b9f5db9ae348a33cf  pcb154/DOCS/DELTA154-CHANGES.md
+31d62017eeb5fef2be1ec43df10ee9c8  pcb154/DOCS/SYSOP_154.TXT
+a008c4a2fb9be8026765f1e43d5e6307  pcb1541/pcbic12/src/RUNINET.md
 
-# New files added in this release
-721339edf2262c2369ec3a539fb43c8d  pcb1541/pcbic12/src/dos/pcbic_last4.asm
-b4a27a657341fb355318846a127f1f5b  pcb1541/pcbic12/src/dos/pcbiccfg_catalog.txt
-d5cbf389f53b2950b4b5e11afc5e4e37  pcb1541/pcbic12/src/dos/pcbiccfg_code.asm
-7c2ea543af2b8dffee0b09a312db77d0  pcb1541/pcbic12/src/dos/pcbicevt_catalog.txt
-cf6355d22d81e9988dfb5dcd9738f46b  pcb1541/pcbic12/src/dos/pcbicevt_code.asm
-006fdd78874d1cb2ad407b99ca453b76  pcb1541/pcbic12/src/dos/testic_code.asm
-df7c68da0d5590f05ff85c819b6aff74  pcb1541/pcbic12/src/os2/lx_structure.txt
-a043f1fad31a97075ccea9b0ed8c835b  pcb1541/pcbic12/src/os2/pcbic2.lnk
-2b4837c439ba029384f144a4f11f7bd8  pcb1541/pcbic12/src/os2/pcbic2_catalog.txt
-b6ab52f1cc26214c03d807ca0bbf7c33  pcb1541/pcbic12/src/os2/pcbic2_code.asm
-12f5276a881bedefbc958ccf35580fc9  pcb1541/pcbic12/src/os2/pcbic2_data.asm
-a55a8c2c85a44c8ba81c6991c3c22c7e  pcb1541/pcbic12/src/os2/testic2.lnk
-b8120595c405717ef01c5dc4e3f2e7d5  pcb1541/pcbic12/src/os2/testic2_code.asm
-70fdbed71ae9b2edb5ee48760fd36ed4  pcb1541/pcbic12/src/os2/testic2_data.asm
-4cc725a235244e06f9a1210651e5ef21  pcb1541/pcbic12/bin/rebuilt/Pcbic2_rebuilt.exe
-a72da4d8b74cc15ac08129a19c1a5d0f  pcb1541/pcbic12/bin/rebuilt/TESTIC2_rebuilt.exe
-1b0770ae9c04f25c365a8e324c7f63ad  APPLY.txt
-9799286ad8d1a3fca28470196c5f7f41  CHECKSUMS.txt
-95e175d4a019fb7adf46fb6469e4a733  HISTORY.md
-be588616f0fbb716dc6e0ac3ed64277d  pcb1541/pcbic12/RECONSTRUCTION.md
-5f099db6181e195a1d3aadd8634e85ed  pcb1541/pcbic12/src/dos/pcbic_code.asm
-8b8e19ac5a62b55af08b7a6acfc516bc  pcb1541/pcbic12/bin/rebuilt/Pcbic_rebuilt.exe
+# New — PCB/IC source on the 15.4 PWA leg
+8dd64401bb105e0ca3208f8457011e1c  pcb153/upd154/SOURCE/IC/README.md
+e7ba824005bf6d49c42692e5f855f8e6  pcb153/upd154/SOURCE/IC/RUNINET.3.30.PPE
+60a370b1bcd094fbfa3fed00a47111a5  pcb153/upd154/SOURCE/IC/RUNINET.PPS
+a008c4a2fb9be8026765f1e43d5e6307  pcb153/upd154/SOURCE/IC/RUNINET.md
+5f099db6181e195a1d3aadd8634e85ed  pcb153/upd154/SOURCE/IC/dos/pcbic_code.asm
+721339edf2262c2369ec3a539fb43c8d  pcb153/upd154/SOURCE/IC/dos/pcbic_last4.asm
+b4a27a657341fb355318846a127f1f5b  pcb153/upd154/SOURCE/IC/dos/pcbiccfg_catalog.txt
+d5cbf389f53b2950b4b5e11afc5e4e37  pcb153/upd154/SOURCE/IC/dos/pcbiccfg_code.asm
+7c2ea543af2b8dffee0b09a312db77d0  pcb153/upd154/SOURCE/IC/dos/pcbicevt_catalog.txt
+cf6355d22d81e9988dfb5dcd9738f46b  pcb153/upd154/SOURCE/IC/dos/pcbicevt_code.asm
+006fdd78874d1cb2ad407b99ca453b76  pcb153/upd154/SOURCE/IC/dos/testic_code.asm
+df7c68da0d5590f05ff85c819b6aff74  pcb153/upd154/SOURCE/IC/os2/lx_structure.txt
+a043f1fad31a97075ccea9b0ed8c835b  pcb153/upd154/SOURCE/IC/os2/pcbic2.lnk
+2b4837c439ba029384f144a4f11f7bd8  pcb153/upd154/SOURCE/IC/os2/pcbic2_catalog.txt
+b6ab52f1cc26214c03d807ca0bbf7c33  pcb153/upd154/SOURCE/IC/os2/pcbic2_code.asm
+12f5276a881bedefbc958ccf35580fc9  pcb153/upd154/SOURCE/IC/os2/pcbic2_data.asm
+a55a8c2c85a44c8ba81c6991c3c22c7e  pcb153/upd154/SOURCE/IC/os2/testic2.lnk
+b8120595c405717ef01c5dc4e3f2e7d5  pcb153/upd154/SOURCE/IC/os2/testic2_code.asm
+70fdbed71ae9b2edb5ee48760fd36ed4  pcb153/upd154/SOURCE/IC/os2/testic2_data.asm
+cbe5faf64929ba409c5c0c47f09038ff  pcb153/upd154/SOURCE/IC/pcbic.c
+
+# New — PCB/IC binaries (15.4 PWA output)
+092a895b9dcc7e8b84cb1cea46adeccd  OUT/pwa153/upd154/PCBICCFG.EXE
+45bcc0367c6d7e9a51ea1323ba7248f9  OUT/pwa153/upd154/PCBICEVT.EXE
+8b8e19ac5a62b55af08b7a6acfc516bc  OUT/pwa153/upd154/Pcbic.exe
+44e459deeaa901cad575472f91dd3943  OUT/pwa153/upd154/Pcbic2.exe
+985bf3f06b7ce592cf718667697be7b1  OUT/pwa153/upd154/TESTIC.EXE
+bfb0e052edebcf5abeb56139ee9f700c  OUT/pwa153/upd154/TESTIC2.EXE
+
+# New — PCB/IC data files
+b709046691512b45924b93ab24d55df5  OUT/data/ic12/DATA/FING
+649e73b96d8f3d5e742a73dc975bc831  OUT/data/ic12/DATA/FTP
+bd62b603cd580c6b1246fb2328e77887  OUT/data/ic12/DATA/FTPSCRN
+e0617ba65f4c6d4b41f2e8b59b205eda  OUT/data/ic12/DATA/GOPH
+cee40bf3b28d21d03bd83378897c3d40  OUT/data/ic12/DATA/ICPROFS.DAT
+87dba450b74d80d999f2357605032ebb  OUT/data/ic12/DATA/MENU
+d057d6433a465f1fda54269aa0775605  OUT/data/ic12/DATA/MENU.DAT
+d016ad1dd0266ef93d4118b2d8eb43b9  OUT/data/ic12/DATA/PING
+2f1d2dfe0faef47a4f37d8fd0a88734d  OUT/data/ic12/DATA/PPP
+6e51ef9cefbc5551d36d21d2335461c1  OUT/data/ic12/DATA/RLOG
+ed5d94d2a16c4487b69b7bf88efa9590  OUT/data/ic12/DATA/SLIP
+8b336eeca8aee72edc89c4a35b88685b  OUT/data/ic12/DATA/TCPTEXT
+91d728bcde201f7b10f38087ab6af78a  OUT/data/ic12/DATA/TELN
+b3155f14d17858adb0f9ed3bf2d4b55f  OUT/data/ic12/DATA/TROU
+a89d24f14c12e69bce0f98f0d8e61b01  OUT/data/ic12/DATA/WHO
+2bbe7d1819c88d8f0dbd078be86d96f8  OUT/data/ic12/DOCS/PCBIC.DOC
+94074cc143554793d6df407d472107ca  OUT/data/ic12/DOCS/PCBIC.PDF
+de106334ab6a80ad81ce0002dc189cac  OUT/data/ic12/DOCS/README.1ST
+b0b243085d07a22f0c359d1d73e19d32  OUT/data/ic12/FILE_ID.DIZ
+d748fee7acef8c005e7fe68cfe499717  OUT/data/ic12/PCBIC.HLP
+32116780b9264f5e39bbe6db430e4ea5  OUT/data/ic12/RUNINET.PPE
+60a370b1bcd094fbfa3fed00a47111a5  OUT/data/ic12/RUNINET.PPS
+630f55f1b2f62b631b95b6f1f260f393  OUT/data/ic12/SCRIPTS/OS2SLIP.CMD
+a3be3e260e9254342f2e0ac7964fe6a9  OUT/data/ic12/SCRIPTS/OS2SLIP.TXT
+9666c2b82e547dc6d3789faf96c304b0  OUT/data/ic12/SCRIPTS/WIN31PPP.SCP
+014ea182e7030ed918210645ca927e44  OUT/data/ic12/SCRIPTS/WIN31PPP.TXT
+83466d6e44157dd267e745787501fcc6  OUT/data/ic12/SCRIPTS/WIN95PPP.SCP
+59ab243e914046ed569b44dafeb21f98  OUT/data/ic12/SCRIPTS/WIN95PPP.TXT
+5822dd3ddcc04f6a54753470f4325a31  OUT/data/ic12/root/PCBIC
+ce14c07789c552db34ae908482ec2b21  OUT/data/ic12/root/PPP
+a626d0258ca97dd22de272b8840aa27e  OUT/data/ic12/root/SLIP
+ac5535fcbec9a7313f89c3b9c2b4284e  OUT/data/ic12/root/TPA.BAT
+
+# New — Clark's shipped 15.4 beta binaries (recovered reference)
+3effd447b1e9fa6b97f2eb7a9cf6428b  OUT/clark-original/CHECKSUMS.sha256
+d790b2725176804720e3771f4663ade5  OUT/clark-original/DOS/LOCAL.EXE
+3566f9fb626b5de62593301febdf276d  OUT/clark-original/DOS/MKPCBTXT.EXE
+88763782508c44ee4a574c1799c82890  OUT/clark-original/DOS/PCBOARD.EXE
+44887f8c5ccf1f91550b7bd7355a0bb4  OUT/clark-original/DOS/PCBOARDM.EXE
+61d9513116718a6dedd140eb4f7975d9  OUT/clark-original/DOS/PCBSETUP.EXE
+a522430a314858a7dfd4dd3ecafa75c6  OUT/clark-original/DOS/PCBSM.EXE
+6359db0b2b9f160b2b535954c472ffa4  OUT/clark-original/DOS/PPLC.EXE
+dd0de3e9d3df3790db75664e3d478e57  OUT/clark-original/DOS/UUIN.EXE
+c6015ba89520bb0ef246556bd0349b43  OUT/clark-original/DOS/UUOUT.EXE
+0f26c017d08a77e899b53ce3a9c93df8  OUT/clark-original/DOS/UUUTIL.EXE
+79449c0063da2d5071ca0c3340967da6  OUT/clark-original/DOS/UUXFER.EXE
+38e4935dd28ebc5029c33e798cfd1b07  OUT/clark-original/OS2/PCBOARD2.EXE
+67447b5650e08e4b9778d9b6f21cd1b9  OUT/clark-original/README.md
+062dd7672bf7a95cea0410d0e71d2654  OUT/clark-original/beta-patched/LOCAL.EXE
+6cb31b2f8e05dea66445e545da3dd7d5  OUT/clark-original/beta-patched/PCBOARD.EXE
+5506687729c0c0b3e7ee9c5f9c13ae40  OUT/clark-original/beta-patched/PCBOARDM.EXE
+e8723634b5806246eb1c55a421e1344c  OUT/clark-original/docs/HISTORY
+c54de523c0ec8cbbd751eb424df06adf  OUT/clark-original/docs/PCBOARD.SER
+113ee2e1bb028ef99134763f8a5c3ff4  OUT/clark-original/docs/README.1ST
+ac1788327476e0f388595845ef2ac714  OUT/clark-original/docs/REPORT.TXT
+4b2848a66c8b6595e1c47c43f85a22f4  OUT/clark-original/docs/WHATSNEW
+
+# New — PCBIC v1.1 reference package
+5087e225e27178daeab4eecdd747b211  reference/pcball/pcboard/Pcbic11   05-28-96.zip
+28889bd753216bcb78b647ebcdfb06bd  reference/pcball/pcboard/Pcbic11.md
+
+# Release metadata (self-referential: APPLY.txt and CHECKSUMS.txt)
+21c777e0a3c9e847d8dfa294fb8421a2  APPLY.txt
+0d680bd988b401c73f4f82c47066806e  CHECKSUMS.txt

@@ -13,7 +13,44 @@
 3. **IC package (Pcbic12)** — rebuild byte-for-byte with the same bugs
    AFTER toolkit/SDK is done. Fix bugs only after full restoration.
 
+   **SUPERSEDED — IC was completed ahead of this order.** PCBIC v1.2 is
+   reconstructed byte-exact (all 6 binaries SHA256-verified, v0.2.9),
+   done standalone without waiting on the toolkit/SDK. It did not need
+   the category libs: the reconstruction is NASM `db` output linked with
+   NASM + wlink, not C compiled against toolkit headers. The
+   "byte-for-byte with the same bugs, fix nothing yet" principle held
+   and still holds.
+
+   Placement (Phase A, done): source `pcb153/upd154/SOURCE/IC/`,
+   binaries `OUT/pwa153/upd154/`, data `OUT/data/ic12/`. Originals stay
+   in `pcb1541/pcbic12/`. IC belongs to PWA 15.4; Delta inherits the 6
+   binaries unchanged — Watcom cannot rebuild Borland output with no C
+   source. See `MAIN/DELTA-MODEL.md` and `pcb154/DOCS/SYSOP_154.TXT` §8.
+
+   What IC still owes this plan: nothing for the six binaries.
+   `RUNINET.PPE` is the one IC component that IS built from source, and
+   it is not yet byte-exact — Clark used PPLC 3.20 (1,808 B); our 3.30
+   build is 2,261 B and 3.40 is 2,286 B. `toolkit/pplc/3.20/PPLC320.EXE`
+   is in the repo and should close it in one compile.
+
 4. **OUT/ = binaries only.** Docs → docs/. Runtime data → OUT/support/.
+
+   **AMENDED — OUT/ now also holds installer data and Clark's originals.**
+   The rule was written before the installer work needed a home for the
+   data the .RED archives ship. Current layout:
+
+   - `OUT/<version>/` — program EXEs (top level, NOT in `bins/`)
+   - `OUT/<version>/bins/` — SDK example binaries only
+   - `OUT/data/<program>/` — all installer data files, grouped by
+     program (ic12, commdrv, help, doc, ppl, gen, fido, main,
+     conferences, ...). No EXEs, no source.
+   - `OUT/clark-original/` — Clark's own shipped 15.4 beta binaries.
+     Reference material, never our output, never overwritten.
+   - `OUT/lib/`, `OUT/support/` — unchanged.
+
+   Docs still go to `docs/` and per-tree `docs/` dirs; runtime data still
+   goes to `OUT/support/`. What changed is that "binaries only" is no
+   longer true of `OUT/` as a whole. See `OUT/README.md`.
 
 ## Category Library Manifests (complete, verified no dupes)
 

@@ -746,9 +746,21 @@ Sub-phases:
   BLOCKER: decompiled PPS has 63 implicit variables vs Clark’s 39.
   Both PPLC 3.20 and 3.30 produce 2,261 B from this source.
   Decision: build PPLC 3.20 from `pcb153/SOURCE/PPL/` source.
-  Fix shipped: .gitignore now allows toolkit/pplc/**/*.EXE.
+  ~~Fix shipped: .gitignore now allows toolkit/pplc/**/*.EXE.
   Once PPLC320.EXE is placed at toolkit/pplc/3.20/PPLC320.EXE and
-  committed, one compile closes this phase.
+  committed, one compile closes this phase.~~
+
+  **Corrected v0.3.0:** PPLC320.EXE was never committed and does not
+  belong at `toolkit/pplc/3.20/` — `<ver>/out/` is for compiled .PPE
+  output, not compiler binaries. Clark's shipped PPLC320.EXE stays
+  inside `reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP`; per
+  `toolkit/pplc/README.md` the decision is to build PPLC from Clark's
+  source. The `!toolkit/pplc/**/*.EXE` whitelist has been removed.
+
+  Note the blocker above is the decompiled PPS, not the compiler
+  version: both 3.20 and 3.30 emit 2,261 B from it. Getting PPLC 3.20
+  is necessary but NOT sufficient — the 63-vs-39 implicit-variable gap
+  has to close too.
 
 
   Scope expanded (2026-09-06): PPLC links against 7 PCBoard support
@@ -872,7 +884,8 @@ Sub-phases:
 
   Files:
   - `pcb1541/pcbic12/src/RUNINET.3.30.PPE` — 3.30 output (2,261 B, proof)
-  - `.gitignore` — updated (allow toolkit/pplc/ EXEs)
+  - ~~`.gitignore` — updated (allow toolkit/pplc/ EXEs)~~ reverted in
+    v0.3.0; no compiler binary belongs under toolkit/pplc/
 
 
 
@@ -887,6 +900,110 @@ Sub-phases:
   resource / compiler-artifact). v1.11.10 = understanding-complete.
   Byte-exact rebuild deferred to v1.12 arc. See updated
   `docs/pcboard-internals/INSTALL-EXE-PARITY.md`.
+
+### v0.3.0 — PCB/IC placed on 15.4 PWA; Clark's 15.4 beta binaries recovered (Sep 16, 2026)
+
+Two arcs closed in one release: IC moved onto the branch it belongs to,
+and Clark's own shipped 15.4 binaries were recovered after three weeks
+missing without anyone noticing.
+
+**Phase A — IC on the 15.4 PWA leg.** IC is Clark's 15.4 internet
+upgrade, so it belongs to PWA 15.4. It had been sitting in `pcb1541`
+(the IRC tree) as a staging spot for the reconstruction work — `pcb153`
+= PWA, `pcb154` = Delta, `pcb1541` = IRC, and IC is not IRC.
+
+- Source → `pcb153/upd154/SOURCE/IC/` (20 files, `dos/` + `os2/` kept)
+- Binaries → `OUT/pwa153/upd154/` (6 files)
+- Data → `OUT/data/ic12/` (32 files)
+- Originals in `pcb1541/pcbic12/` untouched
+
+`OUT/data/ic12/` mirrors Clark's subdirectories rather than flattening
+them. Flat is impossible: `bin/PPP` (150 B) and `bin/SLIP` (151 B) are
+different files from `bin/DATA/PPP` and `bin/DATA/SLIP` (377 B each).
+Mirroring also dissolves the README.1ST conflict — it only gets renamed
+at install time.
+
+**Delta inheritance decided.** Delta 15.4 inherits IC but ships Clark's
+6 binaries unchanged: they are Borland C++ 3.1 (DOS) and BC++ 2.0 OS/2
+output, no C source survives, and the reconstruction is 18,110 lines of
+raw NASM `db` bytes across 3,888 functions that Watcom cannot compile
+(`pcbic.c` is a stub — notes and empty bodies). RUNINET.PPE (real PPL
+source), the docs and the data ARE inherited properly. Recorded in
+`pcb154/DOCS/SYSOP_154.TXT` §8 beside PCBSETUP and LOCAL, which are
+shipped-binary for the same reason.
+
+**clark-original recovered.** `OUT/README.md` referenced a
+`clark-original/` directory that did not exist. The binaries had lived
+at `OUT/DOS/` and `OUT/OS2/`, were deleted in `e4181e5` (Aug 25, the
+toolkit restructure — see v0.7 above) and never re-added. Nothing
+flagged the absence: the `*.EXE` rule in `.gitignore` meant git could no
+longer see them. There was never an `OUT/pwa154/` slot, despite the
+note in v0.7.
+
+Recovered from `e4181e5^` and cross-verified against the original 1997
+distribution — `PCB154B` inside a Team GLoW release dated 04/28/97,
+archived as `pcb-metaworlds` on the Internet Archive, bundling PCBoard
+15.3 (250-node), the 15.4 beta, PCBIC and MetaWorlds 1.02.
+
+9 of 12 EXEs byte-identical between the two sources. PCBOARD.SER
+identical. The 4 docs identical once line endings are ignored — the repo
+copies had been normalized CRLF→LF.
+
+3 differed by exactly **one byte** each, at the beta date check:
+
+```
+... 26 2b 07 89 46 fe 83 7e fe 1e [76|EB] ...
+     \__ Terry's signature __/     76 = JBE (check intact)
+                                   EB = JMP (check bypassed)
+
+LOCAL.EXE     0x03249B    76 → EB
+PCBOARD.EXE   0x03D45B    76 → EB
+PCBOARDM.EXE  0x03CBE3    76 → EB
+```
+
+That pattern is the signature David Terry published in June 1997 for
+disabling the 30-day beta timer (`reference/pcb-1997-06-16-terry.txt`).
+The repo copies were patched; the 1997 originals are not. This matters
+for byte-exactness: a faithful rebuild emits `76`, so verifying against
+a patched reference would report three one-byte failures that are not
+reconstruction errors. `OUT/clark-original/` holds the unpatched 1997
+binaries; the patched variants are kept in `beta-patched/`, not
+discarded. Placed at `OUT/` top level — Clark's originals are not any
+one build leg's output.
+
+Gaps: no 15.4 `.HLP` files in any known copy, and no `PCBUUCP.ZIP`,
+though README.1ST refers to both.
+
+**PCBIC v1.1 added to reference.** `reference/pcball/pcboard/` held v1.2
+only; v1.1 (05-28-96) recovered from the same GLoW release. Diffing the
+two: only 3 binaries changed between releases (PCBIC.EXE, PCBIC2.EXE,
+PCBICCFG.EXE). PCBIC.HLP, PCBIC.DOC, PCBIC.PDF, PCBICEVT.EXE,
+TESTIC.EXE and TESTIC2.EXE are byte-identical across both — which
+settles the long-open question of PCBIC.HLP's provenance: it is a
+shipped data file, not something the build compiles. v1.1 also carries
+`RUNINET.DOC` (5,986 B) and `W95PPP.SCP` (922 B), neither of which
+exists in the v1.2 set or anywhere in this repo's history.
+
+**Documentation corrections.** Four documents asserted things that were
+not on disk. `OUT/README.md` (OUT/ no longer binaries-only; `bins/`
+documented as SDK examples, not program EXEs), `MAIN/DELTA-MODEL.md`
+(clark-original path; the retired-`OUT/pwa154/` claim removed; PCB/IC
+section; PWA/Delta/IRC shorthand added), `MAIN/README.md`,
+`MAIN/build/IC-TOOLKIT-SDK-BUILD-PLAN.md` (decision 3 superseded — IC
+completed ahead of the toolkit/SDK order and never needed it; decision 4
+amended — "OUT/ = binaries only" no longer true), `README.md` (binaries
+are 1997 not 1996; PCB/IC section distinguishing it from pcbis), and
+`RUNINET.md` (the PPLC320.EXE path claim, see the v1.0.1 correction
+above).
+
+`.gitignore`: `OUT/clark-original/` and `OUT/pwa153/upd154/` EXEs
+whitelisted as reference material; the `toolkit/pplc/**/*.EXE` whitelist
+removed.
+
+**Lesson.** Two separate docs described directories that had never
+existed, and both read as completed work. A binary set went missing for
+three weeks because the ignore rule that hid it also hid its deletion.
+Worth checking assertions against the filesystem before trusting them.
 
 ---
 

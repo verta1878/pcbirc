@@ -1,0 +1,105 @@
++-----------------------------------------------------------------------------+
+|             Windows 3.1 PPP Connections Via Salt Air BBS                    |
+|                               03/18/96                                      |
++-----------------------------------------------------------------------------+
+
+Setting up Windows 3.1 to connect to Salt Air for PPP access involves many 
+steps.  Once setup, you are only a couple of clicks away from browsing the 
+web or using other Internet applications.
+
+In performing the setup, you'll need a winsock application.  We'll use the
+popular Trumpet Winsock.  You can get this from any of the authorized
+FTP distribution sites:
+
+   ftp://ftp.synapse.net/contrib/trumpet/ 
+   ftp://ftp.laa.com.au/pub/trumpet/ 
+   ftp://ftp.eexi.gr/pub/systems/windows/win31/sockets/winsock 
+   ftp://ftp.mms-gmbh.de/pub/trumpet/ 
+   ftp://ftp.more.net/pub/mirrors/winsock/ 
+   ftp://ieee.cas.uc.edu/pub/winsock/TRUMPET/ 
+           
+If you need access to FTP, call Salt Air and open up the PCBIC door for
+access to the FTP application.
+
+NOTE:  Make sure you follow all of the instructions in this document.  Each
+step is essential to the end goal -- logging onto Salt Air for PPP access.
+           
+Setting Up Trumpet Winsock
+--------------------------
+  Since Windows 3.1 does not have built-in TCP/IP or Winsock support, we need
+  to use a third-party source to accomplish this (Trumpet Winsock).  Of course,
+  if you find this utility useful, you are encouraged to reward the author for
+  his effort by sending in the required shareware fee.
+           
+        1. Unzip the TWSK21F.ZIP into the C:\TRUMP directory.
+        2. Click on your Program Manager window.
+        3. Select File from the menu.
+        4. Select New.
+        5. Select Program Group.
+        6. Click OK.
+        7. Enter "Winsock/Internet" for the description.
+        8. Click OK.
+        9. Select File from the menu.
+        10. Select New
+        11. Select Program Item.
+        12. Enter "Trumpet Winsock" in the Description field.
+        13. Enter "C:\TRUMP\TCPMAN.EXE" in the Command Line field.
+        14. Enter "C:\TRUMP" in the Working Directory.
+        15. Click on OK.
+        
+  Trumpet Winsock is now installed on your system.  Now we need to configure
+  the program with appropriate values for an Internet Connection.
+  
+        1.  Double click on the Trumpet Winsock icon.
+        2.  Choose whether you agree to licensing terms.
+        3.  Enter "206.173.168.40 199.3.12.2" in the Name Server field.
+        4.  Enter "pcboard.com" in the Domain suffic field.
+        5.  Enter 1500 in the MTU field.
+        6.  Enter 4380 in the TCP RWIN field.
+        7.  Enter 1460 in the TCP MSS field.
+        8.  Select Internal PPP.
+        9.  Enter the COM port to  use in the "SLIP port" field.  For example
+            to use COM2, enter 2 in this field.
+       10.  Enter either 38400 or 57600 for the baud rate.
+       11.  Make sure Hardware handshaking is enabled.
+       12.  Set online status detection to "DCD (RLSD) check.
+       13.  Click OK.
+       14.  Click OK.
+       
+  Now we just need to setup the program to use our script.
+  
+        1.  Take the WIN31PPP.CMD file and copy it to your C:\TRUMP
+            subdirectory.
+        2.  Load TRUMP.CMD using NOTEPAD or a similar text editor.
+        3.  Edit the $username to have your logon name between the quotes.
+        4.  Edit the $password to have your logon password.
+        5.  Change the $phonenum to 1-801-261-8976.  Remember to include 
+            any additional information for dialing such as 9 or the country
+            code if required.
+        6.  Change the $langnum to be 4 instead of 3.
+        7.  Save and exit the file.
+        8.  Select Dial from the Trumpet Winsock menu.
+        9.  Select Other.
+        10. Select "trump.cmd" from the file listing.
+        11. Press OK.
+        12. Wait for the login to complete and which you will see
+            PPP Enabled show up in the Trumpet window.
+
+Congratulations
+---------------
+  You now have a PPP connection active on your system.  Load up your favorite
+  browser or Winsock application and HAVE FUN!
+
+Vital Information
+-----------------
+  There is information about our system that you will find helpful in your
+  Internet traversels. 
+
+
+     Netmask:                        255.255.255.0
+     Gateway:                        206.173.168.1
+
+     Domain Nameservers (DNS):
+             Primary:                206.173.168.40
+             Secondary:              199.3.12.2    
+

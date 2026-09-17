@@ -10,8 +10,29 @@
 !pcb1541/pcbic12/bin/*.EXE
 !pcb1541/pcbic12/bin/*.exe
 !pcb1541/install/reference/*.EXE
-!toolkit/pplc/**/*.EXE
-!toolkit/pplc/**/*.exe
+
+# NOTE: toolkit/pplc/ holds NO compiler binaries by design.
+# !toolkit/pplc/**/*.EXE was added to track a PPLC320.EXE that was never
+# committed and does not belong there — toolkit/pplc/<ver>/out/ is for
+# compiled .PPE output. Per toolkit/pplc/README.md the decision is to
+# build PPLC from Clark's source, not extract the shipped binaries;
+# Clark's PPLC320.EXE stays inside
+# reference/roysac/PCB1522-CS2BACKUP-Clean.ZIP. Compiler distributions
+# live in devtools/. Rule removed rather than left whitelisting an
+# empty location.
+
+# Exception: OUT/clark-original — Clark's shipped 15.4 beta binaries.
+# Reference material, NOT our build output. These were lost once already:
+# tracked at OUT/DOS/ and OUT/OS2/, then the *.EXE rule above landed, the
+# 2026-08-25 restructure deleted them, and nothing flagged the absence
+# because git could no longer see them. Keep them tracked.
+!OUT/clark-original/**/*.EXE
+!OUT/clark-original/**/*.exe
+
+# Exception: PCBIC v1.2 binaries in the 15.4 PWA output slot.
+# Byte-exact reconstruction, kept as the released reference.
+!OUT/pwa153/upd154/*.EXE
+!OUT/pwa153/upd154/*.exe
 
 # Local reverse-engineering scratch — one working folder at repo root,
 # named by archive under /analysis/<archive>/. Never tracked.

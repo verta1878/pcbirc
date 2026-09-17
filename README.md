@@ -26,6 +26,7 @@ to OpenWatcom 2.0 for cross-compilation on modern Linux.
 --- source trees (one per version; each owns its source) ---
 pcb153/        15.3 PWA source (Borland C++ 3.1) - the pure base
 pcb153/upd154/     15.4 PWA - Clark's 15.4 reconstructed from binaries (source only)
+  .../SOURCE/IC/   PCB/IC - the 15.4 internet upgrade, reconstructed
 pcb154/        15.4 Delta - the crew's active work (OpenWatcom)
 pcb1541/       15.41 IRC - our new work (ports to openwatcom2irc)
                network front-ends: syncterm, binkd, pcbcomm,
@@ -37,6 +38,10 @@ toolkit/       toolkit source per branch (pwa153, pwa154, delta154, irc1541)
 OUT/           build outputs per version (pwa153, delta154, irc1541)
   lib/pwa153/  the SDK library matrix (PCBKBC + PCBKIT built; PCBKMS pending)
   support/     shared PCBoard runtime files (non-version-specific)
+  data/        ALL installer data files by program (ic12, commdrv, help,
+               doc, ppl, gen, fido, main, conferences, ...) - no EXEs
+  clark-original/  Clark's own shipped 15.4 beta binaries - the
+               byte-match reference. NOT our build output
 MAIN/          project model + build system
   DELTA-MODEL.md   the 4-version model
   build/           scripts, manifests, backups, SDK build status
@@ -96,9 +101,9 @@ for milestone plan.
 > These `_W`-suffixed EXEs are the crew's **15.4 Delta** rebuild,
 > compiled with **OpenWatcom** (pcb154/). They are NOT Clark's binaries.
 >
-> Clark built 15.4 with **Borland C++ 3.1**. His original 1996 binaries
-> (Copyright 1996 Clark Development, report v15.4) are preserved as the
-> reference at `OUT/pwa153/upd154/clark-original/`. The 15.4 PWA source
+> Clark built 15.4 with **Borland C++ 3.1**. His own shipped 15.4 beta
+> binaries (12 EXEs, newest build stamp 04/22/97) are preserved as the
+> byte-match reference at `OUT/clark-original/`. The 15.4 PWA source
 > rebuild (also Borland) targets `OUT/pwa153/upd154/`.
 
 | Binary | Size | Description |
@@ -146,6 +151,32 @@ All 12 Clark utilities that shipped with PCBoard, ported to Watcom DOS4G:
 | pcbfido | 778 | FidoNet console (15.41) |
 | pcbiso | 969 | ISO/CD-ROM file area indexer (15.4+) |
 | pcbis.exe | 5,710 | Internet services daemon (18 Pascal units) |
+
+## PCB/IC — Clark's Internet Collection (the 15.4 internet upgrade)
+
+Clark's own internet package, missing for 20 years and now restored.
+PCBIC v1.2 (April 1997) is reconstructed byte-exact — all 6 binaries
+SHA256-verified.
+
+| Where | What |
+|---|---|
+| `pcb153/upd154/SOURCE/IC/` | the reconstruction (NASM, 3,888 functions) + RUNINET.PPS |
+| `OUT/pwa153/upd154/` | the 6 IC binaries on the PWA 15.4 output leg |
+| `OUT/data/ic12/` | 32 IC data files (DATA, DOCS, SCRIPTS, root) |
+| `pcb1541/pcbic12/` | the original standalone reconstruction work |
+| `reference/pcball/pcboard/` | Clark's shipped v1.1 and v1.2 packages |
+
+IC belongs to **PWA 15.4** — pcb153 has no IC, no internet. **15.4 Delta
+inherits it**, but ships Clark's 6 binaries unchanged: they are Borland
+output with no surviving C source, so Watcom cannot rebuild them. Delta
+does inherit RUNINET.PPE as real PPL source, plus the docs and data. See
+`pcb154/DOCS/SYSOP_154.TXT` §8.
+
+Services: FTP, Gopher, Finger, Ping, Telnet, RLOGIN, PPP/SLIP, WHO.
+Launched from PCBoard by RUNINET.PPE.
+
+**pcbis** (below) is the crew's modern successor to this — not the same
+program.
 
 ## pcbis — PCBoard Internet Services
 

@@ -1,8 +1,12 @@
 # CHECKSUMS — verify release integrity
-# PCBIC v1.2: all 6 binaries byte-exact reconstructed
+# v0.3.0: PCB/IC placed on the 15.4 PWA leg; Clark's 15.4 beta binaries recovered
 # Date: 2026-09-16
 
-Original binaries (pcb1541/pcbic12/bin/):
+91 files: 9 modified, 82 new.
+
+PCB/IC binaries — OUT/pwa153/upd154/ (byte-exact reconstruction, unchanged
+from v0.2.9; copies of pcb1541/pcbic12/bin/):
+
   Pcbic.exe      313,310  sha256:8b44592a6f020d520cabb64a29c39dd44c481ef9a7924188e05e81b94132fb82  byte-exact
   Pcbic2.exe     217,111  sha256:dbf5dc6f7cd2655a7d857835585ac93ca84764226e81f4b9ff7eb2e58e08fb26  byte-exact
   PCBICCFG.EXE   185,398  sha256:5fdee1af3c45c4887420ec74c4efdb3547afb665097f936e8ee427c6ccd5b25f  byte-exact
@@ -10,6 +14,31 @@ Original binaries (pcb1541/pcbic12/bin/):
   TESTIC.EXE      40,104  sha256:35b656f53d0afab073d428db2fea0e1f22baa97f602977bec63acec8a5fb22a3  byte-exact
   TESTIC2.EXE     46,627  sha256:82f8c606ff68c7241504466dcea9ae971039c2b13da9f5217cff753a9761a06b  byte-exact
 
+Clark's shipped 15.4 beta — OUT/clark-original/ (Clark Development's own
+binaries, NOT ours; the byte-match reference the 15.4 PWA rebuild must
+reproduce). Newest build stamp 04/22/97:
+
+  DOS/PCBOARD.EXE    1,051,920  sha256:613ec40eac66bf94e71b9ef3b7e64455ff9154a705d4413422e4aa2ec71ff437
+  DOS/PCBOARDM.EXE   1,007,552  sha256:e934e95ee226286a798afef45f1dee26a1b2edf2a0e76bfc006f535275573f5d
+  DOS/LOCAL.EXE        768,080  sha256:af4f604e3269da67a4086daf308f5ea8e7f642522a4f771e4200c24984cfa3ff
+  DOS/PCBSETUP.EXE     411,344  sha256:c9eaef461ab6e870726582c8bc055eb598f10f6160f778584b10edbf512509e0
+  DOS/PCBSM.EXE        278,160  sha256:e1abf2075ffe330acb77c4dfa9915f5dd234af98d169dcf2ba83f3d410db1933
+  DOS/UUIN.EXE         259,728  sha256:ef4b4e18964c3d29f62a8e9a85e72f7afc52ef5f9ee7451cf5adfe1dddd2da89
+  DOS/PPLC.EXE         201,774  sha256:b73fc4f19ad2cf01c108a61ae06019c0345531406223bca8d50cd7cb9240fb3a
+  DOS/UUXFER.EXE       176,998  sha256:8682e83240335b336029cee187b3f5717eef188c4cc3ba56989a9b0ee38b52a6
+  DOS/UUOUT.EXE        141,272  sha256:059333278efaeaba293a517553c13d08e2bdcb4a1c8334187a9a95a418580ca3
+  DOS/UUUTIL.EXE       141,170  sha256:97da8e7fdc5c78af93a622aef5de9648f4fd59370f6c42cd4f55d7a245ee550d
+  DOS/MKPCBTXT.EXE      62,958  sha256:e0067f79a80b8a66586ab93494682e8d5032fc10f3849640a2cd4101a36fee3f
+  OS2/PCBOARD2.EXE     891,963  sha256:257b73f5666b247faec0a0bf3f2ecae93fb4a6ab94e95bd3de60b487a6631fa8
+
+  beta-patched/ holds three date-check-patched variants of LOCAL, PCBOARD
+  and PCBOARDM recovered from git history — one byte each (76 JBE -> EB
+  JMP at Terry's signature). NOT the reference. See
+  OUT/clark-original/README.md.
+
 Verification:
   md5sum -c CHECKSUMS.md5
   sha256sum -c CHECKSUMS.sha256
+
+Both lists are grouped by section and cover every file this release
+touches.

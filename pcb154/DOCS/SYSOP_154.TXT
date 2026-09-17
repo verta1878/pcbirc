@@ -633,6 +633,43 @@ Compared to what Clark shipped in 15.4b:
   - The 15.4b Local logon utility (LOCAL.EXE, ~768 KB code region)
     has not been sourced or reversed; use the shipped binary.
 
+  - PCB/IC — the Internet Collection — is NOT built from this tree.
+    Delta ships Clark's own six IC binaries unchanged:
+
+        Pcbic.exe     313,310   DOS    FTP/Gopher/Finger/Ping/Telnet/
+                                       RLOGIN/PPP/SLIP/WHO
+        PCBICCFG.EXE  185,398   DOS    configurator
+        PCBICEVT.EXE   89,612   DOS    event scheduler
+        TESTIC.EXE     40,104   DOS    connectivity test
+        Pcbic2.exe    217,111   OS/2   IC for OS/2
+        TESTIC2.EXE    46,627   OS/2   connectivity test, OS/2
+
+    They run correctly on a Delta system — they are standalone
+    programs launched by RUNINET.PPE, not code linked into
+    PCBOARD.EXE — so IC works, it just isn't yours to patch.
+
+    Why they aren't built here: the four DOS binaries are Borland
+    C++ 3.1 output and the two OS/2 binaries are BC++ 2.0 for OS/2
+    (32-bit LX).  No C source for any of them survives.  What the
+    crew reconstructed (pcb153/upd154/SOURCE/IC/) is byte-exact NASM
+    — 18,110 lines of raw `db` hex across 3,888 functions — which
+    rebuilds Clark's EXEs exactly but cannot be read, modified, or
+    compiled by Watcom.  pcbic.c in that directory is a stub: notes
+    and empty function bodies, not an implementation.
+
+    Everything else about IC IS inherited properly:
+      - RUNINET.PPE — real PPL source (RUNINET.PPS, 121 lines);
+        Delta compiles it with its own PPLC.
+      - PCBIC.DOC, PCBIC.PDF and the 32 IC data files ship from
+        OUT/data/ic12/ like any other data.
+
+    Changing IC means writing C for those six from the
+    disassembly first.  That is a project in its own right, on the
+    scale of the original PCBIC reconstruction — not a patch
+    revision.  Until someone does it, treat the six EXEs the way
+    this section already treats PCBSETUP and LOCAL: shipped, working,
+    not ours.
+
 Nothing above prevents the BBS from RUNNING correctly.  These are
 gaps in this port, not runtime bugs.
 
