@@ -69,7 +69,7 @@
 #define HDR_TXT "PCBoard Programming Language Executable  3.30\x0D\x0A\x1A"
 #define HDR_SIZ 48
 
-#define CUR_PPE_VER 	 320   // For PCB 15.23 and 15.3 the ppl version is 3.20 (changed from 3.30)
+#define CUR_PPE_VER 	 330   // For PCB 15.23 and 15.3 the ppl version is 3.30
 #define MAX_PPE_VER 	9999
 
 /******************************************************************************/
@@ -1150,9 +1150,7 @@ void LIBENTRY cSCRIPT::writeVars(cVAR & obj)
 	memcpy(tmpBuf,&obj.info,sizeof(obj.info));
 #ifdef CRYPT
 	encrypt2(tmpBuf,sizeof(obj.info));
-#if CUR_PPE_VER >= 330
 	encrypt3(tmpBuf,sizeof(obj.info));		  // Added for 15.3
-#endif
 #endif
 	*tmpER = *tmpER || (writecheck(*tmpHN,tmpBuf/*&obj.info*/,sizeof(obj.info)) == -1);
 
@@ -1164,17 +1162,13 @@ void LIBENTRY cSCRIPT::writeVars(cVAR & obj)
 			short  len = strlen(ptr)+1; 	  // DWT changed from int to short
 #ifdef CRYPT
 			encrypt2(ptr,len);
-#if CUR_PPE_VER >= 330
 			encrypt3(ptr,len);	  // added for 15.3
-#endif
 #endif
 			*tmpER = (writecheck(*tmpHN,&len,sizeof(len)) == -1) ||
 					 (writecheck(*tmpHN,ptr,len)		  == -1);
 #ifdef CRYPT
 
-#if CUR_PPE_VER >= 330
 			decrypt3(ptr,len);	 // Added for 15.3
-#endif
 			decrypt2(ptr,len);
 #endif
 		}
@@ -1184,9 +1178,7 @@ void LIBENTRY cSCRIPT::writeVars(cVAR & obj)
 			memcpy(tmpBuf,obj.data,sizeof(cVARVAL));
 #ifdef CRYPT
 			encrypt2(tmpBuf,sizeof(cVARVAL));
-#if CUR_PPE_VER >= 330
 			encrypt3(tmpBuf,sizeof(cVARVAL));	// Added for 15.3
-#endif
 #endif
 			*tmpER = (writecheck(*tmpHN,tmpBuf/*obj.data*/,sizeof(cVARVAL)) == -1);
 		}
@@ -1274,9 +1266,7 @@ int LIBENTRY cSCRIPT::save(char * f)
 			  writeLastByte = TRUE;
 #ifdef CRYPT
 			encrypt2(tmpBuf,size_t(thisSize));
-#if CUR_PPE_VER >= 330
 			encrypt3(tmpBuf,size_t(thisSize));		// added for 15.3
-#endif
 #endif
 			err = (writecheck(hand,tmpBuf,size_t(thisSize)) == -1);
 			if(writeLastByte)

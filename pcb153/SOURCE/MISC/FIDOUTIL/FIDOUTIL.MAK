@@ -23,30 +23,19 @@
 
 PROGNAME = FIDOUTIL
 
-# ROOT names this branch. Was \PROJ until 2026-09-17: neither
-# \PROJ (Clark, one product) nor \PCBSRC named a branch, and this
-# tree is one of four. Guarded so a build can still override it:
-#     MAKE -f<this>.MAK -DROOT=\DELTA154
-# Borland MAKE lets a makefile definition beat -D, so the !ifndef is
-# required for the override to take effect.
-!ifndef ROOT
-ROOT     = \PWA153
-!endif
+ROOT     = \PROJ
 SOURCE   = SOURCE
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB
 LIBH     = $(LIBROOT)\H
-# Library path: our layout is <branch>\LIB\<compiler>\lib, not Clark's
-# LIB\BCDOS\<compiler>. Repointed 2026-09-17 to match the repo
-# (toolkit/<branch>/<compiler>/lib) rather than bridge it with copies.
-LIBLIB   = $(LIBROOT)\$(BCCOMPILER)\lib
+LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(ROOT)\SOURCE\H;\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA
 
 #=============================================================
 
@@ -94,6 +83,7 @@ EXE_DEPENDENCIES = \
   data.obj      \
   fidonet.obj   \
   maint.obj     \
+  packfido.obj  \
   passthru.obj  \
   pcbfu.obj     \
   ptsetup.obj   \
@@ -120,6 +110,7 @@ $(OBJDIR)\convert.obj+
 $(OBJDIR)\data.obj+
 $(OBJDIR)\fidonet.obj+
 $(OBJDIR)\maint.obj+
+$(OBJDIR)\packfido.obj+
 $(OBJDIR)\passthru.obj+
 $(OBJDIR)\pcbfu.obj+
 $(OBJDIR)\ptsetup.obj+
@@ -145,33 +136,17 @@ c$(MDL).lib+
 
 # rules for individual files where necessary
 
-ci_build.obj: $(ROOT)\source\util\pcbsetup\source\ci_build.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\source\util\pcbsetup\source\ci_build.c
+ci_build.obj: $(ROOT)\pcbsetup\source\ci_build.c
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcbsetup\source\ci_build.c
 
-data.obj: $(ROOT)\source\fido\data.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\source\fido\data.cpp
+data.obj: $(ROOT)\pcb\source\fido\data.cpp
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\data.cpp
 
-# packfido.obj DROPPED from both lists above, 2026-09-17.
-#
-# packfido.c is missing -- Clark kept it at $(ROOT)\packfido\, a
-# top-level directory beside $(ROOT)\md5\, outside the source tree, and
-# it was never archived. See PACKFIDO-MISSING.md in this directory.
-#
-# It is NOT needed. packfido.obj supplies exactly one symbol, do_pack(),
-# and FIDOUTIL never calls it: SOURCE\CONVERT.CPP line 53 declares
-# "void do_pack(void);" and line 124 is "//do_pack();" -- commented out.
-# Those two lines are the only occurrences of do_pack anywhere in the
-# archive. So the object contributed nothing to the linked image and
-# FIDOUTIL.EXE builds without it.
-#
-# Rule kept, commented, so a recovered packfido.c can be restored by
-# uncommenting these three places:
-#
-# packfido.obj: $(ROOT)\source\packfido.c
-#   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\source\packfido.c
+packfido.obj: $(ROOT)\packfido\packfido.c
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\packfido\packfido.c
 
-passthru.obj: $(ROOT)\source\fido\passthru.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\source\fido\passthru.cpp
+passthru.obj: $(ROOT)\pcb\source\fido\passthru.cpp
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\passthru.cpp
 
 #=============================================================
 

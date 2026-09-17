@@ -20,40 +20,21 @@ this tree.)
 
 15.3 itself (pcb153/SOURCE) stays **pure** — untouched by the upgrade.
 
-## Status — source only; the "build-fix pass" was a config error
+## Status — source only, not yet compiling 100%
 
-There are no libraries or executables here yet, but **the two blockers
-this file used to list are not source defects.** Both were retested on
-2026-09-17 under headless dosbox-x with Clark's own Borland C++ 3.1 and
-his real `PCBOARD.CFG` + `ALL.RES` flags:
+There are no libraries or executables here yet. The reconstructed source
+does not compile completely on our setup. Known gaps (build-fixes, not
+feature changes):
 
-    bcc +<pcboard cfg> -ml -n<obj> CALLWAIT.C     0 errors
-    bcc +<pcboard cfg> -ml -n<obj> DOORS.C        0 errors
+- `CALLWAIT.C` — 'Stats' undefined (the missing STATS control OBJ, the
+  same gap the pure 15.3 PWA source has), plus a tossmisc.h language
+  declaration mismatch.
+- `DOORS.C` — UData member access (TotUpldBytes): a header/struct
+  resolution between the reconstructed source and the toolkit.
 
-Both produce clean `.OBJ`. The previously-recorded gaps were:
-
-- `CALLWAIT.C` — "'Stats' undefined (the missing STATS control OBJ, the
-  same gap the pure 15.3 PWA source has)". Wrong on both counts. The
-  15.3 source compiles `CALLWAIT.C` fine — `CALLWAIT.OBJ` is in the
-  working 15.3 build that produced `OUT/pwa153/PCBOARDM.EXE`. `Stats` is
-  gated by `-DPCBSTATS` / `-DSTATS`, which the attempted build did not
-  define.
-- `DOORS.C` — "UData member access (TotUpldBytes): a header/struct
-  resolution between the reconstructed source and the toolkit". Also a
-  define, not a struct mismatch.
-
-The cause is in `build/BLDUPD154.BAT`, whose documented compile pattern
-was `-DPCB152 -DLIB -DCOMM`. **`-DLIB` is the door-SDK switch.** Under
-it, `PCBOARD.H` selects the reduced, door-visible versions of `Status`
-and the user structs — so members that exist in the real program build
-genuinely vanish. PCBoard itself must be built *without* `-DLIB`, with
-Clark's `PCBOARD.CFG` flags. Same class of error as the one that made
-the PCBKBC SDK look unbuildable in small and compact
-(`toolkit/pwa153/bc31/README.md`).
-
-So the reconstruction is sound and does not need a source-fix pass. What
-it needs is the correct config and a full run — which has not been done,
-so "compiles 100%" is still unproven. Two modules is not a build.
+A sample of the main program (INIT, CHAT, COMMAND, INKEY, RECYCLE)
+compiles clean, including 15.4 toolkit features (SPACERIGHTAT), so the
+reconstruction is sound — it just needs the build-fix pass.
 
 ## Toolkit
 

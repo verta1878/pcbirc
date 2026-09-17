@@ -14,26 +14,10 @@ base, since 15.4 was a binary upgrade on top of 15.3.
 
 ## Status
 
-Not yet a complete build — but **not for the reason this file used to
-give.** The "build-fix pass" (STATS control OBJ; DOORS.C UData/header
-resolution) was a config error, not a source defect: `CALLWAIT.C` and
-`DOORS.C` both compile clean under Clark's real `PCBOARD.CFG` flags.
-Retested 2026-09-17. See ../README.md.
-
-**Do not build this with `-DLIB`.** The compile pattern this script
-documented — `-DPCB152 -DLIB -DCOMM` — is the *door SDK* flag set, taken
-from BLDKBC. Under `-DLIB`, `PCBOARD.H` selects the reduced door-visible
-structs, so members the program legitimately uses disappear and you get
-exactly the two "gaps" above. PCBoard is built without `-DLIB`.
-
-The working flag set is Clark's, in
-`toolkit/pwa153/CFG/BC31/{ALL.RES,PCBOARD.CFG}`, plus what
-`MAIN/COMPILE.BAT` adds (`-DSTATS -DMP -D386 -DDBASE -DFIDO`,
-`NODES=25`). `OUT/pwa153/BUILD-RECIPE.md` records the 15.3 build that
-used it end to end.
-
-What remains genuinely unproven: a full run. Two modules compiling is
-not a build.
+Not yet a complete build: the reconstructed source needs the build-fix
+pass first (STATS control OBJ; DOORS.C UData/header resolution — see
+../README.md). BLDUPD154.BAT is scaffolded to the point those fixes
+allow; it targets Borland C++ 3.1 and writes to OUT/pwa153/upd154/.
 
 ## Output
 

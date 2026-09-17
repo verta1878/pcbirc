@@ -1,0 +1,8 @@
+NAME PCBoard2
+
+DESCRIPTION 'PCBoard/2 Copyright (C) Clark Development Company, 1995'
+
+CODE    EXECUTEONLY PRELOAD CONFORMING
+DATA    MOVEABLE MULTIPLE
+
+

@@ -23,30 +23,19 @@
 
 PROGNAME = MKPCBTXT
 
-# ROOT names this branch. Was \PCBSRC until 2026-09-17: neither
-# \PROJ (Clark, one product) nor \PCBSRC named a branch, and this
-# tree is one of four. Guarded so a build can still override it:
-#     MAKE -f<this>.MAK -DROOT=\DELTA154
-# Borland MAKE lets a makefile definition beat -D, so the !ifndef is
-# required for the override to take effect.
-!ifndef ROOT
-ROOT     = \PWA153
-!endif
+ROOT     = \PCBSRC
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB
 LIBH     = $(LIBROOT)\H
-# Library path: our layout is <branch>\LIB\<compiler>\lib, not Clark's
-# LIB\BCDOS\<compiler>. Repointed 2026-09-17 to match the repo
-# (toolkit/<branch>/<compiler>/lib) rather than bridge it with copies.
-LIBLIB   = $(LIBROOT)\$(BCCOMPILER)\lib
+LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);$(ROOT)\SOURCE\H;$(ROOT)\SOURCE\UTIL\PCBSM\SOURCE
+INCLUDEPATH = $(INCLUDE);$(LIBH);$(ROOT)\MAIN\SOURCE\H;$(ROOT)\MAIN\SOURCE\UTIL\PCBSM\SOURCE
 
 #=============================================================
 
@@ -98,24 +87,24 @@ EXE_DEPENDENCIES = \
 #=============================================================
 
 $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH);$(ROOT)\SOURCE\UTIL\PCBSM\BC31 @&&|
+  $(LINKER) /x/c/L$(LIBPATH);\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31 @&&|
 c0$(MDL).obj+
 $(OBJDIR)\MKPCBTXT.OBJ+
 $(OBJDIR)\STRS15.OBJ+
 $(OBJDIR)\INPUTNUM.OBJ+
 $(OBJDIR)\SCRNINPT.OBJ+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\box.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\delete.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\dosfread.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\getmode.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\insert.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\kbdstat.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\readscrn.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\scrollup.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\showerr2.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\stripb.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\timechng.obj+
-$(ROOT)\SOURCE\UTIL\PCBSM\BC31\wherex.obj
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\box.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\delete.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\dosfread.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\getmode.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\insert.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\kbdstat.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\readscrn.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\scrollup.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\showerr2.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\stripb.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\timechng.obj+
+\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\wherex.obj
 $(OBJDIR)\$(PROGNAME)
                 # no map file
 $(LIBLIB)\dos_$(MDL).386+

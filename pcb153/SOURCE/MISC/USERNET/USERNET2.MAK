@@ -21,18 +21,6 @@
 
 .AUTODEPEND
 
-# ROOT/BCROOT added 2026-09-17. This makefile declared neither and
-# instead carried five hardcoded D:\ paths from the machine it was
-# written on -- which is why the v0.3.2 ROOT pass skipped it.
-!ifndef ROOT
-ROOT    = \PWA153
-!endif
-!ifndef BCROOT
-BCROOT  = \BCOS2
-!endif
-LIBROOT = $(ROOT)\LIB
-LIBDIR  = $(LIBROOT)\bcos2\lib
-
 .PATH.obj = BCOS2
 
 #=============================================================
@@ -44,8 +32,8 @@ TLIB = tlib.exe
 TLINK = tlink
 RC = brcc.exe
 RB = rc.exe
-LIBPATH = $(BCROOT)\LIB
-INCLUDEPATH = $(BCROOT)\INCLUDE;$(LIBROOT)\H
+LIBPATH = D:\BCOS2\LIB
+INCLUDEPATH = D:\BCOS2\INCLUDE;d:\proj\lib\h
 
 
 #=============================================================
@@ -80,16 +68,16 @@ EXE_DEPENDENCIES =  \
 #=============================================================
 bcos2\usernet2.exe: usernet2.cfg $(EXE_DEPENDENCIES)
   $(TLINK) /B:0x10000 /x /Toe /ap /L$(LIBPATH) @&&|
-$(BCROOT)\LIB\C02.OBJ+
+D:\BCOS2\LIB\C02.OBJ+
 bcos2\usernet.obj
 bcos2\usernet2
 		# no map file
-$(LIBDIR)\system.lib+
-$(LIBDIR)\screen.lib+
-$(LIBDIR)\misc.lib+
-$(LIBDIR)\dos.lib+
-$(BCROOT)\LIB\C2.LIB+
-$(BCROOT)\LIB\OS2.LIB
+..\lib\bcos2\system.lib+
+..\lib\bcos2\screen.lib+
+..\lib\bcos2\misc.lib+
+..\lib\bcos2\dos.lib+
+D:\BCOS2\LIB\C2.LIB+
+D:\BCOS2\LIB\OS2.LIB
 
 |
 
