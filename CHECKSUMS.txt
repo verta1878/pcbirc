@@ -15,7 +15,7 @@ paths to $(LIBROOT)\$(BCCOMPILER)\lib, and the redundant \PCB level
 removed. 13 files:
 
   153/PCBOARD.MAK                             21741  sha256:87688a60a4329a932b272caef091d97dc77afd00746b4953c52a30e5fb018819  LIBDIR only; ROOT = .. left as found
-  153/PCBOARD2.MAK                            20014  sha256:a8045552a4718aee9fccd8a7558ebc93f3976ebc7a15f02bf163db9a42c6c2b3  + md5 path repointed
+  153/PCBOARD2.MAK                            20666  sha256:0282abcd68b6be989f9b67c303b9f80c0e7a18ce77beb8546a3c91c0010d7cb0  + md5 path repointed
   153/PPLC.MAK                                 3950  sha256:68245482a57585821ba994378d7c69725dc7215b114a28f5dac117745e469621  relative lib path; declares no ROOT
   SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK            5790  sha256:75ec0e7e384ec346efad949c1907dfed3f2fcc14a66b0627c6fdc0dc4608909c  SUPERSEDED, see packfido below
   SOURCE/MISC/IDX/MAKEIDX.MAK                  4210  sha256:bb951995f8b6ac4f85ec78356f8673156c96009e5251ed49647af7bb4146996d
@@ -28,8 +28,16 @@ removed. 13 files:
   SOURCE/UUCP/UUUTIL/UUUTIL.MAK                6194  sha256:19b1cc6357ea10d4cb0ac74b777afa1d0f51d07d2a4c29c057deaa3d855d5409
   SOURCE/UUCP/UUXFER/UUXFER.MAK                7249  sha256:5185dfef4c3f289ce80c2d22baec8a89e1c76b36625c9e09685359c3248bb31c
 
-  USERNET2.MAK was left untouched — it declares no ROOT and no library
-  path. 153/PCBOARD.MAK kept its `ROOT = ..`, already branch-neutral.
+  153/PCBOARD.MAK kept its `ROOT = ..`, already branch-neutral.
+
+  USERNET2.MAK was called "left untouched — declares no ROOT and no
+  library path" here. That was wrong: it carried five hardcoded D:\
+  paths instead, which is why the ROOT scan missed it. Fixed 2026-09-17
+  along with PCBOARD2.MAK's own D:\BCOS2\LIB\C02.OBJ — see the OS/2
+  section below.
+
+  SOURCE/MISC/USERNET/USERNET2.MAK
+                     3509  sha256:e142e9531139e1aec4fcf4d96ade6bb3df6a42e18d5d9aecd037730c456b218d
 
 PCBOARD.EXE after the repoint — byte-identical to the pre-change
 binary, which is the proof the repoint changed only where the linker
@@ -78,6 +86,25 @@ points at it, so a recovered file drops straight in:
   of thing. Now $(ROOT)\source\packfido.c -- one loose file, so a loose
   file's home rather than a directory holding a single .c.
 
+OS/2 paths — the v0.3.2 ROOT pass hunted $(LIBROOT)\BCDOS\ and \PCBSRC\
+and missed the OS/2 side entirely. Seven hardcoded absolute drive paths
+survived in two makefiles:
+
+  PCBOARD2.MAK   LIBDIR = $(LIBROOT)\BCOS2   -> $(LIBROOT)\bcos2\lib
+                 D:\BCOS2\LIB\C02.OBJ       -> $(BCROOT)\LIB\C02.OBJ
+  USERNET2.MAK   LIBPATH, INCLUDEPATH, C02.OBJ, C2.LIB, OS2.LIB
+                 all D:\BCOS2\... plus d:\proj\lib\h
+                 -> $(BCROOT)\... and $(LIBROOT)\H
+
+Both now carry !ifndef guards for ROOT and BCROOT. BUILD_OS2.CMD sets
+BCROOT=\BCOS2, so an OS/2 build still works unchanged; the guards only
+matter when the makefile is invoked without that script.
+
+  The OS/2 category libraries these resolve to (pcb country misc dos
+  doscls screen system, unsuffixed) have NEVER been built. Only the DOS
+  large-model set in bc31/lib exists. The paths are now correct and the
+  targets are still absent.
+
 VMData — copied into toolkit/pwa153/ from pcb154/LIB/. NOT Clark's:
 the crew's own clean-room replacement, zero Watcom markers, so the
 Borland build takes it unmodified. VMDATA.LIB is still not built:
@@ -100,7 +127,7 @@ Docs and scripts:
       no-symlinks rule; VMData corrected
   APPLY.txt                              16348  sha256:9b2ccffefc0225fac246b6a30d76e88efc1374e68b3e7ed74c40138b117a5450
       v0.3.2 prepended
-  HISTORY.md                              72863  sha256:d2fae5ae310af62fdeffb85c4068827bab5d42206721370cb5df51a91c353480
+  HISTORY.md                              74354  sha256:557d0a3c7ba471c4e7176bc6469be1e953cd67810eedcfcaf3a3cdf3c11b26ae
       v0.3.2 entry
   .gitignore                               6212  sha256:359e565913d247ff426b36b3e0d117aafc855fba12f7e2cd05bf74f016741241
       LAST WORD block restored + MD5 OBJ
@@ -111,6 +138,17 @@ lib-move and layout rewrite) — its v0.3.2 line is the current one.
 Closed since v0.3.1: OUT/pwa153/lib/ is gone — the 9 old
 category-library copies have been deleted. toolkit/pwa153/bc31/lib/ is
 now the only location.
+
+VIRTUAL.C is a MERGED file in both PWA branches — Clark's VIRTUAL.C and
+VIRTUAL1.C behind #define VIRTUAL_HUGE, headers merged the same way,
+VIRTUAL1.H deleted. pwa153 and pwa154 carry byte-identical copies;
+delta154 and irc1541 kept the split. Deliberate, undocumented until now:
+
+  toolkit/pwa153/SOURCE/MISC/VIRTUAL-MERGE.md
+  toolkit/pwa154/SOURCE/MISC/VIRTUAL-MERGE.md
+                     5016  sha256:af124d5bdd596940b57f1cc74fe1e1dc2539696893e0698db85ac07ebb58d599
+
+  VIRTUAL.C itself is NOT touched.
 
 VIRTUAL1.C — toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C replaced with Clark's
 archive original (CRLF -> LF to match the tree). v0.3.1 called the

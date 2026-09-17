@@ -611,6 +611,133 @@ Output: disk1/ through diskN/
     Recorded in pcb154/DOCS/SYSOP_154.TXT §8 next to PCBSETUP and LOCAL, which
     are shipped-binary for the same reason. Writing C for the six remains
     possible later, as its own project.
+11. **PCBWAT2.\* — Clark's Watcom OS/2 IDE project, 4 files, does not
+    compile. FOR JOINT REVIEW, do not change unilaterally.**
+
+    `pcb153/153/PCBWAT2.{MK,MK1,TGT,WPJ}` — a WATCOM IDE project targeting
+    OS/2, carried over untouched. They are full of drive paths this
+    project does not use:
+
+        PCBWAT2.MK    2 x  d:\proj\pcb\153\
+        PCBWAT2.MK1   213 x d:\proj\pcb\153\
+                      118 x d:\proj\pcb\source\
+                      117 x \PROJ\PCB\OBJ\
+                      118 x \proj\lib\h   + d:\watcom\h
+        PCBWAT2.TGT   118 x d:\proj\pcb\source\  + \PROJ\PCB\{SOURCE,OBJ}\
+        PCBWAT2.WPJ   IDE window state
+
+    Two things make a mechanical path rewrite fail, both verified
+    2026-09-17 by attempting it:
+
+    - **`.MK1` wraps lines with `&` mid-path.** `\PROJ\PCB\SOURCE\H`
+      is stored as `...\PCB\S&` then `OURCE\H` on the next line. A
+      substitution pass converted 347 of 359 references and left 12
+      unreachable, producing a file that looks converted and is not.
+      Reverted to Clark's original rather than ship that.
+    - **`.TGT` and `.WPJ` are length-prefixed binaries.** Strings are
+      stored as `WString60<60 bytes>`. Changing any path changes its
+      length and corrupts the file unless every prefix is recomputed.
+
+    **What to compare against.** We already have working makefiles for
+    the same target, so this does not need to be reverse-engineered from
+    the IDE files:
+
+    - `BUILD_OS2_OW.SH` (repo root) — the OpenWatcom cross-compile, with
+      the BCOS2 -> Watcom flag mapping already worked out
+      (`-bt=os2v2 -mf -5 -ox -zp1 -ei -ecw`) and the source-compat
+      analysis: 0 inline asm, 315 `__OS2__` blocks, 8 Borland pragmas,
+      413 LIBENTRY/pascal calls, `WATCOMPAT.H` as the bridge.
+    - `PCBOARD2.MAK` + `PCBOARD2.CFG` — the BCOS2 native path, now
+      repointed onto `$(ROOT)` and `$(BCROOT)`.
+    - The twelve DOS makefiles, for the `!ifndef ROOT` guard convention.
+
+    **The decision to take together:** rewrite them onto `$(ROOT)`
+    properly (unwrap the `&` continuations first, recompute the `.TGT`
+    length prefixes), regenerate them from `BUILD_OS2_OW.SH`, keep them
+    as unconverted provenance with a README saying so, or drop them.
+    They compile nothing today either way.
+
+12. **The OS/2 build chain — makefiles need fixing. FOR JOINT REVIEW.**
+
+    Audited 2026-09-17. Three separate problems, only the first is fixed.
+
+    **(a) FIXED — absolute drive paths.** Seven hardcoded paths from
+    Clark's machine, in two makefiles and one config, all repointed:
+
+        153/PCBOARD2.MAK   LIBDIR = $(LIBROOT)\BCOS2  -> $(LIBROOT)\bcos2\lib
+                           D:\BCOS2\LIB\C02.OBJ       -> $(BCROOT)\LIB\C02.OBJ
+        SOURCE/MISC/USERNET/USERNET2.MAK
+                           LIBPATH, INCLUDEPATH, C02.OBJ, C2.LIB, OS2.LIB
+                           all D:\BCOS2\..., plus d:\proj\lib\h
+                           -> $(BCROOT)\... and $(LIBROOT)\H
+                           + added !ifndef guards for ROOT and BCROOT
+        153/PCBOARD2.CFG   -I...\PROJ\PCB\SOURCE\H;\PROJ\LIB\H
+                           -> ...\PWA153\SOURCE\H;\PWA153\LIB\H
+                           -n\PROJ\PCB\OBJ\BCOS2 -> -n\PWA153\OBJ\BCOS2
+
+    `.CFG` files had never been scanned — the v0.3.2 pass only looked at
+    `.MAK`, which is why `PCBOARD2.CFG` still carried `\PROJ` *and* the
+    `PCB` level that was removed everywhere else.
+
+    **(b) NOT FIXED — the 7 OS/2 category libraries have no makefile.**
+    `PCBOARD2.MAK` and `USERNET2.MAK` link against:
+
+        pcb.lib  country.lib  misc.lib  dos.lib
+        doscls.lib  screen.lib  system.lib
+
+    unsuffixed, from `$(LIBROOT)\bcos2\lib`. **None of them exist
+    anywhere** — searched the whole build root by name. And nothing
+    builds them: all eight per-directory toolkit makefiles are hardwired
+    to DOS —
+
+        COUNTRY DOS DOSCLS MISC PCB SCREEN SYSTEM TOOLKIT
+        all:  CVER = bc31   LIBDIR = ..\..\bcdos\$(CVER)
+
+    — producing the suffixed `misc_l.lib` DOS set. **Not one file in the
+    toolkit tree mentions `bcos2`.** So these two makefiles have always
+    asked for libraries this project does not produce; the repoint in (a)
+    only made the missing target point somewhere honest.
+
+    What that needs: an OS/2 variant of those eight makefiles —
+    `CVER = bcos2`, `LIBDIR = ..\..\bcos2\lib`, unsuffixed output
+    names, BCC from `BCOS2\BIN`, and the `.ASM` modules dropped
+    (`SWAP.ASM`, `XMODEM.ASM` are 16-bit DOS and cannot build 32-bit
+    flat). Switches come from Clark's own `PCBOARD2.CFG`: `-sm -a -5 -P
+    -K -C -O -Ot -Oz -Ob -Oe -Oc -R -G -vi -d -k-`.
+
+    **(c) NOT FIXED — BCOS2 cannot run in this sandbox.** Checked the
+    binaries:
+
+        BCOS2/BIN/BCC.EXE    LX 32-bit OS/2
+        BCOS2/BIN/MAKE.EXE   LX 32-bit OS/2
+        BCOS2/BIN/TASM.EXE   LX 32-bit OS/2
+
+    The whole Borland C++ for OS/2 toolchain is LX and needs a real OS/2
+    host. So writing the makefiles in (b) produces scaffolding that
+    nobody here can run. (For contrast, `BC31/BIN/BCC.EXE` is NE with
+    target OS/2 *and* a working DOS stub — a bound executable, which is
+    why the DOS build runs fine under DOSBox-X.)
+
+    **Two routes, and only one works from here:**
+
+    - **BCOS2 native** — byte-exact to Clark, needs an OS/2 VM.
+      `PCBOARD2.EXE` is confirmed 32-bit LX built with
+      `Borland C++ - Copyright 1994 Borland Intl.`, so this is what he
+      used. MSC 7.0 is ruled out entirely: its OS/2 add-on README says
+      it "will not create applications that run with the OS/2 operating
+      system" — it is an OS/2-*hosted* compiler emitting DOS/Windows.
+    - **OpenWatcom cross-compile** — `wcc386 -bt=os2v2 -mf` from Linux,
+      runnable today, `/opt/watcom` installed and verified.
+      `BUILD_OS2_OW.SH` already has the flag mapping and the
+      source-compat analysis: 0 inline asm, 315 `__OS2__` blocks,
+      8 Borland pragmas, 413 LIBENTRY/pascal calls, `WATCOMPAT.H` as the
+      bridge. Zero inline asm is why this port is tractable where PCBKMS
+      is not.
+
+    **The decision to take together:** build the OS/2 category libraries
+    via OpenWatcom now, or write the BCOS2 makefiles as scaffolding for
+    whoever has an OS/2 VM, or defer the OS/2 leg entirely until the DOS
+    side is finished.
 
 ---
 

@@ -1389,6 +1389,35 @@ the archive. Replaced 2026-09-17 with the archive file, CRLF converted
 to LF to match the rest of the toolkit tree (6,432 -> 6,207 B); content
 byte-identical to Clark's otherwise.
 
+**The merge was deliberate and was never written down.** Enumerating all
+four branches settles it:
+
+| Branch | VIRTUAL.C | VIRTUAL1.C | virtual.h | VIRTUAL1.H |
+|---|---|---|---|---|
+| **pwa153** | 14,610 merged | 6,207 | 3,949 merged | absent |
+| **pwa154** | 14,610 merged | **absent** | 3,949 merged | absent |
+| delta154 | 8,283 split | 6,345 | 2,283 split | 2,220 |
+| irc1541 | 8,325 split | 6,575 | 2,283 split | 2,220 |
+
+Both PWA branches carry byte-identical merged files — source *and*
+header — and `VIRTUAL1.H` was deleted from both. The two OpenWatcom
+branches kept Clark's split untouched. That is a scoped, intentional,
+Borland-side change, not an accident.
+
+It also means **pwa153's `VIRTUAL1.C` is the anomaly**: pwa154 has none,
+because the merged file already contains it. The deletion in `e4181e5`
+was most likely part of the merge rather than part of that commit's data
+loss — in which case v0.3.1 restored a file the merge had deliberately
+removed, and today's replacement entrenched it. Left in place pending a
+decision, and documented in
+`toolkit/pwa153/SOURCE/MISC/VIRTUAL-MERGE.md` (mirrored to pwa154).
+
+The *reason* for the merge is still unrecorded. Identical symbol names
+in two files collide when a build script compiles a whole directory, and
+one file behind a `#define` cannot drift from itself — but both of those
+are inferences. Whoever made the change should say which, and that note
+should be corrected with the real answer rather than the guess.
+
 **They are not duplicates of each other**, which was the question that
 started this. `VIRTUAL.C` and `VIRTUAL1.C` implement the same
 seven-function API with incompatible signatures:
