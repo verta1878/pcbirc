@@ -14,7 +14,7 @@
 
 #=============================================================
 #
-#	USERNET2.MAK - Makefile for project D:\PROJ\USERNET\usernet2.prj
+#	USERNET2.MAK - Makefile for project $(ROOT)\PROJ\USERNET\usernet2.prj
 #		Created on 08/11/96 at 23:23
 #
 #=============================================================
@@ -26,14 +26,15 @@
 #=============================================================
 #		Translator Definitions
 #=============================================================
+ROOT     = \OUT
 CC = bcc +USERNET2.CFG
 TASM = tasm.exe
 TLIB = tlib.exe
 TLINK = tlink
 RC = brcc.exe
 RB = rc.exe
-LIBPATH = D:\BCOS2\LIB
-INCLUDEPATH = D:\BCOS2\INCLUDE;d:\proj\lib\h
+LIBPATH = $(ROOT)\BCOS2\LIB
+INCLUDEPATH = $(ROOT)\BCOS2\INCLUDE;$(ROOT)\proj\lib\h
 
 
 #=============================================================
@@ -68,7 +69,7 @@ EXE_DEPENDENCIES =  \
 #=============================================================
 bcos2\usernet2.exe: usernet2.cfg $(EXE_DEPENDENCIES)
   $(TLINK) /B:0x10000 /x /Toe /ap /L$(LIBPATH) @&&|
-D:\BCOS2\LIB\C02.OBJ+
+$(ROOT)\BCOS2\LIB\C02.OBJ+
 bcos2\usernet.obj
 bcos2\usernet2
 		# no map file
@@ -76,8 +77,8 @@ bcos2\usernet2
 ..\lib\bcos2\screen.lib+
 ..\lib\bcos2\misc.lib+
 ..\lib\bcos2\dos.lib+
-D:\BCOS2\LIB\C2.LIB+
-D:\BCOS2\LIB\OS2.LIB
+$(ROOT)\BCOS2\LIB\C2.LIB+
+$(ROOT)\BCOS2\LIB\OS2.LIB
 
 |
 

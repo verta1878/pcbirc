@@ -23,7 +23,7 @@
 
 PROGNAME = FIDOUTIL
 
-ROOT     = \PROJ
+ROOT     = \OUT
 SOURCE   = SOURCE
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB
@@ -82,6 +82,7 @@ EXE_DEPENDENCIES = \
   convert.obj   \
   data.obj      \
   fidonet.obj   \
+#  packfido.obj  \
   maint.obj     \
   packfido.obj  \
   passthru.obj  \
@@ -110,7 +111,7 @@ $(OBJDIR)\convert.obj+
 $(OBJDIR)\data.obj+
 $(OBJDIR)\fidonet.obj+
 $(OBJDIR)\maint.obj+
-$(OBJDIR)\packfido.obj+
+#$(OBJDIR)\packfido.obj+
 $(OBJDIR)\passthru.obj+
 $(OBJDIR)\pcbfu.obj+
 $(OBJDIR)\ptsetup.obj+
@@ -142,8 +143,8 @@ ci_build.obj: $(ROOT)\pcbsetup\source\ci_build.c
 data.obj: $(ROOT)\pcb\source\fido\data.cpp
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\data.cpp
 
-packfido.obj: $(ROOT)\packfido\packfido.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\packfido\packfido.c
+#packfido.obj: $(ROOT)\packfido\packfido.c
+#  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\packfido\packfido.c
 
 passthru.obj: $(ROOT)\pcb\source\fido\passthru.cpp
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\passthru.cpp
