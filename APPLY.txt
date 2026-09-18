@@ -12,8 +12,12 @@ Clark wrote `ROOT = \PROJ` for a company with one product.  This tree is
 one of four.  All eleven makefiles that declared a root now say:
 
     !ifndef ROOT
-    ROOT     = \PWA153
+    ROOT     = \OUT
     !endif
+
+ROOT already names a PCBoard branch; \PCB said it twice and named nothing.
+      \PCBSRC, which appeared in two makefiles, was not Clark's and named
+      nothing either. changed to \OUT
 
 The guard is not decoration.  Borland MAKE 3.6 lets a MAKEFILE
 definition beat a `-D` command-line macro -- the opposite of GNU make --
@@ -24,7 +28,7 @@ Left alone on purpose: 153/PCBOARD.MAK had `ROOT = ..`, already
 branch-neutral by being relative and arguably the better pattern.
 PPLC.MAK and USERNET2.MAK declare no ROOT at all.
 
-PATHS REPOINTED TO OUR LAYOUT
+PATHS MIGHT NEED REPOINTED TO OUR LAYOUT
 -----------------------------
   $(LIBROOT)\BCDOS\$(BCCOMPILER)  ->  $(LIBROOT)\$(BCCOMPILER)\lib
       12 references.  BCCOMPILER is already bc31, so this resolves to
@@ -34,10 +38,7 @@ PATHS REPOINTED TO OUR LAYOUT
   $(ROOT)\PCB\SOURCE              ->  $(ROOT)\SOURCE
   $(ROOT)\MAIN\SOURCE             ->  $(ROOT)\SOURCE
   $(ROOT)\PCBSM\SOURCE            ->  $(ROOT)\SOURCE\UTIL\PCBSM\SOURCE
-      35 paths across 10 makefiles.  ROOT already names a PCBoard
-      branch; \PCB said it twice and named nothing.  \PCBSRC, which
-      appeared in two makefiles, was not Clark's and named nothing
-      either.
+      35 paths across 10 makefiles.  
 
 Verified by rebuild, not by inspection.  PCBOARD.EXE after the repoint:
 955,904 B, sha256 b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45
@@ -100,8 +101,7 @@ PCBSM.MAK and MKPCBTXT.MAK had already been rewritten, unrecorded --
 `ROOT = \PCBSRC`, 221 and 48 lines differing from the PCBSRCV/000
 originals, the \LIBS\VMDATA include dropped, and MKPCBTXT changed from
 small to LARGE memory model.  Only the root name was normalised here;
-the rest was left as found.  Reverting work whose reason is unknown is
-worse than recording it.
+the rest was left as found. This needs to be re-verified.  
 
 OUT/pwa153/PCBOARDM.EXE and PCBOARD.EXE were built from the ARCHIVE
 tree (PCBSRCV/014), not from pcb153/SOURCE.  They link and they run, but
@@ -134,7 +134,7 @@ VIRTUAL1.C correctly, since undefined VIRTUAL_HUGE yields VIRTUAL1's ABI.
 VIRTUAL.C and VIRTUAL1.C are NOT duplicates of each other: same
 seven-function API, incompatible signatures (huge/long/cached vs
 near/unsigned/uncached), identical symbol names, so a program links one
-or the other.
+or the other. This needs to be reverified.
 
 FIDOUTIL.EXE WAS NEVER ACTUALLY BLOCKED
 ---------------------------------------
