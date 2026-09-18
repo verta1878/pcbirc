@@ -26,7 +26,7 @@ PROGNAME = UUIN
 #uncomment this line if you want to use TLINK instead of RTLINK
 #USETLINK = 1
 
-ROOT     = \PROJ
+ROOT     = \OUT
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB

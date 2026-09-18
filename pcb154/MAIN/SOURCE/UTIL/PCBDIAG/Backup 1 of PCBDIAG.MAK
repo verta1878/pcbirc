@@ -14,16 +14,16 @@
 
 #=============================================================
 #
-#       UUXFER.MAK - Makefile for UUXFER Program
+#       PCBDIAG.MAK - Makefile for PCBDIAG Program
 #
 #=============================================================
 
 .SILENT
 .AUTODEPEND
 
-PROGNAME = UUXFER
+PROGNAME = PCBDIAG
 
-ROOT     = \OUT
+ROOT     = \PROJ
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB
@@ -35,7 +35,7 @@ MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(ROOT)\PCB\SOURCE\H
+INCLUDEPATH = $(INCLUDE);$(LIBH);$(ROOT)\PCB\SOURCE\H;$(ROOT)\PCBSM\SOURCE
 
 #=============================================================
 
@@ -61,20 +61,10 @@ ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
 .PATH.obj = $(OBJDIR)
 .PATH.asm = $(SOURCE)
 .PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
-
-.cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
-
-{..\common\}.c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
-
-{..\common\}.cpp.obj:
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
 
 .asm.obj:
@@ -83,116 +73,60 @@ ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
 #=============================================================
 
 EXE_DEPENDENCIES = \
-  $(OBJDIR)\uuxfer.obj        \
-  $(OBJDIR)\uucp.obj          \
-  $(OBJDIR)\gprot.obj         \
-  $(OBJDIR)\commbuf.obj       \
-  $(OBJDIR)\uushwerr.obj      \
-  $(OBJDIR)\dresword.obj      \
-  $(LIBLIB)\toolkit\large\fossil.obj   \
-  $(LIBLIB)\toolkit\large\nolog.obj    \
-  $(LIBLIB)\toolkit\large\nostatus.obj \
-  $(LIBLIB)\toolkit\large\nodisp.obj   \
-  $(LIBLIB)\toolkit\large\noansi.obj   \
-  $(LIBLIB)\toolkit\large\notxt.obj    \
-  $(LIBLIB)\toolkit\large\nochat.obj   \
-  $(LIBLIB)\toolkit\large\nolang.obj   \
-  $(LIBLIB)\toolkit\large\nopcbsys.obj \
-  $(LIBLIB)\toolkit\large\noscreen.obj \
-  $(LIBLIB)\toolkit\large\noshell.obj  \
-  $(LIBLIB)\toolkit\large\nosys.obj    \
-  $(LIBLIB)\pcbkit_$(MDL).lib \
+  $(OBJDIR)\ANALYZE.OBJ       \
+  $(OBJDIR)\INDEX.OBJ         \
+  $(OBJDIR)\INIT.OBJ          \
+  $(OBJDIR)\PCBDIAG.OBJ       \
+  $(OBJDIR)\PRINT.OBJ         \
+  $(OBJDIR)\SCANUSER.OBJ      \
+  $(OBJDIR)\SHARE.OBJ         \
+  $(OBJDIR)\USERINFO.OBJ      \
+  $(OBJDIR)\USERS.OBJ         \
   $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\doscls_$(MDL).lib \
   $(LIBLIB)\pcb_$(MDL).lib    \
   $(LIBLIB)\misc_$(MDL).lib   \
   $(LIBLIB)\screen_$(MDL).lib \
+  $(LIBLIB)\scrnio_$(MDL).lib \
   $(LIBLIB)\system_$(MDL).lib \
   $(LIBLIB)\country$(MDL).lib
 
 #=============================================================
 
-!if $d(BC31)
 $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
   $(LINKER) /x/c/L$(LIBPATH) @&&|
 c0$(MDL).obj+
-$(OBJDIR)\uuxfer.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\gprot.obj+
-$(OBJDIR)\commbuf.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\dresword.obj+
-..\bc31\stbdsgtn.obj+
-..\bc31\stbdsptn.obj+
-..\bc31\stbsgetn.obj+
-..\bc31\stbsputn.obj+
-$(LIBLIB)\toolkit\large\fossil.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\nostatus.obj+
-$(LIBLIB)\toolkit\large\nodisp.obj+
-$(LIBLIB)\toolkit\large\noansi.obj+
-$(LIBLIB)\toolkit\large\notxt.obj+
-$(LIBLIB)\toolkit\large\nochat.obj+
-$(LIBLIB)\toolkit\large\nolang.obj+
-$(LIBLIB)\toolkit\large\nopcbsys.obj+
-$(LIBLIB)\toolkit\large\noscreen.obj+
-$(LIBLIB)\toolkit\large\noshell.obj+
-$(LIBLIB)\toolkit\large\nosys.obj
+$(OBJDIR)\ANALYZE.OBJ  +
+$(OBJDIR)\INDEX.OBJ    +
+$(OBJDIR)\INIT.OBJ     +
+$(OBJDIR)\PCBDIAG.OBJ  +
+$(OBJDIR)\PRINT.OBJ    +
+$(OBJDIR)\SCANUSER.OBJ +
+$(OBJDIR)\SHARE.OBJ    +
+$(OBJDIR)\USERINFO.OBJ +
+$(OBJDIR)\USERS.OBJ
 $(OBJDIR)\$(PROGNAME)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
 $(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
 $(LIBLIB)\pcb_$(MDL).lib+
 $(LIBLIB)\misc_$(MDL).lib+
 $(LIBLIB)\screen_$(MDL).lib+
+$(LIBLIB)\scrnio_$(MDL).lib+
 $(LIBLIB)\system_$(MDL).lib+
 $(LIBLIB)\country$(MDL).lib+
 math$(MDL).lib+
 emu.lib+
 c$(MDL).lib
 |
-!else
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuxfer.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\gprot.obj+
-$(OBJDIR)\commbuf.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\dresword.obj+
-$(LIBLIB)\toolkit\large\fossil.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\nostatus.obj+
-$(LIBLIB)\toolkit\large\nodisp.obj+
-$(LIBLIB)\toolkit\large\noansi.obj+
-$(LIBLIB)\toolkit\large\notxt.obj+
-$(LIBLIB)\toolkit\large\nochat.obj+
-$(LIBLIB)\toolkit\large\nolang.obj+
-$(LIBLIB)\toolkit\large\nopcbsys.obj+
-$(LIBLIB)\toolkit\large\noscreen.obj+
-$(LIBLIB)\toolkit\large\noshell.obj+
-$(LIBLIB)\toolkit\large\nosys.obj
-$(OBJDIR)\$(PROGNAME)
-                # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
-emu.lib+
-c$(MDL).lib
-|
-!endif
 
 #=============================================================
 
 # rules for individual files where necessary
+
+$(OBJDIR)\USERS.OBJ: $(ROOT)\PCBSM\SOURCE\USERS.C
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCBSM\SOURCE\USERS.C
+
+$(OBJDIR)\USERINFO.OBJ: $(ROOT)\PCBSM\SOURCE\USERINFO.C
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCBSM\SOURCE\USERINFO.C
 
 #=============================================================
 
@@ -262,17 +196,9 @@ $(CFG): $(MAK)
 -d
 -I$(INCLUDEPATH)
 -L$(LIBPATH)
--DLIB
--D___USE_CI_CACHE___
--D___USE_USERS___
--D___USE_CNAMES___
--DBOUNCE
--UDEBUG
--DNOMEMCHECK
--DUNIX
--D___UUIN___
--DEXCLUDE_DEBUG
+-D_FARDATA_=far
+-DPCB152
+-DPCB153
 | $(CFG)
 
 #=============================================================
-
