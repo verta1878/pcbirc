@@ -4,7 +4,7 @@
 |  __/| |__| |_) | | |  __/>  <| |\ V / (_| | |
 |_|    \____|____/|_|  \___/_/\_\_| \_/ \__,_|_|
 PCBoard 15.4 BBS Revival
-Released: August 15, 2026
+Released: August 15, 2026 -> September 17, 2026
 ----------------------------------------------
 36 programs (28 Clark + 8 new tools)
 Phase 0: 12/12 Clark utilities linked
@@ -13,9 +13,14 @@ pcbis 5,710-line internet services daemon
 QFront 9,112-line FidoNet mailer suite
 pcbbinkp BinkP/1.1 FidoNet mailer
 pcbdraw ANSI art viewer/editor
+OS/2 Code, Multiport Code, &
+DOS Code. Includes PPL. Also
+has Comm Driver Release. This
 5,703 PPE collection (incl. Roy/SAC)
-26 bugs fixed
 ----------------------------------------------
-pcbirc crew 2026 - hexadecimal
-verta1878/wrench/sysop0/kiddo/evga
+pcbirc crew 2026 - hexadecimal/dotmatrix
+verta1878/wrench/sysop0/kiddo/evga/byte
 github.com/verta1878/pcbirc
+
+
+

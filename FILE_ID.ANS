@@ -1,22 +1,26 @@
-[1;37m ____  ____ ____                _            _
+ ____  ____ ____                _            _
 |  _ \/ ___| __ ) _ __ _____  _(_)_   ____ _| |
 | |_) | |  |  _ \| '__/ _ \ \/ / \ \ / / _` | |
 |  __/| |__| |_) | | |  __/>  <| |\ V / (_| | |
 |_|    \____|____/|_|  \___/_/\_\_| \_/ \__,_|_|
-[0;36mPCBoard 15.4 BBS Revival
-[1;33mReleased: August 15, 2026
-[0;37m----------------------------------------------
-[1;32m36 programs [0;37m(28 Clark + 8 new tools)
-[1;32mPhase 0: [0;37m12/12 Clark utilities linked
-[1;32mPhase 5: [0;37mPCBISO file area indexer
-[1;36mpcbis [0;37m5,710-line internet services daemon
-[1;36mQFront [0;37m9,112-line FidoNet mailer suite
-[1;36mpcbbinkp [0;37mBinkP/1.1 FidoNet mailer
-[1;36mpcbdraw [0;37mANSI art viewer/editor
-[1;35m5,703 PPE [0;37mcollection (incl. Roy/SAC)
-[1;31m26 bugs fixed
-[0;37m----------------------------------------------
-[0;36mpcbirc crew 2026 - hexadecimal
-verta1878/wrench/sysop0/kiddo/evga
+PCBoard 15.4 BBS Revival
+Released: August 15, 2026 -> September 17, 2026
+----------------------------------------------
+36 programs (28 Clark + 8 new tools)
+Phase 0: 12/12 Clark utilities linked
+Phase 5: PCBISO file area indexer
+pcbis 5,710-line internet services daemon
+QFront 9,112-line FidoNet mailer suite
+pcbbinkp BinkP/1.1 FidoNet mailer
+pcbdraw ANSI art viewer/editor
+OS/2 Code, Multiport Code, &
+DOS Code. Includes PPL. Also
+has Comm Driver Release. This
+5,703 PPE collection (incl. Roy/SAC)
+----------------------------------------------
+pcbirc crew 2026 - hexadecimal/dotmatrix
+verta1878/wrench/sysop0/kiddo/evga/byte
 github.com/verta1878/pcbirc
-[0m
+
+
+
