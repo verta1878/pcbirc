@@ -26,7 +26,12 @@ and the docs/data; see open question 10 and pcb154/DOCS/SYSOP_154.TXT §8.
 
 ## OUT/ — Canonical Binary + Data Output
 
-> **Reality check, 2026-09-17.** The `OUT/data/` layout described in the
+**Some of Clarks MAK files don't specify a root. Clarks default root for some MAK
+files is PROJ. For our repo the project root is suppose to be the source code version.
+PCB153, PCB154 and PCB1541. The repo root structure needs to ne searched and its MAK 
+files modified so the source code compiles in the correct location.
+
+> **Headsup check, 2026-09-17.** The `OUT/data/` layout described in the
 > next ~15 sections is a **plan, not a state**. `OUT/data/` currently
 > contains one directory — `ic12/` — and nothing else. `data/root`,
 > `data/gen`, `data/help`, `data/doc`, `data/ppl`, `data/main`,
@@ -55,21 +60,20 @@ Version layout follows `OUT/README.md` (Convention A):
 
 ```
 OUT/
+  clark-original/            Clark's shipped 15.4 beta binaries (12 EXEs,
+                             no source) — the byte-match reference
   pwa153/                    15.3 base EXEs (Borland)
     COMMDRV/                   WCSC serial driver package
     PCBMAIL/                   QWK mailer binaries
     PCBOS2/                    OS/2 binaries
-    bins/                      SDK example binaries (NOT program EXEs)
-    upd154/                    15.4 PWA upgrade EXEs (Borland) — incl. IC
-      bins/                      SDK example binaries
-  clark-original/            Clark's shipped 15.4 beta binaries (12 EXEs,
-                             no source) — the byte-match reference
   delta154/                  15.4 full build (OpenWatcom)
     bins/                      SDK example binaries
   irc1541/                   15.41 full build (future, ow2irc)
     bins/                      SDK example binaries
   lib/                       toolkit libraries
   support/                   shared runtime data (PCBOARD.SER, PCBSM.CLR/CNF, ENDPCB)
+  upd154/                    15.4 PWA upgrade EXEs (Borland) — incl. IC
+    bins/                      SDK example binaries (NOT program EXEs)
   data/                      ALL data files, by program — NO source code, NO EXEs
     ic12/                      PCBIC: all IC data files (see below)
     commdrv/                   COMMDRV: configs (.DAT), firmware (.BIN), MONITOR.BAT
