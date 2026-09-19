@@ -1,7 +1,46 @@
 v0.3.2: ROOT names the branch; paths match our layout; three recoveries
 =======================================================================
-Date: 2026-09-17
+Date: 2026-09-19
 
+ROOT NAMES THE BRANCH
+---------------------
+Clark wrote `ROOT = \PROJ` for a company with one product.  This tree is
+one of four.  All eleven makefiles that declared a root now say:
+
+    !ifndef ROOT
+    ROOT     = \OUT
+    !endif
+
+ROOT already names a PCBoard branch; \PCB said it twice and named nothing.
+      \PCBSRC, which appeared in two makefiles, was not Clark's and named
+      nothing either. changed to \OUT
+
+The guard is not decoration.  Borland MAKE 3.6 lets a MAKEFILE
+definition beat a `-D` command-line macro -- the opposite of GNU make --
+so `MAKE -DROOT=\DELTA154` silently does nothing without it.  Tested
+both ways, before and after. `MAKE -DROOT=\DELTA154` needs to be changed
+to branch \out and not branch name. Branch name has its own section.
+
+Left alone on purpose: 153/PCBOARD.MAK had `ROOT = ..`, already
+branch-neutral by being relative and arguably the better pattern.
+PPLC.MAK and USERNET2.MAK declare no ROOT at all.
+
+PATHS MIGHT NEED REPOINTED TO OUR LAYOUT
+-----------------------------
+  $(LIBROOT)\BCDOS\$(BCCOMPILER)  ->  $(LIBROOT)\$(BCCOMPILER)\lib
+      12 references.  BCCOMPILER is already bc31, so this resolves to
+      toolkit/pwa153/bc31/lib/ -- where the category libraries moved in
+      v0.3.1.
+
+  $(ROOT)\PCB\SOURCE              ->  $(ROOT)\SOURCE
+  $(ROOT)\MAIN\SOURCE             ->  $(ROOT)\SOURCE
+  $(ROOT)\PCBSM\SOURCE            ->  $(ROOT)\SOURCE\UTIL\PCBSM\SOURCE
+      35 paths across 10 makefiles.  
+
+Verified by rebuild, not by inspection.  PCBOARD.EXE after the repoint:
+955,904 B, sha256 b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45
+-- byte-identical to the pre-change binary.  The repoint changes where
+the linker looks, not what it emits.
 the makefiles and *.cfg in pcbirc revival need to check which branch they belong
 to and point at directories that exist in this repo.  Plus three things that
 were recorded as missing and were not. the mak and cfg files need to be checked
@@ -34,52 +73,13 @@ be incorrect might work without HDMI host..
 
 "msc7.x with OS/2 addon. devtools/ and dosbox-x.zip
 
-The components table in the same section spells out the host×target mapping exactly:
+The components table in the same section spells out the host ×target mapping exactly:
 
 MS-DOS hosted     OS/2 hosted      Compiler
 C13216.EXE        C11616.EXE       pass 1
 C1XX3216.EXE      C1XX1616.EXE     C++ pass 1
 C23216.EXE        C21616.EXE       pass 2
 C33216.EXE        C31616.EXE       pass 3
-
-ROOT NAMES THE BRANCH
----------------------
-Clark wrote `ROOT = \PROJ` for a company with one product.  This tree is
-one of four.  All eleven makefiles that declared a root now say:
-
-    !ifndef ROOT
-    ROOT     = \OUT
-    !endif
-
-ROOT already names a PCBoard branch; \PCB said it twice and named nothing.
-      \PCBSRC, which appeared in two makefiles, was not Clark's and named
-      nothing either. changed to \OUT
-
-The guard is not decoration.  Borland MAKE 3.6 lets a MAKEFILE
-definition beat a `-D` command-line macro -- the opposite of GNU make --
-so `MAKE -DROOT=\DELTA154` silently does nothing without it.  Tested
-both ways, before and after.
-
-Left alone on purpose: 153/PCBOARD.MAK had `ROOT = ..`, already
-branch-neutral by being relative and arguably the better pattern.
-PPLC.MAK and USERNET2.MAK declare no ROOT at all.
-
-PATHS MIGHT NEED REPOINTED TO OUR LAYOUT
------------------------------
-  $(LIBROOT)\BCDOS\$(BCCOMPILER)  ->  $(LIBROOT)\$(BCCOMPILER)\lib
-      12 references.  BCCOMPILER is already bc31, so this resolves to
-      toolkit/pwa153/bc31/lib/ -- where the category libraries moved in
-      v0.3.1.
-
-  $(ROOT)\PCB\SOURCE              ->  $(ROOT)\SOURCE
-  $(ROOT)\MAIN\SOURCE             ->  $(ROOT)\SOURCE
-  $(ROOT)\PCBSM\SOURCE            ->  $(ROOT)\SOURCE\UTIL\PCBSM\SOURCE
-      35 paths across 10 makefiles.  
-
-Verified by rebuild, not by inspection.  PCBOARD.EXE after the repoint:
-955,904 B, sha256 b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45
--- byte-identical to the pre-change binary.  The repoint changes where
-the linker looks, not what it emits.
 
 THREE RECOVERIES
 ----------------
@@ -193,7 +193,8 @@ A declaration and a commented-out call.  Checked against all eleven
 inputs; CONVERT.CPP is the only file that mentions it.  The object
 contributed nothing to the linked image.  Dropped from EXE_DEPENDENCIES
 and the linker response list; build rule commented, not deleted.
-FIDOUTIL builds today with its ten real modules.
+FIDOUTIL builds today with its ten real modules. With this code add and
+tested should produce 12/12 libraries binaries.
 
 THE 37-EXE TARGET, AUDITED
 --------------------------
