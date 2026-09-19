@@ -2,9 +2,45 @@ v0.3.2: ROOT names the branch; paths match our layout; three recoveries
 =======================================================================
 Date: 2026-09-17
 
-Thirteen makefiles in pcb153 now say which branch they belong to and
-point at directories that exist in this repo.  Plus three things that
-were recorded as missing and were not.
+the makefiles and *.cfg in pcbirc revival need to check which branch they belong
+to and point at directories that exist in this repo.  Plus three things that
+were recorded as missing and were not. the mak and cfg files need to be checked
+for set BRANCH=PWA153/PWA154/PWA1541 and sym link cannot be used.
+
+PPLC is be blocked on pcbkit_l.lib, per BUILD-RECIPE.md this needs to be checked
+out.
+
+PCBKIT vs PCBKMS: same source, different compiler.
+
+	Compiler	Why it exists
+PCBKBC	Borland C++ 3.1	done
+PCBKIT	Turbo C 2.01	
+PCBKMS	Microsoft C 7.0	
+
+A door author in 1996 used whatever compiler they owned, and object format, name
+decoration and runtime conventions don't mix across vendors. So Clark shipped the
+same toolkit three times. 3 compilers × 4 memory models = the 12-library matrix. 
+We have 4 of 12.
+
+What's actually different about each:
+
+PCBKIT — Turbo C 2.01 is pre-ANSI, C only, no C++. Our headers carry //
+comments and __BORLANDC__ < 0x500 guards it can't parse. Earlier work added 
+compiler guards for this. Clark's own PCBKITL.LIB is 341 C symbols to 4 C++, 
+which confirms it was a C-mode build. PCBKMS — the blocker is the host, not the code. 
+"MSC 7.0's DOS compiler hard-requires a DPMI host; Microsoft's own README names 386MAX. 
+The OS/2-hosted 16-bit add-on sidesteps DPMI entirely but needs an OS/2 host." This might
+be incorrect might work without HDMI host..
+
+"msc7.x with OS/2 addon. devtools/ and dosbox-x.zip
+
+The components table in the same section spells out the host×target mapping exactly:
+
+MS-DOS hosted     OS/2 hosted      Compiler
+C13216.EXE        C11616.EXE       pass 1
+C1XX3216.EXE      C1XX1616.EXE     C++ pass 1
+C23216.EXE        C21616.EXE       pass 2
+C33216.EXE        C31616.EXE       pass 3
 
 ROOT NAMES THE BRANCH
 ---------------------
@@ -67,7 +103,8 @@ copied; it is a text advertisement with a .LIB extension.
 packfido.c -- cannot be fixed.  FIDOUTIL.MAK builds packfido.obj and the
 string `packfido` appears in exactly one place across the whole archive
 and repo: that makefile.  There is nothing to repoint to.  Recorded as a
-real gap.
+real gap. FIDOUTIL.EXE might not be buildable yet until packfido it check
+in the ftsc and created.
 
 normalize-case.sh
 -----------------
@@ -112,6 +149,14 @@ Flagged, not quietly replaced.
 
 VIRTUAL1.C -- v0.3.1's "ORIGINAL" WAS NOT ORIGINAL
 --------------------------------------------------
+Enumerating all four branches proves it was deliberate.
+
+Branch	VIRTUAL.C	VIRTUAL1.C	virtual.h	VIRTUAL1.H
+pwa153	14,610 merged	6,207	3,949 merged	absent
+pwa154	14,610 merged	absent	3,949 merged	absent
+delta154	8,283 split	6,345	2,283 split	2,220
+irc1541	8,325 split	6,575	2,283 split	2,220
+
 v0.3.1 restored toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C and called it the
 only unmodified copy.  It carried one port fix:
 
@@ -152,13 +197,32 @@ FIDOUTIL builds today with its ten real modules.
 
 THE 37-EXE TARGET, AUDITED
 --------------------------
-todo/PCBIC-PWA-BUILD-DRAFT.md now carries the breakdown.  Four numbers
-were being conflated:
+
+The draft's 37 is what the installed 15.3 product contains. Source
+exists in pcb153/SOURCE for about 14 of them: PCBOARD, PCBOARDM, PCBSETUP,
+PCBSM, MKPCBTXT, MAKEHELP, MAKEIDX, USERNET, FIDOUTIL, UUIN, UUOUT, UUUTIL, UUXFER, PPLC.
+
+The other ~23 have no source in the repo: PCBSTATS, PCBPACK, PCBMONI, PCBMODEM, PCBEDIT,
+PCBFILER, PCBDIAG, PCBDESC, PCBNLC, FIXTEXT, INIT, MKPCBMNU, OVLSIZE, PACKFIDO, RDPCBTXT, 
+TESTFILE, UPGRADE, ENCRYPT, VIEWARCH.COM, VIEWZIP, ZMRECV, ZMSEND, DOORWAY. Some are
+third-party (DOORWAY is Marshall Dudley's); 
+
+The 11th module: it's packfido — and FIDOUTIL never needed it.
+packfido.obj supplies exactly one symbol, do_pack(). Every
+occurrence of do_pack in the entire archive:
+MISC/FIDOUTIL/SOURCE/CONVERT.CPP:53     void do_pack(void);
+MISC/FIDOUTIL/SOURCE/CONVERT.CPP:124      //do_pack();
+
+A declaration, and a call site that is commented out. Checked all eleven of FIDOUTIL's
+inputs — the seven modules in FIDOUTIL/SOURCE/, FIDO/DATA.CPP, FIDO/PASSTHRU.CPP, 
+PCBSETUP/SOURCE/CI_BUILD.C — and CONVERT.CPP is the only file that mentions it at all. 
 
     37  shipped by the 15.3 installer
     24  have a makefile somewhere
     11  present in the packaged build root
      2  actually built
+
+FIDOUTIL.EXE might not be buildable yet until packfido it check in the ftsc and created.
 
 Tier 2 is the cheap win: PCBOARD, PCBOARDM, PCBOARD2, PPLC100, PPLC330
 are blocked only because BUILDROOT/PCB153/ has no 153\ directory --
