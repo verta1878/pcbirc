@@ -1,4 +1,4 @@
-# OUT/pwa153/bins — SDK example binaries
+# OUT\pwa153\SDK\BC31 — SDK example binaries
 
 Clark's own sample doors from
 `toolkit/pwa153/SOURCE/TOOLKIT/SAMPLES/`, compiled and linked against

@@ -1,4 +1,4 @@
-# OUT/pwa153/upd154 — rebuilt 15.4 PWA upgrade binaries
+# OUT\upd154\PWA153 — rebuilt 15.4 PWA upgrade binaries
 
 Where our **recompiled-from-source** 15.4 PWA upgrade binaries will be
 released — built from pcb153/upd154/ (Clark's 15.4 reconstructed source)

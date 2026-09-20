@@ -1,4 +1,4 @@
-v0.3.2: ROOT names the branch; paths match our layout; three recoveries
+v0.3.2+: ROOT names the branch; paths match our layout; three recoveries
 =======================================================================
 Date: 2026-09-20
 
@@ -6,8 +6,10 @@ ROOT NAMES THE BRANCH
 ---------------------
 The Repo is called PCBIRC. ROOT=\OUT translates into PCBIRC\OUT. PCBIRC
 is just the root directory the repo source lives in and can be name
-anything.
-
+anything. The build root needs testing for DOS/OS2 and later LINUX. The build
+should be tested in Wine and Win32 before checked in dosbox-x.zip buildroot.
+The mak/cfg files should contain a section that allow Make CLEAN to run and 
+clean out build files and artifacts.
 
 Clark wrote `ROOT = \PROJ` for a company with one product.  This tree is
 one of four.  All eleven makefiles that declared a root now say:
@@ -24,7 +26,7 @@ The guard is not decoration.  Borland MAKE 3.6 lets a MAKEFILE
 definition beat a `-D` command-line macro -- the opposite of GNU make --
 so `MAKE -DROOT=\DELTA154` silently does nothing without it.  Tested
 both ways, before and after. `MAKE -DROOT=\DELTA154` needs to be changed
-to branch \out and not branch name. Branch name has its own section.
+to branch \OUT and not branch name. Branch name has its own section.
 
 153/PCBOARD.MAK had `ROOT = ..`, already branch-neutral by being relative and
 arguably the better pattern. PPLC.MAK and USERNET2.MAK doesn't declare ROOT at
@@ -54,7 +56,17 @@ for set BRANCH=PWA153/PWA154/PWA1541 and sym link cannot be used.
 PPLC is MAYBE blocked on pcbkit_l.lib, per BUILD-RECIPE.md this needs to be checked
 out.
 
-PCBKIT, PCBKBC and PCBKMS MAKE/CFG files need to have a ROOT=\OUT\BRANCH\SDK\COMPILER\BIN.
+PCBKIT, PCBKBC and PCBKMS toolkit MAKE/CFG files need to have a ROOT=\OUT\BRANCH\SDK\COMPILER\BIN.
+COMPILER is BC31, TC201 or MC7. Should probably be test in Wine and Win32 before exammed 
+in dosbox-x.zip buildroot.
+
+-- Needs to be checked OUT\branch\SDK\PWA153\BC31.
+-- Needs to be checked OUT\branch\SDK\PWA154\BC31.
+-- Needs to be checked OUT\branch\SDK\DELTA154\BC31.
+-- Needs to be checked OUT\branch\SDK\IRC154\BC31.
+-- etc TC201 and MC7
+
+
 
 PCBKIT vs PCBKMS: same source, different compiler.
 
@@ -415,9 +427,23 @@ STILL NOT BUILT
 ---------------
   OUT/pwa153/          PCBOARDM.EXE only.  The draft plan calls for 37
                        root EXEs plus COMMDRV, PCBMAIL and PCBOS2 sets.
-  OUT/pwa153/upd154/   the 6 IC binaries only.
+ 
+"
+  OUT\upd154\PWA153..  the 6 IC binaries only. BC31
+  OUT\upd154\PWA154..  OPENWATCOM BUILD.
+NEEDS CHECKING IN THE BUILD MAKE and CFG FILES.
+" 
+153 build in borland31 an 154 in openwatcom.
+
+
   PCBKIT, PCBKMS       unbuilt, and now need re-running against the
                        corrected manifest and config, not the old ones.
+
+COMMDRV start to be recreated as PCBDCOM. The orginal COMMDRV should be
+released with the 15.3 and 15.4 PWA version of PC Board. While further
+thought and development goes into the irc1541 version.
+
+--C:\Users\owner\Desktop\Claude\share\pcbirc\pcbircrevival\pcb1541\pcbdcom
 
 LESSON
 ------
