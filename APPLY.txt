@@ -1,9 +1,14 @@
 v0.3.2: ROOT names the branch; paths match our layout; three recoveries
 =======================================================================
-Date: 2026-09-19
+Date: 2026-09-20
 
 ROOT NAMES THE BRANCH
 ---------------------
+The Repo is called PCBIRC. ROOT=\OUT translates into PCBIRC\OUT. PCBIRC
+is just the root directory the repo source lives in and can be name
+anything.
+
+
 Clark wrote `ROOT = \PROJ` for a company with one product.  This tree is
 one of four.  All eleven makefiles that declared a root now say:
 
@@ -21,9 +26,9 @@ so `MAKE -DROOT=\DELTA154` silently does nothing without it.  Tested
 both ways, before and after. `MAKE -DROOT=\DELTA154` needs to be changed
 to branch \out and not branch name. Branch name has its own section.
 
-Left alone on purpose: 153/PCBOARD.MAK had `ROOT = ..`, already
-branch-neutral by being relative and arguably the better pattern.
-PPLC.MAK and USERNET2.MAK declare no ROOT at all.
+153/PCBOARD.MAK had `ROOT = ..`, already branch-neutral by being relative and
+arguably the better pattern. PPLC.MAK and USERNET2.MAK doesn't declare ROOT at
+all, needs to be checked: 
 
 PATHS MIGHT NEED REPOINTED TO OUR LAYOUT
 -----------------------------
@@ -46,8 +51,10 @@ to and point at directories that exist in this repo.  Plus three things that
 were recorded as missing and were not. the mak and cfg files need to be checked
 for set BRANCH=PWA153/PWA154/PWA1541 and sym link cannot be used.
 
-PPLC is be blocked on pcbkit_l.lib, per BUILD-RECIPE.md this needs to be checked
+PPLC is MAYBE blocked on pcbkit_l.lib, per BUILD-RECIPE.md this needs to be checked
 out.
+
+PCBKIT, PCBKBC and PCBKMS MAKE/CFG files need to have a ROOT=\OUT\BRANCH\SDK\COMPILER\BIN.
 
 PCBKIT vs PCBKMS: same source, different compiler.
 
