@@ -50,6 +50,20 @@ typedef int showtype;
 #define SHOW 1
 #define HIDE 0
 
+/* onlinetype - pcb153\SOURCE\H\PCBOARD.H line 128:
+ *     typedef enum {OFFLINE, LOCAL, REMOTE } onlinetype;
+ * Asy.Online is stubbed as int below, so the three values have to come
+ * from somewhere.  Added 2026-09-22: without them BCC 3.1 gives
+ * "Undefined symbol 'REMOTE'" at lines 640, 662 and 679.  Ordinal
+ * values preserved exactly - an enum is int-wide under BC 3.1, so this
+ * is ABI-identical to Clark's declaration.
+ */
+#ifndef OFFLINE
+#define OFFLINE 0
+#define LOCAL   1
+#define REMOTE  2
+#endif
+
 /* ---- InBytes/OutBytes macros (from PCBOARD.H under MULTIPORT) ---------- */
 #define InBytes   inbytes()
 #define OutBytes  outbytes()
@@ -122,8 +136,15 @@ extern int  VerifyCDLoss;
 #define ALOGOFF           0
 
 /* ---- PCBoard structures (subset used under LIB) ------------------------ */
+/*
+ * These two are DECLARED here and DEFINED by the program that links this
+ * object.  Clark's FOSSIL.OBJ imports _Asy and _PcbData; it does not
+ * export them.  Defining them here instead produced two extra PUBDEFs
+ * and would collide with PCBOARD's own definitions at link time.
+ * Changed to extern 2026-09-22 after comparing the OMF symbol tables.
+ */
 
-struct {
+extern struct {
     int  ComPortNumber;
     long ModemSpeed;
     int  DataBits;
@@ -134,7 +155,7 @@ struct {
     long CarrierSpeed;
 } Asy;
 
-struct {
+extern struct {
     int  DisableCTS;
     int  Packet;
     int  ModemDelay;
@@ -158,9 +179,11 @@ struct {
 
 bool ModemOpened = FALSE;
 bool ModemOffHook;
-bool ModemFixupsDone = FALSE;
+/* static: Clark's object neither exports nor imports these two, so in
+ * the original they are file-local.  2026-09-22. */
+static bool ModemFixupsDone = FALSE;
 
-int OutBufSize;
+static int OutBufSize;
 
 /* ---- Forward declarations (ASYNC stubs + FOSSIL functions) ------------- */
 

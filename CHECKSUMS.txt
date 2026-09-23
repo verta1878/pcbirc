@@ -1,5 +1,5 @@
 # CHECKSUMS - verify release integrity
-# v0.3.5: FOSSIL.C exists
+# v0.3.6: FOSSIL.C compiles, 79/79 exports match Clark
 # Date: 2026-09-22
 
 ONE MANIFEST
@@ -10,7 +10,7 @@ everything:
 
     sha256sum -c CHECKSUMS.sha256          (or, on Windows:  CLEANUP VERIFY)
 
-101 files: every built or recovered binary under OUT/ and toolkit/, plus
+104 files: every built or recovered binary under OUT/ and toolkit/, plus
 every file changed in v0.3.4 and v0.3.5.  Each path appears exactly once
 with its current hash.
 
@@ -30,14 +30,17 @@ were not.  Do not create another one.
 
 v0.3.5 - changed this release
 -----------------------------
-  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C             25731  sha256:b5d03d8bfac986cb2cf1cf45b1301ef29812241105d7c00ab0ba4883a66602c3  NEW - 767 lines; bcc -ml -c -oFOSSIL.OBJ
+  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C             26754  sha256:097d6f735ca5f5e726fb711f6dac1b120a4cdc6ca1152ed55933dd5e9ceebe95  COMPILES - 0 errors; 79/79 exports match
+  MAIN/build/FOSSIL-C-STATUS.md                       3827  sha256:be3c95bfff4cbd99c7313a366c755e4a8d744c7ebf7bb4e882ed967c69bfcbf6  the three fixes, the import delta
+  MAIN/build/FOSSIL-OBJ-VERIFY.txt                    1114  sha256:131a92033d9ef959a6d9a1e3b7b0f7f514c6c350ce7b3f9ac878d95c727ec915  raw symbol diff
   toolkit/pwa153/bc31/obj/README.md                   3347  sha256:1aafdb34ab30c51d1a0e4d01c92b36f91cdbe0f265860adccb56fc0c904eab5e  the acceptance test, still open
   MAIN/build/CATEGORY-LIBRARIES.md                   10930  sha256:de59ce0e26c11106bc08179ed1746aa86dd9dd1500b7235171e5ab4f9b1daa4d  "One is missing" answered
   pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md       14082  sha256:79cdb43920932ee0cbd38aae4b4a9a9f9861e7ba9c85044248550bf95083b42d  sysop/0's second drop, as received
   pcb1541/pcbdcom/doc/COMM-H-MERGE.md                 5174  sha256:d712ce91a63ea9bb04a39bcb86e3236e97a274d453df1e93d4f4d76f185bb8b9  + his open item 4 marked settled
   CLEANUP.BAT                                         8927  sha256:1b247d06d024a3d4e915a082c3d2c4dcebd17f35985e1c47d4385e10141e9360  REPLACED - RETIRE, DRYRUN, STRAY, VERIFY; pass 1 unchanged
+  .gitignore                                          7496  sha256:ebf8f4b6d9985aed72b1eceb9a42eb61a514f448d0fc461d2ae2befda7c2740d  FIXED - !toolkit/**/obj/*.OBJ added
   attic/RETIRE.LST                                    1942  sha256:e27a5c772d7685ed2d8cc4f81ae370c8e5a9a838c53a46d2db8c943ca8b59eae  NEW - the eight guarded deletes
-  APPLY.txt                                          38446  sha256:86f55324c2d36b6adccc2131d7f0408f1b68dc3199a4d6c6c24bfa1cc1009e27  section v0.3.5 + the DRYRUN/STRAY note
+  APPLY.txt                                          45445  sha256:93409021a32ef1ae88558137362c72f0225a31a89e4c5d9963d2209f1521a392  v0.3.6 + TOOLKIT2 placement
 
 v0.3.4 - the previous release
 -----------------------------

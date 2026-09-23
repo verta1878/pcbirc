@@ -1,27 +1,21 @@
 # CHECKSUMS.sha256 - the single manifest for this repo
 #
-# There is ONE CHECKSUMS.sha256 and ONE CHECKSUMS.md5, both here at the
-# root, both repo-relative.  The six per-directory copies that used to
-# sit under OUT/ and toolkit/ are retired to attic/checksums/ - see
-# APPLY.txt, "ONE CHECKSUM MANIFEST, NOT SEVEN".  Do not add new ones;
-# 'CLEANUP STRAY' reports any that appear.
-#
-# Verify from the repo root:
+# ONE CHECKSUMS.sha256 and ONE CHECKSUMS.md5, at the root, repo-relative.
+# 'CLEANUP STRAY' reports any new per-directory copy.
 #
 #     sha256sum -c CHECKSUMS.sha256          (or: CLEANUP VERIFY, on Windows)
 #
-# Every path appears exactly ONCE, with its CURRENT hash.  Earlier
-# releases' hashes are not kept here: a path listed twice cannot be
-# checked.  Release history is prose - CHECKSUMS.txt and APPLY.txt.
+# Every path appears exactly ONCE, with its CURRENT hash.  Release
+# history is prose - CHECKSUMS.txt and APPLY.txt.  104 files, 2026-09-22.
 #
-# Covers every built or recovered binary under OUT/ and toolkit/, plus
-# every file changed in v0.3.4 and v0.3.5.  101 files.  2026-09-22.
-#
-# This manifest EXCLUDES the files CLEANUP RETIRE deletes, so it passes
-# whether or not that has run.  It cannot tell you they are still there.
-# 'CLEANUP STRAY' and 'git status' can.
+# WHAT THIS FILE CANNOT TELL YOU: whether a file it lists is actually
+# committed.  Both recovered Clark objects hashed correctly here while
+# .gitignore's *.OBJ kept them out of the push entirely.  Run
+# `git check-ignore` over these paths as part of a release.
+# A sum is a note.
 
-86f55324c2d36b6adccc2131d7f0408f1b68dc3199a4d6c6c24bfa1cc1009e27  APPLY.txt
+ebf8f4b6d9985aed72b1eceb9a42eb61a514f448d0fc461d2ae2befda7c2740d  .gitignore
+93409021a32ef1ae88558137362c72f0225a31a89e4c5d9963d2209f1521a392  APPLY.txt
 047f2db6da1b811c12fa879ec91d06e76417242f81c55d3da5d35518bbbfe75e  attic/checksums/OUT-clark-original.sha256
 2d99bbf7d4da11540818dc6a1a614e5c636badff1bac2fd458d69f561f0afbd1  attic/checksums/OUT-delta154.sha256
 aafe31c252b1e7214d66c3243bb1f4f3ca27faece926096ccbddc6987a95dbe9  attic/checksums/OUT-pwa153-SDK-BC31.sha256
@@ -32,6 +26,8 @@ b44ef43f862b36e8ede68e7a2d25a40e762fe9e7a12f759bae3c7407785e12b9  attic/checksum
 e27a5c772d7685ed2d8cc4f81ae370c8e5a9a838c53a46d2db8c943ca8b59eae  attic/RETIRE.LST
 1b247d06d024a3d4e915a082c3d2c4dcebd17f35985e1c47d4385e10141e9360  CLEANUP.BAT
 de59ce0e26c11106bc08179ed1746aa86dd9dd1500b7235171e5ab4f9b1daa4d  MAIN/build/CATEGORY-LIBRARIES.md
+be3c95bfff4cbd99c7313a366c755e4a8d744c7ebf7bb4e882ed967c69bfcbf6  MAIN/build/FOSSIL-C-STATUS.md
+131a92033d9ef959a6d9a1e3b7b0f7f514c6c350ce7b3f9ac878d95c727ec915  MAIN/build/FOSSIL-OBJ-VERIFY.txt
 4ac78ad51ce2e089fe4f8005fd42fba86dd0948e0662d198dfa20d0573de4027  MAIN/build/VMDATA-RECONSTRUCTION.md
 4381d7157956be9ba4b59c7b4c2d734ba5cbb5de4d5500c9422ad50c0fdd29d8  OUT/clark-original/beta-patched/LOCAL.EXE
 98037ff34c5a596cbb0bdd4f8fa6d3bbec63965addb3e4dc9f593815e1074f8e  OUT/clark-original/beta-patched/PCBOARD.EXE
@@ -120,5 +116,5 @@ b107819dc757bf87214a12b980630e71a9e995e62c9f743c9f45a41c1f11e0c4  toolkit/pwa153
 d35bf353aed016d3e248ed871d79585aa0131391b33eb4050d60aff56e22fdd1  toolkit/pwa153/bc31/obj/FOSSIL.OBJ
 1aafdb34ab30c51d1a0e4d01c92b36f91cdbe0f265860adccb56fc0c904eab5e  toolkit/pwa153/bc31/obj/README.md
 1507f83820327fe273bc3a0f731b1ba21f44d2727c76d839665a91d54a4e760c  toolkit/pwa153/H/VMDATA.H
-b5d03d8bfac986cb2cf1cf45b1301ef29812241105d7c00ab0ba4883a66602c3  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C
+097d6f735ca5f5e726fb711f6dac1b120a4cdc6ca1152ed55933dd5e9ceebe95  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C
 291a1160d60d7629163acc36cb252735e781dc3449b6bdb5c55209ddd8bbbb57  toolkit/pwa153/SOURCE/VMFUNCS.C

@@ -180,6 +180,8 @@ codebase-dbf/
 !toolkit/**/lib/*.LST
 !toolkit/**/lib/*.lst
 !toolkit/**/lib/*.386
+!toolkit/**/obj/*.OBJ
+!toolkit/**/obj/*.obj
 
 # Clark's prebuilt MD5 object for the OS/2 build. PCBOARD2.MAK has
 # referenced md5.obj since forever while the object existed nowhere in the

@@ -1,0 +1,27 @@
+=== /home/claude/bld/TOOLKIT/PWA153/SOURCE/TOOLKIT/FOSSIL.OBJ  (9326 B)
+    module : ['fossil.c']
+    exports: 79   imports: 46
+=== /tmp/claude-0/-home-claude/655db15b-2d4a-5fd9-99df-256ff35c10b1/scratchpad/fos5/FOSSIL.OBJ  (9157 B)
+    module : ['y:\\modem.c']
+    exports: 79   imports: 48
+
+=== EXPORTS: ours 79   Clark 79 ===
+  only in OURS  (0):
+  only in CLARK (0):
+  in both: 79
+
+=== IMPORTS: ours 46   Clark 48 ===
+  only in OURS  (5): TIMEREXPIRED, __CDokay, _free, _malloc, _memcpy
+  only in CLARK (7): ASYNC_INIT, ASYNC_OPENCOM, ASYNC_TURNONFIFO, GETTIMER, _CDokay, _farfree, _farmalloc
+
+----------------------------------------------------------------------
+Produced 2026-09-22 by compiling toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C
+under Borland C++ 3.1 and comparing OMF symbol tables with Clark's
+recovered FOSSIL.OBJ.
+
+    bcc -ml -c -I\BC31\INCLUDE -oFOSSIL.OBJ FOSSIL.C
+    0 errors, 2 warnings (unused parameter 'Show', twice)
+
+EXPORTS MATCH EXACTLY: 79 of 79, nothing extra either way.
+IMPORTS DO NOT.  The interface is right; the implementation still
+diverges.  See MAIN/build/FOSSIL-C-STATUS.md.

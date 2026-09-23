@@ -829,3 +829,163 @@ release note from July, not a manifest.
 The general version of the lesson is still git status.  A clean VERIFY
 means every listed file is intact; it says nothing about what else is
 lying around.  VERIFY now prints that in as many words when it finishes.
+
+
+THE TWO RECOVERED OBJECTS WERE NEVER IN THE PUSH
+------------------------------------------------
+Found 2026-09-22, after v0.3.5 was already pushed as b20893bd.
+
+  .gitignore line 3   *.OBJ
+
+The only negation for it in 220 lines was line 188,
+!pcb153/SOURCE/MISC/MD5/OS2/*.OBJ .  Nothing covered
+toolkit/**/obj/ .  So:
+
+  toolkit/pwa153/bc31/obj/FOSSIL.OBJ    IGNORED
+  toolkit/pwa153/bc31/obj/COMMDRV.OBJ   IGNORED
+
+Clark's originals, Oct 11 1993, extracted from TOOLKIT2.ZIP - the two
+files in this repo that cannot be regenerated from anything - were on
+disk, listed in CHECKSUMS.sha256, described in their own README, and not
+in the commit.  git took everything else and silently skipped them.
+
+Verified with real `git check-ignore -v`, not by reading the rules:
+
+  toolkit/pwa153/bc31/obj/FOSSIL.OBJ    <- 3:*.OBJ
+  toolkit/pwa153/bc31/obj/COMMDRV.OBJ   <- 3:*.OBJ
+
+FIX: two negations added beside the existing toolkit lib rules.
+
+  !toolkit/**/obj/*.OBJ
+  !toolkit/**/obj/*.obj
+
+Re-checked afterwards, again with git check-ignore, over all 101 manifest
+paths: 0 ignored.  Build-output objects stay ignored as they should -
+OUT/PWA153/SDK/BC31/OBJ/MISC/LARGE/SWAP.OBJ and
+pcb153/SOURCE/MODEM/MODEM.OBJ both still match *.OBJ.
+
+WHY NOTHING CAUGHT IT
+---------------------
+Everything that could have caught it was looking the wrong way.
+
+  CHECKSUMS.sha256   lists both files.  Both are on disk.  Both hash
+                     correctly.  A manifest verifies bytes, not
+                     membership - it cannot tell you a file it lists is
+                     absent from the commit, because it never asks git.
+  CLEANUP VERIFY     same.  Passes.
+  CLEANUP STRAY      looks for files that should not exist, not for
+                     files that exist but are not tracked.
+  git status         would have shown nothing.  An ignored file is not
+                     untracked; it is invisible.
+
+A sum is a note.  It records what a file was.  It says nothing about
+whether the file is anywhere the note can still reach.
+
+This is the third time in this project that a rules file was believed
+rather than executed - after \PROJ, after BCDOS\BC31, after the earlier
+.gitignore break recorded in v0.3.2+.  The lesson written there was
+already exactly right and was not applied here:
+
+    After committing any file that governs what gets committed:
+    re-read it from disk and verify the RULES, not the bytes.
+
+.gitignore is now IN the manifest, so at least its own bytes are tracked.
+That is not the same as its rules being correct, and never will be.
+Only `git check-ignore` over the real path list answers that, and that
+check now belongs in the release routine.
+
+
+v0.3.6: FOSSIL.C compiles, and matches Clark 79/79
+==================================================
+Date: 2026-09-22
+
+  bcc -ml -c -I\BC31\INCLUDE -oFOSSIL.OBJ FOSSIL.C
+  0 errors, 2 warnings      FOSSIL.OBJ  9,334 B  (Clark's: 9,157 B)
+
+  EXPORTS: 79 ours, 79 Clark's, 0 different either way.
+
+The previous entry said the 79-symbol match "was made by a Python OMF
+parser, not by a compiler" and recorded the acceptance test as open.  It
+is now closed for exports.  It was right to keep it open: the FIRST
+build exported 83, not 79.
+
+THREE FIXES, NONE FINDABLE BY READING THE SOURCE
+------------------------------------------------
+1. REMOTE undefined at lines 640, 662, 679.  Asy.Online is stubbed int;
+   the enum is in pcb153\SOURCE\H\PCBOARD.H:128 -
+   typedef enum {OFFLINE, LOCAL, REMOTE} onlinetype.  Added as three
+   #defines, ordinals preserved; a BC 3.1 enum is int-wide so it is
+   ABI-identical.
+2. Asy and PcbData were DEFINED.  Clark's object IMPORTS _Asy and
+   _PcbData - the linking program owns them.  Defining them here made
+   two extra PUBDEFs that would collide with PCBOARD's own definitions.
+   Both now extern.  This was the actual bug; the other two were noise
+   around it.
+3. OutBufSize and ModemFixupsDone were global.  Clark neither exports
+   nor imports them, so they are file-local in the original.  Both now
+   static.
+
+Every one of the three came out of the symbol-table diff.  Reading 767
+lines would not have produced any of them.
+
+IMPORTS STILL DIFFER - 5 ours-only, 7 Clark-only
+------------------------------------------------
+  ours:   _malloc _free _memcpy TIMEREXPIRED __CDokay
+  Clark:  _farmalloc _farfree GETTIMER _CDokay
+          ASYNC_INIT ASYNC_OPENCOM ASYNC_TURNONFIFO
+
+The interface is right.  The implementation is not.  The file defines
+fbmalloc/fbfree as farmalloc/farfree at the top and then calls plain
+malloc/free in FOSSIL_openmodem and FOSSIL_disconnectmodem - a 64K
+buffer taken from the near heap where Clark took it from far memory.
+That is behaviour, not cosmetics.  __CDokay vs _CDokay is a
+one-underscore mismatch that will not resolve at link.  And Clark's
+openmodem path calls three ASYNC.ASM functions ours does not.
+
+SO: 79/79 EXPORTS IS NOT "DONE"
+-------------------------------
+It means anything linking this object sees the symbols Clark's offered.
+A far/near allocation difference does not appear in a symbol table at
+all.  The next real test is linking UUXFER - the only program that asks
+for fossil.obj - and running it.
+
+Clark's FOSSIL.OBJ and COMMDRV.OBJ stay in toolkit/pwa153/bc31/obj/
+until the imports match too.  COMMDRV.OBJ has no reconstruction yet.
+
+  MAIN/build/FOSSIL-C-STATUS.md      the three fixes, the import delta
+  MAIN/build/FOSSIL-OBJ-VERIFY.txt   the raw symbol diff
+
+TWO OBJ PATHS, ON PURPOSE
+-------------------------
+  toolkit/pwa153/bc31/obj/FOSSIL.OBJ       tracked   Clark's, irreplaceable
+  OUT/pwa153/SDK/BC31/OBJ/../FOSSIL.OBJ    ignored   ours, reproducible
+
+Checked with git check-ignore, not by reading the rules.  A build product
+bcc will regenerate does not belong in git; the 1993 original does.
+
+
+TOOLKIT2.ZIP IS IN THE REPO TWICE
+---------------------------------
+  devtools/TOOLKIT2.ZIP                   1,141,042 B
+  reference/pcball/pcboard/TOOLKIT2.ZIP   1,141,042 B
+  both sha256 12e915a01e65cb05606600241da73f2afcfda976edfa6682e728313eee5fc9b3
+
+Byte-identical, both tracked, 2.2 MB of git history for one file.
+
+It is Clark's shipped Programmer's Toolkit v2: INSTALL.EXE, PCBTOOLS.H,
+SAMPLES.EXE, and twelve self-extracting archives -
+PCBKIT_{S,C,M,L}.EXE under TOOLKIT/BC, TOOLKIT/MSC and TOOLKIT/TC.
+Dated Oct 29 1993.  It is the oracle for the whole door SDK, across all
+three compilers, and FOSSIL.OBJ and COMMDRV.OBJ came out of its
+TOOLKIT/BC/PCBKIT_L.EXE.
+
+KEEP: reference/pcball/pcboard/TOOLKIT2.ZIP - it arrived inside the
+pcball archive and that is its provenance.
+RETIRE: devtools/TOOLKIT2.ZIP - devtools/ is for tools we run.  A vendor
+distribution is not a tool.
+
+It does NOT belong under toolkit/pwa153/, despite being the source of
+that branch's oracles: it spans BC, MSC and TC, so filing it under any
+one branch would be wrong for the other two.  Extracted artifacts go to
+the branch that uses them, as FOSSIL.OBJ already did.  The archive stays
+whole, in one place, under reference/.
