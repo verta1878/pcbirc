@@ -3,7 +3,8 @@
 # There is ONE CHECKSUMS.sha256 and ONE CHECKSUMS.md5, both here at the
 # root, both repo-relative.  The six per-directory copies that used to
 # sit under OUT/ and toolkit/ are retired to attic/checksums/ - see
-# APPLY.txt, "ONE CHECKSUM MANIFEST, NOT SEVEN".  Do not add new ones.
+# APPLY.txt, "ONE CHECKSUM MANIFEST, NOT SEVEN".  Do not add new ones;
+# 'CLEANUP STRAY' reports any that appear.
 #
 # Verify from the repo root:
 #
@@ -16,10 +17,11 @@
 # Covers every built or recovered binary under OUT/ and toolkit/, plus
 # every file changed in v0.3.4 and v0.3.5.  101 files.  2026-09-22.
 #
-# This manifest already EXCLUDES the eight files CLEANUP RETIRE deletes,
-# so it is correct only AFTER that has been run.
+# This manifest EXCLUDES the files CLEANUP RETIRE deletes, so it passes
+# whether or not that has run.  It cannot tell you they are still there.
+# 'CLEANUP STRAY' and 'git status' can.
 
-b9d1667a12c86dfa60bd7226c49f95c0ae5fb3a7a606f2948d0ed3f620eaaf2f  APPLY.txt
+86f55324c2d36b6adccc2131d7f0408f1b68dc3199a4d6c6c24bfa1cc1009e27  APPLY.txt
 047f2db6da1b811c12fa879ec91d06e76417242f81c55d3da5d35518bbbfe75e  attic/checksums/OUT-clark-original.sha256
 2d99bbf7d4da11540818dc6a1a614e5c636badff1bac2fd458d69f561f0afbd1  attic/checksums/OUT-delta154.sha256
 aafe31c252b1e7214d66c3243bb1f4f3ca27faece926096ccbddc6987a95dbe9  attic/checksums/OUT-pwa153-SDK-BC31.sha256
@@ -28,7 +30,7 @@ aafe31c252b1e7214d66c3243bb1f4f3ca27faece926096ccbddc6987a95dbe9  attic/checksum
 69dc428c85e0d14c383cc44b37bc7c2b268ff28513438250a25ce153706bced2  attic/checksums/toolkit-pwa153-bc31-lib.md5
 b44ef43f862b36e8ede68e7a2d25a40e762fe9e7a12f759bae3c7407785e12b9  attic/checksums/toolkit-pwa153-bc31-lib.sha256
 e27a5c772d7685ed2d8cc4f81ae370c8e5a9a838c53a46d2db8c943ca8b59eae  attic/RETIRE.LST
-e1380fb464086802eabb5adc920010109729369a1428770673e57d7eadbc421a  CLEANUP.BAT
+1b247d06d024a3d4e915a082c3d2c4dcebd17f35985e1c47d4385e10141e9360  CLEANUP.BAT
 de59ce0e26c11106bc08179ed1746aa86dd9dd1500b7235171e5ab4f9b1daa4d  MAIN/build/CATEGORY-LIBRARIES.md
 4ac78ad51ce2e089fe4f8005fd42fba86dd0948e0662d198dfa20d0573de4027  MAIN/build/VMDATA-RECONSTRUCTION.md
 4381d7157956be9ba4b59c7b4c2d734ba5cbb5de4d5500c9422ad50c0fdd29d8  OUT/clark-original/beta-patched/LOCAL.EXE

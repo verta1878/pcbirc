@@ -14,10 +14,11 @@ everything:
 every file changed in v0.3.4 and v0.3.5.  Each path appears exactly once
 with its current hash.
 
-IT IS CORRECT ONLY AFTER 'CLEANUP RETIRE' HAS RUN.  The manifest already
-excludes the eight files that pass deletes, so verifying before the
-cleanup is fine - those eight simply are not listed - but 'git status'
-will still show them until it does.
+IT PASSES WHETHER OR NOT 'CLEANUP RETIRE' HAS RUN.  The manifest
+excludes the files that pass deletes, so a clean VERIFY does not mean the
+tree is clean - it means every listed file is intact.  'CLEANUP STRAY',
+run automatically at the end of VERIFY, reports checksum files outside
+the root.  'git status' reports everything else.
 
 The six per-directory checksum files are retired to attic/checksums/ with
 a README.  Two of them had rotted unnoticed, because a per-directory file
@@ -34,9 +35,9 @@ v0.3.5 - changed this release
   MAIN/build/CATEGORY-LIBRARIES.md                   10930  sha256:de59ce0e26c11106bc08179ed1746aa86dd9dd1500b7235171e5ab4f9b1daa4d  "One is missing" answered
   pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md       14082  sha256:79cdb43920932ee0cbd38aae4b4a9a9f9861e7ba9c85044248550bf95083b42d  sysop/0's second drop, as received
   pcb1541/pcbdcom/doc/COMM-H-MERGE.md                 5174  sha256:d712ce91a63ea9bb04a39bcb86e3236e97a274d453df1e93d4f4d76f185bb8b9  + his open item 4 marked settled
-  CLEANUP.BAT                                         6446  sha256:e1380fb464086802eabb5adc920010109729369a1428770673e57d7eadbc421a  REPLACED - gained RETIRE and VERIFY; pass 1 unchanged
+  CLEANUP.BAT                                         8927  sha256:1b247d06d024a3d4e915a082c3d2c4dcebd17f35985e1c47d4385e10141e9360  REPLACED - RETIRE, DRYRUN, STRAY, VERIFY; pass 1 unchanged
   attic/RETIRE.LST                                    1942  sha256:e27a5c772d7685ed2d8cc4f81ae370c8e5a9a838c53a46d2db8c943ca8b59eae  NEW - the eight guarded deletes
-  APPLY.txt                                          36922  sha256:b9d1667a12c86dfa60bd7226c49f95c0ae5fb3a7a606f2948d0ed3f620eaaf2f  section v0.3.5
+  APPLY.txt                                          38446  sha256:86f55324c2d36b6adccc2131d7f0408f1b68dc3199a4d6c6c24bfa1cc1009e27  section v0.3.5 + the DRYRUN/STRAY note
 
 v0.3.4 - the previous release
 -----------------------------

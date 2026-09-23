@@ -3,7 +3,8 @@
 # There is ONE CHECKSUMS.sha256 and ONE CHECKSUMS.md5, both here at the
 # root, both repo-relative.  The six per-directory copies that used to
 # sit under OUT/ and toolkit/ are retired to attic/checksums/ - see
-# APPLY.txt, "ONE CHECKSUM MANIFEST, NOT SEVEN".  Do not add new ones.
+# APPLY.txt, "ONE CHECKSUM MANIFEST, NOT SEVEN".  Do not add new ones;
+# 'CLEANUP STRAY' reports any that appear.
 #
 # Verify from the repo root:
 #
@@ -16,10 +17,11 @@
 # Covers every built or recovered binary under OUT/ and toolkit/, plus
 # every file changed in v0.3.4 and v0.3.5.  101 files.  2026-09-22.
 #
-# This manifest already EXCLUDES the eight files CLEANUP RETIRE deletes,
-# so it is correct only AFTER that has been run.
+# This manifest EXCLUDES the files CLEANUP RETIRE deletes, so it passes
+# whether or not that has run.  It cannot tell you they are still there.
+# 'CLEANUP STRAY' and 'git status' can.
 
-1d843ed13f973c258eca3586c5c497c0  APPLY.txt
+0dffd40ba02e0f9ce8a7785610c1d8f9  APPLY.txt
 3effd447b1e9fa6b97f2eb7a9cf6428b  attic/checksums/OUT-clark-original.sha256
 3cab2fe6ead81c2fd66e351f0129a6f2  attic/checksums/OUT-delta154.sha256
 26cc1b7dc2182ae5f9d2a58ec0981eb5  attic/checksums/OUT-pwa153-SDK-BC31.sha256
@@ -28,7 +30,7 @@ ac5638890d8e06370a4f5e91cce3536c  attic/checksums/OUT-pwa153.sha256
 188f6a869eebbe7946d223daf8b99656  attic/checksums/toolkit-pwa153-bc31-lib.md5
 8c0c4c5932c13a4b2a44c69cc128a133  attic/checksums/toolkit-pwa153-bc31-lib.sha256
 72f95afd04ac029d7e5c9c3c58463c96  attic/RETIRE.LST
-9688764c61366b17e18ec9e6703f61fd  CLEANUP.BAT
+20fd660d41f7afcd5333bc25dd4b01d8  CLEANUP.BAT
 a86025c98006910bea986ad4b2c23adc  MAIN/build/CATEGORY-LIBRARIES.md
 82e79cf466b3c3d653466dbe384ed5c9  MAIN/build/VMDATA-RECONSTRUCTION.md
 062dd7672bf7a95cea0410d0e71d2654  OUT/clark-original/beta-patched/LOCAL.EXE

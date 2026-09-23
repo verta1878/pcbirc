@@ -795,3 +795,37 @@ will report every CLEANUP.LST entry as absent - that pass was run on
 CLEANUP.BAT REPLACED: 2,991 B -> the version with both passes.  Pass 1's
 logic is byte-for-byte the same; the old file is not archived because
 nothing was removed from it.
+
+
+CLEANUP.BAT: DRYRUN AND STRAY
+-----------------------------
+Two modes added after the v0.3.5 push.  Both passes are unchanged.
+
+  CLEANUP DRYRUN    say what both passes WOULD do.  Changes nothing.
+  CLEANUP STRAY     find checksum files outside the repo root.
+                    VERIFY now runs it automatically at the end.
+
+DRYRUN is there because del /f has no Recycle Bin.  A guarded delete is
+still a delete, and reading what a run intends is cheaper than undoing
+what it did.
+
+STRAY exists because of a hole this release opened by accident.  The root
+manifest lists 101 files and deliberately EXCLUDES the seven stale
+per-directory checksum files, so:
+
+    CLEANUP VERIFY passes right now, with all seven still in the tree.
+
+That is not a bug in VERIFY.  A manifest only checks what it lists, and
+nothing lists a file whose whole problem is that it should not exist.
+It is the same hole that let OUT\pwa153\CHECKSUMS.sha256 point at bin\
+and lib\ directories that were never there - no command touched it, so
+nothing complained.  A checksum tells you a file CHANGED.  It cannot
+tell you a file should not BE there.
+
+STRAY closes that one case: CHECKSUMS.sha256, .md5 or .txt anywhere but
+the repo root is reported.  todo\CHECKSUMS.md is ignored - it is a dated
+release note from July, not a manifest.
+
+The general version of the lesson is still git status.  A clean VERIFY
+means every listed file is intact; it says nothing about what else is
+lying around.  VERIFY now prints that in as many words when it finishes.

@@ -5,9 +5,11 @@ rem
 rem  Run from the repo root (the folder holding APPLY.txt).
 rem
 rem    CLEANUP           both passes, then a summary
+rem    CLEANUP DRYRUN    say what both passes WOULD do.  Changes nothing.
 rem    CLEANUP MOVE      pass 1 only
 rem    CLEANUP RETIRE    pass 2 only
-rem    CLEANUP VERIFY    check the tree against CHECKSUMS.sha256
+rem    CLEANUP STRAY     find checksum files outside the repo root
+rem    CLEANUP VERIFY    hash the tree against CHECKSUMS.sha256, then STRAY
 rem
 rem  PASS 1 - MOVE, driven by attic\CLEANUP.LST
 rem    Moves files out of the tree into attic\<category>\<path>.
@@ -27,7 +29,15 @@ rem    Add work:  keeper\path.ext^|victim\path.ext
 rem
 rem  Both passes are safe to run twice.  Nothing listed has to
 rem  exist.  del /f does not use the Recycle Bin, which is why
-rem  every line in both lists names something to check first.
+rem  every line in both lists names something to check first,
+rem  and why DRYRUN exists.
+rem
+rem  STRAY enforces one rule: there is ONE CHECKSUMS.sha256, ONE
+rem  CHECKSUMS.md5 and ONE CHECKSUMS.txt, all at the repo root.
+rem  VERIFY cannot catch a stray - a file that is not in the
+rem  manifest is not checked by the manifest.  That is exactly how
+rem  two per-directory lists rotted for weeks unnoticed.  It
+rem  ignores todo\CHECKSUMS.md, which is a release note.
 rem ============================================================
 
 setlocal
@@ -40,6 +50,8 @@ set SKIPPED=0
 set GONE=0
 set HELD=0
 set ABSENT=0
+set STRAYS=0
+set DRY=0
 
 if not exist "%REPO%APPLY.txt" goto nroot
 if not exist "%REPO%attic\." goto noattic
@@ -48,15 +60,24 @@ set MODE=%~1
 if "%MODE%"=="" set MODE=ALL
 
 if /i "%MODE%"=="VERIFY" goto verify
+if /i "%MODE%"=="STRAY"  goto strayonly
 if /i "%MODE%"=="MOVE"   goto p1
 if /i "%MODE%"=="RETIRE" goto p2
 if /i "%MODE%"=="ALL"    goto p1
-echo ERROR: unknown mode "%MODE%".  Use MOVE, RETIRE, VERIFY, or nothing.
+if /i "%MODE%"=="DRYRUN" goto setdry
+if /i "%MODE%"=="-N"     goto setdry
+echo ERROR: unknown mode "%MODE%".
+echo        Use DRYRUN, MOVE, RETIRE, STRAY, VERIFY, or nothing.
 goto end
+
+:setdry
+set DRY=1
+goto p1
 
 rem ============================================================
 :p1
 echo.
+if "%DRY%"=="1" echo *** DRY RUN - nothing will be changed ***
 echo === PASS 1: move to attic ===================================
 if not exist "%LIST%" (
   echo   attic\CLEANUP.LST not found - nothing to move.
@@ -64,7 +85,11 @@ if not exist "%LIST%" (
   for /f "eol=; tokens=1,2 delims=|" %%a in ('type "%LIST%"') do call :MOVEIT "%%a" "%%b"
 )
 echo.
-echo   moved to attic : %MOVED%
+if "%DRY%"=="1" (
+  echo   would move     : %MOVED%
+) else (
+  echo   moved to attic : %MOVED%
+)
 echo   kept in place  : %KEPT%
 echo   not in tree    : %SKIPPED%
 if /i "%MODE%"=="MOVE" goto done
@@ -80,7 +105,11 @@ if not exist "%RLIST%" (
 for /f "eol=; tokens=1,2 delims=|" %%a in ('type "%RLIST%"') do call :RETIREIT "%%a" "%%b"
 :p2done
 echo.
-echo   deleted        : %GONE%
+if "%DRY%"=="1" (
+  echo   would delete   : %GONE%
+) else (
+  echo   deleted        : %GONE%
+)
 echo   held back      : %HELD%
 echo   already gone   : %ABSENT%
 goto done
@@ -98,6 +127,16 @@ set DST=%REPO%attic\%CAT%\%REL%
 if not exist "%SRC%" (
   echo   absent   %REL%
   set /a SKIPPED=SKIPPED+1
+  goto :eof
+)
+
+if "%DRY%"=="1" (
+  if exist "%DST%" (
+    echo   WOULD    %REL%   [attic copy exists; size checked at run time]
+  ) else (
+    echo   WOULD    %REL%   -^> attic\%CAT%\
+  )
+  set /a MOVED=MOVED+1
   goto :eof
 )
 
@@ -157,6 +196,13 @@ if not exist "%KPATH%" (
   goto :eof
 )
 
+if "%DRY%"=="1" (
+  echo   WOULD    %VICT%
+  echo            keeper:  %KEEP%
+  set /a GONE=GONE+1
+  goto :eof
+)
+
 del /f /q "%VPATH%"
 if exist "%VPATH%" (
   echo   FAILED   %VICT%   [delete failed - file in use or read-only?]
@@ -166,6 +212,37 @@ if exist "%VPATH%" (
   echo            kept:   %KEEP%
   set /a GONE=GONE+1
 )
+goto :eof
+
+rem ============================================================
+rem  STRAY - one manifest, at the root, and nowhere else
+rem ============================================================
+:strayonly
+call :STRAYSCAN
+goto end
+
+:STRAYSCAN
+echo.
+echo === STRAY checksum files ====================================
+for /r "%REPO%." %%F in (CHECKSUMS.sha256 CHECKSUMS.md5 CHECKSUMS.txt) do call :ONESTRAY "%%F"
+echo.
+if not "%STRAYS%"=="0" goto straysfound
+echo   None.  One manifest, at the root, as intended.
+goto :eof
+:straysfound
+echo   %STRAYS% stray checksum file/s.  Retire them: add a
+echo   keeper^|victim line to attic\RETIRE.LST and run CLEANUP RETIRE.
+echo   Do not leave a per-directory checksum file in the tree -
+echo   nothing checks it, which is how two of them rotted unnoticed.
+goto :eof
+
+:ONESTRAY
+set SF=%~1
+if not exist "%SF%" goto :eof
+for %%D in ("%SF%") do set SD=%%~dpD
+if /i "%SD%"=="%REPO%" goto :eof
+echo   STRAY    %SF%
+set /a STRAYS=STRAYS+1
 goto :eof
 
 rem ============================================================
@@ -194,6 +271,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "Write-Host ('  failed  : ' + $bad);" ^
   "Write-Host ('  missing : ' + $miss);" ^
   "if ($bad -eq 0 -and $miss -eq 0) { Write-Host ''; Write-Host '  Tree matches the manifest.' }"
+call :STRAYSCAN
+echo.
+echo A clean VERIFY does NOT mean the tree is clean.  The manifest
+echo only checks what it lists; git status shows what it does not.
 goto end
 
 rem ============================================================
@@ -201,9 +282,13 @@ rem ============================================================
 echo.
 echo ------------------------------------------------------------
 echo Next:
-echo   CLEANUP VERIFY     check the tree against CHECKSUMS.sha256
+if "%DRY%"=="1" goto nextdry
+echo   CLEANUP VERIFY     hash the tree, then scan for strays
 echo   git status         see what changed
 echo   git add -A ^&^& git commit ^&^& git push
+goto end
+:nextdry
+echo   CLEANUP            do it for real
 goto end
 
 :nroot
