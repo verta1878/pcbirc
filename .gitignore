@@ -187,3 +187,34 @@ codebase-dbf/
 # build output, so *.OBJ must not hide it.
 !pcb153/SOURCE/MISC/MD5/OS2/*.OBJ
 !pcb153/SOURCE/MISC/MD5/OS2/*.obj
+
+# SDK build output: OUT/<branch>/SDK/<compiler>/ -- the libraries we build
+# (VMDATA_L.LIB, the category libraries and the PCBKBC/PCBKIT/PCBKMS door
+# SDK), their TLIB module listings, and the sample doors linked against
+# them. These exist only after a build. They stay visible on purpose: if
+# git shows them, we can tell what has been built and whether a
+# `make CLEAN` is needed. Added 2026-09-22 with the first built library.
+!OUT/*/SDK/**/*.LIB
+!OUT/*/SDK/**/*.lib
+!OUT/*/SDK/**/*.386
+!OUT/*/SDK/**/*.LST
+!OUT/*/SDK/**/*.lst
+!OUT/*/SDK/**/*.EXE
+!OUT/*/SDK/**/*.exe
+
+# PCBIC v1.2 binaries, at the path they are actually in: OUT/upd154/PWA153/.
+# The older rule says OUT/pwa153/upd154/, which is not where they live, so
+# they were invisible to git.
+!OUT/upd154/**/*.EXE
+!OUT/upd154/**/*.exe
+
+# Prebuilt category libraries kept in the attic for reference (.386).
+!attic/prebuilt-libs/**/*.386
+
+# Program binaries built by BLDDOS: they land directly in OUT/<branch>/,
+# e.g. OUT/PWA153/PCBSETUP.EXE. The SDK rule above only reaches
+# OUT/<branch>/SDK/, and the OUT/upd154 rule only that one branch, so
+# these were invisible to git. Added 2026-09-22 with the first two
+# programs that linked: PCBSETUP.EXE and FIDOUTIL.EXE.
+!OUT/*/*.EXE
+!OUT/*/*.exe

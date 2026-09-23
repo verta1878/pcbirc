@@ -53,6 +53,8 @@ int pascal showerror(char *path, char *str, bool Timed) {
   char Temp[80];
   int  Seconds;
 
+  (void)path;      /* the path is shown by the caller, not here */
+
   sprintf(Temp,"(%d:%d) Error %s File - %s",ExtendedError,ExtendedAction,str,doserror(NULL, ExtendedError));
   puts(Temp);
 

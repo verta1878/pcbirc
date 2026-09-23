@@ -59,13 +59,25 @@ void * VMRecordCreate(VMDataSet *set, unsigned recSize,
     }
 }
 
+/* VMDATA indices are ONE-BASED.  Every caller in the tree proves it:
+ *   MAKEIDX.C 266   for (X = 1; X <= PathNum;  X++)  VMRecordGetByIndex(&Paths,X,..)
+ *   MAKEIDX.C 313   for (X = 1; X <= NumFiles; X++)  VMRecordGetByIndex(&Files,X,..)
+ *   SORT.C    352   for (Counter = 1; Counter <= Recs; )
+ *   CI_BUILD.C 138  same shape
+ * and all four VMSort() calls pass start = 1.
+ *
+ * This used to treat idx as zero-based, which shifted every record by one
+ * and returned NULL for the last one (idx == count hit the >= guard).  In
+ * PCBSM that is the users file; in MAKEIDX the file index.  Corrected
+ * 2026-09-22 -- see MAIN\build\VMDATA-RECONSTRUCTION.md.
+ */
 void * VMRecordGetByIndex(VMDataSet *set, long idx, void *ignored)
 {
     (void)ignored;
-    if (idx < 0 || idx >= set->count) return NULL;
+    if (idx < 1 || idx > set->count) return NULL;
     {
         unsigned char *base = (unsigned char *) set->data;
-        return (void *)(base + (unsigned)(idx * (long)set->recSize));
+        return (void *)(base + (unsigned)((idx - 1L) * (long)set->recSize));
     }
 }
 
@@ -99,11 +111,49 @@ void VMSort(VMDataSet *set, unsigned recSize, long start, long cnt,
             VMSortFunc *sortFn,
             void *scratchBuf, unsigned scratchLen)
 {
-    (void)start; (void)cnt; (void)direction; (void)sortFn;
-    (void)scratchBuf; (void)scratchLen;
-    if (set->data != NULL && set->count > 1 && compar != NULL) {
-        qsort(set->data, (size_t)set->count, (size_t)recSize, *compar);
+    /* start is ONE-BASED and cnt is a record count -- see the note on
+     * VMRecordGetByIndex.  This used to discard both and sort the whole
+     * set from offset 0.  sortFn is the caller's sort routine (always
+     * qsort in this tree) and scratchBuf was the swap-file staging area,
+     * neither of which a resident implementation needs. */
+    long first = (start < 1L) ? 0L : start - 1L;
+    long num   = cnt;
+
+    (void)direction; (void)sortFn; (void)scratchBuf; (void)scratchLen;
+
+    if (set->data == NULL || compar == NULL) return;
+    if (first >= set->count) return;
+    if (num <= 0L || first + num > set->count)
+        num = set->count - first;
+    if (num > 1L) {
+        unsigned char *base = (unsigned char *) set->data;
+        qsort((void *)(base + (unsigned)(first * (long)recSize)),
+              (size_t)num, (size_t)recSize, *compar);
     }
+}
+
+/* VMSeqFinalPass - see the note in VMDATA.H.
+ *
+ * In Clark's VMDATA this closed out a SEQUENTIAL-access pass: the sorted
+ * order lived in the swap file and had to be written back before the
+ * caller read the records in sequence.  This implementation keeps the
+ * whole set resident (VMDataSet is a flat malloc'd array; see VMInitRec)
+ * and VMSort() has already reordered it in place with qsort, so there is
+ * nothing left to flush.  It therefore validates the set and reports
+ * success, in the same spirit as VMSizeLock() and VMRecordChanged()
+ * above, which are no-ops here for the same reason.
+ *
+ * If a swap-file implementation is ever restored, this is where the
+ * write-back belongs.  All three call sites in PCBSM's SORT.C discard
+ * the return value, so a caller cannot currently tell the difference.
+ */
+int VMSeqFinalPass(VMDataSet *set)
+{
+    if (set == NULL)
+        return VM_FALSE;
+    if (set->count > 0 && set->data == NULL)
+        return VM_FALSE;
+    return VM_TRUE;
 }
 
 void VMEMSStateSave(void) {}

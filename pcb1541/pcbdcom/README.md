@@ -6,9 +6,122 @@
 > record. Canonical name everywhere: **pcbdcom**. Binaries:
 > `PCBDCOM.EXE`, `PCBDCOM.SYS`, `PCBDCOM.OBJ`, config: `PCBDCOM.CFG`.
 
-> **Location:** `pcb154/pcbdcom/` is the canonical home. 15.41 line
-> references the same tree via build-time include path (no source
-> duplication).
+> **Location:** `pcb1541/pcbdcom/` is the canonical home -- THIS tree.
+> The 15.3 and 15.4 lines reference it via build-time include path; no
+> source duplication.
+>
+> Corrected 2026-09-22. This paragraph previously said
+> `pcb154/pcbdcom/`, and that folder has never existed. Anything written
+> against the old claim -- notably the FOSSIL 5C status note in
+> `pcbdcom-fossil5c.zip`, which cites `pcb154/pcbdcom/src/int14.c` -- was
+> following the README, not making a mistake. Those paths become correct
+> once they are re-pointed at `pcb1541/pcbdcom/`.
+
+> **Second tree, being folded in:** `toolkit/pwa154/pcbdcom/` also
+> exists, 31 files against this tree's 53. Neither is a superset, so the
+> merge is a real audit and is NOT done yet. Compared 2026-09-22:
+>
+> * Only here (30 files): `SPEC.md`, `GAP-ANALYSIS.md`,
+>   `BUILD-STATUS.md`, `PCBDCOM.MAK`, `PCBDCOM.CFG.sample`, the whole
+>   `ref/linux/` reference set, and six backends the other tree lacks --
+>   chase_iolan, digi_comxi, equinox_sst, gtek, hub6, stallion_brumby.
+> * Only there (8 files): `docs/SDK.md`, `docs/LINKOUT.md`,
+>   `examples/{simple,multiport,tsrless}.c`, `lib/README.md`,
+>   `lib/NOPCBDCOM.README`, `src/nopcbdcom_stub.c`.
+> * In both but different: `README.md`, `inc/backend.h`,
+>   `inc/pcbdcom.h`, `src/pcbdcom.c`, `src/ser_rs232_shim.c`.
+>
+> **Decided:** the COMM-DRV shim from `toolkit/pwa154/pcbdcom/` is the
+> one to keep. Its `src/ser_rs232_shim.c` uses the shared header instead
+> of declaring a private `struct port_param`, wires `pp->opcb` and
+> `pp->auxpcb` to the embedded `compat_opcb` / `compat_auxpcb` blocks,
+> refreshes them through `update_opcb()`, and fills `lngth`, `cardtype`,
+> `protocol`, `outbuf_len` and `block[]`. Its `inc/pcbdcom.h` (6,422
+> bytes) declares `port_param`, `opcb_type`, `auxpcb_type` and the
+> `ser_rs232_*` prototypes; the copy here (1,849 bytes) declares none of
+> them. **Both files have to move together** -- the kept shim will not
+> compile against this tree's smaller header.
+>
+> The draft shim that was here is retired to
+> `attic/superseded-pcbdcom/`. Until the merge lands, this tree has no
+> shim; the working one is in `toolkit/pwa154/pcbdcom/src/`.
+
+> **The kept shim still needs four fixes**, all established against
+> `MODEMDRV.C` and against the `MODEMDRV.OBJ` built from it on
+> 2026-09-22:
+>
+> 1. **Signatures.** Every `unsigned int port` / `unsigned int n` /
+>    `unsigned int which` must become `int`. PCBoard compiles with `-P`,
+>    so TLINK matches mangled names: the object asks for
+>    `@SER_RS232_GETPACKET$QIINUC` -- `(int,int,unsigned char *)`.
+>    `unsigned int` mangles differently and the link fails outright.
+>    Thirteen declarations, in the shim and in `inc/pcbdcom.h`.
+> 2. **Port numbering is off by one.** `port_by_num()` rejects 0 and
+>    indexes `g_ports[port-1]`. `MODEMDRV.C` line 421 passes
+>    `Asy.ComPortNumber - 1`, so COM1 arrives as 0 and every call
+>    returns `RS232ERR_PARAM`. Accept `0 .. g_n_ports-1` and index
+>    directly.
+> 3. **`putpacket(port, 0, NULL)` must kick the transmitter.**
+>    `COMMDRV_turnonxmit()` calls it for that and nothing else; it
+>    currently returns success without acting.
+> 4. **DTR/RTS must go through the backend.** The shim writes the MCR
+>    directly with `outp(p->base + 4, ...)`, which is right for a UART
+>    and wrong for Digi FEP, Cyclom, Stallion and RocketPort -- the same
+>    class of bug already fixed in `int14.c`'s `status_word()`.
+>
+> Two call conventions the shim already has right, recorded so they are
+> not "tidied" later: `getpacket(Port, 0, buf)` exists only to make the
+> card refresh `opcb` -- the buffer is scratch, not an output -- and
+> `getpacket(Port, 32767, NULL)` must refresh the counters and leave the
+> data alone, because `COMMDRV_inbytes()` reads
+> `pcb.opcb->inbuf_count` on the very next line.
+
+> **The interface header now exists.** `pcbcbase/COMMDRV/H/COMM.H`,
+> written 2026-09-22, is the reconstructed COMM-DRV SDK header --
+> 13 functions, `port_param` / `opcb_param` / `auxpcb_param`, and the
+> constants. `MODEMDRV.C` compiles clean against it in both the PCBOARD
+> and the door-SDK (`-DLIB`) flavours. It is where `PCBOARD.MAK` line 64
+> looks, and it should become the single source of truth for the ABI:
+> `inc/pcbdcom.h` should include it rather than redeclare those structs.
+> See `APPLY.txt`, "COMM-DRV SDK HEADER RECOVERED".
+
+> **Where the three pieces live** -- one header, shared source, one
+> library per compiler:
+>
+> | Piece | Path | Shared? |
+> |---|---|---|
+> | interface header | `pcbcbase\COMMDRV\H\COMM.H` | yes, one copy for every branch |
+> | library source | `toolkit\pwa154\pcbdcom\src\ser_rs232_shim.c` + the backends beside it, folding into `pcb1541\pcbdcom\src\` | yes, one copy |
+> | built library | `pcbcbase\commdrv\lib\COMMDRBL.LIB` (with `LIBSBL.LIB`) | **no -- one per compiler** |
+>
+> The header is shared because neither `pcb153\153\PCBOARD.MAK` (line
+> 64) nor `pcb154\MAIN\153\PCBOARD.MAK` (line 43) defines `LIBSDIR`
+> itself -- it comes from the environment, where `BLDDOS.BAT` sets
+> `LIBSDIR=\PCBCBASE`. Both add `$(LIBSDIR)\COMMDRV\H` to the include
+> path, and both link `$(LIBSDIR)\commdrv\lib\commdrbl.lib` at lines
+> 820-821. `ZMODEM.MAK` uses the same two paths.
+
+> **Delta / OpenWatcom.** The Delta 15.4 leg does not build the COMM-DRV
+> backend at all today: `pcb154\MAIN\WATCOM\PCBOARD.MK` and
+> `pcb154\MAIN\153\PCBWAT2.MK` are three lines each and name neither
+> `COMMDRV` nor `MODEMDRV` nor `comm.h`, even though
+> `pcb154\MAIN\SOURCE\MODEM\MODEMDRV.C` is present. So COMM-DRV is a
+> Borland-only path right now. When the Watcom leg is fleshed out:
+>
+> 1. **`COMM.H` needs compiler guards.** It uses `far` and `LIBENTRY`,
+>    which are Borland/MSC spellings; OpenWatcom wants `__far`. Guard
+>    them the way `pcbdcom`'s own `compat.h` already guards the
+>    interrupt keywords.
+> 2. **The library cannot be shared, only the source.** `COMMDRBL.LIB`
+>    is a Borland large-model OMF library; Watcom has different name
+>    mangling and calling conventions. Each branch builds its own from
+>    the same `ser_rs232_shim.c`.
+> 3. **The name check is per compiler.** PCBoard compiles with `-P`, so
+>    TLINK matches mangled names: the BC 3.1 `MODEMDRV.OBJ` asks for
+>    `@SER_RS232_GETPACKET$QIINUC`. Watcom will emit its own spelling.
+>    The source fix is the same either way -- port and count parameters
+>    must be `int`, not `unsigned int` -- but the verification has to be
+>    redone against that branch's own `MODEMDRV.OBJ`.
 
 Drop-in replacement for WCSC COMM-DRV. Matches the `ser_rs232_*` API
 that PCBoard's `MODEMDRV.C` calls into (see `GAP-ANALYSIS.md` for the

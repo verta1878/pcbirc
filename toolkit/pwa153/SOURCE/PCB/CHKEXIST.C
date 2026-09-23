@@ -24,7 +24,9 @@
 #include <misc.h>
 #include <validate.h>
 #include "pcb.h"
-#include <\proj\pcbsetup\source\setup.h>
+#include <setup.h>            /* was <\proj\pcbsetup\source\setup.h>: Clark's
+                                 drive layout.  The folder is on the include
+                                 path in CFG\<CVER>\TK.CFG instead. */
 #ifdef DEBUG
 #include <memcheck.h>
 #endif

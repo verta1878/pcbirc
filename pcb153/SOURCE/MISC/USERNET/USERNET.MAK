@@ -23,19 +23,40 @@
 
 PROGNAME = USERNET
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = s
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);$(ROOT)\PCB\SOURCE\H;$(ROOT)\PCBSM\SOURCE
+INCLUDEPATH = $(INCLUDE);$(LIBH);$(SRC)\SOURCE\H;$(SRC)\SOURCE\UTIL\PCBSM\SOURCE
 
 #=============================================================
 
@@ -74,7 +95,7 @@ ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
 
 EXE_DEPENDENCIES = \
   $(OBJDIR)\usernet.obj            \
-  $(LIBLIB)\dos\small\showerr2.obj \
+  $(SDKOBJ)\dos\small\showerr2.obj \
   $(LIBLIB)\dos_$(MDL).lib         \
   $(LIBLIB)\misc_$(MDL).lib        \
   $(LIBLIB)\screen_$(MDL).lib      \
@@ -86,7 +107,7 @@ $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
   $(LINKER) /x/c/L$(LIBPATH) @&&|
 c0$(MDL).obj+
 $(OBJDIR)\usernet.OBJ+
-$(LIBLIB)\dos\small\showerr2.OBJ
+$(SDKOBJ)\dos\small\showerr2.OBJ
 $(OBJDIR)\$(PROGNAME)
                 # no map file
 $(LIBLIB)\dos_$(MDL).lib+
@@ -171,3 +192,15 @@ $(CFG): $(MAK)
 | $(CFG)
 
 #=============================================================
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

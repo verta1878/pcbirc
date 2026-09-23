@@ -44,8 +44,8 @@ extern pcbdattype      PcbData;
 extern char            ALLTEXT[];
 extern char            ALLFILE[];
 
-extern ARCHIVERS        archiver_info;          /* archiver information     */
-extern DIRECTORIES      directory_info;         /* directory information    */
+extern ARCHIVERS  _FAR_ archiver_info;          /* archiver information     */
+extern DIRECTORIES _FAR_ directory_info;        /* directory information    */
 
 /*****************************************************************************/
 /* Initialize the screen fields.                                             */

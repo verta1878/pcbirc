@@ -39,6 +39,12 @@ typedef struct pcbdcom_port {
     unsigned char  stop_bits;   /* 1 or 2 */
     unsigned char  flow;        /* 0=none, 1=RTS/CTS, 2=XON/XOFF */
     void          *card_state;  /* per-card state (owned by backend) */
+    /* FOSSIL 5C addition */
+    unsigned char  cached_msr;  /* modem status register, updated by backend ISR.
+                                 * Used by status_word() in int14.c so it works
+                                 * for all backends, not just direct-UART ones.
+                                 * Backend ISR sets: p->cached_msr = inp(base + UART_MSR);
+                                 * Non-UART backends update from their own status mechanism. */
 } pcbdcom_port_t;
 
 #define PCBDCOM_MAX_CARDS  8

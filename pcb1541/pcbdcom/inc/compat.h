@@ -26,6 +26,11 @@
 # define PCBDCOM_BX  _bx
 # define PCBDCOM_CX  _cx
 # define PCBDCOM_DX  _dx
+# define PCBDCOM_ES  _es
+# define PCBDCOM_DI  _di
+# define PCBDCOM_SI  _si
+# define PCBDCOM_MK_FP(seg,ofs)  MK_FP((seg),(ofs))
+# define PCBDCOM_FAR_PTR(seg,ofs)  ((unsigned char __far *)MK_FP((seg),(ofs)))
 # define PCBDCOM_UNUSED_REGS \
     (void)_bp; (void)_si; (void)_di; (void)_es; (void)_ds; \
     (void)_sp; (void)_ip; (void)_cs; (void)_flags
@@ -44,6 +49,11 @@
 # define PCBDCOM_BX  bx
 # define PCBDCOM_CX  cx
 # define PCBDCOM_DX  dx
+# define PCBDCOM_ES  es
+# define PCBDCOM_DI  di
+# define PCBDCOM_SI  si
+# define PCBDCOM_MK_FP(seg,ofs)  MK_FP((seg),(ofs))
+# define PCBDCOM_FAR_PTR(seg,ofs)  ((unsigned char far *)MK_FP((seg),(ofs)))
 # define PCBDCOM_UNUSED_REGS \
     (void)bp; (void)si; (void)di; (void)es; (void)ds; \
     (void)cx; (void)ip; (void)cs; (void)flags
@@ -64,6 +74,15 @@
 # define PCBDCOM_BX  _bx
 # define PCBDCOM_CX  _cx
 # define PCBDCOM_DX  _dx
+# define PCBDCOM_ES  _es
+# define PCBDCOM_DI  _di
+# define PCBDCOM_SI  _si
+  /* MSC 7 has no MK_FP — define it */
+# ifndef MK_FP
+#  define MK_FP(seg,ofs) ((void _far *)((unsigned long)(seg) << 16 | (unsigned)(ofs)))
+# endif
+# define PCBDCOM_MK_FP(seg,ofs)  MK_FP((seg),(ofs))
+# define PCBDCOM_FAR_PTR(seg,ofs)  ((unsigned char _far *)MK_FP((seg),(ofs)))
 # define PCBDCOM_UNUSED_REGS \
     (void)_bp; (void)_si; (void)_di; (void)_es; (void)_ds; \
     (void)_sp; (void)_ip; (void)_cs; (void)_flags

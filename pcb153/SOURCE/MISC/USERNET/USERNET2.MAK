@@ -26,15 +26,39 @@
 #=============================================================
 #		Translator Definitions
 #=============================================================
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
+!ifndef BCROOT
+BCROOT   = \BCOS2
+!endif
 CC = bcc +USERNET2.CFG
 TASM = tasm.exe
 TLIB = tlib.exe
 TLINK = tlink
 RC = brcc.exe
 RB = rc.exe
-LIBPATH = $(ROOT)\BCOS2\LIB
-INCLUDEPATH = $(ROOT)\BCOS2\INCLUDE;$(ROOT)\proj\lib\h
+LIBPATH = $(BCROOT)\LIB
+INCLUDEPATH = $(BCROOT)\INCLUDE;$(TKIT)\H
 
 
 #=============================================================
@@ -58,10 +82,10 @@ INCLUDEPATH = $(ROOT)\BCOS2\INCLUDE;$(ROOT)\proj\lib\h
 
 
 EXE_DEPENDENCIES =  \
- ..\lib\bcos2\system.lib \
- ..\lib\bcos2\screen.lib \
- ..\lib\bcos2\misc.lib \
- ..\lib\bcos2\dos.lib \
+ $(OUTDIR)\SDK\BCOS2\LIB\system.lib \
+ $(OUTDIR)\SDK\BCOS2\LIB\screen.lib \
+ $(OUTDIR)\SDK\BCOS2\LIB\misc.lib \
+ $(OUTDIR)\SDK\BCOS2\LIB\dos.lib \
  usernet.obj
 
 #=============================================================
@@ -69,16 +93,16 @@ EXE_DEPENDENCIES =  \
 #=============================================================
 bcos2\usernet2.exe: usernet2.cfg $(EXE_DEPENDENCIES)
   $(TLINK) /B:0x10000 /x /Toe /ap /L$(LIBPATH) @&&|
-$(ROOT)\BCOS2\LIB\C02.OBJ+
+$(BCROOT)\LIB\C02.OBJ+
 bcos2\usernet.obj
 bcos2\usernet2
 		# no map file
-..\lib\bcos2\system.lib+
-..\lib\bcos2\screen.lib+
-..\lib\bcos2\misc.lib+
-..\lib\bcos2\dos.lib+
-$(ROOT)\BCOS2\LIB\C2.LIB+
-$(ROOT)\BCOS2\LIB\OS2.LIB
+$(OUTDIR)\SDK\BCOS2\LIB\system.lib+
+$(OUTDIR)\SDK\BCOS2\LIB\screen.lib+
+$(OUTDIR)\SDK\BCOS2\LIB\misc.lib+
+$(OUTDIR)\SDK\BCOS2\LIB\dos.lib+
+$(BCROOT)\LIB\C2.LIB+
+$(BCROOT)\LIB\OS2.LIB
 
 |
 
@@ -117,3 +141,12 @@ usernet2.cfg: usernet2.mak
 | usernet2.cfg
 
 
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist BCOS2\*.obj del BCOS2\*.obj
+  -if exist BCOS2\*.map del BCOS2\*.map
+  -if exist BCOS2\*.res del BCOS2\*.res
+  -if exist BCOS2\USERNET2.EXE del BCOS2\USERNET2.EXE

@@ -1,0 +1,31 @@
+From: pcbirc
+Subject: PCBSETUP SEARCH.C - pointer parameters for the OpenWatcom port
+Date: 2026-09-22
+
+Clark's SEARCH.C passes `uniqueunlimited` by C++ reference. Someone changed
+the two function definitions to pointers on the pwa153 (Borland) branch but
+left the call sites passing by reference, so the file compiled under neither
+compiler. The Borland branch has been restored to Clark's references; this
+patch keeps the pointer form for the Watcom port, WITH the matching call
+sites, which the original change was missing.
+
+Apply to <branch>/SOURCE/UTIL/PCBSETUP/SOURCE/SEARCH.C when the Watcom
+program tree exists (delta154 / irc1541).
+
+--- SEARCH.C	(Clark, references)
++++ SEARCH.C	(pointers)
+@@ line 345 @@
+-static bool near pascal updatelstfiles(char *FileName, uniqueunlimited & FileNameList, bool (near pascal update(DOSFILE *In, DOSFILE *Out))) {
++static bool near pascal updatelstfiles(char *FileName, uniqueunlimited *FileNameList, bool (near pascal update(DOSFILE *In, DOSFILE *Out))) {
+@@ line 352 @@
+-  if (FileName[0] == 0 || FileNameList.foundinlist(FileName))
++  if (FileName[0] == 0 || FileNameList->foundinlist(FileName))
+@@ line 395 @@
+-static bool near pascal scancnames(uniqueunlimited & FileNameList) {
++static bool near pascal scancnames(uniqueunlimited *FileNameList) {
+@@ line 454 -- CALL SITE, was never changed @@
+-    MadeChanges |= updatelstfiles(PcbData.CmdLst,FileNameList,updatecmdlst);
++    MadeChanges |= updatelstfiles(PcbData.CmdLst,&FileNameList,updatecmdlst);
+@@ line 457 -- CALL SITE, was never changed @@
+-    MadeChanges |= scancnames(FileNameList);
++    MadeChanges |= scancnames(&FileNameList);

@@ -23,23 +23,47 @@
 
 PROGNAME = PCBSM
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+!ifndef LIBEXT
+LIBEXT   = LIB
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = SOURCE
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(ROOT)\MAIN\SOURCE\H
+INCLUDEPATH = $(INCLUDE);SOURCE;$(SRC)\SOURCE\MISC\HELP;$(SRC)\SOURCE\H;$(LIBH)
 
 #=============================================================
 
-!if $d(DEBUG)
+!if $(DEBUG)
 CODEOPT=-DDEBUG
 !endif
 
@@ -75,8 +99,8 @@ LINKOPT = $(LINKOPT) /v
 
 .PATH.obj = $(OBJDIR)
 .PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE);EXTRAOBJ
-.PATH.cpp = $(SOURCE);EXTRAOBJ
+.PATH.c   = $(SOURCE)
+.PATH.cpp = $(SOURCE)
 
 #=============================================================
 
@@ -138,14 +162,17 @@ EXE_DEPENDENCIES = \
   $(OBJDIR)\smallsub.obj      \
   $(OBJDIR)\stripb.obj      \
   $(OBJDIR)\timechng.obj      \
-  $(OBJDIR)\wherex.obj      \
-  $(LIBLIB)\dos_$(MDL).386    \
-  $(LIBLIB)\pcb_$(MDL).386    \
-  $(LIBLIB)\misc_$(MDL).386   \
-  $(LIBLIB)\screen_$(MDL).386 \
-  $(LIBLIB)\scrnio_$(MDL).386 \
-  $(LIBLIB)\system_$(MDL).386 \
-  $(LIBLIB)\country$(MDL).386 \
+    $(OBJDIR)\ctod.obj          \
+  $(OBJDIR)\kbdstat.obj       \
+$(OBJDIR)\wherex.obj      \
+  $(LIBLIB)\dos_$(MDL).$(LIBEXT)    \
+  $(LIBLIB)\pcb_$(MDL).$(LIBEXT)    \
+  $(LIBLIB)\misc_$(MDL).$(LIBEXT)   \
+  $(LIBLIB)\screen_$(MDL).$(LIBEXT) \
+  $(LIBLIB)\scrnio_$(MDL).$(LIBEXT) \
+  $(LIBLIB)\system_$(MDL).$(LIBEXT) \
+  $(LIBLIB)\country$(MDL).$(LIBEXT) \
+  $(SDKLIB)\VMDATA_L.LIB
 
 #=============================================================
 
@@ -203,13 +230,14 @@ $(OBJDIR)\timechng.obj+
 $(OBJDIR)\wherex.obj
 $(OBJDIR)\$(PROGNAME)
 
-$(LIBLIB)\dos_$(MDL).386+
-$(LIBLIB)\pcb_$(MDL).386+
-$(LIBLIB)\misc_$(MDL).386+
-$(LIBLIB)\screen_$(MDL).386+
-$(LIBLIB)\scrnio_$(MDL).386+
-$(LIBLIB)\system_$(MDL).386+
-$(LIBLIB)\country$(MDL).386+
+$(LIBLIB)\dos_$(MDL).$(LIBEXT)+
+$(LIBLIB)\pcb_$(MDL).$(LIBEXT)+
+$(LIBLIB)\misc_$(MDL).$(LIBEXT)+
+$(LIBLIB)\screen_$(MDL).$(LIBEXT)+
+$(LIBLIB)\scrnio_$(MDL).$(LIBEXT)+
+$(LIBLIB)\system_$(MDL).$(LIBEXT)+
+$(LIBLIB)\country$(MDL).$(LIBEXT)+
+$(SDKLIB)\VMDATA_L.LIB+
 mathl.lib+
 emu.lib+
 cl.lib+
@@ -371,3 +399,15 @@ $(OBJDIR)\ctod.obj: EXTRAOBJ\CTOD.C
 
 $(OBJDIR)\kbdstat.obj: EXTRAOBJ\KBDSTAT.C
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\kbdstat.obj -c EXTRAOBJ\KBDSTAT.C
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

@@ -113,3 +113,57 @@ archive records the development path as `D:\TC\MISC\VIRTUAL.C`; no
 **Left in place pending a decision.** Removing it is a one-line change
 if the merge was meant to supersede it; keeping it costs nothing but the
 confusion this note is meant to end.
+
+## WHY HUGE — the caller is PCBFILER  (added 2026-09-22)
+
+One program in the repo uses this API:
+`pcb154/MAIN/SOURCE/UTIL/PCBFILER/SAVEDIR.C`. Nothing else calls it —
+checked across every branch, excluding `reference/`.
+
+SAVEDIR walks the file-directory list with `VirType huge *p`, indexing the
+global `Virtual[]`. That is the case the near implementation cannot serve:
+
+    VIRTUAL1 (near)   VirType *        counts are `unsigned`  -> 65,535 records,
+                                       one 64 KB segment, memory only
+    VIRTUAL  (huge)   VirType huge *   counts are `long`      -> arrays past
+                                       64 KB, plus the disk cache
+
+`huge` is NOT extended memory. In Borland C it is a real-mode segment:offset
+pointer that the compiler normalises on every arithmetic step, so one array
+can cross segment boundaries. No XMS, EMS, DPMI or 386 needed; it runs on an
+8086 under stock DOS. The cost is speed, and the 640 KB conventional-memory
+limit is unchanged — huge buys one object bigger than 64 KB, not more memory.
+So a file directory with more than 65,535 entries, or more than 64 KB of
+them, is a plausible reason the huge version was wanted. **Plausible, not
+recorded**: nothing in the tree states the motive.
+
+### The mismatch in SAVEDIR.C
+
+`SAVEDIR.C` line 33 includes `<virtual1.h>` — the NEAR header — and then at
+line 491 declares `VirType huge *p`. Against Clark's split pair those
+disagree: `VIRTUAL1.H` declares `VirType *Virtual` and near-pointer
+prototypes; the huge declarations are in `VIRTUAL.H`. So the one caller asks
+for the huge implementation through the near header.
+
+That may be the reason for the merge — one header that serves either
+implementation, so an include of either name yields a consistent ABI. Still
+an inference.
+
+### Caution for anyone building PCBFILER on a PWA branch
+
+The merged `virtual.h` yields VIRTUAL1's NEAR ABI unless `VIRTUAL_HUGE` is
+defined. PCBFILER needs the huge ABI. Built without that define, the
+prototypes say near while the code and the caller use huge:
+
+- `Virtual` is declared `VirType *` but indexed as `VirType huge *`
+- `openvirtual`/`freevirtual` take `unsigned` instead of `long`
+
+Pointer arithmetic then stops normalising and wraps inside a 64 KB segment —
+the exact failure huge exists to prevent, and it is silent at run time rather
+than an error at compile time. So `PCBFILER.MAK` must define `VIRTUAL_HUGE`,
+or `SAVEDIR.C` must include the huge header explicitly.
+
+Suggested fix, not yet applied: change `SAVEDIR.C` line 33 from
+`#include <virtual1.h>` to `#include <virtual.h>`, which is correct against
+Clark's split pair in `pcb154/LIB/H/` and, with `VIRTUAL_HUGE` defined,
+correct against the merged header too.

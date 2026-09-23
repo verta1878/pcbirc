@@ -36,7 +36,7 @@
 #include <memcheck.h>
 #endif
 
-extern EMSI_DATA  emsi_data;
+extern EMSI_DATA  _FAR_ emsi_data;
 
 char  Phone[5]={4,0,'0','9','-'};
 

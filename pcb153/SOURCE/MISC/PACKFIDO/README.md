@@ -1,59 +1,36 @@
-# packfido — the source is missing
+# pcb153/SOURCE/MISC/PACKFIDO — stub, awaiting reconstruction
 
-`packfido.c` is **not in this repo, not in the archive, and not in any
-Clark material we have.** This directory exists to give it a defined
-home, so that if a copy ever turns up it drops in and `FIDOUTIL.MAK`
-builds without further edits.
+`PACKFIDO.C` here is **a stub written by pcbirc**, not Clark's code.
 
-## What references it
+## What the real PACKFIDO does
 
-`pcb153/SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK`, in three places:
+Clark's `PACK.DOC`: written for PCBoard 15.21 to pack the FIDO
+configuration file `PCBFIDO.CFG`; as records are packed out of the file it
+is noted on the screen. `WHATSNEW.FID` says to run it before FIDOUTIL's
+conversion, to pack out duplicates first.
 
-```
-EXE_DEPENDENCIES = ... packfido.obj ...          (line 97)
-$(OBJDIR)\packfido.obj+                          (line 124, link list)
-packfido.obj: $(ROOT)\source\misc\packfido\packfido.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\source\misc\packfido\packfido.c
-```
+## Why the stub exists
 
-Clark's original path was `$(ROOT)\packfido\packfido.c` — a **top-level
-directory under `\PROJ`**, outside the PCBoard source tree, exactly like
-`$(ROOT)\md5\os2\md5.obj`. Those two were the only FIDOUTIL/PCBOARD2
-dependencies that lived outside `$(ROOT)\source`, which is itself a
-strong hint about what they were: external drops Clark kept beside the
-project rather than modules he wrote.
+`FIDOUTIL.MAK` builds `packfido.obj` and links it. The only symbol it
+supplies is `do_pack()`, which `CONVERT.CPP` declares at line 53; its one
+call, at line 124, is commented out. So FIDOUTIL needs the module to link
+but never calls into it. The stub prints one line and changes nothing —
+packing a live `PCBFIDO.CFG` wrongly would lose records, and that is worse
+than not packing.
 
-`md5` turned out to be exactly that — a public-domain MD5 package from a
-BBS file area (see `../MD5/README.md`). `packfido` is likely the same
-kind of thing: a small third-party or in-house utility module for
-packing outbound FidoNet mail.
+## What is known for the reconstruction
 
-The path here was repointed to match the repo layout on 2026-09-17,
-alongside the MD5 recovery.
+- The shipped binary is in `PCBinstalled.zip` on the share: `PCB\PACKFIDO.EXE`,
+  with `PCB\DOC\PACK.DOC` and `WHATSNEW.FID` beside it.
+- Borland C++ build; the runtime string says Copyright 1991, so BC++ 2.0/3.0
+  era rather than 3.1.
+- Strings in the EXE: `PCBOARD.DAT`, `CNAMES.@@@`, `CNAMES.ADD`,
+  `FIDOQUE.DAT`, `tmp.cfg`, "scanning conference configuration...",
+  "packing the fido configuration file...", "removed %5d %s...".
+- The v2 (15.21) `PCBFIDO.CFG` record layout it walks is the `oldver == 2`
+  path in `FIDOUTIL/SOURCE/CONVERT.CPP` / `CONVERT.HPP`.
+- Test fixtures: the `PCBFIDO.CFG` data files already in this repo.
 
-## What we know about it
-
-Almost nothing, and that itself is the finding. The string `packfido`
-appears in **exactly one place** across the entire source archive
-(`reference/pcb153src0014.zip`, inner `PCBoard 15.3 source code
-v0.014.zip`) and the whole repo: the makefile above. There is no header,
-no prototype, no call site naming it, no `.OBJ`, and — unlike `md5` —
-not even an empty directory stub in `PCBSRCV/000/`.
-
-Checked and ruled out:
-
-| Candidate | Why not |
-|---|---|
-| `pcb153/SOURCE/FIDO/PACKMSG.CPP` | Similar name, wrong thing. It is an include-fragment — a bare statement body with no function wrapper, meant to be `#include`d, not compiled to an object. |
-| `PCBSRCV/000/MISC/` in the archive | Contains only `BCDOS.BAT`, `BCOS2.CMD`, `WATOS2.CMD`. No `PACKFIDO` directory at any level. |
-| `devtools/Md5.zip` | The md5 drop. Nothing Fido-related in it. |
-
-## Consequence
-
-`FIDOUTIL.EXE` cannot link. `packfido.obj` is in both the dependency
-list and the linker response list, so the target fails at compile, not
-at link — which is the better failure, since it names the missing file.
-
-This is not fixable by repointing a path. The file is gone. If it
-surfaces, drop it here as `packfido.c` and the makefile is already
-pointing at it.
+Replacing the stub means decompiling `PACKFIDO.EXE` and rebuilding it to
+match, the same method used for PCBIC. Until then FIDOUTIL builds and the
+missing behaviour is documented rather than invented.

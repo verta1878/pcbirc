@@ -30,9 +30,30 @@
 .AUTODEPEND
 
 VERSION = 153
-ROOT    = \OUT
-PROJ    = $(ROOT)\MAIN
-LIBDIR  = $(ROOT)\LIB\BCDOS\$(BCCOMPILER)
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
+PROJ    = $(SRC)
+LIBDIR  = $(SDKLIB)
 OBJ     = OBJ\$(BCCOMPILER)
 
 CFG     = $(VERSION)\PCBOARD.CFG
@@ -40,9 +61,9 @@ MAK     = $(VERSION)\PCBOARD.MAK
 
 
 !if $d(COMMDRV)
-INCLUDEPATH = $(INCLUDE);SOURCE\H;..\LIB\H;$(LIBSDIR)\COMMDRV\H
+INCLUDEPATH = $(INCLUDE);SOURCE\H;$(TKIT)\H;$(LIBSDIR)\COMMDRV\H
 !else
-INCLUDEPATH = $(INCLUDE);SOURCE\H;..\LIB\H
+INCLUDEPATH = $(INCLUDE);SOURCE\H;$(TKIT)\H
 !endif
 
 
@@ -845,4 +866,15 @@ $(LIBS): $(MAK)
 !endif
 
 
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
 
+CLEAN:
+  -if exist $(OBJ)\*.obj del $(OBJ)\*.obj
+  -if exist $(OBJ)\*.map del $(OBJ)\*.map
+  -if exist $(OBJ)\*.res del $(OBJ)\*.res
+  -if exist $(OBJ)\PCBOARD.EXE
+  -if exist $(OBJ)\PCBOARDM.EXE del $(OBJ)\PCBOARDM.EXE del $(OBJ)\PCBOARD.EXE
+  -if exist $(OBJ)\PCBOARDM.EXE del $(OBJ)\PCBOARDM.EXE
+  -if exist $(CFG) del $(CFG)

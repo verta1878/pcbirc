@@ -15,6 +15,29 @@
 .NOSILENT
 .AUTODEPEND
 
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
+
 # Process DEBUG
 #DEBUG = 1
 #TD = 1
@@ -66,7 +89,7 @@ LIBLST  = country$(MODEL).386        \
           dos_$(MODEL).386           \
           misc_$(MODEL).386          \
           system_$(MODEL).386        \
-          ..\pcbkit_$(MODEL).lib     \
+          $(SDKLIB)\PCBKIT_$(MODEL).LIB     \
           math$(MODEL).lib           \
           emu.lib                    \
           c$(MODEL).lib
@@ -131,8 +154,8 @@ CD = $(CD);PCB152
 
 
 
-LIBPTH = $(LIBPTH)..\..\b\c31\lib
-LIBPTH = $(LIBPTH);..\lib\bcdos\bc31
+LIBPTH = $(LIBPTH)$(LIBPATH)
+LIBPTH = $(LIBPTH);$(SDKLIB)
 
 ################################################################################
 
@@ -165,3 +188,13 @@ $(OBJPTH)\pplc.exe
 $(LIBLST)
 |
 
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJPTH)\*.obj del $(OBJPTH)\*.obj
+  -if exist $(OBJPTH)\*.map del $(OBJPTH)\*.map
+  -if exist $(OBJPTH)\*.res del $(OBJPTH)\*.res
+  -if exist $(OBJPTH)\PPLC.EXE del $(OBJPTH)\PPLC.EXE

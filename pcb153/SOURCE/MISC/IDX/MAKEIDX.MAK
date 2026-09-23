@@ -23,19 +23,40 @@
 
 PROGNAME = MAKEIDX
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);$(SRC)\SOURCE\UUCP\COMMON
 
 #=============================================================
 
@@ -79,7 +100,7 @@ EXE_DEPENDENCIES =  \
   $(LIBLIB)\misc_$(MDL).lib   \
   $(LIBLIB)\screen_$(MDL).lib \
   $(LIBLIB)\system_$(MDL).lib \
-  \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+  $(SDKLIB)\VMDATA_L.LIB
 
 #=============================================================
 
@@ -94,7 +115,7 @@ $(LIBLIB)\dos_$(MDL).lib+
 $(LIBLIB)\misc_$(MDL).lib+
 $(LIBLIB)\screen_$(MDL).lib+
 $(LIBLIB)\system_$(MDL).lib+
-\LIBS\VMDATA\BC31_DOS\VMDATA.LIB+
+$(SDKLIB)\VMDATA_L.LIB+
 c$(MDL).lib
 |
 
@@ -168,3 +189,15 @@ $(CFG): $(MAK)
 | $(CFG)
 
 #=============================================================
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

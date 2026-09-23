@@ -454,3 +454,344 @@ misidentified source tree, 22 missing modules, two modules that did not
 belong, and a config that would have produced silently incompatible
 structs.  Build the smallest real consumer of an artifact before
 believing the artifact is finished.
+
+
+v0.3.4: VMDATA is one-based; the COMM-DRV source lands live
+===========================================================
+Date: 2026-09-22
+
+
+VMDATA WAS OFF BY ONE
+---------------------
+`toolkit/pwa153/SOURCE/VMFUNCS.C` is a crew reimplementation of Clark's
+`VMDATA.LIB`, which this repo has never had.  It treated record indices
+as zero-based.  Every caller in the tree - all of them Clark's own code -
+treats them as ONE-based:
+
+    MAKEIDX.C  266   for (X = 1; X <= PathNum;  X++)
+    MAKEIDX.C  313   for (X = 1; X <= NumFiles; X++)
+    SORT.C     352   for (Counter = 1; Counter <= Recs; )
+    CI_BUILD.C 138   Rec = VMRecordGetByIndex(&CnamesIdxSet,i,NULL)
+
+and all four `VMSort()` call sites pass start as 1.  So every record came
+back shifted by one and the LAST record returned NULL, because the
+`idx >= count` guard rejected it.  `VMSort()` made it worse by discarding
+start and cnt and sorting the whole set from offset 0.
+
+The library was corrected, not the callers - the callers are the evidence
+of the contract.  Editing MAKEIDX.C, SORT.C and CI_BUILD.C to match a
+reimplementation's accident was considered and rejected.
+
+`VMSeqFinalPass()` was added.  SORT.C calls it three times and it is
+declared nowhere in this repo except an `#ifdef __WATCOMC__` block in
+`pcbsm_externs.h` - the only surviving evidence of its signature.
+
+MAKEIDX.EXE had already been built, run, and recorded as good with this
+bug in it.  Same lesson as below: a count is not a verification, and
+neither is a clean link.
+
+  toolkit/pwa153/H/VMDATA.H          VMSeqFinalPass declared
+  toolkit/pwa153/SOURCE/VMFUNCS.C    one-based; VMSort honours start/cnt
+  MAIN/build/VMDATA-RECONSTRUCTION.md
+
+Still open: `VMDataStartUp` ignores its swap-file argument, so the whole
+set must fit in the 640K real-mode heap.  PCBSM sorts only boards that
+fit in memory until a paging store is written.  Seven no-ops in VMFUNCS.C
+go live the day it exists.
+
+
+MAKEFILES: THE .386 EXTENSION AND .PATH
+---------------------------------------
+Two more of the same family as the ROOT pass.  That pass repointed WHERE
+files live; it never audited HOW MAKE resolves them, so nothing flagged
+these - they contain no root path.
+
+  PCBSM.MAK      `.PATH.c` and `.PATH.cpp` carried semicolon-separated
+                 directory lists.  Borland MAKE 3.6 does not accept
+                 them; it took the whole string as one directory name.
+                 Fourteen `$(MDL).386` became `$(MDL).$(LIBEXT)` with
+                 `LIBEXT = LIB` guarded.  `!if $d(DEBUG)` tested
+                 DEFINED, so `DEBUG=0` turned debug ON - now `!if $(DEBUG)`.
+                 VMDATA_L.LIB added to the dependency and link lists;
+                 ctod.obj and kbdstat.obj added.
+  MKPCBTXT.MAK   twelve `.386` -> `.$(LIBEXT)`.
+
+Built clean afterwards, 0 errors each:
+
+    VMDATA_L.LIB   6,656 B     MAKEIDX.EXE   29,138 B
+    PCBSM.EXE    388,496 B     MKPCBTXT.EXE  74,336 B
+
+
+THE COMM-DRV SOURCE IS NOT ATTIC MATERIAL
+-----------------------------------------
+`attic/` is for things that have been SUPERSEDED.  The nine `.386`
+category libraries went there only AFTER being rebuilt and verified.
+sysop/0's `pcbdcom-fossil5c.zip` is the opposite case: eleven files that
+nothing supersedes and, for two of them, the only copies in existence.
+All eleven land live.
+
+  pcb1541/pcbdcom/src/    fossil.c  int14.c  commdrbl.c  libsbl.c
+  pcb1541/pcbdcom/inc/    compat.h  pcbdcom.h
+  pcb1541/pcbdcom/doc/    INT14-FOSSIL5C-STATUS.md  FOSSIL-OBJ-ANALYSIS.md
+  pcbcbase/COMMDRV/H/     COMM.H
+  toolkit/pwa153/bc31/obj/  FOSSIL.OBJ  COMMDRV.OBJ
+
+FOSSIL.OBJ and COMMDRV.OBJ are recovered Clark originals, Oct 11 1993,
+out of TOOLKIT2.ZIP -> TOOLKIT/BC/PCBKIT_L.EXE.  Their OMF records carry
+`y:\modem.c`, which settles a long-standing assumption: FOSSIL.OBJ is
+NOT MODEMFOS.C.  It is MODEM.C compiled `-DCOMM -DMULTIPORT -DLIB`,
+which #includes MODEMFOS.C and MODEMASY.C.  COMMDRV.OBJ is the same file
+with `-DCOMMDRV`, pulling in MODEMDRV.C instead.
+
+All four of those sources are in `pcb153/SOURCE/MODEM/`, so these objects
+are rebuildable - which is exactly why they stay out of the attic.  They
+are the reference oracle for the rebuild: acceptance is that the new
+FOSSIL.OBJ exports match the recovered one's 79 symbols.  They move to
+the attic the day that test passes.
+
+This also answers the "One is missing" note in CATEGORY-LIBRARIES.md.  A
+toolkit makefile asks for `$(SDKOBJ)\toolkit\large\fossil.obj` and there
+is no FOSSIL.C in the toolkit tree, because there never was one - the
+object came from SOURCE\MODEM.
+
+
+REPLACED, NOT DELETED
+---------------------
+  pcb1541/pcbdcom/src/int14.c    211 lines -> 701 (FOSSIL 5C rewrite).
+                                 Old copy kept as int14-r1.c.  Same five
+                                 entry points; the rewrite adds the INT
+                                 1Ch timer, baud parsing, DTR, break and
+                                 the buffer counters.
+  pcb1541/pcbdcom/inc/compat.h   76 -> 95 lines, strict superset.
+  pcb1541/pcbdcom/inc/pcbdcom.h  47 -> 53 lines, strict superset.
+
+Nothing was removed.
+
+
+TWO comm.h RECONSTRUCTIONS, ONE WINNER
+--------------------------------------
+sysop/0 and this session each reconstructed WCSC's `comm.h` on the same
+day.  Neither is WCSC's file.  They agree on the 13 `ser_rs232_*`
+prototypes - which is the part that is genuinely recovered, because
+MODEMDRV.C is the whole of PCBoard's use of COMM-DRV.  They disagree on
+PROT_* values, the CARD_* numbering, and the baud table.
+
+MODEMDRV.C names exactly two constants, PROT_RTSRTS and CARD_DIGCXI, and
+never compares either to a number - so it proves the names exist and
+nothing about the values.  sysop/0's version wins because its sixteen
+CARD_* constants map one-to-one onto the fourteen backend .c files that
+actually exist in pcb1541/pcbdcom/src/, plus CARD_NONE and CARD_BOCA16.
+The other was inferred before those backends were read.
+
+  pcbcbase/COMMDRV/H/COMM.H        live, on the include path
+  reference/commdrv/comm-h-recon-b.h   retired, keeps the baud table
+  pcb1541/pcbdcom/doc/COMM-H-MERGE.md  the full comparison
+
+NEITHER recovers WCSC's byte layout.  Field widths and offsets in both
+are a choice.  Anything built against either talks only to a driver built
+against the same header and will NOT interoperate with a real WCSC TSR.
+That has to come out of the v15.0b runtime binaries in
+pcb1541/install/dist/target/COMMDRV/ if it is ever wanted.
+
+CHECKED, NOT A DEFECT: `ser_rs232_shim.c` declared a THIRD port_param
+layout at lines 49-57, matching neither header - which would have been a
+silent corruption, not a link error, with PCBoard writing `pcb.protocol`
+where the shim read `data_bits`.  The shim is retired to
+attic/superseded-pcbdcom/ and `commdrbl.c` replaces it, correctly:
+#include "comm.h" at line 24, no local struct, LIBENTRY on all thirteen
+definitions.  The two mangling traps stand as lessons - LIBENTRY on every
+DEFINITION, and the #include OUTSIDE any extern "C" - because both were
+hit once already.
+
+`libsbl.c` adds six helpers past the thirteen (strerror, detect,
+baud_to_divisor, divisor_to_baud, cardname, defaults).  MODEMDRV.C calls
+none of them, so LIBSBL.LIB's real scope is still unknown.
+
+
+ONE CHECKSUM MANIFEST, NOT SEVEN
+--------------------------------
+The repo had nine checksum files: three at the root (CHECKSUMS.sha256,
+.md5, .txt) and six scattered through OUT/ and toolkit/.  Now there is
+one set at the root, repo-relative, and one command that checks
+everything:
+
+    sha256sum -c CHECKSUMS.sha256
+
+98 files - every built or recovered binary under OUT/ and toolkit/, plus
+every file changed in this release.  Each path appears exactly once with
+its current hash.
+
+This is not tidying.  Scattering the manifest let two of the six rot
+without anyone noticing, because a per-directory file has no single
+command that checks it:
+
+  OUT/pwa153/CHECKSUMS.sha256          listed bin/PCBOARDM.EXE and
+                                       lib/*.LIB.  There is no bin/ or
+                                       lib/ under OUT/pwa153 - the EXEs
+                                       are at the top level, the
+                                       libraries in SDK/BC31/LIB.  So
+                                       'sha256sum -c' could never have
+                                       passed there.  It also covered 1
+                                       of the 7 EXEs in that folder.
+  toolkit/pwa153/bc31/lib/CHECKSUMS.*  13 entries for a folder holding 4
+                                       libraries.  The nine category
+                                       .LIB it also listed moved to
+                                       attic/lib/pwa153/bc31/ when the
+                                       rebuilds superseded them; the list
+                                       was never updated.
+
+The hashes in both were right.  The PATHS were wrong, which a checksum
+file cannot tell you about itself.  OUT/clark-original and OUT/delta154
+were accurate and are retired for consistency, not fault.
+
+Cross-checks that did pass: PCBOARD.EXE hashes to b55719144e359fbc...,
+exactly what this file recorded at line 48, and all eleven
+OUT/clark-original/DOS entries match their retired list byte for byte.
+
+The sectioned root format is gone too.  It listed a path once per
+release and needed a rule - "where a path appears in both sections, the
+newer line is current" - which no checker implements.  History is prose
+and belongs here and in CHECKSUMS.txt, not interleaved with the data a
+tool reads.
+
+  attic/checksums/            the six retired files, verbatim, + README
+
+THE SIX ORIGINALS ARE STILL ON DISK.  This session has the file bridge
+but no shell on the build machine, so it can create and update files but
+not move or delete them.  Delete these by hand, or the tree still has
+seven manifests:
+
+  OUT\pwa153\CHECKSUMS.sha256
+  OUT\pwa153\SDK\BC31\CHECKSUMS.sha256
+  OUT\pwa153\SDK\BC31\LIB\CHECKSUMS.sha256     (created and superseded
+                                                the same day)
+  OUT\delta154\CHECKSUMS.sha256
+  OUT\clark-original\CHECKSUMS.sha256
+  toolkit\pwa153\bc31\lib\CHECKSUMS.sha256
+  toolkit\pwa153\bc31\lib\CHECKSUMS.md5
+
+RULE: a new artifact gets a line in the root manifest.  Never a new
+per-directory checksum file.  One file means one command, and a command
+someone will actually run is the only kind that catches drift.
+
+
+v0.3.5: FOSSIL.C exists
+=======================
+Date: 2026-09-22
+
+sysop/0's second drop, pcbdcom-fossil5c.zip, sha256
+6c0612090e20eeb8880e84e24aa0fbf79f23102901b7652a327d529ea141242c,
+40,446 B, 11 files.  Nine are byte-identical to the first drop.  Two
+changed:
+
+  fossil.c                  25,282 -> 25,731 B
+  INT14-FOSSIL5C-STATUS.md  11,596 -> 14,082 B
+
+
+THE FOSSIL.OBJ GAP IS ANSWERED
+------------------------------
+CATEGORY-LIBRARIES.md recorded that UUXFER.MAK asks for
+`toolkit\large\fossil.obj` and that no FOSSIL.C existed anywhere in
+toolkit/pwa153/SOURCE.  That was true, and it was the wrong place to
+look.  The OMF source path in the recovered object is `y:\modem.c`:
+Clark built it from pcb153\SOURCE\MODEM\MODEM.C with
+-DCOMM -DMULTIPORT -DLIB -DFOSSIL, which #includes MODEMFOS.C and
+MODEMASY.C as one unit.  There was never a separate FOSSIL.C.  The note
+in CATEGORY-LIBRARIES.md even named MODEMFOS.C as "the nearest real
+PCBoard FOSSIL code we hold" and then set it aside.  It was the answer.
+
+sysop/0 has now written a standalone reconstruction - 767 lines, its own
+type stubs instead of project.h/model.h, so it needs no -D flags:
+
+  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C
+  bcc -ml -c -oFOSSIL.OBJ FOSSIL.C
+
+79 exports, matching Clark's object symbol for symbol: 30 FOSSIL_*, 11
+ASYNC_* stubs, 30 vtable pointers, 8 helpers.
+
+THE MATCH WAS MADE BY A PYTHON OMF PARSER, NOT BY A COMPILER.  Nothing
+has been compiled from FOSSIL.C yet.  That is the same shape of claim
+this file already carries a lesson about, so it is written down as open,
+not done.  The acceptance test:
+
+  1. bcc -ml -c FOSSIL.C under BC 3.1.  Zero errors.
+  2. Dump the OMF exports of the result.
+  3. Diff against FOSSIL.OBJ's 79, then compare at byte level.
+
+FOSSIL.OBJ and COMMDRV.OBJ stay in toolkit/pwa153/bc31/obj/ until that
+passes.  COMMDRV.OBJ has no reconstruction at all yet.
+
+
+PLACED IN THE TOOLKIT, NOT IN pcbdcom
+-------------------------------------
+The first drop's fossil.c was landed at pcb1541/pcbdcom/src/fossil.c.
+That was wrong and is corrected here.  FOSSIL.C reconstructs Clark's
+FOSSIL backend for PCBoard; it has zero references to pcbdcom, includes
+only Borland runtime headers, and its own header calls it "Standalone
+FOSSIL driver object for the PCBoard Toolkit".  sysop/0's status doc
+lists it under "Toolkit:", separate from the pcbdcom files.  It belongs
+where the makefile looks for it.
+
+  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C    correct home
+  pcb1541/pcbdcom/src/fossil.c              DELETE - misfiled copy
+
+TWO NOTES ON sysop/0's STATUS DOC, which is landed as received:
+
+  - It gives the pcbdcom paths as pcb154/pcbdcom/.  In this tree they are
+    pcb1541/pcbdcom/.  The doc is what he sent; the tree is right.
+  - Its open item 4, "reconcile sysop/0's comm.h against hexadecimal's
+    pcbcbase/COMMDRV/H/COMM.H (15,592 bytes) - pick one", is already
+    settled.  His won, on the evidence that his sixteen CARD_* constants
+    map one-to-one onto the fourteen backend .c files that exist.  See
+    pcb1541/pcbdcom/doc/COMM-H-MERGE.md.
+
+FILES
+-----
+  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C       new, 767 lines
+  pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md updated, as received
+  toolkit/pwa153/bc31/obj/README.md            the acceptance test
+  MAIN/build/CATEGORY-LIBRARIES.md             "One is missing" answered
+
+
+CLEANUP.BAT PASS 2: RETIRE
+--------------------------
+The two delete lists above are now a batch file instead of a paragraph.
+CLEANUP.BAT gained a second pass and a verify mode; pass 1 is unchanged.
+
+  CLEANUP           both passes
+  CLEANUP MOVE      pass 1 only - move to attic, driven by attic\CLEANUP.LST
+  CLEANUP RETIRE    pass 2 only - guarded delete, driven by attic\RETIRE.LST
+  CLEANUP VERIFY    hash the tree against CHECKSUMS.sha256
+
+Pass 2 exists because these eight files do not fit pass 1.  Pass 1 copies
+a file to attic\<category>\<its original path> and deletes it only if the
+copy matches.  These eight are already replaced, under DIFFERENT names
+and in different places - attic\checksums\OUT-pwa153.sha256, not
+attic\checksums\OUT\pwa153\CHECKSUMS.sha256 - so there is nothing left to
+copy.  What is needed is a guard, not an archive.
+
+attic\RETIRE.LST is  keeper|victim , both repo-relative.  The victim is
+deleted only if the keeper exists; no keeper, no delete, and the run
+says which keeper was missing.  Safe to run twice.  del /f has no
+Recycle Bin, which is the whole reason for the guard.
+
+The eight:
+
+  keeper                                        victim
+  --------------------------------------------  --------------------------------
+  toolkit\pwa153\SOURCE\TOOLKIT\FOSSIL.C        pcb1541\pcbdcom\src\fossil.c
+  attic\checksums\OUT-pwa153.sha256             OUT\pwa153\CHECKSUMS.sha256
+  attic\checksums\OUT-pwa153-SDK-BC31.sha256    OUT\pwa153\SDK\BC31\CHECKSUMS.sha256
+  attic\checksums\OUT-delta154.sha256           OUT\delta154\CHECKSUMS.sha256
+  attic\checksums\OUT-clark-original.sha256     OUT\clark-original\CHECKSUMS.sha256
+  attic\checksums\toolkit-pwa153-bc31-lib.sha256  toolkit\pwa153\bc31\lib\CHECKSUMS.sha256
+  attic\checksums\toolkit-pwa153-bc31-lib.md5     toolkit\pwa153\bc31\lib\CHECKSUMS.md5
+  CHECKSUMS.sha256                              OUT\pwa153\SDK\BC31\LIB\CHECKSUMS.sha256
+
+All eight keepers were confirmed present before this was written.  Pass 1
+will report every CLEANUP.LST entry as absent - that pass was run on
+2026-09-22 and its work is done.
+
+CLEANUP.BAT REPLACED: 2,991 B -> the version with both passes.  Pass 1's
+logic is byte-for-byte the same; the old file is not archived because
+nothing was removed from it.

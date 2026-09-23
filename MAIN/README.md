@@ -33,6 +33,38 @@ JSON at runtime), so they're self-contained. In DOSBox they run from
 there as `BUILD/SCRIPTS`).
 
 
+
+## Building (2026-09-22)
+
+The build entry points are at the repo root:
+
+| Script | Builds | Output |
+|---|---|---|
+| `BLDDOS.BAT` | 15.3 PWA with Borland C++ 3.1 under DOS | `\OUT\PWA153` |
+| `BLDOS2.CMD` | PCBOARD2 / USERNET2 with Borland C++ for OS/2 | `\OUT\PWA153` |
+
+    BLDDOS ALL          every program
+    BLDDOS MAKEIDX      one program
+    BLDDOS CLEAN        make CLEAN in every program folder
+    BLDOS2 PCBOARD2
+
+Both drive Clark's makefiles (`MAKE -f<PROG>.MAK`); neither compiles anything
+itself. `BUILD_DOS.BAT` and `BUILD_OS2.CMD` are now notes pointing at them —
+their nine-character names cannot be called from DOS or stored on FAT.
+
+**The repo is the build drive.** Mount the repo folder as the drive root
+(`mount C <repo>`), so `\OUT`, `\PCB153`, `\TOOLKIT` and `\PCBCBASE` are all
+inside the repo and the folder's name does not matter. Both scripts refuse to
+run if `\APPLY.txt` is not at the drive root. Full detail, including why the
+makefile paths are absolute and what `make CLEAN` removes, is in
+[`build/BUILD-ROOT.md`](build/BUILD-ROOT.md).
+
+State as of this writing: `MAKEIDX.EXE` builds and links clean, and
+`VMDATA_L.LIB` is built from `toolkit/pwa153/SOURCE`. PCBSETUP and FIDOUTIL
+compile but do not link yet — the prebuilt category libraries are the wrong
+variant and incomplete, so the category libraries have to be rebuilt from
+`toolkit/pwa153/SOURCE` first. See APPLY.txt.
+
 ## Four Versions, One Tree
 
 | Version | Source | Toolkit | Binaries | Compiler |

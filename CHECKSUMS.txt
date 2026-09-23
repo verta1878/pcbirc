@@ -1,236 +1,151 @@
-# CHECKSUMS — verify release integrity
-# v0.3.2: ROOT names the branch; paths match our layout
-# Date: 2026-09-17
+# CHECKSUMS - verify release integrity
+# v0.3.5: FOSSIL.C exists
+# Date: 2026-09-22
 
-OUT/README.md and toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C were listed in
-v0.3.1 and changed again here, so their entries moved into the v0.3.2
-section of the per-file lists rather than being duplicated.
+ONE MANIFEST
+------------
+CHECKSUMS.sha256 and CHECKSUMS.md5, here at the root, repo-relative, are
+the only checksum files in the repo.  One command from the root verifies
+everything:
 
-Full per-file lists: CHECKSUMS.sha256 and CHECKSUMS.md5. Where a path
-appears in both the v0.3.2 and v0.3.1 sections of those files, the
-v0.3.2 line is current.
+    sha256sum -c CHECKSUMS.sha256          (or, on Windows:  CLEANUP VERIFY)
 
-Makefiles repointed — ROOT = \PWA153 behind an !ifndef guard, library
-paths to $(LIBROOT)\$(BCCOMPILER)\lib, and the redundant \PCB level
-removed. 13 files:
+101 files: every built or recovered binary under OUT/ and toolkit/, plus
+every file changed in v0.3.4 and v0.3.5.  Each path appears exactly once
+with its current hash.
 
-  153/PCBOARD.MAK                             21741  sha256:87688a60a4329a932b272caef091d97dc77afd00746b4953c52a30e5fb018819  LIBDIR only; ROOT = .. left as found
-  153/PCBOARD2.MAK                            20666  sha256:0282abcd68b6be989f9b67c303b9f80c0e7a18ce77beb8546a3c91c0010d7cb0  + md5 path repointed
-  153/PPLC.MAK                                 3950  sha256:68245482a57585821ba994378d7c69725dc7215b114a28f5dac117745e469621  relative lib path; declares no ROOT
-  SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK            5790  sha256:75ec0e7e384ec346efad949c1907dfed3f2fcc14a66b0627c6fdc0dc4608909c  SUPERSEDED, see packfido below
-  SOURCE/MISC/IDX/MAKEIDX.MAK                  4210  sha256:bb951995f8b6ac4f85ec78356f8673156c96009e5251ed49647af7bb4146996d
-  SOURCE/MISC/USERNET/USERNET.MAK              4338  sha256:8865e0ec13a6ce8531a820145cb9262da01cef3eb5ccf1e3209d0c537d4dfba1
-  SOURCE/UTIL/PCBSETUP/PCBSETUP.MAK           10079  sha256:d134b79c3501bfe064a007f964509465d36152a837cc4d70229ecbab708d9d40
-  SOURCE/UTIL/PCBSM/PCBSM.MAK                 10563  sha256:9f927d7a6aa03b166b9ceace21a3a86a890e54a4684d54cb2958e43c5aa3d78b  was \PCBSRC, not Clark's \PROJ
-  SOURCE/UTIL/PCBTEXT/MKPCBTXT.MAK             5415  sha256:352a712c3ac37c7d668fa5d796c5825fdfc9931911805f5d281a9d1e98adf410  was \PCBSRC; model already large
-  SOURCE/UUCP/UUIN/UUIN.MAK                    9376  sha256:4d49ff5213428a8325bb307fa27be43204de92c6e57dd39eeb784ea46a12f8ff
-  SOURCE/UUCP/UUOUT/UUOUT.MAK                  6279  sha256:074caec2540d0d4c1f4e24f99c44bd3bd9b0b0f1a613f716a6d094f7c9c1fdb3
-  SOURCE/UUCP/UUUTIL/UUUTIL.MAK                6194  sha256:19b1cc6357ea10d4cb0ac74b777afa1d0f51d07d2a4c29c057deaa3d855d5409
-  SOURCE/UUCP/UUXFER/UUXFER.MAK                7249  sha256:5185dfef4c3f289ce80c2d22baec8a89e1c76b36625c9e09685359c3248bb31c
+IT IS CORRECT ONLY AFTER 'CLEANUP RETIRE' HAS RUN.  The manifest already
+excludes the eight files that pass deletes, so verifying before the
+cleanup is fine - those eight simply are not listed - but 'git status'
+will still show them until it does.
 
-  153/PCBOARD.MAK kept its `ROOT = ..`, already branch-neutral.
-
-  USERNET2.MAK was called "left untouched — declares no ROOT and no
-  library path" here. That was wrong: it carried five hardcoded D:\
-  paths instead, which is why the ROOT scan missed it. Fixed 2026-09-17
-  along with PCBOARD2.MAK's own D:\BCOS2\LIB\C02.OBJ — see the OS/2
-  section below.
-
-  SOURCE/MISC/USERNET/USERNET2.MAK
-                     3509  sha256:e142e9531139e1aec4fcf4d96ade6bb3df6a42e18d5d9aecd037730c456b218d
-
-PCBOARD.EXE after the repoint — byte-identical to the pre-change
-binary, which is the proof the repoint changed only where the linker
-looks:
-
-  OUT/pwa153/PCBOARD.EXE   955904  sha256:b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45
-
-  Built from the ARCHIVE tree (PCBSRCV/014), not pcb153/SOURCE. It
-  links and runs, but the archive carries a 15.4 leak in CALLWAIT.C
-  and lacks MD5IMPL.CPP. Rebuild before treating it as the 15.3
-  reference. Same applies to PCBOARDM.EXE, unchanged this release.
-
-MD5 — recovered from devtools/Md5.zip into pcb153/SOURCE/MISC/MD5/.
-PCBOARD2.MAK has referenced md5\os2\md5.obj against an empty
-directory since the archive was made:
-
-  MD5.ASM           14773  sha256:1e0dc205e144b13bb6129cf01425b790b3b4b4c2083f39a597be487f6ce2c8ee  MASM 6.0, public domain
-  OS2/MD5.OBJ        1492  sha256:c5112b729193d636b7a30bd8387379b823059f26300fe2f2d0ae9a58ccbebaa1  OMF, THEADR "md5.asm"
-  MD5.TXT           11226  sha256:7c3db59098dde5ceff2cb25c361414b83392e213dc7685050e6bbb44d79e3558
-  RFC1321.TXT       36400  sha256:45f360c2ec2e053a5b9ec928f341b07adf6790d4240b8beb95fa534cead33fe2
-  RFC1725.TXT       36070  sha256:8204c4442a1b2e61bf22950581d4e13c0e9182a515cb7b61a1bc4fb437cbe592
-  README.md          1282  sha256:a5e8572cc92aa1b8dd0251eb682251265f1cb7e3e8d9d8866a987c26a4be4c90  provenance
-
-  FILE_ID.DIZ         251  sha256:f1ffebeca94e14f01668c00b711732efc3d818b52e710a527be877d8af098ec8  the package's own description
-  README.md          2256  sha256:15968d7f99b3d2dea347ff1acebfcb91b111e1e3488b15875e486572c7788337  provenance (revised)
-
-  ARSENAL.LIB was the 7th file in the zip and is NOT here: 1,577 bytes of
-  plain ASCII, a redistribution notice from Arsenal Computer Services, a
-  BBS CD-ROM distributor. No object code. `.LIB` is the BBS file-area
-  convention for a label/notice file, not a linker library. The original
-  stays intact in devtools/Md5.zip.
-
-packfido — still missing, but it now has a defined home and the makefile
-points at it, so a recovered file drops straight in:
-
-  pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md
-                     5214  sha256:0f6b0f767f251749bca2e830ab0f69fb7604ec395abff8446e113c0e7b291b8c
-  pcb153/SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK
-                     6523  sha256:eb44e86b44c139efda55071731bf9a1903ca4bdd7a5592410cd6590e8b447780  packfido path repointed
-
-  Clark's path was $(ROOT)\packfido\packfido.c -- a TOP-LEVEL directory
-  under \PROJ, beside \PROJ\md5\. Those two were the only dependencies
-  in FIDOUTIL.MAK and PCBOARD2.MAK that lived outside $(ROOT)\source,
-  which is what made them the two missing dirs. md5 turned out to be an
-  external drop from a BBS file area; packfido is probably the same kind
-  of thing. Now $(ROOT)\source\packfido.c -- one loose file, so a loose
-  file's home rather than a directory holding a single .c.
-
-OS/2 paths — the v0.3.2 ROOT pass hunted $(LIBROOT)\BCDOS\ and \PCBSRC\
-and missed the OS/2 side entirely. Seven hardcoded absolute drive paths
-survived in two makefiles:
-
-  PCBOARD2.MAK   LIBDIR = $(LIBROOT)\BCOS2   -> $(LIBROOT)\bcos2\lib
-                 D:\BCOS2\LIB\C02.OBJ       -> $(BCROOT)\LIB\C02.OBJ
-  USERNET2.MAK   LIBPATH, INCLUDEPATH, C02.OBJ, C2.LIB, OS2.LIB
-                 all D:\BCOS2\... plus d:\proj\lib\h
-                 -> $(BCROOT)\... and $(LIBROOT)\H
-
-Both now carry !ifndef guards for ROOT and BCROOT. BUILD_OS2.CMD sets
-BCROOT=\BCOS2, so an OS/2 build still works unchanged; the guards only
-matter when the makefile is invoked without that script.
-
-  The OS/2 category libraries these resolve to (pcb country misc dos
-  doscls screen system, unsuffixed) have NEVER been built. Only the DOS
-  large-model set in bc31/lib exists. The paths are now correct and the
-  targets are still absent.
-
-VMData — copied into toolkit/pwa153/ from pcb154/LIB/. NOT Clark's:
-the crew's own clean-room replacement, zero Watcom markers, so the
-Borland build takes it unmodified. VMDATA.LIB is still not built:
-
-  SOURCE/VMAVL.C       9603  sha256:c0f696ebff507bf356361ea85e0e1d0ecb25a3d630dd2d1c0e173b6639055220  sysop/0, clean-room GPLv3
-  SOURCE/VMFUNCS.C     3987  sha256:4361c81adeb2d15f56c1d018d7a57a9efe60c0b2d32acc5ef3a5db6e58e8736a  hexadecimal v0.036
-  H/VMDATA.H           2633  sha256:4de496406eaf6282a1393e2996439442bb9494380e22a64d7a365e3a65a40db4
-  H/vmavl.h            2893  sha256:d3ad396c5ea8844c9440e3502ed936474e0ec958041ad2d7734e609ee6450474
-
-todo/PCBIC-PWA-BUILD-DRAFT.md   29305  sha256:42b4b44b7a43dbebfe17e4bb8001ffd7ae46e9620d12f57f9e35b848fed72c26
-  the 37-EXE ship list now carries its buildability tiers, the
-  13-target backlog with source/binary/method per target, and a
-  reality check on the unpopulated OUT/data/ plan
-
-Docs and scripts:
-
-  MAIN/build/scripts/normalize-case.sh     3514  sha256:0ba523544229586a156fc3980daf698e385bb8aeabe715cc607a84ae2bce29cd
-      new; supersedes pcb154/normalize_case.sh
-  MAIN/build/CLARK-DRIVE-LAYOUT.md         12763  sha256:34077aefb0069d5885cd40171d51e2adc8e1736b4fae5b00f5cbae0957a4928b
-      no-symlinks rule; VMData corrected
-  APPLY.txt                              16348  sha256:9b2ccffefc0225fac246b6a30d76e88efc1374e68b3e7ed74c40138b117a5450
-      v0.3.2 prepended
-  HISTORY.md                              74354  sha256:557d0a3c7ba471c4e7176bc6469be1e953cd67810eedcfcaf3a3cdf3c11b26ae
-      v0.3.2 entry
-  .gitignore                               6212  sha256:359e565913d247ff426b36b3e0d117aafc855fba12f7e2cd05bf74f016741241
-      LAST WORD block restored + MD5 OBJ
-
-todo/toolkit.md changed again after the v0.3.1 list was written (the
-lib-move and layout rewrite) — its v0.3.2 line is the current one.
-
-Closed since v0.3.1: OUT/pwa153/lib/ is gone — the 9 old
-category-library copies have been deleted. toolkit/pwa153/bc31/lib/ is
-now the only location.
-
-VIRTUAL.C is a MERGED file in both PWA branches — Clark's VIRTUAL.C and
-VIRTUAL1.C behind #define VIRTUAL_HUGE, headers merged the same way,
-VIRTUAL1.H deleted. pwa153 and pwa154 carry byte-identical copies;
-delta154 and irc1541 kept the split. Deliberate, undocumented until now:
-
-  toolkit/pwa153/SOURCE/MISC/VIRTUAL-MERGE.md
-  toolkit/pwa154/SOURCE/MISC/VIRTUAL-MERGE.md
-                     5016  sha256:af124d5bdd596940b57f1cc74fe1e1dc2539696893e0698db85ac07ebb58d599
-
-  VIRTUAL.C itself is NOT touched.
-
-VIRTUAL1.C — toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C replaced with Clark's
-archive original (CRLF -> LF to match the tree). v0.3.1 called the
-restored copy "the ORIGINAL Borland version"; it carried one port fix,
-`#include <sys/stat.h>` for `<stat.h>`. All five repo copies were
-modified; only the archive's is clean.
-
-  toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C
-                       6207  sha256:08fb73ca06b88bbe5231d87ceb874d095e8e322447fe54cb3de4af73982ce02a
-
-  VIRTUAL.C is NOT touched. It is a crew-merged file carrying both
-  implementations behind #define VIRTUAL_HUGE, and the merged virtual.h
-  still serves VIRTUAL1.C correctly when VIRTUAL_HUGE is undefined.
-
-FIDOUTIL.EXE is no longer blocked. packfido.obj supplied one symbol,
-do_pack(), whose only call site is commented out (CONVERT.CPP:124).
-Dropped from EXE_DEPENDENCIES and the linker list; rule commented, not
-deleted.
-
-Still open: packfido.c itself, for PACKFIDO.EXE. The string appears in exactly one place
-across the archive and the repo — that makefile — and unlike md5 there
-is not even an empty directory stub in PCBSRCV/000/. FIDOUTIL.EXE cannot
-be built until a copy surfaces.
+The six per-directory checksum files are retired to attic/checksums/ with
+a README.  Two of them had rotted unnoticed, because a per-directory file
+has no single command that checks it: OUT/pwa153/CHECKSUMS.sha256 named
+bin/ and lib/ paths that do not exist there, and toolkit/pwa153/bc31/lib
+listed 13 files for a folder holding 4.  The hashes were right; the paths
+were not.  Do not create another one.
 
 
--- v0.3.1 ------------------------------------------------------------
-# CHECKSUMS — verify release integrity
-# v0.3.1: the pwa153 door SDK, built and verified by linking
-# Date: 2026-09-17
+v0.3.5 - changed this release
+-----------------------------
+  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C             25731  sha256:b5d03d8bfac986cb2cf1cf45b1301ef29812241105d7c00ab0ba4883a66602c3  NEW - 767 lines; bcc -ml -c -oFOSSIL.OBJ
+  toolkit/pwa153/bc31/obj/README.md                   3347  sha256:1aafdb34ab30c51d1a0e4d01c92b36f91cdbe0f265860adccb56fc0c904eab5e  the acceptance test, still open
+  MAIN/build/CATEGORY-LIBRARIES.md                   10930  sha256:de59ce0e26c11106bc08179ed1746aa86dd9dd1500b7235171e5ab4f9b1daa4d  "One is missing" answered
+  pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md       14082  sha256:79cdb43920932ee0cbd38aae4b4a9a9f9861e7ba9c85044248550bf95083b42d  sysop/0's second drop, as received
+  pcb1541/pcbdcom/doc/COMM-H-MERGE.md                 5174  sha256:d712ce91a63ea9bb04a39bcb86e3236e97a274d453df1e93d4f4d76f185bb8b9  + his open item 4 marked settled
+  CLEANUP.BAT                                         6446  sha256:e1380fb464086802eabb5adc920010109729369a1428770673e57d7eadbc421a  REPLACED - gained RETIRE and VERIFY; pass 1 unchanged
+  attic/RETIRE.LST                                    1942  sha256:e27a5c772d7685ed2d8cc4f81ae370c8e5a9a838c53a46d2db8c943ca8b59eae  NEW - the eight guarded deletes
+  APPLY.txt                                          36922  sha256:b9d1667a12c86dfa60bd7226c49f95c0ae5fb3a7a606f2948d0ed3f620eaaf2f  section v0.3.5
 
-Full per-file lists: CHECKSUMS.sha256 and CHECKSUMS.md5.
+v0.3.4 - the previous release
+-----------------------------
+  MAIN/build/VMDATA-RECONSTRUCTION.md                 5596  sha256:4ac78ad51ce2e089fe4f8005fd42fba86dd0948e0662d198dfa20d0573de4027
+  toolkit/pwa153/H/VMDATA.H                           3276  sha256:1507f83820327fe273bc3a0f731b1ba21f44d2727c76d839665a91d54a4e760c  VMSeqFinalPass declared
+  toolkit/pwa153/SOURCE/VMFUNCS.C                     6471  sha256:291a1160d60d7629163acc36cb252735e781dc3449b6bdb5c55209ddd8bbbb57  one-based; VMSort honours start/cnt
+  pcb153/SOURCE/UTIL/PCBSM/PCBSM.MAK                 10597  sha256:a7f496c9a56e4728480aff21f69f0429d5106de50836c0c495c6fc69812201bc  .PATH split; .386 -> .LIB; !if $(DEBUG)
+  pcb153/SOURCE/UTIL/PCBTEXT/MKPCBTXT.MAK             5499  sha256:8dd2256cdcb79142f28635347a858c258ee7c4e52520edc8b966e899c6aeb6f0  twelve .386 -> .$(LIBEXT)
+  pcb1541/pcbdcom/doc/FOSSIL-OBJ-ANALYSIS.md          4284  sha256:924e8f85167054da20b149d4076aef24aeb68566a333ebee3e65be576f9120bb
+  pcb1541/pcbdcom/inc/compat.h                        3949  sha256:00608bd52c86206282f6227df5db0fe9abedd5830276787ef019705a33308594  REPLACES 76-line copy, strict superset
+  pcb1541/pcbdcom/inc/pcbdcom.h                       2307  sha256:fb6e5d7299eb2464db7aeb5d061e1a1be41342cf689ef6aa4a58e8737903ddd9  REPLACES 47-line copy, strict superset
+  pcb1541/pcbdcom/src/commdrbl.c                     10306  sha256:4b196afc3e0a23037a8076f59978d5de65dff57ae510a236f388e52b22fef698
+  pcb1541/pcbdcom/src/int14.c                        23454  sha256:bdad86758ed7fe85b8c0777d194c83473347ca8680310ef9b8f7303547703371  REPLACES the 211-line copy
+  pcb1541/pcbdcom/src/int14-r1.c                      7448  sha256:e94f9ff941ddee0e3c148599b84496e4c4810734071b7503e9331766f1e956f3  the replaced copy, kept
+  pcb1541/pcbdcom/src/libsbl.c                        4639  sha256:0e963c2a66243a13706c7ecdbb68ae6123eed4019aff534ecc4671e22bf0e189
+  pcbcbase/COMMDRV/H/COMM.H                           6594  sha256:de675fef7272a0196ed7b39a88a3c82696a7249b43289574b8106d131345034a  sysop/0's; where PCBOARD.MAK line 45 looks
+  pcbcbase/COMMDRV/LIB/README.md                      1460  sha256:d84a04d24b054f4bf23a37f09648017c6ab9c09c2476b57df3874f551bf73d98
+  reference/commdrv/comm-h-recon-b.h                 15592  sha256:6b07c22c30ebfc1a4ec3556801f293c68260da562ff0b4ff475522c1a3d89d9b  the losing reconstruction, kept for its baud table
+  toolkit/pwa153/bc31/obj/FOSSIL.OBJ                  9157  sha256:d35bf353aed016d3e248ed871d79585aa0131391b33eb4050d60aff56e22fdd1  Clark's, Oct 11 1993 - the oracle for FOSSIL.C
+  toolkit/pwa153/bc31/obj/COMMDRV.OBJ                10024  sha256:53046b4d8722379f8d57a28752746ffb3ca23ae2fe3e780f05752ea7d0b96969  Clark's; no reconstruction yet
+  attic/checksums/OUT-clark-original.sha256           1652  sha256:047f2db6da1b811c12fa879ec91d06e76417242f81c55d3da5d35518bbbfe75e
+  attic/checksums/OUT-delta154.sha256                 1185  sha256:2d99bbf7d4da11540818dc6a1a614e5c636badff1bac2fd458d69f561f0afbd1
+  attic/checksums/OUT-pwa153-SDK-BC31.sha256          1018  sha256:aafe31c252b1e7214d66c3243bb1f4f3ca27faece926096ccbddc6987a95dbe9
+  attic/checksums/OUT-pwa153.sha256                    822  sha256:3878487e0339c713ea324ca1610cb4b7111099f41a404d0363435998c3f2f8ea
+  attic/checksums/README.md                           2085  sha256:42fa4f000ae682e1e8b71ff7883a3e4b935cc553fd8c8d9894b0a581cb242b76
+  attic/checksums/toolkit-pwa153-bc31-lib.md5          599  sha256:69dc428c85e0d14c383cc44b37bc7c2b268ff28513438250a25ce153706bced2
+  attic/checksums/toolkit-pwa153-bc31-lib.sha256      1015  sha256:b44ef43f862b36e8ede68e7a2d25a40e762fe9e7a12f759bae3c7407785e12b9
 
-PCBKBC door SDK — toolkit/pwa153/bc31/lib/ (152 modules, 4 memory models):
+OUT/pwa153 - the BC 3.1 build
+-----------------------------
+  OUT/pwa153/FIDOUTIL.EXE                           152962  sha256:31d2726fb2e21912cef0d6b19f278a8afb8b6dc4806f417e23ae1902eab73cc0
+  OUT/pwa153/MAKEIDX.EXE                             29138  sha256:61ac99793e7d89b3b14c84d2ce18295b6e1316cf19746108673d205001b9ece4  relinked v0.3.4, 0 errors
+  OUT/pwa153/MKPCBTXT.EXE                            74336  sha256:77aba1403680abc8c6d89aabf244b282d2a163d9f19b976cf348704ca8cb39e2  built v0.3.4, 0 errors
+  OUT/pwa153/PCBOARD.EXE                            955904  sha256:b55719144e359fbc5d6cdf0f4fce401c8b7366476df8a22d179bc1469f6f7a45
+  OUT/pwa153/PCBOARDM.EXE                           961504  sha256:dae62e709bb15748d78d783799b78b39b40dde21e2f9a00849e49208aaa6a729
+  OUT/pwa153/PCBSETUP.EXE                           360736  sha256:f6ff475429c595a8f79d9b8b02974c860c8110a7b8ae482fadb4e87fd49851a0
+  OUT/pwa153/PCBSM.EXE                              388496  sha256:eb1c54add89022a00c73d5356371bdfd001e1fa5eb35382cb840d886b62c5f59  relinked v0.3.4, 0 errors
+  OUT/pwa153/SDK/BC31/large/CALLBACK.EXE            111190  sha256:d4e7506cbd91606c9e73b0aed171c639beed94dae9eec1d7f02d4b6c149550b8
+  OUT/pwa153/SDK/BC31/large/COPYBIN1.EXE            110284  sha256:705f8ceb9140f1df42378e94f1d7f0a78983edb270fa0920b987e8fa6074826e
+  OUT/pwa153/SDK/BC31/large/COPYBIN2.EXE            110092  sha256:6fd1989ff6a754666a72211426a8e93055a207193508326e644686c4c8fa1856
+  OUT/pwa153/SDK/BC31/large/COPYTEXT.EXE            110636  sha256:60201f573da1794a83de8d3f201350f0d4168dd148f156e198b5e4b8e44c2dfc
+  OUT/pwa153/SDK/BC31/large/HELLO.EXE               109270  sha256:fbcc2e5d5f8a0855a2d5fa0d452914dd35d030b00c3fa24f2ce7bf270335ae8d
+  OUT/pwa153/SDK/BC31/large/UPGRADE.EXE             109574  sha256:df393ed3945ee68ba23157a356c7497e525aa6a7ecd37a849dc753a45c6e84d1
+  OUT/pwa153/SDK/BC31/LIB/COUNTRYL.LIB                6144  sha256:88daa0cdbd58392cb5c2478fb9755535526811d3d73cfcf5677beddbbc4943ab
+  OUT/pwa153/SDK/BC31/LIB/DOS_L.LIB                  42496  sha256:a3272af15830078d57cd8e77a0dbe191175c58c7b829f36a826adb22d15ec4db
+  OUT/pwa153/SDK/BC31/LIB/DOSCLS_L.LIB               11264  sha256:a786326afb3ec22e57d3cf74b2a5b9769e7b5542edf8aa430ed11e8e433f815e
+  OUT/pwa153/SDK/BC31/LIB/MISC_L.LIB                 75264  sha256:6332cf939f76674418faaa79ccc3b8c16a3a882488dbe35248dfda9ebb69accc
+  OUT/pwa153/SDK/BC31/LIB/PCB_L.LIB                  94720  sha256:dca022fad47f050853a1651e783da2e98d805f6c4b13617864a5460b4db5746b
+  OUT/pwa153/SDK/BC31/LIB/SCREEN_L.LIB               28672  sha256:21dd7cece8e6b00d9f47210ce8f2873fb2656d8c9a09c5282dbe20a1730ea69a
+  OUT/pwa153/SDK/BC31/LIB/SCRNIO_L.LIB               42496  sha256:ff86f6c32d9d5d9213c10491d61ecb6375477c4c574184c9657c5e2489c7495b
+  OUT/pwa153/SDK/BC31/LIB/SYSTEM_L.LIB                2560  sha256:a30dc85d7951bbc89678675771ac283ce055ac3f8a327c3d58cc5c82f97951a2
+  OUT/pwa153/SDK/BC31/LIB/TOOLKITL.LIB                6656  sha256:0059d8e32cdb45f1c56e61c6b78f01639ea49ecdbf6add11221e849c3b86f9c4
+  OUT/pwa153/SDK/BC31/LIB/VMDATA_L.LIB                6656  sha256:13948326e38be307aa884a3e7629949935eef973627bb88e314d9f1e4beb1b62  VMAVL + VMFUNCS
+  OUT/pwa153/SDK/BC31/medium/CALLBACK.EXE           101724  sha256:62836fb0cf726ba450d7a72280eaf79019e70b7bade974d3220ca5e2a62c2286
+  OUT/pwa153/SDK/BC31/medium/COPYBIN1.EXE           101296  sha256:a8b8ed5255890cbd5855bac5494cbf274a7c91780065cec6c298720143e3f427
+  OUT/pwa153/SDK/BC31/medium/COPYBIN2.EXE           101168  sha256:6bc5a8843df089a861b5c75bb19e584b68792774fbb8b7cdcf912f60d9420e50
+  OUT/pwa153/SDK/BC31/medium/COPYTEXT.EXE           101520  sha256:ff5c286612414758f5de10eefe66a9f9d17e1f2d42082a49c004eed1fbaa416d
+  OUT/pwa153/SDK/BC31/medium/HELLO.EXE              100444  sha256:ce1b45e57c9179033da14547b25d72e362aa0e09c184aa4720bff003a1b13d3e
+  OUT/pwa153/SDK/BC31/medium/UPGRADE.EXE            100732  sha256:e5e69c6128055f9e833da593b6c8e30d27df0cfb6c336cbf9a4e2e191c07b1a7
 
-  PCBKBCS.LIB    245,760  sha256:b107819dc757bf87214a12b980630e71a9e995e62c9f743c9f45a41c1f11e0c4  small
-  PCBKBCC.LIB    258,560  sha256:bff3d212f2da8cedcb0f0f8ac179cc8fb04e303409adf832462d4fd5e7af1e53  compact
-  PCBKBCM.LIB    252,928  sha256:64505e8cab00bac94970048629dcfa38c58bd44476de2d04c3edd36083712f24  medium
-  PCBKBCL.LIB    265,216  sha256:04e2c2419ffd774b716b2bc5da8551b855bdd0a66a2ca670729b7aa8c5f392af  large
+OUT/delta154 - the OpenWatcom build
+-----------------------------------
+  OUT/delta154/LOCAL_W.EXE                         1275628  sha256:8f6dac4c8ce4db154b4c89934655f6e5ead3b9e91eb6e5b739b8320e3032c708
+  OUT/delta154/MAKEHELP_W.EXE                        25114  sha256:2bb65d27a272098c90ef06471dee117446db838451b84441b2dcf2986600e8d1
+  OUT/delta154/MAKEIDX_W.EXE                         37672  sha256:a5ac862868c90f21ccbbe01fb9b47c1416fe110e6c732fb82c79103d30e682b6
+  OUT/delta154/MKPCBTXT_W.EXE                        27506  sha256:2e3469df4e4ae23a9f9aef9f153be7326ba7b69bab230042c984d49c8bac85a9
+  OUT/delta154/PCBCP_W.EXE                           77952  sha256:7906421818c3bc725b8d138a1a23f962a0fdd2a0870892bfe6954aa39230ff9a
+  OUT/delta154/PCBIS_W.EXE                           48478  sha256:298246ced8eb7e90c3d88ef70faa07736211e4c998a9693456661f5be4b5a269
+  OUT/delta154/PCBOARD_W.EXE                       1281492  sha256:82a7a0025d6880c666132effe5acd4bf0661a6d6aa2500eaeadef568db6a7f4c
+  OUT/delta154/PCBSETUP_W.EXE                       433986  sha256:ad298be638b4a95a101adf0f7742e92f4e60bf18ebd7a4a7cac2c27d9172c6d5
+  OUT/delta154/PCBSM_W.EXE                          226072  sha256:79e9ffec2d923b7d0f0c75286cf46861a002d80f66b4fa3a577be7c8e42f31d8
+  OUT/delta154/PPLC_W.EXE                          1276464  sha256:df10718e9a4560988aa37ca2ff5773b0254fdfea0d28519204daf487a0654c98
+  OUT/delta154/USERNET_W.EXE                         27774  sha256:7b590fd22cdd38d1502f29b93f9a29580d754404c539193d347f74486772e9aa
+  OUT/delta154/UUIN_W.EXE                          1404500  sha256:31d7bafb08242aaabb430799a622a40d21311b52abfc811f4ce49e8c34d430ce
+  OUT/delta154/UUOUT_W.EXE                         1404500  sha256:84ba5283161c9176d61f9183deef7f70c0e9c00fd77624993a6fab9cca4bfa77
+  OUT/delta154/UUUTIL_W.EXE                        1404500  sha256:695763631947a2af6d183c669253dd43e85d89341f159c65a856bf805b5ccf6a
+  OUT/delta154/UUXFER_W.EXE                        1404500  sha256:ee51819be94edf19e43f29c063b2bb316b0224bc0c97302563e28db74050f0ee
 
-Category libraries — same directory, moved from OUT/pwa153/lib/ this
-release. Built by COMPILE.BAT -> PCBOARD.MAK, not by BLDKBC.BAT.
-Content unchanged by the move:
+OUT/upd154 - the PCBIC 1.2 set
+------------------------------
+  OUT/upd154/PWA153/Pcbic.exe                       313310  sha256:8b44592a6f020d520cabb64a29c39dd44c481ef9a7924188e05e81b94132fb82
+  OUT/upd154/PWA153/Pcbic2.exe                      217111  sha256:dbf5dc6f7cd2655a7d857835585ac93ca84764226e81f4b9ff7eb2e58e08fb26
+  OUT/upd154/PWA153/PCBICCFG.EXE                    185398  sha256:5fdee1af3c45c4887420ec74c4efdb3547afb665097f936e8ee427c6ccd5b25f
+  OUT/upd154/PWA153/PCBICEVT.EXE                     89612  sha256:bf2f9d9b70dc32e6f5ce98533ac87e0021667c790b9f39fe3ed1da9be4a4e448
+  OUT/upd154/PWA153/TESTIC.EXE                       40104  sha256:35b656f53d0afab073d428db2fea0e1f22baa97f602977bec63acec8a5fb22a3
+  OUT/upd154/PWA153/TESTIC2.EXE                      46627  sha256:82f8c606ff68c7241504466dcea9ae971039c2b13da9f5217cff753a9761a06b
 
-  COUNTRYL.LIB      6,144  sha256:a435951f9f2f465b76a4734e36648dc0d85bd20275b56d992b251f75206cb353
-  DOS_L.LIB        33,280  sha256:6ec80c38784680e212f03ab2e73a281c998c6484e5fdadac8472acb4d808d3f5
-  DOSCLS_L.LIB     11,776  sha256:2484be8a450853099e4abea4bd96080eed7e61db15afcb9b12ec5620adfe883e
-  MISC_L.LIB       30,720  sha256:cc86ab45fce496c1acbc99db60144f5319a9207b44748f875b4daeb54ac4f56e
-  PCB_L.LIB        18,944  sha256:1fa141ed2b50eeeec97b3868c3bc6e08efbb183137d5901aba439d15424e30dc
-  SCREEN_L.LIB     17,408  sha256:58f2e3dc735c0a7938b5fb8da6467af4c9220368984095130c0d2537008b83dd
-  SCRNIO_L.LIB     43,008  sha256:2750091cac3e6c11db9c46a0f773b0128034a2e9fabd5d413f74cbb95a4fe75b
-  SYSTEM_L.LIB      2,560  sha256:a4ebc5014a3c306d8b11aab5cd98e516d14eac848da46fb12f2aa6e41186af37
-  TOOLKITL.LIB      6,656  sha256:cb776b6d81390c482275000b7834e49feb987bf0b3547ab64d969f6a6eb0b85c
+OUT/clark-original - Clark's shipped binaries, the comparison baseline
+----------------------------------------------------------------------
+  OUT/clark-original/beta-patched/LOCAL.EXE         768080  sha256:4381d7157956be9ba4b59c7b4c2d734ba5cbb5de4d5500c9422ad50c0fdd29d8
+  OUT/clark-original/beta-patched/PCBOARD.EXE      1051920  sha256:98037ff34c5a596cbb0bdd4f8fa6d3bbec63965addb3e4dc9f593815e1074f8e
+  OUT/clark-original/beta-patched/PCBOARDM.EXE     1007552  sha256:6e09319c3de056d3f32ec7934af6d06238f8c86bde352109bd7e22643d8e38d9
+  OUT/clark-original/DOS/LOCAL.EXE                  768080  sha256:af4f604e3269da67a4086daf308f5ea8e7f642522a4f771e4200c24984cfa3ff
+  OUT/clark-original/DOS/MKPCBTXT.EXE                62958  sha256:e0067f79a80b8a66586ab93494682e8d5032fc10f3849640a2cd4101a36fee3f
+  OUT/clark-original/DOS/PCBOARD.EXE               1051920  sha256:613ec40eac66bf94e71b9ef3b7e64455ff9154a705d4413422e4aa2ec71ff437
+  OUT/clark-original/DOS/PCBOARDM.EXE              1007552  sha256:e934e95ee226286a798afef45f1dee26a1b2edf2a0e76bfc006f535275573f5d
+  OUT/clark-original/DOS/PCBSETUP.EXE               411344  sha256:c9eaef461ab6e870726582c8bc055eb598f10f6160f778584b10edbf512509e0
+  OUT/clark-original/DOS/PCBSM.EXE                  278160  sha256:e1abf2075ffe330acb77c4dfa9915f5dd234af98d169dcf2ba83f3d410db1933
+  OUT/clark-original/DOS/PPLC.EXE                   201774  sha256:b73fc4f19ad2cf01c108a61ae06019c0345531406223bca8d50cd7cb9240fb3a
+  OUT/clark-original/DOS/UUIN.EXE                   259728  sha256:ef4b4e18964c3d29f62a8e9a85e72f7afc52ef5f9ee7451cf5adfe1dddd2da89
+  OUT/clark-original/DOS/UUOUT.EXE                  141272  sha256:059333278efaeaba293a517553c13d08e2bdcb4a1c8334187a9a95a418580ca3
+  OUT/clark-original/DOS/UUUTIL.EXE                 141170  sha256:97da8e7fdc5c78af93a622aef5de9648f4fd59370f6c42cd4f55d7a245ee550d
+  OUT/clark-original/DOS/UUXFER.EXE                 176998  sha256:8682e83240335b336029cee187b3f5717eef188c4cc3ba56989a9b0ee38b52a6
+  OUT/clark-original/OS2/PCBOARD2.EXE               891963  sha256:257b73f5666b247faec0a0bf3f2ecae93fb4a6ab94e95bd3de60b487a6631fa8
 
-SDK example doors — OUT/pwa153/bins/ (Clark's own samples, linked
-against the SDK; no small/compact, they exceed the 64K code segment):
+toolkit/pwa153/bc31/lib - the door SDK
+--------------------------------------
+  toolkit/pwa153/bc31/lib/PCBKBCC.LIB               258560  sha256:bff3d212f2da8cedcb0f0f8ac179cc8fb04e303409adf832462d4fd5e7af1e53
+  toolkit/pwa153/bc31/lib/PCBKBCL.LIB               265216  sha256:04e2c2419ffd774b716b2bc5da8551b855bdd0a66a2ca670729b7aa8c5f392af
+  toolkit/pwa153/bc31/lib/PCBKBCM.LIB               252928  sha256:64505e8cab00bac94970048629dcfa38c58bd44476de2d04c3edd36083712f24
+  toolkit/pwa153/bc31/lib/PCBKBCS.LIB               245760  sha256:b107819dc757bf87214a12b980630e71a9e995e62c9f743c9f45a41c1f11e0c4
 
-  medium/CALLBACK.EXE   101,724  sha256:62836fb0cf726ba450d7a72280eaf79019e70b7bade974d3220ca5e2a62c2286
-  medium/COPYBIN1.EXE   101,296  sha256:a8b8ed5255890cbd5855bac5494cbf274a7c91780065cec6c298720143e3f427
-  medium/COPYBIN2.EXE   101,168  sha256:6bc5a8843df089a861b5c75bb19e584b68792774fbb8b7cdcf912f60d9420e50
-  medium/COPYTEXT.EXE   101,520  sha256:ff5c286612414758f5de10eefe66a9f9d17e1f2d42082a49c004eed1fbaa416d
-  medium/HELLO.EXE      100,444  sha256:ce1b45e57c9179033da14547b25d72e362aa0e09c184aa4720bff003a1b13d3e
-  medium/UPGRADE.EXE    100,732  sha256:e5e69c6128055f9e833da593b6c8e30d27df0cfb6c336cbf9a4e2e191c07b1a7
-  large/CALLBACK.EXE   111,190  sha256:d4e7506cbd91606c9e73b0aed171c639beed94dae9eec1d7f02d4b6c149550b8
-  large/COPYBIN1.EXE   110,284  sha256:705f8ceb9140f1df42378e94f1d7f0a78983edb270fa0920b987e8fa6074826e
-  large/COPYBIN2.EXE   110,092  sha256:6fd1989ff6a754666a72211426a8e93055a207193508326e644686c4c8fa1856
-  large/COPYTEXT.EXE   110,636  sha256:60201f573da1794a83de8d3f201350f0d4168dd148f156e198b5e4b8e44c2dfc
-  large/HELLO.EXE      109,270  sha256:fbcc2e5d5f8a0855a2d5fa0d452914dd35d030b00c3fa24f2ce7bf270335ae8d
-  large/UPGRADE.EXE    109,574  sha256:df393ed3945ee68ba23157a356c7497e525aa6a7ecd37a849dc753a45c6e84d1
-
-Restored from e4181e5^ — deleted 2026-08-25, never re-added. Verified
-by blob hash, not filename:
-
-  toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C
-        6,211  sha256:2fcb7d89262212fea9ec3898a6b9bc2ceebaf9fe590255d3ec78054220918080
-    original Borland version; the 4 surviving copies all carry Watcom fixes
-  toolkit/pwa153/H/PCB153FX.H
-          512  sha256:450c41be45dc579938fb560f7237307ac645cb64b647a5a89b56ad5022901fc0
-    BCC 3.1 enum-overflow compat header
-  DOSBOX.CFG
-        1,054  sha256:49b6b5af52c6a3e810b0f98406929d08c4730de09ba92b6143f88f6cc0e9de36
-    repo-root build environment config
-
-Not included: OUT/pwa153/lib/ — the 9 old category-library copies still
-on disk after the move. They are byte-identical to the new location and
-need deleting by hand.

@@ -26,19 +26,40 @@ PROGNAME = UUIN
 #uncomment this line if you want to use TLINK instead of RTLINK
 #USETLINK = 1
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);..\COMMON;$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);..\COMMON;$(SRC)\SOURCE\H
 
 #=============================================================
 
@@ -102,8 +123,8 @@ EXE_DEPENDENCIES = \
   $(OBJDIR)\vmdclass.obj      \
   $(OBJDIR)\dresword.obj      \
   $(OBJDIR)\ci_other.obj      \
-  $(LIBLIB)\toolkit\large\nolog.obj    \
-  $(LIBLIB)\toolkit\large\smalldly.obj \
+  $(SDKOBJ)\toolkit\large\nolog.obj    \
+  $(SDKOBJ)\toolkit\large\smalldly.obj \
   $(LIBLIB)\pcbkit_$(MDL).lib \
   $(LIBLIB)\dos_$(MDL).lib    \
   $(LIBLIB)\doscls_$(MDL).lib \
@@ -112,7 +133,7 @@ EXE_DEPENDENCIES = \
   $(LIBLIB)\screen_$(MDL).lib \
   $(LIBLIB)\system_$(MDL).lib \
   $(LIBLIB)\country$(MDL).lib \
-  \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+  $(SDKLIB)\VMDATA_L.LIB
 
 #=============================================================
 
@@ -140,8 +161,8 @@ $(OBJDIR)\ci_other.obj+
 ..\bc31\stbdsptn.obj+
 ..\bc31\stbsgetn.obj+
 ..\bc31\stbsputn.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\smalldly.obj
+$(SDKOBJ)\toolkit\large\nolog.obj+
+$(SDKOBJ)\toolkit\large\smalldly.obj
 $(OBJDIR)\$(PROGNAME)
                 # no map file
 $(LIBLIB)\pcbkit_$(MDL).lib+
@@ -155,7 +176,7 @@ $(LIBLIB)\country$(MDL).lib+
 math$(MDL).lib+
 emu.lib+
 c$(MDL).lib+
-\LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+$(SDKLIB)\VMDATA_L.LIB
 |
 !else
 $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
@@ -176,8 +197,8 @@ $(OBJDIR)\decodem.obj+
 $(OBJDIR)\vmdclass.obj+
 $(OBJDIR)\dresword.obj+
 $(OBJDIR)\ci_other.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\smalldly.obj
+$(SDKOBJ)\toolkit\large\nolog.obj+
+$(SDKOBJ)\toolkit\large\smalldly.obj
 $(OBJDIR)\$(PROGNAME)
                 # no map file
 $(LIBLIB)\pcbkit_$(MDL).lib+
@@ -191,7 +212,7 @@ $(LIBLIB)\country$(MDL).lib+
 math$(MDL).lib+
 emu.lib+
 c$(MDL).lib+
-\LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+$(SDKLIB)\VMDATA_L.LIB
 |
 !endif
 !else
@@ -222,8 +243,8 @@ FILE ..\bc31\stbdsgtn.obj
 FILE ..\bc31\stbdsptn.obj
 FILE ..\bc31\stbsgetn.obj
 FILE ..\bc31\stbsputn.obj
-FILE $(LIBLIB)\toolkit\large\nolog.obj
-FILE $(LIBLIB)\toolkit\large\smalldly.obj
+FILE $(SDKOBJ)\toolkit\large\nolog.obj
+FILE $(SDKOBJ)\toolkit\large\smalldly.obj
 LIBRARY $(LIBLIB)\system_$(MDL).lib
 LIBRARY $(LIBLIB)\pcbkit_$(MDL).lib
 LIBRARY $(LIBLIB)\dos_$(MDL).lib
@@ -235,7 +256,7 @@ LIBRARY $(LIBLIB)\country$(MDL).lib
 LIBRARY $(LIBPATH)\math$(MDL).lib
 LIBRARY $(LIBPATH)\emu.lib
 LIBRARY $(LIBPATH)\c$(MDL).lib
-LIBRARY \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+LIBRARY $(SDKLIB)\VMDATA_L.LIB
 |
 !else
 $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
@@ -260,8 +281,8 @@ FILE $(OBJDIR)\decodem.obj
 FILE $(OBJDIR)\vmdclass.obj
 FILE $(OBJDIR)\dresword.obj
 FILE $(OBJDIR)\ci_other.obj
-FILE $(LIBLIB)\toolkit\large\nolog.obj
-FILE $(LIBLIB)\toolkit\large\smalldly.obj
+FILE $(SDKOBJ)\toolkit\large\nolog.obj
+FILE $(SDKOBJ)\toolkit\large\smalldly.obj
 LIBRARY $(LIBLIB)\system_$(MDL).lib
 LIBRARY $(LIBLIB)\pcbkit_$(MDL).lib
 LIBRARY $(LIBLIB)\dos_$(MDL).lib
@@ -273,7 +294,7 @@ LIBRARY $(LIBLIB)\country$(MDL).lib
 LIBRARY $(LIBPATH)\math$(MDL).lib
 LIBRARY $(LIBPATH)\emu.lib
 LIBRARY $(LIBPATH)\c$(MDL).lib
-LIBRARY \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+LIBRARY $(SDKLIB)\VMDATA_L.LIB
 |
 !endif
 !endif
@@ -363,3 +384,15 @@ $(CFG): $(MAK)
 
 #=============================================================
 
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

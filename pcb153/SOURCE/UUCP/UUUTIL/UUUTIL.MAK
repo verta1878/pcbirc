@@ -23,19 +23,40 @@
 
 PROGNAME = UUUTIL
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(SRC)\SOURCE\H
 
 #=============================================================
 
@@ -88,19 +109,19 @@ EXE_DEPENDENCIES = \
   $(OBJDIR)\ci_other.obj      \
   $(OBJDIR)\ci_build.obj      \
   $(OBJDIR)\uucp.obj          \
-  $(LIBLIB)\dos\large\showerr2.obj     \
-  $(LIBLIB)\toolkit\large\nolog.obj    \
-  $(LIBLIB)\toolkit\large\smalldly.obj \
-  $(LIBLIB)\toolkit\large\nostatus.obj \
-  $(LIBLIB)\toolkit\large\nodisp.obj   \
-  $(LIBLIB)\toolkit\large\noansi.obj   \
-  $(LIBLIB)\toolkit\large\notxt.obj    \
-  $(LIBLIB)\toolkit\large\nochat.obj   \
-  $(LIBLIB)\toolkit\large\nolang.obj    \
-  $(LIBLIB)\toolkit\large\nopcbsys.obj \
-  $(LIBLIB)\toolkit\large\noscreen.obj \
-  $(LIBLIB)\toolkit\large\noshell.obj  \
-  $(LIBLIB)\toolkit\large\nosys.obj    \
+  $(SDKOBJ)\dos\large\showerr2.obj     \
+  $(SDKOBJ)\toolkit\large\nolog.obj    \
+  $(SDKOBJ)\toolkit\large\smalldly.obj \
+  $(SDKOBJ)\toolkit\large\nostatus.obj \
+  $(SDKOBJ)\toolkit\large\nodisp.obj   \
+  $(SDKOBJ)\toolkit\large\noansi.obj   \
+  $(SDKOBJ)\toolkit\large\notxt.obj    \
+  $(SDKOBJ)\toolkit\large\nochat.obj   \
+  $(SDKOBJ)\toolkit\large\nolang.obj    \
+  $(SDKOBJ)\toolkit\large\nopcbsys.obj \
+  $(SDKOBJ)\toolkit\large\noscreen.obj \
+  $(SDKOBJ)\toolkit\large\noshell.obj  \
+  $(SDKOBJ)\toolkit\large\nosys.obj    \
   $(LIBLIB)\pcbkit_$(MDL).lib \
   $(LIBLIB)\dos_$(MDL).lib    \
   $(LIBLIB)\doscls_$(MDL).lib \
@@ -120,19 +141,19 @@ $(OBJDIR)\fidocfg.obj+
 $(OBJDIR)\ci_other.obj+
 $(OBJDIR)\ci_build.obj+
 $(OBJDIR)\uucp.obj+
-$(LIBLIB)\dos\large\showerr2.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\smalldly.obj+
-$(LIBLIB)\toolkit\large\nostatus.obj+
-$(LIBLIB)\toolkit\large\nodisp.obj+
-$(LIBLIB)\toolkit\large\noansi.obj+
-$(LIBLIB)\toolkit\large\notxt.obj+
-$(LIBLIB)\toolkit\large\nochat.obj+
-$(LIBLIB)\toolkit\large\nolang.obj+
-$(LIBLIB)\toolkit\large\nopcbsys.obj+
-$(LIBLIB)\toolkit\large\noscreen.obj+
-$(LIBLIB)\toolkit\large\noshell.obj+
-$(LIBLIB)\toolkit\large\nosys.obj
+$(SDKOBJ)\dos\large\showerr2.obj+
+$(SDKOBJ)\toolkit\large\nolog.obj+
+$(SDKOBJ)\toolkit\large\smalldly.obj+
+$(SDKOBJ)\toolkit\large\nostatus.obj+
+$(SDKOBJ)\toolkit\large\nodisp.obj+
+$(SDKOBJ)\toolkit\large\noansi.obj+
+$(SDKOBJ)\toolkit\large\notxt.obj+
+$(SDKOBJ)\toolkit\large\nochat.obj+
+$(SDKOBJ)\toolkit\large\nolang.obj+
+$(SDKOBJ)\toolkit\large\nopcbsys.obj+
+$(SDKOBJ)\toolkit\large\noscreen.obj+
+$(SDKOBJ)\toolkit\large\noshell.obj+
+$(SDKOBJ)\toolkit\large\nosys.obj
 $(OBJDIR)\$(PROGNAME)
                 # no map file
 $(LIBLIB)\pcbkit_$(MDL).lib+
@@ -146,7 +167,7 @@ $(LIBLIB)\country$(MDL).lib+
 math$(MDL).lib+
 emu.lib+
 c$(MDL).lib+
-\LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+$(SDKLIB)\VMDATA_L.LIB
 |
 
 #=============================================================
@@ -235,3 +256,15 @@ $(CFG): $(MAK)
 
 #=============================================================
 
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

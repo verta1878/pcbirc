@@ -23,19 +23,40 @@
 
 PROGNAME = FIDOUTIL
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = SOURCE
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(SRC)\SOURCE\H;$(SRC)\SOURCE\UUCP\COMMON
 
 #=============================================================
 
@@ -82,14 +103,13 @@ EXE_DEPENDENCIES = \
   convert.obj   \
   data.obj      \
   fidonet.obj   \
-#  packfido.obj  \
   maint.obj     \
   packfido.obj  \
   passthru.obj  \
   pcbfu.obj     \
   ptsetup.obj   \
   report.obj    \
-  $(LIBLIB)\dos\large\showerr2.obj \
+  $(SDKOBJ)\dos\large\showerr2.obj \
   $(LIBLIB)\dos_$(MDL).lib          \
   $(LIBLIB)\doscls_$(MDL).lib       \
   $(LIBLIB)\pcb_$(MDL).lib          \
@@ -98,7 +118,7 @@ EXE_DEPENDENCIES = \
   $(LIBLIB)\scrnio_$(MDL).lib       \
   $(LIBLIB)\system_$(MDL).lib       \
   $(LIBLIB)\country$(MDL).lib       \
-  \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+  $(SDKLIB)\VMDATA_L.LIB
 
 #=============================================================
 
@@ -111,12 +131,12 @@ $(OBJDIR)\convert.obj+
 $(OBJDIR)\data.obj+
 $(OBJDIR)\fidonet.obj+
 $(OBJDIR)\maint.obj+
-#$(OBJDIR)\packfido.obj+
+$(OBJDIR)\packfido.obj+
 $(OBJDIR)\passthru.obj+
 $(OBJDIR)\pcbfu.obj+
 $(OBJDIR)\ptsetup.obj+
 $(OBJDIR)\report.obj+
-$(LIBLIB)\dos\large\showerr2.obj
+$(SDKOBJ)\dos\large\showerr2.obj
 $(OBJDIR)\$(PROGNAME)
                 # no map file
 $(LIBLIB)\dos_$(MDL).lib+
@@ -127,7 +147,7 @@ $(LIBLIB)\screen_$(MDL).lib+
 $(LIBLIB)\scrnio_$(MDL).lib+
 $(LIBLIB)\system_$(MDL).lib+
 $(LIBLIB)\country$(MDL).lib+
-\LIBS\VMDATA\BC31_DOS\VMDATA.LIB+
+$(SDKLIB)\VMDATA_L.LIB+
 math$(MDL).lib+
 emu.lib+
 c$(MDL).lib+
@@ -137,17 +157,17 @@ c$(MDL).lib+
 
 # rules for individual files where necessary
 
-ci_build.obj: $(ROOT)\pcbsetup\source\ci_build.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcbsetup\source\ci_build.c
+ci_build.obj: $(SRC)\SOURCE\UTIL\PCBSETUP\SOURCE\CI_BUILD.C
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\UTIL\PCBSETUP\SOURCE\CI_BUILD.C
 
-data.obj: $(ROOT)\pcb\source\fido\data.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\data.cpp
+data.obj: $(SRC)\SOURCE\FIDO\data.cpp
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\data.cpp
 
-#packfido.obj: $(ROOT)\packfido\packfido.c
-#  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\packfido\packfido.c
+packfido.obj: $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
 
-passthru.obj: $(ROOT)\pcb\source\fido\passthru.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\passthru.cpp
+passthru.obj: $(SRC)\SOURCE\FIDO\passthru.cpp
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\passthru.cpp
 
 #=============================================================
 
@@ -222,9 +242,20 @@ $(CFG): $(MAK)
 -I$(INCLUDEPATH)
 -L$(LIBPATH)
 -DPCBSETUP;QUIET_BUILD;FIDO;PCBFU;
--D_FARDATA_=far
 -DFIDOUTIL
 | $(CFG)
 
 #=============================================================
 
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

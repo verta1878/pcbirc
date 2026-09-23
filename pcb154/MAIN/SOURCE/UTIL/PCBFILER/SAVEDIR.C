@@ -30,7 +30,8 @@
 #include "pcbfiler.ext"
 #include "idx.hpp"
 #include "vmstruct.h"
-#include <virtual1.h>
+#include <virtual.h>     /* huge VirType: VIRTUAL1 is the near variant, and
+                              delta154 has no virtual1.h */
 #include "rules.h"
 #ifdef DEBUG
 #include <memcheck.h>

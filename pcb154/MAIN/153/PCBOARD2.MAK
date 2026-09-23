@@ -31,7 +31,12 @@
 .CACHEAUTODEPEND
 
 VERSION = 153
-ROOT    = \PROJ
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef BCROOT
+BCROOT   = \BCOS2
+!endif
 PROJ    = $(ROOT)\PCB
 LIBROOT = $(ROOT)\LIB
 LIBDIR  = $(LIBROOT)\BCOS2
@@ -195,7 +200,7 @@ EXE_DEPENDENCIES =  \
 
 $(OBJ)\pcboard2.exe: $(CFG) $(EXE_DEPENDENCIES) $(OBJ)\linker.res
    $(LINKER) $(DBG) /B:0x10000 /S:49152 /x /Toe /ap /Oc /L$(LIBPATH) @&&|
-D:\BCOS2\LIB\C02.OBJ+
+$(BCROOT)\LIB\C02.OBJ+
 $(OBJ)\pcboard.obj+
 $(OBJ)\init.obj+
 VERSION\BCOS2.obj+
@@ -316,7 +321,7 @@ $(LIBPATH)\OS2.LIB
 $(PROJ)\$(VERSION)\pcboard2.def
 |
 
-  \PROJ\PCB\153\LXBFIX $(OBJ)\pcboard2.exe
+  $(ROOT)\PCB\153\LXBFIX $(OBJ)\pcboard2.exe
   if exist $(OBJ)\linker.res del $(OBJ)\linker.res
 
 

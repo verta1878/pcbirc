@@ -60,7 +60,9 @@ int  ExitKeyFlag[NumEKeys];
 #define MenuTotal     7
 #define MenuItemTotal 89
 
-char   _FAR_ MenuList[MenuItemTotal][36];
+char         MenuList[MenuItemTotal][36];   /* was _FAR_; SCRNIO.EXT
+                                              declares it near, and PCBSM
+                                              and PCBFU define it near too */
 char   MenuAvail[MenuItemTotal];
 struct MenuType Menu[MenuTotal];
 void pascal (*MenuFunc[MenuItemTotal])(void);

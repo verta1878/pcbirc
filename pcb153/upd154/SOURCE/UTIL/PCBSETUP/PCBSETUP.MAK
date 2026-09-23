@@ -23,7 +23,9 @@
 
 PROGNAME = PCBSETUP
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
 SOURCE   = SOURCE
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB

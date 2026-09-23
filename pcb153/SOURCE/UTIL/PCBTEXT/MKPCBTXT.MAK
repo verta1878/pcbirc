@@ -23,19 +23,43 @@
 
 PROGNAME = MKPCBTXT
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+!ifndef LIBEXT
+LIBEXT   = LIB
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);$(ROOT)\MAIN\SOURCE\H;$(ROOT)\MAIN\SOURCE\UTIL\PCBSM\SOURCE
+INCLUDEPATH = $(INCLUDE);$(LIBH);$(SRC)\SOURCE\H;$(SRC)\SOURCE\UTIL\PCBSM\SOURCE
 
 #=============================================================
 
@@ -77,42 +101,42 @@ EXE_DEPENDENCIES = \
   $(OBJDIR)\STRS15.OBJ        \
   $(OBJDIR)\INPUTNUM.OBJ      \
   $(OBJDIR)\SCRNINPT.OBJ      \
-  $(LIBLIB)\dos_$(MDL).386    \
-  $(LIBLIB)\misc_$(MDL).386   \
-  $(LIBLIB)\screen_$(MDL).386 \
-  $(LIBLIB)\scrnio_$(MDL).386 \
-  $(LIBLIB)\system_$(MDL).386 \
-  $(LIBLIB)\country$(MDL).386
+  $(LIBLIB)\dos_$(MDL).$(LIBEXT)    \
+  $(LIBLIB)\misc_$(MDL).$(LIBEXT)   \
+  $(LIBLIB)\screen_$(MDL).$(LIBEXT) \
+  $(LIBLIB)\scrnio_$(MDL).$(LIBEXT) \
+  $(LIBLIB)\system_$(MDL).$(LIBEXT) \
+  $(LIBLIB)\country$(MDL).$(LIBEXT)
 
 #=============================================================
 
 $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH);\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31 @&&|
+  $(LINKER) /x/c/L$(LIBPATH);$(SRC)\SOURCE\UTIL\PCBSM\$(CVER) @&&|
 c0$(MDL).obj+
 $(OBJDIR)\MKPCBTXT.OBJ+
 $(OBJDIR)\STRS15.OBJ+
 $(OBJDIR)\INPUTNUM.OBJ+
 $(OBJDIR)\SCRNINPT.OBJ+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\box.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\delete.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\dosfread.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\getmode.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\insert.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\kbdstat.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\readscrn.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\scrollup.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\showerr2.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\stripb.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\timechng.obj+
-\PCBSRC\MAIN\SOURCE\UTIL\PCBSM\BC31\wherex.obj
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\box.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\delete.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\dosfread.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\getmode.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\insert.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\kbdstat.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\readscrn.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\scrollup.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\showerr2.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\stripb.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\timechng.obj+
+$(SRC)\SOURCE\UTIL\PCBSM\$(CVER)\wherex.obj
 $(OBJDIR)\$(PROGNAME)
                 # no map file
-$(LIBLIB)\dos_$(MDL).386+
-$(LIBLIB)\misc_$(MDL).386+
-$(LIBLIB)\screen_$(MDL).386+
-$(LIBLIB)\scrnio_$(MDL).386+
-$(LIBLIB)\system_$(MDL).386+
-$(LIBLIB)\country$(MDL).386+
+$(LIBLIB)\dos_$(MDL).$(LIBEXT)+
+$(LIBLIB)\misc_$(MDL).$(LIBEXT)+
+$(LIBLIB)\screen_$(MDL).$(LIBEXT)+
+$(LIBLIB)\scrnio_$(MDL).$(LIBEXT)+
+$(LIBLIB)\system_$(MDL).$(LIBEXT)+
+$(LIBLIB)\country$(MDL).$(LIBEXT)+
 cl.lib
 |
 
@@ -120,11 +144,11 @@ cl.lib
 
 # rules for individual files where necessary
 
-$(OBJDIR)\INPUTNUM.OBJ: $(ROOT)\lib\source\scrnio\inputnum.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\lib\source\scrnio\inputnum.c
+$(OBJDIR)\INPUTNUM.OBJ: $(TKIT)\SOURCE\SCRNIO\inputnum.c
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(TKIT)\SOURCE\SCRNIO\inputnum.c
 
-$(OBJDIR)\SCRNINPT.OBJ: $(ROOT)\lib\source\scrnio\scrninpt.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\lib\source\scrnio\scrninpt.c
+$(OBJDIR)\SCRNINPT.OBJ: $(TKIT)\SOURCE\SCRNIO\scrninpt.c
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(TKIT)\SOURCE\SCRNIO\scrninpt.c
 
 #=============================================================
 
@@ -198,3 +222,15 @@ $(CFG): $(MAK)
 | $(CFG)
 
 #=============================================================
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

@@ -23,7 +23,9 @@
 
 PROGNAME = UUUTIL
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
 SOURCE   = .
 OBJDIR   = $(BCCOMPILER)
 LIBROOT  = $(ROOT)\LIB

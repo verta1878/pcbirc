@@ -15,6 +15,10 @@
 .NOSILENT
 .AUTODEPEND
 
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+
 # Process DEBUG
 #DEBUG = 1
 #TD = 1

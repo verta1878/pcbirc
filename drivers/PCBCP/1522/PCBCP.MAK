@@ -27,7 +27,12 @@
 #=============================================================
 
 VERSION = 1522
-ROOT    = \PROJ
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef TKROOT
+TKROOT   = \TOOLKT21
+!endif
 PROJ    = $(ROOT)\PCBCP
 LIBROOT = $(ROOT)\LIB
 LIBDIR  = $(LIBROOT)\BCOS2
@@ -108,7 +113,7 @@ $(LIBDIR)\misc.lib+
 $(LIBDIR)\screen.lib+
 $(LIBDIR)\dos.lib+
 !if $d(VALIDATOR)
-  d:\toolkt21\os2lib\validatr.lib+
+  $(TKROOT)\OS2LIB\VALIDATR.LIB+
 !endif
 $(LIBPATH)\C2MT.LIB+
 $(LIBPATH)\OS2.LIB

@@ -1,124 +1,122 @@
-# v0.3.2 — ROOT names the branch; paths match our layout (2026-09-17)
+# CHECKSUMS.md5 - the single manifest for this repo
 #
-# Where a path appears in both the v0.3.2 and the v0.3.1 section, the
-# v0.3.2 line is the current one. HISTORY.md, APPLY.txt and .gitignore
-# all changed again in this release.
+# There is ONE CHECKSUMS.sha256 and ONE CHECKSUMS.md5, both here at the
+# root, both repo-relative.  The six per-directory copies that used to
+# sit under OUT/ and toolkit/ are retired to attic/checksums/ - see
+# APPLY.txt, "ONE CHECKSUM MANIFEST, NOT SEVEN".  Do not add new ones.
+#
+# Verify from the repo root:
+#
+#     md5sum -c CHECKSUMS.md5          (or: CLEANUP VERIFY, on Windows)
+#
+# Every path appears exactly ONCE, with its CURRENT hash.  Earlier
+# releases' hashes are not kept here: a path listed twice cannot be
+# checked.  Release history is prose - CHECKSUMS.txt and APPLY.txt.
+#
+# Covers every built or recovered binary under OUT/ and toolkit/, plus
+# every file changed in v0.3.4 and v0.3.5.  101 files.  2026-09-22.
+#
+# This manifest already EXCLUDES the eight files CLEANUP RETIRE deletes,
+# so it is correct only AFTER that has been run.
 
-# Modified again in v0.3.2 (these supersede the v0.3.1 lines below for the same path)
-cb0af655a3edd8d885f8ee297d1ada48  .gitignore
-ff1181eaf54048db9b49342f2d997e98  APPLY.txt
-24b27746683c9382f1825fdde5e6efe4  HISTORY.md
-fa789cabd5b93ff9d7106cca22a67b1a  MAIN/build/CLARK-DRIVE-LAYOUT.md
-
-857fa9cdf39ff67b3300d227d2449c9a  todo/toolkit.md
-
-87d90dcf4f98de6c70174f11314ac27c  pcb153/SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK
-
-67f17754271c9cc1198641d08144616d  pcb153/SOURCE/MISC/MD5/README.md
-
-9889268c9c971d58539a39993a6909b1  pcb153/SOURCE/MISC/MD5/FILE_ID.DIZ
-
-
-197a4c28d16f2b7c9f9a4463b21c5d53  pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md
-
-b95f2b31ddc8295c22db40d650d236df  todo/PCBIC-PWA-BUILD-DRAFT.md
-
-2f540b44e076da73693e5469a9e7e493  OUT/README.md
-ff12ab23f113033f470c243457e7f8ae  toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C
-
-6e71d153643fbd359290939fe3a0d885  toolkit/pwa153/SOURCE/MISC/VIRTUAL-MERGE.md
-
-6e71d153643fbd359290939fe3a0d885  toolkit/pwa154/SOURCE/MISC/VIRTUAL-MERGE.md
-
-9c646738e4c4f2f3073d372ecda05968  pcb153/SOURCE/MISC/USERNET/USERNET2.MAK
-
-# New in v0.3.2
-4d9df2e4185bb007dea01463f3dd9396  MAIN/build/scripts/normalize-case.sh
-bd8016f075cc9907e0003acf8dc8377e  pcb153/SOURCE/MISC/MD5/MD5.ASM
-df65abb47c5187661fbb9cae18573c12  pcb153/SOURCE/MISC/MD5/MD5.TXT
-7b4cd49ad19fd5de225997e9cfc65c5a  pcb153/SOURCE/MISC/MD5/RFC1321.TXT
-f1a07b4adb486c3497f338d37a55a9e6  pcb153/SOURCE/MISC/MD5/RFC1725.TXT
-f72bba6c996faf932fdec642371865c7  pcb153/SOURCE/MISC/MD5/OS2/MD5.OBJ
-3bb48d7f1b7dcc7ffecb67ddfffb11c2  toolkit/pwa153/H/VMDATA.H
-236659b6c5b1190169685615710fdb36  toolkit/pwa153/H/vmavl.h
-46e327513080275a5fcbe60c7194a1f9  toolkit/pwa153/SOURCE/VMAVL.C
-3de76e3a080d81fdfda50a13c33cfb78  toolkit/pwa153/SOURCE/VMFUNCS.C
+1d843ed13f973c258eca3586c5c497c0  APPLY.txt
+3effd447b1e9fa6b97f2eb7a9cf6428b  attic/checksums/OUT-clark-original.sha256
+3cab2fe6ead81c2fd66e351f0129a6f2  attic/checksums/OUT-delta154.sha256
+26cc1b7dc2182ae5f9d2a58ec0981eb5  attic/checksums/OUT-pwa153-SDK-BC31.sha256
+ac5638890d8e06370a4f5e91cce3536c  attic/checksums/OUT-pwa153.sha256
+6ff7b2e1186cd79b264ec87005541c81  attic/checksums/README.md
+188f6a869eebbe7946d223daf8b99656  attic/checksums/toolkit-pwa153-bc31-lib.md5
+8c0c4c5932c13a4b2a44c69cc128a133  attic/checksums/toolkit-pwa153-bc31-lib.sha256
+72f95afd04ac029d7e5c9c3c58463c96  attic/RETIRE.LST
+9688764c61366b17e18ec9e6703f61fd  CLEANUP.BAT
+a86025c98006910bea986ad4b2c23adc  MAIN/build/CATEGORY-LIBRARIES.md
+82e79cf466b3c3d653466dbe384ed5c9  MAIN/build/VMDATA-RECONSTRUCTION.md
+062dd7672bf7a95cea0410d0e71d2654  OUT/clark-original/beta-patched/LOCAL.EXE
+6cb31b2f8e05dea66445e545da3dd7d5  OUT/clark-original/beta-patched/PCBOARD.EXE
+5506687729c0c0b3e7ee9c5f9c13ae40  OUT/clark-original/beta-patched/PCBOARDM.EXE
+d790b2725176804720e3771f4663ade5  OUT/clark-original/DOS/LOCAL.EXE
+3566f9fb626b5de62593301febdf276d  OUT/clark-original/DOS/MKPCBTXT.EXE
+88763782508c44ee4a574c1799c82890  OUT/clark-original/DOS/PCBOARD.EXE
+44887f8c5ccf1f91550b7bd7355a0bb4  OUT/clark-original/DOS/PCBOARDM.EXE
+61d9513116718a6dedd140eb4f7975d9  OUT/clark-original/DOS/PCBSETUP.EXE
+a522430a314858a7dfd4dd3ecafa75c6  OUT/clark-original/DOS/PCBSM.EXE
+6359db0b2b9f160b2b535954c472ffa4  OUT/clark-original/DOS/PPLC.EXE
+dd0de3e9d3df3790db75664e3d478e57  OUT/clark-original/DOS/UUIN.EXE
+c6015ba89520bb0ef246556bd0349b43  OUT/clark-original/DOS/UUOUT.EXE
+0f26c017d08a77e899b53ce3a9c93df8  OUT/clark-original/DOS/UUUTIL.EXE
+79449c0063da2d5071ca0c3340967da6  OUT/clark-original/DOS/UUXFER.EXE
+38e4935dd28ebc5029c33e798cfd1b07  OUT/clark-original/OS2/PCBOARD2.EXE
+6c4c5c463791e7d742c2802336613cac  OUT/delta154/LOCAL_W.EXE
+5827cadbf8c1d2cb36aab7b6ea8fc954  OUT/delta154/MAKEHELP_W.EXE
+afccab35ddd3d5768571e72fd6f9f734  OUT/delta154/MAKEIDX_W.EXE
+78257f046bb5866b45b316c9f12083ff  OUT/delta154/MKPCBTXT_W.EXE
+47bed6d24aaf632479a24d0d3379ed86  OUT/delta154/PCBCP_W.EXE
+9de204e4a9b726b3df0c7d3312821078  OUT/delta154/PCBIS_W.EXE
+1a6196d97531df3f09a5ae91b64cf500  OUT/delta154/PCBOARD_W.EXE
+28a0839abc03cd1e5377f54a7a1e6107  OUT/delta154/PCBSETUP_W.EXE
+f494f9ba7515a768f5598c5e673c6aec  OUT/delta154/PCBSM_W.EXE
+ea35f28b2f6e2fb0dcbc2cfc89aa7c48  OUT/delta154/PPLC_W.EXE
+8bf9987873464659fbc65d339a8e3bc1  OUT/delta154/USERNET_W.EXE
+69f9465fa1603f3c291cc5206ebe893e  OUT/delta154/UUIN_W.EXE
+2c079e15a51ae4b4c37d840f44d8bda3  OUT/delta154/UUOUT_W.EXE
+bd48fc3e973cefc98d1fb87ea5dee79e  OUT/delta154/UUUTIL_W.EXE
+ef5d34f655bf2f98a09fa57a71cf69a7  OUT/delta154/UUXFER_W.EXE
+8db525640efcf258f308eb829e2ab290  OUT/pwa153/FIDOUTIL.EXE
+bcdba320477446972925ee10d34cda03  OUT/pwa153/MAKEIDX.EXE
+a0f810af1f8c8db52121480143d405d0  OUT/pwa153/MKPCBTXT.EXE
 521947f8ad247a488b15d5c838ee6ff7  OUT/pwa153/PCBOARD.EXE
-
-# Makefiles repointed in v0.3.2 (13 files)
-54be57f57a71e6aa842912050e96db9e  pcb153/153/PCBOARD.MAK
-fb929538cd2d352dc0d79681dfbd4c39  pcb153/153/PCBOARD2.MAK
-c2459c70224dd55151a94dbe62d33874  pcb153/153/PPLC.MAK
-7e0cf14b16d83a23f40ceb4cb3edab72  pcb153/SOURCE/MISC/IDX/MAKEIDX.MAK
-e1592e301eaa8919f056d4c61b5ac13f  pcb153/SOURCE/MISC/USERNET/USERNET.MAK
-0b435d0fcd89169b14e29249af8d7eba  pcb153/SOURCE/UTIL/PCBSETUP/PCBSETUP.MAK
-22cee8c8c20bff2d4f13c5ef05c2ddef  pcb153/SOURCE/UTIL/PCBSM/PCBSM.MAK
-e556a03a8cbd80bcb64ab954fdc646ee  pcb153/SOURCE/UTIL/PCBTEXT/MKPCBTXT.MAK
-b23fa1613e7aff8703d34576ee5fde9b  pcb153/SOURCE/UUCP/UUIN/UUIN.MAK
-d5fa559f421f612c58df2f8f10d1743f  pcb153/SOURCE/UUCP/UUOUT/UUOUT.MAK
-51224510d6d60f6870b231fe307bf548  pcb153/SOURCE/UUCP/UUUTIL/UUUTIL.MAK
-029eb0e4f126df3d5128c441e586e58e  pcb153/SOURCE/UUCP/UUXFER/UUXFER.MAK
-
-# v0.3.1 — pwa153 door SDK built and verified by linking (2026-09-17)
-# NOTE: OUT/README.md and toolkit/pwa153/SOURCE/MISC/VIRTUAL1.C were
-# listed here in v0.3.1 but changed again in v0.3.2, so their entries
-# moved to the v0.3.2 section above. Their v0.3.1 hashes are recorded
-# in that release's APPLY.txt, not repeated here.
-
-# Modified in this release
-ee7835a71a1ebef45e11265d972ad2dc  .gitignore
-7da78113e6322ca33e2b02b79ee8c735  APPLY.txt
-3591e0c6af2b6e79e665a266f9c71e1e  HISTORY.md
-d42565b498e73f9f0139f5bb067bb752  MAIN/build/SDK-BUILD-STATUS.md
-8bfbbfe612def7241ef1940db85cacd5  MAIN/build/scripts/BLDKBC.BAT
-037e134d07c055fcd9cf483cd1514a7c  OUT/delta154/README.md
-73a5a27617020d750b24ccebcd5690ca  todo/pcb-libchain-build.md
-65d52450e236bb1aeff30a7a86f6194e  todo/toolkit.md
-
-# Restored from e4181e5^ (deleted 2026-08-25, never re-added)
-eb237a4475c59e5dce25c4272fdef514  DOSBOX.CFG
-2205273d376d9a66f3134b58eb5d7b5a  toolkit/pwa153/H/PCB153FX.H
-
-# New in this release
-22fae1abbf3950662f9888029ad24f67  MAIN/build/scripts/KBCC.RSP
-7aa429cb7a861cb3a9e09e7f1c43b0a7  MAIN/build/scripts/KBCL.RSP
-9f6b9bfa8d734e75e0220a8d460e078c  MAIN/build/scripts/KBCM.RSP
-bb70d3b35f84cb1247812a1050d02613  MAIN/build/scripts/KBCS.RSP
-0dbf86720ed32a3557f0717b68651645  MAIN/build/scripts/PCBKBC.CFG
-26cc1b7dc2182ae5f9d2a58ec0981eb5  OUT/pwa153/bins/CHECKSUMS.sha256
-d75fc19f94ce785913b83e811c4ed88f  OUT/pwa153/bins/README.md
-92a8df089d528f95bb81c8cbc08ac4d6  OUT/pwa153/bins/large/CALLBACK.EXE
-e4fa389b268775ade531a1ac651fe7b4  OUT/pwa153/bins/large/COPYBIN1.EXE
-d021f8dccf02c9e000dc7e72f2238104  OUT/pwa153/bins/large/COPYBIN2.EXE
-90c940f28dda3d18ffb245a2da275740  OUT/pwa153/bins/large/COPYTEXT.EXE
-efcd36926f8b5d3e238e8acb94ab72a2  OUT/pwa153/bins/large/HELLO.EXE
-e9b65af0894850806652893da9ea236f  OUT/pwa153/bins/large/UPGRADE.EXE
-21fc0d7a224b54231f1f9e780b18bc10  OUT/pwa153/bins/medium/CALLBACK.EXE
-b10b78c0199985f99cfb6ed7165df62b  OUT/pwa153/bins/medium/COPYBIN1.EXE
-324970fb503a3cb4fab7554d7b7a2a28  OUT/pwa153/bins/medium/COPYBIN2.EXE
-100a19410652fab50868d85135f642c7  OUT/pwa153/bins/medium/COPYTEXT.EXE
-2106102ae0787e783ca6548c01897765  OUT/pwa153/bins/medium/HELLO.EXE
-4ff6d97931f522de0762bcf653830f53  OUT/pwa153/bins/medium/UPGRADE.EXE
-89aee0e731871f6dc0578753c68d7feb  toolkit/pwa153/bc31/README.md
-188f6a869eebbe7946d223daf8b99656  toolkit/pwa153/bc31/lib/CHECKSUMS.md5
-8c0c4c5932c13a4b2a44c69cc128a133  toolkit/pwa153/bc31/lib/CHECKSUMS.sha256
-eec13b69dd13d7b1ae9feeeecd5aa908  toolkit/pwa153/bc31/lib/COUNTRYL.LIB
-e019cd899f2931854f2fb6d6ff2d2b81  toolkit/pwa153/bc31/lib/DOSCLS_L.LIB
-e7ac0b83fdb6cd17cbe920221453484d  toolkit/pwa153/bc31/lib/DOS_L.LIB
-7fda4ec64ca269454fc6c4900561aded  toolkit/pwa153/bc31/lib/MISC_L.LIB
+9c6e949f3e4f81054b242c370f9e7b7c  OUT/pwa153/PCBOARDM.EXE
+9b98446096df0b244d4ff4cd490ecb7d  OUT/pwa153/PCBSETUP.EXE
+a7e1944d22b93ef6c5149d3e3326e683  OUT/pwa153/PCBSM.EXE
+92a8df089d528f95bb81c8cbc08ac4d6  OUT/pwa153/SDK/BC31/large/CALLBACK.EXE
+e4fa389b268775ade531a1ac651fe7b4  OUT/pwa153/SDK/BC31/large/COPYBIN1.EXE
+d021f8dccf02c9e000dc7e72f2238104  OUT/pwa153/SDK/BC31/large/COPYBIN2.EXE
+90c940f28dda3d18ffb245a2da275740  OUT/pwa153/SDK/BC31/large/COPYTEXT.EXE
+efcd36926f8b5d3e238e8acb94ab72a2  OUT/pwa153/SDK/BC31/large/HELLO.EXE
+e9b65af0894850806652893da9ea236f  OUT/pwa153/SDK/BC31/large/UPGRADE.EXE
+534998ee5352958574cb8a2c11a43909  OUT/pwa153/SDK/BC31/LIB/COUNTRYL.LIB
+b4117da71496f5488fb2909f1719d2b4  OUT/pwa153/SDK/BC31/LIB/DOS_L.LIB
+771fde018412e9695d79afb25c1988e4  OUT/pwa153/SDK/BC31/LIB/DOSCLS_L.LIB
+e2d1459d1346bf0e7de544a2badded81  OUT/pwa153/SDK/BC31/LIB/MISC_L.LIB
+a160b7e7d0a5236c10f984361a94f645  OUT/pwa153/SDK/BC31/LIB/PCB_L.LIB
+6353afcfec1c6e42fccac7cdd30797d1  OUT/pwa153/SDK/BC31/LIB/SCREEN_L.LIB
+c6a7e974eafd4ba33c63da03d8bb8f5b  OUT/pwa153/SDK/BC31/LIB/SCRNIO_L.LIB
+4ed902eeddd1401fa2c40f23a40c0a4b  OUT/pwa153/SDK/BC31/LIB/SYSTEM_L.LIB
+dfc2316946a486c760f645e61963b25f  OUT/pwa153/SDK/BC31/LIB/TOOLKITL.LIB
+ced31108cfb69c85d618bb32c1029624  OUT/pwa153/SDK/BC31/LIB/VMDATA_L.LIB
+21fc0d7a224b54231f1f9e780b18bc10  OUT/pwa153/SDK/BC31/medium/CALLBACK.EXE
+b10b78c0199985f99cfb6ed7165df62b  OUT/pwa153/SDK/BC31/medium/COPYBIN1.EXE
+324970fb503a3cb4fab7554d7b7a2a28  OUT/pwa153/SDK/BC31/medium/COPYBIN2.EXE
+100a19410652fab50868d85135f642c7  OUT/pwa153/SDK/BC31/medium/COPYTEXT.EXE
+2106102ae0787e783ca6548c01897765  OUT/pwa153/SDK/BC31/medium/HELLO.EXE
+4ff6d97931f522de0762bcf653830f53  OUT/pwa153/SDK/BC31/medium/UPGRADE.EXE
+8b8e19ac5a62b55af08b7a6acfc516bc  OUT/upd154/PWA153/Pcbic.exe
+44e459deeaa901cad575472f91dd3943  OUT/upd154/PWA153/Pcbic2.exe
+092a895b9dcc7e8b84cb1cea46adeccd  OUT/upd154/PWA153/PCBICCFG.EXE
+45bcc0367c6d7e9a51ea1323ba7248f9  OUT/upd154/PWA153/PCBICEVT.EXE
+985bf3f06b7ce592cf718667697be7b1  OUT/upd154/PWA153/TESTIC.EXE
+bfb0e052edebcf5abeb56139ee9f700c  OUT/upd154/PWA153/TESTIC2.EXE
+6cfa295c485d3b03ef57d53d0509d013  pcb153/SOURCE/UTIL/PCBSM/PCBSM.MAK
+fa5d2223ffad8d0e0dba75eb6db5c088  pcb153/SOURCE/UTIL/PCBTEXT/MKPCBTXT.MAK
+df4ef5d2ef1007fd1bb6e28e38f63c9b  pcb1541/pcbdcom/doc/COMM-H-MERGE.md
+ad9c9c5a4a79a0b548c4b8db3df46ec8  pcb1541/pcbdcom/doc/FOSSIL-OBJ-ANALYSIS.md
+fa131cc4c43b206151aa480afc745fdc  pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md
+a50725859f1bdd4c42e338b1790fd2a2  pcb1541/pcbdcom/inc/compat.h
+e8f62e36e0eb0405f05f55dac0992aa4  pcb1541/pcbdcom/inc/pcbdcom.h
+f4700571097a0ed79be0eec4492d3f58  pcb1541/pcbdcom/src/commdrbl.c
+41b912a762da8b030f7d90a3d43093d7  pcb1541/pcbdcom/src/int14-r1.c
+85f3dc700ee6b1a711362cdf43a0b7d5  pcb1541/pcbdcom/src/int14.c
+596afa0b42052993096f15fa9d3558d4  pcb1541/pcbdcom/src/libsbl.c
+8d8b2feacde21b0d2716d98aec78251d  pcbcbase/COMMDRV/H/COMM.H
+7b1f55cd3806dc11688a5faf9d8e907e  pcbcbase/COMMDRV/LIB/README.md
+20fd3000667dffe48c76cd76aac2f6c9  reference/commdrv/comm-h-recon-b.h
 dd0d6ed030781cffc5c6e3bc174caac8  toolkit/pwa153/bc31/lib/PCBKBCC.LIB
-228e6fa591a6f010d58dfd2a8ba42d39  toolkit/pwa153/bc31/lib/PCBKBCC.LST
 26ddb7b5a7bda9cbef5d071c6399a1ea  toolkit/pwa153/bc31/lib/PCBKBCL.LIB
-e76d07652d3d83f05075bbb68c3d377c  toolkit/pwa153/bc31/lib/PCBKBCL.LST
 b34e0069be1a6cf2237d9ebf8b434299  toolkit/pwa153/bc31/lib/PCBKBCM.LIB
-862906d29558fe647e80cdb3523c4ec7  toolkit/pwa153/bc31/lib/PCBKBCM.LST
 7dc6844db1069b79911feea7099239f1  toolkit/pwa153/bc31/lib/PCBKBCS.LIB
-b72cf4689da46e6371794b52187d7731  toolkit/pwa153/bc31/lib/PCBKBCS.LST
-927898ee5be0b91ac7fdd4ff54e9ba82  toolkit/pwa153/bc31/lib/PCB_L.LIB
-951a5e77c548ec47034129b02eafebc3  toolkit/pwa153/bc31/lib/SCREEN_L.LIB
-f3bfd5d7fe4399a75a7209da62f0622b  toolkit/pwa153/bc31/lib/SCRNIO_L.LIB
-4ca97cedf71dd6e7b2a6901c17cfc83b  toolkit/pwa153/bc31/lib/SYSTEM_L.LIB
-998c5ce390d7fc53cd67e61bd0d02d7a  toolkit/pwa153/bc31/lib/TOOLKITL.LIB
-
-# Moved this release: OUT/pwa153/lib/*.LIB -> toolkit/pwa153/bc31/lib/
-# (content unchanged; the 9 old copies still need deleting by hand)
+e58fb206add5c75994c881ad08f912ca  toolkit/pwa153/bc31/obj/COMMDRV.OBJ
+ca0450499e4e0e1d17ebf4afab5592c7  toolkit/pwa153/bc31/obj/FOSSIL.OBJ
+6acc8d3c3f2ea0ebedf85aa8a233e128  toolkit/pwa153/bc31/obj/README.md
+3c8dd834d4aa44c8b1b2891ca45afe3d  toolkit/pwa153/H/VMDATA.H
+920b20dc157a34cd33f5827f207672c0  toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C
+b1c98be2fa7f197ac9cb29e6281663b9  toolkit/pwa153/SOURCE/VMFUNCS.C

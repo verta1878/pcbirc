@@ -30,7 +30,9 @@
 .AUTODEPEND
 
 VERSION = 153
-ROOT    = ..
+!ifndef ROOT
+ROOT     = \OUT
+!endif
 PROJ    = $(ROOT)\MAIN
 LIBDIR  = $(ROOT)\LIB\BCDOS\$(BCCOMPILER)
 OBJ     = OBJ\$(BCCOMPILER)

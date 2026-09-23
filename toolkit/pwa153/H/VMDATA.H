@@ -66,6 +66,19 @@ void VMSort(VMDataSet *set, unsigned recSize, long start, long cnt,
             VMSortFunc *sortFn,
             void *scratchBuf, unsigned scratchLen);
 
+/* VMSeqFinalPass - finish the sequential pass over a sorted set.
+ *
+ * NOT Clark's declaration.  Reconstructed 2026-09-22.  PCBSM's SORT.C
+ * calls it three times (lines 346, 444, 536), always immediately after
+ * VMSort() and immediately before the records are written out, and it is
+ * declared nowhere in this repo except a #ifdef __WATCOMC__ block in
+ * pcb153\SOURCE\UTIL\PCBSM\SOURCE\pcbsm_externs.h, which types it as
+ *     extern int (*VMSeqFinalPass)(void *);
+ * That block is the only surviving evidence of its signature: returns
+ * int, takes the VMDataSet.  See VMDATA-RECONSTRUCTION.md.
+ */
+int VMSeqFinalPass(VMDataSet *set);
+
 void VMEMSStateSave(void);
 void VMEMSStateRestore(void);
 

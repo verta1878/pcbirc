@@ -23,19 +23,40 @@
 
 PROGNAME = PCBSETUP
 
+!ifndef ROOT
 ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
 SOURCE   = SOURCE
 OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
+LIBROOT  = $(TKIT)
 LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+LIBLIB   = $(SDKLIB)
 
 CFG      = $(PROGNAME).CFG
 MAK      = $(PROGNAME).MAK
 
 MDL      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA
+INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(SRC)\SOURCE\H;$(SRC)\SOURCE\UUCP\COMMON
 
 #=============================================================
 
@@ -77,7 +98,7 @@ ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
 #=============================================================
 
 EXE_DEPENDENCIES = \
-  $(LIBLIB)\misc\large\swap.obj \
+  $(SDKOBJ)\misc\large\swap.obj \
   $(OBJDIR)\pcbsetup.obj        \
   $(OBJDIR)\account.obj         \
   $(OBJDIR)\chkfile.obj         \
@@ -150,21 +171,22 @@ EXE_DEPENDENCIES = \
   $(OBJDIR)\unique.obj          \
   $(OBJDIR)\uucp.obj            \
   $(OBJDIR)\data.obj            \
-  $(OBJDIR)\dos_$(MDL).lib      \
-  $(OBJDIR)\pcb_$(MDL).lib      \
-  $(OBJDIR)\misc_$(MDL).lib     \
-  $(OBJDIR)\screen_$(MDL).lib   \
-  $(OBJDIR)\scrnio_$(MDL).lib   \
+  $(LIBLIB)\dos_$(MDL).lib      \
+  $(LIBLIB)\pcb_$(MDL).lib      \
+  $(LIBLIB)\misc_$(MDL).lib     \
+  $(LIBLIB)\screen_$(MDL).lib   \
+  $(LIBLIB)\scrnio_$(MDL).lib   \
   $(LIBLIB)\system_$(MDL).lib   \
   $(LIBLIB)\doscls_$(MDL).lib   \
   $(LIBLIB)\country$(MDL).lib   \
+  $(SDKLIB)\VMDATA_L.LIB
 
 #=============================================================
 
 $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/P/L$(LIBPATH) @&&|
+  $(LINKER) /x/c/L$(LIBPATH) @&&|
 /o- c0$(MDL).obj+
-/o- $(LIBLIB)\misc\large\swap.obj+
+/o- $(SDKOBJ)\misc\large\swap.obj+
 /o+ $(OBJDIR)\pcbsetup.obj+
 /o+ $(OBJDIR)\account.obj+
 /o+ $(OBJDIR)\chkfile.obj+
@@ -236,36 +258,18 @@ $(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
 /o+ $(OBJDIR)\sysopfun.obj+
 /o+ $(OBJDIR)\unique.obj+
 /o+ $(OBJDIR)\uucp.obj+
-/o+ $(OBJDIR)\data.obj+
-$(OBJDIR)\kbdstat.obj+
-$(OBJDIR)\vmfuncs.obj+
-$(OBJDIR)\dosfugts.obj+
-$(OBJDIR)\PCB\DATAFILE.obj+
-$(OBJDIR)\PCB\DATADFLT.obj+
-$(OBJDIR)\PCB\CHKEXIST.obj+
-$(OBJDIR)\PCB\ENDSTR.obj+
-$(OBJDIR)\PCB\GETDAYS.obj+
-$(OBJDIR)\PCB\CONFIG.obj+
-$(OBJDIR)\PCB\DATA120.obj+
-$(OBJDIR)\PCB\DATAWRIT.obj+
-$(OBJDIR)\DELETE.obj+
-$(OBJDIR)\INSERT.obj+
-$(OBJDIR)\READSCRN.obj+
-$(OBJDIR)\TIMECHNG.obj+
-$(OBJDIR)\GETMODE.obj+
-$(OBJDIR)\VALIDATE.obj+
-$(OBJDIR)\VALIDSEM.obj+
-$(OBJDIR)\INT24HND.obj
+/o+ $(OBJDIR)\data.obj
 $(OBJDIR)\$(PROGNAME)
 $(OBJDIR)\$(PROGNAME)
-/o- $(OBJDIR)\dos_$(MDL).lib+
-/o- $(OBJDIR)\pcb_$(MDL).lib+
-/o- $(OBJDIR)\misc_$(MDL).lib+
-/o- $(OBJDIR)\screen_$(MDL).lib+
-/o- $(OBJDIR)\scrnio_$(MDL).lib+
+/o- $(LIBLIB)\dos_$(MDL).lib+
+/o- $(LIBLIB)\pcb_$(MDL).lib+
+/o- $(LIBLIB)\misc_$(MDL).lib+
+/o- $(LIBLIB)\screen_$(MDL).lib+
+/o- $(LIBLIB)\scrnio_$(MDL).lib+
 /o- $(LIBLIB)\system_$(MDL).lib+
 /o- $(LIBLIB)\doscls_$(MDL).lib+
 /o- $(LIBLIB)\country$(MDL).lib+
+/o- $(SDKLIB)\VMDATA_L.LIB+
 /o- math$(MDL).lib+
 /o- emu.lib+
 /o- c$(MDL).lib+
@@ -276,11 +280,11 @@ $(OBJDIR)\$(PROGNAME)
 
 # rules for individual files where necessary
 
-$(OBJDIR)\fconfig.obj: $(ROOT)\pcb\source\fido\fconfig.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\fconfig.c
+$(OBJDIR)\fconfig.obj: $(SRC)\SOURCE\FIDO\fconfig.c
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\fconfig.c
 
-$(OBJDIR)\data.obj: $(ROOT)\pcb\source\fido\data.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\data.cpp
+$(OBJDIR)\data.obj: $(SRC)\SOURCE\FIDO\data.cpp
+  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\data.cpp
 
 #=============================================================
 
@@ -356,8 +360,19 @@ $(CFG): $(MAK)
 -I$(INCLUDEPATH)
 -L$(LIBPATH)
 -DFIDO;TRAVIS;PCBSETUP;USEFLOAT;USEDATE;VMDATA;NDEBUG;QUIET_BUILD
--D_FARDATA_=far
 | $(CFG)
 
 #=============================================================
 
+
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
+  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
+  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
+  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
+  -if exist $(CFG) del $(CFG)

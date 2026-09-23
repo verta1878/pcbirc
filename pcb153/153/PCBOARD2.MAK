@@ -31,12 +31,36 @@
 .CACHEAUTODEPEND
 
 VERSION = 153
-ROOT    = \PROJ
-PROJ    = $(ROOT)\PCB
-LIBROOT = $(ROOT)\LIB
-LIBDIR  = $(LIBROOT)\BCOS2
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef BRANCH
+BRANCH   = PWA153
+!endif
+!ifndef CVER
+CVER     = $(BCCOMPILER)
+!endif
+!ifndef SRC
+SRC      = \PCB153
+!endif
+!ifndef TKIT
+TKIT     = \TOOLKIT\PWA153
+!endif
+!ifndef LIBSDIR
+LIBSDIR  = \PCBCBASE
+!endif
+OUTDIR   = $(ROOT)\$(BRANCH)
+SDK      = $(OUTDIR)\SDK\$(CVER)
+SDKLIB   = $(SDK)\LIB
+SDKOBJ   = $(SDK)\OBJ
+!ifndef BCROOT
+BCROOT   = \BCOS2
+!endif
+PROJ    = $(SRC)
+LIBROOT = $(TKIT)
+LIBDIR  = $(OUTDIR)\SDK\BCOS2\LIB
 SOURCE  = $(PROJ)\SOURCE
-OBJ     = $(PROJ)\OBJ\BCOS2
+OBJ     = OBJ\BCOS2
 
 CFG     = $(PROJ)\$(VERSION)\PCBOARD2.CFG
 MAK     = $(PROJ)\$(VERSION)\PCBOARD2.MAK
@@ -181,7 +205,7 @@ EXE_DEPENDENCIES =  \
  blt.obj \
  ansi.obj \
  account.obj \
- $(ROOT)\md5\os2\md5.obj
+ $(SRC)\SOURCE\MISC\MD5\OS2\MD5.OBJ
 
 #=============================================================
 #               Explicit Rules
@@ -195,7 +219,7 @@ EXE_DEPENDENCIES =  \
 
 $(OBJ)\pcboard2.exe: $(CFG) $(EXE_DEPENDENCIES) $(OBJ)\linker.res
    $(LINKER) $(DBG) /B:0x10000 /S:49152 /x /Toe /ap /Oc /L$(LIBPATH) @&&|
-D:\BCOS2\LIB\C02.OBJ+
+$(BCROOT)\LIB\C02.OBJ+
 $(OBJ)\pcboard.obj+
 $(OBJ)\init.obj+
 VERSION\BCOS2.obj+
@@ -300,7 +324,7 @@ $(OBJ)\chat.obj+
 $(OBJ)\capture.obj+
 $(OBJ)\blt.obj+
 $(OBJ)\account.obj+
-$(ROOT)\md5\os2\md5.obj
+$(SRC)\SOURCE\MISC\MD5\OS2\MD5.OBJ
 $(OBJ)\pcboard2
                 # no map file
 $(LIBSDIR)\codebase\os2bor1\b4.lib+
@@ -316,7 +340,7 @@ $(LIBPATH)\OS2.LIB
 $(PROJ)\$(VERSION)\pcboard2.def
 |
 
-  \PROJ\PCB\153\LXBFIX $(OBJ)\pcboard2.exe
+  $(SRC)\153\LXBFIX $(OBJ)\pcboard2.exe
   if exist $(OBJ)\linker.res del $(OBJ)\linker.res
 
 
@@ -683,3 +707,14 @@ $(CFG): $(MAK)
 $(DBG)
 | $(CFG)
 
+
+#=============================================================
+#       CLEAN - remove everything this makefile produces
+#=============================================================
+
+CLEAN:
+  -if exist $(OBJ)\*.obj del $(OBJ)\*.obj
+  -if exist $(OBJ)\*.map del $(OBJ)\*.map
+  -if exist $(OBJ)\*.res del $(OBJ)\*.res
+  -if exist $(OBJ)\PCBOARD2.EXE del $(OBJ)\PCBOARD2.EXE
+  -if exist $(CFG) del $(CFG)

@@ -21,6 +21,13 @@
 
 .AUTODEPEND
 
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef BCROOT
+BCROOT   = \BCOS2
+!endif
+
 .PATH.obj = BCOS2
 
 #=============================================================
@@ -32,8 +39,8 @@ TLIB = tlib.exe
 TLINK = tlink
 RC = brcc.exe
 RB = rc.exe
-LIBPATH = D:\BCOS2\LIB
-INCLUDEPATH = D:\BCOS2\INCLUDE;d:\proj\lib\h
+LIBPATH = $(BCROOT)\LIB
+INCLUDEPATH = $(BCROOT)\INCLUDE;$(ROOT)\lib\h
 
 
 #=============================================================
@@ -68,7 +75,7 @@ EXE_DEPENDENCIES =  \
 #=============================================================
 bcos2\usernet2.exe: usernet2.cfg $(EXE_DEPENDENCIES)
   $(TLINK) /B:0x10000 /x /Toe /ap /L$(LIBPATH) @&&|
-D:\BCOS2\LIB\C02.OBJ+
+$(BCROOT)\LIB\C02.OBJ+
 bcos2\usernet.obj
 bcos2\usernet2
 		# no map file
@@ -76,8 +83,8 @@ bcos2\usernet2
 ..\lib\bcos2\screen.lib+
 ..\lib\bcos2\misc.lib+
 ..\lib\bcos2\dos.lib+
-D:\BCOS2\LIB\C2.LIB+
-D:\BCOS2\LIB\OS2.LIB
+$(BCROOT)\LIB\C2.LIB+
+$(BCROOT)\LIB\OS2.LIB
 
 |
 

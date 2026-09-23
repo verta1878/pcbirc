@@ -21,7 +21,14 @@
 
 .AUTODEPEND
 
-.PATH.obj = \PROJ\PCBMONI\OS2
+!ifndef ROOT
+ROOT     = \OUT
+!endif
+!ifndef BCROOT
+BCROOT   = \BCOS2
+!endif
+
+.PATH.obj = $(ROOT)\PCBMONI\OS2
 
 #=============================================================
 #               Translator Definitions
@@ -32,8 +39,8 @@ TLIB = tlib.exe
 TLINK = tlink
 RC = brcc.exe
 RB = rc.exe
-LIBPATH = D:\BCOS2\LIB
-INCLUDEPATH = D:\BCOS2\INCLUDE;\proj\lib\h
+LIBPATH = $(BCROOT)\LIB
+INCLUDEPATH = $(BCROOT)\INCLUDE;$(ROOT)\lib\h
 
 
 #=============================================================
@@ -69,20 +76,20 @@ EXE_DEPENDENCIES =  \
 #=============================================================
 #               Explicit Rules
 #=============================================================
-\proj\pcbmoni\os2\pcbmoni2.exe: pcbmoni2.cfg $(EXE_DEPENDENCIES)
+$(ROOT)\pcbmoni\os2\pcbmoni2.exe: pcbmoni2.cfg $(EXE_DEPENDENCIES)
   $(TLINK) /B:0x10000 /Toe /ap /L$(LIBPATH) @&&|
-D:\BCOS2\LIB\C02.OBJ+
-\proj\pcbmoni\os2\scrninpt.obj+
-\proj\pcbmoni\os2\pcbmoni.obj
-\proj\pcbmoni\os2\pcbmoni2,\proj\pcbmoni\os2\pcbmoni2
+$(BCROOT)\LIB\C02.OBJ+
+$(ROOT)\pcbmoni\os2\scrninpt.obj+
+$(ROOT)\pcbmoni\os2\pcbmoni.obj
+$(ROOT)\pcbmoni\os2\pcbmoni2,$(ROOT)\pcbmoni\os2\pcbmoni2
 ..\lib\bcos2\country.lib+
 ..\lib\bcos2\misc.lib+
 ..\lib\bcos2\scrnio.lib+
 ..\lib\bcos2\screen.lib+
 ..\lib\bcos2\dos.lib+
 ..\lib\bcos2\system.lib+
-D:\BCOS2\LIB\C2MT.LIB+
-D:\BCOS2\LIB\OS2.LIB
+$(BCROOT)\LIB\C2MT.LIB+
+$(BCROOT)\LIB\OS2.LIB
 
 |
 

@@ -21,6 +21,7 @@
 #include <dosfunc.h>
 #include <screen.h>
 #include <scrnio.h>
+#include <scrnio.ext>
 #include <data.hpp>
 #include <misc.h>
 #include <pcb.h>
