@@ -21,6 +21,8 @@ family maps to PCBKBC/PCBKIT/PCBKMS, decompression recipe), see
 | Archive (here) | Extracted / curated form | Notes |
 |---|---|---|
 | `TURBOC201.zip` | root `TC201BT.ZIP` (build subset) | Turbo C 2.01 → PCBKIT |
+| `BC31.zip` | root `PCB153BT.ZIP` / inside `DOSBOXX.ZIP` | **Borland C++ 3.1** — Clark's DOS compiler. Pristine distro in devtools; build-ready copy at root and in DOSBOXX.ZIP. |
+| `BC2(OS2).ZIP` | not yet extracted | **Borland C++ 2.0 for OS/2** — 32-bit flat-model compiler (LX binaries, Copyright 1994). Clark used this for PCBOARD2.EXE and USERNET2.EXE. Needs a real OS/2 host or Wine — cannot run under DOSBox-X. Build script: BLDOS2.CMD. |
 | `MSC51.zip` | not yet extracted — install v1.11 use | **MS C 5.1** — 14 floppy images (5.25"). Ships **LINK 5.01.21** (Microsoft Segmented-Executable Linker), MS OS/2 Libraries (API.LIB with DOSCALLS/KBDCALLS/VIOCALLS), CodeView for OS/2. Candidate toolchain for install v1.11 (byte-exact rebuild of Clark's INSTALL.EXE which has linker version bytes 5.10 in its NE header). |
 | `MSC60A.zip` | not yet extracted — install v1.11 use | **MS C 6.0a** — 6 floppy images (5.25" HD). Contains newer LINK.EX$ (SZ-compressed, decompresses during Setup). Also targets DOS + OS/2. Backup candidate if MSC 5.1's LINK version doesn't match Clark's 5.10 exactly. |
 | `OS2SDK103.zip` | not yet extracted — install v1.11 use | **MS OS/2 SDK 1.03** — 11 floppy images (3.5"). Contains same LINK.EXE as MSC 5.1 (identical md5), plus PM SDK, Petzold sample code, toolkit binaries. Provides OS/2 host environment for running the MSC 5.1 or MSC 6.0a linker. |
@@ -28,21 +30,23 @@ family maps to PCBKBC/PCBKIT/PCBKMS, decompression recipe), see
 | `C7OS2.zip` | folded into `MSC70BT.ZIP` | C7 OS/2 hosted add-on (the DPMI unlock) |
 | `MSC70-patches.7z` | applied during build | LINK/LIB/PWB/CV fixes |
 
-(Borland C++ 3.1 lives at root `PCB153BT.ZIP` / inside `DOSBOXX.ZIP`;
-its raw distro is not in devtools.)
-
 ### DPMI host (for the MSC 7.0 DOS route)
 | Archive (here) | What it is |
 |---|---|
 | `386MAX-803.7z` | Qualitas 386MAX 8.03 (2 floppy images). The 32-bit DPMI host the MSC 7.0 DOS compiler ("3216" passes) requires. Build-time tool for PCBKMS Route A only. Proprietary (abandonware). NOT a 1541 dependency - see todo/SDK-1541-OPENSOURCE-MIGRATION.md. |
 | `386max.7z` | 386MAX source code from https://github.com/sudleyplace/386MAX (GPLv3). Open-source path for PCBKMS Route A. |
 | `d32a.7z` | DOS/32A Advanced DOS Extender v9.1.2 source + prebuilt binaries (github.com/amindlost/dos32a, Adapted Apache 1.1 license). The DPMI host the crew uses for forward Watcom-based work (delta154, irc1541). Drop-in replacement for DOS/4GW. Runtime binaries staged into `PCBBLDBT.IMG` at `C:\D32A\` for immediate use; compile-from-source is a roadmap task (needs TASM 5.0 + Watcom C 11.0). |
+| `cwsdpmi.zip` | CWSDPMI — Charles W. Sandmann's DPMI host for DJGPP. Lightweight 32-bit DPMI server for DOS. |
+| `hxrt216.zip` | HX DOS Extender Runtime v2.16 — Win32 PE loader for DOS. Runs Win32 console apps under plain DOS without Windows. |
 
 ### Toolkit source
 | Archive (here) | Extracted / curated form | Notes |
 |---|---|---|
 | `Toolkit3.zip`, `toolkit3a.ZIP`, `toolkit3b.ZIP` | `toolkit/pwa153` (+ pwa154/delta154/irc1541) | PWA toolkit source, already extracted into the working trees |
-| `TOOLKIT2.ZIP` | provenance only | earlier toolkit revision |
+| `TOOLKIT2.ZIP` | provenance only | Clark's Doors Developer's TOOLKIT v2.0 (1993) — 12 prebuilt kit libraries. Not yet extracted into the tree. |
+| `TOOLKT21.ZIP` | stays in devtools/ | **IBM Developer's Toolkit for OS/2 2.1** — from Developer Connection for OS/2 Volume 1 (Aug 1993, archive.org "ibm-devcon-01"). NOT Clark's Doors Toolkit. PCBCP source references `\TOOLKT21\` for OS/2 API headers. See `TOOLKT21.md` for provenance. |
+| `TK21D35.ZIP` | — | TOOLKT21 3.5" diskette set |
+| `TK21D525.ZIP` | — | TOOLKT21 5.25" diskette set |
 
 The `toolkit/` working trees are what the build uses; these ZIPs are the
 pristine originals they came from.
