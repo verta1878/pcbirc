@@ -471,7 +471,7 @@ typedef struct
 {
   uint          PCB_Conference;         /* PCBoard conference number    */
   char          Area_Name[AREA_SIZE];          /* name of area                 */
-/*char          Messages[MAXFLEN];       /* name of file for messages    */ */
+/*char          Messages[MAXFLEN];          name of file for messages      */
   char          Mreserved[MAXFLEN];       /* name of file for messages    */
   char          default_aka[25];        /* Address to use for Export    */
   char          origin[70];             /* Origin line to use           */

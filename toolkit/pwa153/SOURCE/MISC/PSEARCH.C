@@ -142,7 +142,7 @@ lookahead:
     }
     p++;
   }
-/*return(TOK_END);  /* keep the compiler happy */ */
+/*return(TOK_END);     keep the compiler happy    */
 }
 
 

@@ -2,10 +2,10 @@
 REM ---------------------------------------------------------------
 REM BLDTK.BAT - build the PCBoard toolkit category libraries
 REM
-REM   BLDTK              build all nine categories
+REM   BLDTK              build all ten libraries
 REM   BLDTK CLEAN        delete the objects and the libraries
 REM   BLDTK <CATEGORY>   one of COUNTRY DOS DOSCLS MISC PCB
-REM                      SCREEN SCRNIO SYSTEM TOOLKIT
+REM                      SCREEN SCRNIO SYSTEM TOOLKIT VMDATA
 REM
 REM Each category is built with MAKE -fTKLIB.MAK in its own folder.
 REM Clark's original MAKEFILE is left in place, untouched and unused.
@@ -79,12 +79,15 @@ MAKE -fTKLIB.MAK %TKACT%
 CD \TOOLKIT\PWA153\SOURCE\TOOLKIT
 ECHO === TOOLKIT ===
 MAKE -fTKLIB.MAK %TKACT%
+CD \TOOLKIT\PWA153\SOURCE\VMDATA
+ECHO === VMDATA ===
+MAKE -fTKLIB.MAK %TKACT%
 CD \
 GOTO DONE
 
 :BADCAT
 ECHO ERROR: no such category "%TKONE%".
-ECHO        COUNTRY DOS DOSCLS MISC PCB SCREEN SCRNIO SYSTEM TOOLKIT
+ECHO        COUNTRY DOS DOSCLS MISC PCB SCREEN SCRNIO SYSTEM TOOLKIT VMDATA
 GOTO END
 
 :NOBCC

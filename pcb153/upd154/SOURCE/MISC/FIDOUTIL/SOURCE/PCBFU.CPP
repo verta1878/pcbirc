@@ -52,8 +52,25 @@ extern char *HelpVerifyStr;
 extern int GeneralHelpNum;
 extern char HelpName[];
 extern char ColorCnf[];
+/* SCRNIO\MENU.C defines these as POINTERS - "char *MainHead1;" - and
+   PCBSETUP\SOURCE\INIT.C:296 assigns to them.  Declaring them here as
+   ARRAYS and strcpy'ing into them writes through an uninitialised pointer,
+   every time FIDOUTIL starts.  Borland's linker matches names only, so it
+   never noticed; Watcom C++ encodes the type and refuses to link it.
+   
+   THE FIX IS GUARDED TO OS/2 ON PURPOSE.  Correcting it on DOS as well
+   changes FIDOUTIL.EXE - the strcpy code disappears and the binary loses
+   sixteen bytes, 154,362 -> 154,346.  The DOS arm is therefore left
+   exactly as Clark wrote it so the DOS output stays byte for byte what it
+   has always been, and the DOS defect is recorded here rather than
+   silently repaired.       -- pcbirc crew, 2026-09-23 */
+#if defined(__OS2__)
+extern char *MainHead1;
+extern char *MainHead2;
+#else
 extern char MainHead1[];
 extern char MainHead2[];
+#endif
 extern char MainHead3[];
 extern int KeyFlags;
 
@@ -172,8 +189,13 @@ void static near pascal menu(void)
   addmenu(2,"Manually add areas",setupAreasMan);
 
 
+#if defined(__OS2__)
+  MainHead1 = "PCBoard Fido Utility";
+  MainHead2 = "Copyright (C) 1996 Clark Development, Inc.";
+#else
   strcpy(MainHead1, "PCBoard Fido Utility");
   strcpy(MainHead2, "Copyright (C) 1996 Clark Development, Inc.");
+#endif
 
    do
    {

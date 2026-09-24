@@ -72,6 +72,9 @@ static void near pascal makepathlist(char *DownPaths, char *FileName, bool Appen
 
 
 static void near pascal makedirlist(char *GenPath, char *FileName, int Num, int Start, char FirstLetter, bool Append) {
+  #ifdef __OS2__
+  os2errtype Os2Error;   /* OS/2 carries the extended error per call - see CHKAPPEN.C */
+  #endif
   DirListType2 List;
   char Result[66];
   char Buffer2[61];
@@ -89,7 +92,7 @@ static void near pascal makedirlist(char *GenPath, char *FileName, int Num, int 
     doslseek(File,0,SEEK_END);
   } else {
     validatepath(NULL,FileName,Result,VALIDATE_FILE);
-    if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL)) == -1)
+    if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL POS2ERROR)) == -1)
       return;
   }
 
@@ -116,6 +119,9 @@ static void near pascal makedirlist(char *GenPath, char *FileName, int Num, int 
 
 
 static void near pascal makebltlist(char *FileName, char *Path, int Num) {
+  #ifdef __OS2__
+  os2errtype Os2Error;   /* OS/2 carries the extended error per call - see CHKAPPEN.C */
+  #endif
   char Result[66];
   char Buffer1[31];
   char Buffer2[31];
@@ -123,7 +129,7 @@ static void near pascal makebltlist(char *FileName, char *Path, int Num) {
   int  Count;
 
   validatepath(NULL,FileName,Result,VALIDATE_FILE);
-  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL)) == -1)
+  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL POS2ERROR)) == -1)
     return;
 
   for (Count = 1; Count <= Num; Count++) {
@@ -137,6 +143,9 @@ static void near pascal makebltlist(char *FileName, char *Path, int Num) {
 
 
 static void near pascal makescriptlist(char *FileName, char *Path, char FirstLetter) {
+  #ifdef __OS2__
+  os2errtype Os2Error;   /* OS/2 carries the extended error per call - see CHKAPPEN.C */
+  #endif
   char Result[66];
   char Buffer3[61];
   char Buffer1[31];
@@ -148,7 +157,7 @@ static void near pascal makescriptlist(char *FileName, char *Path, char FirstLet
   char *q;
 
   validatepath(NULL,FileName,Result,VALIDATE_FILE);
-  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL)) == -1)
+  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL POS2ERROR)) == -1)
     return;
 
   strcpy(Buffer1,Path);

@@ -154,7 +154,12 @@ typedef struct {
 } callerstattype;
 #pragma pack()
 
-#ifdef PCB152
+/* accounttype, personal_psa_t, timebank_psa_t and qwkconfigtype were inside
+   #ifdef PCB152 while USERSYS.H uses accounttype and qwkconfigtype
+   unconditionally.  All three headers that carry this block share one
+   #ifndef EXTENDED_USER_INFO guard, so whichever is included first supplies
+   the types for the rest.  Moved out; no effect when PCB152 is defined.
+                                           -- pcbirc crew, 2026-09-23 */
 #pragma pack(1)
 typedef struct {
   double StartingBalance;
@@ -229,7 +234,6 @@ typedef struct {
   char           Reserved[13];
 } qwkconfigtype;
 #pragma pack()
-#endif /* ifdef PCB152 */
 #endif /* ifndef EXTENDED_USER_INFO */
 
 #pragma pack(1)

@@ -79,6 +79,9 @@ static void near pascal makedirlist(char *GenPath, char *FileName, int Num, int 
   char NumBuf[10];
   int  File;
   int  Count;
+  #ifdef __OS2__
+  os2errtype Os2Error;   /* OS/2 carries the extended error per call - see CHKAPPEN.C */
+  #endif
 
   Num--;   /*  reduce the number by ONE because we don't want to     */
            /*  include the UPLOAD directory in the DIR.LST file !!!  */
@@ -89,7 +92,7 @@ static void near pascal makedirlist(char *GenPath, char *FileName, int Num, int 
     doslseek(File,0,SEEK_END);
   } else {
     validatepath(NULL,FileName,Result,VALIDATE_FILE);
-    if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL)) == -1)
+    if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL POS2ERROR)) == -1)
       return;
   }
 
@@ -121,9 +124,12 @@ static void near pascal makebltlist(char *FileName, char *Path, int Num) {
   char Buffer2[31];
   int  File;
   int  Count;
+  #ifdef __OS2__
+  os2errtype Os2Error;   /* OS/2 carries the extended error per call - see CHKAPPEN.C */
+  #endif
 
   validatepath(NULL,FileName,Result,VALIDATE_FILE);
-  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL)) == -1)
+  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL POS2ERROR)) == -1)
     return;
 
   for (Count = 1; Count <= Num; Count++) {
@@ -146,9 +152,12 @@ static void near pascal makescriptlist(char *FileName, char *Path, char FirstLet
   int  Counter;
   char *p;
   char *q;
+  #ifdef __OS2__
+  os2errtype Os2Error;   /* OS/2 carries the extended error per call - see CHKAPPEN.C */
+  #endif
 
   validatepath(NULL,FileName,Result,VALIDATE_FILE);
-  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL)) == -1)
+  if ((File = doscreate(FileName,OPEN_WRIT,OPEN_NORMAL POS2ERROR)) == -1)
     return;
 
   strcpy(Buffer1,Path);

@@ -151,7 +151,15 @@ typedef struct {
 } callerstattype;
 #pragma pack()
 
-#ifdef PCB152
+/* accounttype and qwkconfigtype were inside #ifdef PCB152 while USERSYS.H
+   uses both unconditionally (accounttype at :213, qwkconfigtype at :215).
+   All three headers that carry this block - USERS.H, USERSYS.H and
+   PCBTOOLS.H - share one #ifndef EXTENDED_USER_INFO guard, so whichever is
+   included first supplies the types for the rest.  When USERS.H won and
+   PCB152 was not defined, these two were simply never declared and the use
+   sites failed.  Same defect as personal_psa_t / timebank_psa_t in the
+   upd154 copy of this file.  Moved out; no effect when PCB152 is defined.
+                                          -- pcbirc crew, 2026-09-23 */
 #pragma pack(1)
 typedef struct {
   double StartingBalance;
@@ -186,7 +194,6 @@ typedef struct {
   char           Reserved[13];
 } qwkconfigtype;
 #pragma pack()
-#endif /* ifdef PCB152 */
 #endif /* ifndef EXTENDED_USER_INFO */
 
 #pragma pack(1)

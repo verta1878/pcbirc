@@ -1,0 +1,133 @@
+                              PACKFIDO.EXE
+                      pcbirc crew, 2026.  GPLv3.
+                 The 15.4 upgrade that was never shipped
+
+              pcb153\upd154\SOURCE\MISC\PACKFIDO
+
+
+This utility packs the FIDO area file AREAS.DAT, the format PCBoard has
+used since 15.22.
+
+
+WHY IT IS FILED IN upd154
+-------------------------
+
+upd154 is Clark's 15.4 upgrade to 15.3 in source form: 15.3 is the base,
+upd154 is the delta, which is the same shape the 15.4 binary patches
+had.  A PACKFIDO that reads the current data structure IS a 15.4 upgrade
+to a 15.3 board, so it belongs in the delta.  pcb153\SOURCE stays pure.
+
+And 15.3 is where the evidence that it was needed lives - the shipped
+PACKFIDO.EXE, DOC\PACK.DOC calling it a 15.21 tool, and CONVERT.CPP with
+the pack step commented out.  The problem is documented in the base; the
+fix is filed in the upgrade.
+
+
+WHY IT EXISTS
+-------------
+
+Clark shipped a PACKFIDO.EXE in the 15.41 install set.  Its own
+documentation, DOC\PACK.DOC, copyright 1995, describes a utility
+"written for PCBoard 15.21 to pack the FIDO configuration file
+PCBFIDO.CFG."  That is exactly what it does, and PCBFIDO.CFG stopped
+holding the areas at 15.22.
+
+It was never updated.  Every binary in that install set that touches
+current data carries a 15.3 version string - PCBOARD, PCBOARDM, PCBSM,
+PCBPACK, PCBSETUP, MKPCBTXT, UUIN, UUOUT, UUXFER, PCBMODEM, PPLC330.
+PACKFIDO.EXE carries 15.0 and nothing later.  FIDOUTIL.EXE, the program
+that CONVERTS 15.21 data to 15.22, carries 15.0, 15.21 and 15.22 - it
+knew about the new format.  The program whose whole job is packing the
+file FIDOUTIL had just converted never learned it.
+
+The converter's own source says the same thing a third way.  In
+MISC\FIDOUTIL\SOURCE\CONVERT.CPP, the call to packfido's one exported
+symbol is commented out:
+
+    //do_pack();
+
+The pack step was disabled at conversion time rather than fixed.
+
+So a 15.3 or 15.4 sysop had a PACKFIDO.EXE on disk, documented as a
+15.21 tool, that could not read the file it was pointed at.  This is the
+successor that was never written.
+
+
+USING IT
+--------
+
+    PACKFIDO <areas.dat> <cnames> <numconf> [/R]
+
+      <areas.dat>  the FIDO area file, version 3
+      <cnames>     the CNAMES base name, with or without an extension;
+                   both CNAMES.@@@ and CNAMES.ADD are read
+      <numconf>    number of conferences
+      /R           report only - read and decide, write nothing
+
+Make a backup copy of AREAS.DAT first.  As records are packed out of the
+file it will be noted on the screen, in the same form the original used:
+
+    removed     5 4DOS...
+
+Clark's version took no arguments; it read PCBOARD.DAT from the current
+directory and found everything from there.  This one takes them on the
+command line on purpose.  A utility you can point at a copy of a file is
+a utility you can test, and this one has no shipped binary to be
+compared against - see NO ORACLE below.
+
+
+WHAT GETS REMOVED
+-----------------
+
+An area record is dropped for three reasons, the same three the original
+used:
+
+    1. its conference number is above the conference count
+    2. its conference is not a FIDO conference
+    3. an area for that conference was already kept
+
+A conference is a FIDO conference when it has a name, has a message
+base, and has ConfType 5.  The name and the message base come from
+CNAMES.@@@; ConfType comes from CNAMES.ADD.  A board with no CNAMES.ADD
+has no FIDO conferences at all, which is correct - ConfType did not
+exist before that file.
+
+Reason 3 is duplicate removal, and it is half of what PACKFIDO is for.
+The FIRST area for a conference is kept and every later one is removed.
+
+
+THE RECORD SIZE IS MEASURED, NOT ASSUMED
+----------------------------------------
+
+Three sources disagree about the size of an AREAS.DAT record:
+
+    STRUCTS.H, sizeof(NAREA_STRUCT)                      81
+    FIDO.DOC, the record laid out over offsets 2..82     81
+    Clark's own AREAS.DAT                                71
+
+    48,566 - 2 = 48,564 ;  48,564 / 71 = 684.0000 exactly
+
+The ten bytes are the trailing reserved[10].  It is in the header and in
+the document; it is not in the data.  So the size is probed: 81 first,
+then 71, and the first one that divides the file evenly AND whose every
+record has a sane conference number and a printable area tag is the one
+used.  It is printed at the start of the run.
+
+The pack loop reads raw bytes rather than a structure, so any byte it
+does not understand - including a reserved[10] that may or may not be
+there - is copied through untouched instead of overwritten.
+
+
+NO ORACLE
+---------
+
+No shipped binary ever packed version 3, so there is nothing to compare
+this against byte for byte.  It is checked against Clark's own
+AREAS.DAT, kept in pcb153\SOURCE\MISC\FIDOUTIL\: 684 records at
+71 bytes, 683 kept, the one non-FIDO conference removed, and /R leaves
+the file untouched.
+
+That is a weaker check than a byte diff, and it is said plainly here
+rather than dressed up.  The 15.3 rebuild in pcb153\SOURCE\MISC\PACKFIDO
+is the one with a real oracle, because Clark's binary exists to compare
+it to.

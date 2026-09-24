@@ -1,0 +1,204 @@
+                              PACKFIDO.EXE
+                      pcbirc crew, 2026.  GPLv3.
+                 The 15.4 upgrade that was never shipped
+
+              pcb154 - the OpenWatcom and OS/2 build
+
+
+This utility packs the FIDO area file AREAS.DAT, the format PCBoard has
+used since 15.22.
+
+
+WHY IT EXISTS
+-------------
+
+Clark shipped a PACKFIDO.EXE in the 15.41 install set.  Its own
+documentation, DOC\PACK.DOC, copyright 1995, describes a utility
+"written for PCBoard 15.21 to pack the FIDO configuration file
+PCBFIDO.CFG."  That is exactly what it does, and PCBFIDO.CFG stopped
+holding the areas at 15.22.
+
+It was never updated.  Every binary in that install set that touches
+current data carries a 15.3 version string - PCBOARD, PCBOARDM, PCBSM,
+PCBPACK, PCBSETUP, MKPCBTXT, UUIN, UUOUT, UUXFER, PCBMODEM, PPLC330.
+PACKFIDO.EXE carries 15.0 and nothing later.  FIDOUTIL.EXE, the program
+that CONVERTS 15.21 data to 15.22, carries 15.0, 15.21 and 15.22 - it
+knew about the new format.  The program whose whole job is packing the
+file FIDOUTIL had just converted never learned it.
+
+The converter's own source says the same thing a third way.  In
+MISC\FIDOUTIL\SOURCE\CONVERT.CPP, the call to packfido's one exported
+symbol is commented out:
+
+    //do_pack();
+
+The pack step was disabled at conversion time rather than fixed.
+
+So a 15.3 or 15.4 sysop had a PACKFIDO.EXE on disk, documented as a
+15.21 tool, that could not read the file it was pointed at.  This is the
+successor that was never written.
+
+
+BUILDING IT
+-----------
+
+    wmake -f PACKFIDO.MAK            16-bit DOS      PACKFIDO.EXE
+    wmake -f PACKFIDO.MAK os2        32-bit OS/2     PACKFIDO2.EXE
+    wmake -f PACKFIDO.MAK dos32      32-bit DOS/4G   PACKF32.EXE
+    wmake -f PACKFIDO.MAK all
+
+Verified 2026-09-23 with Open Watcom 2.0 beta:
+
+    wcc    -bt=dos   -ml     PACKFIDO.EXE    19,878 bytes   C runtime
+    wcc386 -bt=os2v2 -mf     PACKFIDO2.EXE   16,554 bytes   native OS/2
+    wcc386 -bt=dos   -mf     PACKF32.EXE     26,262 bytes   C runtime
+
+
+IT IS AN OS/2 PORT, NOT AN OS/2 RECOMPILE
+-----------------------------------------
+
+Under OS/2 the file layer calls DosOpen, DosRead, DosWrite,
+DosSetFilePtr, DosClose, DosDelete and DosMove directly.  The C runtime
+file functions are not linked at all, which is why the OS/2 binary is the
+SMALLEST of the three - it was 19,763 bytes when it was only a recompile,
+and 16,554 after the port.  That 3,209 bytes is the C file I/O runtime
+leaving.
+
+The reasons are not decorative:
+
+  - DosOpen takes the SHARING MODE as an argument.  This opens AREAS.DAT
+    with OPEN_SHARE_DENYWRITE and the temporary file with
+    OPEN_SHARE_DENYREADWRITE, which says exactly what the program needs
+    and no more.  On a multi-node board another node may have the file
+    open while this runs; open() cannot express that.
+  - DosMove replaces the file and tells you why if it could not.
+    rename() on DOS does neither.
+
+Everything above the file layer is unchanged and has no #ifdef in it.
+The DOS builds take the open/read/write/lseek path exactly as before, and
+the Borland cross-check below is run on the DOS build, so the shared code
+is still verified by two compilers.
+
+THE OS/2 BINARY IS BUILT AND LINKED HERE, NOT RUN.  There is no OS/2 to
+run it on in this environment.  Said plainly rather than implied.
+
+0 errors.  Two warnings on every target, both W201 "Unreachable code",
+and they are the result rather than a defect: they are the compiler
+reporting that the two sizeof guards in main() can never fire, which is
+it confirming that pcbword is 2 bytes and NAREA_STRUCT packs to 81.
+
+The Borland C++ 3.1 build of the SAME SOURCE is in the 15.3 upgrade
+tree, pcb153\upd154\SOURCE\MISC\PACKFIDO.  One source, two compilers.
+
+
+WHY THE 32-BIT TARGETS DO NOT CORRUPT THE FILE
+----------------------------------------------
+
+"unsigned int" is 2 bytes under Borland C 3.1, Turbo C, Microsoft C and
+Open Watcom's 16-bit wcc - and 4 bytes under wcc386 and every 32-bit
+target.  A conference number read through an "unsigned int *" would
+swallow the next two bytes of the record the moment this was built for
+OS/2, silently, with no diagnostic and no crash - just wrong answers
+about which areas to keep.
+
+So every field that is two bytes in the file is declared pcbword, and
+main() refuses to run if pcbword is not 2 bytes.  That is what the
+second guard is for.
+
+
+THE ONLY CROSS-CHECK THIS PROGRAM CAN HAVE
+------------------------------------------
+
+No shipped binary ever packed the version 3 format, so there is nothing
+to diff against.  What there is instead: two independent compilers,
+built from one source, run over identical copies of Clark's own
+AREAS.DAT.
+
+    684 records in, 683 out, conference 5 removed
+    48,495 bytes
+    ab6fd621afbcdd3673b7856bcb84e3c923116a72552d1557042eadd6a4cd6a4b
+
+from the Borland build and the OpenWatcom build, with identical console
+output.  That is weaker than matching a shipped binary and it is said
+plainly rather than dressed up - but two toolchains agreeing to the byte
+rules out a large class of mistakes that one toolchain cannot.
+
+
+USING IT
+--------
+
+    PACKFIDO <areas.dat> <cnames> <numconf> [/R]
+
+      <areas.dat>  the FIDO area file, version 3
+      <cnames>     the CNAMES base name, with or without an extension;
+                   both CNAMES.@@@ and CNAMES.ADD are read
+      <numconf>    number of conferences
+      /R           report only - read and decide, write nothing
+
+Make a backup copy of AREAS.DAT first.  As records are packed out of the
+file it will be noted on the screen, in the same form the original used:
+
+    removed     5 4DOS...
+
+Clark's version took no arguments; it read PCBOARD.DAT from the current
+directory and found everything from there.  This one takes them on the
+command line on purpose.  A utility you can point at a copy of a file is
+a utility you can test, and this one has no shipped binary to be
+compared against - see NO ORACLE below.
+
+
+WHAT GETS REMOVED
+-----------------
+
+An area record is dropped for three reasons, the same three the original
+used:
+
+    1. its conference number is above the conference count
+    2. its conference is not a FIDO conference
+    3. an area for that conference was already kept
+
+A conference is a FIDO conference when it has a name, has a message
+base, and has ConfType 5.  The name and the message base come from
+CNAMES.@@@; ConfType comes from CNAMES.ADD.  A board with no CNAMES.ADD
+has no FIDO conferences at all, which is correct - ConfType did not
+exist before that file.
+
+Reason 3 is duplicate removal, and it is half of what PACKFIDO is for.
+The FIRST area for a conference is kept and every later one is removed.
+
+
+THE RECORD SIZE IS MEASURED, NOT ASSUMED
+----------------------------------------
+
+Three sources disagree about the size of an AREAS.DAT record:
+
+    STRUCTS.H, sizeof(NAREA_STRUCT)                      81
+    FIDO.DOC, the record laid out over offsets 2..82     81
+    Clark's own AREAS.DAT                                71
+
+    48,566 - 2 = 48,564 ;  48,564 / 71 = 684.0000 exactly
+
+The ten bytes are the trailing reserved[10].  It is in the header and in
+the document; it is not in the data.  So the size is probed: 81 first,
+then 71, and the first one that divides the file evenly AND whose every
+record has a sane conference number and a printable area tag is the one
+used.  It is printed at the start of the run.
+
+The pack loop reads raw bytes rather than a structure, so any byte it
+does not understand - including a reserved[10] that may or may not be
+there - is copied through untouched instead of overwritten.
+
+
+NO ORACLE
+---------
+
+No shipped binary ever packed version 3, so there is nothing to compare
+this against byte for byte.  It is checked against Clark's own
+AREAS.DAT, kept in pcb153\SOURCE\MISC\FIDOUTIL\: 684 records at
+71 bytes, 683 kept, the one non-FIDO conference removed, and /R leaves
+the file untouched.
+
+That is a weaker check than a byte diff, and it is said plainly here
+rather than dressed up.  The 15.3 rebuild in pcb153\SOURCE\MISC\PACKFIDO
+is the one with a real oracle, because Clark's binary exists to compare
+it to.

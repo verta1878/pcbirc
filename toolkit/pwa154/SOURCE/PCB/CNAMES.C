@@ -225,7 +225,7 @@ void LIBENTRY writeconfrecord(pcbconftype *Conf) {
   convertfrompcbconftype(&Old,&Add,Conf);
 
 /*
-/* SDR NOTE : This function not modified for new conference info on 06/03/94 */
+   SDR NOTE : This function not modified for new conference info on 06/03/94
   addconftype Temp;
   memcpy(&Temp.ForceEcho,&Conf->ForceEcho,ADDCONFSIZE);
   memset(Temp.Reserved,0,sizeof(Temp.Reserved));

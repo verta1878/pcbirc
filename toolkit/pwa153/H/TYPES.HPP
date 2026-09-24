@@ -76,12 +76,25 @@
 #define bitsin(t) (sizeof(t) * CHAR_BIT)
 
 /* Macros to calculate the min/max for   signed types (twos complement) */
+/* Macros to calculate the min/max for unsigned types                   */
+/*                                                                      */
+/* Watcom C++ parses  ~t(...)  as a pseudo-destructor call - which is    */
+/* what the standard says and what Borland let pass.  The Watcom arm     */
+/* below is the same arithmetic written with C casts, so the ~ applies   */
+/* to a parenthesised expression.  The Borland arm is Clark's, untouched,*/
+/* so the DOS builds stay byte for byte what they were.                  */
+/*                                        -- pcbirc crew, 2026-09-23     */
+#ifdef __WATCOMC__
+#define minSType(t) ((t)(((t)1) << (bitsin(t) - 1)))
+#define maxSType(t) ((t)(~(minSType(t))))
+#define minUType(t) ((t)0)
+#define maxUType(t) ((t)(~(minUType(t))))
+#else
 #define minSType(t) t(t(1) << (bitsin(t) - 1))
 #define maxSType(t) t(~minSType(t))
-
-/* Macros to calculate the min/max for unsigned types */
 #define minUType(t) t(t(0))
 #define maxUType(t) t(~minUType(t))
+#endif
 
 /* Define NULL if it isn't already defined */
 #ifndef NULL
@@ -105,13 +118,22 @@
   #define EXTERN_C
 #endif
 
+/* LIBENTRY is pascal on BOTH compilers, and that is deliberate.
+   The headers declare with LIBENTRY while a great many .C files spell the
+   same convention "pascal" on the definition.  Under Borland they are the
+   same word, so they always agreed and nobody noticed the split.  Watcom
+   has pascal as a real calling-convention keyword that a #define cannot
+   suppress - the preprocessor still emits __pascal - so making LIBENTRY
+   empty there put the declaration and the definition on DIFFERENT
+   conventions and produced "function modifier conflicts with previous
+   declaration" on read120file, srchpath and others, in files that both
+   look correct.  Keeping LIBENTRY as pascal keeps the two spellings the
+   same thing, which is what the source has always assumed.
+                                            -- pcbirc crew, 2026-09-23 */
 #ifndef LIBENTRY
-  #ifdef __WATCOMC__
-        #define LIBENTRY
-  #else
-        #define LIBENTRY pascal
-  #endif
+  #define LIBENTRY pascal
 #endif
+
 
 /* _NEAR_ is used for local functions in large code models */
 #ifndef _NEAR_
@@ -149,7 +171,7 @@ typedef unsigned cdcLONG  int  ulong;  /* Unsigned 32-bit integer */
 /* Borland C 5.0 defines the 'bool' type internally (C++ only). */
 /* Turbo C / C mode has no built-in bool, so define it there too.   */
 #if defined(__cplusplus)
-#if __BORLANDC__ < 0x500
+#if !defined(__WATCOMC__) && __BORLANDC__ < 0x500
 typedef ubyte bool;
 #endif
 #else
@@ -212,12 +234,12 @@ const ulong    maxULong    = maxUType(ulong);
 
 
 /* Borland C 5.0 defines the 'true' identifier internally */
-#if __BORLANDC__ < 0x500
+#if !defined(__WATCOMC__) && __BORLANDC__ < 0x500
 const bool true  = 1;
 #endif
 
 /* Borland C 5.0 defines the 'false' identifier internally */
-#if __BORLANDC__ < 0x500
+#if !defined(__WATCOMC__) && __BORLANDC__ < 0x500
 const bool false = 0;
 #endif
 

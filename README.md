@@ -2,7 +2,7 @@
 
 **PCBoard 15.4 source code recovery, OpenWatcom 2.0 port, and modernization.**
 
-pcbirc crew — August 2026
+pcbirc crew — September 2026
 
 ## What Is This
 
@@ -35,7 +35,7 @@ patches/       15.4-pwa.patch = the 15.3->15.4 PWA delta over pcb153
 --- toolkit + SDK ---
 toolkit/       toolkit source per branch (pwa153, pwa154, delta154, irc1541)
 OUT/           build outputs per version (pwa153, delta154, irc1541)
-  lib/pwa153/  the SDK library matrix (PCBKBC + PCBKIT built; PCBKMS pending)
+  lib/pwa153/  the SDK library matrix (PCBKBC built; PCBKIT + PCBKMS pending)
   support/     shared PCBoard runtime files (non-version-specific)
 MAIN/          project model + build system
   DELTA-MODEL.md   the 4-version model
@@ -66,9 +66,9 @@ normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 
 | Family | Compiler | Status |
 |---|---|---|
-| PCBKBC | Borland C++ 3.1 | NOT BUILT (manifest known: 130 modules) |
-| PCBKIT | Turbo C 2.01 | NOT BUILT |
-| PCBKMS | Microsoft C 7.0 | compiler in hand (DOS + OS/2), build in progress under `PCBBLDBT.IMG` (FreeDOS + CWSDPMI); DPMI wiring being verified |
+| PCBKBC | Borland C++ 3.1 | BUILT — 4 models (S/C/M/L), 152 modules each. `toolkit/pwa153/bc31/lib/` |
+| PCBKIT | Turbo C 2.01 | NOT BUILT — TC201 needs its own TK.CFG (no C++, limited switches) |
+| PCBKMS | Microsoft C 7.0 | NOT BUILT — compiler in hand (DOS + OS/2); cl syntax rewrite needed |
 
 The SDK matrix lives in toolkit/pwa153/ (compiler-first layout:
 `bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its
@@ -90,6 +90,14 @@ for milestone plan.
 | Clark binaries (Watcom DOS4G) | 28 (16 main + 12 Phase 0 utilities) |
 | New tools | 8 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis, QFront, pcbfoss, pcbiso) |
 | PPE collection | 5,703 archives (incl. Roy/SAC donation) |
+
+### OS/2 Build (OpenWatcom 2.0, pwa153)
+
+| Output | Location | Status |
+|---|---|---|
+| Category libraries (10) | `toolkit/pwa153/ow2/lib/` | BUILT — 254/277 modules compile; 12 libraries archived |
+| FIDOUTIL2.EXE | `OUT/pwa153/os2/` | BUILT — 170,039 B, LX OS/2 2.x, zero undefined references |
+| VMDATA_L.LIB | `toolkit/pwa153/bc31/lib/` | BUILT — 10th category library, makefile-driven |
 
 ### 15.4 Delta Binaries — Main (OpenWatcom 2.0)
 
@@ -145,6 +153,8 @@ All 12 Clark utilities that shipped with PCBoard, ported to Watcom DOS4G:
 | pcbpscan | 770 | Upload file scanner |
 | pcbfido | 778 | FidoNet console (15.41) |
 | pcbiso | 969 | ISO/CD-ROM file area indexer (15.4+) |
+| PACKFIDO | 243 | Fido config compactor — reconstructed from Clark's binary |
+| FOSSIL.C | 767 | Toolkit FOSSIL driver — reconstructed, 79/79 exports match Clark |
 | pcbis.exe | 5,710 | Internet services daemon (18 Pascal units) |
 
 ## pcbis — PCBoard Internet Services

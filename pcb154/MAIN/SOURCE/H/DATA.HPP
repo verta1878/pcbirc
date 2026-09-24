@@ -506,7 +506,10 @@ class cCONFIG
 	  uint			  filever;
 	  uint			  curver;
 	  unsigned long   diroffset,emsioffset,freqoffset,archoffset;
+	  unsigned long   dirblock; 	   /* bytes the directory block occupies  */
+	  bool			  oldlayout;	   /* TRUE = 6 entry OLDDIRECTORIES file  */
 	  cDOSFILE		  f;
+	  void		  probeLayout(void); /* which version 3 generation is this? */
 	public:
 				cCONFIG(void);
 			   ~cCONFIG(void){if(openedbyme) f.close();}

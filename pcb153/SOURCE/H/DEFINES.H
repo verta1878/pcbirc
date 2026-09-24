@@ -107,7 +107,7 @@ const   int  NODESTR    = 0x02;
 #define     CONFIG_FILE         PcbData.FidoConfig
 #define     WORK_DIR            directory_info.work_directory
 #define     IN_DIR              directory_info.incoming_packets
-/*#define     QUEUE_FILE          "FIDOQUE.DAT"       /* Name of the Queue    */ */
+/*#define     QUEUE_FILE          "FIDOQUE.DAT"          Name of the Queue      */
 /*#define     MASTER_QUEUE_FILE   "MASTER.DAT" */
 #define     LOGFILE             "FIDOLOG.IN"        /* log file             */
 #define     INCOMING_MASK       "*.PKT"             /* Packet files         */

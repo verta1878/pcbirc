@@ -85,7 +85,6 @@ EXE_DEPENDENCIES = \
   data.obj      \
   fidonet.obj   \
   maint.obj     \
-  packfido.obj  \
   passthru.obj  \
   pcbfu.obj     \
   ptsetup.obj   \
@@ -112,7 +111,7 @@ $(OBJDIR)\convert.obj+
 $(OBJDIR)\data.obj+
 $(OBJDIR)\fidonet.obj+
 $(OBJDIR)\maint.obj+
-$(OBJDIR)\packfido.obj+
+#$(OBJDIR)\packfido.obj+
 $(OBJDIR)\passthru.obj+
 $(OBJDIR)\pcbfu.obj+
 $(OBJDIR)\ptsetup.obj+
@@ -144,8 +143,8 @@ ci_build.obj: $(ROOT)\pcbsetup\source\ci_build.c
 data.obj: $(ROOT)\pcb\source\fido\data.cpp
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\data.cpp
 
-packfido.obj: $(ROOT)\packfido\packfido.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\packfido\packfido.c
+#packfido.obj: $(ROOT)\packfido\packfido.c
+#  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\packfido\packfido.c
 
 passthru.obj: $(ROOT)\pcb\source\fido\passthru.cpp
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\pcb\source\fido\passthru.cpp
@@ -229,3 +228,22 @@ $(CFG): $(MAK)
 
 #=============================================================
 
+
+#=============================================================
+# PACKFIDO AND FIDOUTIL - why the three packfido lines are
+# commented out, 2026-09-23.
+#
+# They pointed at $(ROOT)\packfido\packfido.c, a path that has
+# never existed in this repo.  The reconstructions are at
+#     pcb153\SOURCE\MISC\PACKFIDO\        byte-exact, 15.21 layout
+#     pcb153\upd154\SOURCE\MISC\PACKFIDO\ AREAS.DAT v3, Borland
+#     pcb154\MAIN\SOURCE\MISC\PACKFIDO\   OpenWatcom and OS/2
+# and NONE of them can be linked in here.  They are PROGRAMS, with
+# main().  FIDOUTIL has its own.  What FIDOUTIL wanted from
+# packfido.obj was one symbol, do_pack(), declared at
+# CONVERT.CPP:54 - and the only call to it, at CONVERT.CPP:125, is
+# commented out in Clark's own source.
+#
+# FIDOUTIL.EXE builds without it.  Verified 2026-09-23: 11 objects,
+# 0 errors, 153,674 bytes.  See BUILD.md.
+#=============================================================

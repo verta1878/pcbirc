@@ -1257,6 +1257,21 @@ is still absent and may never have left his machine.
 
 ### md5\os2\md5.obj recovered; packfido is simply gone
 
+> **CORRECTED 2026-09-23 — read this first.** Everything below about
+> `md5` still stands. Everything below about **`packfido` does not**.
+> Clark's `packfido.c` is still missing, but the program has been
+> reconstructed from the shipped binary and there are now three of them
+> in the tree. Three specific claims in this section are wrong: packfido
+> was **not** an external drop like `md5` (it was Clark's own code at
+> `E:\TC\PACKFIDO\PACKFIDO.C`, beside `SCANLOG` and `PCBMONI`); it does
+> **not** appear "in exactly one place, the makefile" (`CONVERT.CPP` has
+> the prototype at :54 and a commented-out call at :125); and
+> `\PROJ\packfido\` was never its home. The section left as written,
+> because how the wrong conclusion was reached is worth keeping. See
+> **v0.3.3+ — packfido reconstructed** below, and
+> `pcb153/SOURCE/MISC/PACKFIDO/README.md`.
+
+
 `PCBOARD2.MAK` has referenced `$(ROOT)\md5\os2\md5.obj` since forever
 against an object that existed nowhere in the tree — `PCBSRCV/000/MISC/MD5/`
 has the RFCs and `MD5.TXT` and two **empty** `DOS/` and `OS2/`
@@ -1472,6 +1487,301 @@ when the crew had written a replacement, an `md5.obj` reference that
 resolved to nothing for thirty years, and a `.gitignore` I broke myself
 by trusting a stale copy. None of it announced itself.
 
+
+---
+
+### v0.3.3+ — packfido reconstructed, FIDOUTIL built, OS/2 opened up (Sep 23, 2026)
+
+`packfido.c` is still gone. Everything else this project believed about
+it was wrong.
+
+**Where it actually lived.** Two Borland IDE desktop files record the
+path: `PCBSRCV/000/MISC/IDX/MAKEIDX.DSK` and
+`PCBSRCV/000/UTIL/PCBMONI/PCBMONI.DSK` both list
+`E:\TC\PACKFIDO\PACKFIDO.C`, with neighbours `E:\TC\SCANLOG\SCANLOG.C`
+and `E:\TC\PCBMONI\PCBMONI.C`. `E:\TC\` is the developer's Turbo C
+scratch drive; the product tree is `D:\PROJ\...` on the other drive in
+the same list. The source archive was made from the product tree, so
+anything living only under `E:\TC\` was never in scope.
+
+**Correction 1 — it was not an external drop.** The
+`md5\os2\md5.obj` section above reasons that `packfido`, like `md5`, was
+"an external drop Clark kept beside the project rather than a module he
+wrote", and "very likely the same kind of thing" as a public-domain
+package from a BBS file area. It was not. It was Clark's own code on
+Clark's own scratch drive, alongside `SCANLOG` and `PCBMONI`, both of
+which are unambiguously his.
+
+**Correction 2 — it appears in more than the makefile.** That same
+section says `packfido` "appears in exactly one place across the whole
+archive and repo, and that place is the makefile: no header, no
+prototype, no call site". There is a prototype and there is a call site,
+both in Clark's own converter:
+
+```
+MISC/FIDOUTIL/SOURCE/CONVERT.CPP:54     void do_pack(void);
+MISC/FIDOUTIL/SOURCE/CONVERT.CPP:125      //do_pack();
+```
+
+The call is commented out, which turned out to be the most informative
+line in the file — see below.
+
+**Correction 3 — `\PROJ\packfido\` was not its home.** The path
+repointing recorded above assumed the makefile's
+`$(ROOT)\packfido\packfido.c` named a real top-level directory. The
+`.DSK` files say otherwise.
+
+#### What the program does, read out of the shipped binary
+
+`pcb1541/install/dist/target/PACKFIDO.EXE`, 23,214 bytes, sha256
+`ef584f…f63a8`. It is **not** a FidoNet packet packer — an earlier note
+in this repo guessed that. It compacts the Fido **area configuration**,
+dropping records whose conference is out of range, whose conference is
+not a Fido conference, or that duplicate an area already kept. DGROUP
+base `0x5230`, fixed by correlating 27 of 33 string offsets against
+immediate operands.
+
+The duplicate rule was the find. Three bitmap routines, one bit per
+conference — `0x2EE3` sets, `0x2DEB` tests, `0x2F75` **clears**. The
+clear means the bit is *this conference is still available*, so the first
+area for a conference takes it and every later one is dropped. Nothing
+in the program's strings hints at it: `removed %5d %s...` reads the same
+for all three drop reasons. Later confirmed by experiment against the
+shipped binary, not just by reading.
+
+#### PACKFIDO was abandoned at 15.21, and Clark's own files say so
+
+Three independent pieces of evidence:
+
+1. **`DOC/PACK.DOC`**, copyright 1995, shipped unchanged in the 15.41
+   install set, describes a utility *"written for PCBoard 15.21 to pack
+   the FIDO configuration file PCBFIDO.CFG."* PCBFIDO.CFG stopped
+   holding the areas at 15.22.
+2. **Version strings across all 36 shipped EXEs.** Everything that
+   touches current data carries 15.3 — PCBOARD, PCBOARDM, PCBSM,
+   PCBPACK, PCBSETUP, MKPCBTXT, UUIN, UUOUT, UUXFER, PCBMODEM, PPLC330.
+   **FIDOUTIL**, the 15.21→15.22 converter, carries 15.0, 15.21 *and*
+   15.22. **PACKFIDO carries 15.0 and nothing later.** (The `11-10-94`
+   date string is not the discriminator — PCBOARD.EXE and PCBSETUP.EXE
+   carry it too. It is a shared build stamp.)
+3. **`//do_pack();`** — the pack step disabled at conversion time rather
+   than fixed.
+
+So a 15.3 or 15.4 sysop had a `PACKFIDO.EXE` on disk, documented as a
+15.21 tool, that could not read the file it was pointed at.
+
+#### What was built
+
+| Path | What |
+|---|---|
+| `pcb153/SOURCE/MISC/PACKFIDO/` | the 15.3 base — aimed at a **byte-exact** rebuild of Clark's shipped binary |
+| `pcb153/upd154/SOURCE/MISC/PACKFIDO/` | the 15.4 upgrade that was never shipped — Borland C++ 3.1 |
+| `pcb154/MAIN/SOURCE/MISC/PACKFIDO/` | the same source, OpenWatcom — DOS 16, OS/2 32, DOS/4G |
+
+The byte-exact attempt is **21,938 bytes against Clark's 23,214**, small
+model, 512-byte header. It does not link yet: four symbols missing, none
+of them ours — `retrycount()`, `findstartofname()`, `_int23hnd`,
+`_int24hnd`, all the *kit's* dependencies on category libraries that
+exist only in large model. The small-model libraries are the "4 models"
+leg of the SDK matrix, still open because `TK.CFG` has `-ml` baked in.
+
+Evidence that fixed the build shape, all measured from the binary: 8
+relocations and a 512-byte header → small model; `"15.0"` present and
+`"14.5"` absent → built without `-DLIB`; the CNAMES error strings in no
+library we hold → they are in `PACKFIDO.OBJ`, so the program opens
+`CNAMES.@@@`/`.ADD` and checks the RecSize header itself. `-P` is not
+optional — the kit libraries are C++ objects, and a C compile left eight
+kit symbols undefined. The recipe is Clark's own, from
+`reference/pcball/pcboard/pcb-util/PCBTEXT/MKPCBTXT.MAK`.
+
+#### Three documents proved wrong by their own data files
+
+- **`FIDO.DOC`** lays an `AREAS.DAT` record over offsets 2..82 — 81
+  bytes. Clark's own `AREAS.DAT` measures **71**: `48,566 − 2 = 48,564`,
+  `48,564 / 71 = 684.0000` exactly, 684 of 684 records sane. The ten
+  bytes are the trailing `reserved[10]`; it is in the header and in the
+  document and not in the data. The record size is now **probed**, not
+  assumed.
+- **`CNAMES.DOC`** says seek `(ConfNum-1)*RecSize+2`. The code says
+  `ConfNum` — conference 0, the Main Board, is record 0. `pcbconftype`'s
+  739 bytes are a **merge** of `oldconftype` (548, in `CNAMES.@@@` after
+  a 2-byte RecSize header) and `addconftype` (256, in `CNAMES.ADD`, no
+  header). There is no 739-byte file anywhere.
+- **`PCBDAT.DOC`** lists lines 245, 246 and 247 as "Reserved". They are
+  `EnableFido`, `FidoConfig` and `FidoQueue` — `DATAFILE.C` reads them
+  there, and Clark's own `PCBOARD.DAT` has `PCBFIDO.CFG` on 246.
+
+`PCBOARD.DAT` is a line-oriented **text** file; `pcbdattype` is the
+in-memory structure the reader fills, not the layout on disk. A harness
+built by writing that struct to a file produced something PCBoard cannot
+read, which cost a day.
+
+#### OS2PORTS.DOC, and the answer to "do the formats follow OS/2 too"
+
+They do not need to — **the data files are identical on both platforms**.
+`OS2PORTS.DOC` is the only OS/2-specific document in the devkit and it
+is not a format document at all: it covers reaching an OS/2 comm port
+from a DOS program, `open("COM2")` plus `INT 21h AX=440Ch`. It is the
+public write-up of `pcb153/SOURCE/MODEM/DEVIOCTL.C`, which this repo has
+been compiling all along — `MODEMOS2.C:442` is the document's own DTR
+example verbatim.
+
+The whole Developer's Information package — 23 documents from
+`devtools/Develop.zip` — was already extracted in the tree four times,
+under `toolkit/pwa153/docs/devkit/`, `.../develop9/` and the same two
+under `pwa154`. Reading `FIDO.DOC` first would have been faster than
+disassembling the binary.
+
+#### Two compilers, one source
+
+`wcc -bt=dos -ml` → 19,878 B, `wcc386 -bt=os2v2 -mf` → 19,763 B,
+`wcc386 -bt=dos -mf` → 26,262 B, all 0 errors. The Borland and
+OpenWatcom 16-bit binaries were run over identical copies of Clark's own
+`AREAS.DAT`: 684 records in, 683 out, 48,495 bytes,
+`ab6fd621…6a4b` from both, with identical console output.
+
+No shipped binary ever packed the version 3 format, so that agreement is
+the only cross-check the program can have, and it is weaker than a byte
+diff against a real binary. Said plainly rather than dressed up.
+
+The portability work that made it possible is one typedef: `unsigned
+int` is 2 bytes under Borland, Turbo C, MSC and 16-bit `wcc`, and **4
+under `wcc386`**. A conference number read through an `unsigned int *`
+would have swallowed the next two bytes of every record on any 32-bit
+target, silently. Every on-disk 16-bit field is now `pcbword`, and
+`main()` refuses to run if `pcbword` is not 2 bytes.
+
+#### An acceptance harness, built and then retired
+
+A three-program harness — fixture builder, file-ops helper, driver batch
+— proved the pack logic matched Clark's binary byte for byte on 530
+areas with 30 removals, and confirmed the first-one-wins duplicate rule
+by experiment. It was then retired to `attic/RETIRE.LST`: three programs
+and a scratch directory to prove one 23 KB utility behaves is the wrong
+target when the right one is a byte-exact rebuild, where the sha256 *is*
+the test. What it proved is kept in the README.
+
+Two things it taught, worth keeping: **`COPY` silently does nothing from
+inside a batch file under DOSBox-X** — it works from the autoexec, and
+from a batch there is no error, no file, and `ERRORLEVEL` unchanged — and
+a `PCBOARD.DAT` path longer than 32 characters is **truncated** by
+Clark's binary, which then opens nothing, prints `done.` and changes no
+file. A silent pass that proves nothing.
+
+#### FIDOUTIL builds — that makes twelve, not eleven
+
+`BUILD_DOS.BAT` names eleven targets and `OUT/clark-original/DOS` holds
+exactly those eleven to diff against. **FIDOUTIL is the twelfth**, and it
+now builds: 11 objects, 0 errors, `FIDOUTIL.EXE` 153,674 bytes against
+Clark's 214,586. Its own strings come out of our binary — *"PCBoard FIDO
+file conversion utility / Copyright Clark Development 1996"*.
+
+It builds in **both** trees. `pcb153/upd154` gives a byte-identical
+binary, because FIDOUTIL's ten sources are the same in both and none of
+the 33 differing headers adds a field FIDOUTIL reads.
+
+**`USEDBC50` is a compiler marker, and it is not a wall.** `FIDOUTIL.CFG`
+said `-nbc50`, `\BC5\INCLUDE`, `\BC5\LIB`, and the file beside it says
+*"Now using bc50."* — it sits in **25 directories**. We have no Borland
+C++ 5.0. The source compiles clean under 3.1 anyway, unchanged. So the
+marker records the compiler Clark moved to, not one the source requires —
+and that reopens PCBSETUP, PCBTEXT, USERNET, PCBPACK, PCBDIAG, PCBFILER,
+PCBNLC, PCBMODEM, PCBSTATS, ZMODEM, WAITFILE and MSETUP.
+
+**But it is the compiler, so byte-exact still needs BC 5.0.** Our 153,674
+against Clark's 214,586 is a working FIDOUTIL, not a matching one. Part
+of the gap is `packfido.obj` being absent; the rest is a different
+compiler's runtime and code generation. A byte-exact FIDOUTIL is a BC 5.0
+job, exactly as PACKFIDO's byte-exact target is a BC 3.1 small-model job.
+
+Two things cost the time, and neither was the compiler: without
+`-D_FARDATA_=far` and five other defines the parse dies inside
+`PCBOARD.H` with *"Enum syntax error"* at a perfectly healthy enum; and
+**BC 3.1 reads `TURBOC.CFG`, not `BCC.CFG`**, so a config under the wrong
+name is ignored in silence and you get *"Unable to open include file
+'stdio.h'"*.
+
+Also learned: `SHOWERR2.OBJ` is in **no** library — searched all thirteen
+— which is why the makefile lists it as a loose object.
+
+#### A 15.4 header bug that hid behind a guard
+
+`pcb153/upd154/SOURCE/H/USERS.H` declared `personal_psa_t` and
+`timebank_psa_t` — both 15.4 additions — **inside `#ifdef PCB152`**,
+while the `extern Personal` and `extern Bank` that use them sit outside
+it. Any translation unit not defining `PCB152` lost the types and then
+hit the declarations, giving two bare *"Declaration syntax error"*s that
+point at the externs and say nothing about the cause. `PASSTHRU.CPP` was
+the module that failed; `CPP.EXE` on the preprocessed output is what
+showed the typedefs were simply absent. Moved out, unconditional.
+
+#### PACKFIDO: two compilers, three targets, and an OS/2 port
+
+One source now lives in `pcb153/upd154` and `pcb154/MAIN`, byte
+identical, built by Borland C++ 3.1 and by OpenWatcom. Their output over
+the same `AREAS.DAT` is byte identical — 684 records in, 683 out,
+`ab6fd621…6a4b` from both — which is the only cross-check a program with
+no shipped binary can have.
+
+`pcb154` is a real OS/2 port, not a recompile: `DosOpen`, `DosRead`,
+`DosWrite`, `DosSetFilePtr`, `DosClose`, `DosDelete`, `DosMove` direct,
+with the C file runtime not linked at all. It is the *smallest* of the
+three binaries at 16,554 bytes — it was 19,763 as a recompile, and that
+3,209-byte drop is the evidence the port took.
+
+The portability work was one typedef and it mattered: `unsigned int` is 2
+bytes under Borland, Turbo C, MSC and 16-bit `wcc`, and **4 under
+`wcc386`**. A conference number read through an `unsigned int *` would
+have swallowed the next two bytes of every record on any 32-bit target,
+silently. Every on-disk 16-bit field is now `pcbword`, and `main()`
+refuses to run if it is not 2 bytes.
+
+**Watcom does not predefine `__OS2__` for `-bt=os2v2`** — it defines
+`__OS2V2__`. The first OS/2 build compiled the DOS path and linked
+cleanly with no diagnostic; the only tell was the binary coming out the
+same size as before the port.
+
+#### OS/2 for the rest: probed, and the blocker is named
+
+`wpp386 -bt=os2v2` on `PCBFU.CPP`, includes mirrored to lowercase, with
+`-DLIBENTRY= -Dpascal= -D_FARDATA_=` — **21 errors**, down from several
+hundred, every one a known Borland→Watcom bridge item: `dir.h` and
+`alloc.h`, `bool` already built in, and six `~` destructor errors in
+`TYPES.HPP` where `far`/`pascal` were stripped. `WATCOMPAT.H` already
+exists in three trees and `BUILD_OS2_OW.SH` was written around it.
+
+**The real blocker is one level down.** FIDOUTIL links eight category
+libraries and none of them exists for OS/2. `BUILD_OS2_OW.SH` sidesteps
+that by compiling the library *sources* into the executable. An OS/2
+FIDOUTIL means building the category chain with `wcc386 -bt=os2v2` first
+— the same wall the byte-exact PACKFIDO hit one axis over, where the
+libraries exist in one model for one platform.
+
+And it is a port, not a recompile: FIDOUTIL reads `pcbconftype` and
+`AREA_STRUCT` off disk **through real structs**, so under `wcc386` every
+`int` in them doubles and the file layout silently stops matching.
+
+#### TOOLKT21 is IBM's, not Clark's — now in devtools\
+
+Recorded here so it is not conflated again. PCBCP's source carries
+`#include <\toolkt21\c\os2h\valapi.h>`, and this project spent time
+assuming `\TOOLKT21\` meant Clark's *Doors Developer's TOOLKIT v2.0*
+(`devtools/TOOLKIT2.ZIP`). It does not. `\TOOLKT21\` is the install
+path of **IBM's Developer's Toolkit for OS/2 2.1**, shipped on The
+Developer Connection for OS/2 Volume 1 (August 1993) — archive.org
+`ibm-devcon-01`, `devcon-01.iso`, 395 MB, where it appears in three
+forms: an installable version and 3.5" and 5.25" diskette image sets.
+
+**Found and landed.** Now in `devtools/TOOLKT21.ZIP` (11,220,521 bytes),
+with `TK21D35.ZIP` and `TK21D525.ZIP` (3.5" and 5.25" diskette sets)
+and `TOOLKT21.md` (provenance).  See APPLY.txt v0.3.3+ (16).
+
+`devtools/TOOLKIT2.ZIP` is a different thing entirely and is worth
+having on its own account: Clark's Doors Developer's TOOLKIT v2.0, dated
+1993, holding **12 prebuilt kit libraries** — `PCBKIT_S/M/C/L.LIB` for
+BC, MSC and TC — plus ~20 loose stub objects each (`NOANSI`, `NOCHAT`,
+`NODISP`, `COMMDRV.OBJ`, `FOSSIL.OBJ`, `PCBDAT.OBJ`). Not yet extracted
+into the tree.
 
 ---
 

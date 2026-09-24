@@ -104,7 +104,6 @@ EXE_DEPENDENCIES = \
   data.obj      \
   fidonet.obj   \
   maint.obj     \
-  packfido.obj  \
   passthru.obj  \
   pcbfu.obj     \
   ptsetup.obj   \
@@ -131,7 +130,7 @@ $(OBJDIR)\convert.obj+
 $(OBJDIR)\data.obj+
 $(OBJDIR)\fidonet.obj+
 $(OBJDIR)\maint.obj+
-$(OBJDIR)\packfido.obj+
+#$(OBJDIR)\packfido.obj+
 $(OBJDIR)\passthru.obj+
 $(OBJDIR)\pcbfu.obj+
 $(OBJDIR)\ptsetup.obj+
@@ -163,8 +162,8 @@ ci_build.obj: $(SRC)\SOURCE\UTIL\PCBSETUP\SOURCE\CI_BUILD.C
 data.obj: $(SRC)\SOURCE\FIDO\data.cpp
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\data.cpp
 
-packfido.obj: $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
+#packfido.obj: $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
+#  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
 
 passthru.obj: $(SRC)\SOURCE\FIDO\passthru.cpp
   $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\passthru.cpp
@@ -259,3 +258,27 @@ CLEAN:
   -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
   -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
   -if exist $(CFG) del $(CFG)
+
+
+#=============================================================
+# PACKFIDO AND FIDOUTIL - why the three packfido lines above are
+# commented out, 2026-09-23.
+#
+# They had been re-enabled and repointed at
+#     $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
+# which is a reconstruction of Clark's standalone PACKFIDO.EXE.  That
+# cannot be linked into FIDOUTIL.EXE:
+#
+#   - it is a PROGRAM.  It has main().  FIDOUTIL has its own, and two
+#     in one image is a link error.
+#   - FIDOUTIL does not want a program.  packfido.obj supplied exactly
+#     one symbol, do_pack(), declared at CONVERT.CPP:54 - and the only
+#     call to it, at CONVERT.CPP:125, is itself commented out.
+#   - the model does not match either.  The reconstruction is small
+#     model and compiled as C++ for the kit; this makefile is $(MDL).
+#
+# FIDOUTIL.EXE builds without it, and always did.  Re-enabling it means
+# writing a do_pack() MODULE, not compiling the program.  The
+# reconstructions and what is known about them are in
+#     pcb153\SOURCE\MISC\PACKFIDO\README.md
+#=============================================================

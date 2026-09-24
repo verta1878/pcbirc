@@ -30,8 +30,12 @@
 #define CHECK_FILE     2
 #define CHECK_DIR      3
 
-#ifndef __OS2__  /* this needs to be finished */
+/* The prototype used to be hidden behind #ifndef __OS2__ with the note
+   "this needs to be finished".  It is finished: MISC\VALIDATE.C, which
+   holds the definition, compiles clean for OS/2 with wpp386 -bt=os2v2,
+   and the function is target-independent - it walks a path string.
+   Hiding the prototype only stopped its callers (PCB\DATA120.C and
+   FIDOUTIL's FIDONET.CPP) from building.  -- pcbirc crew, 2026-09-23 */
 int LIBENTRY validatepath(FILE *Out, char *Path, char *ResultPath, char Choice);
-#endif
 
 #endif

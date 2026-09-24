@@ -840,6 +840,13 @@ unsigned int	  i;
 *
 ******************************************************************************/
 
+/* Fixed overhead in a version 3 PCBFIDO.CFG, excluding the directory block:
+   2 (version word) + 230 (EMSI_DATA) + 15 (FREQ_INFO) + 1168 (ARCHIVERS).
+   The directory count is (filesize - PCBFIDO_OVERHEAD) / MAXFLEN.            */
+#define PCBFIDO_OVERHEAD     (2L + (long)sizeof(EMSI_DATA) + (long)sizeof(FREQ_INFO) \
+                              + (long)sizeof(ARCHIVERS))
+#define PCBFIDO_NEWDIRS 	 9						 /* sizeof(DIRECTORIES)/MAXFLEN */
+
 cCONFIG::cCONFIG(void)
 {
 	// generic initializations
@@ -847,8 +854,10 @@ cCONFIG::cCONFIG(void)
 	err 	   = FALSE;
 	filever    = 0;
 	curver	   = 3;
+	oldlayout  = FALSE;
+	dirblock   = (unsigned long)sizeof(DIRECTORIES);
 	diroffset  =2;
-	emsioffset =diroffset  + sizeof(DIRECTORIES);
+	emsioffset =diroffset  + dirblock;
 	freqoffset =emsioffset + sizeof(EMSI_DATA);
 	archoffset =freqoffset + sizeof(FREQ_INFO);
 
@@ -881,27 +890,83 @@ cCONFIG::cCONFIG(void)
 		 #endif
 		 err = TRUE;
 	}
+
+	if(!err) probeLayout();
 }
 
+/*---------------------------------------------------------------------------
+* probeLayout - determine the directory count from the file size.
+*
+* A version 3 PCBFIDO.CFG is laid out as:
+*   2 (version) + N*66 (directories) + 230 (EMSI) + 15 (FREQ) + 1168 (ARCH)
+*
+* The fixed overhead is 1415 bytes.  The directory count is whatever fills
+* the remainder: (filesize - 1415) / 66.  Both known samples are 2009 bytes,
+* giving 9 directories (the 15.22+ layout with passthrough, securemail and
+* messages added to the original six FidoNet mail paths).
+*
+* If the arithmetic does not divide evenly the file is damaged; leave the
+* defaults in place and let the caller's read fail on its own terms.
+*--------------------------------------------------------------------------*/
+void cCONFIG::probeLayout(void)
+{
+  long	fsize;
+  long	dirspace;
+  int	ndirs;
+
+  if(!f.isOpen()) return;
+
+  fsize = f.size();
+
+  if(fsize <= PCBFIDO_OVERHEAD) return;			/* too small for any layout */
+
+  dirspace = fsize - PCBFIDO_OVERHEAD;
+
+  if(dirspace % (long)MAXFLEN != 0) return;		/* not an even multiple	   */
+
+  ndirs = (int)(dirspace / (long)MAXFLEN);
+
+  if(ndirs < 1) return;							/* sanity				   */
+
+  oldlayout = (ndirs < PCBFIDO_NEWDIRS) ? TRUE : FALSE;
+  dirblock  = (unsigned long)ndirs * (unsigned long)MAXFLEN;
+
+  if(oldlayout)
+  {
+	#ifndef PCBSETUP
+	writeFidolog("PCBFIDO.CFG has fewer than 9 directories. EMSI and FREQ data unavailable.",BLOCK);
+	#endif
+  }
+
+  diroffset  = 2;
+  emsioffset = diroffset  + dirblock;
+  freqoffset = emsioffset + sizeof(EMSI_DATA);
+  archoffset = (unsigned long)(fsize - (long)sizeof(ARCHIVERS));
+}
 
 bool cCONFIG::getDirs(DIRECTORIES & dirs)
 {
 	if(err) return FALSE;
+	memset(&dirs,0,sizeof(dirs));
 	f.seek(diroffset,SEEK_SET);
-	if(f.isOpen() && f.read(&dirs,sizeof(DIRECTORIES)) != sizeof(DIRECTORIES)) err = TRUE;
+	if(f.isOpen() && f.read(&dirs,(unsigned)dirblock) != (int)dirblock) err = TRUE;
 	return TRUE;
 }
 bool cCONFIG::getEMSI(EMSI_DATA & edata)
 {
 	if(err) return FALSE;
+	memset(&edata,0,sizeof(edata));
+	if(oldlayout) return FALSE;
 	f.seek(emsioffset,SEEK_SET);
-	return(f.read(&edata,sizeof(edata)) == sizeof(edata));
+	return(f.read(&edata,sizeof(edata)) == (int)sizeof(edata));
 }
 bool cCONFIG::getFREQInfo(FREQ_INFO & finfo)
 {
 	if(err) return FALSE;
+	memset(&finfo,0,sizeof(finfo));
+	if(oldlayout) return FALSE;
 	f.seek(freqoffset,SEEK_SET);
-	return(f.read(&finfo,sizeof(finfo)) == sizeof(finfo));
+	return(f.read(&finfo,sizeof(finfo)) == (int)sizeof(finfo));
 }
 bool cCONFIG::getArchInfo(ARCHIVERS & archinfo)
 {
@@ -909,20 +974,27 @@ bool cCONFIG::getArchInfo(ARCHIVERS & archinfo)
 	f.seek(archoffset,SEEK_SET);
 	return(f.read(&archinfo,sizeof(archinfo)) == sizeof(archinfo));
 }
+/* The three puts below refuse when the directory count is below nine.
+   Writing a full DIRECTORIES into a shorter block overruns whatever follows
+   it, and EMSI/FREQ offsets assume the nine entry layout.  Refusing loses
+   nothing; writing loses the sysop's configuration. */
 bool cCONFIG::putDirs(DIRECTORIES & dirs)
 {
+	if(oldlayout) return FALSE;
 	f.seek(diroffset,SEEK_SET);
-	return(f.write(&dirs,sizeof(dirs)) == sizeof(dirs));
+	return(f.write(&dirs,sizeof(dirs)) == (int)sizeof(dirs));
 }
 bool cCONFIG::putEMSI(EMSI_DATA & edata)
 {
+	if(oldlayout) return FALSE;
 	f.seek(emsioffset,SEEK_SET);
-	return(f.write(&edata,sizeof(edata)) == sizeof(edata));
+	return(f.write(&edata,sizeof(edata)) == (int)sizeof(edata));
 }
 bool cCONFIG::putFREQInfo(FREQ_INFO & finfo)
 {
+	if(oldlayout) return FALSE;
 	f.seek(freqoffset,SEEK_SET);
-	return(f.write(&finfo,sizeof(finfo)) == sizeof(finfo));
+	return(f.write(&finfo,sizeof(finfo)) == (int)sizeof(finfo));
 }
 bool cCONFIG::putArchInfo(ARCHIVERS & archinfo)
 {

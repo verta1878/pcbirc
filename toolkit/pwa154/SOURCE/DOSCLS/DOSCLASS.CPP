@@ -30,6 +30,21 @@
 /* For Toolkit Compatibility */
 #if defined(LIB)
 
+  /* Under OS/2 the dosXXXX functions carry an extended-error pointer,   */
+  /* because a per-thread error state cannot live in a global.  The      */
+  /* macros in PCBTOOLS.H already declare and pass it, so they must NOT  */
+  /* be overridden here - overriding them gave "number of arguments for  */
+  /* function 'dosread' is incorrect" and kept DOSCLS, and therefore     */
+  /* cDOSFILE, out of the OS/2 build entirely.  The file-scope Os2Error  */
+  /* below is what POS2ERROR points at, and mirrors what the DOS build   */
+  /* does with its global error variables.                               */
+  /*                                      -- pcbirc crew, 2026-09-23     */
+#if defined(__OS2__)
+
+  static os2errtype Os2Error;
+
+#else
+
   /* the DOS functions don't pass the extended error values because the */
   /* extended error variables are global variables.                     */
 
@@ -47,6 +62,8 @@
   int LIBENTRY dostrunc  ( int handle, long offset DOS2ERROR );
   int LIBENTRY dosftrunc ( DOSFILE *file, long offset );
   int LIBENTRY dosfugets ( char *Str, unsigned MaxChars, DOSFILE *file );
+
+#endif
 
 #endif
 

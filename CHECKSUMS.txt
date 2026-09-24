@@ -1,6 +1,11 @@
 # CHECKSUMS - verify release integrity
-# v0.3.6: FOSSIL.C compiles, 79/79 exports match Clark
-# Date: 2026-09-22
+# v0.3.3+ : one release, following v0.3.2+
+# Date: 2026-09-23
+#
+# RENUMBERED.  This work was written across one session under invented
+# version numbers - v0.3.4 through v0.4.1 - which implied eight releases
+# where there was one working night.  The (1)..(6) markers below are the
+# order the work happened in, not versions.
 
 ONE MANIFEST
 ------------
@@ -10,7 +15,7 @@ everything:
 
     sha256sum -c CHECKSUMS.sha256          (or, on Windows:  CLEANUP VERIFY)
 
-104 files: every built or recovered binary under OUT/ and toolkit/, plus
+107 files: every built or recovered binary under OUT/ and toolkit/, plus
 every file changed in v0.3.4 and v0.3.5.  Each path appears exactly once
 with its current hash.
 
@@ -28,22 +33,25 @@ listed 13 files for a folder holding 4.  The hashes were right; the paths
 were not.  Do not create another one.
 
 
-v0.3.5 - changed this release
+v0.3.3+ (2) - FOSSIL.C exists
 -----------------------------
   toolkit/pwa153/SOURCE/TOOLKIT/FOSSIL.C             26754  sha256:097d6f735ca5f5e726fb711f6dac1b120a4cdc6ca1152ed55933dd5e9ceebe95  COMPILES - 0 errors; 79/79 exports match
   MAIN/build/FOSSIL-C-STATUS.md                       3827  sha256:be3c95bfff4cbd99c7313a366c755e4a8d744c7ebf7bb4e882ed967c69bfcbf6  the three fixes, the import delta
+  MAIN/build/PCBCP-COPIES.md                          4338  sha256:3032521e23da6168c36619e937672d5db2fc444b09209d91f22d4ab428429f68  four copies, which to keep
   MAIN/build/FOSSIL-OBJ-VERIFY.txt                    1114  sha256:131a92033d9ef959a6d9a1e3b7b0f7f514c6c350ce7b3f9ac878d95c727ec915  raw symbol diff
   toolkit/pwa153/bc31/obj/README.md                   3347  sha256:1aafdb34ab30c51d1a0e4d01c92b36f91cdbe0f265860adccb56fc0c904eab5e  the acceptance test, still open
   MAIN/build/CATEGORY-LIBRARIES.md                   10930  sha256:de59ce0e26c11106bc08179ed1746aa86dd9dd1500b7235171e5ab4f9b1daa4d  "One is missing" answered
   pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md       14082  sha256:79cdb43920932ee0cbd38aae4b4a9a9f9861e7ba9c85044248550bf95083b42d  sysop/0's second drop, as received
   pcb1541/pcbdcom/doc/COMM-H-MERGE.md                 5174  sha256:d712ce91a63ea9bb04a39bcb86e3236e97a274d453df1e93d4f4d76f185bb8b9  + his open item 4 marked settled
-  CLEANUP.BAT                                         8927  sha256:1b247d06d024a3d4e915a082c3d2c4dcebd17f35985e1c47d4385e10141e9360  REPLACED - RETIRE, DRYRUN, STRAY, VERIFY; pass 1 unchanged
+  CLEANUP.BAT                                         9887  sha256:8feb24d888f3eeb0349a03b2a2decf2687118afa5b35bbebf25e58dc468d017d  REPLACED - + DEDUPE (pass 3)
   .gitignore                                          7496  sha256:ebf8f4b6d9985aed72b1eceb9a42eb61a514f448d0fc461d2ae2befda7c2740d  FIXED - !toolkit/**/obj/*.OBJ added
   attic/RETIRE.LST                                    1942  sha256:e27a5c772d7685ed2d8cc4f81ae370c8e5a9a838c53a46d2db8c943ca8b59eae  NEW - the eight guarded deletes
-  APPLY.txt                                          45445  sha256:93409021a32ef1ae88558137362c72f0225a31a89e4c5d9963d2209f1521a392  v0.3.6 + TOOLKIT2 placement
+  attic/DEDUPE.LST                                    1343  sha256:3bb508ecaec0a388371ff57936c2210aa6c0333658744b4c37c7b6b2dd761a1d  keeper_folder|victim_folder
+  attic/dedupe.ps1                                    3707  sha256:7076bf5983d81b0caaad5545672f4bbcfdc0a67cc741964c7a876a3e86ceb7e4  the SHA-256 tree comparison
+  APPLY.txt                                          59072  sha256:795f29cef84599542a9cc90c31ed6fb2a8c67aeee5f3fb613fac37570546dad0  + the PCBCP separation
 
-v0.3.4 - the previous release
------------------------------
+v0.3.3+ (1) - VMDATA one-based; COMM-DRV source
+-----------------------------------------------
   MAIN/build/VMDATA-RECONSTRUCTION.md                 5596  sha256:4ac78ad51ce2e089fe4f8005fd42fba86dd0948e0662d198dfa20d0573de4027
   toolkit/pwa153/H/VMDATA.H                           3276  sha256:1507f83820327fe273bc3a0f731b1ba21f44d2727c76d839665a91d54a4e760c  VMSeqFinalPass declared
   toolkit/pwa153/SOURCE/VMFUNCS.C                     6471  sha256:291a1160d60d7629163acc36cb252735e781dc3449b6bdb5c55209ddd8bbbb57  one-based; VMSort honours start/cnt
@@ -153,3 +161,62 @@ toolkit/pwa153/bc31/lib - the door SDK
   toolkit/pwa153/bc31/lib/PCBKBCM.LIB               252928  sha256:64505e8cab00bac94970048629dcfa38c58bd44476de2d04c3edd36083712f24
   toolkit/pwa153/bc31/lib/PCBKBCS.LIB               245760  sha256:b107819dc757bf87214a12b980630e71a9e995e62c9f743c9f45a41c1f11e0c4
 
+PCBCP - the OpenWatcom port, 43 files in each of pcb153 and pcb154
+------------------------------------------------------------------
+  pcb153/SOURCE/UTIL/PCBCP/1522/COMPILE.CMD                 383  sha256:b9ac1095d6f2e57f5138e86833b2ac1a6c5554255e1f361d4a4f18b91a3d8df1
+  pcb153/SOURCE/UTIL/PCBCP/1522/DEBUG.CMD                    36  sha256:d4323b189ec35802401be370e94a75a756db5511b5e8358ce9a7aae105587573
+  pcb153/SOURCE/UTIL/PCBCP/1522/G.CMD                        36  sha256:860b3dee089a1ace8a1a45c3c90522fcbb3217ef8686e599876034d612afe09f
+  pcb153/SOURCE/UTIL/PCBCP/1522/PCBCP.CFG                   163  sha256:de4761b9405d64e3cd7dfa35a70f6d4099d914a82125843a1ba5329622d35b17
+  pcb153/SOURCE/UTIL/PCBCP/1522/PCBCP.MAK                  4326  sha256:da9fe5267c26810e88588a739f24a4ae1e0255e113ad7dddf55bcf53583c97af
+  pcb153/SOURCE/UTIL/PCBCP/BUILD_OW.SH                     2589  sha256:00fa9de029f32c0f6bd9cb7003f9c7201ff2ca1248c8f8d0b045ec876c0397d2
+  pcb153/SOURCE/UTIL/PCBCP/COMPILE.CMD                      383  sha256:b9ac1095d6f2e57f5138e86833b2ac1a6c5554255e1f361d4a4f18b91a3d8df1
+  pcb153/SOURCE/UTIL/PCBCP/DEBUG.CMD                         36  sha256:d4323b189ec35802401be370e94a75a756db5511b5e8358ce9a7aae105587573
+  pcb153/SOURCE/UTIL/PCBCP/G.CMD                             36  sha256:860b3dee089a1ace8a1a45c3c90522fcbb3217ef8686e599876034d612afe09f
+  pcb153/SOURCE/UTIL/PCBCP/HELP/ACTION.IPF                15658  sha256:483c5e416c7839c13cf635a6dbb03391fe2419a3cffebe2e7ddde59785c3fb0d
+  pcb153/SOURCE/UTIL/PCBCP/HELP/DLG.IPF                    1610  sha256:a680061c7eded65162445ea8fb15780c32678c703f907da02de802d5e2d14eff
+  pcb153/SOURCE/UTIL/PCBCP/HELP/EDIT.IPF                  10439  sha256:d0073e620043e672b2d3c0e892a94ec810c5376f581e40179e79813ee2bfdf8d
+  pcb153/SOURCE/UTIL/PCBCP/HELP/FILE.IPF                  24982  sha256:395742835690a9bb40ed01aa452a3d1566a60c3928bd3d51346b897df20cfbdd
+  pcb153/SOURCE/UTIL/PCBCP/HELP/HELP.IPF                  16809  sha256:f4d0597aaf8a0af6cc4a1ce28a6124f48451e32226a19d7c9442e02c579d00b0
+  pcb153/SOURCE/UTIL/PCBCP/HELP/MENU.IPF                   1361  sha256:631fb07f87cc3f7200f78bfb9a49c8d0d2d7c534fb32d91fd0ea1755cd5a803b
+  pcb153/SOURCE/UTIL/PCBCP/HELP/NODESET.BMP              236636  sha256:1d9d989b53cfec29fa3f431074ebcf1935797ca5df2c17c5df3a341bdb3773c1
+  pcb153/SOURCE/UTIL/PCBCP/HELP/OPTION.IPF                32671  sha256:6286bd1f923198517859d6e4a991f670404377ff1f1fc6388db8d45a48641c9e
+  pcb153/SOURCE/UTIL/PCBCP/HELP/PCBCP.IPF                  2615  sha256:25cc5af4edc4cc2c6e3124895c222051cfabbafc17de81eb9e99655d051e4241
+  pcb153/SOURCE/UTIL/PCBCP/HELP/RUNSET.BMP               236636  sha256:9d5718fac9bafdff51f249a718768de3d4634918c17facab69ebc13514daef92
+  pcb153/SOURCE/UTIL/PCBCP/HELP/UPDATE.IPF                 2899  sha256:f3ec328a530ca705adde023f5e4c3d490c789bfd6afb27f32c6c4e48db1fa0fb
+  pcb153/SOURCE/UTIL/PCBCP/HELP/WARN.BMP                 114008  sha256:5cf5dc94883c609115655571e7942e51508b96c436f4fadd235a75b79cafaf06
+  pcb153/SOURCE/UTIL/PCBCP/OBJ/MAIN.RES                   15002  sha256:ff76c972e603c850dd1190d641a13659438e2cf43101df2e39ab2b0a5e3913c8
+  pcb153/SOURCE/UTIL/PCBCP/PCBCP.INI                     105861  sha256:bc0c5ce09b6183ebffb8ac6a4a7af255d75bacd94da1489e85e8bacf3fa24fdb
+  pcb153/SOURCE/UTIL/PCBCP/README.md                       4841  sha256:c86738039657836b50f325572a05c45eb6c01f2453868c787281b0f4ecece9c8
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/DLG.C                    4730  sha256:d7542e0dded2fa95c45a5b09970af97c47d0adbb9efab5549dae88512849db3c
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/DLG.H                    1395  sha256:fb36f71305b35c2994e87e8f079fd5ab64984c20936f19bbc3f09413de3d5be0
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/FILE.C                   8438  sha256:7ce737158d7e7b759971f53e68e1572778629f4f53c1001141fabdfc97bdfc3e
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/HELP.C                  12237  sha256:2aa294f3b165c4fe45eaf5515f03e996b6b7cdac6418c8e7a3fbfbd1790b8e89
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/HELP.H                   3648  sha256:c1d4129b6c912493d650669872b7d5572f6ddf640beae5b3507a1fa65871fb34
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/HELP.RC                  4206  sha256:4580f8a8bbdb294e03cb2d1a378e64c91d564f9618cc233b080a47ce3510f9bf
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/INIT.C                  16769  sha256:058347a9f9da4aea0070cbed26cfebec77ae2253092f5953111edf12d6937445
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/MAIN.C                  15610  sha256:0d2678fc0662482158048fa55691b106d9f63d15d803d4672ff23ac062f08a59
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/MAIN.H                   8826  sha256:bf7cbd38476942146b43df210874486ce26bd244e910302aea75d6c831640f14
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/MAIN.ICO                  874  sha256:0e190af90fb1c401d042e4375e2437ad1732d958a916c1c4781e52c2dc8cfb57
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/MAIN.RC                 24541  sha256:c50612d1e2072e1b0b696d479189246a8681fe23c5252fa87a3fa43a934eb6f3
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/PCBCP.DEF                 121  sha256:6125878a420cfabd79d619f60fbf13a3d809b6001990a4dde49a879574af619d
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/PCBCP.DLG                 647  sha256:74664210f5bfe39d96d7a351bc82bf9bd0766073af14d33608573c4bcda8c48f
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/PCBCP_COMPAT.H            343  sha256:6cdacd08cd324f5ba49ac9ce78e5d9a83905b3b7a9c1bfa666e5eef99967b0d8
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/PNT.C                    2568  sha256:5fc5449c239def07db64709000f85ff3a53a99a7aae2c528b8bfd612234658be
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/PRODINFO.BMP             3288  sha256:098dc41549794598f88e70fdda44147ba934e84fb28d6f099dbeadb498392c06
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/THRD.C                  69842  sha256:e577e27e864feef186e48e7f2e2f37db3d0841fb165bc720313c70e3145f1c71
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/USER.C                  45915  sha256:774c8d065dbbe3fb0eec7ff2170836d26234c18a53fb5ac96bc9ee6d2a40ccd7
+  pcb153/SOURCE/UTIL/PCBCP/SOURCE/XTRN.H                   8674  sha256:e21d9e80ab8a001d7d43a46f6c184630d13ff4ed333475fa08edf897a4978012
+
+  pcb154/MAIN/SOURCE/UTIL/PCBCP/  is byte-identical to the above.
+
+v0.3.3+ (5) - the tenth library
+-------------------------------
+  toolkit/pwa153/SOURCE/VMDATA/TKLIB.MAK               2787  sha256:35790317a47131bb1b2c36151ae7a312df6211c58be076be7e1938a829e274a2  NEW - VMDATA_L is reproducible now
+  toolkit/pwa153/SOURCE/VMDATA/VMAVL.C                 9603  sha256:c0f696ebff507bf356361ea85e0e1d0ecb25a3d630dd2d1c0e173b6639055220  moved from SOURCE\ root
+  toolkit/pwa153/SOURCE/VMDATA/VMFUNCS.C               6471  sha256:291a1160d60d7629163acc36cb252735e781dc3449b6bdb5c55209ddd8bbbb57  moved from SOURCE\ root
+  BLDTK.BAT                                            3000  sha256:b4306fdb747039aaed4503e89269001b5620924423a3822dd083831c76e3b0a5  nine categories -> ten
+  attic/RETIRE.LST                                     2459  sha256:dc20495cf84af7981732ba649def70bef92786d89020f610318cdec8a08e0c8c  + the two loose root copies
+  APPLY.txt                                           63885  sha256:6df205a64bc20ae10d570d19bf3de6a075f4c20a08c36f423f016a0fcfd32425  v0.4.0 + the three-compiler blockers
+
+  toolkit/pwa153/SOURCE/VMFUNCS.C and VMAVL.C are OUT of the manifest:
+  queued in RETIRE.LST, still on disk until CLEANUP RETIRE runs.

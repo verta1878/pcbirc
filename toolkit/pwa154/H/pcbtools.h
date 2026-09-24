@@ -1005,7 +1005,12 @@ int  LIBENTRY dosopencheck(char *path, int access);
 int  LIBENTRY doscreatecheck(char *path, int access, unsigned mode);
 int  LIBENTRY writecheck(int handle, void *buffer, unsigned count);
 int  LIBENTRY readcheck(int handle, void *buffer, unsigned count);
-int  LIBENTRY dosappend(char *FileName, int OpenFlags);
+int  LIBENTRY dosappend(char *FileName, int OpenFlags DOS2ERROR);
+   /* DOS2ERROR was missing here and is present on the same prototype in
+      DOSFUNC.H:151, on the definition in DOS\DOSAPPEN.C, and on the call
+      in DOS\CHKAPPEN.C.  Under DOS the macro is empty, so the two headers
+      agreed and nothing ever complained; under OS/2 it is a parameter and
+      the mismatch stops the build.          -- pcbirc crew, 2026-09-23 */
 void LIBENTRY dosclose(int handle);
 int  LIBENTRY doscommit(int Handle);
 int  LIBENTRY doscreate(char *FileName, int OpenFlags, int Attributes DOS2ERROR);

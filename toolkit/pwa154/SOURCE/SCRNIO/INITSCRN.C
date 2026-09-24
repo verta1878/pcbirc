@@ -42,7 +42,7 @@ char BandW[NUMCOLORS];
 
 /* moved to SYSTEM.LIB */
 /* #ifndef __OS2__ */
-/* char far *KbdStatus;         /* pointer to Keyboard status byte */ */
+/* char far *KbdStatus;            pointer to Keyboard status byte    */
 /* #endif */
 
 char DefColor1[NUMCOLORS] =
