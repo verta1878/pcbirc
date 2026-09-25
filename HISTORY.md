@@ -1526,29 +1526,289 @@ event manager — Clark's event manager is how PCBoard works.
 
 ---
 
-## v0.3.2+ (41) — 2026-09-24
+## v0.3.2+ — Build-root, recoveries, toolkit, OS/2 push (2026-09-20 – 2026-09-24)
+
+### ROOT repointed to \OUT
+
+The repo is called PCBIRC but the root directory can be named anything.
+`ROOT = \OUT` translates to `<repo-root>\OUT` — build output goes under
+`OUT\<branch>\` (e.g. `OUT\pwa153\`, `OUT\pwa153\os2\`).  Clark wrote
+`ROOT = \PROJ` for a company with one product; this tree is one of four.
+All eleven makefiles now declare `ROOT = \OUT` behind an `!ifndef` guard
+(Borland MAKE 3.6 lets a `MAKEFILE` definition beat a `-D` macro without
+it).  `\PCBSRC`, which appeared in two makefiles, was not Clark's and
+was also changed.  The build should be tested in Wine and Win32 before
+checked into the DOSBox-X buildroot.  MAK/CFG files should contain a
+section that allows `MAKE CLEAN` to run and clean out build files and
+artifacts.
+
+### Three recoveries
+
+1. **VMData off-by-one** — `VMAVL.C`, `VMFUNCS.C` and `VMDATA.H`
+   indexed records zero-based; Clark's binary uses one-based.  Verified
+   against the shipped EXE at three call sites.  Fix carried to all four
+   trees.  `.386` extension references in makefiles corrected to `.LIB`.
+
+2. **md5\os2\md5.obj** — referenced by the OS/2 makefile for thirty
+   years, resolved to nothing.  The object was recovered from the OS/2
+   build tree and the reference validated.
+
+3. **PACKFIDO.C reconstructed** — fully reverse-engineered from binary
+   (767 lines, GPLv3).  See the PACKFIDO section below for details.
+
+### VIRTUAL1.C retired
+
+`VIRTUAL.C` and `VIRTUAL1.C` implement the same seven-function API.
+`VIRTUAL1.C` is the near version — max 65,535 records, one 64KB segment.
+`VIRTUAL.C` is the huge version — arrays past 64KB with disk cache,
+needed by PCBFILER's `SAVEDIR.C` for huge pointers beyond the 64KB
+boundary.  The crew merged both behind `#define VIRTUAL_HUGE` in
+`VIRTUAL.C`.  `VIRTUAL1.C` retired to attic from pwa153, delta154 and
+irc1541.  `pcb154/LIB` keeps Clark's original split pair as a
+preservation copy.  Documentation at
+`toolkit/pwa153/SOURCE/MISC/VIRTUAL-MERGE.md`.
+
+### 37-EXE audit
+
+The install tree ships 37 executables.  All 37 accounted for: build
+paths verified, no unknowns remaining.  Approximately 10 are binary-only
+with no source recovered.
+
+### .gitignore and normalize-case.sh
+
+`.gitignore` line 3 (`*.OBJ`) silently excluded Clark's two irreplaceable
+objects — `toolkit/pwa153/bc31/obj/FOSSIL.OBJ` and `COMMDRV.OBJ`.
+Negations added (`!toolkit/**/obj/*.OBJ`).  Verified with
+`git check-ignore -v` over all 101 manifest paths: 0 ignored.
+`.gitignore` added to the manifest so its own bytes are tracked.
+
+`normalize-case.sh` created: fixes filename case on case-sensitive
+filesystems where Clark's uppercase headers and lowercase `#include`
+lines collide.
+
+### Door SDK PCBKBC — 4 memory models, 150/150 functions
+
+All 150 toolkit functions built across tiny, small, medium and large
+memory models.  Four PCBKBC libraries produced.  The 6 Clark sample
+doors compile and link against them.
+
+### Category library reorganization
+
+The 10 SDK categories (`MISC`, `PCB`, `SCRNIO`, `DOSCLS`, `SCREEN`,
+`SYSTEM`, `NODE`, `TOOLKIT`, `CONVERT`, `VMDATA`) formalized with
+individual `TKLIB.MAK` files.  `BLDTK.BAT` drives all 10.  VMDATA had
+been built by hand with no makefile — now a proper `TKLIB.MAK` drives
+it and the hand-built library is retired.  Verified: both carry the same
+29 PUBDEF symbols.
+
+### e4181e5 audit
+
+Commit `e4181e5` (the v0.7 restructure) was audited against the file
+manifest.  3 files restored that had been lost in the restructure,
+13 binaries confirmed as never committed (build output, not source).
+
+### COMM-DRV interface landed
+
+`COMM.H` header recovered at `pcbcbase/COMMDRV/H/COMM.H` — two
+independent reconstructions merged into one (merge documented in
+`pcb1541/pcbdcom/doc/COMM-H-MERGE.md`).  `commdrbl.c` and `libsbl.c`
+are clean-room stub libraries, not the complete COMM-DRV driver source.
+The driver itself is not needed — pcbcomm replaces it.
+
+### Single checksum manifest
+
+All per-directory checksum files replaced by one root-level
+`CHECKSUMS.sha256`.  `CLEANUP.BAT` passes 1–3 created: VERIFY validates
+manifest, RETIRE removes stale per-directory files via keeper/victim
+guards, DEDUPE deletes a duplicate folder only if every file has a
+byte-identical SHA-256 twin under the keeper.  DRYRUN and STRAY modes
+added.
+
+### FOSSIL.C standalone reconstruction
+
+767 lines, reverse-engineered from Clark's `FOSSIL.OBJ` (9,157 bytes,
+Oct 1993).  79 exports matching Clark's exactly: 30 `FOSSIL_*` + 11
+`ASYNC_*` + 30 vtable entries + 8 helpers.  Compiles under
+`bcc -ml -c -DCOMM -DMULTIPORT -DLIB -DFOSSIL` to 9,334 bytes (Clark's:
+9,157 B).  79/79 exports match, 0 differ.  Size difference is compiler
+path strings and alignment.
+
+### TOOLKT21 identified as IBM's OS/2 Toolkit 2.1
+
+Name collision resolved: `TOOLKT21` in Clark's makefiles is IBM's OS/2
+Toolkit 2.1, not a PCBoard toolkit.  `valapi.h` / `validatr.lib` = IBM
+Validation API.  Not needed for the ported PCBCP build.  Filing location
+if acquired: `devtools/`, not `toolkit/`.
+
+### PCBCP separated — four copies reduced to two
+
+Clark's PCBCP OS/2 Control Panel existed four times.  Reduced to:
+`reference/pcball/.../PCBCP` (Clark's frozen original) and
+`pcb153/SOURCE/UTIL/PCBCP` (the working OpenWatcom port, 43 files,
+mirrored to pcb154).  `drivers/PCBCP` queued for DEDUPE.  BUILD_OW.SH
+path fixes: four stale `PCBSRC` paths corrected, script now derives all
+paths from repo root.  5 headers renamed to uppercase, 32 `#include`
+lines rewritten to match Clark's convention.
+
+### Three-compiler target
+
+10 libraries × 3 compilers (BC31, TC201, MSC70) × 4 memory models.
+Built today: 10 libs, BC31, LARGE only.  Blockers for the other two legs
+documented: CVER steers paths not the compiler, `-ml` baked into TK.CFG,
+TC201 has no C++ (builds 9 of 10 categories — matches Clark's smaller
+Turbo C library).
+
+### PACKFIDO.C reconstructed from binary
+
+**What it is**: a Fido conference configuration compactor — removes
+orphaned and duplicate area records from `PCBFIDO.CFG`.  Not a network
+packet packer (earlier guess was wrong).  Reads `PCBOARD.DAT`,
+`CNAMES.@@@`, `CNAMES.ADD`, `FIDOQUE.DAT`.
+
+Traced from the shipped binary (23,214 B, Borland C++ 1991, date string
+11-10-94).  DGROUP base 0x5230, 27 of 33 string offsets correlated.  Key
+discovery: the program uses a bitmap to detect and remove duplicate
+conference areas (first record wins, bit cleared after keeping).
+Compiles to 11,362 B; gap is the PCBoard library.  Acceptance test
+defined: both binaries over the same config, diff output byte for byte.
+
+Carried through multiple corrections after initial reconstruction:
+format docs found in the tree's own headers; dual-generation support
+added (old 6-directory and new 9-directory layouts); OS/2 port completed.
+
+### FIDOUTIL builds — 12 binaries
+
+FIDOUTIL was never blocked on PACKFIDO.  Builds 12 binaries across the
+4-version model.
+
+### OS/2 category libraries — 9/9 libs, 256/277 modules
+
+All 9 OS/2 category libraries built with OpenWatcom 2.0 against IBM's
+`OS2TK/H` headers (332 headers, OS/2 2.1 toolkit — already in the repo).
+256 of 277 modules compile.  Six real source defects fixed, all invisible
+to Borland:
+
+1. **Nested comments** — 3 instances (`CNAMES.C`, `INITSCRN.C`,
+   `PSEARCH.C`).  Borland's `-C` flag allows it; OpenWatcom does not.
+   Tree now clean of nested comments.
+2. **VMFUNCS.C `void *` vs `void far *`** — definitions did not match
+   `VMDATA.H`.  Same type under Borland LARGE; different under wcc386.
+3. **USERS.H `#ifdef PCB152` scope** — `accounttype` and `qwkconfigtype`
+   inside `PCB152` guard but used unconditionally.  Moved out.
+4. **CNAMES.C build configuration** — `PCB\CNAMES.C` must not be built
+   with `-dLIB`; it is the non-LIB arm.
+
+### FIDOUTIL2.EXE links — OS/2 build complete
+
+`OUT/pwa153/os2/FIDOUTIL2.EXE` — 170,039 bytes, LX OS/2 2.x console,
+zero undefined references.  Four closures:
+
+1. **Stack calling convention** (`-5s` not `-5`) — register convention
+   decorated names; stack convention matches `clib3s.lib`.
+2. **MainHead1/MainHead2 bug in Clark's FIDOUTIL** — `MENU.C` defines
+   pointers, `PCBFU.CPP` declared arrays and did `strcpy` through an
+   uninitialised pointer.  Fixed (the only DOS binary change: −16 bytes).
+3. **settimer/gettimer** from `DOSTIME.C` — compiled for OS/2 as
+   `TIME2.lib`.
+4. **ALTMODEM.C/SLOWMODM.C excluded** — alternate DOS modem drivers
+   that dragged the whole comm layer via `PcbData`.
+
+### probeLayout rewritten — size arithmetic
+
+The old `probeLayout()` tested directory slot content.  Replaced with:
+`dirspace = filesize − 1415; ndirs = dirspace / 66`.  Nine directories
+= new layout, fewer = old.  Handles any count, no content inspection.
+
+### PCBFIDO.CFG layout — settled
+
+File B identified as Stan Paulsen's 15.22 beta board config.  Two
+contradicting layout readings produced and both withdrawn: one fits the
+file size (9 directories), the other fits the content (6 directories +
+readable EMSI fields).  Safe to rely on: `ARCHIVERS` at +841, `FREQ_INFO`
+at +826, first six directories at known offsets.  `probeLayout()` refuses
+file B's EMSI under either reading, which is correct and blocks nothing.
+
+### pwa154 OS/2 sync
+
+All pwa153 OS/2 fixes carried to `toolkit/pwa154` (8 files, conceptual
+fix per file — Clark changed styles between 15.3 and 15.4).  Header
+fixes carried to `pcb153/upd154` and `pcb154`.
 
 ### CodeBase libraries identified as blockers
 
 c4base.lib (DOS/BC31) and b4.lib (OS/2) are both missing from the repo.
 Must be compiled from `pcbcbase/CODEBASE/SOURCE/`.  Without them:
-- DOS PCBOARD.EXE has no dBASE support
-- OS/2 PCBOARD2.EXE cannot link
-
+DOS PCBOARD.EXE has no dBASE support, OS/2 PCBOARD2.EXE cannot link.
 Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF (2.8 GB,
-URL link only — too large to mirror).
+URL link only).
 
 ### BLDTKOS2.CMD written
 
 OS/2 SDK category library build script.  Uses OpenWatcom 2.0 against the
-delta154 toolkit tree (`\TOOLKIT\DELTA154\SOURCE\`), outputs to
-`\OUT\DELTA154\SDK\OW2\LIB\`.  The DOS equivalent (BLDTK.BAT) uses BC31
-against pwa153.  Delta154 SDK is one compiler (OW2), not the three-compiler
-matrix Clark shipped for door authors.
+delta154 toolkit tree, outputs to `OUT/DELTA154/SDK/OW2/LIB/`.  Delta154
+SDK is one compiler (OW2), not the three-compiler matrix Clark shipped.
+
+### MAKE CLEAN — stale library purge
+
+Build tree cleaned.  No longer linking against stale or outdated `.LIB`
+files — fresh libs only.
+
+### PCBIC v1.2 OS/2 source confirmed
+
+Both `Pcbic2.exe` (1,090 functions) and `TESTIC2.EXE` (258 functions)
+byte-exact in the repo as NASM raw `db`.  Builds with NASM + OpenWatcom
+`wlink` on Linux, no OS/2 VM needed.  BC++ 2.0 for OS/2 added to
+`BUILDROOT/BCOS2/`.
 
 ### Doc moves and fixes
 
-- `todo/pcb-libchain-build.md` → `docs/pcboard-internals/` (second toolchain doc)
-- `devtools/README.md` — CodeBase section added, ZIP paths fixed (root → devtools/)
-- Root `README.md` — ZIP paths fixed (root → devtools/)
+- `todo/pcb-libchain-build.md` → `docs/pcboard-internals/`
+- `devtools/README.md` — CodeBase section added, ZIP paths fixed
+- Root `README.md` — ZIP paths fixed
 - Build script table added to pcb-libchain-build.md
+
+### pcbcomm v1.1 — 13/13 source files, three-compiler verification
+
+All 13 source files compile clean on two primary compilers:
+
+| Compiler | PCBDTSR.EXE size | Warnings |
+|---|---|---|
+| OpenWatcom 2.0 | 35,306 bytes | 0 |
+| Borland C++ 3.1 | 28,892 bytes | 0 |
+| Microsoft C 7.0 | compile 13/13, link blocked | 8 (C4761) |
+
+`inc/compat.h` created to abstract interrupt handler syntax across the
+three compilers — different keywords (`__interrupt __far` vs `interrupt`
+vs `_interrupt _far`), different register argument orders, different
+naming.  Adding a compiler = one `#elif` block, no `.c` changes.
+
+MSC70 link deferred — LINK.EXE under HDPMI32 produces a header-only
+`.MAP` and no `.EXE`.  Two working compilers (OW + BC31) give strong
+coverage.
+
+### pcbcomm v1.2 — 15/15 files, Arnet backend, COMMDRV-compatible shim
+
+Baseline build added two files (15 total, OW2 cross-compile, 37,800
+bytes):
+
+- `arnet_backend.c` (231 lines) — Arnet SmartPort / SmartPort Plus, 8th
+  card family.  Auto-detects Plus firmware via mailbox probe.
+- `pcbcomm.c` (renamed from ser_rs232_shim.c, 216 lines) — 13-function
+  COMMDRV.OBJ-compatible API surface (init/setup/getport/getbyte/putbyte/
+  getpacket/putpacket/viewpacket/flush/dtr_on/dtr_off/rts_on/rts_off).
+  Compiles to PCBCOMM.OBJ, drop-in replacement for Clark's COMMDRV.OBJ.
+- `int14.c` extended: COMM-DRV AH=0x10 (commgo), AH=0x11 (port count),
+  AH=0x12 (commstop), AH=0x13 (backend name), AH=0x14 (baud get/set).
+- `pcbdcom.c` main() uses `_dos_keep()` / `keep()` for proper TSR
+  install.  Device driver `.SYS` path removed for WCSC parity.
+
+SDK packaging landed at `toolkit/pwa154/pcbdcom/`: public API header,
+docs (SDK.md, LINKOUT.md), three examples (simple.c, multiport.c,
+tsrless.c), stub library (nopcbdcom_stub.c).
+
+**v1.2 is the baseline, not the current state.**  wrench is reworking
+pcbcomm from pcb1541's newer code (23 src, 5 headers — ahead of pwa154
+SDK's 16 src).  Renamed pcbdcom → pcbcomm (supports OS/2 too).  The
+13-item finish road, full piece inventory (9 Clark card families + 6
+post-WCSC backends), and Delta 15.4 tightening are tracked in
+`pcb1541/pcbdcom/BUILD-STATUS.md` and `todo/SOURCE-RECOVERY.md`.

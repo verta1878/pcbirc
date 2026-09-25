@@ -1,5 +1,17 @@
 # pcbdcom — PCB DOS COM (unified serial layer)
 
+> **RENAME (2026-09-26):** pcbdcom → **pcbcomm**. Supports DOS + OS/2,
+> not DOS-only. The "D" in pcbdcom was too narrow. All dirs/files to be
+> renamed as part of item 13 on the finish road (see
+> `todo/SOURCE-RECOVERY.md` bottom).
+>
+> **Reassembly status:** This tree (pcb1541) has the latest code but the
+> crash scattered pieces and hexadecimal's build method is lost. wrench
+> is reassembling from surviving parts. The full plan, inventory, and
+> finish road are in `todo/SOURCE-RECOVERY.md` and
+> `BUILD-STATUS.md` (this dir). Read those before making changes.
+
+
 > **Name:** `pcbdcom` = **PCB** **D**OS **COM**. Locked in. An
 > earlier planning doc (`pcb1541/pcbcomm/README.md`) proposed
 > `pcbcomm`; that doc is historical and preserved only as design
@@ -17,9 +29,47 @@
 > following the README, not making a mistake. Those paths become correct
 > once they are re-pointed at `pcb1541/pcbdcom/`.
 
-> **Second tree, being folded in:** `toolkit/pwa154/pcbdcom/` also
-> exists, 31 files against this tree's 53. Neither is a superset, so the
-> merge is a real audit and is NOT done yet. Compared 2026-09-22:
+> **Why there is no merge (clarified 2026-09-25).** The two trees are
+> not a fork to reconcile -- they are two *roles* of one codebase, and
+> both are meant to exist:
+>
+> * `pcb1541/pcbdcom/` is the **source-code home**. This is where the
+>   driver is developed: every backend `.c`, the `ref/linux/` study
+>   material, the gap analysis, the research backends. Development happens
+>   here.
+> * `toolkit/pwa154/pcbdcom/` is the **redistributable SDK** -- the tree
+>   that ships the linkable `.OBJ`. Its reason to exist is the link matrix
+>   (`PCBDCOM_BL.OBJ`, `_7L`, `_WL`, ... one built object per compiler x
+>   memory model) plus the drop-in recipe, headers for consumers, and
+>   examples. A sysop or door author never compiles this tree; they link
+>   its prebuilt `.OBJ` into `PCBOARD.MAK` in place of Clark's
+>   `COMMDRV.OBJ`. See `toolkit/pwa154/pcbdcom/docs/SDK.md` and
+>   `LINKOUT.md`.
+>
+> So the relationship is source -> built artifact, the same split Clark
+> himself shipped (`COMMDRV.OBJ` + `FOSSIL.OBJ` as link-time objects, see
+> "SDK -- two artifacts, not one" below). Consolidating them into one tree
+> would defeat the point: the SDK tree is deliberately a lean, consumer-
+> facing cut, not a second development copy.
+>
+> The only thing that genuinely *moves between* the two is the COMM-DRV
+> shim and its header (`ser_rs232_shim.c` + the 6,422-byte `pcbdcom.h`,
+> decided below) -- the source of that shim lands in `pcb1541`, and the
+> SDK tree builds its `.OBJ` variants from it. That is a normal
+> source->artifact hand-off, not a merge.
+>
+> One narrow open item remains, and it is a *check*, not a merge: confirm
+> the files that differ between the trees (`int14.c`, `inc/pcbdcom.h`) are
+> deliberate lean SDK cuts and not stale drift that fell behind `pcb1541`.
+> If deliberate, nothing to do; if drift, re-cut the SDK copy from source.
+
+> **Second tree, historical folding note:** `toolkit/pwa154/pcbdcom/`
+> exists, 31 files against this tree's 53. Neither is a superset. The
+> file-by-file comparison below (2026-09-22) predates the clarification
+> above -- it still reads as a "merge audit," but per that note the right
+> framing is: which unique files are SDK-only, which are source-only, and
+> which single shim+header pair hands off from source to SDK. Compared
+> 2026-09-22:
 >
 > * Only here (30 files): `SPEC.md`, `GAP-ANALYSIS.md`,
 >   `BUILD-STATUS.md`, `PCBDCOM.MAK`, `PCBDCOM.CFG.sample`, the whole
@@ -393,3 +443,37 @@ matching pcbdcom backend:
 Plus 4 backends for post-WCSC cards (Cyclades Cyclom-Y, Digi
 AccelePort, Comtrol RocketPort, Comtrol EasyIO). Total: 10 card
 backends, 4,275 lines GPLv3.
+
+## Delta 15.4 — tightening pass (2026-09-25)
+
+Cleanup toward a tight, buildable 15.4 Delta target. Ordered
+cheapest/safest first; only item 1 is done.
+
+1. **[done] Attic the superseded `src/int14-r1.c`.** A 211-line earlier
+   revision of the INT 14h handler whose header still reads "int14.c".
+   The live handler is the 701-line `src/int14.c` that `PCBDCOM.MAK`
+   builds; nothing referenced `-r1`. Moved to
+   `attic/superseded-pcbdcom/pcb1541/pcbdcom/src/` by `ATTIC-CLEANUP.BAT`
+   (run from repo root; move-only, deletes nothing).
+2. **[todo] Re-cut the SDK's `int14.c` from source.** The SDK copy in
+   `toolkit/pwa154/pcbdcom/src/int14.c` is the *old* 211-line cut, not
+   the current 701-line handler -- i.e. the SDK has drifted behind
+   source. Re-generate it so source -> artifact stays honest.
+3. **[todo] Land the shim in the source tree.** `pcb1541/pcbdcom/` has no
+   shim today (its draft is already atticked); the kept shim lives only
+   in `toolkit/pwa154/pcbdcom/src/ser_rs232_shim.c`. For the Delta target
+   to build from source, that shim + the 6,422-byte `inc/pcbdcom.h`
+   belong here in `src/`/`inc/`, and the SDK builds its `.OBJ` from them.
+4. **[todo] Delta link proof.** The Watcom/Delta leg (`PCBOARD.MK`,
+   `PCBWAT2.MK`) names neither COMMDRV nor MODEMDRV yet, so nothing
+   proves pcbdcom links into Delta. Add `wmake -f PCBDCOM.MAK CC=OWC`
+   producing the `.OBJ`, then a link test against Delta's `MODEMDRV.OBJ`.
+5. **[todo] The four shim fixes** (see "The kept shim still needs four
+   fixes" above): `unsigned int`->`int` signatures, off-by-one port
+   numbering, `putpacket(port,0,NULL)` transmitter kick, and
+   backend-routed DTR/RTS. These slot in after item 3.
+
+Backend gating is already clean and needs no change: the three v1.4
+backends (chase_iolan, equinox_sst, stallion_brumby) are correctly
+`#if defined(PCB1541)`-gated (15.41-only); the other eleven are
+always-on and compile into the 15.4 Delta target.

@@ -177,3 +177,21 @@ recorded in the headers.
 - **PCBMODEM.** Not an SDK component — it is a standalone utility with its
   own source in `Pcb-util/PCBMODEM/`, built in Phase 1 alongside the other
   Clark binaries. It reads MODEMS.DAT; doors do not link against it.
+
+## pcbcomm doc map (wrench, 2026-09-26)
+
+Quick "where do I look?" for pcbcomm/COMMDRV docs:
+
+| Question | Doc |
+|---|---|
+| Current state / what's next? | `todo/SOURCE-RECOVERY.md` (bottom) |
+| How do the toolkit versions relate? | `todo/toolkit.md` |
+| What did the crash take? | `todo/SOURCE-RECOVERY.md` |
+| What must we match in COMM-DRV? | `pcb1541/pcbdcom/GAP-ANALYSIS.md` + `docs/pcboard-internals/PCBDCOM-CARDS.md` |
+| Legal / clean-room rules? | `todo/pcbdcom-clean-room-plan.md` |
+| Does it build? | `pcb1541/pcbdcom/BUILD-STATUS.md` |
+| Full piece inventory? | `pcb1541/pcbdcom/BUILD-STATUS.md` (bottom) |
+| Interface spec? | `pcb1541/pcbdcom/SPEC.md` |
+| FOSSIL OBJ analysis? | `pcb1541/pcbdcom/doc/FOSSIL-OBJ-ANALYSIS.md` |
+| INT14h status? | `pcb1541/pcbdcom/doc/INT14-FOSSIL5C-STATUS.md` |
+| COMM.H merge decision? | `pcb1541/pcbdcom/doc/COMM-H-MERGE.md` |

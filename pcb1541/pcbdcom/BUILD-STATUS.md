@@ -1,5 +1,15 @@
 # pcbdcom build status
 
+## Delta 15.4 tightening — 2026-09-25
+
+Attic pass toward a tight 15.4 Delta target. Moved superseded
+`src/int14-r1.c` (211-line old INT 14h draft, misfiled header, nothing
+references it) to `attic/superseded-pcbdcom/...` via `ATTIC-CLEANUP.BAT`.
+Live handler remains `src/int14.c` (701 lines, built by `PCBDCOM.MAK`).
+Remaining Delta todos tracked in `README.md` -> "Delta 15.4 — tightening
+pass": re-cut SDK int14 from source, land shim in source tree, add Delta
+link proof, apply the four shim fixes.
+
 ## v1.1 verification — 2026-08-31
 
 **PASS** — all 13 source files compile clean on both primary compilers.
@@ -135,3 +145,47 @@ New in toolkit/pwa154/pcbdcom/ (SDK packaging):
 - examples/simple.c, multiport.c, tsrless.c
 - src/nopcbdcom_stub.c — empty ser_rs232_* symbols for #ifdef-out builds
 - lib/README.md, lib/NOPCBDCOM.README — .OBJ variant naming matrix
+
+## Full piece inventory (wrench, 2026-09-26)
+
+### Board drivers — all 9 Clark card families
+
+| COMMDV | Card | Backend | Status |
+|---|---|---|---|
+| 00 | Generic 8250/16550 | uart_backend.c (158L) | ✓ done |
+| 01 | Intel Hub6 | hub6_backend.c (152L) | ✓ done |
+| 02 | Digi-ComXi | digi_comxi_backend.c (298L) | ✓ done |
+| 03 | Arnet SmartPort | arnet_backend.c (243L) | ✓ done |
+| 04 | Boca 1610 | boca_backend.c (173L) | ✓ done |
+| 05 | Digi PC/Xe | digi_pcxe_backend.c (58L) | ⚠ NEEDS FINISHING |
+| 06 | GTek 8Fx | gtek_backend.c (153L) | ✓ done |
+| 07 | INT14H | int14.c (701L) | ✓ done |
+| 08 | COMMDRV VxD | — | ❌ NEEDS STARTING |
+
+Plus 6 post-WCSC: chase_iolan ✓, cyclom ⚠1, digi_accel ⚠1,
+equinox_sst ✓, rocket ⚠3, stallion_brumby ✓. Total: 14 + COMMDV08.
+
+### Programs
+
+| Clark shipped | Our equivalent | Status |
+|---|---|---|
+| COMMTSR.EXE | PCBDTSR.EXE | ❌ never started |
+| COMMDRV.EXE | PCBCOMM.EXE | pcbcomm.c exists — status uncertain |
+| DRVSETUP.EXE | DRVSETUP.EXE | ❌ never started |
+| TEST.EXE | TEST.EXE | ❌ never started |
+
+### Link-time objects
+
+| Clark's | Ours | Source | Status |
+|---|---|---|---|
+| COMMDRV.OBJ | PCBCOMM.OBJ | pcbcomm.c | ✅ exists (pwa154 SDK only) |
+| FOSSIL.OBJ | FOSSIL.OBJ | FOSSIL.C | ✅ reversed 79/79 |
+| — | PCBCOMMS.OBJ | pcbcomms.c | ✅ stub exists |
+
+### Diverged files (pcb1541 vs pwa154) — role differences, not drift
+
+backend.h / compat.h / pcbdcom.c / int14.c: pcb1541 ahead.
+pcbdcom.h: pwa154 ahead (6422B has struct defs for consumers).
+Only int14.c in SDK is genuinely STALE (211L vs 701L).
+
+### Dead file: int14-r1.c — attic when ready (ATTIC-CLEANUP.BAT)

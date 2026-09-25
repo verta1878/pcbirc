@@ -152,3 +152,64 @@ Memory-model matrix stays a build-configuration problem, not a porting one —
 "a single function call does it all" for door init — read config, set up the
 comm port, update USERS.INF TPA. Whatever we rebuild has to keep that
 one-call simplicity, because that is what door authors actually used.
+
+## pcbcomm reassembly — current state (wrench, 2026-09-26)
+
+Project renamed: pcbdcom → **pcbcomm** (supports DOS + OS/2).
+
+### Ground truth (verified on disk)
+
+| Tree | Role | State |
+|---|---|---|
+| pcb1541/pcbdcom/ | Latest code (crashed) — dirs to rename pcbcomm | 23 src, 5 hdrs, 7 docs |
+| toolkit/pwa154/pcbdcom/ | 154 SDK — dirs to rename pcbcomm | 16 src, 5 hdrs, 4 docs |
+| toolkit/pwa153/ | Intact Borland reference | FOSSIL.C + OBJs + 10 TKLIB.MAK |
+| toolkit/delta154/ | OpenWatcom toolkit | 377 files — 0 COMMDRV, never wired |
+| pcb154/ | 154 base source | MODEMDRV.C — NO pcbcomm/ |
+
+Two trees = two roles (source → SDK artifact), not a fork.
+
+### Naming (settled)
+
+- ser_rs232_shim.c → **pcbcomm.c** (→ PCBCOMM.OBJ)
+- nopcbdcom_stub.c → **pcbcomms.c** (→ PCBCOMMS.OBJ, S=stub)
+- OBJ = one name all compilers; W/2 suffixes on EXE binaries only
+- PCBCOMM/PCBCOMMW/PCBCOMM2, PCBDTSR/PCBDTSRW/PCBDTSR2,
+  DRVSETUP/DRVSETUPW/DRVSETUP2, TEST/TESTW/TEST2
+- Long names fine as build output; 8.3 at installer-disk time
+
+### Output structure
+
+Binaries → OUT/ by version. EXEs at top level; bins/ = SDK examples only.
+SDK OBJ/LIB → toolkit/<branch>/<compiler>/lib/ (NOT in OUT/).
+OUT/pwa153/upd154 = Borland 15.4 PWA upgrade (NOT OW2).
+
+### Memory model
+
+Borland/MSC = large (-ml / /AL). OW2 = FLAT. All SDKs to be ported to OW2.
+
+### Recovery notes
+
+- hexadecimal's build method: LOST in crash
+- exe/com .md: LOST
+- pcb1541 = latest; analyzed into pcb154/delta (not mechanical move)
+- Found pcbdcom-source.zip = superseded EXCEPT self-contained shim (229L)
+  with inline RS232ERR + port_param — recovery piece for source tree
+
+### The finish road (13 items)
+
+TO FINISH: 1. COMMDV05 digi_pcxe  2. 4 backends (cyclom/digi_accel/
+easyio/rocket)  3. irq.c (4 markers)
+
+TO START: 4. COMMDV08 VxD bridge  5. PCBDTSR.EXE  6. DRVSETUP.EXE
+7. TEST.EXE
+
+TO WIRE: 8. Land shim into pcb1541  9. Wire delta154 OW2 build
+10. Create pcb154/pcbcomm
+
+CLEANUP: 11. Attic int14-r1.c  12. Refresh stale docs  13. Rename
+pcbdcom → pcbcomm throughout
+
+### Future seam (note only)
+
+pcbcomm backend vtable ↔ netfossil could meet someday. Don't design for it.
