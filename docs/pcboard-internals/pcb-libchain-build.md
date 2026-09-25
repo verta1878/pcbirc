@@ -207,6 +207,19 @@ source-compiled modules.
 - PCBOARD.EXE build (future)
 - v1.0.1 cmp -s gate (correct source + correct compiler)
 
+## Build scripts
+
+| Script | Target | Description |
+|---|---|---|
+| BLDDOS.BAT | DOS | 12 DOS programs (BC31) |
+| BLDOS2.CMD | OS/2 | 2 OS/2 programs (BCOS2) — PCBOARD2, USERNET2 |
+| BLDTK.BAT | SDK (DOS) | 10 category libraries (BC31, large model) |
+| BLDTKOS2.CMD | SDK (OS/2) | 10 category libraries (BCOS2/OW2) — **missing, needs writing** |
+| BLDCBASE.BAT | CodeBase | c4base.lib (DOS/BC31) + b4.lib (OS/2/BCOS2) — **planned** |
+
+All scripts run from the repo root.  The repo folder is mounted as the
+drive root, so `\OUT`, `\TOOLKIT` and `\BC31` are all inside the repo.
+
 ---
 
 **RULE:** Source code fixes apply to BOTH locations:

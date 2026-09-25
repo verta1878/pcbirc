@@ -4406,3 +4406,68 @@ single-line // comment or restructures the nesting.
 Written to the user's share in one pass.  0 rejected.
 
 Nothing deleted.
+
+v0.3.2+ (41): CodeBase libraries identified, doc moves, BLDTKOS2 missing
+========================================================================
+Date: 2026-09-24
+
+CODEBASE LIBRARIES — THE BLOCKERS
+----------------------------------
+c4base.lib (DOS, BC31 large model) and b4.lib (OS/2, BCOS2 flat model)
+are both missing.  Neither is pre-built in the repo.  Both must be
+compiled from pcbcbase/CODEBASE/SOURCE/.
+
+PCBOARD.MAK line 180: OPTLIB = /o $(LIBSDIR)\codebase\bor31\c4base.lib+
+PCBOARD2.MAK line 96:  $(LIBSDIR)\codebase\os2bor1\b4.lib
+
+Without c4base.lib, DOS PCBOARD.EXE has no dBASE support compiled in.
+Without b4.lib, OS/2 PCBOARD2.EXE cannot link at all.
+
+Upstream CodeBase-for-DBF: https://github.com/MPSystemsServices/CodeBase-for-DBF
+(2.8 GB — too large to mirror; URL link added to devtools/README.md)
+
+Build script BLDCBASE.BAT is planned but not yet written.
+
+BLDTKOS2.CMD — WRITTEN
+-----------------------
+BLDTK.BAT builds the 10 SDK category libraries for DOS (BC31/pwa153).
+BLDTKOS2.CMD is the OS/2 equivalent — same 10 categories, compiled with
+OpenWatcom 2.0 against the delta154 toolkit tree.
+
+  Source:  \TOOLKIT\DELTA154\SOURCE\<category>\TKLIBOS2.MAK
+  Output:  \OUT\DELTA154\SDK\OW2\LIB\*.LIB
+
+The split: BLDTK.BAT = BC31 / DOS / pwa153.
+           BLDTKOS2.CMD = OW2 / OS/2 / delta154.
+
+Delta154 SDK is one compiler (OW2) not three.  The pwa153 SDK matrix
+(BC31/TC201/MSC70 × 4 memory models = 12 libs) exists because Clark
+shipped three compiler families for door authors.  Delta154 is the
+crew's OpenWatcom port — one compiler covers all targets.
+
+Each category still needs a TKLIBOS2.MAK (not yet written — copy
+TKLIB.MAK and change flags to OW2 flat model).
+
+MOVES
+-----
+  todo/pcb-libchain-build.md  ->  docs/pcboard-internals/pcb-libchain-build.md
+      Second toolchain doc (alongside devtools/COMPILERS.md).  Was parked in
+      todo/ pending review.  Now filed with the other PCBoard internals docs.
+
+CHANGES
+-------
+  devtools/README.md
+      Added CodeBase section with upstream URL and library table.
+      Fixed MSC70BT.ZIP and TC201BT.ZIP paths: root -> devtools/.
+
+  README.md (root)
+      Fixed MSC70BT.ZIP, PCB153BT.ZIP, TC201BT.ZIP paths: root -> devtools/.
+
+  docs/pcboard-internals/pcb-libchain-build.md
+      Added build script table (BLDDOS, BLDOS2, BLDTK, BLDTKOS2, BLDCBASE).
+
+ADD
+---
+  BLDTKOS2.CMD              OS/2 SDK category library build script (new)
+
+Nothing deleted.

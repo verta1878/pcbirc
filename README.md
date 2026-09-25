@@ -43,12 +43,12 @@ MAIN/          project model + build system
                    (moved here from the repo root)
 
 --- compilers (build tools) ---
-MSC70BT.ZIP    Microsoft C 7.0 (retail) + OS/2 add-on - extract to
-               C:\MSC70 to build PCBKMS (not shipped unpacked)
-PCB153BT.ZIP   Borland C++ 3.1 standalone build tools (for PCBKBC)
-TC201BT.ZIP    Turbo C 2.01 standalone build tools (for PCBKIT)
-DOSBOXX.ZIP    all-in-one: compilers + dosbox-x + BUILD scripts
-devtools/      raw compiler distributions + COMPILERS.md catalog
+devtools/MSC70BT.ZIP    Microsoft C 7.0 (retail) + OS/2 add-on - extract to
+                        C:\MSC70 to build PCBKMS (not shipped unpacked)
+devtools/PCB153BT.ZIP   Borland C++ 3.1 standalone build tools (for PCBKBC)
+devtools/TC201BT.ZIP    Turbo C 2.01 standalone build tools (for PCBKIT)
+DOSBOXX.ZIP             all-in-one: compilers + dosbox-x + BUILD scripts
+devtools/               raw compiler distributions + COMPILERS.md catalog
 
 --- other ---
 OS2TK/         OS/2 toolkit

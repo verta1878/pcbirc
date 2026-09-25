@@ -1523,3 +1523,32 @@ event manager — Clark's event manager is how PCBoard works.
 - DOSBOXX.ZIP updated with BC++ 2.0 for OS/2 (`BUILDROOT/BCOS2/`)
 - OpenWatcom V2 `wlink` (Linux native) proven for OS/2 LX cross-linking
 - NASM 32-bit OMF `.obj` output compatible with wlink import resolution
+
+---
+
+## v0.3.2+ (41) — 2026-09-24
+
+### CodeBase libraries identified as blockers
+
+c4base.lib (DOS/BC31) and b4.lib (OS/2) are both missing from the repo.
+Must be compiled from `pcbcbase/CODEBASE/SOURCE/`.  Without them:
+- DOS PCBOARD.EXE has no dBASE support
+- OS/2 PCBOARD2.EXE cannot link
+
+Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF (2.8 GB,
+URL link only — too large to mirror).
+
+### BLDTKOS2.CMD written
+
+OS/2 SDK category library build script.  Uses OpenWatcom 2.0 against the
+delta154 toolkit tree (`\TOOLKIT\DELTA154\SOURCE\`), outputs to
+`\OUT\DELTA154\SDK\OW2\LIB\`.  The DOS equivalent (BLDTK.BAT) uses BC31
+against pwa153.  Delta154 SDK is one compiler (OW2), not the three-compiler
+matrix Clark shipped for door authors.
+
+### Doc moves and fixes
+
+- `todo/pcb-libchain-build.md` → `docs/pcboard-internals/` (second toolchain doc)
+- `devtools/README.md` — CodeBase section added, ZIP paths fixed (root → devtools/)
+- Root `README.md` — ZIP paths fixed (root → devtools/)
+- Build script table added to pcb-libchain-build.md
