@@ -1,13 +1,13 @@
-# pcbdcom source scaffold
+# pcbcomm source scaffold
 
-Initial source tree for PCB DOS COM. Scaffold only — implementations
+Initial source tree for PCB COMM. Scaffold only — implementations
 land phase by phase per `MAIN/build/PCBBLDBT-ROADMAP.md` phase 4.
 
 ## Files
 
 | File | Purpose | Status |
 |---|---|---|
-| `pcbdcom.c` | Main entry, dual-mode loader (CONFIG.SYS device OR TSR), argument parsing | scaffold |
+| `pcbcomm.c` | Main entry, dual-mode loader (CONFIG.SYS device OR TSR), argument parsing | scaffold |
 | `../inc/uart.h` | 8250/16450/16550 register + bit definitions | complete (reference constants) |
 | `uart.c` | UART chip probe + register I/O | TODO |
 | `fossil.c` | FOSSIL INT 14h dispatch | TODO |
@@ -32,7 +32,7 @@ Not yet — waiting on TODO files. Once implementations land, build
 under DOSBox-X + MSC 7.0 with:
 
 ```
-CL /AL /Ox /Zp /Fepcbdcom.exe pcbdcom.c uart.c fossil.c irq.c ring.c modem.c
+CL /AL /Ox /Zp /Fepcbcomm.exe pcbcomm.c uart.c fossil.c irq.c ring.c modem.c
 ```
 
 Model = LARGE (all pointers far) for the TSR path.

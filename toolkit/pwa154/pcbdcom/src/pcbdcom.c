@@ -1,9 +1,9 @@
 /* ============================================================================
- * pcbdcom.c — main entry point (TSR install), config parser, backend registry
+ * pcbcomm.c — main entry point (TSR install), config parser, backend registry
  *
  * Dual-mode loader:
- *   - CONFIG.SYS DEVICE=PCBDCOM.SYS  → device_entry() called by DOS
- *   - AUTOEXEC.BAT LH PCBDCOM.EXE    → main() called normally, TSR install
+ *   - CONFIG.SYS DEVICE=PCBCOMM.SYS  → device_entry() called by DOS
+ *   - AUTOEXEC.BAT LH PCBCOMM.EXE    → main() called normally, TSR install
  *
  * The same source file compiles into either variant. .SYS build uses
  * device_entry() as its request-header dispatch; .EXE build uses main()
@@ -16,41 +16,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 /* Global port table (referenced from int14.c) */
-pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
+pcbcomm_port_t g_ports[PCBCOMM_MAX_PORTS];
 int            g_n_ports = 0;
 
 /* Ring buffer arenas — statically allocated to keep resident image small */
-static unsigned char g_rx_arena[PCBDCOM_MAX_PORTS][PCBDCOM_RX_RING];
-static unsigned char g_tx_arena[PCBDCOM_MAX_PORTS][PCBDCOM_TX_RING];
+static unsigned char g_rx_arena[PCBCOMM_MAX_PORTS][PCBCOMM_RX_RING];
+static unsigned char g_tx_arena[PCBCOMM_MAX_PORTS][PCBCOMM_TX_RING];
 
 /* External IRQ + INT14 install/uninstall */
-extern int  pcbdcom_irq_register(unsigned char irq, pcbdcom_port_t *p);
-extern void pcbdcom_irq_shutdown(void);
-extern void pcbdcom_int14_install(void);
-extern void pcbdcom_int14_uninstall(void);
+extern int  pcbcomm_irq_register(unsigned char irq, pcbcomm_port_t *p);
+extern void pcbcomm_irq_shutdown(void);
+extern void pcbcomm_int14_install(void);
+extern void pcbcomm_int14_uninstall(void);
 
 /* Backend name -> pointer lookup */
-static const pcbdcom_backend_t *find_backend(const char *name)
+static const pcbcomm_backend_t *find_backend(const char *name)
 {
-    if (!strcmp(name, "8250"))       return &pcbdcom_uart_backend;
-    if (!strcmp(name, "BOCA"))       return &pcbdcom_boca_backend;
-    if (!strcmp(name, "BOCA16"))     return &pcbdcom_boca_backend;
-    if (!strcmp(name, "CYCLOM"))     return &pcbdcom_cyclom_backend;
-    if (!strcmp(name, "DIGI_PCXE"))  return &pcbdcom_digi_pcxe_backend;
-    if (!strcmp(name, "DIGI_ACCEL")) return &pcbdcom_digi_accel_backend;
-    if (!strcmp(name, "ROCKET"))     return &pcbdcom_rocket_backend;
-    if (!strcmp(name, "EASYIO"))     return &pcbdcom_easyio_backend;
-    if (!strcmp(name, "ARNETSPP"))   return &pcbdcom_arnet_backend;
-    if (!strcmp(name, "ARNET"))      return &pcbdcom_arnet_backend;
+    if (!strcmp(name, "8250"))       return &pcbcomm_uart_backend;
+    if (!strcmp(name, "BOCA"))       return &pcbcomm_boca_backend;
+    if (!strcmp(name, "BOCA16"))     return &pcbcomm_boca_backend;
+    if (!strcmp(name, "CYCLOM"))     return &pcbcomm_cyclom_backend;
+    if (!strcmp(name, "DIGI_PCXE"))  return &pcbcomm_digi_pcxe_backend;
+    if (!strcmp(name, "DIGI_ACCEL")) return &pcbcomm_digi_accel_backend;
+    if (!strcmp(name, "ROCKET"))     return &pcbcomm_rocket_backend;
+    if (!strcmp(name, "EASYIO"))     return &pcbcomm_easyio_backend;
+    if (!strcmp(name, "ARNETSPP"))   return &pcbcomm_arnet_backend;
+    if (!strcmp(name, "ARNET"))      return &pcbcomm_arnet_backend;
     return NULL;
 }
 
 /* ----- Config file parser ----- *
- * PCBDCOM.CFG format (see SPEC.md):
+ * PCBCOMM.CFG format (see SPEC.md):
  *   # comment
  *   PORT CARD SUBPORT BASE IRQ CARDSEG FOSSIL
  *   1    8250 0       0x3F8 4  0       Y
@@ -62,8 +62,8 @@ static int parse_config(const char *path)
     char line[128], card[16];
     unsigned int port, subport, base, irq, cardseg;
     char fossil;
-    pcbdcom_port_t *p;
-    const pcbdcom_backend_t *b;
+    pcbcomm_port_t *p;
+    const pcbcomm_backend_t *b;
     int n = 0;
 
     f = fopen(path, "r");
@@ -75,11 +75,11 @@ static int parse_config(const char *path)
         if (sscanf(line, "%u %15s %u %i %u %u %c",
                    &port, card, &subport, &base, &irq, &cardseg, &fossil) < 6)
             continue;
-        if (port == 0 || port > PCBDCOM_MAX_PORTS) continue;
+        if (port == 0 || port > PCBCOMM_MAX_PORTS) continue;
 
         b = find_backend(card);
         if (!b) {
-            printf("pcbdcom: unknown card '%s' on port %u\n", card, port);
+            printf("pcbcomm: unknown card '%s' on port %u\n", card, port);
             continue;
         }
 
@@ -99,7 +99,7 @@ static int parse_config(const char *path)
             card_key = cardseg ? (unsigned long)cardseg : (unsigned long)base;
             p->backend_data = b->card_get(card_key);
             if (!p->backend_data) {
-                printf("pcbdcom: card pool full for '%s' on port %u\n",
+                printf("pcbcomm: card pool full for '%s' on port %u\n",
                        card, port);
                 continue;
             }
@@ -108,9 +108,9 @@ static int parse_config(const char *path)
         }
 
         p->rx_buf     = g_rx_arena[port - 1];
-        p->rx_size    = PCBDCOM_RX_RING;
+        p->rx_size    = PCBCOMM_RX_RING;
         p->tx_buf     = g_tx_arena[port - 1];
-        p->tx_size    = PCBDCOM_TX_RING;
+        p->tx_size    = PCBCOMM_TX_RING;
         p->rx_head = p->rx_tail = p->tx_head = p->tx_tail = 0;
         p->open       = 0;
 
@@ -122,20 +122,20 @@ static int parse_config(const char *path)
 }
 
 /* Bring up every configured port + register IRQs + install INT 14h */
-static int pcbdcom_install(void)
+static int pcbcomm_install(void)
 {
     int i, ok = 0;
-    printf("pcbdcom v1 — %d ports configured\n", g_n_ports);
+    printf("pcbcomm v1 — %d ports configured\n", g_n_ports);
 
     for (i = 0; i < g_n_ports; i++) {
-        pcbdcom_port_t *p = &g_ports[i];
+        pcbcomm_port_t *p = &g_ports[i];
         if (!p->backend) continue;
         if (p->backend->init(p) < 0) {
             printf("  port %d (%s @ 0x%X): probe/init FAILED\n",
                    i + 1, p->backend->name, p->base);
             continue;
         }
-        if (pcbdcom_irq_register(p->irq, p) < 0) {
+        if (pcbcomm_irq_register(p->irq, p) < 0) {
             printf("  port %d IRQ %u: register FAILED\n", i + 1, p->irq);
             p->backend->deinit(p);
             continue;
@@ -145,12 +145,12 @@ static int pcbdcom_install(void)
         ok++;
     }
 
-    pcbdcom_int14_install();
-    printf("pcbdcom: %d/%d ports online, INT 14h hooked.\n", ok, g_n_ports);
+    pcbcomm_int14_install();
+    printf("pcbcomm: %d/%d ports online, INT 14h hooked.\n", ok, g_n_ports);
     return ok;
 }
 
-/* Command-line arg: /CFG=path (default PCBDCOM.CFG) */
+/* Command-line arg: /CFG=path (default PCBCOMM.CFG) */
 static const char *find_cfg_arg(int argc, char **argv)
 {
     int i;
@@ -158,7 +158,7 @@ static const char *find_cfg_arg(int argc, char **argv)
         if (!strncmp(argv[i], "/CFG=", 5)) return argv[i] + 5;
         if (!strncmp(argv[i], "/cfg=", 5)) return argv[i] + 5;
     }
-    return "PCBDCOM.CFG";
+    return "PCBCOMM.CFG";
 }
 
 /* ----- .EXE / TSR entry ----- */
@@ -174,22 +174,22 @@ int main(int argc, char **argv)
     unsigned int resident_paragraphs;
     unsigned int psp_seg;
 
-    printf("pcbdcom v1.2 — PCB DOS COM (WCSC COMM-DRV replacement)\n");
+    printf("pcbcomm v1.2 — PCB COMM (WCSC COMM-DRV replacement)\n");
     printf("the crew 4free — GPLv3\n\n");
 
     cfg = find_cfg_arg(argc, argv);
     n = parse_config(cfg);
     if (n <= 0) {
-        printf("pcbdcom: no ports configured (config: %s)\n", cfg);
+        printf("pcbcomm: no ports configured (config: %s)\n", cfg);
         return 1;
     }
 
-    if (pcbdcom_install() == 0) {
-        printf("pcbdcom: no ports came online — aborting.\n");
+    if (pcbcomm_install() == 0) {
+        printf("pcbcomm: no ports came online — aborting.\n");
         return 2;
     }
 
-    printf("pcbdcom: %d port(s) online, installing TSR...\n", n);
+    printf("pcbcomm: %d port(s) online, installing TSR...\n", n);
 
     /* TSR install: compute resident size = end-of-BSS - PSP + safety margin.
      * PSP is 256 bytes below the loaded image on DOS EXE (CS = PSP + 0x10).
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
  *
  * DROPPED in v1.2 for WCSC parity: original COMM-DRV shipped ONLY as
  * COMMTSR.EXE (a TSR), never as a .SYS device driver. Sysops load us
- * from AUTOEXEC.BAT with `PCBDTSR.EXE /F=PCBDCOM.CFG` — same as they
+ * from AUTOEXEC.BAT with `PCBDTSR.EXE /F=PCBCOMM.CFG` — same as they
  * used to load COMMTSR.EXE.
  *
  * If .SYS-mode is needed later, resurrect device_entry() with correct

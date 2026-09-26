@@ -26,6 +26,10 @@
 #       Every macro is guarded, so it can be overridden:
 #           make -DCVER=TC201 -DMODEL=SMALL
 #
+#       Memory model:
+#           Large (default):  make
+#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#
 #       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
 #
 #=============================================================
@@ -42,14 +46,20 @@ CVER     = BC31
 !ifndef MODEL
 MODEL    = LARGE
 !endif
+!ifndef MDL
+MDL      = l
+!endif
+!ifndef CFGNAME
+CFGNAME  = TK
+!endif
 !ifndef TKIT
 TKIT     = \TOOLKIT\PWA153
 !endif
 
 SUBDIR   = VMDATA
-LIBNAME  = VMDATA_L
+LIBNAME  = VMDATA_$(MDL)
 CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\TK.CFG
+CFG      = $(CFGDIR)\$(CFGNAME).CFG
 SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
 LIBDIR   = $(SDK)\LIB
 OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)

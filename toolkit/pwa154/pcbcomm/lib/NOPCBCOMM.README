@@ -1,0 +1,5 @@
+NOPCBDCOM.OBJ — empty ser_rs232_* stub.
+
+For building PCBoard-derived tools that #ifdef out serial entirely but
+still need symbols to link. All functions return RS232ERR_NOPORT.
+Build from `../src/nopcbdcom_stub.c` when present.

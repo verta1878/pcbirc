@@ -1,5 +1,5 @@
 /* ============================================================================
- * PCBDCOM.H  pcbdcom SDK public API
+ * PCBCOMM.H  pcbcomm SDK public API
  *
  * Drop-in replacement for WCSC's COMMDRV.OBJ. Provides the ser_rs232_*
  * API used by PCBoard's MODEMDRV.C. All structs, constants, and function
@@ -7,8 +7,8 @@
  *
  * License: GPLv3.
  * ==========================================================================*/
-#ifndef PCBDCOM_SDK_H
-#define PCBDCOM_SDK_H
+#ifndef PCBCOMM_SDK_H
+#define PCBCOMM_SDK_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,17 +96,17 @@ struct port_param {
     unsigned char  misc[16];       /* reserved                           */
 };
 
-/* -------- pcbdcom internal port state -------- */
+/* -------- pcbcomm internal port state -------- */
 /* Forward-declared for backend.h; full definition here. */
 
-#define PCBDCOM_MAX_PORTS  32
-#define PCBDCOM_RX_RING   4096
-#define PCBDCOM_TX_RING   2048
-#define PCBDCOM_BUF_SIZE  PCBDCOM_RX_RING
+#define PCBCOMM_MAX_PORTS  32
+#define PCBCOMM_RX_RING   4096
+#define PCBCOMM_TX_RING   2048
+#define PCBCOMM_BUF_SIZE  PCBCOMM_RX_RING
 
-struct pcbdcom_backend;  /* forward */
+struct pcbcomm_backend;  /* forward */
 
-typedef struct pcbdcom_port {
+typedef struct pcbcomm_port {
     /* Hardware */
     unsigned int   base;           /* I/O base address                  */
     unsigned char  irq;            /* IRQ number                        */
@@ -123,7 +123,7 @@ typedef struct pcbdcom_port {
     unsigned char  flow;
     unsigned int   buf_size;
 
-    /* Ring buffers (pointers set by pcbdcom.c from static arenas) */
+    /* Ring buffers (pointers set by pcbcomm.c from static arenas) */
     unsigned char *rx_buf;
     unsigned int   rx_head;
     unsigned int   rx_tail;
@@ -134,7 +134,7 @@ typedef struct pcbdcom_port {
     unsigned int   tx_size;
 
     /* Backend */
-    const struct pcbdcom_backend *backend;
+    const struct pcbcomm_backend *backend;
     void          *backend_data;   /* per-backend private state          */
     void          *card_state;     /* per-card shared state              */
     void          *isr;            /* saved ISR vector                   */
@@ -142,7 +142,7 @@ typedef struct pcbdcom_port {
     /* COMMDRV compatibility — populated by shim for MODEMDRV.C access */
     opcb_type      compat_opcb;    /* embedded opcb for this port        */
     auxpcb_type    compat_auxpcb;  /* embedded auxpcb for this port      */
-} pcbdcom_port_t;
+} pcbcomm_port_t;
 
 /* -------- API functions -------- */
 int  ser_rs232_init(void);
@@ -163,4 +163,4 @@ int  ser_rs232_rts_off(unsigned int port);
 }
 #endif
 
-#endif /* PCBDCOM_SDK_H */
+#endif /* PCBCOMM_SDK_H */

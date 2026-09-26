@@ -1,11 +1,11 @@
-# pcbdcom SDK
+# pcbcomm SDK
 
 Free-software (GPLv3) drop-in replacement for WCSC's COMMDRV.OBJ.
 
 ## Contents
 
     src/        Full source (all backends + shim)
-    inc/        Public headers (PCBDCOM.H)
+    inc/        Public headers (PCBCOMM.H)
     lib/        Pre-built .OBJ variants per compiler + memory model
     docs/       This directory
     examples/   Sample apps
@@ -19,12 +19,12 @@ Free-software (GPLv3) drop-in replacement for WCSC's COMMDRV.OBJ.
 | MSC 8.0    | _8S   | _8M    | _8C     | _8L   | _8H  | —    |
 | OpenWatcom | —     | —      | —       | _WL   | —    | _WF  |
 
-Prefix all with `PCBDCOM` (e.g. `PCBDCOM_BL.OBJ`). For PCBoard use
-`PCBDCOM_BL.OBJ` (large model, BC-built) to match Clark's original.
+Prefix all with `PCBCOMM` (e.g. `PCBCOMM_BL.OBJ`). For PCBoard use
+`PCBCOMM_BL.OBJ` (large model, BC-built) to match Clark's original.
 
 ## Substitution recipe
 
-Replace `COMMDRV.OBJ` with `PCBDCOM_BL.OBJ` in your link line. Keep
+Replace `COMMDRV.OBJ` with `PCBCOMM_BL.OBJ` in your link line. Keep
 `FOSSIL.OBJ` as-is. Everything else stays the same.
 
 Calling convention: Pascal, callee-cleans, uppercase symbols. Matches

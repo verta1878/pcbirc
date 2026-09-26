@@ -1,6 +1,6 @@
 # int14.c — FOSSIL 5 Revision C Status
 
-## pcbdcom INT 14h handler for PCBoard
+## pcbcomm INT 14h handler for PCBoard
 ### pcbirc crew, GPLv3
 
 ## Architecture — How PCBoard Talks to Serial
@@ -31,10 +31,10 @@ API: 13 `ser_rs232_*` functions via `<comm.h>` plus shared `pcb.opcb->`
 structure. Only 2 `asm int 14h` sites (lines 264/271: AX=1000h commgo,
 AX=1002h commstop). 33 `COMMDRV_*` entry points.
 
-## pcbdcom Scope
+## pcbcomm Scope
 
 **Primary: FOSSIL driver (option a)**. `MODEMFOS.C` is pure INT 14h — exactly
-what `int14.c` provides. pcbdcom installs on INT 14h, PCBoard reaches it
+what `int14.c` provides. pcbcomm installs on INT 14h, PCBoard reaches it
 through the existing `MODEMFOS.C` path, no new code needed in PCBoard.
 
 **Future: COMM-DRV replacement (option c)**. Requires shipping a `comm.h`-
@@ -44,14 +44,14 @@ compatible `port_param`/`opcb` layout. A TSR on INT 14h cannot satisfy this.
 it was part of the proprietary COMM-DRV SDK. This is the real unknown.
 
 ```
-pcbdcom identity:
+pcbcomm identity:
   Primary:   FOSSIL driver (option a — working now)
   Future:    COMM-DRV replacement (option c — needs comm.h)
 
 PCBoard selection order (MODEM.C line 510):
   1. COMM-DRV loaded? → MODEMDRV.C → linked C API    → needs comm.h library
-  2. FOSSIL loaded?   → MODEMFOS.C → INT 14h          → pcbdcom ✓
-  3. Neither?         → MODEMASY.C → ASYNC.ASM → bare UART (no pcbdcom)
+  2. FOSSIL loaded?   → MODEMFOS.C → INT 14h          → pcbcomm ✓
+  3. Neither?         → MODEMASY.C → ASYNC.ASM → bare UART (no pcbcomm)
 ```
 
 ## Toolkit fossil.obj
@@ -92,7 +92,7 @@ Fn    AX/AH       Function              MODEMFOS.C usage
 
 **Critical:** 18h, 19h, and 1Bh are the three functions that were stubs.
 They are precisely the ones PCBoard's FOSSIL client uses with `ES:DI`
-buffers. Fixed — they now write/read via `PCBDCOM_FAR_PTR(ES, DI)`.
+buffers. Fixed — they now write/read via `PCBCOMM_FAR_PTR(ES, DI)`.
 
 ## COMM-DRV Extension Dispatch — CORRECTED
 
@@ -144,10 +144,10 @@ Fn   Name                    Status       Notes
 15h  Write char+attr         DONE         INT 10h AH=09h
 16h  Timer chain             DONE         ES:DX callback, _chain_intr (low priority, never called)
 17h  Reboot                  DONE         Cold/warm, all 3 compilers
-18h  Block read              DONE         ES:DI via PCBDCOM_FAR_PTR ← PCBoard uses this
-19h  Block write             DONE         ES:DI via PCBDCOM_FAR_PTR ← PCBoard uses this
+18h  Block read              DONE         ES:DI via PCBCOMM_FAR_PTR ← PCBoard uses this
+19h  Block write             DONE         ES:DI via PCBCOMM_FAR_PTR ← PCBoard uses this
 1Ah  Break signal            DONE         LCR break bit
-1Bh  Get driver info         DONE         ES:DI via PCBDCOM_FAR_PTR ← PCBoard uses this
+1Bh  Get driver info         DONE         ES:DI via PCBCOMM_FAR_PTR ← PCBoard uses this
 ```
 
 No stubs remain. All functions PCBoard calls through MODEMFOS.C are implemented.
@@ -167,12 +167,12 @@ No stubs remain. All functions PCBoard calls through MODEMFOS.C are implemented.
        FIXED: renamed 'xor' (C++ reserved keyword) to 'xor_val' in
        GPROT.HPP. All 3 copies synced. The CPP already had xor_val.
 3. [x] Fix 18h/19h/1Bh ES:DI stubs
-       DONE: PCBDCOM_FAR_PTR(ES, DI). These are the functions PCBoard
+       DONE: PCBCOMM_FAR_PTR(ES, DI). These are the functions PCBoard
        actually calls — they were the critical path, not cleanup.
        1Bh also hardened: always writes full 19 bytes regardless of CX,
        defensive against callers that don't set CX before calling.
        (Clark's MODEMFOS.C does set CX = sizeof(fossilstruct).)
-4. [x] Add cached_msr to pcbdcom_port_t
+4. [x] Add cached_msr to pcbcomm_port_t
        DONE: status_word() reads p->cached_msr. Works for all backends.
 5. [x] Fix timer chain 16h
        DONE: ES:DX callback, _chain_intr. Low priority — MODEMFOS.C
@@ -193,7 +193,7 @@ No stubs remain. All functions PCBoard calls through MODEMFOS.C are implemented.
        - comm.h: 13 ser_rs232_* prototypes with LIBENTRY, port_param/
          opcb_block/aux_pcb structs, all constants (RS232ERR_*, CARD_*,
          LENGTH_*, PARITY_*, PROT_*, XMTOFF_STATE)
-       - commdrbl.c: 13 functions via INT 14h to pcbdcom TSR. Block
+       - commdrbl.c: 13 functions via INT 14h to pcbcomm TSR. Block
          read/write via fn 18h/19h, refresh_info via 1Bh, viewpacket
          via 0Ch. rx/tx_buf_total stored, feeds outbuf_len.
        - libsbl.c: strerror, detect, baud/divisor, cardname, defaults
@@ -244,16 +244,16 @@ No stubs remain. All functions PCBoard calls through MODEMFOS.C are implemented.
 ## File Locations
 
 ```
-Driver side (pcbdcom):
-  pcb154/pcbdcom/src/int14.c             FOSSIL 5C + COMM-DRV handler
-  pcb154/pcbdcom/src/ser_rs232_shim.c    COMM-DRV API shim (13 functions + opcb)
-  pcb154/pcbdcom/inc/pcbdcom.h           Port structure (+ cached_msr)
-  pcb154/pcbdcom/inc/compat.h            Cross-compiler ISR macros (+ ES/DI/MK_FP)
-  pcb154/pcbdcom/inc/comm.h              COMM-DRV SDK header (clean-room)
-  pcb154/pcbdcom/inc/backend.h           Backend vtable
-  pcb154/pcbdcom/inc/uart.h              UART register defines
-  pcb154/pcbdcom/src/commdrbl.c          COMMDRBL.LIB source (13 ser_rs232_*)
-  pcb154/pcbdcom/src/libsbl.c            LIBSBL.LIB source (utilities)
+Driver side (pcbcomm):
+  pcb154/pcbcomm/src/int14.c             FOSSIL 5C + COMM-DRV handler
+  pcb154/pcbcomm/src/ser_rs232_shim.c    COMM-DRV API shim (13 functions + opcb)
+  pcb154/pcbcomm/inc/pcbcomm.h           Port structure (+ cached_msr)
+  pcb154/pcbcomm/inc/compat.h            Cross-compiler ISR macros (+ ES/DI/MK_FP)
+  pcb154/pcbcomm/inc/comm.h              COMM-DRV SDK header (clean-room)
+  pcb154/pcbcomm/inc/backend.h           Backend vtable
+  pcb154/pcbcomm/inc/uart.h              UART register defines
+  pcb154/pcbcomm/src/commdrbl.c          COMMDRBL.LIB source (13 ser_rs232_*)
+  pcb154/pcbcomm/src/libsbl.c            LIBSBL.LIB source (utilities)
 
 Toolkit:
   fossil.c                               Standalone FOSSIL.OBJ source (767 lines)

@@ -1,16 +1,16 @@
-# Linking pcbdcom into PCBoard
+# Linking pcbcomm into PCBoard
 
 PCBoard's `MODEMDRV.C` is `#ifdef COMMDRV`-gated and calls the
 `ser_rs232_*` API. Clark's link recipe uses `COMMDRV.OBJ + FOSSIL.OBJ`
 from the PCBoard toolkit .ZIP.
 
-Substitute `PCBDCOM_BL.OBJ + FOSSIL.OBJ` and rebuild. Everything else
+Substitute `PCBCOMM_BL.OBJ + FOSSIL.OBJ` and rebuild. Everything else
 stays the same.
 
 ## Historical note
 
 PCBoard 15.x kept `#ifdef COMMDRV` intact in `MODEMDRV.C`. pcbirc
-preserves that block untouched and adds a parallel `#ifdef PCBDCOM`
+preserves that block untouched and adds a parallel `#ifdef PCBCOMM`
 block for our extensions. Either can be built; both work.
 
 ## What you gain

@@ -14,6 +14,10 @@
 #           make -DCVER=BC50
 #           make -DROOT=\OUT -DBRANCH=PWA154
 #
+#       Memory model:
+#           Large (default):  make
+#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#
 #       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
 #
 #       The module list is Clark's: it matches the module names read
@@ -41,14 +45,20 @@ CVER     = BC31
 !ifndef MODEL
 MODEL    = LARGE
 !endif
+!ifndef MDL
+MDL      = l
+!endif
+!ifndef CFGNAME
+CFGNAME  = TK
+!endif
 !ifndef TKIT
 TKIT     = \TOOLKIT\PWA153
 !endif
 
 SUBDIR   = SCRNIO
-LIBNAME  = SCRNIO_L
+LIBNAME  = SCRNIO_$(MDL)
 CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\TK.CFG
+CFG      = $(CFGDIR)\$(CFGNAME).CFG
 SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
 LIBDIR   = $(SDK)\LIB
 OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)
@@ -61,7 +71,7 @@ LIBFILE  = $(LIBDIR)\$(LIBNAME).LIB
 	bcc +$(CFG) -n$(OBJDIR) $<
 
 .asm.obj:
-	tasm /mx /d__l__ $<, $(OBJDIR)\$&.obj
+	tasm /mx /d__$(MDL)__ $<, $(OBJDIR)\$&.obj
 
 all: DIRS OBJS LIBF
 

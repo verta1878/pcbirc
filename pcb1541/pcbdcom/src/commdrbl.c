@@ -5,7 +5,7 @@
  * MODEMDRV.C links against. Compiles to commdrbl.lib (Borland large model)
  * as a drop-in replacement for the proprietary WCSC COMM-DRV/DOS SDK library.
  *
- * This is the link-time library. It talks to the pcbdcom TSR (or any
+ * This is the link-time library. It talks to the pcbcomm TSR (or any
  * COMM-DRV-compatible TSR) through shared memory — the TSR allocates the
  * opcb and auxpcb blocks in its resident segment, and this library accesses
  * them via far pointers set during ser_rs232_setup().
@@ -26,7 +26,7 @@
 #include <string.h>
 
 /* ---- TSR detection ----------------------------------------------------- */
-/* The pcbdcom TSR (or COMM-DRV) installs on INT 14h. We detect it by
+/* The pcbcomm TSR (or COMM-DRV) installs on INT 14h. We detect it by
  * calling function 04h (FOSSIL init) and checking for the 0x1954 signature.
  * If present, the TSR also stores a far pointer to its port table at a
  * known location (the COMM-DRV "info block" returned by function 1Bh). */
@@ -146,7 +146,7 @@ int LIBENTRY ser_rs232_init(void)
 
     memset(ports, 0, sizeof(ports));
 
-    /* Probe for FOSSIL/pcbdcom on port 0 */
+    /* Probe for FOSSIL/pcbcomm on port 0 */
     ax = call_int14_bx(0x04, 0, 0, &bx);
     if (ax != 0x1954)
         return RS232ERR_INIT;  /* no FOSSIL driver loaded */

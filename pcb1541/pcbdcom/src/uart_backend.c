@@ -1,8 +1,8 @@
 /* ============================================================================
- * uart_backend.c — pcbdcom backend wrapper for standard 8250-family UARTs
+ * uart_backend.c — pcbcomm backend wrapper for standard 8250-family UARTs
  *
  * Ties uart.c (low-level register access, from Linux 8250_port.c) to
- * the pcbdcom_backend_t interface (see inc/backend.h).
+ * the pcbcomm_backend_t interface (see inc/backend.h).
  *
  * Ported from Linux drivers/tty/serial/8250/8250_core.c handling of
  * uart_port callbacks, GPLv2 (Russell King, Alan Cox, Ted Ts'o).
@@ -18,7 +18,7 @@
 
 #include <conio.h>
 #include "uart.h"
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 
 #if defined(_MSC_VER)
 # define UART_OUT(port, val) _outp((port), (val))
@@ -28,14 +28,14 @@
 # define UART_IN(port)       (unsigned char)inp((port))
 #endif
 
-int uart_backend_probe(pcbdcom_port_t *p)
+int uart_backend_probe(pcbcomm_port_t *p)
 {
     uart_type_t t = uart_probe(p->base);
     p->chip = t;
     return (t != UART_TYPE_NONE) ? 0 : -1;
 }
 
-int uart_backend_init(pcbdcom_port_t *p)
+int uart_backend_init(pcbcomm_port_t *p)
 {
     if (uart_backend_probe(p) < 0) return -1;
 
@@ -56,7 +56,7 @@ int uart_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void uart_backend_deinit(pcbdcom_port_t *p)
+void uart_backend_deinit(pcbcomm_port_t *p)
 {
     UART_OUT(p->base + UART_IER, 0);
     UART_OUT(p->base + UART_MCR, 0);
@@ -64,7 +64,7 @@ void uart_backend_deinit(pcbdcom_port_t *p)
 }
 
 /* IRQ handler — called from irq.c dispatch for this port's IRQ line */
-void uart_backend_isr(pcbdcom_port_t *p)
+void uart_backend_isr(pcbcomm_port_t *p)
 {
     unsigned char iir, lsr, ch;
     unsigned int next;
@@ -110,7 +110,7 @@ void uart_backend_isr(pcbdcom_port_t *p)
 }
 
 /* Non-blocking read: drain from rx ring into caller buffer, return count */
-int uart_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int uart_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
     unsigned char *out = (unsigned char *)buf;
     int i;
@@ -122,7 +122,7 @@ int uart_backend_read(pcbdcom_port_t *p, void *buf, int n)
 }
 
 /* Non-blocking write: fill tx ring, kick THRE IRQ on first byte, return count */
-int uart_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int uart_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     const unsigned char *in = (const unsigned char *)buf;
     unsigned int next;
@@ -146,7 +146,7 @@ int uart_backend_write(pcbdcom_port_t *p, const void *buf, int n)
 
 #include "backend.h"
 
-const pcbdcom_backend_t pcbdcom_uart_backend = {
+const pcbcomm_backend_t pcbcomm_uart_backend = {
     "8250",
     0,                        /* no per-card state — every UART is standalone */
     uart_backend_probe,

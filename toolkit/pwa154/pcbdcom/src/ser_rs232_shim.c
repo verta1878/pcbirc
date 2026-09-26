@@ -1,8 +1,8 @@
 /* ============================================================================
- * ser_rs232_shim.c  pcbdcom drop-in replacement for COMMDRV.OBJ
+ * ser_rs232_shim.c  pcbcomm drop-in replacement for COMMDRV.OBJ
  *
  * Exports the 13-function ser_rs232_* API that PCBoard's MODEMDRV.C links
- * against. Enables link-time substitution: link PCBoard with pcbdcom.OBJ
+ * against. Enables link-time substitution: link PCBoard with pcbcomm.OBJ
  * (this shim + backend code) instead of Clark's proprietary COMMDRV.OBJ.
  *
  * Calling convention (Pascal, callee-cleans, uppercase symbols) matches
@@ -10,7 +10,7 @@
  *
  * License: GPLv3
  * ==========================================================================*/
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include <stddef.h>
 #include <conio.h>
@@ -24,11 +24,11 @@
 # define SHIM_IN(port)       (unsigned char)inp((port))
 #endif
 
-/* External port table from pcbdcom.c */
-extern pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
+/* External port table from pcbcomm.c */
+extern pcbcomm_port_t g_ports[PCBCOMM_MAX_PORTS];
 extern int g_n_ports;
 
-static pcbdcom_port_t *port_by_num(unsigned int port_num)
+static pcbcomm_port_t *port_by_num(unsigned int port_num)
 {
     if (port_num == 0 || port_num > (unsigned int)g_n_ports)
         return NULL;
@@ -36,7 +36,7 @@ static pcbdcom_port_t *port_by_num(unsigned int port_num)
 }
 
 /* Update compat_opcb from current port state */
-static void update_opcb(pcbdcom_port_t *p)
+static void update_opcb(pcbcomm_port_t *p)
 {
     unsigned int rx_avail = (p->rx_head - p->rx_tail) & (p->rx_size - 1);
     unsigned int tx_pend  = (p->tx_head - p->tx_tail) & (p->tx_size - 1);
@@ -58,7 +58,7 @@ int ser_rs232_init(void)
 
 int ser_rs232_setup(unsigned int port, struct port_param *pp)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p || !pp) return RS232ERR_PARAM;
 
     p->baud      = (unsigned long)pp->baud;
@@ -77,7 +77,7 @@ int ser_rs232_setup(unsigned int port, struct port_param *pp)
 
 int ser_rs232_getport(unsigned int port, struct port_param *pp)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p || !pp) return RS232ERR_PARAM;
 
     /* Update opcb from current state */
@@ -113,7 +113,7 @@ int ser_rs232_getport(unsigned int port, struct port_param *pp)
 
 int ser_rs232_getbyte(unsigned int port, unsigned char *b)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p || !b) return RS232ERR_PARAM;
     if (!p->backend || !p->backend->read) return RS232ERR_NOPORT;
     return (p->backend->read(p, b, 1) == 1) ? RS232ERR_NONE : RS232ERR_BUSY;
@@ -121,7 +121,7 @@ int ser_rs232_getbyte(unsigned int port, unsigned char *b)
 
 int ser_rs232_putbyte(unsigned int port, unsigned char *b)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p || !b) return RS232ERR_PARAM;
     if (!p->backend || !p->backend->write) return RS232ERR_NOPORT;
     return (p->backend->write(p, b, 1) == 1) ? RS232ERR_NONE : RS232ERR_BUSY;
@@ -129,7 +129,7 @@ int ser_rs232_putbyte(unsigned int port, unsigned char *b)
 
 int ser_rs232_getpacket(unsigned int port, unsigned int n, unsigned char *buf)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     int got;
     if (!p) return RS232ERR_PARAM;
     if (!p->backend || !p->backend->read) return RS232ERR_NOPORT;
@@ -153,7 +153,7 @@ int ser_rs232_getpacket(unsigned int port, unsigned int n, unsigned char *buf)
 
 int ser_rs232_putpacket(unsigned int port, unsigned int n, unsigned char *buf)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     int put;
     if (!p) return RS232ERR_PARAM;
     if (!p->backend || !p->backend->write) return RS232ERR_NOPORT;
@@ -168,7 +168,7 @@ int ser_rs232_putpacket(unsigned int port, unsigned int n, unsigned char *buf)
 
 int ser_rs232_viewpacket(unsigned int port, unsigned int n, unsigned char *buf)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     unsigned int i;
     if (!p || !buf) return RS232ERR_PARAM;
 
@@ -183,7 +183,7 @@ int ser_rs232_viewpacket(unsigned int port, unsigned int n, unsigned char *buf)
 
 int ser_rs232_flush(unsigned int port, unsigned int which)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p) return RS232ERR_PARAM;
 
     if (which == 0 || which == 2) { p->rx_head = p->rx_tail = 0; }
@@ -193,7 +193,7 @@ int ser_rs232_flush(unsigned int port, unsigned int which)
 
 int ser_rs232_dtr_on(unsigned int port)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p) return RS232ERR_PARAM;
     SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) | 0x01);
     return RS232ERR_NONE;
@@ -201,7 +201,7 @@ int ser_rs232_dtr_on(unsigned int port)
 
 int ser_rs232_dtr_off(unsigned int port)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p) return RS232ERR_PARAM;
     SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) & ~0x01);
     return RS232ERR_NONE;
@@ -209,7 +209,7 @@ int ser_rs232_dtr_off(unsigned int port)
 
 int ser_rs232_rts_on(unsigned int port)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p) return RS232ERR_PARAM;
     SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) | 0x02);
     return RS232ERR_NONE;
@@ -217,7 +217,7 @@ int ser_rs232_rts_on(unsigned int port)
 
 int ser_rs232_rts_off(unsigned int port)
 {
-    pcbdcom_port_t *p = port_by_num(port);
+    pcbcomm_port_t *p = port_by_num(port);
     if (!p) return RS232ERR_PARAM;
     SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) & ~0x02);
     return RS232ERR_NONE;

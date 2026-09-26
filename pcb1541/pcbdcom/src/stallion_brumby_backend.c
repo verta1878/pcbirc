@@ -1,5 +1,5 @@
 /* ============================================================================
- * stallion_brumby_backend.c — pcbdcom Stallion Brumby / ONboard backend
+ * stallion_brumby_backend.c — pcbcomm Stallion Brumby / ONboard backend
  *
  * Cards supported (v1):
  *   Stallion Brumby/4     4 ports, 80186 on-board, dual-port RAM
@@ -42,7 +42,7 @@
 /* PCB1541-only backend: only compiled into 15.41 builds */
 #if defined(PCB1541)
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "card_pool.h"
 
@@ -96,7 +96,7 @@ typedef struct {
     unsigned char   in_use;                      /* pool header            */
     unsigned int    card_seg;                    /* dual-port RAM segment  */
     unsigned char   nports;                      /* 4 or 8                 */
-    pcbdcom_port_t *ports[BR_MAX_CHANNELS];      /* subport -> port slot   */
+    pcbcomm_port_t *ports[BR_MAX_CHANNELS];      /* subport -> port slot   */
 } brumby_card_t;
 
 #define BR_MAX_CARDS 4
@@ -173,7 +173,7 @@ static void *brumby_card_get(unsigned long card_seg)
 
 /* ----- Backend hooks ----- */
 
-int stallion_brumby_backend_probe(pcbdcom_port_t *p)
+int stallion_brumby_backend_probe(pcbcomm_port_t *p)
 {
     brumby_card_t *card = (brumby_card_t *)p->backend_data;
     unsigned int sig, seg;
@@ -200,7 +200,7 @@ int stallion_brumby_backend_probe(pcbdcom_port_t *p)
     return 0;
 }
 
-int stallion_brumby_backend_init(pcbdcom_port_t *p)
+int stallion_brumby_backend_init(pcbcomm_port_t *p)
 {
     brumby_card_t *card = (brumby_card_t *)p->backend_data;
 
@@ -225,7 +225,7 @@ int stallion_brumby_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void stallion_brumby_backend_deinit(pcbdcom_port_t *p)
+void stallion_brumby_backend_deinit(pcbcomm_port_t *p)
 {
     brumby_card_t *card = (brumby_card_t *)p->backend_data;
 
@@ -241,7 +241,7 @@ void stallion_brumby_backend_deinit(pcbdcom_port_t *p)
 }
 
 /* ISR: read 16-bit interrupt-status mask, walk affected channels, ack. */
-void stallion_brumby_backend_isr(pcbdcom_port_t *p)
+void stallion_brumby_backend_isr(pcbcomm_port_t *p)
 {
     brumby_card_t *card = (brumby_card_t *)p->backend_data;
     unsigned int mask, i;
@@ -262,7 +262,7 @@ void stallion_brumby_backend_isr(pcbdcom_port_t *p)
     br_writew(card->card_seg, BR_INT_STATUS_OFF, 0x0000);
 }
 
-int stallion_brumby_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int stallion_brumby_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
     brumby_card_t *card = (brumby_card_t *)p->backend_data;
     unsigned char *dst = (unsigned char *)buf;
@@ -295,7 +295,7 @@ int stallion_brumby_backend_read(pcbdcom_port_t *p, void *buf, int n)
     return (int)avail;
 }
 
-int stallion_brumby_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int stallion_brumby_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     brumby_card_t *card = (brumby_card_t *)p->backend_data;
     const unsigned char *src = (const unsigned char *)buf;
@@ -329,7 +329,7 @@ int stallion_brumby_backend_write(pcbdcom_port_t *p, const void *buf, int n)
     return (int)room;
 }
 
-const pcbdcom_backend_t pcbdcom_stallion_brumby_backend = {
+const pcbcomm_backend_t pcbcomm_stallion_brumby_backend = {
     "STALLION_BRUMBY",
     brumby_card_get,
     stallion_brumby_backend_probe,

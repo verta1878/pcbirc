@@ -1,5 +1,5 @@
 /* ============================================================================
- * gtek_backend.c — pcbdcom GTEK BBS-550 / 8Fx dumb-multiport backend
+ * gtek_backend.c — pcbcomm GTEK BBS-550 / 8Fx dumb-multiport backend
  *
  * Cards supported (v1):
  *   GTEK BBS-550        8 ports, 16550 UARTs, 32-byte stride, shared IRQ
@@ -27,7 +27,7 @@
 
 #include <conio.h>
 #include "uart.h"
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "card_pool.h"
 
@@ -48,7 +48,7 @@ typedef struct {
     unsigned long   addr;                    /* pool header: card base I/O   */
     unsigned char   in_use;                  /* pool header                  */
     unsigned int    base;                    /* I/O base (typ. 0x100/180..)  */
-    pcbdcom_port_t *sub[GTEK_MAX_PORTS];     /* 8 sub-port slots             */
+    pcbcomm_port_t *sub[GTEK_MAX_PORTS];     /* 8 sub-port slots             */
 } gtek_card_t;
 
 #define GTEK_MAX_CARDS 4
@@ -67,15 +67,15 @@ static void *gtek_card_get(unsigned long card_addr)
 
 /* ----- Backend hooks ----- */
 
-int gtek_backend_probe(pcbdcom_port_t *p)
+int gtek_backend_probe(pcbcomm_port_t *p)
 {
-    extern int uart_backend_probe(pcbdcom_port_t *);
+    extern int uart_backend_probe(pcbcomm_port_t *);
     return uart_backend_probe(p);
 }
 
-int gtek_backend_init(pcbdcom_port_t *p)
+int gtek_backend_init(pcbcomm_port_t *p)
 {
-    extern int uart_backend_init(pcbdcom_port_t *);
+    extern int uart_backend_init(pcbcomm_port_t *);
     gtek_card_t *card = (gtek_card_t *)p->backend_data;
     unsigned int slot;
 
@@ -87,9 +87,9 @@ int gtek_backend_init(pcbdcom_port_t *p)
     return uart_backend_init(p);
 }
 
-void gtek_backend_deinit(pcbdcom_port_t *p)
+void gtek_backend_deinit(pcbcomm_port_t *p)
 {
-    extern void uart_backend_deinit(pcbdcom_port_t *);
+    extern void uart_backend_deinit(pcbcomm_port_t *);
     gtek_card_t *card = (gtek_card_t *)p->backend_data;
     unsigned int slot;
 
@@ -102,9 +102,9 @@ void gtek_backend_deinit(pcbdcom_port_t *p)
 }
 
 /* Shared-IRQ dispatch — same do/while(serviced) pattern as boca/hub6 */
-void gtek_backend_isr(pcbdcom_port_t *p)
+void gtek_backend_isr(pcbcomm_port_t *p)
 {
-    extern void uart_backend_isr(pcbdcom_port_t *);
+    extern void uart_backend_isr(pcbcomm_port_t *);
     gtek_card_t *card = (gtek_card_t *)p->backend_data;
     unsigned int i, sub_base;
     unsigned char iir;
@@ -115,7 +115,7 @@ void gtek_backend_isr(pcbdcom_port_t *p)
     do {
         serviced = 0;
         for (i = 0; i < GTEK_MAX_PORTS; i++) {
-            pcbdcom_port_t *sp = card->sub[i];
+            pcbcomm_port_t *sp = card->sub[i];
             if (!sp) continue;
             sub_base = card->base + i * GTEK_PORT_STRIDE;
             iir = GTEK_IN(sub_base + GTEK_IIR);
@@ -127,19 +127,19 @@ void gtek_backend_isr(pcbdcom_port_t *p)
     } while (serviced);
 }
 
-int gtek_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int gtek_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
 
-int gtek_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int gtek_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
-    extern int uart_backend_write(pcbdcom_port_t *, const void *, int);
+    extern int uart_backend_write(pcbcomm_port_t *, const void *, int);
     return uart_backend_write(p, buf, n);
 }
 
-const pcbdcom_backend_t pcbdcom_gtek_backend = {
+const pcbcomm_backend_t pcbcomm_gtek_backend = {
     "GTEK",
     gtek_card_get,
     gtek_backend_probe,

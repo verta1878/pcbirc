@@ -1,5 +1,5 @@
 /* ============================================================================
- * digi_accel_backend.c — pcbdcom DigiBoard AccelePort backend
+ * digi_accel_backend.c — pcbcomm DigiBoard AccelePort backend
  *
  * Cards supported: AccelePort Xe, Xr, Xem (2..64 ports; ISA/PCI).
  *
@@ -17,7 +17,7 @@
  * pcbirc crew (hexadecimal), GPLv3.
  * ==========================================================================*/
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "digi_fep.h"
 
@@ -28,7 +28,7 @@
 #define PCIXR_ID    0x05
 #define ACCELE_ID   0x06
 
-int digi_accel_backend_probe(pcbdcom_port_t *p)
+int digi_accel_backend_probe(pcbcomm_port_t *p)
 {
     unsigned int seg = ((digi_fep_card_t *)p->backend_data)->card_seg;
     unsigned char card_type = digi_fep_readb(seg, CARDTYPE_OFF);
@@ -45,7 +45,7 @@ int digi_accel_backend_probe(pcbdcom_port_t *p)
     return (n_ports >= 2 && n_ports <= 64) ? 0 : -1;
 }
 
-int digi_accel_backend_init(pcbdcom_port_t *p)
+int digi_accel_backend_init(pcbcomm_port_t *p)
 {
     digi_fep_card_t *card = (digi_fep_card_t *)p->backend_data;
     if (digi_accel_backend_probe(p) < 0) return -1;
@@ -55,20 +55,20 @@ int digi_accel_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void digi_accel_backend_deinit(pcbdcom_port_t *p)
+void digi_accel_backend_deinit(pcbcomm_port_t *p)
 {
     if (!p->open) return;
     digi_fep_deinit_channel(p, p->subport);
     p->open = 0;
 }
 
-int digi_accel_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int digi_accel_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
 
-const pcbdcom_backend_t pcbdcom_digi_accel_backend = {
+const pcbcomm_backend_t pcbcomm_digi_accel_backend = {
     "DIGI_ACCEL",
     digi_fep_card_get,
     digi_accel_backend_probe,

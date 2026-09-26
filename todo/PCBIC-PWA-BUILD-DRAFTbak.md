@@ -317,7 +317,7 @@ UUOUT, UUUTIL, UUXFER. Plus `MISC\HELP\MAKEHELP.C`, which has its own
 `packfido.obj`, supplies one symbol — `do_pack()` — whose only call site
 is commented out (`CONVERT.CPP:124`). Dropped from the makefile
 2026-09-17; FIDOUTIL builds with its ten real modules. See
-`pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md`.
+`pcb153/SOURCE/MISC/PACKFIDO/README.md` (PACKFIDO-MISSING.md resolved, moved to attic 2026-09-25).
 
 ##### Tier 2 — in the repo, NOT in the build root (blocked by a packaging gap)
 

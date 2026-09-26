@@ -69,8 +69,8 @@ INIT, MKPCBMNU, OVLSIZE, PACKFIDO, RDPCBTXT, TESTFILE, UPGRADE,
 VIEWARCH, VIEWZIP. Some of these were never Clark's to begin with:
 DOORWAY is Marshall Dudley's third-party door driver, shipped with
 PCBoard under licence. Others were small one-file tools kept outside the
-product tree — `packfido.c` is the documented case (see
-`pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md`).
+product tree — `packfido.c` is the documented case — **resolved 2026-09-24**, reconstructed
+from the shipped binary (see `pcb153/SOURCE/MISC/PACKFIDO/README.md`).
 
 So 37 is the shipping target, 24 is the buildable ceiling from what
 survives, and 2 is what is built today. Those three numbers should not be

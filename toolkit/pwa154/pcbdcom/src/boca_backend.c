@@ -1,5 +1,5 @@
 /* ============================================================================
- * boca_backend.c — pcbdcom Boca dumb multiport backend
+ * boca_backend.c — pcbcomm Boca dumb multiport backend
  *
  * Cards supported (v1):
  *   BB-1004    4 ports,  base+0x00..0x18 step 0x08, one shared IRQ
@@ -18,7 +18,7 @@
 
 #include <conio.h>
 #include "uart.h"
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 #if defined(_MSC_VER)
@@ -38,7 +38,7 @@ typedef enum {
     BOCA_BB_2016 = 16   /* two 8-port groups, second group has its own IRQ */
 } boca_model_t;
 
-/* Per-card state: which sub-ports exist and their pcbdcom_port_t
+/* Per-card state: which sub-ports exist and their pcbcomm_port_t
  * pointers, for IRQ dispatch. Attached via backend_data. */
 typedef struct {
     unsigned long  addr;                    /* pool header: card base I/O    */
@@ -46,7 +46,7 @@ typedef struct {
     boca_model_t   model;
     unsigned int   base;
     unsigned char  group_size;              /* 4 or 8 */
-    pcbdcom_port_t *sub[8];                 /* max 8 per IRQ group */
+    pcbcomm_port_t *sub[8];                 /* max 8 per IRQ group */
 } boca_card_t;
 
 #include "card_pool.h"
@@ -71,7 +71,7 @@ static void *boca_card_get(unsigned long card_addr)
 
 /* ----- Backend hooks — each sub-port looks like a plain UART ----- */
 
-int boca_backend_probe(pcbdcom_port_t *p)
+int boca_backend_probe(pcbcomm_port_t *p)
 {
     /* Each sub-port is a plain 16550. Delegate to the UART probe. */
     uart_type_t t = uart_probe(p->base);
@@ -81,19 +81,19 @@ int boca_backend_probe(pcbdcom_port_t *p)
     return (t >= UART_TYPE_16550A) ? 0 : -1;
 }
 
-int boca_backend_init(pcbdcom_port_t *p)
+int boca_backend_init(pcbcomm_port_t *p)
 {
     boca_card_t *card = (boca_card_t *)p->backend_data;
-    extern int uart_backend_init(pcbdcom_port_t *);
+    extern int uart_backend_init(pcbcomm_port_t *);
     /* Register in card's sub-port table */
     if (card && p->subport < card->group_size)
         card->sub[p->subport] = p;
     return uart_backend_init(p);
 }
 
-void boca_backend_deinit(pcbdcom_port_t *p)
+void boca_backend_deinit(pcbcomm_port_t *p)
 {
-    extern void uart_backend_deinit(pcbdcom_port_t *);
+    extern void uart_backend_deinit(pcbcomm_port_t *);
     uart_backend_deinit(p);
 }
 
@@ -101,10 +101,10 @@ void boca_backend_deinit(pcbdcom_port_t *p)
  * IRQ group. Walks the sub-ports, dispatches to the standard UART ISR
  * on any port whose IIR reports pending. Boca hardware does NOT
  * provide a card-level "which port fired" register — poll is the way. */
-void boca_backend_isr(pcbdcom_port_t *p)
+void boca_backend_isr(pcbcomm_port_t *p)
 {
     boca_card_t *card = (boca_card_t *)p->backend_data;
-    extern void uart_backend_isr(pcbdcom_port_t *);
+    extern void uart_backend_isr(pcbcomm_port_t *);
     int i, serviced;
 
     if (!card) {
@@ -118,7 +118,7 @@ void boca_backend_isr(pcbdcom_port_t *p)
     do {
         serviced = 0;
         for (i = 0; i < card->group_size; i++) {
-            pcbdcom_port_t *sp = card->sub[i];
+            pcbcomm_port_t *sp = card->sub[i];
             if (!sp || !sp->open) continue;
             if ((BOCA_IN(sp->base + UART_IIR) & IIR_NONE) == 0) {
                 uart_backend_isr(sp);
@@ -128,19 +128,19 @@ void boca_backend_isr(pcbdcom_port_t *p)
     } while (serviced);
 }
 
-int boca_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int boca_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
 
-int boca_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int boca_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
-    extern int uart_backend_write(pcbdcom_port_t *, const void *, int);
+    extern int uart_backend_write(pcbcomm_port_t *, const void *, int);
     return uart_backend_write(p, buf, n);
 }
 
-const pcbdcom_backend_t pcbdcom_boca_backend = {
+const pcbcomm_backend_t pcbcomm_boca_backend = {
     "BOCA",
     boca_card_get,
     boca_backend_probe,
@@ -151,12 +151,12 @@ const pcbdcom_backend_t pcbdcom_boca_backend = {
     boca_backend_write
 };
 
-/* ----- Helper: build a Boca card record for the PCBDCOM.CFG parser ----- *
- * Called from src/pcbdcom.c when config file names a BOCA_* card. Fills
+/* ----- Helper: build a Boca card record for the PCBCOMM.CFG parser ----- *
+ * Called from src/pcbcomm.c when config file names a BOCA_* card. Fills
  * a boca_card_t and points each sub-port's backend_data at the card so
  * the shared-IRQ ISR can find its peers. */
 int boca_card_init(boca_card_t *card, boca_model_t model, unsigned int base,
-                   pcbdcom_port_t *sub_ports)
+                   pcbcomm_port_t *sub_ports)
 {
     int i;
     card->model = model;
@@ -165,7 +165,7 @@ int boca_card_init(boca_card_t *card, boca_model_t model, unsigned int base,
 
     for (i = 0; i < card->group_size; i++) {
         sub_ports[i].base = base + (i * BOCA_PORT_STRIDE);
-        sub_ports[i].backend = &pcbdcom_boca_backend;
+        sub_ports[i].backend = &pcbcomm_boca_backend;
         sub_ports[i].backend_data = card;
         card->sub[i] = &sub_ports[i];
     }

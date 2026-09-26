@@ -88,7 +88,7 @@ ceiling is 11 utilities, not 24.
 driver, shipped under licence. `PACKFIDO` is the documented case: the
 `.DSK` desktop files place its source at `E:\TC\PACKFIDO\PACKFIDO.C`,
 a developer's Turbo C scratch drive that was never in the archive's
-scope. See `pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md`.
+scope. **Resolved 2026-09-24** — reconstructed from shipped binary; see `pcb153/SOURCE/MISC/PACKFIDO/README.md`.
 
 So the three numbers are: **37 shipped**, **24 have a makefile
 somewhere**, **11 are in the build root**, **2 are built**. Earlier
@@ -276,4 +276,4 @@ against a staged build root, not the repo you commit from.
 | Reference | In | Status |
 |---|---|---|
 | `$(ROOT)\md5\os2\md5.obj` | `153/PCBOARD2.MAK` | **resolved** 2026-09-17. The object was recovered from `devtools/Md5.zip` and now lives at `pcb153/SOURCE/MISC/MD5/OS2/MD5.OBJ` (1,492 B, valid OMF, `THEADR md5.asm`) with `MD5.ASM` beside it. `PCBOARD2.MAK` repointed. |
-| `packfido.c` | `SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK` | **absent.** The string `packfido` appears in exactly one place in the archive and the repo: that makefile. Clark's `$(ROOT)\packfido\packfido.c` was a top-level directory beside `\PROJ\md5\`; repointed to `$(ROOT)\source\packfido.c` so a recovered file drops in, but the source itself is gone. See `pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md`. |
+| `packfido.c` | `SOURCE/MISC/FIDOUTIL/FIDOUTIL.MAK` | **resolved 2026-09-24.** Clark's original source is gone but the program was reconstructed from the shipped binary. Three versions now exist at `pcb153/SOURCE/MISC/PACKFIDO/`, `pcb153/upd154/SOURCE/MISC/PACKFIDO/`, and `pcb154/MAIN/SOURCE/MISC/PACKFIDO/`. FIDOUTIL does not need it (`do_pack()` call commented out). See `pcb153/SOURCE/MISC/PACKFIDO/README.md`. |

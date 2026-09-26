@@ -1,11 +1,11 @@
-# pcbdcom build status
+# pcbcomm build status
 
 ## Delta 15.4 tightening — 2026-09-25
 
 Attic pass toward a tight 15.4 Delta target. Moved superseded
 `src/int14-r1.c` (211-line old INT 14h draft, misfiled header, nothing
-references it) to `attic/superseded-pcbdcom/...` via `ATTIC-CLEANUP.BAT`.
-Live handler remains `src/int14.c` (701 lines, built by `PCBDCOM.MAK`).
+references it) to `attic/superseded-pcbcomm/...` via `ATTIC-CLEANUP.BAT`.
+Live handler remains `src/int14.c` (701 lines, built by `PCBCOMM.MAK`).
 Remaining Delta todos tracked in `README.md` -> "Delta 15.4 — tightening
 pass": re-cut SDK int14 from source, land shim in source tree, add Delta
 link proof, apply the four shim fixes.
@@ -43,11 +43,11 @@ The three compilers have:
 3. Different argument naming conventions (underscored vs plain)
 
 `compat.h` provides:
-- `PCBDCOM_INTERRUPT` — the interrupt keyword + return type combo
-- `PCBDCOM_INT14_ARGS` — the register argument list in correct order
-- `PCBDCOM_AX/BX/CX/DX` — access macros for register values
-- `PCBDCOM_UNUSED_REGS` — `(void)` casts for unused regs
-- `pcbdcom_isr_t` — typedef for interrupt-function pointer (for
+- `PCBCOMM_INTERRUPT` — the interrupt keyword + return type combo
+- `PCBCOMM_INT14_ARGS` — the register argument list in correct order
+- `PCBCOMM_AX/BX/CX/DX` — access macros for register values
+- `PCBCOMM_UNUSED_REGS` — `(void)` casts for unused regs
+- `pcbcomm_isr_t` — typedef for interrupt-function pointer (for
   `_dos_setvect` call type matching)
 
 Adding a new compiler = new `#elif` block in compat.h. No .c changes.
@@ -66,7 +66,7 @@ wcl -ml -bt=dos -k32768 -fe=PCBDTSR.EXE obj/*.obj
 ### Borland C++ 3.1 (DOSBox-X on Linux)
 ```
 SET PATH=C:\BC31\BIN;%PATH%
-BCC -c -ml -IINC -IC:\BC31\INCLUDE -w- -DPCBDCOM_V1 -n..\OBJ <file>.C
+BCC -c -ml -IINC -IC:\BC31\INCLUDE -w- -DPCBCOMM_V1 -n..\OBJ <file>.C
 BCC -ml -LC:\BC31\LIB -ePCBDTSR.EXE *.OBJ
 ```
 
@@ -77,7 +77,7 @@ UARTBACK.C, cyclom_backend.c → CYCLOM.C, etc.).
 ## Files compiled (13)
 
 boca_backend, card_pool, cyclom_backend, digi_accel_backend,
-digi_fep, digi_pcxe_backend, easyio_backend, int14, irq, pcbdcom,
+digi_fep, digi_pcxe_backend, easyio_backend, int14, irq, pcbcomm,
 rocket_backend, uart, uart_backend.
 
 ## MSC70 status
@@ -90,7 +90,7 @@ blocking.
 
 **Link blocked** in this session. LINK.EXE runs under HDPMI32 -r
 (HX Extender) but produces only a 32-byte header-only .MAP file and
-no .EXE. Same LINK.EXE works fine outside pcbdcom (verified by other
+no .EXE. Same LINK.EXE works fine outside pcbcomm (verified by other
 BUILDROOT modules). Suspect: our `void interrupt` handler symbol
 export or some OMF record LINK 5.15 doesn't like. Needs deeper
 investigation.
@@ -132,60 +132,16 @@ New in v1.2:
 - src/int14.c extended with COMM-DRV AH=0x10 (commgo), AH=0x11 (port
   count query), AH=0x12 (commstop), AH=0x13 (backend name query),
   AH=0x14 (baud rate get/set).
-- src/pcbdcom.c main() uses _dos_keep() / keep() per compiler for
+- src/pcbcomm.c main() uses _dos_keep() / keep() per compiler for
   proper TSR install (was leaving driver un-resident). device_entry()
   and .SYS device driver path removed for WCSC parity — original
   COMM-DRV only shipped as an EXE TSR.
-- inc/pcbdcom.h extended: parity, data_bits, stop_bits, flow, card_state
-  fields on pcbdcom_port_t; PCBDCOM_MAX_CARDS = 8; PCBDCOM_BUF_SIZE.
+- inc/pcbcomm.h extended: parity, data_bits, stop_bits, flow, card_state
+  fields on pcbcomm_port_t; PCBCOMM_MAX_CARDS = 8; PCBCOMM_BUF_SIZE.
 
-New in toolkit/pwa154/pcbdcom/ (SDK packaging):
-- inc/PCBDCOM.H — public API header for SDK consumers
+New in toolkit/pwa154/pcbcomm/ (SDK packaging):
+- inc/PCBCOMM.H — public API header for SDK consumers
 - docs/SDK.md, docs/LINKOUT.md — SDK usage + PCBoard integration guide
 - examples/simple.c, multiport.c, tsrless.c
-- src/nopcbdcom_stub.c — empty ser_rs232_* symbols for #ifdef-out builds
-- lib/README.md, lib/NOPCBDCOM.README — .OBJ variant naming matrix
-
-## Full piece inventory (wrench, 2026-09-26)
-
-### Board drivers — all 9 Clark card families
-
-| COMMDV | Card | Backend | Status |
-|---|---|---|---|
-| 00 | Generic 8250/16550 | uart_backend.c (158L) | ✓ done |
-| 01 | Intel Hub6 | hub6_backend.c (152L) | ✓ done |
-| 02 | Digi-ComXi | digi_comxi_backend.c (298L) | ✓ done |
-| 03 | Arnet SmartPort | arnet_backend.c (243L) | ✓ done |
-| 04 | Boca 1610 | boca_backend.c (173L) | ✓ done |
-| 05 | Digi PC/Xe | digi_pcxe_backend.c (58L) | ⚠ NEEDS FINISHING |
-| 06 | GTek 8Fx | gtek_backend.c (153L) | ✓ done |
-| 07 | INT14H | int14.c (701L) | ✓ done |
-| 08 | COMMDRV VxD | — | ❌ NEEDS STARTING |
-
-Plus 6 post-WCSC: chase_iolan ✓, cyclom ⚠1, digi_accel ⚠1,
-equinox_sst ✓, rocket ⚠3, stallion_brumby ✓. Total: 14 + COMMDV08.
-
-### Programs
-
-| Clark shipped | Our equivalent | Status |
-|---|---|---|
-| COMMTSR.EXE | PCBDTSR.EXE | ❌ never started |
-| COMMDRV.EXE | PCBCOMM.EXE | pcbcomm.c exists — status uncertain |
-| DRVSETUP.EXE | DRVSETUP.EXE | ❌ never started |
-| TEST.EXE | TEST.EXE | ❌ never started |
-
-### Link-time objects
-
-| Clark's | Ours | Source | Status |
-|---|---|---|---|
-| COMMDRV.OBJ | PCBCOMM.OBJ | pcbcomm.c | ✅ exists (pwa154 SDK only) |
-| FOSSIL.OBJ | FOSSIL.OBJ | FOSSIL.C | ✅ reversed 79/79 |
-| — | PCBCOMMS.OBJ | pcbcomms.c | ✅ stub exists |
-
-### Diverged files (pcb1541 vs pwa154) — role differences, not drift
-
-backend.h / compat.h / pcbdcom.c / int14.c: pcb1541 ahead.
-pcbdcom.h: pwa154 ahead (6422B has struct defs for consumers).
-Only int14.c in SDK is genuinely STALE (211L vs 701L).
-
-### Dead file: int14-r1.c — attic when ready (ATTIC-CLEANUP.BAT)
+- src/nopcbcomm_stub.c — empty ser_rs232_* symbols for #ifdef-out builds
+- lib/README.md, lib/NOPCBCOMM.README — .OBJ variant naming matrix

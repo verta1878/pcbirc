@@ -1,8 +1,8 @@
-/* simple.c — minimal pcbdcom SDK example.
+/* simple.c — minimal pcbcomm SDK example.
  * Opens COM1 at 9600 8N1, echoes RX to TX.
- * Build: BCC -ml simple.c PCBDCOM_BL.OBJ  ->  simple.exe */
+ * Build: BCC -ml simple.c PCBCOMM_BL.OBJ  ->  simple.exe */
 #include <stdio.h>
-#include "PCBDCOM.H"
+#include "PCBCOMM.H"
 
 int main(void)
 {

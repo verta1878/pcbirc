@@ -1,5 +1,5 @@
 /* ============================================================================
- * uart.c — pcbdcom 8250/16450/16550/16550A UART backend
+ * uart.c — pcbcomm 8250/16450/16550/16550A UART backend
  *
  * Ported from Linux drivers/tty/serial/8250/8250_port.c (kernel v6.6), GPLv2.
  * Original authors: Ted Ts'o, Russell King, Alan Cox, Theodore Y. Ts'o.
@@ -10,8 +10,8 @@
  *   - serial_in/serial_out (memory or port I/O) → UART_IN/UART_OUT
  *     (I/O port only — DOS 16-bit target, no memory-mapped serial).
  *   - Removed tty_struct/uart_port plumbing; talks to caller-supplied
- *     base I/O address; higher-level backend passes pcbdcom_port_t.
- *   - Removed platform_device/OF; static port table (see pcbdcom.c).
+ *     base I/O address; higher-level backend passes pcbcomm_port_t.
+ *   - Removed platform_device/OF; static port table (see pcbcomm.c).
  *   - 16650/16750 detection deferred to v2 (EFR probe).
  *
  * Chip probe reference: Linux 8250_port.c autoconfig(), lines ~1500-1700.

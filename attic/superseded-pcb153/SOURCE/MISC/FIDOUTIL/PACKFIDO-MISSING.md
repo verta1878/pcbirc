@@ -1,11 +1,9 @@
-# packfido.c — Clark's source is still missing; the program is not
+# packfido.c — RESOLVED
 
-**Superseded 2026-09-23.** This note used to say packfido was gone and
-record where a recovered file would go. Clark's `packfido.c` is still
-gone and is not coming back — but the program has been reconstructed from
-the shipped binary, and there are now three of them. Read
-`../PACKFIDO/README.md` first; this file is kept only for the search
-history.
+**Resolved 2026-09-24.** Clark's original `packfido.c` source is gone,
+but the program has been fully reconstructed from the shipped binary.
+Three versions now exist (see below). This file moved to attic from
+`pcb153/SOURCE/MISC/FIDOUTIL/` — kept for search history only.
 
 ## Where Clark's source was
 

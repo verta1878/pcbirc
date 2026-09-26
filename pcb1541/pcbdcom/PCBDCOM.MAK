@@ -1,19 +1,19 @@
 # ============================================================================
-# PCBDCOM.MAK — build pcbdcom v1 for DOS 16-bit target
+# PCBCOMM.MAK — build pcbcomm v1 for DOS 16-bit target
 #
 # Compilers supported (selected via %CC% env variable):
-#   BC31   Borland C++ 3.1        make -f PCBDCOM.MAK CC=BC31
-#   MSC70  Microsoft C 7.0        make -f PCBDCOM.MAK CC=MSC70
-#   OWC    OpenWatcom 1.9         wmake -f PCBDCOM.MAK CC=OWC
+#   BC31   Borland C++ 3.1        make -f PCBCOMM.MAK CC=BC31
+#   MSC70  Microsoft C 7.0        make -f PCBCOMM.MAK CC=MSC70
+#   OWC    OpenWatcom 1.9         wmake -f PCBCOMM.MAK CC=OWC
 #
 # All builds produce two artifacts:
-#   PCBDCOM.EXE   TSR (load from AUTOEXEC.BAT)
-#   PCBDCOM.SYS   Device driver (load from CONFIG.SYS DEVICE=)
+#   PCBCOMM.EXE   TSR (load from AUTOEXEC.BAT)
+#   PCBCOMM.SYS   Device driver (load from CONFIG.SYS DEVICE=)
 # ============================================================================
 
 # ---- Common ----
 INC    = -Iinc
-DEFS   = -DPCBDCOM_V1
+DEFS   = -DPCBCOMM_V1
 # TARGET selects which PCBoard line to build for:
 #   TARGET=15.4  (default) — WCSC-parity backends only (lean)
 #   TARGET=15.41           — adds Stallion/Chase/Equinox extended backends
@@ -26,7 +26,7 @@ EXTRA_OBJS = obj\stallion_brumby_backend.obj \
 EXTRA_OBJS =
 !endif
 
-OBJS   = obj\pcbdcom.obj      \
+OBJS   = obj\pcbcomm.obj      \
          obj\uart.obj         \
          obj\uart_backend.obj \
          obj\boca_backend.obj \
@@ -54,16 +54,16 @@ MODEL  = -ml
 CFLAGS = $(MODEL) -c -O -w $(INC) $(DEFS)
 LFLAGS = $(MODEL)
 
-all: PCBDCOM.EXE PCBDCOM.SYS
+all: PCBCOMM.EXE PCBCOMM.SYS
 
 {src}.c{obj}.obj:
 	$(BCC) $(CFLAGS) -oobj\$&.obj $<
 
-PCBDCOM.EXE: $(OBJS)
-	$(BCC) $(LFLAGS) -ePCBDCOM.EXE $(OBJS) $(EXTRA_OBJS)
+PCBCOMM.EXE: $(OBJS)
+	$(BCC) $(LFLAGS) -ePCBCOMM.EXE $(OBJS) $(EXTRA_OBJS)
 
-PCBDCOM.SYS: $(OBJS)
-	$(BCC) $(LFLAGS) -tD -ePCBDCOM.SYS $(OBJS) $(EXTRA_OBJS)
+PCBCOMM.SYS: $(OBJS)
+	$(BCC) $(LFLAGS) -tD -ePCBCOMM.SYS $(OBJS) $(EXTRA_OBJS)
 
 !endif
 
@@ -74,16 +74,16 @@ MODEL  = /AL
 CFLAGS = /c /Ox /W3 $(INC) $(DEFS) $(MODEL)
 LFLAGS = $(MODEL)
 
-all: PCBDCOM.EXE PCBDCOM.SYS
+all: PCBCOMM.EXE PCBCOMM.SYS
 
 {src}.c{obj}.obj:
 	$(MSC) $(CFLAGS) /Foobj\$&.obj $<
 
-PCBDCOM.EXE: $(OBJS)
-	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBDCOM.EXE;
+PCBCOMM.EXE: $(OBJS)
+	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBCOMM.EXE;
 
-PCBDCOM.SYS: $(OBJS)
-	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBDCOM.SYS,, /NOD;
+PCBCOMM.SYS: $(OBJS)
+	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBCOMM.SYS,, /NOD;
 
 !endif
 
@@ -94,20 +94,20 @@ MODEL  = -ml
 CFLAGS = -c -oxs -bt=dos $(MODEL) $(INC) $(DEFS)
 LFLAGS = system dos
 
-all: PCBDCOM.EXE PCBDCOM.SYS
+all: PCBCOMM.EXE PCBCOMM.SYS
 
 {src}.c{obj}.obj:
 	$(WCC) $(CFLAGS) -fo=obj\$&.obj $<
 
-PCBDCOM.EXE: $(OBJS)
-	wlink $(LFLAGS) file { $(OBJS) } name PCBDCOM.EXE
+PCBCOMM.EXE: $(OBJS)
+	wlink $(LFLAGS) file { $(OBJS) } name PCBCOMM.EXE
 
-PCBDCOM.SYS: $(OBJS)
-	wlink $(LFLAGS) file { $(OBJS) } name PCBDCOM.SYS format dos device
+PCBCOMM.SYS: $(OBJS)
+	wlink $(LFLAGS) file { $(OBJS) } name PCBCOMM.SYS format dos device
 
 !endif
 
 clean:
 	del obj\*.obj
-	del PCBDCOM.EXE
-	del PCBDCOM.SYS
+	del PCBCOMM.EXE
+	del PCBCOMM.SYS

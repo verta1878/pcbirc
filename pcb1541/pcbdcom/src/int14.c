@@ -1,5 +1,5 @@
 /* ============================================================================
- * int14.c — INT 14h FOSSIL 5 revision C handler for pcbdcom
+ * int14.c — INT 14h FOSSIL 5 revision C handler for pcbcomm
  *
  * Implements the complete FOSSIL (Fido/Opus/Seadog Standard Interface Layer)
  * specification, FTS-0015 revision 5.
@@ -22,14 +22,14 @@
 
 #include <dos.h>
 #include <string.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "compat.h"
 #include "backend.h"
 #include "uart.h"
 
 /* ---- External state ---------------------------------------------------- */
 
-extern pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
+extern pcbcomm_port_t g_ports[PCBCOMM_MAX_PORTS];
 extern int            g_n_ports;
 
 /* ---- Constants --------------------------------------------------------- */
@@ -44,27 +44,27 @@ extern int            g_n_ports;
 #define FOSSIL_INFO_SIZE  19
 
 /* Driver ID string — returned via function 1Bh info block */
-static const char fossil_id[] = "pcbdcom FOSSIL 5C";
+static const char fossil_id[] = "pcbcomm FOSSIL 5C";
 
 /* ---- Saved vectors ----------------------------------------------------- */
 
-static pcbdcom_isr_t g_old_int14;
+static pcbcomm_isr_t g_old_int14;
 
 /* ---- Timer tick chain (function 16h) ----------------------------------- */
 
 #define MAX_TIMER_HOOKS  4
 
 typedef struct {
-    void (PCBDCOM_FAR *func)(void);
+    void (PCBCOMM_FAR *func)(void);
     int  active;
 } timer_hook_t;
 
 static timer_hook_t  g_timer_hooks[MAX_TIMER_HOOKS];
-static pcbdcom_isr_t g_old_int1c;  /* saved timer tick vector */
+static pcbcomm_isr_t g_old_int1c;  /* saved timer tick vector */
 static int           g_timer_installed;
 
 /* Timer tick ISR — calls all registered hooks, then chains to old vector */
-PCBDCOM_INTERRUPT pcbdcom_int1c(PCBDCOM_INT14_ARGS)
+PCBCOMM_INTERRUPT pcbcomm_int1c(PCBCOMM_INT14_ARGS)
 {
     int i;
     for (i = 0; i < MAX_TIMER_HOOKS; i++) {
@@ -78,7 +78,7 @@ PCBDCOM_INTERRUPT pcbdcom_int1c(PCBDCOM_INT14_ARGS)
         /* Call old handler — compiler generates far call + IRET handling */
         _chain_intr(g_old_int1c);
     }
-    PCBDCOM_UNUSED_REGS;
+    PCBCOMM_UNUSED_REGS;
 }
 
 static void timer_install(void)
@@ -86,7 +86,7 @@ static void timer_install(void)
     if (!g_timer_installed) {
         memset(g_timer_hooks, 0, sizeof(g_timer_hooks));
         g_old_int1c = _dos_getvect(0x1C);
-        _dos_setvect(0x1C, pcbdcom_int1c);
+        _dos_setvect(0x1C, pcbcomm_int1c);
         g_timer_installed = 1;
     }
 }
@@ -101,7 +101,7 @@ static void timer_remove(void)
 
 /* ---- Port helpers ------------------------------------------------------ */
 
-static pcbdcom_port_t *port_lookup(unsigned int port_num)
+static pcbcomm_port_t *port_lookup(unsigned int port_num)
 {
     if (port_num >= (unsigned int)g_n_ports) return NULL;
     if (!g_ports[port_num].open) return NULL;
@@ -125,7 +125,7 @@ static pcbdcom_port_t *port_lookup(unsigned int port_num)
  *  Uses cached_msr from port struct (updated by backend ISR) so this
  *  works for all backends, not just direct-UART ones.
  */
-static unsigned int status_word(pcbdcom_port_t *p)
+static unsigned int status_word(pcbcomm_port_t *p)
 {
     unsigned char ah = 0x80;  /* bit 7 always set */
     unsigned char al = 0;
@@ -162,7 +162,7 @@ static const long baud_table[8] = {
     19200L, 38400L, 300L, 600L, 1200L, 2400L, 4800L, 9600L
 };
 
-static void parse_baud_byte(pcbdcom_port_t *p, unsigned char al)
+static void parse_baud_byte(pcbcomm_port_t *p, unsigned char al)
 {
     unsigned char baud_idx = (al >> 5) & 0x07;
     unsigned char par      = (al >> 3) & 0x03;
@@ -192,7 +192,7 @@ static void parse_baud_byte(pcbdcom_port_t *p, unsigned char al)
 
 /* ---- DTR control (function 06h) ---------------------------------------- */
 
-static void set_dtr(pcbdcom_port_t *p, int state)
+static void set_dtr(pcbcomm_port_t *p, int state)
 {
     unsigned char mcr;
     if (!p || !p->base) return;
@@ -207,7 +207,7 @@ static void set_dtr(pcbdcom_port_t *p, int state)
 
 /* ---- Break signal (function 1Ah) --------------------------------------- */
 
-static void send_break(pcbdcom_port_t *p, int on)
+static void send_break(pcbcomm_port_t *p, int on)
 {
     unsigned char lcr;
     if (!p || !p->base) return;
@@ -222,17 +222,17 @@ static void send_break(pcbdcom_port_t *p, int on)
 
 /* ---- Ring buffer helpers ----------------------------------------------- */
 
-static unsigned int rx_count(pcbdcom_port_t *p)
+static unsigned int rx_count(pcbcomm_port_t *p)
 {
     return (p->rx_head - p->rx_tail) & (p->rx_size - 1);
 }
 
-static unsigned int tx_count(pcbdcom_port_t *p)
+static unsigned int tx_count(pcbcomm_port_t *p)
 {
     return (p->tx_head - p->tx_tail) & (p->tx_size - 1);
 }
 
-static unsigned int tx_free(pcbdcom_port_t *p)
+static unsigned int tx_free(pcbcomm_port_t *p)
 {
     return p->tx_size - 1 - tx_count(p);
 }
@@ -241,19 +241,19 @@ static unsigned int tx_free(pcbdcom_port_t *p)
  * Main dispatcher — called via INT 14h vector
  * ======================================================================== */
 
-PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
+PCBCOMM_INTERRUPT pcbcomm_int14(PCBCOMM_INT14_ARGS)
 {
-    unsigned char func = (PCBDCOM_AX >> 8) & 0xFF;
-    unsigned char ch   = PCBDCOM_AX & 0xFF;
-    unsigned int  port = PCBDCOM_DX;
-    pcbdcom_port_t *p;
+    unsigned char func = (PCBCOMM_AX >> 8) & 0xFF;
+    unsigned char ch   = PCBCOMM_AX & 0xFF;
+    unsigned int  port = PCBCOMM_DX;
+    pcbcomm_port_t *p;
     unsigned int rc = 0;
     unsigned char buf[1];
 
     /* Functions 04h (init) and 1Bh (info) work even if port not open */
     p = port_lookup(port);
     if (!p && func != 0x04 && func != 0x1B) {
-        PCBDCOM_AX = 0x0080;  /* timeout / not ready */
+        PCBCOMM_AX = 0x0080;  /* timeout / not ready */
         return;
     }
 
@@ -299,7 +299,7 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
         }
         rc = FOSSIL_SIG;
         /* BH = FOSSIL revision, BL = max port number */
-        PCBDCOM_BX = ((unsigned int)FOSSIL_REV << 8) |
+        PCBCOMM_BX = ((unsigned int)FOSSIL_REV << 8) |
                      (unsigned int)(g_n_ports > 0 ? g_n_ports - 1 : 0);
         break;
 
@@ -422,8 +422,8 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
 
             case 0x01:  /* query port count */
                 rc = (unsigned int)g_n_ports;
-                PCBDCOM_AX = rc;
-                PCBDCOM_UNUSED_REGS;
+                PCBCOMM_AX = rc;
+                PCBCOMM_UNUSED_REGS;
                 return;
 
             case 0x02:  /* commstop — stop TX, flush RX+TX */
@@ -435,7 +435,7 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
 
             case 0x03:  /* query backend name — 2-char sig in BX */
                 if (p && p->backend) {
-                    PCBDCOM_BX = ((unsigned int)p->backend->name[0] << 8) |
+                    PCBCOMM_BX = ((unsigned int)p->backend->name[0] << 8) |
                                  (unsigned char)(p->backend->name[1] ?
                                                   p->backend->name[1] : 0);
                 }
@@ -443,10 +443,10 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
 
             case 0x04:  /* set/get baud — bit0: 0=get,1=set; CX=baud */
                 if (p) {
-                    if ((PCBDCOM_AX & 1) == 0) {
-                        PCBDCOM_CX = (unsigned int)p->baud;
+                    if ((PCBCOMM_AX & 1) == 0) {
+                        PCBCOMM_CX = (unsigned int)p->baud;
                     } else {
-                        p->baud = PCBDCOM_CX;
+                        p->baud = PCBCOMM_CX;
                         if (p->backend && p->backend->init)
                             (void)p->backend->init(p);
                     }
@@ -469,7 +469,7 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
             r.h.ah = 0x09;
             r.h.al = ch;
             r.h.bh = 0;              /* page 0 */
-            r.h.bl = (unsigned char)(PCBDCOM_BX & 0xFF);
+            r.h.bl = (unsigned char)(PCBCOMM_BX & 0xFF);
             r.x.cx = 1;              /* count = 1 */
             int86(0x10, &r, &r);
         }
@@ -481,13 +481,13 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
                  * AL = 1: remove hook, ES:DX = far pointer to routine */
         {
             int i;
-            void (PCBDCOM_FAR *hook_ptr)(void);
+            void (PCBCOMM_FAR *hook_ptr)(void);
 
             if (!g_timer_installed) timer_install();
 
             /* Extract the far function pointer from ES:DX */
-            hook_ptr = (void (PCBDCOM_FAR *)(void))
-                       PCBDCOM_MK_FP(PCBDCOM_ES, PCBDCOM_DX);
+            hook_ptr = (void (PCBCOMM_FAR *)(void))
+                       PCBCOMM_MK_FP(PCBCOMM_ES, PCBCOMM_DX);
 
             if (ch == 0) {
                 /* Add hook */
@@ -553,10 +553,10 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
     case 0x18:  /* Block read — CX = max bytes, ES:DI = buffer
                  * Returns AX = bytes actually read */
         if (p && p->backend && p->backend->read) {
-            unsigned int want = PCBDCOM_CX;
+            unsigned int want = PCBCOMM_CX;
             unsigned int got  = 0;
-            unsigned char PCBDCOM_FAR *dest =
-                PCBDCOM_FAR_PTR(PCBDCOM_ES, PCBDCOM_DI);
+            unsigned char PCBCOMM_FAR *dest =
+                PCBCOMM_FAR_PTR(PCBCOMM_ES, PCBCOMM_DI);
             unsigned char one_byte;
             while (got < want) {
                 if (p->backend->read(p, &one_byte, 1) > 0) {
@@ -573,10 +573,10 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
     case 0x19:  /* Block write — CX = byte count, ES:DI = buffer
                  * Returns AX = bytes actually written */
         if (p && p->backend && p->backend->write) {
-            unsigned int want = PCBDCOM_CX;
+            unsigned int want = PCBCOMM_CX;
             unsigned int sent = 0;
-            unsigned char PCBDCOM_FAR *src =
-                PCBDCOM_FAR_PTR(PCBDCOM_ES, PCBDCOM_DI);
+            unsigned char PCBCOMM_FAR *src =
+                PCBCOMM_FAR_PTR(PCBCOMM_ES, PCBCOMM_DI);
             unsigned char one_byte;
             while (sent < want) {
                 one_byte = src[sent];
@@ -631,7 +631,7 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
             info[3] = 'C';
             /* Far pointer to ID string */
             {
-                unsigned long fp = (unsigned long)(void PCBDCOM_FAR *)fossil_id;
+                unsigned long fp = (unsigned long)(void PCBCOMM_FAR *)fossil_id;
                 info[4] = (unsigned char)(fp);
                 info[5] = (unsigned char)(fp >> 8);
                 info[6] = (unsigned char)(fp >> 16);
@@ -665,13 +665,43 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
 
             /* Copy info block to caller's ES:DI buffer */
             {
-                unsigned char PCBDCOM_FAR *dest =
-                    PCBDCOM_FAR_PTR(PCBDCOM_ES, PCBDCOM_DI);
+                unsigned char PCBCOMM_FAR *dest =
+                    PCBCOMM_FAR_PTR(PCBCOMM_ES, PCBCOMM_DI);
                 unsigned int i;
                 for (i = 0; i < buf_size; i++)
                     dest[i] = info[i];
             }
             rc = buf_size;
+        }
+        break;
+
+    case 0xFF:  /* ---- Admin / control channel (wrench, 2026-09-26) ----
+                 * Used by PCBDTSR.EXE -d (deinstall) to tell the resident
+                 * copy to shut down cleanly.
+                 *   AL=01h: unload request
+                 *     - unhooks INT 14h (restores saved vector)
+                 *     - shuts down all IRQs
+                 *     - deinits all backends
+                 *     - returns AX=0x4F52 ("OR" = OK-Removed)
+                 *   All other AL values: reserved, returns 0 (no-op). */
+        switch (ch) {  /* AL sub-command */
+        case 0x01:  /* unload */
+            pcbcomm_int14_uninstall();
+            pcbcomm_irq_shutdown();
+            /* Deinit all active backends */
+            {
+                int i;
+                for (i = 0; i < g_n_ports; i++) {
+                    pcbcomm_port_t *pp = &g_ports[i];
+                    if (pp->backend && pp->open)
+                        pp->backend->deinit(pp);
+                }
+            }
+            rc = 0x4F52;  /* "OR" = OK-Removed */
+            break;
+        default:
+            rc = 0;
+            break;
         }
         break;
 
@@ -681,19 +711,19 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
         break;
     }
 
-    PCBDCOM_AX = rc;
-    PCBDCOM_UNUSED_REGS;
+    PCBCOMM_AX = rc;
+    PCBCOMM_UNUSED_REGS;
 }
 
 /* ---- Install / uninstall INT 14h vector -------------------------------- */
 
-void pcbdcom_int14_install(void)
+void pcbcomm_int14_install(void)
 {
     g_old_int14 = _dos_getvect(0x14);
-    _dos_setvect(0x14, pcbdcom_int14);
+    _dos_setvect(0x14, pcbcomm_int14);
 }
 
-void pcbdcom_int14_uninstall(void)
+void pcbcomm_int14_uninstall(void)
 {
     if (g_timer_installed) timer_remove();
     if (g_old_int14)

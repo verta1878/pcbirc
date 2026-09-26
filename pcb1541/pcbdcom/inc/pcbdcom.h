@@ -1,18 +1,18 @@
 /* ============================================================================
- * pcbdcom.h — public types for the pcbdcom serial layer
+ * pcbcomm.h — public types for the pcbcomm serial layer
  *
  * License: GPLv3
  * ==========================================================================*/
-#ifndef PCBDCOM_H
-#define PCBDCOM_H
+#ifndef PCBCOMM_H
+#define PCBCOMM_H
 
 #include "uart.h"
 
-#define PCBDCOM_MAX_PORTS 16   /* covers COM1..COM8 + multiport cards      */
-#define PCBDCOM_RX_RING   512  /* per-port RX ring (bytes, DOS memory)     */
-#define PCBDCOM_TX_RING   512  /* per-port TX ring                         */
+#define PCBCOMM_MAX_PORTS 16   /* covers COM1..COM8 + multiport cards      */
+#define PCBCOMM_RX_RING   512  /* per-port RX ring (bytes, DOS memory)     */
+#define PCBCOMM_TX_RING   512  /* per-port TX ring                         */
 
-typedef struct pcbdcom_port {
+typedef struct pcbcomm_port {
     unsigned int   base;       /* I/O base address                          */
     unsigned char  irq;        /* IRQ number                                */
     unsigned char  subport;    /* Sub-port index within multi-port card 0..N-1 */
@@ -29,7 +29,7 @@ typedef struct pcbdcom_port {
     unsigned int   tx_tail;
     unsigned int   tx_size;
     /* Backend hook */
-    const struct pcbdcom_backend *backend;
+    const struct pcbcomm_backend *backend;
     void          *backend_data;
     /* State */
     int            open;
@@ -45,9 +45,9 @@ typedef struct pcbdcom_port {
                                  * for all backends, not just direct-UART ones.
                                  * Backend ISR sets: p->cached_msr = inp(base + UART_MSR);
                                  * Non-UART backends update from their own status mechanism. */
-} pcbdcom_port_t;
+} pcbcomm_port_t;
 
-#define PCBDCOM_MAX_CARDS  8
-#define PCBDCOM_BUF_SIZE   PCBDCOM_RX_RING
+#define PCBCOMM_MAX_CARDS  8
+#define PCBCOMM_BUF_SIZE   PCBCOMM_RX_RING
 
-#endif /* PCBDCOM_H */
+#endif /* PCBCOMM_H */

@@ -1,8 +1,8 @@
 /* multiport.c — poll 4 ports, print incoming bytes with source ID.
- * Assumes PCBDCOM.CFG has COM1..COM4 configured.
- * Build: BCC -ml multiport.c PCBDCOM_BL.OBJ */
+ * Assumes PCBCOMM.CFG has COM1..COM4 configured.
+ * Build: BCC -ml multiport.c PCBCOMM_BL.OBJ */
 #include <stdio.h>
-#include "PCBDCOM.H"
+#include "PCBCOMM.H"
 
 int main(void)
 {

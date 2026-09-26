@@ -1312,14 +1312,14 @@ bare statement body with no function wrapper, not something that
 compiles to an object.
 
 So the path was repointed anyway, to `$(ROOT)\source\packfido.c` —
-`pcb153/SOURCE/packfido.c`. It is one loose file, so it gets a loose
-file's home rather than a directory holding a single `.c`; the note on
-what is missing and what was ruled out lives with the only consumer, at
-`pcb153/SOURCE/MISC/FIDOUTIL/PACKFIDO-MISSING.md`. A recovered file drops
-straight in with no further edits.
-`FIDOUTIL.EXE` cannot link until then — and it fails at compile rather
-than at link, which is the better failure, since the error names the
-file.
+`pcb153/SOURCE/packfido.c`. **Resolved 2026-09-24**: Clark's original
+source is gone but the program was reconstructed from the shipped binary.
+Three versions now exist at `pcb153/SOURCE/MISC/PACKFIDO/`,
+`pcb153/upd154/SOURCE/MISC/PACKFIDO/`, and
+`pcb154/MAIN/SOURCE/MISC/PACKFIDO/`. FIDOUTIL does not need packfido
+(`do_pack()` call commented out in Clark's own source). See
+`pcb153/SOURCE/MISC/PACKFIDO/README.md`. The old `PACKFIDO-MISSING.md`
+was moved to `attic/superseded-pcb153/SOURCE/MISC/FIDOUTIL/`.
 
 ### normalize-case.sh
 
