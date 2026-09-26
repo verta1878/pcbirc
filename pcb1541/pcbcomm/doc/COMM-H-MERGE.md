@@ -5,7 +5,7 @@ written 2026-09-22, neither of them WCSC's file:
 
 | | Author | Size | Method |
 |---|---|---|---|
-| A | sysop/0, shipped in `pcbdcom-fossil5c.zip` | 6,594 B | written alongside the pcbdcom backends |
+| A | sysop/0, shipped in `pcbcomm-fossil5c.zip` | 6,594 B | written alongside the pcbcomm backends |
 | B | this session | 15,592 B | inferred from `pcb153\SOURCE\MODEM\MODEMDRV.C` alone |
 
 **A is the one the tree uses.** B is retired to
@@ -47,7 +47,7 @@ A's card list maps **one-to-one onto backend source that exists**:
     CARD_DIGCXI    digi_comxi_backend.c      CARD_CHASE     chase_iolan_backend.c
                                              CARD_EQUINOX   equinox_sst_backend.c
 
-Fourteen backends in `pcb1541/pcbdcom/src/`, fourteen card constants,
+Fourteen backends in `pcb1541/pcbcomm/src/`, fourteen card constants,
 plus `CARD_NONE` for a disabled port and `CARD_BOCA16` for the 16-port
 Boca. B's eight were a guess made before those backends were read.
 
@@ -74,7 +74,7 @@ corruption, not a link error: PCBoard writes `pcb.protocol` where the
 shim reads `data_bits`.
 
 It is retired, in
-`attic/superseded-pcbdcom/pcb1541/pcbdcom/src/ser_rs232_shim.c`, and
+`attic/superseded-pcbcomm/pcb1541/pcbcomm/src/ser_rs232_shim.c`, and
 `commdrbl.c` replaces it. `commdrbl.c` does the right thing already —
 `#include "comm.h"` at line 24, no local struct, and `LIBENTRY` on all
 thirteen definitions. Nothing to fix; recorded because the shim is still
@@ -105,5 +105,5 @@ It is picked. His is live at `pcbcbase/COMMDRV/H/COMM.H`; the 15,592-byte
 one is retired to `reference/commdrv/comm-h-recon-b.h`. The doc is landed
 as he sent it rather than edited, so the item reads open there.
 
-The same doc gives the pcbdcom paths as `pcb154/pcbdcom/`. In this tree
-they are `pcb1541/pcbdcom/`.
+The same doc gives the pcbcomm paths as `pcb154/pcbcomm/`. In this tree
+they are `pcb1541/pcbcomm/`.

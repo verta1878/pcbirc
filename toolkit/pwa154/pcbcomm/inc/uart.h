@@ -1,5 +1,5 @@
 /* ============================================================================
- * uart.h — 8250 / 16450 / 16550 UART register definitions for pcbdcom
+ * uart.h — 8250 / 16450 / 16550 UART register definitions for pcbcomm
  *
  * Reference sources (all free/open):
  *   drivers/netfosdl/serial.pas — Free Pascal DOS FOSSIL driver (crew)
@@ -9,8 +9,8 @@
  * License: GPLv3
  * ==========================================================================*/
 
-#ifndef PCBDCOM_UART_H
-#define PCBDCOM_UART_H
+#ifndef PCBCOMM_UART_H
+#define PCBCOMM_UART_H
 
 /* Standard COM port base I/O addresses (IBM PC/AT convention) */
 #define COM1_BASE 0x3F8
@@ -136,4 +136,4 @@ void        uart_set_dtr(unsigned int base, int on);
 void        uart_set_rts(unsigned int base, int on);
 int         uart_get_modem_status(unsigned int base);
 
-#endif /* PCBDCOM_UART_H */
+#endif /* PCBCOMM_UART_H */

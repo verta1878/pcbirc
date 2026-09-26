@@ -1,224 +1,233 @@
 /* ============================================================================
- * ser_rs232_shim.c  pcbdcom drop-in replacement for COMMDRV.OBJ
+ * pcbcomm.c — main entry point (TSR install), config parser, backend registry
  *
- * Exports the 13-function ser_rs232_* API that PCBoard's MODEMDRV.C links
- * against. Enables link-time substitution: link PCBoard with pcbdcom.OBJ
- * (this shim + backend code) instead of Clark's proprietary COMMDRV.OBJ.
+ * Dual-mode loader:
+ *   - CONFIG.SYS DEVICE=PCBCOMM.SYS  → device_entry() called by DOS
+ *   - AUTOEXEC.BAT LH PCBCOMM.EXE    → main() called normally, TSR install
  *
- * Calling convention (Pascal, callee-cleans, uppercase symbols) matches
- * what COMM-DRV shipped — MODEMDRV.C sees no difference.
+ * The same source file compiles into either variant. .SYS build uses
+ * device_entry() as its request-header dispatch; .EXE build uses main()
+ * and calls dos_keep_tsr() after installation.
  *
- * License: GPLv3
+ * License: GPLv3 (pcbirc crew, hexadecimal)
  * ==========================================================================*/
-#include "pcbdcom.h"
-#include "backend.h"
-#include <stddef.h>
-#include <conio.h>
-#include "compat.h"
 
-#if defined(_MSC_VER)
-# define SHIM_OUT(port, val) _outp((port), (val))
-# define SHIM_IN(port)       (unsigned char)_inp((port))
+#include <dos.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "pcbcomm.h"
+#include "backend.h"
+
+/* Global port table (referenced from int14.c) */
+pcbcomm_port_t g_ports[PCBCOMM_MAX_PORTS];
+int            g_n_ports = 0;
+
+/* Ring buffer arenas — statically allocated to keep resident image small */
+static unsigned char g_rx_arena[PCBCOMM_MAX_PORTS][PCBCOMM_RX_RING];
+static unsigned char g_tx_arena[PCBCOMM_MAX_PORTS][PCBCOMM_TX_RING];
+
+/* External IRQ + INT14 install/uninstall */
+extern int  pcbcomm_irq_register(unsigned char irq, pcbcomm_port_t *p);
+extern void pcbcomm_irq_shutdown(void);
+extern void pcbcomm_int14_install(void);
+extern void pcbcomm_int14_uninstall(void);
+
+/* Backend name -> pointer lookup */
+static const pcbcomm_backend_t *find_backend(const char *name)
+{
+    if (!strcmp(name, "8250"))       return &pcbcomm_uart_backend;
+    if (!strcmp(name, "BOCA"))       return &pcbcomm_boca_backend;
+    if (!strcmp(name, "BOCA16"))     return &pcbcomm_boca_backend;
+    if (!strcmp(name, "CYCLOM"))     return &pcbcomm_cyclom_backend;
+    if (!strcmp(name, "DIGI_PCXE"))  return &pcbcomm_digi_pcxe_backend;
+    if (!strcmp(name, "DIGI_ACCEL")) return &pcbcomm_digi_accel_backend;
+    if (!strcmp(name, "ROCKET"))     return &pcbcomm_rocket_backend;
+    if (!strcmp(name, "EASYIO"))     return &pcbcomm_easyio_backend;
+    if (!strcmp(name, "ARNETSPP"))   return &pcbcomm_arnet_backend;
+    if (!strcmp(name, "ARNET"))      return &pcbcomm_arnet_backend;
+    return NULL;
+}
+
+/* ----- Config file parser ----- *
+ * PCBCOMM.CFG format (see SPEC.md):
+ *   # comment
+ *   PORT CARD SUBPORT BASE IRQ CARDSEG FOSSIL
+ *   1    8250 0       0x3F8 4  0       Y
+ *   ...
+ * Returns number of ports configured, or -1 on error. */
+static int parse_config(const char *path)
+{
+    FILE *f;
+    char line[128], card[16];
+    unsigned int port, subport, base, irq, cardseg;
+    char fossil;
+    pcbcomm_port_t *p;
+    const pcbcomm_backend_t *b;
+    int n = 0;
+
+    f = fopen(path, "r");
+    if (!f) return -1;
+
+    while (fgets(line, sizeof(line), f)) {
+        unsigned long card_key;
+        if (line[0] == '#' || line[0] == '\n' || line[0] == '\r') continue;
+        if (sscanf(line, "%u %15s %u %i %u %u %c",
+                   &port, card, &subport, &base, &irq, &cardseg, &fossil) < 6)
+            continue;
+        if (port == 0 || port > PCBCOMM_MAX_PORTS) continue;
+
+        b = find_backend(card);
+        if (!b) {
+            printf("pcbcomm: unknown card '%s' on port %u\n", card, port);
+            continue;
+        }
+
+        p             = &g_ports[port - 1];
+        p->base       = base;
+        p->irq        = (unsigned char)irq;
+        p->subport    = (unsigned char)subport;   /* v1.1: sub-port index    */
+        p->baud       = 38400;
+        p->lcr        = 0;
+        p->backend    = b;
+
+        /* v1.1: per-card state via backend->card_get() hook.
+         * card_key: memory-mapped cards → cardseg; I/O-mapped cards →
+         * base (Boca / EasyIO) or a mudbac derived from base. If backend
+         * has no card_get (uart), backend_data stays as the raw seg. */
+        if (b->card_get) {
+            card_key = cardseg ? (unsigned long)cardseg : (unsigned long)base;
+            p->backend_data = b->card_get(card_key);
+            if (!p->backend_data) {
+                printf("pcbcomm: card pool full for '%s' on port %u\n",
+                       card, port);
+                continue;
+            }
+        } else {
+            p->backend_data = (void *)(unsigned long)cardseg;
+        }
+
+        p->rx_buf     = g_rx_arena[port - 1];
+        p->rx_size    = PCBCOMM_RX_RING;
+        p->tx_buf     = g_tx_arena[port - 1];
+        p->tx_size    = PCBCOMM_TX_RING;
+        p->rx_head = p->rx_tail = p->tx_head = p->tx_tail = 0;
+        p->open       = 0;
+
+        n++;
+        if (n > g_n_ports) g_n_ports = n;
+    }
+    fclose(f);
+    return n;
+}
+
+/* Bring up every configured port + register IRQs + install INT 14h */
+static int pcbcomm_install(void)
+{
+    int i, ok = 0;
+    printf("pcbcomm v1 — %d ports configured\n", g_n_ports);
+
+    for (i = 0; i < g_n_ports; i++) {
+        pcbcomm_port_t *p = &g_ports[i];
+        if (!p->backend) continue;
+        if (p->backend->init(p) < 0) {
+            printf("  port %d (%s @ 0x%X): probe/init FAILED\n",
+                   i + 1, p->backend->name, p->base);
+            continue;
+        }
+        if (pcbcomm_irq_register(p->irq, p) < 0) {
+            printf("  port %d IRQ %u: register FAILED\n", i + 1, p->irq);
+            p->backend->deinit(p);
+            continue;
+        }
+        printf("  port %d: %s @ 0x%X IRQ %u  chip=%d\n",
+               i + 1, p->backend->name, p->base, p->irq, (int)p->chip);
+        ok++;
+    }
+
+    pcbcomm_int14_install();
+    printf("pcbcomm: %d/%d ports online, INT 14h hooked.\n", ok, g_n_ports);
+    return ok;
+}
+
+/* Command-line arg: /CFG=path (default PCBCOMM.CFG) */
+static const char *find_cfg_arg(int argc, char **argv)
+{
+    int i;
+    for (i = 1; i < argc; i++) {
+        if (!strncmp(argv[i], "/CFG=", 5)) return argv[i] + 5;
+        if (!strncmp(argv[i], "/cfg=", 5)) return argv[i] + 5;
+    }
+    return "PCBCOMM.CFG";
+}
+
+/* ----- .EXE / TSR entry ----- */
+/* Symbol at end of BSS — linker-supplied. Used to compute resident size.
+ * All compilers we target expose _end or __end (BC31: _end; OpenWatcom: end;
+ * MSC: _end). Fall back to a conservative constant if unavailable. */
+extern char _end[];
+
+int main(int argc, char **argv)
+{
+    const char *cfg;
+    int n;
+    unsigned int resident_paragraphs;
+    unsigned int psp_seg;
+
+    printf("pcbcomm v1.2 — PCB DOS COM (WCSC COMM-DRV replacement)\n");
+    printf("the crew 4free — GPLv3\n\n");
+
+    cfg = find_cfg_arg(argc, argv);
+    n = parse_config(cfg);
+    if (n <= 0) {
+        printf("pcbcomm: no ports configured (config: %s)\n", cfg);
+        return 1;
+    }
+
+    if (pcbcomm_install() == 0) {
+        printf("pcbcomm: no ports came online — aborting.\n");
+        return 2;
+    }
+
+    printf("pcbcomm: %d port(s) online, installing TSR...\n", n);
+
+    /* TSR install: compute resident size = end-of-BSS - PSP + safety margin.
+     * PSP is 256 bytes below the loaded image on DOS EXE (CS = PSP + 0x10).
+     * _end gives us the top of BSS relative to DS. Convert to paragraphs. */
+    {
+        unsigned long end_off = (unsigned long)(unsigned int)_end;
+        /* Add PSP (256 bytes) + safety stack (256 bytes) */
+        resident_paragraphs = (unsigned int)((end_off + 256 + 256 + 15) >> 4);
+    }
+
+    /* Get PSP segment for _dos_keep. OpenWatcom/BC/MSC all have this. */
+    psp_seg = 0;
+#if defined(__WATCOMC__)
+    /* OpenWatcom: _psp declared in stdlib.h */
+    psp_seg = _psp;
+    _dos_keep(0, resident_paragraphs);
+#elif defined(__BORLANDC__) || defined(__TURBOC__)
+    /* BC31: keep() function */
+    keep(0, resident_paragraphs);
+#elif defined(_MSC_VER)
+    /* MSC: _dos_keep — same as OpenWatcom */
+    _dos_keep(0, resident_paragraphs);
 #else
-# define SHIM_OUT(port, val) outp((port), (val))
-# define SHIM_IN(port)       (unsigned char)inp((port))
+#  error "Unknown compiler — add TSR-install path"
 #endif
 
-/* External port table from pcbdcom.c */
-extern pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
-extern int g_n_ports;
-
-static pcbdcom_port_t *port_by_num(unsigned int port_num)
-{
-    if (port_num == 0 || port_num > (unsigned int)g_n_ports)
-        return NULL;
-    return &g_ports[port_num - 1];
+    /* Not reached */
+    (void)psp_seg;
+    return 0;
 }
 
-/* Update compat_opcb from current port state */
-static void update_opcb(pcbdcom_port_t *p)
-{
-    unsigned int rx_avail = (p->rx_head - p->rx_tail) & (p->rx_size - 1);
-    unsigned int tx_pend  = (p->tx_head - p->tx_tail) & (p->tx_size - 1);
-
-    p->compat_opcb.inbuf_count  = rx_avail;
-    p->compat_opcb.outbuf_count = tx_pend;
-    /* Read MSR from hardware if port is open */
-    if (p->open && p->base)
-        p->compat_opcb.msr_reg = SHIM_IN(p->base + 6);
-}
-
-/* -------- API functions -------- */
-
-int ser_rs232_init(void)
-{
-    /* Driver already initialized by TSR install. This just returns OK. */
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_setup(unsigned int port, struct port_param *pp)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p || !pp) return RS232ERR_PARAM;
-
-    p->baud      = (unsigned long)pp->baud;
-    p->parity    = pp->parity;
-    p->data_bits = pp->data_bits;
-    p->stop_bits = pp->stop_bits;
-    p->flow      = pp->flow;
-
-    /* Store COMMDRV-compatible fields */
-    p->compat_opcb.cardtype = pp->cardtype;
-
-    if (p->backend && p->backend->init)
-        return (p->backend->init(p) == 0) ? RS232ERR_NONE : RS232ERR_PARAM;
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_getport(unsigned int port, struct port_param *pp)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p || !pp) return RS232ERR_PARAM;
-
-    /* Update opcb from current state */
-    update_opcb(p);
-
-    /* Basic serial parameters */
-    pp->baud      = (unsigned int)p->baud;
-    pp->parity    = p->parity;
-    pp->data_bits = p->data_bits;
-    pp->stop_bits = p->stop_bits;
-    pp->flow      = p->flow;
-    pp->buf_size  = p->rx_size;
-
-    /* COMMDRV-compatible fields */
-    pp->lngth      = (p->data_bits == 8) ? LENGTH_8 : LENGTH_7;
-    pp->cardtype   = p->compat_opcb.cardtype;
-    pp->protocol   = (p->flow == 1) ? PROT_RTSRTS :
-                     (p->flow == 2) ? PROT_XONXOFF : 0;
-    pp->error      = RS232ERR_NONE;
-    pp->outbuf_len = p->tx_size;
-    pp->inbuf_len  = p->rx_size;
-    pp->block[0]   = 0;
-    pp->block[1]   = 0;
-    pp->block[2]   = 0;
-    pp->block[3]   = 0;
-
-    /* Pointers to embedded compat structs */
-    pp->opcb   = &p->compat_opcb;
-    pp->auxpcb = &p->compat_auxpcb;
-
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_getbyte(unsigned int port, unsigned char *b)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p || !b) return RS232ERR_PARAM;
-    if (!p->backend || !p->backend->read) return RS232ERR_NOPORT;
-    return (p->backend->read(p, b, 1) == 1) ? RS232ERR_NONE : RS232ERR_BUSY;
-}
-
-int ser_rs232_putbyte(unsigned int port, unsigned char *b)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p || !b) return RS232ERR_PARAM;
-    if (!p->backend || !p->backend->write) return RS232ERR_NOPORT;
-    return (p->backend->write(p, b, 1) == 1) ? RS232ERR_NONE : RS232ERR_BUSY;
-}
-
-int ser_rs232_getpacket(unsigned int port, unsigned int n, unsigned char *buf)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    int got;
-    if (!p) return RS232ERR_PARAM;
-    if (!p->backend || !p->backend->read) return RS232ERR_NOPORT;
-
-    /* n == 0: refresh state (MODEMDRV.C convention) */
-    if (n == 0) {
-        update_opcb(p);
-        return RS232ERR_NONE;
-    }
-
-    /* n == 32767 with NULL buf: flush RX buffer (MODEMDRV.C convention) */
-    if (n == 32767 && buf == NULL) {
-        p->rx_head = p->rx_tail = 0;
-        return RS232ERR_NONE;
-    }
-
-    if (!buf) return RS232ERR_PARAM;
-    got = p->backend->read(p, buf, (int)n);
-    return (got >= 0) ? RS232ERR_NONE : RS232ERR_BUSY;
-}
-
-int ser_rs232_putpacket(unsigned int port, unsigned int n, unsigned char *buf)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    int put;
-    if (!p) return RS232ERR_PARAM;
-    if (!p->backend || !p->backend->write) return RS232ERR_NOPORT;
-
-    /* n == 0, buf == NULL: flush TX (MODEMDRV.C convention) */
-    if (n == 0 || buf == NULL)
-        return RS232ERR_NONE;
-
-    put = p->backend->write(p, buf, (int)n);
-    return (put >= 0) ? RS232ERR_NONE : RS232ERR_BUSY;
-}
-
-int ser_rs232_viewpacket(unsigned int port, unsigned int n, unsigned char *buf)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    unsigned int i;
-    if (!p || !buf) return RS232ERR_PARAM;
-
-    /* Peek RX buffer without consuming */
-    {
-        unsigned int avail = (p->rx_head - p->rx_tail) & (p->rx_size - 1);
-        for (i = 0; i < n && i < avail; i++)
-            buf[i] = p->rx_buf[(p->rx_tail + i) & (p->rx_size - 1)];
-    }
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_flush(unsigned int port, unsigned int which)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p) return RS232ERR_PARAM;
-
-    if (which == 0 || which == 2) { p->rx_head = p->rx_tail = 0; }
-    if (which == 1 || which == 2) { p->tx_head = p->tx_tail = 0; }
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_dtr_on(unsigned int port)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p) return RS232ERR_PARAM;
-    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) | 0x01);
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_dtr_off(unsigned int port)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p) return RS232ERR_PARAM;
-    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) & ~0x01);
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_rts_on(unsigned int port)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p) return RS232ERR_PARAM;
-    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) | 0x02);
-    return RS232ERR_NONE;
-}
-
-int ser_rs232_rts_off(unsigned int port)
-{
-    pcbdcom_port_t *p = port_by_num(port);
-    if (!p) return RS232ERR_PARAM;
-    SHIM_OUT(p->base + 4, SHIM_IN(p->base + 4) & ~0x02);
-    return RS232ERR_NONE;
-}
+/* ----- .SYS / DEVICE entry -----
+ *
+ * DROPPED in v1.2 for WCSC parity: original COMM-DRV shipped ONLY as
+ * COMMTSR.EXE (a TSR), never as a .SYS device driver. Sysops load us
+ * from AUTOEXEC.BAT with `PCBDTSR.EXE /F=PCBCOMM.CFG` — same as they
+ * used to load COMMTSR.EXE.
+ *
+ * If .SYS-mode is needed later, resurrect device_entry() with correct
+ * CONFIG.SYS request-header dispatch. Old skeleton in commit history.
+ */

@@ -1,5 +1,5 @@
 /* ============================================================================
- * rocket_backend.c — pcbdcom Comtrol RocketPort backend
+ * rocket_backend.c — pcbcomm Comtrol RocketPort backend
  *
  * Cards supported (v1, ISA):
  *   RocketPort ISA 8, 16, 32 (1-4 AIOPs of 8 channels each)
@@ -22,7 +22,7 @@
  *   Linux rocket.c is POLLED — it uses a 10ms tasklet, avoiding
  *   spinlock cost in ISR. RocketPort ISA hardware supports IRQ mode
  *   too (via MUDBAC IRQ config). This port uses IRQ mode because
- *   pcbdcom's backend model expects IRQ-driven backends (they register
+ *   pcbcomm's backend model expects IRQ-driven backends (they register
  *   with irq.c and get called from the shared PIC dispatch). DOS
  *   doesn't have the spinlock cost that motivated Linux to poll.
  *
@@ -39,7 +39,7 @@
  * ==========================================================================*/
 
 #include <conio.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 #if defined(_MSC_VER)
@@ -105,7 +105,7 @@ typedef struct {
     unsigned int   aiop_io[MAX_AIOPS];              /* Per-AIOP base I/O     */
     unsigned char  n_aiops;
     unsigned char  mreg2, mreg3;
-    pcbdcom_port_t *ports[MAX_AIOPS * MAX_CHANS_PER_AIOP];
+    pcbcomm_port_t *ports[MAX_AIOPS * MAX_CHANS_PER_AIOP];
 } rocket_card_t;
 
 #include "card_pool.h"
@@ -181,7 +181,7 @@ static void rp_set_baud(unsigned int aiop_io, unsigned char chan, long baud)
 
 /* ----- Backend hooks ----- */
 
-int rocket_backend_probe(pcbdcom_port_t *p)
+int rocket_backend_probe(pcbcomm_port_t *p)
 {
     rocket_card_t *card = (rocket_card_t *)p->backend_data;
     /* Weak probe: AIOP 0 must exist. Real probe requires MUDBAC config
@@ -190,7 +190,7 @@ int rocket_backend_probe(pcbdcom_port_t *p)
     return (RP_IN(card->aiop_io[0] + _INT_CHAN) != 0xFF) ? 0 : -1;
 }
 
-int rocket_backend_init(pcbdcom_port_t *p)
+int rocket_backend_init(pcbcomm_port_t *p)
 {
     rocket_card_t *card = (rocket_card_t *)p->backend_data;
     unsigned char aiop, chan;
@@ -201,7 +201,7 @@ int rocket_backend_init(pcbdcom_port_t *p)
     if (p->subport < MAX_AIOPS * MAX_CHANS_PER_AIOP)
         card->ports[p->subport] = p;
 
-    /* MUDBAC setup: IRQ disabled globally in v1 (pcbdcom's irq.c owns
+    /* MUDBAC setup: IRQ disabled globally in v1 (pcbcomm's irq.c owns
      * IRQ management; MUDBAC IRQ routing is v1.1 refinement). */
     card->mreg2 = 0;   /* IRQ disable */
     card->mreg3 = 0;   /* No periodic */
@@ -239,7 +239,7 @@ int rocket_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void rocket_backend_deinit(pcbdcom_port_t *p)
+void rocket_backend_deinit(pcbcomm_port_t *p)
 {
     rocket_card_t *card = (rocket_card_t *)p->backend_data;
     if (!card) return;
@@ -254,12 +254,12 @@ void rocket_backend_deinit(pcbdcom_port_t *p)
  * _INT_CHAN read returns a byte with:
  *   bit 7 = 1 (pending), bits 6:3 = channel, bits 2:0 = interrupt type
  * We loop until bit 7 clears (no more pending on this AIOP). */
-void rocket_backend_isr(pcbdcom_port_t *p)
+void rocket_backend_isr(pcbcomm_port_t *p)
 {
     rocket_card_t *card = (rocket_card_t *)p->backend_data;
     unsigned char aiop, int_stat, chan;
     unsigned int aio, fifo_cnt, i;
-    pcbdcom_port_t *pp;
+    pcbcomm_port_t *pp;
     unsigned char ch;
     unsigned int next;
 
@@ -303,18 +303,18 @@ void rocket_backend_isr(pcbdcom_port_t *p)
     }
 }
 
-int rocket_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int rocket_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
-int rocket_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int rocket_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
-    extern int uart_backend_write(pcbdcom_port_t *, const void *, int);
+    extern int uart_backend_write(pcbcomm_port_t *, const void *, int);
     return uart_backend_write(p, buf, n);
 }
 
-const pcbdcom_backend_t pcbdcom_rocket_backend = {
+const pcbcomm_backend_t pcbcomm_rocket_backend = {
     "ROCKET",
     rocket_card_get,
     rocket_backend_probe,
@@ -326,13 +326,13 @@ const pcbdcom_backend_t pcbdcom_rocket_backend = {
 };
 
 /* ----- v1.1 TODO -----
- *  1. Multi-card wiring: pcbdcom.c parse_config passes card_seg via
+ *  1. Multi-card wiring: pcbcomm.c parse_config passes card_seg via
  *     backend_data. For ROCKET, needs rocket_card_t* with mudbac_io
  *     + aiop_io[] array. Config file syntax extension: use CARDSEG
  *     column for MudbacIO; add per-AIOP I/O addresses. Match same
  *     multi-card TODO as cyclom and digi_*.
  *  2. Real MUDBAC IRQ routing (mreg2 IRQ bits set, mreg3 frequency).
- *     Currently we use MUDBAC in polled-status mode; pcbdcom irq.c
+ *     Currently we use MUDBAC in polled-status mode; pcbcomm irq.c
  *     hooks the actual IRQ. This works but wastes cycles.
  *  3. Full sSetInterfaceMode + software flow control (XON/XOFF handled
  *     in AIOP itself — RData already programs the char values).

@@ -12,7 +12,7 @@
  *   -p  Subdevice file path prefix
  *   configfile defaults to PCBCOMM.CFG
  *
- * Build:  same PCBDCOM.MAK targets (BC31 -ml / OW2 -ml / MSC7 /AL)
+ * Build:  same PCBCOMM.MAK targets (BC31 -ml / OW2 -ml / MSC7 /AL)
  *         link against: int14.obj + uart.obj + irq.obj + all backends
  *
  * License: GPLv3 (pcbirc crew)
@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 /* ---- Resident signature ------------------------------------------------
@@ -39,51 +39,51 @@
 #define PCBCOMM_SIG_LEN  8
 
 /* The signature is placed by the compiler in a const array right here.
- * pcbdcom_int14_install() copies the handler address; to find the resident
+ * pcbcomm_int14_install() copies the handler address; to find the resident
  * copy we read the INT 14h vector then scan backwards for the cookie. */
 static const char pcbcomm_sig[PCBCOMM_SIG_LEN] = PCBCOMM_SIG;
 
 /* ---- Global port table (shared with int14.c) --------------------------- */
-pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
+pcbcomm_port_t g_ports[PCBCOMM_MAX_PORTS];
 int            g_n_ports = 0;
 
 /* Ring buffer arenas */
-static unsigned char g_rx_arena[PCBDCOM_MAX_PORTS][PCBDCOM_RX_RING];
-static unsigned char g_tx_arena[PCBDCOM_MAX_PORTS][PCBDCOM_TX_RING];
+static unsigned char g_rx_arena[PCBCOMM_MAX_PORTS][PCBCOMM_RX_RING];
+static unsigned char g_tx_arena[PCBCOMM_MAX_PORTS][PCBCOMM_TX_RING];
 
 /* ---- External symbols -------------------------------------------------- */
-extern int  pcbdcom_irq_register(unsigned char irq, pcbdcom_port_t *p);
-extern void pcbdcom_irq_shutdown(void);
-extern void pcbdcom_int14_install(void);
-extern void pcbdcom_int14_uninstall(void);
+extern int  pcbcomm_irq_register(unsigned char irq, pcbcomm_port_t *p);
+extern void pcbcomm_irq_shutdown(void);
+extern void pcbcomm_int14_install(void);
+extern void pcbcomm_int14_uninstall(void);
 
 /* ---- Backend registry -------------------------------------------------- */
-static const pcbdcom_backend_t *find_backend(const char *name)
+static const pcbcomm_backend_t *find_backend(const char *name)
 {
-    if (!strcmp(name, "8250"))       return &pcbdcom_uart_backend;
-    if (!strcmp(name, "BOCA"))       return &pcbdcom_boca_backend;
-    if (!strcmp(name, "BOCA16"))     return &pcbdcom_boca_backend;
-    if (!strcmp(name, "CYCLOM"))     return &pcbdcom_cyclom_backend;
-    if (!strcmp(name, "DIGI_PCXE"))  return &pcbdcom_digi_pcxe_backend;
-    if (!strcmp(name, "DIGI_ACCEL")) return &pcbdcom_digi_accel_backend;
-    if (!strcmp(name, "ROCKET"))     return &pcbdcom_rocket_backend;
-    if (!strcmp(name, "EASYIO"))     return &pcbdcom_easyio_backend;
-    if (!strcmp(name, "ARNETSPP"))   return &pcbdcom_arnet_backend;
-    if (!strcmp(name, "ARNET"))      return &pcbdcom_arnet_backend;
-    if (!strcmp(name, "HUB6"))       return &pcbdcom_hub6_backend;
-    if (!strcmp(name, "IBM8"))       return &pcbdcom_hub6_backend;
-    if (!strcmp(name, "DIGI_COMXI")) return &pcbdcom_digi_comxi_backend;
-    if (!strcmp(name, "COMXI"))      return &pcbdcom_digi_comxi_backend;
-    if (!strcmp(name, "GTEK"))       return &pcbdcom_gtek_backend;
-    if (!strcmp(name, "GTEK8"))      return &pcbdcom_gtek_backend;
+    if (!strcmp(name, "8250"))       return &pcbcomm_uart_backend;
+    if (!strcmp(name, "BOCA"))       return &pcbcomm_boca_backend;
+    if (!strcmp(name, "BOCA16"))     return &pcbcomm_boca_backend;
+    if (!strcmp(name, "CYCLOM"))     return &pcbcomm_cyclom_backend;
+    if (!strcmp(name, "DIGI_PCXE"))  return &pcbcomm_digi_pcxe_backend;
+    if (!strcmp(name, "DIGI_ACCEL")) return &pcbcomm_digi_accel_backend;
+    if (!strcmp(name, "ROCKET"))     return &pcbcomm_rocket_backend;
+    if (!strcmp(name, "EASYIO"))     return &pcbcomm_easyio_backend;
+    if (!strcmp(name, "ARNETSPP"))   return &pcbcomm_arnet_backend;
+    if (!strcmp(name, "ARNET"))      return &pcbcomm_arnet_backend;
+    if (!strcmp(name, "HUB6"))       return &pcbcomm_hub6_backend;
+    if (!strcmp(name, "IBM8"))       return &pcbcomm_hub6_backend;
+    if (!strcmp(name, "DIGI_COMXI")) return &pcbcomm_digi_comxi_backend;
+    if (!strcmp(name, "COMXI"))      return &pcbcomm_digi_comxi_backend;
+    if (!strcmp(name, "GTEK"))       return &pcbcomm_gtek_backend;
+    if (!strcmp(name, "GTEK8"))      return &pcbcomm_gtek_backend;
 #if defined(PCB1541)
-    if (!strcmp(name, "STALLION_BRUMBY")) return &pcbdcom_stallion_brumby_backend;
-    if (!strcmp(name, "BRUMBY"))          return &pcbdcom_stallion_brumby_backend;
-    if (!strcmp(name, "ONBOARD"))         return &pcbdcom_stallion_brumby_backend;
-    if (!strcmp(name, "CHASE_IOLAN"))     return &pcbdcom_chase_iolan_backend;
-    if (!strcmp(name, "IOLAN"))           return &pcbdcom_chase_iolan_backend;
-    if (!strcmp(name, "EQUINOX_SST"))     return &pcbdcom_equinox_sst_backend;
-    if (!strcmp(name, "SST"))             return &pcbdcom_equinox_sst_backend;
+    if (!strcmp(name, "STALLION_BRUMBY")) return &pcbcomm_stallion_brumby_backend;
+    if (!strcmp(name, "BRUMBY"))          return &pcbcomm_stallion_brumby_backend;
+    if (!strcmp(name, "ONBOARD"))         return &pcbcomm_stallion_brumby_backend;
+    if (!strcmp(name, "CHASE_IOLAN"))     return &pcbcomm_chase_iolan_backend;
+    if (!strcmp(name, "IOLAN"))           return &pcbcomm_chase_iolan_backend;
+    if (!strcmp(name, "EQUINOX_SST"))     return &pcbcomm_equinox_sst_backend;
+    if (!strcmp(name, "SST"))             return &pcbcomm_equinox_sst_backend;
 #endif
     return NULL;
 }
@@ -95,8 +95,8 @@ static int parse_config(const char *path)
     char line[128], card[16];
     unsigned int port, subport, base, irq, cardseg;
     char fossil;
-    pcbdcom_port_t *p;
-    const pcbdcom_backend_t *b;
+    pcbcomm_port_t *p;
+    const pcbcomm_backend_t *b;
     int n = 0;
 
     f = fopen(path, "r");
@@ -107,7 +107,7 @@ static int parse_config(const char *path)
         if (sscanf(line, "%u %15s %u %i %u %u %c",
                    &port, card, &subport, &base, &irq, &cardseg, &fossil) < 6)
             continue;
-        if (port == 0 || port > PCBDCOM_MAX_PORTS) continue;
+        if (port == 0 || port > PCBCOMM_MAX_PORTS) continue;
 
         b = find_backend(card);
         if (!b) {
@@ -137,9 +137,9 @@ static int parse_config(const char *path)
         }
 
         p->rx_buf  = g_rx_arena[port - 1];
-        p->rx_size = PCBDCOM_RX_RING;
+        p->rx_size = PCBCOMM_RX_RING;
         p->tx_buf  = g_tx_arena[port - 1];
-        p->tx_size = PCBDCOM_TX_RING;
+        p->tx_size = PCBCOMM_TX_RING;
         p->rx_head = p->rx_tail = p->tx_head = p->tx_tail = 0;
         p->open    = 0;
 
@@ -157,14 +157,14 @@ static int pcbcomm_install(void)
     printf("pcbcomm: %d port(s) configured\n", g_n_ports);
 
     for (i = 0; i < g_n_ports; i++) {
-        pcbdcom_port_t *p = &g_ports[i];
+        pcbcomm_port_t *p = &g_ports[i];
         if (!p->backend) continue;
         if (p->backend->init(p) < 0) {
             printf("  port %d (%s @ 0x%X): probe/init FAILED\n",
                    i + 1, p->backend->name, p->base);
             continue;
         }
-        if (pcbdcom_irq_register(p->irq, p) < 0) {
+        if (pcbcomm_irq_register(p->irq, p) < 0) {
             printf("  port %d IRQ %u: register FAILED\n", i + 1, p->irq);
             p->backend->deinit(p);
             continue;
@@ -174,7 +174,7 @@ static int pcbcomm_install(void)
         ok++;
     }
 
-    pcbdcom_int14_install();
+    pcbcomm_int14_install();
     printf("pcbcomm: %d/%d port(s) online, INT 14h hooked.\n", ok, g_n_ports);
     return ok;
 }
@@ -259,13 +259,13 @@ static int do_deinstall(void)
 
     /* The clean path: call our own uninstall (restores the saved vector,
      * shuts down IRQs, deinits backends).  This works because the
-     * resident copy's pcbdcom_int14_uninstall() is at a known address
+     * resident copy's pcbcomm_int14_uninstall() is at a known address
      * — we call it via the INT 14h handler's AH=FFh "admin" function,
      * which we define as our internal unload command.
      *
      * Protocol: INT 14h with AH=FFh, AL=01h = unload request.
      * The resident handler recognises this and calls its own
-     * pcbdcom_int14_uninstall() + pcbdcom_irq_shutdown(), then
+     * pcbcomm_int14_uninstall() + pcbcomm_irq_shutdown(), then
      * returns AX=0x4F52 ("OR" = OK-Removed) as confirmation.
      *
      * If the resident copy doesn't support AH=FFh (old version),

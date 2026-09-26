@@ -1,4 +1,4 @@
-# PCBDCOM.CFG — pcbdcom v1 port configuration
+# PCBCOMM.CFG — pcbcomm v1 port configuration
 # Format: PORT CARD SUBPORT BASE IRQ CARDSEG FOSSIL
 # Card types: 8250 BOCA BOCA16 CYCLOM DIGI_PCXE DIGI_ACCEL ROCKET EASYIO
 # Base: I/O port (hex OK: 0x3F8), IRQ: 3..15, CardSeg: 0 for I/O-mapped,

@@ -10,7 +10,7 @@
 #ifndef DIGI_FEP_H
 #define DIGI_FEP_H
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 
 /* ----- Card window offsets ----- */
 #define CSTART      0x0400L
@@ -68,7 +68,7 @@ typedef struct digi_fep_card {
     unsigned int   card_seg;
     unsigned char  n_ports;
     unsigned char  card_type;      /* For AccelePort: distinguishes model  */
-    pcbdcom_port_t *ports[64];     /* Max concentrator size                */
+    pcbcomm_port_t *ports[64];     /* Max concentrator size                */
 } digi_fep_card_t;
 
 /* Shared card pool for both PC/Xe + AccelePort backends */
@@ -84,9 +84,9 @@ unsigned int  digi_fep_readw (unsigned int seg, unsigned long off);
 void          digi_fep_writew(unsigned int seg, unsigned long off, unsigned int v);
 int           digi_fep_cmd   (unsigned int seg, unsigned char chan,
                               unsigned char op, unsigned char a1, unsigned char a2);
-int           digi_fep_init_channel(pcbdcom_port_t *p, unsigned char chan);
-void          digi_fep_deinit_channel(pcbdcom_port_t *p, unsigned char chan);
-void          digi_fep_isr   (pcbdcom_port_t *p);
-int           digi_fep_write (pcbdcom_port_t *p, const void *buf, int n);
+int           digi_fep_init_channel(pcbcomm_port_t *p, unsigned char chan);
+void          digi_fep_deinit_channel(pcbcomm_port_t *p, unsigned char chan);
+void          digi_fep_isr   (pcbcomm_port_t *p);
+int           digi_fep_write (pcbcomm_port_t *p, const void *buf, int n);
 
 #endif /* DIGI_FEP_H */

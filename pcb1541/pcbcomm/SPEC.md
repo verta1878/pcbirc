@@ -1,4 +1,4 @@
-# pcbdcom — v1 interface specification
+# pcbcomm — v1 interface specification
 
 ## Goal
 
@@ -12,18 +12,18 @@ driver sources as reference.
 ### CONFIG.SYS load
 
 ```
-DEVICE=C:\PCBDCOM\PCBDCOM.SYS /IRQ=4 /BASE=0x3F8 /BAUD=38400
+DEVICE=C:\PCBCOMM\PCBCOMM.SYS /IRQ=4 /BASE=0x3F8 /BAUD=38400
 ```
 
 Also works from AUTOEXEC.BAT as a TSR:
 
 ```
-LH C:\PCBDCOM\PCBDCOM.EXE /IRQ=4 /BASE=0x3F8 /BAUD=38400
+LH C:\PCBCOMM\PCBCOMM.EXE /IRQ=4 /BASE=0x3F8 /BAUD=38400
 ```
 
 Same binary handles both — dispatches on load context (DS:SI vs PSP).
 
-### Config file (PCBDCOM.CFG)
+### Config file (PCBCOMM.CFG)
 
 Line-oriented, one port per line. Matches COMM-DRV DRVSETUP output:
 
@@ -50,7 +50,7 @@ Card types recognized in v1:
 Card type v1.2 addition (Phase 1 confirmed):
 - `ARNET_SPP` — Arnet SmartPort Plus. BIOS files (XABIOS.BIN,
   XACOOK.BIN, XACOMX.BIN) ship inside COMMDRV.RED and can be
-  redistributed with pcbdcom under WCSC's PCBoard install disk
+  redistributed with pcbcomm under WCSC's PCBoard install disk
   terms. Card config data (ARNETSP4.DAT, ARNETSP8.DAT) is
   reference material, not code.
 
@@ -75,25 +75,25 @@ Standard FOSSIL functions supported:
 - 0Dh Set/get modem status
 - 0Eh Extended baud rate
 
-Port numbers 0..MAX_PORTS-1 map via PCBDCOM.CFG to physical
+Port numbers 0..MAX_PORTS-1 map via PCBCOMM.CFG to physical
 (card, subport) tuples.
 
 ## Backends (internal)
 
-One `pcbdcom_backend_t` per card type, resolved at load time from
+One `pcbcomm_backend_t` per card type, resolved at load time from
 config file. Each backend implements:
 
 ```c
 typedef struct {
     const char *name;                     /* "8250", "BOCA16", ... */
-    int  (*probe)(pcbdcom_port_t *p);     /* detect chip presence   */
-    int  (*init) (pcbdcom_port_t *p);     /* configure hardware     */
-    void (*isr)  (pcbdcom_port_t *p);     /* IRQ dispatch entry     */
-    int  (*read) (pcbdcom_port_t *p, void *buf, int n);
-    int  (*write)(pcbdcom_port_t *p, const void *buf, int n);
-    int  (*ioctl)(pcbdcom_port_t *p, int cmd, void *arg);
-    void (*deinit)(pcbdcom_port_t *p);
-} pcbdcom_backend_t;
+    int  (*probe)(pcbcomm_port_t *p);     /* detect chip presence   */
+    int  (*init) (pcbcomm_port_t *p);     /* configure hardware     */
+    void (*isr)  (pcbcomm_port_t *p);     /* IRQ dispatch entry     */
+    int  (*read) (pcbcomm_port_t *p, void *buf, int n);
+    int  (*write)(pcbcomm_port_t *p, const void *buf, int n);
+    int  (*ioctl)(pcbcomm_port_t *p, int cmd, void *arg);
+    void (*deinit)(pcbcomm_port_t *p);
+} pcbcomm_backend_t;
 ```
 
 Backends compiled in v1: uart (8250), boca (dumb multi), cyclom,
@@ -103,7 +103,7 @@ digi_pcxe, digi_accel, rocket, easyio.
 
 ```
 src/
-  pcbdcom.c        entry point, load-mode dispatch, config parser
+  pcbcomm.c        entry point, load-mode dispatch, config parser
   int14.c          FOSSIL INT 14h handler
   uart.c           standard 8250/16450/16550/16650 backend
   boca.c           Boca dumb-multiport backend (shared IRQ)
@@ -115,9 +115,9 @@ src/
   ring.c           IRQ-safe ring buffer helpers
   irq.c            PIC control (mask/unmask) helpers
 inc/
-  pcbdcom.h        public types + port table
+  pcbcomm.h        public types + port table
   uart.h           UART register constants (already present)
-  backend.h        pcbdcom_backend_t + registry
+  backend.h        pcbcomm_backend_t + registry
 ```
 
 ## Porting rules
@@ -149,7 +149,7 @@ Target compilers (from CONFIG.SYS route the sysop picks):
 - MSC70  — Microsoft C 7.0, model=large
 - OWC    — OpenWatcom (v3 only, 15.41 optional linked-in build)
 
-BUILD/PCBDCOM.MAK dispatches by %CC% env variable.
+BUILD/PCBCOMM.MAK dispatches by %CC% env variable.
 
 ## Status
 
@@ -168,7 +168,7 @@ required for drop-in COMMDRV.OBJ replacement:
  All 7 backends have full
 probe + init + ISR implementations. See src/README.md for per-file
 lines-of-code, and each backend's file header + v1.1 TODO section
-for remaining work (multi-port wiring in pcbdcom.c is the common
+for remaining work (multi-port wiring in pcbcomm.c is the common
 v1.1 task — most backends currently assume chan=0 pending config
 parser extension).
 

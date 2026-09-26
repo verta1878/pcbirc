@@ -1,5 +1,5 @@
 /* ============================================================================
- * equinox_sst_backend.c — pcbdcom Equinox SuperSerial Technology backend
+ * equinox_sst_backend.c — pcbcomm Equinox SuperSerial Technology backend
  *
  * ============================================================================
  * ⚠ SCAFFOLDED BACKEND — UNTESTED ON REAL HARDWARE
@@ -54,7 +54,7 @@
 /* PCB1541-only backend: only compiled into 15.41 builds */
 #if defined(PCB1541)
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "card_pool.h"
 
@@ -109,7 +109,7 @@ typedef struct {
     unsigned char   in_use;                      /* pool header            */
     unsigned int    card_seg;                    /* 64KB DPR seg           */
     unsigned char   nports;                      /* 4, 8, 16, or 32        */
-    pcbdcom_port_t *ports[SST_MAX_CHANNELS];
+    pcbcomm_port_t *ports[SST_MAX_CHANNELS];
 } sst_card_t;
 
 #define SST_MAX_CARDS 2   /* SST is dense — 2 cards = up to 64 ports       */
@@ -193,7 +193,7 @@ static void *sst_card_get(unsigned long card_seg)
 
 /* ----- Backend hooks ----- */
 
-int equinox_sst_backend_probe(pcbdcom_port_t *p)
+int equinox_sst_backend_probe(pcbcomm_port_t *p)
 {
     sst_card_t *card = (sst_card_t *)p->backend_data;
     unsigned int sig_lo, sig_hi, seg;
@@ -220,7 +220,7 @@ int equinox_sst_backend_probe(pcbdcom_port_t *p)
     return 0;
 }
 
-int equinox_sst_backend_init(pcbdcom_port_t *p)
+int equinox_sst_backend_init(pcbcomm_port_t *p)
 {
     sst_card_t *card = (sst_card_t *)p->backend_data;
 
@@ -243,7 +243,7 @@ int equinox_sst_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void equinox_sst_backend_deinit(pcbdcom_port_t *p)
+void equinox_sst_backend_deinit(pcbcomm_port_t *p)
 {
     sst_card_t *card = (sst_card_t *)p->backend_data;
     if (!p->open || !card) return;
@@ -254,7 +254,7 @@ void equinox_sst_backend_deinit(pcbdcom_port_t *p)
     p->open = 0;
 }
 
-void equinox_sst_backend_isr(pcbdcom_port_t *p)
+void equinox_sst_backend_isr(pcbcomm_port_t *p)
 {
     sst_card_t *card = (sst_card_t *)p->backend_data;
     unsigned long mask;
@@ -275,7 +275,7 @@ void equinox_sst_backend_isr(pcbdcom_port_t *p)
     sst_writel(card->card_seg, SST_INT_STATUS_OFF, 0UL);
 }
 
-int equinox_sst_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int equinox_sst_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
     sst_card_t *card = (sst_card_t *)p->backend_data;
     unsigned char *dst = (unsigned char *)buf;
@@ -309,7 +309,7 @@ int equinox_sst_backend_read(pcbdcom_port_t *p, void *buf, int n)
     return (int)avail;
 }
 
-int equinox_sst_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int equinox_sst_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     sst_card_t *card = (sst_card_t *)p->backend_data;
     const unsigned char *src = (const unsigned char *)buf;
@@ -342,7 +342,7 @@ int equinox_sst_backend_write(pcbdcom_port_t *p, const void *buf, int n)
     return (int)room;
 }
 
-const pcbdcom_backend_t pcbdcom_equinox_sst_backend = {
+const pcbcomm_backend_t pcbcomm_equinox_sst_backend = {
     "EQUINOX_SST",
     sst_card_get,
     equinox_sst_backend_probe,

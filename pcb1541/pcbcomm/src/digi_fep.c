@@ -10,7 +10,7 @@
  * probe and init wrappers.
  * ==========================================================================*/
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "digi_fep.h"
 
 /* ----- Register access via seg:offset far pointer ----- */
@@ -67,7 +67,7 @@ int digi_fep_cmd(unsigned int seg, unsigned char chan, unsigned char op,
 }
 
 /* ----- Per-channel init: baud + line + open ----- */
-int digi_fep_init_channel(pcbdcom_port_t *p, unsigned char chan)
+int digi_fep_init_channel(pcbcomm_port_t *p, unsigned char chan)
 {
     unsigned int seg;
     unsigned int baud_code;
@@ -93,7 +93,7 @@ int digi_fep_init_channel(pcbdcom_port_t *p, unsigned char chan)
     return 0;
 }
 
-void digi_fep_deinit_channel(pcbdcom_port_t *p, unsigned char chan)
+void digi_fep_deinit_channel(pcbcomm_port_t *p, unsigned char chan)
 {
     unsigned int seg = ((digi_fep_card_t *)p->backend_data)->card_seg;
     (void)digi_fep_cmd(seg, chan, SETMODEM, 0, 0x82);
@@ -103,12 +103,12 @@ void digi_fep_deinit_channel(pcbdcom_port_t *p, unsigned char chan)
 
 /* ----- Shared ISR — event queue drain ----- *
  * Ported from doevent() in epca.c (line 1464). */
-void digi_fep_isr(pcbdcom_port_t *p)
+void digi_fep_isr(pcbcomm_port_t *p)
 {
     digi_fep_card_t *card = (digi_fep_card_t *)p->backend_data;
     unsigned int seg, ein, eout, imax;
     unsigned char chan, event;
-    pcbdcom_port_t *pp;
+    pcbcomm_port_t *pp;
 
     if (!card) return;
     seg = card->card_seg;
@@ -165,10 +165,10 @@ void digi_fep_isr(pcbdcom_port_t *p)
     }
 }
 
-/* Write to pcbdcom tx ring; LOWTX_IND flushes to FEP */
-int digi_fep_write(pcbdcom_port_t *p, const void *buf, int n)
+/* Write to pcbcomm tx ring; LOWTX_IND flushes to FEP */
+int digi_fep_write(pcbcomm_port_t *p, const void *buf, int n)
 {
-    extern int uart_backend_write(pcbdcom_port_t *, const void *, int);
+    extern int uart_backend_write(pcbcomm_port_t *, const void *, int);
     return uart_backend_write(p, buf, n);
 }
 

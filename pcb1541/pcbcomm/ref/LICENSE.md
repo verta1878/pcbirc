@@ -2,7 +2,7 @@
 
 All files under `linux/` and `userspace/` are unmodified copies of the
 upstream Linux kernel and setserial sources, retained here for
-reference during pcbdcom v1 development. Their original licenses
+reference during pcbcomm v1 development. Their original licenses
 apply:
 
 ## Linux kernel serial drivers (GPLv2)
@@ -25,12 +25,12 @@ apply:
 - `userspace/setserial.c` — Copyright Ted Ts'o and Rick Sladkey.
   setserial 2.17 (2000), GPLv2.
 
-## Compatibility with pcbdcom (GPLv3)
+## Compatibility with pcbcomm (GPLv3)
 
 GPLv2 code can be incorporated into GPLv3 works (one-way compatibility
-per GNU FSF). pcbdcom ports and adapts these drivers under GPLv3;
+per GNU FSF). pcbcomm ports and adapts these drivers under GPLv3;
 each derived source file will credit the original authors and cite
 the upstream file it was ported from.
 
 Ports live in `../src/`. Files in `ref/` are for reading and cross-
-reference only; they are NOT compiled into pcbdcom.
+reference only; they are NOT compiled into pcbcomm.

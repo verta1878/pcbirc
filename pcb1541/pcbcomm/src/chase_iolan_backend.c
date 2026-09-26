@@ -1,5 +1,5 @@
 /* ============================================================================
- * chase_iolan_backend.c — pcbdcom Chase Research IOLAN backend
+ * chase_iolan_backend.c — pcbcomm Chase Research IOLAN backend
  *
  * ***  PCB1541-ONLY  ***
  * This backend is gated behind #if defined(PCB1541). It ships only in
@@ -34,7 +34,7 @@
 
 #if defined(PCB1541)
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "card_pool.h"
 
@@ -68,7 +68,7 @@ typedef struct {
     unsigned char   in_use;
     unsigned int    card_seg;
     unsigned char   nports;
-    pcbdcom_port_t *ports[IOLAN_MAX_CHANNELS];
+    pcbcomm_port_t *ports[IOLAN_MAX_CHANNELS];
 } iolan_card_t;
 
 #define IOLAN_MAX_CARDS 4
@@ -115,7 +115,7 @@ static void *iolan_card_get(unsigned long card_seg)
     return c;
 }
 
-int chase_iolan_backend_probe(pcbdcom_port_t *p)
+int chase_iolan_backend_probe(pcbcomm_port_t *p)
 {
     iolan_card_t *card = (iolan_card_t *)p->backend_data;
     unsigned int sig, seg;
@@ -132,7 +132,7 @@ int chase_iolan_backend_probe(pcbdcom_port_t *p)
     return 0;
 }
 
-int chase_iolan_backend_init(pcbdcom_port_t *p)
+int chase_iolan_backend_init(pcbcomm_port_t *p)
 {
     iolan_card_t *card = (iolan_card_t *)p->backend_data;
     if (chase_iolan_backend_probe(p) < 0) return -1;
@@ -143,7 +143,7 @@ int chase_iolan_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void chase_iolan_backend_deinit(pcbdcom_port_t *p)
+void chase_iolan_backend_deinit(pcbcomm_port_t *p)
 {
     iolan_card_t *card = (iolan_card_t *)p->backend_data;
     if (!p->open || !card) return;
@@ -153,7 +153,7 @@ void chase_iolan_backend_deinit(pcbdcom_port_t *p)
     p->open = 0;
 }
 
-void chase_iolan_backend_isr(pcbdcom_port_t *p)
+void chase_iolan_backend_isr(pcbcomm_port_t *p)
 {
     iolan_card_t *card = (iolan_card_t *)p->backend_data;
     unsigned int mask;
@@ -171,7 +171,7 @@ void chase_iolan_backend_isr(pcbdcom_port_t *p)
     iolan_writew(card->card_seg, IOLAN_INT_STATUS, 0x0000);
 }
 
-int chase_iolan_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int chase_iolan_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
     iolan_card_t *card = (iolan_card_t *)p->backend_data;
     unsigned char *dst = (unsigned char *)buf;
@@ -199,7 +199,7 @@ int chase_iolan_backend_read(pcbdcom_port_t *p, void *buf, int n)
     return (int)avail;
 }
 
-int chase_iolan_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int chase_iolan_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     iolan_card_t *card = (iolan_card_t *)p->backend_data;
     const unsigned char *src = (const unsigned char *)buf;
@@ -227,7 +227,7 @@ int chase_iolan_backend_write(pcbdcom_port_t *p, const void *buf, int n)
     return (int)room;
 }
 
-const pcbdcom_backend_t pcbdcom_chase_iolan_backend = {
+const pcbcomm_backend_t pcbcomm_chase_iolan_backend = {
     "CHASE_IOLAN",
     iolan_card_get,
     chase_iolan_backend_probe,

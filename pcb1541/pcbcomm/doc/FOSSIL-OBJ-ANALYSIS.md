@@ -106,7 +106,7 @@ Both need:
   - ASYNC.ASM linked separately (provides 23 ASYNC_* imports)
 ```
 
-## What This Means for pcbdcom
+## What This Means for pcbcomm
 
 The toolkit FOSSIL.OBJ was never a standalone FOSSIL driver. It's the
 full PCBoard modem selector compiled in library mode. SDK programs that

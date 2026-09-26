@@ -12,7 +12,7 @@ what the installer copies from the .RED archive to `COMMDRV\` on disk.
 All 9 COMMDV*.DRV files opened and their embedded "family 1.00" version
 strings extracted. Complete mapping:
 
-| File          | Embedded name string    | pcbdcom backend             |
+| File          | Embedded name string    | pcbcomm backend             |
 |---------------|--------------------------|-----------------------------|
 | COMMDV00.DRV  | `GENERIC     1.01`      | uart_backend.c        ✓     |
 | COMMDV01.DRV  | `INTEL HUB6  1.00`      | hub6_backend.c        ✓ NEW |
@@ -30,7 +30,7 @@ strings extracted. Complete mapping:
 
 WCSC-original card lineup for DOS is now feature-complete.
 
-**pcbdcom coverage beyond WCSC:**
+**pcbcomm coverage beyond WCSC:**
 - cyclom_backend.c (Cyclades Cyclom-Y)
 - digi_accel_backend.c (Digi AccelePort — post-WCSC card)
 - rocket_backend.c (Comtrol RocketPort — post-WCSC)
@@ -50,7 +50,7 @@ WCSC-original card lineup for DOS is now feature-complete.
 | COMMDV07.DRV  |         1212 | (unknown) |
 | COMMDV08.DRV  |         2284 | (unknown) |
 
-**9 driver modules total.** pcbdcom v1.1 has 7 backends (uart, boca,
+**9 driver modules total.** pcbcomm v1.1 has 7 backends (uart, boca,
 cyclom, digi_pcxe, digi_accel, rocket, easyio). We may be missing
 up to 2 card families. Confirmed missing: **Arnet SmartPort Plus**
 (see BIOS files below).
@@ -95,11 +95,11 @@ configs, same as reading a card datasheet.
 ## Immediate takeaways (before any binary work)
 
 1. **8th backend identified**: Arnet SmartPort Plus. XABIOS.BIN +
-   XACOOK.BIN + XACOMX.BIN + ARNETSP4/8.DAT confirm it. pcbdcom v1.1
+   XACOOK.BIN + XACOMX.BIN + ARNETSP4/8.DAT confirm it. pcbcomm v1.1
    SPEC.md correctly identified this as the missing card.
 
 2. **9th backend possible**: 9 .DRV files but only 8 named card
-   families visible (7 pcbdcom + Arnet). The 9th could be:
+   families visible (7 pcbcomm + Arnet). The 9th could be:
      - A null / passthrough driver
      - Different variant of an existing family (e.g., BOCA1610 is
        a 16-port version — might be separate from standard Boca)
@@ -107,19 +107,19 @@ configs, same as reading a card datasheet.
 
 3. **BIOS distribution model**: Confirmed by INSTALL.DAT that BIOS
    files (XABIOS, XACOOK, XACOMX, BOCA1610) ship inside COMMDRV.RED.
-   Once extracted, we can package them alongside pcbdcom for sysops
+   Once extracted, we can package them alongside pcbcomm for sysops
    who paid for PCBoard (since they already have redistribution
    rights via their PCBoard license).
 
 4. **Modular per-card driver architecture**: WCSC used exactly the
-   same design pattern pcbdcom uses — one file per card family. Our
+   same design pattern pcbcomm uses — one file per card family. Our
    backend layout matches their .DRV layout. Suggests our SPEC.md
    design is on the right track.
 
 # Phase 1 — PCBoard integration surface (from PCBoard source)
 
 Sourced from `pcb154/MAIN/SOURCE/MODEM/MODEMDRV.C` (PCBoard's own code,
-we have full rights). This is what pcbdcom must expose for a drop-in
+we have full rights). This is what pcbcomm must expose for a drop-in
 replacement of COMM-DRV linked via COMMDRV.OBJ.
 
 ## The ser_rs232_* API (called by MODEMDRV.C)
@@ -154,24 +154,24 @@ Only two, both COMM-DRV extended (AH >= 0x10, not standard FOSSIL):
 
 DX = port number. AL unused (embedded in AH via AX).
 
-**Implication:** pcbdcom's INT 14h handler needs to recognize AH ≥
+**Implication:** pcbcomm's INT 14h handler needs to recognize AH ≥
 0x10 as COMM-DRV extensions, in addition to standard FOSSIL (AH
 0x00..0x0F).
 
-## Delta vs pcbdcom v1.1
+## Delta vs pcbcomm v1.1
 
 v1.1 int14.c implements standard FOSSIL 0x00-0x0F. **Missing: 0x1000
 and 0x1002** — commgo/commstop. Trivial add (few lines).
 
-pcbdcom currently exposes backend functions but NOT the ser_rs232_*
-symbol names. For MODEMDRV.C to link against pcbdcom (COMMDRV.OBJ
-replacement), we need a shim layer that maps ser_rs232_* → pcbdcom
+pcbcomm currently exposes backend functions but NOT the ser_rs232_*
+symbol names. For MODEMDRV.C to link against pcbcomm (COMMDRV.OBJ
+replacement), we need a shim layer that maps ser_rs232_* → pcbcomm
 internal API. Small file, ~100 lines.
 
 ## COMM-DRV ships modular per-card architecture
 
 INSTALL.DAT proves 9 separate .DRV files (COMMDV00-08.DRV, sizes
-1115-4883 bytes each). Same architecture pcbdcom already uses (7
+1115-4883 bytes each). Same architecture pcbcomm already uses (7
 backends). WCSC apparently split at exactly the same seams.
 
 
@@ -277,7 +277,7 @@ Options for actually getting the compressed data extracted:
 3. **Compare against known LHA variants** — LArc, older LH1 with
    different initial state, or a proprietary tweak.
 
-Not blocking pcbdcom v1.2 work. The v1.2 features (Arnet backend,
+Not blocking pcbcomm v1.2 work. The v1.2 features (Arnet backend,
 ser_rs232_shim, INT 14h AH>=0x10, _dos_keep TSR fix) are all built
 from public sources (Linux GPL, published Arnet datasheets, PCBoard
 MODEMDRV.C) and don't need the WCSC binaries as reference.
@@ -287,14 +287,14 @@ MODEMDRV.C) and don't need the WCSC binaries as reference.
 - The 8th card is confirmed Arnet SmartPort Plus (from BIOS blob
   presence: XABIOS/XACOOK/XACOMX + ARNETSP4/8.DAT).
 - All 9 COMMDV*.DRV modules exist and each corresponds to one
-  card family — same modular architecture pcbdcom uses.
+  card family — same modular architecture pcbcomm uses.
 - Firmware blobs (XABIOS.BIN, XACOOK.BIN, XACOMX.BIN, BOCA1610.BIN)
   ship redistributed inside COMMDRV.RED under WCSC's PCBoard install
-  disk terms. Extract-then-ship in pcbdcom is legally clear via the
+  disk terms. Extract-then-ship in pcbcomm is legally clear via the
   Digi ditty precedent (kernel driver GPL, firmware from vendor
   disk).
 - The .DAT config files (ARNETSP4.DAT etc.) are register-table data
-  that pcbdcom's arnet_backend.c can parse at runtime — legal
+  that pcbcomm's arnet_backend.c can parse at runtime — legal
   reference material.
 
 
@@ -349,12 +349,12 @@ segments correctly, then re-analyze) should extract the algorithm.
 
 ## Impact
 
-Not blocking pcbdcom v1.2 (public-source implementation path).
+Not blocking pcbcomm v1.2 (public-source implementation path).
 IS blocking:
 - Extraction of BIOS blobs from COMMDRV.RED for firmware/ dir
 - Extraction of any file from PCBOARD.RED/PCBMAIL.RED/PCBCFGS.RED/PPLC.RED
 - Ability to build a modern pcbirc install from original disks
-- Ability to repack .RED files with pcbdcom.OBJ substituted for
+- Ability to repack .RED files with pcbcomm.OBJ substituted for
   COMMDRV.OBJ in the toolkit
 
 All of which the crew still wants — this is on the roadmap after
@@ -406,10 +406,10 @@ in redx, we can extract ALL .RED files (COMMDRV, PCBOARD,
 PCBOARD2, PCBMAIL, PCBCFGS, PPLC) from any Linux host without
 DOSBox involvement.
 
-For unblocking pcbdcom v1.2 firmware/ directory contents:
+For unblocking pcbcomm v1.2 firmware/ directory contents:
 sysop-provided path — sysop extracts INSTALL.EXE on their own
 machine, drops XABIOS.BIN + XACOOK.BIN + XACOMX.BIN + BOCA1610.BIN
-into `pcb154/pcbdcom/firmware/`. Manual first-load until redx
+into `pcb154/pcbcomm/firmware/`. Manual first-load until redx
 lands.
 
 
@@ -473,7 +473,7 @@ Not attempted further in this chat turn — genuinely requires
 interactive Ghidra work with a human at the keyboard. Suggested
 duration: 4-8 focused hours.
 
-**Not blocking pcbdcom v1.2** — all v1.2 features use public sources.
+**Not blocking pcbcomm v1.2** — all v1.2 features use public sources.
 
 
 ## Step 1-3 attempt — 2026-09-01 late session
@@ -558,11 +558,11 @@ Not committed to public repo per Phase 1 rules (binary derivatives).
 
 ### Not blocking v1.2
 
-pcbdcom v1.2 features (Arnet backend, ser_rs232_shim, INT 14h
+pcbcomm v1.2 features (Arnet backend, ser_rs232_shim, INT 14h
 extensions, `_dos_keep` TSR fix, SDK packaging) all build from
 public sources. Compression crack is only needed to (a) extract
 BIOS blobs for firmware/ dir and (b) build a modern install path
-that re-packs .RED files with pcbdcom.OBJ substituted.
+that re-packs .RED files with pcbcomm.OBJ substituted.
 
 
 ## Step 1-3 continued 2026-09-01 (major discovery + hard block)
@@ -652,7 +652,7 @@ Huffman/LZSS decoder because that lives in the EXEPACK-compressed
 MZ portion of INSTALL.EXE.
 
 ### Not blocking v1.2 still
-pcbdcom v1.2 features (Arnet backend, ser_rs232_shim, INT 14h AH>=0x10,
+pcbcomm v1.2 features (Arnet backend, ser_rs232_shim, INT 14h AH>=0x10,
 _dos_keep TSR fix, SDK packaging) all build from public sources.
 The compression crack unlocks BIOS extraction and modern install
 repack — both scheduled AFTER v1.2 lands.
@@ -1065,10 +1065,10 @@ cards are encouraged to test and file issues.
 - Follows same pattern as planned TCP_SOCKET backend (also 15.41-only)
 
 **Build for 15.41:**
-    wmake -f PCBDCOM.MAK CC=OWC TARGET=15.41
+    wmake -f PCBCOMM.MAK CC=OWC TARGET=15.41
 
 **Build for 15.4 (default):**
-    wmake -f PCBDCOM.MAK CC=OWC
+    wmake -f PCBCOMM.MAK CC=OWC
     (or TARGET=15.4 explicitly)
 
 When PCB1541 is not defined, the extended backends compile to empty

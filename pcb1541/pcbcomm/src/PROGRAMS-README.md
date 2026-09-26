@@ -1,7 +1,7 @@
 # pcbcomm programs — wrench, 2026-09-26
 
 Three new source files for the pcbcomm (COMM-DRV replacement) project.
-All go in `pcb1541/pcbdcom/src/` alongside the existing backends and int14.c.
+All go in `pcb1541/pcbcomm/src/` alongside the existing backends and int14.c.
 
 ## pcbdtsr.c (409 lines) — PCBDTSR.EXE
 
@@ -9,7 +9,7 @@ Replaces Clark's COMMTSR.EXE. The resident TSR that loads PCBCOMM.CFG,
 probes serial card backends, registers IRQs, hooks INT 14h, and goes
 resident.
 
-Built on hexadecimal's existing pcbdcom.c framework (config parser,
+Built on hexadecimal's existing pcbcomm.c framework (config parser,
 backend registry, install path, _dos_keep). Adds:
 - `-i` install (default), `-d` deinstall, `-s` status switches
 - Resident detection via PCBCOMM\x01 signature cookie in memory
@@ -17,7 +17,7 @@ backend registry, install path, _dos_keep). Adds:
 
 **NOTE FOR HEXADECIMAL:** int14.c needs ~10 lines added to recognize
 AH=FFh/AL=01h as the admin unload command. It should call
-pcbdcom_int14_uninstall() + pcbdcom_irq_shutdown() and return
+pcbcomm_int14_uninstall() + pcbcomm_irq_shutdown() and return
 AX=0x4F52 ("OR" = OK-Removed). Without this, the -d switch can't
 tell the resident copy to shut down.
 

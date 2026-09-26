@@ -1,5 +1,5 @@
 /* ============================================================================
- * int14.c — INT 14h FOSSIL API handler for pcbdcom
+ * int14.c — INT 14h FOSSIL API handler for pcbcomm
  *
  * Implements the FOSSIL (Fido/Opus/Seadog Standard Interface Layer)
  * specification, revision 5. Spec: http://www.textfiles.com/programming/fossil.txt
@@ -17,23 +17,23 @@
 
 #include <dos.h>
 #include <string.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "compat.h"
 #include "backend.h"
 
-/* External port table — defined in pcbdcom.c */
-extern pcbdcom_port_t g_ports[PCBDCOM_MAX_PORTS];
+/* External port table — defined in pcbcomm.c */
+extern pcbcomm_port_t g_ports[PCBCOMM_MAX_PORTS];
 extern int            g_n_ports;
 
 /* Saved original INT 14h vector (installed BIOS/prior driver) */
-static pcbdcom_isr_t g_old_int14;
+static pcbcomm_isr_t g_old_int14;
 
 /* FOSSIL signature: after Init(00h), returns 0x1954 in AX (magic). */
 #define FOSSIL_SIG_LO  0x54
 #define FOSSIL_SIG_HI  0x19
 
-/* Convert AH FOSSIL func + DX port to a pcbdcom_port_t*, or NULL */
-static pcbdcom_port_t *port_lookup(unsigned int port_num)
+/* Convert AH FOSSIL func + DX port to a pcbcomm_port_t*, or NULL */
+static pcbcomm_port_t *port_lookup(unsigned int port_num)
 {
     if (port_num >= (unsigned int)g_n_ports) return NULL;
     if (!g_ports[port_num].open) return NULL;
@@ -43,7 +43,7 @@ static pcbdcom_port_t *port_lookup(unsigned int port_num)
 /* Line + modem status bytes for FOSSIL status returns.
  * AH = line status (LSR-like), AL = modem status (MSR-like) — differs
  * per function, see FOSSIL spec. */
-static unsigned int status_word(pcbdcom_port_t *p)
+static unsigned int status_word(pcbcomm_port_t *p)
 {
     unsigned char ah = 0;
     unsigned char al = 0;
@@ -60,19 +60,19 @@ static unsigned int status_word(pcbdcom_port_t *p)
 }
 
 /* Main dispatcher. Called via INT 14h vector. */
-PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
+PCBCOMM_INTERRUPT pcbcomm_int14(PCBCOMM_INT14_ARGS)
 {
-    unsigned char func = (PCBDCOM_AX >> 8) & 0xFF;
-    unsigned char ch   = PCBDCOM_AX & 0xFF;
-    pcbdcom_port_t *p  = port_lookup(PCBDCOM_DX);
+    unsigned char func = (PCBCOMM_AX >> 8) & 0xFF;
+    unsigned char ch   = PCBCOMM_AX & 0xFF;
+    pcbcomm_port_t *p  = port_lookup(PCBCOMM_DX);
     unsigned int rc    = 0;
     unsigned char buf[1];
 
     if (!p && func != 0x00 && func != 0x04) {
         /* Unknown port — pass through to old handler (may be BIOS INT 14h
-         * serving COM1..4 for callers who don't know about pcbdcom).
+         * serving COM1..4 for callers who don't know about pcbcomm).
          * Simplest: return "not ready" so caller falls back. */
-        PCBDCOM_AX = 0x0080;   /* AH=timeout, AL=0 */
+        PCBCOMM_AX = 0x0080;   /* AH=timeout, AL=0 */
         return;
     }
 
@@ -108,7 +108,7 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
         case 0x04: /* FOSSIL Init — returns 0x1954 magic + port count */
             rc = (FOSSIL_SIG_HI << 8) | FOSSIL_SIG_LO;
             /* BL = maximum port number, BH = revision (5) */
-            PCBDCOM_BX = (5 << 8) | (g_n_ports - 1);
+            PCBCOMM_BX = (5 << 8) | (g_n_ports - 1);
             break;
 
         case 0x05: /* FOSSIL Deinit */
@@ -167,7 +167,7 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
         case 0x13: /* Query backend name — CX/DX = base I/O for verification */
             if (p->backend) {
                 /* Return backend signature-word via BX (first 2 chars) */
-                PCBDCOM_BX = ((unsigned int)p->backend->name[0] << 8) |
+                PCBCOMM_BX = ((unsigned int)p->backend->name[0] << 8) |
                              (unsigned char)(p->backend->name[1] ? p->backend->name[1] : 0);
             }
             rc = status_word(p);
@@ -176,10 +176,10 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
         case 0x14: /* Set/get baud rate directly — AL=action, CX=baud */
             if ((ch & 1) == 0) {
                 /* Get */
-                PCBDCOM_CX = p->baud;
+                PCBCOMM_CX = p->baud;
             } else {
                 /* Set */
-                p->baud = PCBDCOM_CX;
+                p->baud = PCBCOMM_CX;
                 if (p->backend && p->backend->init)
                     (void)p->backend->init(p);
             }
@@ -192,19 +192,19 @@ PCBDCOM_INTERRUPT pcbdcom_int14(PCBDCOM_INT14_ARGS)
             break;
     }
 
-    PCBDCOM_AX = rc;
+    PCBCOMM_AX = rc;
     /* Preserve other regs by not writing them */
-    PCBDCOM_UNUSED_REGS;
+    PCBCOMM_UNUSED_REGS;
 }
 
 /* Install / uninstall INT 14h vector */
-void pcbdcom_int14_install(void)
+void pcbcomm_int14_install(void)
 {
     g_old_int14 = _dos_getvect(0x14);
-    _dos_setvect(0x14, pcbdcom_int14);
+    _dos_setvect(0x14, pcbcomm_int14);
 }
 
-void pcbdcom_int14_uninstall(void)
+void pcbcomm_int14_uninstall(void)
 {
     if (g_old_int14)
         _dos_setvect(0x14, g_old_int14);

@@ -1,5 +1,5 @@
 /* ============================================================================
- * digi_comxi_backend.c — pcbdcom Digi COM/Xi (early 80186-based) backend
+ * digi_comxi_backend.c — pcbcomm Digi COM/Xi (early 80186-based) backend
  *
  * Cards supported (v1):
  *   Digi COM/Xi 4       4 ports, 80186 on-board, dual-port RAM
@@ -30,7 +30,7 @@
  * pcbirc crew (hexadecimal), GPLv3.
  * ==========================================================================*/
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "card_pool.h"
 
@@ -70,7 +70,7 @@ typedef struct {
     unsigned char   in_use;                      /* pool header            */
     unsigned int    card_seg;                    /* dual-port RAM segment  */
     unsigned char   nports;                      /* 4 or 8                 */
-    pcbdcom_port_t *ports[COMXI_MAX_CHANNELS];   /* subport -> port slot   */
+    pcbcomm_port_t *ports[COMXI_MAX_CHANNELS];   /* subport -> port slot   */
 } comxi_card_t;
 
 #define COMXI_MAX_CARDS 4
@@ -126,7 +126,7 @@ static void *comxi_card_get(unsigned long card_seg)
 
 /* ----- Backend hooks ----- */
 
-int digi_comxi_backend_probe(pcbdcom_port_t *p)
+int digi_comxi_backend_probe(pcbcomm_port_t *p)
 {
     comxi_card_t *card = (comxi_card_t *)p->backend_data;
     unsigned int sig, seg;
@@ -150,7 +150,7 @@ int digi_comxi_backend_probe(pcbdcom_port_t *p)
     return 0;
 }
 
-int digi_comxi_backend_init(pcbdcom_port_t *p)
+int digi_comxi_backend_init(pcbcomm_port_t *p)
 {
     comxi_card_t *card = (comxi_card_t *)p->backend_data;
 
@@ -167,7 +167,7 @@ int digi_comxi_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void digi_comxi_backend_deinit(pcbdcom_port_t *p)
+void digi_comxi_backend_deinit(pcbcomm_port_t *p)
 {
     comxi_card_t *card = (comxi_card_t *)p->backend_data;
 
@@ -184,7 +184,7 @@ void digi_comxi_backend_deinit(pcbdcom_port_t *p)
 
 /* ISR: card raises host IRQ, board writes per-channel bits in INT_STATUS.
  * We read the mask, walk it, service each affected channel, then clear. */
-void digi_comxi_backend_isr(pcbdcom_port_t *p)
+void digi_comxi_backend_isr(pcbcomm_port_t *p)
 {
     comxi_card_t *card = (comxi_card_t *)p->backend_data;
     unsigned char mask;
@@ -217,7 +217,7 @@ void digi_comxi_backend_isr(pcbdcom_port_t *p)
     comxi_writeb(card->card_seg, COMXI_INT_STATUS, 0x00);
 }
 
-int digi_comxi_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int digi_comxi_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
     comxi_card_t *card = (comxi_card_t *)p->backend_data;
     unsigned char *dst = (unsigned char *)buf;
@@ -250,7 +250,7 @@ int digi_comxi_backend_read(pcbdcom_port_t *p, void *buf, int n)
 
     return (int)avail;
 }
-int digi_comxi_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int digi_comxi_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     comxi_card_t *card = (comxi_card_t *)p->backend_data;
     const unsigned char *src = (const unsigned char *)buf;
@@ -284,7 +284,7 @@ int digi_comxi_backend_write(pcbdcom_port_t *p, const void *buf, int n)
 
 /* ----- Backend descriptor exported to dispatcher ----- */
 
-const pcbdcom_backend_t pcbdcom_digi_comxi_backend = {
+const pcbcomm_backend_t pcbcomm_digi_comxi_backend = {
     "DIGI_COMXI",
     comxi_card_get,
     digi_comxi_backend_probe,

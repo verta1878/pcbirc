@@ -1,5 +1,5 @@
 /* ============================================================================
- * arnet_backend.c — pcbdcom Arnet SmartPort / SmartPort Plus backend
+ * arnet_backend.c — pcbcomm Arnet SmartPort / SmartPort Plus backend
  *
  * Cards supported:
  *   Arnet SmartPort 4/8/16 (ISA, dumb multi-port with 82530 UART chips)
@@ -26,7 +26,7 @@
  *
  * License: GPLv3
  * ==========================================================================*/
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "uart.h"
 #include "card_pool.h"
@@ -45,7 +45,7 @@
 
 
 /* Arnet register offsets (from ARNETSP*.DAT).
- * Base I/O per card is configured in PCBDCOM.CFG. */
+ * Base I/O per card is configured in PCBCOMM.CFG. */
 #define ARNET_UART_STRIDE   8       /* bytes between per-port UART registers  */
 #define ARNET_IRQ_ID_REG    0x40    /* card-level IRQ identify (read-clear)   */
 #define ARNET_IRQ_EN_REG    0x41    /* card-level per-port IRQ enable mask    */
@@ -67,7 +67,7 @@ typedef struct arnet_card {
     unsigned char irq_mask;         /* per-port IRQ enable bitmap             */
 } arnet_card_t;
 
-static arnet_card_t arnet_cards[PCBDCOM_MAX_CARDS];
+static arnet_card_t arnet_cards[PCBCOMM_MAX_CARDS];
 static unsigned char n_arnet_cards = 0;
 
 /* Look up per-card state by base I/O */
@@ -88,7 +88,7 @@ static void *arnet_card_get(unsigned long card_addr)
     arnet_card_t *c = arnet_find_card(card_addr);
     if (c) return c;
 
-    if (n_arnet_cards >= PCBDCOM_MAX_CARDS)
+    if (n_arnet_cards >= PCBCOMM_MAX_CARDS)
         return NULL;
 
     c = &arnet_cards[n_arnet_cards++];
@@ -121,7 +121,7 @@ static int arnet_is_plus(unsigned int io_base)
     return (ARNET_IN(io_base + ARNETPLUS_MBOX_STAT) == 0xAA);
 }
 
-static int arnet_probe(pcbdcom_port_t *p)
+static int arnet_probe(pcbcomm_port_t *p)
 {
     arnet_card_t *c = (arnet_card_t *)p->card_state;
     unsigned int port_io;
@@ -145,7 +145,7 @@ static int arnet_probe(pcbdcom_port_t *p)
     return 1;
 }
 
-static int arnet_init(pcbdcom_port_t *p)
+static int arnet_init(pcbcomm_port_t *p)
 {
     arnet_card_t *c = (arnet_card_t *)p->card_state;
     unsigned int port_io;
@@ -171,7 +171,7 @@ static int arnet_init(pcbdcom_port_t *p)
     return 0;
 }
 
-static void arnet_deinit(pcbdcom_port_t *p)
+static void arnet_deinit(pcbcomm_port_t *p)
 {
     arnet_card_t *c = (arnet_card_t *)p->card_state;
     if (!c) return;
@@ -183,7 +183,7 @@ static void arnet_deinit(pcbdcom_port_t *p)
         ARNET_OUT(c->io_base + ARNET_CARD_CTL, 0x00);  /* disable card */
 }
 
-static void arnet_isr(pcbdcom_port_t *p)
+static void arnet_isr(pcbcomm_port_t *p)
 {
     arnet_card_t *c = (arnet_card_t *)p->card_state;
     unsigned char pending;
@@ -202,7 +202,7 @@ static void arnet_isr(pcbdcom_port_t *p)
             else
                 port_io = c->io_base + i * ARNET_UART_STRIDE;
             {
-                pcbdcom_port_t tmp;
+                pcbcomm_port_t tmp;
                 tmp.base = port_io;
                 tmp.subport = i;
                 tmp.card_state = c;
@@ -213,7 +213,7 @@ static void arnet_isr(pcbdcom_port_t *p)
     }
 }
 
-static int arnet_read(pcbdcom_port_t *p, void *buf, int n)
+static int arnet_read(pcbcomm_port_t *p, void *buf, int n)
 {
     /* Old (non-Plus) SmartPort quirk from MODEMDRV.C: interrupts don't
      * always update the buffered count reliably. Force a hardware read
@@ -226,12 +226,12 @@ static int arnet_read(pcbdcom_port_t *p, void *buf, int n)
     return uart_backend_read(p, buf, n);
 }
 
-static int arnet_write(pcbdcom_port_t *p, const void *buf, int n)
+static int arnet_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     return uart_backend_write(p, buf, n);
 }
 
-const pcbdcom_backend_t pcbdcom_arnet_backend = {
+const pcbcomm_backend_t pcbcomm_arnet_backend = {
     "ARNETSPP",
     arnet_card_get,
     arnet_probe,

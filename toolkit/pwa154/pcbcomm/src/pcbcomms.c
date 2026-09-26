@@ -1,5 +1,5 @@
-/* nopcbdcom_stub.c — empty ser_rs232_* implementations.
- * Build into NOPCBDCOM.OBJ for use when you need the symbols but not
+/* nopcbcomm_stub.c — empty ser_rs232_* implementations.
+ * Build into NOPCBCOMM.OBJ for use when you need the symbols but not
  * the driver.
  * License: GPLv3. */
 #define RS232ERR_NOPORT 3

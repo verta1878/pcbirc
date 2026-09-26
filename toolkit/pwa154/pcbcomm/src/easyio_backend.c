@@ -1,5 +1,5 @@
 /* ============================================================================
- * easyio_backend.c — pcbdcom Stallion EasyIO backend
+ * easyio_backend.c — pcbcomm Stallion EasyIO backend
  *
  * Cards supported (v1, ISA):
  *   EasyIO 4RS (4-port RS-232)   — EIO_4PORTRS  = 0x05
@@ -28,13 +28,13 @@
  *     path as cyclom_backend.c but I/O-port instead of memory-mapped).
  *   - I/O port access: inp/outp instead of __far pointer.
  *   - Removed struct stlbrd/stlpanel/stlport plumbing; talks directly
- *     to pcbdcom_port_t via rx_buf/tx_buf rings.
+ *     to pcbcomm_port_t via rx_buf/tx_buf rings.
  *   - CD1400 register bit constants same as cyclom_backend.c — the
  *     chip is identical, only bus access differs.
  * ==========================================================================*/
 
 #include <conio.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 #if defined(_MSC_VER)
@@ -124,7 +124,7 @@ typedef struct {
     unsigned int   ioctrl;         /* Control port                           */
     unsigned char  n_chans;        /* 4 or 8 depending on model              */
     unsigned char  clock_20mhz;    /* Non-zero for EIO_8PORTM (20 MHz)       */
-    pcbdcom_port_t *chans[8];
+    pcbcomm_port_t *chans[8];
 } easyio_card_t;
 
 #include "card_pool.h"
@@ -171,7 +171,7 @@ static void cd_set_baud(unsigned int io, long baud)
 
 /* ----- Backend hooks ----- */
 
-int easyio_backend_probe(pcbdcom_port_t *p)
+int easyio_backend_probe(pcbcomm_port_t *p)
 {
     easyio_card_t *card = (easyio_card_t *)p->backend_data;
     unsigned char status, gfrcr;
@@ -207,7 +207,7 @@ int easyio_backend_probe(pcbdcom_port_t *p)
     return (gfrcr >= 0x40 && gfrcr < 0x50) ? 0 : -1;
 }
 
-int easyio_backend_init(pcbdcom_port_t *p)
+int easyio_backend_init(pcbcomm_port_t *p)
 {
     easyio_card_t *card = (easyio_card_t *)p->backend_data;
     unsigned int io;
@@ -242,7 +242,7 @@ int easyio_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void easyio_backend_deinit(pcbdcom_port_t *p)
+void easyio_backend_deinit(pcbcomm_port_t *p)
 {
     easyio_card_t *card = (easyio_card_t *)p->backend_data;
     if (!p->open || !card) return;
@@ -255,13 +255,13 @@ void easyio_backend_deinit(pcbdcom_port_t *p)
 /* ----- ISR ----- *
  * Ported from stl_eiointr() + panelp->isr in stallion.c: poll board
  * status for EIO_INTRPEND, then walk SVRR on CD1400 to service. */
-void easyio_backend_isr(pcbdcom_port_t *p)
+void easyio_backend_isr(pcbcomm_port_t *p)
 {
     easyio_card_t *card = (easyio_card_t *)p->backend_data;
     unsigned int io;
     unsigned char svrr, save_car, save_xir, ivr, chan, ch, count, i, srer;
     unsigned int next;
-    pcbdcom_port_t *pp;
+    pcbcomm_port_t *pp;
 
     if (!card) return;
     io = card->ioaddr;
@@ -331,13 +331,13 @@ void easyio_backend_isr(pcbdcom_port_t *p)
     }
 }
 
-int easyio_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int easyio_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
 
-int easyio_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int easyio_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     easyio_card_t *card = (easyio_card_t *)p->backend_data;
     const unsigned char *in = (const unsigned char *)buf;
@@ -362,7 +362,7 @@ int easyio_backend_write(pcbdcom_port_t *p, const void *buf, int n)
     return i;
 }
 
-const pcbdcom_backend_t pcbdcom_easyio_backend = {
+const pcbcomm_backend_t pcbcomm_easyio_backend = {
     "EASYIO",
     easyio_card_get,
     easyio_backend_probe,

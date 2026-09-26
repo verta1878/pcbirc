@@ -1,5 +1,5 @@
 /* ============================================================================
- * hub6_backend.c — pcbdcom Intel HUB-6 / IBM 8-port async adapter backend
+ * hub6_backend.c — pcbcomm Intel HUB-6 / IBM 8-port async adapter backend
  *
  * Cards supported (v1):
  *   Intel HUB-6         8 ports, base + N*8, one shared IRQ
@@ -24,7 +24,7 @@
 
 #include <conio.h>
 #include "uart.h"
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 #include "card_pool.h"
 
@@ -45,7 +45,7 @@ typedef struct {
     unsigned long   addr;                    /* pool header: card base I/O   */
     unsigned char   in_use;                  /* pool header                  */
     unsigned int    base;                    /* I/O base (typ. 0x100/140..)  */
-    pcbdcom_port_t *sub[HUB6_MAX_PORTS];     /* 8 sub-port slots             */
+    pcbcomm_port_t *sub[HUB6_MAX_PORTS];     /* 8 sub-port slots             */
 } hub6_card_t;
 
 #define HUB6_MAX_CARDS 4
@@ -64,15 +64,15 @@ static void *hub6_card_get(unsigned long card_addr)
 
 /* ----- Backend hooks ----- */
 
-int hub6_backend_probe(pcbdcom_port_t *p)
+int hub6_backend_probe(pcbcomm_port_t *p)
 {
-    extern int uart_backend_probe(pcbdcom_port_t *);
+    extern int uart_backend_probe(pcbcomm_port_t *);
     return uart_backend_probe(p);
 }
 
-int hub6_backend_init(pcbdcom_port_t *p)
+int hub6_backend_init(pcbcomm_port_t *p)
 {
-    extern int uart_backend_init(pcbdcom_port_t *);
+    extern int uart_backend_init(pcbcomm_port_t *);
     hub6_card_t *card = (hub6_card_t *)p->backend_data;
     unsigned int slot;
 
@@ -84,9 +84,9 @@ int hub6_backend_init(pcbdcom_port_t *p)
     return uart_backend_init(p);
 }
 
-void hub6_backend_deinit(pcbdcom_port_t *p)
+void hub6_backend_deinit(pcbcomm_port_t *p)
 {
-    extern void uart_backend_deinit(pcbdcom_port_t *);
+    extern void uart_backend_deinit(pcbcomm_port_t *);
     hub6_card_t *card = (hub6_card_t *)p->backend_data;
     unsigned int slot;
 
@@ -101,9 +101,9 @@ void hub6_backend_deinit(pcbdcom_port_t *p)
 /* Shared-IRQ dispatch: scan all 8 sub-UARTs, service any pending.
  * Matches boca_backend_isr()'s do/while(serviced) pattern to handle
  * back-to-back interrupts that fire during service. */
-void hub6_backend_isr(pcbdcom_port_t *p)
+void hub6_backend_isr(pcbcomm_port_t *p)
 {
-    extern void uart_backend_isr(pcbdcom_port_t *);
+    extern void uart_backend_isr(pcbcomm_port_t *);
     hub6_card_t *card = (hub6_card_t *)p->backend_data;
     unsigned int i, sub_base;
     unsigned char iir;
@@ -114,7 +114,7 @@ void hub6_backend_isr(pcbdcom_port_t *p)
     do {
         serviced = 0;
         for (i = 0; i < HUB6_MAX_PORTS; i++) {
-            pcbdcom_port_t *sp = card->sub[i];
+            pcbcomm_port_t *sp = card->sub[i];
             if (!sp) continue;
             sub_base = card->base + i * HUB6_PORT_STRIDE;
             iir = HUB6_IN(sub_base + HUB6_IIR);
@@ -126,19 +126,19 @@ void hub6_backend_isr(pcbdcom_port_t *p)
     } while (serviced);
 }
 
-int hub6_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int hub6_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
 
-int hub6_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int hub6_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
-    extern int uart_backend_write(pcbdcom_port_t *, const void *, int);
+    extern int uart_backend_write(pcbcomm_port_t *, const void *, int);
     return uart_backend_write(p, buf, n);
 }
 
-const pcbdcom_backend_t pcbdcom_hub6_backend = {
+const pcbcomm_backend_t pcbcomm_hub6_backend = {
     "HUB6",
     hub6_card_get,
     hub6_backend_probe,

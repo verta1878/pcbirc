@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 /* ---- UART register offsets (standard 8250/16550) ----------------------- */

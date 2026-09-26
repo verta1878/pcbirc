@@ -1,5 +1,5 @@
 /* ============================================================================
- * cyclom_backend.c — pcbdcom Cyclades Cyclom-Y backend
+ * cyclom_backend.c — pcbcomm Cyclades Cyclom-Y backend
  *
  * Cards supported: Cyclom-4Y, Cyclom-8Y, Cyclom-16Y, Cyclom-32Y (ISA).
  * All use Cirrus Logic CD1400 quad-UART chips memory-mapped at Card
@@ -16,15 +16,15 @@
  *   - cyy_interrupt() → cyclom_backend_isr(): same SVRR walk, same
  *     RIVR/TIVR/MIVR vector decode. Simplified: no character tagging,
  *     RX errors dropped silently (v1). Break/parity handling deferred.
- *   - Ring buffers use pcbdcom's 512B (Linux used 4KB per port).
+ *   - Ring buffers use pcbcomm's 512B (Linux used 4KB per port).
  *   - Removed tty_flip_buffer / tty_insert_flip_char; write directly
- *     to pcbdcom_port_t's rx_buf ring.
+ *     to pcbcomm_port_t's rx_buf ring.
  *   - Removed spinlocks: DOS is single-threaded; ISR must complete
  *     without being re-entered (guaranteed by 8259 PIC masking).
  *   - ISA-only: register offsets use *2 multiplier (Linux "index=1").
  * ==========================================================================*/
 
-#include "pcbdcom.h"
+#include "pcbcomm.h"
 #include "backend.h"
 
 /* ----- CD1400 register offsets (ISA: byte offset = *2 from datasheet) ----- */
@@ -95,7 +95,7 @@ typedef struct {
     unsigned int   card_seg;                       /* Card memory segment    */
     unsigned char  n_chips;                        /* 1..8                   */
     unsigned char  n_channels;                     /* n_chips * 4            */
-    pcbdcom_port_t *channels[CyMAX_CHIPS_PER_CARD * CyPORTS_PER_CHIP];
+    pcbcomm_port_t *channels[CyMAX_CHIPS_PER_CARD * CyPORTS_PER_CHIP];
 } cyclom_card_t;
 
 #include "card_pool.h"
@@ -166,7 +166,7 @@ static void cy_set_baud(unsigned int seg, unsigned char chip, long baud)
 
 /* ----- Backend hooks ----- */
 
-int cyclom_backend_probe(pcbdcom_port_t *p)
+int cyclom_backend_probe(pcbcomm_port_t *p)
 {
     cyclom_card_t *card = (cyclom_card_t *)p->backend_data;
     unsigned char gfrcr;
@@ -175,7 +175,7 @@ int cyclom_backend_probe(pcbdcom_port_t *p)
     return (gfrcr >= 0x40 && gfrcr < 0x50) ? 0 : -1;
 }
 
-int cyclom_backend_init(pcbdcom_port_t *p)
+int cyclom_backend_init(pcbcomm_port_t *p)
 {
     cyclom_card_t *card = (cyclom_card_t *)p->backend_data;
     unsigned int seg;
@@ -217,7 +217,7 @@ int cyclom_backend_init(pcbdcom_port_t *p)
     return 0;
 }
 
-void cyclom_backend_deinit(pcbdcom_port_t *p)
+void cyclom_backend_deinit(pcbcomm_port_t *p)
 {
     cyclom_card_t *card = (cyclom_card_t *)p->backend_data;
     unsigned char chip, chan;
@@ -233,7 +233,7 @@ void cyclom_backend_deinit(pcbdcom_port_t *p)
 /* ----- ISR: per-card entry, walks all chips + services pending channels
  * Ported from cy_interrupt() / cyy_chip_rx / cyy_chip_tx / cyy_chip_modem
  * in Linux cyclades.c (~line 400-800). ----- */
-void cyclom_backend_isr(pcbdcom_port_t *p)
+void cyclom_backend_isr(pcbcomm_port_t *p)
 {
     cyclom_card_t *card = (cyclom_card_t *)p->backend_data;
     unsigned int seg;
@@ -259,7 +259,7 @@ void cyclom_backend_isr(pcbdcom_port_t *p)
             ivr = cy_read(seg, CHIP_BASE(chip) + CyRIVR) & CyIVRMask;
 
             if (ivr == CyIVRRxOK) {
-                pcbdcom_port_t *pp = card->channels[chip * 4 + chan];
+                pcbcomm_port_t *pp = card->channels[chip * 4 + chan];
                 count = cy_read(seg, CHIP_BASE(chip) + CyRDCR);
                 for (i = 0; i < count && pp && pp->open; i++) {
                     ch = cy_read(seg, CHIP_BASE(chip) + CyRDSR);
@@ -283,7 +283,7 @@ void cyclom_backend_isr(pcbdcom_port_t *p)
             chan = save_xir & 0x03;
             cy_write(seg, CHIP_BASE(chip) + CyCAR, chan);
             {
-                pcbdcom_port_t *pp = card->channels[chip * 4 + chan];
+                pcbcomm_port_t *pp = card->channels[chip * 4 + chan];
                 /* Feed up to CyMAX_CHAR_FIFO (12) chars per TX interrupt */
                 for (i = 0; i < 12 && pp && pp->open &&
                             pp->tx_head != pp->tx_tail; i++) {
@@ -317,13 +317,13 @@ void cyclom_backend_isr(pcbdcom_port_t *p)
     cy_write(seg, Cy_ClrIntr, 0);
 }
 
-int cyclom_backend_read(pcbdcom_port_t *p, void *buf, int n)
+int cyclom_backend_read(pcbcomm_port_t *p, void *buf, int n)
 {
-    extern int uart_backend_read(pcbdcom_port_t *, void *, int);
+    extern int uart_backend_read(pcbcomm_port_t *, void *, int);
     return uart_backend_read(p, buf, n);
 }
 
-int cyclom_backend_write(pcbdcom_port_t *p, const void *buf, int n)
+int cyclom_backend_write(pcbcomm_port_t *p, const void *buf, int n)
 {
     cyclom_card_t *card = (cyclom_card_t *)p->backend_data;
     unsigned char chip = p->subport / CyPORTS_PER_CHIP;
@@ -348,7 +348,7 @@ int cyclom_backend_write(pcbdcom_port_t *p, const void *buf, int n)
     return i;
 }
 
-const pcbdcom_backend_t pcbdcom_cyclom_backend = {
+const pcbcomm_backend_t pcbcomm_cyclom_backend = {
     "CYCLOM",
     cyclom_card_get,
     cyclom_backend_probe,
@@ -364,9 +364,9 @@ const pcbdcom_backend_t pcbdcom_cyclom_backend = {
  *     port. Config parser needs to pass sub-port index; then chip =
  *     subport / 4, chan = subport % 4.
  *  2. cyclom_card_init() helper: allocate cyclom_card_t, wire card
- *     -> channels[] array so ISR can find pcbdcom_port_t for each
+ *     -> channels[] array so ISR can find pcbcomm_port_t for each
  *     (chip, chan). Currently ISR assumes it exists (via backend_data
- *     = card_t*), but pcbdcom.c parse_config sets backend_data = card_seg.
+ *     = card_t*), but pcbcomm.c parse_config sets backend_data = card_seg.
  *     Mismatch to reconcile in v1.1 wiring.
  *  3. Baud table beyond common rates (need cy_baud_table[] from Linux).
  *  4. RX error tagging (parity/framing/break) — current v1 drops them.
