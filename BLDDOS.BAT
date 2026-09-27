@@ -49,9 +49,10 @@ set BCCOMPILER=bc31
 set BC31=yes
 set TC30=
 set BC50=
-set DEBUG=0
-set TD=0
+set DEBUG=
+set TD=
 set LIBSDIR=\PCBCBASE
+set PATH=%BC31PATH%\BIN;%PATH%
 if not exist \OUT\NUL mkdir \OUT
 if not exist \OUT\PWA153\NUL mkdir \OUT\PWA153
 
@@ -106,16 +107,31 @@ echo  CLEAN done.  \OUT\PWA153 was not touched.
 goto END
 
 rem --- one target -----------------------------------------------------------
+rem  BDIR  = subdirectory under \PCB153 that the MAK lives in
+rem  BCDTO = directory to cd into before running MAKE
+rem  BMAKP = path to the MAK file relative to BCDTO
+rem
+rem  For most targets BCDTO = \PCB153\BDIR and BMAKP = the MAK filename.
+rem  For PCBOARD/PPLC/COMMDRV whose MAK lives in 153\ but whose SOURCE\
+rem  paths are relative to \PCB153, BCDTO = \PCB153 and BMAKP = 153\MAK.
+rem  This matches Clark's original COMPILE.BAT which ran MAKE -f153\pcboard.mak
+rem  from \PCB153, NOT from \PCB153\153.
 :ONE
 set BDIR=
 set BMAK=
 set BOBJ=
+set BCDTO=
+set BMAKP=
 if "%1"=="PCBOARD"  set BDIR=153
 if "%1"=="PCBOARD"  set BMAK=PCBOARD.MAK
 if "%1"=="PCBOARD"  set BOBJ=OBJ\BC31
+if "%1"=="PCBOARD"  set BCDTO=\PCB153
+if "%1"=="PCBOARD"  set BMAKP=153\PCBOARD.MAK
 if "%1"=="PPLC"     set BDIR=153
 if "%1"=="PPLC"     set BMAK=PPLC.MAK
 if "%1"=="PPLC"     set BOBJ=OBJ\PPL
+if "%1"=="PPLC"     set BCDTO=\PCB153
+if "%1"=="PPLC"     set BMAKP=153\PPLC.MAK
 if "%1"=="PCBSETUP" set BDIR=SOURCE\UTIL\PCBSETUP
 if "%1"=="PCBSETUP" set BMAK=PCBSETUP.MAK
 if "%1"=="PCBSM"    set BDIR=SOURCE\UTIL\PCBSM
@@ -138,20 +154,29 @@ if "%1"=="UUXFER"   set BDIR=SOURCE\UUCP\UUXFER
 if "%1"=="UUXFER"   set BMAK=UUXFER.MAK
 if "%1"=="COMMDRV"  set BDIR=153
 if "%1"=="COMMDRV"  set BMAK=COMMDRV.MAK
-if "%1"=="PCBOARD"  set BMAKEOPT=-DCOMMDRV
+if "%1"=="COMMDRV"  set BCDTO=\
+if "%1"=="COMMDRV"  set BMAKP=PCB153\153\COMMDRV.MAK
+if "%1"=="PCBOARD"  set BMAKEOPT=-DCOMMDRV -DCOMM -DSTATS -DMP -D386 -DDBASE -DFIDO -DNUMNODES=PCB_MAXNODES=25
 if "%BDIR%"=="" goto BADTGT
 if "%BOBJ%"=="" set BOBJ=BC31
+rem Default: cd into the BDIR and run BMAK from there (works for co-located MAKs)
+if "%BCDTO%"=="" set BCDTO=\PCB153\%BDIR%
+if "%BMAKP%"=="" set BMAKP=%BMAK%
 
-cd \PCB153\%BDIR%
-if not exist %BMAK% goto NOMAK
+cd %BCDTO%
+if not exist %BMAKP% goto NOMAK
 if "%BCLEAN%"=="1" goto DOCLEAN
 
 echo --- %1
+if exist bcc.res del bcc.res
+rem Force CFG regeneration with our paths (Clark's COMPILE.BAT did this too)
+if "%1"=="PCBOARD" if exist 153\PCBOARD.CFG del 153\PCBOARD.CFG
+if "%1"=="PPLC" if exist 153\PPLC.CFG del 153\PPLC.CFG
 if "%BOBJ%"=="OBJ\BC31" if not exist OBJ\NUL mkdir OBJ
 if "%BOBJ%"=="OBJ\PPL" if not exist OBJ\NUL mkdir OBJ
 if not exist %BOBJ%\NUL mkdir %BOBJ%
 set PROGNAME=%1
-%MAKE% -f%BMAK% %BMAKEOPT%
+%MAKE% -f%BMAKP% %BMAKEOPT%
 set PROGNAME=
 set BMAKEOPT=
 if exist %BOBJ%\%1.EXE copy %BOBJ%\%1.EXE \OUT\PWA153\%1.EXE > NUL
@@ -159,19 +184,21 @@ if exist %BOBJ%\%1.EXE echo     built  \OUT\PWA153\%1.EXE
 if not exist %BOBJ%\%1.EXE echo     NOT BUILT  %1.EXE -- see the make output
 if exist %BOBJ%\PCBOARDM.EXE copy %BOBJ%\PCBOARDM.EXE \OUT\PWA153\PCBOARDM.EXE > NUL
 if exist %BOBJ%\PCBOARDM.EXE echo     built  \OUT\PWA153\PCBOARDM.EXE
+if exist %BOBJ%\PCBOARDM.EXE copy %BOBJ%\PCBOARDM.EXE \OUT\PWA153\PCBOARD.EXE > NUL
+if exist %BOBJ%\PCBOARDM.EXE echo     built  \OUT\PWA153\PCBOARD.EXE
 cd \
 goto END
 
 :DOCLEAN
 echo --- CLEAN %1
 set PROGNAME=%1
-%MAKE% -f%BMAK% CLEAN
+%MAKE% -f%BMAKP% CLEAN
 set PROGNAME=
 cd \
 goto END
 
 :NOMAK
-echo     skipped %1 -- %BMAK% not found in \PCB153\%BDIR%
+echo     skipped %1 -- %BMAKP% not found (cd was %BCDTO%)
 cd \
 goto END
 

@@ -1,27 +1,11 @@
-SHA256
-======
-4ff4b541833d666c6476e6048a411c18b15e9179eade189b09353ffe0d89a97e  ./toolkit/pwa154/pcbcomm/docs/LINKOUT.md
-92b73884cf4d9fa13b91b16d81889cb1a4c7221b78db0ffe9c032fb97971509d  ./toolkit/pwa154/pcbcomm/docs/SDK.md
-13d28a868117ff9f1483d209b99cf73abeb220182073c5bf6e992f2a658218c4  ./toolkit/pwa154/pcbcomm/inc/backend.h
-7dac4c4d5fcf60d895f171f5204b92f0dd4b89f8c89804b06c402fca232f1339  ./toolkit/pwa154/pcbcomm/src/README.md
-7d458cdc6f27ba19537bda1e2615c4495f36b9540580be8c6faf7710b19169a3  ./toolkit/pwa154/pcbcomm/src/cyclom_backend.c
-04e8a7361db6d08e9eb4b450838107ff44e737c431a13ff587d9c9128b79455b  ./toolkit/pwa154/pcbcomm/src/digi_accel_backend.c
-217402799bd64ece819ed2b5de43447f3bbd78ef27084451d43ae1014c442768  ./toolkit/pwa154/pcbcomm/src/easyio_backend.c
-cba0c7c73a80de788a7f4bb092a0d47b0cc1bf9dcc7666e12db51d3f094f355d  ./toolkit/pwa154/pcbcomm/src/gtek_backend.c
-a2e61324adb4d4ef5717142fd1517e45be211d77655a2c13e05f998ef26e2d60  ./toolkit/pwa154/pcbcomm/src/hub6_backend.c
-494ad70f34e99e145699dd77eab8c4e8b3544a49a232f7089f786738f27b8dab  ./toolkit/pwa154/pcbcomm/src/pcbcomm.c
-a428c4d22156b327aaf9f73ee92f2e5aaacef06d34cfd4874a9bd2bba138f0e8  ./toolkit/pwa154/pcbcomm/src/rocket_backend.c
+PCBoard 15.3 PWA v0.3.2+ — EXE checksums
+Generated: 2026-09-27
 
-MD5
-===
-0e7563690fd84483b8f85a62d9787d38  ./toolkit/pwa154/pcbcomm/docs/LINKOUT.md
-785f8f55e16d1ff1a7804580780342b3  ./toolkit/pwa154/pcbcomm/docs/SDK.md
-d8ec0899741bb81b643df3b82402e917  ./toolkit/pwa154/pcbcomm/inc/backend.h
-f8b7e2514dc99bc851f4edc3e5831171  ./toolkit/pwa154/pcbcomm/src/README.md
-79efd2885f8ea29bf1f142f30a6b0daf  ./toolkit/pwa154/pcbcomm/src/cyclom_backend.c
-8a93b85a3a643414bc516941df36d533  ./toolkit/pwa154/pcbcomm/src/digi_accel_backend.c
-89bcce0fb096e66f2efeb92f7ee4400e  ./toolkit/pwa154/pcbcomm/src/easyio_backend.c
-dd62f97b64687481ffb3078df6312557  ./toolkit/pwa154/pcbcomm/src/gtek_backend.c
-c34c899570f06009a90b9c9ff18f0e46  ./toolkit/pwa154/pcbcomm/src/hub6_backend.c
-efb6e048ce5ef925c8472f368ef32b2a  ./toolkit/pwa154/pcbcomm/src/pcbcomm.c
-8f84f3575adc665070c1242c48f31ef2  ./toolkit/pwa154/pcbcomm/src/rocket_backend.c
+PCBOARD.EXE          982336 bytes
+PCBOARDM.EXE         982336 bytes
+PPLC.EXE             196156 bytes
+USERNET.EXE           12412 bytes
+UUUTIL.EXE            86572 bytes
+UUOUT.EXE            196499 bytes
+UUIN.EXE             274437 bytes
+UUXFER.EXE           247755 bytes

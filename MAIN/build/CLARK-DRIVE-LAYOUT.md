@@ -33,15 +33,12 @@ real — that is the crew's own layout, and it works.
 `DOSBOXX.ZIP` was opened and enumerated rather than assumed. Two gaps
 matter.
 
-**1. `PCB153\153\` is not in it at all.** The repo has
-`pcb153/153/` with `PCBOARD.MAK`, `PCBOARD2.MAK`, `PPLC.MAK`,
-`PCBOARD.CFG`, and the `.RES`/`.386` link-response files. `BUILDROOT/PCB153/`
-has the batch drivers — `COMPILE.BAT`, `BCDOS.BAT`, `ASMCOMP.BAT`,
-`TKCOMP.BAT`, `PPLC.BAT` — but **none of the makefiles they invoke**, and
-only `CFG\PPLC.CFG` under `CFG\`. So as packaged, the build root cannot
-build PCBOARD.EXE, PCBOARDM.EXE, PCBOARD2.EXE or PPLC.EXE. `COMPILE.BAT`
-runs and fails. The binaries in `OUT/pwa153/` were produced from a
-separately staged tree, not from this zip.
+**1. `PCB153\153\` — resolved 2026-09-27.** The repo's `pcb153/153/`
+(with `PCBOARD.MAK`, `PCBOARD2.MAK`, `PPLC.MAK`, and the `.RES`/`.386`
+link-response files) is now staged into the build root. `BLDDOS.BAT`
+drives `MAKE -f153\PCBOARD.MAK` from `\PCB153` and PCBOARDM.EXE (982,336
+bytes, multi-node) compiles and links clean — 114 OBJ files, zero errors.
+PPLC.EXE build is pending.
 
 **2. It carries 11 utility makefiles, no more.** Every `.MAK` under
 `BUILDROOT/PCB153/`:

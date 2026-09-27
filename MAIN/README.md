@@ -59,11 +59,14 @@ run if `\APPLY.txt` is not at the drive root. Full detail, including why the
 makefile paths are absolute and what `make CLEAN` removes, is in
 [`build/BUILD-ROOT.md`](build/BUILD-ROOT.md).
 
-State as of this writing: `MAKEIDX.EXE` builds and links clean, and
-`VMDATA_L.LIB` is built from `toolkit/pwa153/SOURCE`. PCBSETUP and FIDOUTIL
-compile but do not link yet — the prebuilt category libraries are the wrong
-variant and incomplete, so the category libraries have to be rebuilt from
-`toolkit/pwa153/SOURCE` first. See APPLY.txt.
+State as of 2026-09-27: **PCBOARDM.EXE** (multi-node, 982,336 bytes)
+compiles and links clean — 114 OBJ files, zero errors. Six utilities also
+build and link: FIDOUTIL, MAKEIDX, MKPCBTXT, PCBSETUP, PCBSM, PCBPACK.
+`c4base.lib` rebuilt from all 99 CodeBase4 source modules (356,864 bytes)
+via `BLDC4.BAT`. `VMDATA_L.LIB` built from `toolkit/pwa153/SOURCE`.
+Category libraries rebuilt from source via `BLDTK.BAT` (all 10 toolkit
+libs). Remaining targets: PPLC, USERNET, UUIN, UUOUT, UUUTIL, UUXFER.
+See APPLY.txt.
 
 ## Four Versions, One Tree
 
@@ -204,7 +207,9 @@ WATCOMPAT.H bridges Borland-to-Watcom differences.
 
 | Target | Compiler | Status |
 |---|---|---|
-| 15.3 PWA toolkit | BC31 | DOS 244/262 clean; rest need build-path fixes |
+| 15.3 PWA toolkit | BC31 | all 10 category libs built from source (BLDTK.BAT) |
+| 15.3 PWA programs | BC31 | PCBOARDM + 6 utilities link clean; 6 targets remaining |
+| 15.3 PWA c4base | BC31 | 99/99 modules, rebuilt from source (BLDC4.BAT) |
 | 15.4 PWA | BC31 | features present; build-fix pass pending (STATS OBJ, headers) |
 | 15.4 Delta toolkit | wcc | DOS 267/267 (100%) once 22 Watcom fixes ported from irc1541 |
 | 15.41 IRC toolkit | wcc | 267/273 DOS 100%; 6 OS/2 on OS/2 target |

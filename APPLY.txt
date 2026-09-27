@@ -106,3 +106,143 @@ Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
 (2.8 GB, URL link only — not cloned into repo).
 
 Nothing deleted.
+
+v0.3.2+ (46): UUCP 4/4 targets built — BLDDOS step 8b complete
+================================================================
+Date: 2026-09-27
+By: hexadecimal
+
+All 4 UUCP targets compiled and linked under DOSBox-X headless
+(BC 3.1, large model):
+
+  OUT\PWA153\UUUTIL.EXE    86,572 bytes   5 source OBJs + 12 NO* stubs
+  OUT\PWA153\UUOUT.EXE    131,486 bytes   9 source OBJs + stubs
+  OUT\PWA153\UUIN.EXE     206,648 bytes  16 source OBJs + stubs + VMDATA.LIB
+  OUT\PWA153\UUXFER.EXE   165,320 bytes   6 source OBJs + FOSSIL.OBJ + stubs
+
+Header fixes (3 files modified):
+
+  TOOLKIT\PWA153\H\VMDATA.H
+    - VMDebugOn signature: void → int flags
+    - Added VM_MURPHY(1), VM_SANITY_CHECK(2), VM_INFO(4) defines
+    - Guarded with #ifndef to avoid clash with vmavl.h
+
+  TOOLKIT\PWA153\H\pcbtools.h
+    - Added __PCBMSG_ENUMS_DEFINED__ guard around openmsgtype/exthdrtype
+      enum block (~line 1163) to prevent redeclaration when MESSAGES.H
+      is also included
+
+  PCB153\SOURCE\H\MESSAGES.H
+    - Added __PCBTOOLS_H skip-all guard: when pcbtools.h was already
+      included, MESSAGES.H body is entirely skipped (pcbtools.h is a
+      superset)
+    - Added __PCBMSG_ENUMS_DEFINED__ guard around its own enum block
+    - Both guards needed because include order varies across targets
+
+New build files (hexadecimal-created, BC31 subdirs):
+
+  PCB153\SOURCE\UUCP\UUUTIL\BC31\  UUT.CFG, UUT2.CFG, UUUTIL.CFG, UUUTIL.LNK
+  PCB153\SOURCE\UUCP\UUOUT\BC31\   UUOUT.CFG, UUOUT.LNK
+  PCB153\SOURCE\UUCP\UUIN\BC31\    UUIN.CFG, UUIN.LNK
+  PCB153\SOURCE\UUCP\UUXFER\BC31\  UUXFER.CFG, UUXFER.LNK
+
+  All CFG files carry -DNOCURSOR (skips screen.h gotoxy/wherex/wherey
+  declarations that conflict with conio.h).
+
+STBSTUB (temporary combined shim):
+
+  PCB153\SOURCE\UUCP\STBSTUB.CPP        hexadecimal's combined shim
+  PCB153\SOURCE\UUCP\BC31\STBSTUB.OBJ   659 bytes
+  STBSTUB-REBUILD.md                     rebuild notes for sysop0
+
+  Clark's MAK files reference 4 individual OBJs (stbdsgtn, stbdsptn,
+  stbsgetn, stbsputn) — source never shipped.  STBSTUB.OBJ provides
+  do_sputn + do_sgetn in one file as a workaround.  These cannot be
+  stubs — sysop0 needs to write the real BC 3.1 streambuf
+  implementations as 4 individual source files.
+
+FOSSIL.OBJ placed:
+
+  OUT\PWA153\SDK\BC31\OBJ\TOOLKIT\LARGE\FOSSIL.OBJ   9,157 bytes
+  (source already in repo: toolkit\pwa153\SOURCE\TOOLKIT\FOSSIL.C)
+
+Compiled OBJs (36 total, 4 target BC31 dirs):
+
+  UUUTIL\BC31\  5 OBJs (UUUTIL, FIDOCFG, CI_OTHER, CI_BUILD, UUCP)
+  UUOUT\BC31\   9 OBJs (UUOUT, UUCP, PCBMSGS, MSGBASE, UMWF,
+                         EXPRTMSG, UUENCODE, UUSHWERR, DRESWORD)
+  UUIN\BC31\   16 OBJs (UUIN, PCBMSG, MSGBASE, UMWF, UUCP, EXPRTMSG,
+                         UUDECODE, UUSHWERR, VMDATA, DECODE64, DECODEQ,
+                         DECODEM, REJECTS, VMDCLASS, DRESWORD, CI_OTHER)
+  UUXFER\BC31\  6 OBJs (UUXFER, UUCP, GPROT, COMMBUF, UUSHWERR,
+                         DRESWORD)
+
+Build batch files at BUILDROOT root:
+
+  BLDUUCP.BAT, BLDUUT1.BAT, BLDUUIN1.BAT
+  LNKUUT.BAT, LNKUUOUT.BAT, LNKUUIN.BAT, LNKUXFR.BAT
+
+BLDDOS step 8b status — all 12 DOS targets accounted for:
+
+  Built from source: PCBOARD, PPLC, USERNET, UUUTIL, UUOUT, UUIN, UUXFER
+  Pre-built in zip:  FIDOUTIL, MAKEIDX, MKPCBTXT, PCBSETUP, PCBSM, COMMDRV
+
+Nothing deleted.
+
+v0.3.2+ (47): STBSTUB replaced — 4 real streambuf implementations
+================================================================
+Date: 2026-09-27
+By: sysop0 (source), hexadecimal (compile + link)
+
+sysop0 delivered 4 individual streambuf source files reconstructed from
+BC 3.1 iostream.h — real out-of-line implementations, not stubs.
+Compiled all 4 under DOSBox-X headless (BC 3.1, large model).
+Relinked UUIN, UUOUT, UUXFER with 4 individual OBJs matching Clark's
+MAK layout.  UUUTIL unchanged (does not link stb files).
+
+Source files (sysop0, GPLv3 clean-room from BC 3.1 iostream.h):
+
+  PCB153\SOURCE\UUCP\stbdsgtn.cpp   do_sgetn virtual — sbumpc() loop
+  PCB153\SOURCE\UUCP\stbdsptn.cpp   do_sputn virtual — sputc() loop
+  PCB153\SOURCE\UUCP\stbsgetn.cpp   sgetn — memcpy fast-path + do_sgetn fallback
+  PCB153\SOURCE\UUCP\stbsputn.cpp   sputn — memcpy fast-path + do_sputn fallback
+  PCB153\SOURCE\UUCP\STBSTUB-README.md   full documentation
+
+Compiled OBJs:
+
+  PCB153\SOURCE\UUCP\BC31\STBDSGTN.OBJ   564 bytes
+  PCB153\SOURCE\UUCP\BC31\STBDSPTN.OBJ   566 bytes
+  PCB153\SOURCE\UUCP\BC31\STBSGETN.OBJ   610 bytes
+  PCB153\SOURCE\UUCP\BC31\STBSPUTN.OBJ   611 bytes
+
+Relinked EXEs (4 individual OBJs, matching Clark's MAK):
+
+  OUT\PWA153\UUIN.EXE     274,437 bytes  (was 206,648 with combined shim)
+  OUT\PWA153\UUOUT.EXE    196,499 bytes  (was 131,486)
+  OUT\PWA153\UUXFER.EXE   247,755 bytes  (was 165,320)
+  OUT\PWA153\UUUTIL.EXE    86,572 bytes  (unchanged — no stb linkage)
+
+Size increase expected: sgetn/sputn reference memcpy + buffer accessors
+that the old combined shim did not have.  Clark's original builds would
+have been the same size.
+
+LNK files updated (STBSTUB.OBJ → 4 individual OBJs):
+
+  PCB153\SOURCE\UUCP\UUIN\BC31\UUIN.LNK
+  PCB153\SOURCE\UUCP\UUOUT\BC31\UUOUT.LNK
+  PCB153\SOURCE\UUCP\UUXFER\BC31\UUXFER.LNK
+
+Build files:
+
+  PCB153\SOURCE\UUCP\STB.CFG    minimal CFG (-ml -K -P -3 -c)
+  BLDSTB.BAT                     compile batch for all 4
+
+Retired to attic:
+
+  PCB153\SOURCE\UUCP\STBSTUB.CPP   hexadecimal's combined shim (superseded)
+  PCB153\SOURCE\UUCP\BC31\STBSTUB.OBJ   659 bytes (superseded)
+  STBSTUB-REBUILD.md               rebuild notes (superseded by STBSTUB-README.md)
+
+STBSTUB blocker is RESOLVED.
+
+Nothing deleted.
