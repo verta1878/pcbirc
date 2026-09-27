@@ -22,6 +22,14 @@
 #include "comm.h"
 #include <dos.h>
 
+#ifdef __WATCOMC__
+#include <borland.h>
+#define int86x  int386x
+#define int86   int386
+/* OW2 REGS uses .w (WORDREGS), Borland uses .x */
+#define x w
+#endif
+
 /* ---- Error description table ------------------------------------------- */
 
 static const char *rs232_errors[] = {

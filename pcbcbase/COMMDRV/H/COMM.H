@@ -110,21 +110,13 @@ struct port_param {
 };
 
 /* ---- Calling convention ------------------------------------------------- */
-/* PCBoard declares all library entries with LIBENTRY, which expands to
- * 'pascal' on Borland (uppercase symbols, callee-cleans-stack, @…$Q…
- * OMF mangling). Without it, BC 3.1 produces C-style _lowercase names
- * and none of the 13 symbols link. */
+/* PCBoard declares all library entries with LIBENTRY. Clark's COMMDRV.OBJ
+ * imports _ser_rs232_init (lowercase + underscore = cdecl). LIBENTRY must
+ * be empty (cdecl) for all compilers. Corrected 2026-09-26 — was pascal,
+ * which produced uppercase symbols that failed to link. */
 
 #ifndef LIBENTRY
-# if defined(__BORLANDC__) || defined(__TURBOC__)
-#  define LIBENTRY
-# elif defined(_MSC_VER)
-#  define LIBENTRY
-# elif defined(__WATCOMC__)
-#  define LIBENTRY __pascal
-# else
-#  define LIBENTRY
-# endif
+#define LIBENTRY
 #endif
 
 /* ---- Function prototypes ----------------------------------------------- */

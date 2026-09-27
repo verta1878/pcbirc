@@ -5,31 +5,63 @@ Free-software (GPLv3) drop-in replacement for WCSC's COMMDRV.OBJ.
 ## Contents
 
     src/        Full source (all backends + shim)
-    inc/        Public headers (PCBCOMM.H)
-    lib/        Pre-built .OBJ variants per compiler + memory model
+    inc/        Public headers (PCBCOMM.H, COMM.H)
+    lib/        Pre-built .OBJ and .LIB per compiler + memory model
     docs/       This directory
     examples/   Sample apps
 
-## Link matrix
+## What ships
 
-| Compiler   | Small | Medium | Compact | Large | Huge | Flat |
-|------------|-------|--------|---------|-------|------|------|
-| BC 3.1     | _BS   | _BM    | _BC     | _BL   | _BH  | —    |
-| MSC 7.0    | _7S   | _7M    | _7C     | _7L   | _7H  | —    |
-| MSC 8.0    | _8S   | _8M    | _8C     | _8L   | _8H  | —    |
-| OpenWatcom | —     | —      | —       | _WL   | —    | _WF  |
+Door developers link TWO things:
 
-Prefix all with `PCBCOMM` (e.g. `PCBCOMM_BL.OBJ`). For PCBoard use
-`PCBCOMM_BL.OBJ` (large model, BC-built) to match Clark's original.
+1. An override .OBJ (COMMDRV.OBJ or FOSSIL.OBJ) — replaces default
+   modem handling in the toolkit lib
+2. commdrbl.lib + libsbl.lib — the ser_rs232_* API (13 + 6 functions)
+
+## Link matrix — override OBJs
+
+| Compiler   | Large | Flat | Status     |
+|------------|-------|------|------------|
+| BC 3.1     | ✅    | —    | BUILT      |
+| OpenWatcom | —     | ✅   | BUILT      |
+| TC 2.01    |       | —    | pending    |
+| MSC 7.0    |       | —    | pending    |
+| BCOS2      | —     |      | pending    |
+
+## Link matrix — commdrbl.lib + libsbl.lib
+
+| Compiler   | Large | Flat | Status     |
+|------------|-------|------|------------|
+| BC 3.1     | ✅    | —    | BUILT      |
+| OpenWatcom | —     |      | pending    |
+| TC 2.01    |       | —    | pending    |
+| MSC 7.0    |       | —    | pending    |
+| BCOS2      | —     |      | pending    |
+
+## Calling convention
+
+cdecl (C), NOT pascal. Clark's COMMDRV.OBJ imports `_ser_rs232_init`
+(lowercase + underscore = cdecl). COMM.H LIBENTRY is empty.
+
+Corrected 2026-09-26 — original COMM.H had `LIBENTRY pascal` which
+produced uppercase symbols that would fail to link.
 
 ## Substitution recipe
 
-Replace `COMMDRV.OBJ` with `PCBCOMM_BL.OBJ` in your link line. Keep
-`FOSSIL.OBJ` as-is. Everything else stays the same.
+Replace Clark's `COMMDRV.OBJ` with ours in your link line. Add
+`commdrbl.lib + libsbl.lib` to your library list. Keep `FOSSIL.OBJ`
+as-is. Everything else stays the same.
 
-Calling convention: Pascal, callee-cleans, uppercase symbols. Matches
-COMM-DRV byte-for-byte; MODEMDRV.C and other legacy consumers link
-without any changes.
+## File locations
+
+    pcbcbase/COMMDRV/OBJ/   Full 10K override OBJs (PCBOARD.EXE)
+    pcbcbase/COMMDRV/LIB/   commdrbl.lib + libsbl.lib
+    pcbcbase/COMMDRV/H/     COMM.H (cdecl-corrected)
+    pcbcbase/COMMDRV/SRC/   FOSSIL.C, commdrbl.c, libsbl.c
+
+Note: Clark shipped 3K stub OBJs in the toolkit ZIP — placeholders
+he never replaced before Clark Development closed. pwa153/154
+preserves those stubs. delta154 ships the real OBJs.
 
 ## License
 

@@ -25,6 +25,14 @@
 #include <dos.h>
 #include <string.h>
 
+#ifdef __WATCOMC__
+#include <borland.h>
+#define int86x  int386x
+#define int86   int386
+/* OW2 REGS uses .w (WORDREGS), Borland uses .x */
+#define x w
+#endif
+
 /* ---- TSR detection ----------------------------------------------------- */
 /* The pcbcomm TSR (or COMM-DRV) installs on INT 14h. We detect it by
  * calling function 04h (FOSSIL init) and checking for the 0x1954 signature.
