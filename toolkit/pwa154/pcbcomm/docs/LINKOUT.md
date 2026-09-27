@@ -30,7 +30,7 @@ commdrbl.lib + libsbl.lib complete what Clark started.
 ## What you gain
 
 * GPLv3 source, no proprietary binary dependency
-* 15 card families (all Clark boards + 6 post-WCSC)
+* 10 backends (all 7 WCSC hardware cards + 3 crew additions)
 * Multi-port routing across all supported cards
 * Standard FOSSIL INT 14h + COMM-DRV extensions (AH >= 0x10)
 * Cross-compiler support (BC 3.1, OpenWatcom — MSC 7.0 pending)

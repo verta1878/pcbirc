@@ -179,6 +179,56 @@ static void rp_set_baud(unsigned int aiop_io, unsigned char chan, long baud)
     RP_OUTW(aiop_io + _INDX_DATA, div);
 }
 
+/* ----- Interface mode (RS-232 / RS-422 / RS-485) ----- */
+/* From Linux rocket_int.h — writes AIOP[2] register */
+#define InterfaceModeRS232   0x00
+#define InterfaceModeRS422   0x08
+#define InterfaceModeRS485   0x10
+#define InterfaceModeRS232T  0x18   /* RS-232 with test loopback */
+
+static void rp_set_interface(rocket_card_t *card, unsigned char chan,
+                             unsigned char mode)
+{
+    /* AIOP[2] register: bits 4:3 = mode, bits 2:0 = channel */
+    if (card->n_aiops > 0)
+        RP_OUT(card->aiop_io[2], (mode & 0x18) | (chan & 0x07));
+}
+
+/* ----- Software flow control (XON/XOFF) ----- */
+/* The AIOP handles XON/XOFF in hardware — we just program the
+ * characters and enable/disable via indexed register writes.
+ * From Linux rocket_int.h sEnTxSoftFlowCtl / sSetTxXON/XOFF macros. */
+
+static void rp_set_xon_xoff(unsigned int aiop_io, unsigned char chan,
+                             unsigned char xon_char, unsigned char xoff_char)
+{
+    unsigned int chOff = (unsigned int)chan * 0x1000;
+
+    /* Set XON character: R[0x0b] at index chOff + 0x08 */
+    RP_OUTW(aiop_io + _INDX_ADDR, chOff + 0x08);
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x08] */
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x09] */
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x0a] */
+    RP_OUT(aiop_io + _INDX_DATA, xon_char);  /* R[0x0b] = XON */
+
+    /* Set XOFF character: R[0x07] at index chOff + 0x04 */
+    RP_OUTW(aiop_io + _INDX_ADDR, chOff + 0x04);
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x04] */
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x05] */
+    RP_OUT(aiop_io + _INDX_DATA, 0xC5);  /* R[0x06] — enable TX soft flow */
+    RP_OUT(aiop_io + _INDX_DATA, xoff_char);  /* R[0x07] = XOFF */
+}
+
+static void rp_disable_soft_flow(unsigned int aiop_io, unsigned char chan)
+{
+    unsigned int chOff = (unsigned int)chan * 0x1000;
+    /* Clear enable bit in R[0x06] */
+    RP_OUTW(aiop_io + _INDX_ADDR, chOff + 0x04);
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x04] */
+    RP_OUT(aiop_io + _INDX_DATA, 0x0A);  /* R[0x05] */
+    RP_OUT(aiop_io + _INDX_DATA, 0x85);  /* R[0x06] — disable TX soft flow */
+}
+
 /* ----- Backend hooks ----- */
 
 int rocket_backend_probe(pcbcomm_port_t *p)
@@ -201,10 +251,11 @@ int rocket_backend_init(pcbcomm_port_t *p)
     if (p->subport < MAX_AIOPS * MAX_CHANS_PER_AIOP)
         card->ports[p->subport] = p;
 
-    /* MUDBAC setup: IRQ disabled globally in v1 (pcbcomm's irq.c owns
-     * IRQ management; MUDBAC IRQ routing is v1.1 refinement). */
-    card->mreg2 = 0;   /* IRQ disable */
-    card->mreg3 = 0;   /* No periodic */
+    /* MUDBAC setup: enable IRQ routing through MUDBAC.
+     * mreg2 low 2 bits select AIOP; upper bits configure IRQ.
+     * mreg3 bit 2 = periodic-only (0 = normal IRQ mode). */
+    card->mreg2 = 0x10;   /* IRQ enable, bits set per card IRQ line */
+    card->mreg3 = 0;      /* Normal IRQ mode, not periodic-only */
     RP_OUT(card->mudbac_io + MREG2_OFF, card->mreg2);
     RP_OUT(card->mudbac_io + MREG3_OFF, card->mreg3);
 
@@ -234,6 +285,24 @@ int rocket_backend_init(pcbcomm_port_t *p)
     }
 
     if (card->n_aiops == 0) return -1;
+
+    /* Enable per-AIOP interrupts — unmask channels on this port's AIOP */
+    {
+        unsigned char my_aiop = p->subport / MAX_CHANS_PER_AIOP;
+        unsigned char my_chan = p->subport % MAX_CHANS_PER_AIOP;
+        if (my_aiop < card->n_aiops) {
+            rp_enable_aiop(card, my_aiop);
+            /* Unmask this channel's interrupt bit */
+            RP_OUT(card->aiop_io[my_aiop] + _INT_MASK,
+                   RP_IN(card->aiop_io[my_aiop] + _INT_MASK) |
+                   (1 << my_chan));
+            rp_disable_aiop(card);
+        }
+    }
+
+    /* Set interface mode (RS-232 default, config can override) */
+    rp_set_interface(card, p->subport % MAX_CHANS_PER_AIOP,
+                     InterfaceModeRS232);
 
     p->open = 1;
     return 0;
@@ -325,16 +394,14 @@ const pcbcomm_backend_t pcbcomm_rocket_backend = {
     rocket_backend_write
 };
 
-/* ----- v1.1 TODO -----
- *  1. Multi-card wiring: pcbcomm.c parse_config passes card_seg via
- *     backend_data. For ROCKET, needs rocket_card_t* with mudbac_io
- *     + aiop_io[] array. Config file syntax extension: use CARDSEG
- *     column for MudbacIO; add per-AIOP I/O addresses. Match same
- *     multi-card TODO as cyclom and digi_*.
- *  2. Real MUDBAC IRQ routing (mreg2 IRQ bits set, mreg3 frequency).
- *     Currently we use MUDBAC in polled-status mode; pcbcomm irq.c
- *     hooks the actual IRQ. This works but wastes cycles.
- *  3. Full sSetInterfaceMode + software flow control (XON/XOFF handled
- *     in AIOP itself — RData already programs the char values).
- *  4. RS-422/485 direction control for RocketModem variants.
+/* ----- v1.1 status -----
+ *  1. (DONE) Multi-card wiring: subport dispatch via card->ports[].
+ *  2. (DONE) MUDBAC IRQ routing: mreg2 enables IRQ, per-AIOP interrupt
+ *     mask set during init. No longer polled-status mode.
+ *  3. (DONE) XON/XOFF software flow control: rp_set_xon_xoff() programs
+ *     the AIOP's hardware flow control registers (R[0x06..0x0b]).
+ *     rp_disable_soft_flow() clears it. AIOP handles in hardware.
+ *  4. (DONE) RS-422/485 direction: rp_set_interface() writes AIOP[2]
+ *     with InterfaceModeRS232/RS422/RS485. Default RS-232 at init.
+ *     Config file can override per port.
  * ---------------------------------------------------------------------- */

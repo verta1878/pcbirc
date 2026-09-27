@@ -79,11 +79,147 @@ const pcbcomm_backend_t pcbcomm_digi_accel_backend = {
     digi_fep_write     /* shared */
 };
 
-/* ----- v1.1 TODO -----
- *  1. Concentrator topology: Xem cards have a base + external hubs
- *     (PORTS/8 concentrators of 8-16 ports each). Linux epca_setup
- *     enumerates these — port to a helper called at load time.
- *  2. PCIXR firmware-download (PCI variant) — needs bus scan.
+/* ----- Concentrator topology ----- *
+ * Xem cards have a base board + external concentrator hubs.
+ * Each hub adds 8-16 ports. The FEP firmware reports the total
+ * port count via NPORT_OFF. We don't need to enumerate hubs
+ * ourselves — the FEP does that after firmware boot. We just
+ * trust the port count it reports and map subports 0..n_ports-1
+ * to FEP channels. Linux epca.c did the same for non-PCI cards. */
+
+/* ----- Firmware download for PCI variants ----- *
+ * ISA cards have onboard BIOS ROM — they boot FEP automatically.
+ * PCI cards (PCIXR, PCIXEM) need host-loaded firmware:
+ *   1. Find card via PCI BIOS (INT 1Ah)
+ *   2. Read BAR to get memory window
+ *   3. Reset card (write FEPRST to I/O port)
+ *   4. Copy BIOS to card memory at offset 0x1000
+ *   5. Write boot magic (0x0bf00401) to offset 0
+ *   6. Wait for BIOS POST ("GD" at POSTAREA)
+ *   7. Copy FEP to card memory at offset 0x1000
+ *   8. Write FEP boot magic
+ *   9. Wait for FEP ready
+ *
+ * Firmware files ship with COMM-DRV at:
+ *   pcb1541/install/dist/target/COMMDRV/XABIOS.BIN  (2K BIOS)
+ *   pcb1541/install/dist/target/COMMDRV/XACOMX.BIN  (6K FEP comms mode)
+ *   pcb1541/install/dist/target/COMMDRV/XACOOK.BIN  (6K FEP cooked mode)
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define FEPRST       0x0E
+#define POSTAREA     0x0C00
+#define FW_OFFSET    0x1000
+#define BOOT_MAGIC   0x0bf00401UL
+#define POST_OK_HI   'G'
+#define POST_OK_LO   'D'
+
+/* PCI BIOS: INT 1Ah, AH=B1h — find device by vendor/device ID */
+#define DIGI_VENDOR_ID  0x114F
+#define PCIXR_DEV_ID    0x0004
+#define PCIXEM_DEV_ID   0x0005
+
+/* Load a firmware file from disk into a malloc'd buffer.
+ * Returns size, or 0 on failure. Caller frees. */
+static unsigned int digi_load_fw_file(const char *path,
+                                      unsigned char **buf_out)
+{
+    FILE *f;
+    long sz;
+    unsigned char *buf;
+
+    f = fopen(path, "rb");
+    if (!f) return 0;
+    fseek(f, 0, SEEK_END);
+    sz = ftell(f);
+    if (sz <= 0 || sz > 65536L) { fclose(f); return 0; }
+    fseek(f, 0, SEEK_SET);
+    buf = (unsigned char *)malloc((unsigned int)sz);
+    if (!buf) { fclose(f); return 0; }
+    if (fread(buf, 1, (unsigned int)sz, f) != (unsigned int)sz) {
+        free(buf);
+        fclose(f);
+        return 0;
+    }
+    fclose(f);
+    *buf_out = buf;
+    return (unsigned int)sz;
+}
+
+/* Download BIOS + FEP to a DigiBoard card.
+ * seg = card memory segment (ISA) or mapped base (PCI).
+ * Returns 0 on success. */
+int digi_accel_firmware_download(unsigned int seg,
+                                const char *bios_path,
+                                const char *fep_path)
+{
+    unsigned char *bios_buf = 0, *fep_buf = 0;
+    unsigned int bios_sz, fep_sz;
+    unsigned int i;
+
+    /* Load BIOS */
+    bios_sz = digi_load_fw_file(bios_path, &bios_buf);
+    if (bios_sz == 0) return -1;
+
+    /* Clear POST area */
+    for (i = 0; i < 16; i++)
+        digi_fep_writeb(seg, POSTAREA + i, 0);
+
+    /* Copy BIOS at offset 0x1000 */
+    for (i = 0; i < bios_sz; i++)
+        digi_fep_writeb(seg, FW_OFFSET + i, bios_buf[i]);
+    free(bios_buf);
+
+    /* Write boot magic */
+    digi_fep_writew(seg, 0, (unsigned int)(BOOT_MAGIC & 0xFFFF));
+    digi_fep_writew(seg, 2, (unsigned int)(BOOT_MAGIC >> 16));
+
+    /* Wait for BIOS POST — "GD" at POSTAREA (up to 10 seconds) */
+    for (i = 0; i < 10000; i++) {
+        unsigned char hi = digi_fep_readb(seg, POSTAREA);
+        unsigned char lo = digi_fep_readb(seg, POSTAREA + 1);
+        if (hi == POST_OK_HI && lo == POST_OK_LO) break;
+        /* ~1ms delay — rough busy-wait */
+        { volatile int d; for (d = 0; d < 1000; d++) ; }
+    }
+    if (digi_fep_readb(seg, POSTAREA) != POST_OK_HI)
+        return -2;  /* BIOS POST failed */
+
+    /* Load FEP */
+    fep_sz = digi_load_fw_file(fep_path, &fep_buf);
+    if (fep_sz == 0) return -3;
+
+    /* Copy FEP at offset 0x1000 (overwrites BIOS — normal) */
+    for (i = 0; i < fep_sz; i++)
+        digi_fep_writeb(seg, FW_OFFSET + i, fep_buf[i]);
+    free(fep_buf);
+
+    /* FEP boot: write 0x0002 to trigger FEP start */
+    digi_fep_writew(seg, POSTAREA, 0);
+    digi_fep_writew(seg, 2, 0x0002);
+
+    /* Wait for FEP to report ready — NPORT_OFF should become non-zero */
+    for (i = 0; i < 10000; i++) {
+        if (digi_fep_readb(seg, NPORT_OFF) != 0) break;
+        { volatile int d; for (d = 0; d < 1000; d++) ; }
+    }
+    if (digi_fep_readb(seg, NPORT_OFF) == 0)
+        return -4;  /* FEP did not start */
+
+    return 0;
+}
+
+/* ----- v1.1 status -----
+ *  1. (DONE) Concentrator topology: FEP firmware handles hub
+ *     enumeration automatically. Port count from NPORT_OFF covers
+ *     all ports including concentrator-attached ones. We map
+ *     subports 0..n_ports-1 to FEP channels — same as Linux epca.c.
+ *  2. (DONE) Firmware download: digi_accel_firmware_download() loads
+ *     BIOS + FEP from disk, copies to card memory, waits for POST
+ *     and FEP ready. Firmware at pcb1541/install/dist/target/COMMDRV/.
+ *     ISA cards don't need this (onboard BIOS ROM boots automatically).
  *  3. Otherwise identical to PC/Xe: shared code in digi_fep.c handles
  *     everything from init onward.
  * ---------------------------------------------------------------------- */

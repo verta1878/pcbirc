@@ -1,27 +1,27 @@
 SHA256
 ======
-6b254d8a8b32ac1a7958a386da22f695abdfd668af8d3a646293b0cb483a32d5  ./BLDDOS.BAT
-71091ff350d3ebfe882afb5b5c064d26980dce804124a1183846ca10cc44b71d  ./docs/PCBCOMM-LINKAGE.md
-15032b95872c9a981e14a07df53cdf5b5b53de2557ede7dce38e8d66c7c405f9  ./pcb153/153/COMMDRV.MAK
-cbe96978bdd83e1f304584fd2c0d8592635ad844208e0ba4ad245ed6b516ed7a  ./pcb154/LIB/H/WATCOMPAT.H
-41194272a603891ed97382b5b6f6b4f97e350d089765dab54303ea4076277a6f  ./pcbcbase/COMMDRV/H/COMM.H
-fd0f573b332d52e1be936a593b10fe8764d153f16ea4281126959d5a171804d1  ./pcbcbase/COMMDRV/SRC/FOSSIL.C
-e4299ec4b2a7fd8dd2034999f83dbee7ed97e7575182f477abb52b260c28b3fa  ./pcbcbase/COMMDRV/SRC/commdrbl.c
-729f8bff31eb9451c31a449bdabc3ca643e93a343df914c28c5012ce29597f17  ./pcbcbase/COMMDRV/SRC/libsbl.c
-cbe96978bdd83e1f304584fd2c0d8592635ad844208e0ba4ad245ed6b516ed7a  ./toolkit/delta154/H/WATCOMPAT.H
-93408ecf69e8e6a3ed1ef98f30c1476f1200827f483ca93fe3bd6e68fe4aba07  ./toolkit/pwa154/pcbcomm/docs/LINKOUT.md
+4ff4b541833d666c6476e6048a411c18b15e9179eade189b09353ffe0d89a97e  ./toolkit/pwa154/pcbcomm/docs/LINKOUT.md
 92b73884cf4d9fa13b91b16d81889cb1a4c7221b78db0ffe9c032fb97971509d  ./toolkit/pwa154/pcbcomm/docs/SDK.md
+13d28a868117ff9f1483d209b99cf73abeb220182073c5bf6e992f2a658218c4  ./toolkit/pwa154/pcbcomm/inc/backend.h
+7dac4c4d5fcf60d895f171f5204b92f0dd4b89f8c89804b06c402fca232f1339  ./toolkit/pwa154/pcbcomm/src/README.md
+7d458cdc6f27ba19537bda1e2615c4495f36b9540580be8c6faf7710b19169a3  ./toolkit/pwa154/pcbcomm/src/cyclom_backend.c
+04e8a7361db6d08e9eb4b450838107ff44e737c431a13ff587d9c9128b79455b  ./toolkit/pwa154/pcbcomm/src/digi_accel_backend.c
+217402799bd64ece819ed2b5de43447f3bbd78ef27084451d43ae1014c442768  ./toolkit/pwa154/pcbcomm/src/easyio_backend.c
+cba0c7c73a80de788a7f4bb092a0d47b0cc1bf9dcc7666e12db51d3f094f355d  ./toolkit/pwa154/pcbcomm/src/gtek_backend.c
+a2e61324adb4d4ef5717142fd1517e45be211d77655a2c13e05f998ef26e2d60  ./toolkit/pwa154/pcbcomm/src/hub6_backend.c
+494ad70f34e99e145699dd77eab8c4e8b3544a49a232f7089f786738f27b8dab  ./toolkit/pwa154/pcbcomm/src/pcbcomm.c
+a428c4d22156b327aaf9f73ee92f2e5aaacef06d34cfd4874a9bd2bba138f0e8  ./toolkit/pwa154/pcbcomm/src/rocket_backend.c
 
 MD5
 ===
-051b45ed3294a4af73c7338fa5b74e7e  ./BLDDOS.BAT
-f31ae143452a5e092674d06e87614331  ./docs/PCBCOMM-LINKAGE.md
-731facf7f59177e7136a70b227112cc7  ./pcb153/153/COMMDRV.MAK
-b9aee8bc680c007c931079ae92d0af96  ./pcb154/LIB/H/WATCOMPAT.H
-46ba50c3c79bcc57db12ffa2f39ba56c  ./pcbcbase/COMMDRV/H/COMM.H
-69784685059cbc5b0afa67d5dc0ea984  ./pcbcbase/COMMDRV/SRC/FOSSIL.C
-f638cc7d108b52f2a291c393120677e0  ./pcbcbase/COMMDRV/SRC/commdrbl.c
-1e84912183e6091a2a94d3f6e4bcccff  ./pcbcbase/COMMDRV/SRC/libsbl.c
-b9aee8bc680c007c931079ae92d0af96  ./toolkit/delta154/H/WATCOMPAT.H
-24daaec6a62e523fc248dfbac5326f94  ./toolkit/pwa154/pcbcomm/docs/LINKOUT.md
+0e7563690fd84483b8f85a62d9787d38  ./toolkit/pwa154/pcbcomm/docs/LINKOUT.md
 785f8f55e16d1ff1a7804580780342b3  ./toolkit/pwa154/pcbcomm/docs/SDK.md
+d8ec0899741bb81b643df3b82402e917  ./toolkit/pwa154/pcbcomm/inc/backend.h
+f8b7e2514dc99bc851f4edc3e5831171  ./toolkit/pwa154/pcbcomm/src/README.md
+79efd2885f8ea29bf1f142f30a6b0daf  ./toolkit/pwa154/pcbcomm/src/cyclom_backend.c
+8a93b85a3a643414bc516941df36d533  ./toolkit/pwa154/pcbcomm/src/digi_accel_backend.c
+89bcce0fb096e66f2efeb92f7ee4400e  ./toolkit/pwa154/pcbcomm/src/easyio_backend.c
+dd62f97b64687481ffb3078df6312557  ./toolkit/pwa154/pcbcomm/src/gtek_backend.c
+c34c899570f06009a90b9c9ff18f0e46  ./toolkit/pwa154/pcbcomm/src/hub6_backend.c
+efb6e048ce5ef925c8472f368ef32b2a  ./toolkit/pwa154/pcbcomm/src/pcbcomm.c
+8f84f3575adc665070c1242c48f31ef2  ./toolkit/pwa154/pcbcomm/src/rocket_backend.c

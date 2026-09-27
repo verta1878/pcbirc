@@ -35,6 +35,8 @@ extern const pcbcomm_backend_t pcbcomm_digi_accel_backend; /* DigiBoard Accel   
 extern const pcbcomm_backend_t pcbcomm_rocket_backend;     /* Comtrol RocketPrt */
 extern const pcbcomm_backend_t pcbcomm_easyio_backend;     /* Stallion EasyIO   */
 extern const pcbcomm_backend_t pcbcomm_arnet_backend;      /* Arnet SmartPort   */
+extern const pcbcomm_backend_t pcbcomm_hub6_backend;       /* Intel HUB6        */
+extern const pcbcomm_backend_t pcbcomm_gtek_backend;       /* GTEK 8Fx/BBS-550  */
 /* Deferred: TCP_SOCKET (15.41 only) */
 
 #endif /* PCBCOMM_BACKEND_H */

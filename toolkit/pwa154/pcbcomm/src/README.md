@@ -1,49 +1,45 @@
-# pcbcomm source scaffold
+# pcbcomm source
 
-Initial source tree for PCB DOS COM. Scaffold only — implementations
-land phase by phase per `MAIN/build/PCBBLDBT-ROADMAP.md` phase 4.
+Hardware-serial backends for PCBoard. Each backend implements
+`pcbcomm_backend_t` (see `../inc/backend.h`).
 
-## Files
+## Source files
 
-| File | Purpose | Status |
+| File | Card family | Chip/method | Status |
+|---|---|---|---|
+| `uart_backend.c` | Standard 8250/16550 | UART registers | complete |
+| `boca_backend.c` | Boca BB-1004/BB-2016 | 16550 + shared IRQ | complete |
+| `hub6_backend.c` | Intel HUB6 | 8250 + port-select mux | complete |
+| `gtek_backend.c` | GTEK BBS-550/8Fx | 16550 + shared IRQ + status reg | complete |
+| `cyclom_backend.c` | Cyclades Cyclom-Y | CD1400 memory-mapped | complete |
+| `digi_pcxe_backend.c` | DigiBoard PC/Xe | FEP protocol (digi_fep.c) | complete |
+| `digi_accel_backend.c` | DigiBoard AccelePort | FEP protocol (digi_fep.c) | complete |
+| `digi_fep.c` | (shared) DigiBoard FEP | dual-port RAM protocol | complete |
+| `rocket_backend.c` | Comtrol RocketPort | MUDBAC + AIOP | complete |
+| `easyio_backend.c` | Stallion EasyIO | CD1400 I/O-mapped | complete |
+| `arnet_backend.c` | Arnet SmartPort Plus | UART + mux | complete |
+| `pcbcomm.c` | Main entry, TSR loader, config parser, backend registry | — |
+| `pcbcomms.c` | ser_rs232_* shim (COMMDRV API surface) | — |
+| `pcbdcom.c` | Legacy pcbdcom compat wrapper | — |
+| `int14.c` | INT 14h hook / FOSSIL dispatch | — |
+| `irq.c` | IRQ handler install/uninstall, PIC programming | — |
+| `uart.c` | UART chip probe + register I/O (shared by backends) | — |
+| `card_pool.c` | Per-card state allocator | — |
+
+## COMM-DRV card coverage
+
+All 7 hardware backends from WCSC's COMMDRV distribution are covered:
+
+| COMMDRV DRV | Our backend | Notes |
 |---|---|---|
-| `pcbcomm.c` | Main entry, dual-mode loader (CONFIG.SYS device OR TSR), argument parsing | scaffold |
-| `../inc/uart.h` | 8250/16450/16550 register + bit definitions | complete (reference constants) |
-| `uart.c` | UART chip probe + register I/O | TODO |
-| `fossil.c` | FOSSIL INT 14h dispatch | TODO |
-| `irq.c` | IRQ handler install/uninstall, PIC programming | TODO |
-| `ring.c` | TX/RX ring buffer implementation | TODO |
-| `modem.c` | Modem control (DTR/RTS/DCD/CTS/DSR/RI) | TODO |
+| COMMDV00 (GENERIC) | uart_backend | 8250/16550 |
+| COMMDV01 (INTEL HUB6) | hub6_backend | port-select mux at 0x302 |
+| COMMDV02 (DIGI-COMXI) | digi_pcxe_backend | same FEP protocol |
+| COMMDV03 (ARNET-SPORT) | arnet_backend | SmartPort Plus |
+| COMMDV04 (BOCA 1610) | boca_backend | shared IRQ |
+| COMMDV05 (DIGI-PCX*) | digi_pcxe_backend | loads xabios.bin |
+| COMMDV06 (GTEK 8Fx) | gtek_backend | shared IRQ + status reg |
 
-## Reference sources (crew-owned or free)
-
-- **`drivers/netfosdl/`** (Free Pascal, DOS FOSSIL, verified 2026-08-19)
-  — closest match to what we're building. Ports directly to C.
-- **`drivers/SIO/v2/uart/`** (OS/2 SIO clean-room, GPLv3) —
-  register-level UART code, algorithm reference.
-- **Linux `drivers/tty/serial/8250/*.c`** (GPL) — chip probe
-  idioms for UART_TYPE_8250 through UART_TYPE_16750 detection.
-- **Linux `drivers/char/{pcxx,epca,rocket,istallion}.c`** (GPL) —
-  smart multi-port card drivers, for later phase.
-
-## Build
-
-Not yet — waiting on TODO files. Once implementations land, build
-under DOSBox-X + MSC 7.0 with:
-
-```
-CL /AL /Ox /Zp /Fepcbcomm.exe pcbcomm.c uart.c fossil.c irq.c ring.c modem.c
-```
-
-Model = LARGE (all pointers far) for the TSR path.
-Also targets: Watcom C, Borland C++ 3.1 (via cross-compilation shim).
-
-## Design constraints
-
-- **Single-file `.DRV` output** (not the 18-file collection commdrv had).
-- **DOS primary target**; Win98 later if wrench's 98fossil license clears.
-- **GPL license** — matches netfosdl, SIO, cyclades in `drivers/`.
-- **No firmware bundled** — smart-card firmware only if user supplies
-  from vendor disk OR we find explicit free version.
-
-See `MAIN/build/PCBBLDBT-ROADMAP.md` phase 4 for full dependencies.
+Plus 3 backends beyond WCSC: cyclom, rocket, easyio.
+COMMDV07 (INT14H/FOSSIL) handled by int14.c.
+COMMDV08 (VxD) handled by VxD bridge, not a backend.

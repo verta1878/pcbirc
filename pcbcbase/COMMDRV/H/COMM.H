@@ -144,26 +144,16 @@ int  LIBENTRY ser_rs232_rts_off    (int port);
 }
 #endif
 
+/* ---- UART baud rate divisor constants (1843200 / baud / 16) ------------ */
+
+#define BAUD300     384
+#define BAUD1200     96
+#define BAUD2400     48
+#define BAUD4800     24
+#define BAUD9600     12
+#define BAUD19200     6
+#define BAUD38400     3
+#define BAUD57600     2
+#define BAUD115200    1
+
 #endif /* COMM_H */
-
-/* UART baud rate divisor constants (1843200 / baud / 16) */
-#define BAUD300     384
-#define BAUD1200     96
-#define BAUD2400     48
-#define BAUD4800     24
-#define BAUD9600     12
-#define BAUD19200     6
-#define BAUD38400     3
-#define BAUD57600     2
-#define BAUD115200    1
-
-/* UART baud rate divisor constants */
-#define BAUD300     384
-#define BAUD1200     96
-#define BAUD2400     48
-#define BAUD4800     24
-#define BAUD9600     12
-#define BAUD19200     6
-#define BAUD38400     3
-#define BAUD57600     2
-#define BAUD115200    1

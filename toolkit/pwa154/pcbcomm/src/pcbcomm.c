@@ -46,6 +46,9 @@ static const pcbcomm_backend_t *find_backend(const char *name)
     if (!strcmp(name, "EASYIO"))     return &pcbcomm_easyio_backend;
     if (!strcmp(name, "ARNETSPP"))   return &pcbcomm_arnet_backend;
     if (!strcmp(name, "ARNET"))      return &pcbcomm_arnet_backend;
+    if (!strcmp(name, "HUB6"))       return &pcbcomm_hub6_backend;
+    if (!strcmp(name, "GTEK"))       return &pcbcomm_gtek_backend;
+    if (!strcmp(name, "GTEK8FX"))    return &pcbcomm_gtek_backend;
     return NULL;
 }
 

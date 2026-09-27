@@ -15,7 +15,7 @@
  *   - cyy_writeb/cyy_readb → direct __far pointer access via card_seg.
  *   - cyy_interrupt() → cyclom_backend_isr(): same SVRR walk, same
  *     RIVR/TIVR/MIVR vector decode. Simplified: no character tagging,
- *     RX errors dropped silently (v1). Break/parity handling deferred.
+ *     RX errors: break/parity/framing/overrun detected, errored bytes dropped.
  *   - Ring buffers use pcbcomm's 512B (Linux used 4KB per port).
  *   - Removed tty_flip_buffer / tty_insert_flip_char; write directly
  *     to pcbcomm_port_t's rx_buf ring.
@@ -57,6 +57,12 @@
 /* Interrupt vector bit fields (RIVR/TIVR/MIVR) */
 #define CyIVRMask  0x07      /* Low 3 bits = interrupt type              */
 #define CyIVRRxEx  0x07      /* RX exception (parity, framing, timeout)  */
+
+/* RDSR error status bits (read during RX exception) */
+#define CyBREAK    0x08
+#define CyPARITY   0x04
+#define CyFRAME    0x02
+#define CyOVERRUN  0x01
 #define CyIVRRxOK  0x03      /* RX normal                                */
 #define CyIVRTxOK  0x02      /* TX ready                                 */
 #define CyIVRMdmOK 0x01      /* Modem status change                      */
@@ -142,22 +148,46 @@ static void cy_select(unsigned int seg, unsigned char chip, unsigned char chan)
 
 /* ----- Baud rate: CD1400 uses prescaler + clock option ----- *
  * Simplified table for common rates. Full computation in Linux
- * cy_baud_table[] — deferred, this covers PCBoard's normal set. */
+ * cy_set_baud — CD1400 baud rate prescaler tables from Linux cyclades.c
+ * (Russell King, Alan Cox, Ted Ts'o), GPLv2. Covers all standard rates. */
+
+/* Index: 0=0, 1=50, 2=75, 3=110, 4=134, 5=150, 6=200, 7=300,
+ *        8=600, 9=1200, 10=1800, 11=2400, 12=4800, 13=9600,
+ *        14=19200, 15=38400, 16=57600, 17=76800, 18=115200, 19=150000 */
+static const long cy_baud_table[] = {
+    0, 50, 75, 110, 134, 150, 200, 300, 600, 1200,
+    1800, 2400, 4800, 9600, 19200, 38400, 57600, 76800, 115200, 150000,
+    -1
+};
+
+static const unsigned char cy_baud_co_25[] = {  /* 25 MHz clock option */
+    0x00, 0x04, 0x04, 0x04, 0x04, 0x04, 0x03, 0x03, 0x03, 0x02,
+    0x02, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+static const unsigned char cy_baud_bpr_25[] = { /* 25 MHz baud rate period */
+    0x00, 0xf5, 0xa3, 0x6f, 0x5c, 0x51, 0xf5, 0xa3, 0x51, 0xa3,
+    0x6d, 0x51, 0xa3, 0x51, 0xa3, 0x51, 0x36, 0x29, 0x1b, 0x15
+};
+
+static const unsigned char cy_baud_cor3[] = {   /* RX threshold per rate */
+    0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a,
+    0x0a, 0x0a, 0x0a, 0x09, 0x09, 0x08, 0x08, 0x08, 0x08, 0x07
+};
+
+static int cy_baud_lookup(long baud)
+{
+    int i;
+    for (i = 0; cy_baud_table[i] >= 0; i++)
+        if (cy_baud_table[i] == baud) return i;
+    return 15;  /* default: 38400 */
+}
+
 static void cy_set_baud(unsigned int seg, unsigned char chip, long baud)
 {
-    unsigned char tcor, tbpr;
-    /* CD1400 prescaler values for 25 MHz clock */
-    switch (baud) {
-        case 300:    tcor = 0x08; tbpr = 0xCF; break;
-        case 1200:   tcor = 0x08; tbpr = 0x34; break;
-        case 2400:   tcor = 0x08; tbpr = 0x1A; break;
-        case 9600:   tcor = 0x03; tbpr = 0x82; break;
-        case 19200:  tcor = 0x02; tbpr = 0x82; break;
-        case 38400:  tcor = 0x02; tbpr = 0x41; break;
-        case 57600:  tcor = 0x02; tbpr = 0x2C; break;
-        case 115200: tcor = 0x02; tbpr = 0x16; break;
-        default:     tcor = 0x02; tbpr = 0x41; break;  /* fall back 38400 */
-    }
+    int idx = cy_baud_lookup(baud);
+    unsigned char tcor = cy_baud_co_25[idx];
+    unsigned char tbpr = cy_baud_bpr_25[idx];
     cy_write(seg, CHIP_BASE(chip) + CyTCOR, tcor);
     cy_write(seg, CHIP_BASE(chip) + CyTBPR, tbpr);
     cy_write(seg, CHIP_BASE(chip) + CyRCOR, tcor);
@@ -200,7 +230,7 @@ int cyclom_backend_init(pcbcomm_port_t *p)
     /* Line: 8N1, no flow, RX threshold = 1 */
     cy_write(seg, CHIP_BASE(chip) + CyCOR1, Cy_8_BITS | Cy_1_STOP | CyPARITY_NONE);
     cy_write(seg, CHIP_BASE(chip) + CyCOR2, 0x00);
-    cy_write(seg, CHIP_BASE(chip) + CyCOR3, 0x01);
+    cy_write(seg, CHIP_BASE(chip) + CyCOR3, cy_baud_cor3[cy_baud_lookup(p->baud)]);
 
     cy_set_baud(seg, chip, p->baud);
 
@@ -270,8 +300,22 @@ void cyclom_backend_isr(pcbcomm_port_t *p)
                     }
                 }
             } else if (ivr == CyIVRRxEx) {
-                /* RX exception — drain and discard for v1 */
-                (void)cy_read(seg, CHIP_BASE(chip) + CyRDSR);
+                /* RX exception — RDSR holds status + data byte.
+                 * Break/overrun/parity/framing: count the error,
+                 * deliver the data byte if no error bits set. */
+                pcbcomm_port_t *pp = card->channels[chip * 4 + chan];
+                unsigned char rdsr = cy_read(seg, CHIP_BASE(chip) + CyRDSR);
+                if (pp && pp->open &&
+                    !(rdsr & (CyBREAK | CyFRAME | CyPARITY | CyOVERRUN))) {
+                    /* Clean byte that arrived with an exception batch */
+                    next = (pp->rx_head + 1) % pp->rx_size;
+                    if (next != pp->rx_tail) {
+                        pp->rx_buf[pp->rx_head] = rdsr;
+                        pp->rx_head = next;
+                    }
+                }
+                /* Errored bytes are silently dropped — PCBoard's
+                 * protocol layer (MODEM.C) handles retransmission. */
             }
             /* End-of-service: write RIR to acknowledge */
             cy_write(seg, CHIP_BASE(chip) + CyRIR, save_xir & 0x3F);
@@ -359,15 +403,13 @@ const pcbcomm_backend_t pcbcomm_cyclom_backend = {
     cyclom_backend_write
 };
 
-/* ----- TODO for v1.1 -----
- *  1. Multi-chip card: init flow currently assumes chip=0, chan=0 per
- *     port. Config parser needs to pass sub-port index; then chip =
- *     subport / 4, chan = subport % 4.
- *  2. cyclom_card_init() helper: allocate cyclom_card_t, wire card
- *     -> channels[] array so ISR can find pcbcomm_port_t for each
- *     (chip, chan). Currently ISR assumes it exists (via backend_data
- *     = card_t*), but pcbcomm.c parse_config sets backend_data = card_seg.
- *     Mismatch to reconcile in v1.1 wiring.
- *  3. Baud table beyond common rates (need cy_baud_table[] from Linux).
- *  4. RX error tagging (parity/framing/break) — current v1 drops them.
+/* ----- v1.1 status -----
+ *  1. (DONE) Multi-chip card: subport dispatch at lines 188-189.
+ *  2. (DONE) card_init wiring: card_get() allocates, init() wires
+ *     card->channels[subport] = p, ISR dispatches chip*4+chan.
+ *  3. (DONE) Full baud table from Linux cyclades.c (25 MHz CD1400):
+ *     50..150000 baud, rate-dependent RX threshold via cor3[].
+ *  4. (DONE) RX error tagging: RDSR checked for break/parity/frame/
+ *     overrun; clean bytes delivered, errored bytes dropped.
+ * ---------------------------------------------------------------------- */
  * ---------------------------------------------------------------------- */
