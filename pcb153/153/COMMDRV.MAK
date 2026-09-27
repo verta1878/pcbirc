@@ -42,12 +42,12 @@ fossil: $(OBJDIR)\FOSSIL.OBJ
 libs: $(LIBDIR)\commdrbl.lib $(LIBDIR)\libsbl.lib
 
 clean:
-	-del $(OBJDIR)\COMMDRV.OBJ
-	-del $(OBJDIR)\FOSSIL.OBJ
-	-del $(LIBDIR)\commdrbl.lib
-	-del $(LIBDIR)\libsbl.lib
+	@echo COMMDRV clean: removing temp files only
+	@echo OBJs at $(OBJDIR) and libs at $(LIBDIR) are KEPT (pre-built dependencies)
 	-del *.obj
 	-del COMMDRV.CFG
+
+rebuild: clean all
 
 #--------------------------------------------------------------------------
 # Config file — auto-generated from this makefile (Clark's convention)

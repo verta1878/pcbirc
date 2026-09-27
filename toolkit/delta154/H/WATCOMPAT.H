@@ -49,7 +49,7 @@
 #ifndef _BORLAND_REGS_DEFINED
 #define _BORLAND_REGS_DEFINED
 static union REGS _borland_regs;
-static unsigned short _ES_dummy;
+static struct SREGS _borland_sregs;
 #endif
 #define _AH _borland_regs.h.ah
 #define _AL _borland_regs.h.al
@@ -65,8 +65,8 @@ static unsigned short _ES_dummy;
 #define _DX _borland_regs.w.dx
 #define _SI _borland_regs.w.si
 #define _DI _borland_regs.w.di
-#define _ES _ES_dummy
-#define geninterrupt(n) int386(n, &_borland_regs, &_borland_regs)
+#define _ES _borland_sregs.es
+#define geninterrupt(n) int386x(n, &_borland_regs, &_borland_regs, &_borland_sregs)
 
 /*------------------------------------------------------------------------*/
 /* Borland types                                                           */

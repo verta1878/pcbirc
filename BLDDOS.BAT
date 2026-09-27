@@ -16,6 +16,7 @@ rem
 rem  Usage:  BLDDOS [target]
 rem     ALL (default) | CLEAN | PCBOARD | PPLC | PCBSETUP | PCBSM | MKPCBTXT
 rem     MAKEIDX | USERNET | FIDOUTIL | UUIN | UUOUT | UUUTIL | UUXFER
+rem     COMMDRV
 rem
 rem  Compiler: set BC31PATH first, or leave it and \BC31 then \B\C31 are tried.
 rem  DOSBox shows no scrollback worth reading, so keep a log:
@@ -66,6 +67,7 @@ rem --- run every target, by calling this file once per target ---------------
 echo.
 echo  PCBoard 15.3 PWA build -- BC 3.1 at %BC31PATH%, output \OUT\PWA153
 echo.
+call \BLDDOS.BAT COMMDRV
 call \BLDDOS.BAT PCBOARD
 call \BLDDOS.BAT PPLC
 call \BLDDOS.BAT PCBSETUP
@@ -85,6 +87,7 @@ goto END
 
 :CLEANALL
 set BCLEAN=1
+call \BLDDOS.BAT COMMDRV
 call \BLDDOS.BAT PCBOARD
 call \BLDDOS.BAT PPLC
 call \BLDDOS.BAT PCBSETUP
@@ -133,6 +136,9 @@ if "%1"=="UUUTIL"   set BDIR=SOURCE\UUCP\UUUTIL
 if "%1"=="UUUTIL"   set BMAK=UUUTIL.MAK
 if "%1"=="UUXFER"   set BDIR=SOURCE\UUCP\UUXFER
 if "%1"=="UUXFER"   set BMAK=UUXFER.MAK
+if "%1"=="COMMDRV"  set BDIR=153
+if "%1"=="COMMDRV"  set BMAK=COMMDRV.MAK
+if "%1"=="PCBOARD"  set BMAKEOPT=-DCOMMDRV
 if "%BDIR%"=="" goto BADTGT
 if "%BOBJ%"=="" set BOBJ=BC31
 
@@ -145,8 +151,9 @@ if "%BOBJ%"=="OBJ\BC31" if not exist OBJ\NUL mkdir OBJ
 if "%BOBJ%"=="OBJ\PPL" if not exist OBJ\NUL mkdir OBJ
 if not exist %BOBJ%\NUL mkdir %BOBJ%
 set PROGNAME=%1
-%MAKE% -f%BMAK%
+%MAKE% -f%BMAK% %BMAKEOPT%
 set PROGNAME=
+set BMAKEOPT=
 if exist %BOBJ%\%1.EXE copy %BOBJ%\%1.EXE \OUT\PWA153\%1.EXE > NUL
 if exist %BOBJ%\%1.EXE echo     built  \OUT\PWA153\%1.EXE
 if not exist %BOBJ%\%1.EXE echo     NOT BUILT  %1.EXE -- see the make output
@@ -171,7 +178,7 @@ goto END
 :BADTGT
 echo Unknown target "%1".
 echo Targets: ALL CLEAN PCBOARD PPLC PCBSETUP PCBSM MKPCBTXT MAKEIDX USERNET
-echo          FIDOUTIL UUIN UUOUT UUUTIL UUXFER
+echo          FIDOUTIL UUIN UUOUT UUUTIL UUXFER COMMDRV
 goto END
 
 :NOROOT

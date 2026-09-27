@@ -1,8 +1,9 @@
 /* ============================================================================
  * fossil.c — Standalone FOSSIL driver object for the PCBoard Toolkit
  *
- * Produces FOSSIL.OBJ when compiled with BC 3.1 large model:
- *   bcc -ml -c -oFOSSIL.OBJ fossil.c
+ * Produces FOSSIL.OBJ:
+ *   BC 3.1 large:  bcc -ml -c -oFOSSIL.OBJ fossil.c
+ *   OW2 flat:      wcc386 -mf -5r -zq fossil.c
  *
  * Clean-room reconstruction matching the OMF symbol table of Clark's
  * original FOSSIL.OBJ (9,157 bytes, Oct 11 1993) from TOOLKIT2.ZIP.
@@ -17,28 +18,34 @@
  * pcbirc crew (hexadecimal + sysop/0), GPLv3.
  * ==========================================================================*/
 
-/* ---- Minimal type stubs (replaces project.h / model.h / TYPES.HPP) ---- */
+/* ---- Compiler compatibility ---- */
 
 #include <dos.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <alloc.h>
 
-typedef unsigned char bool;
-#ifndef TRUE
-#define TRUE  1
-#endif
-#ifndef FALSE
-#define FALSE 0
+#ifdef __WATCOMC__
+#include <malloc.h>
+#include <borland.h>
+#else
+#include <alloc.h>
 #endif
 
 #ifndef LIBENTRY
+#ifdef __WATCOMC__
+#define LIBENTRY
+#else
 #define LIBENTRY pascal
+#endif
 #endif
 
 #ifndef _NEAR_
+#ifdef __WATCOMC__
+#define _NEAR_
+#else
 #define _NEAR_ near
+#endif
 #endif
 
 #define fbmalloc  farmalloc
@@ -646,8 +653,13 @@ static void near FOSSIL_dofixups(void) {
  * no slowsendtomodem, no modemoffhook, no watchkbddropout, etc)
  * ======================================================================== */
 
+#ifdef __WATCOMC__
+#pragma warning 202 9   /* suppress unreferenced parameter */
+#endif
+#ifdef __BORLANDC__
 #pragma warn -par
-static bool near initializemodem(showtype Show) {
+#endif
+static bool _NEAR_ initializemodem(showtype Show) {
     ModemOpened = TRUE;
     ModemOffHook = FALSE;
     tickdelay((PcbData.ModemDelay * HALFSECOND) + QUARTERSECOND);
@@ -655,7 +667,12 @@ static bool near initializemodem(showtype Show) {
     turnonrts();
     return(TRUE);
 }
+#ifdef __BORLANDC__
 #pragma warn +par
+#endif
+#ifdef __WATCOMC__
+#pragma warning 202 3   /* restore */
+#endif
 
 static void _NEAR_ LIBENTRY waitforroominbuffer(int Len) {
     settimer(0, SIXTYSECONDS);
