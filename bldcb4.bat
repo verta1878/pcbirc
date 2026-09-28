@@ -1,240 +1,240 @@
 @echo off
 rem ============================================================================
-rem  BLDCB4.BAT — Build c4base.lib from CodeBase 4 source (99 .C files)
-rem  Compiler: Borland C++ 3.1, large model
-rem  Output:   \PCBCBASE\CODEBASE\BOR31\c4base.lib
+rem  bldcb4.bat — build c4base.lib from codebase 4 source (99 .c files)
+rem  compiler: borland c++ 3.1, large model
+rem  output:   \pcbcbase\codebase\bor31\c4base.lib
 rem ============================================================================
-C:
-set BC31PATH=\BC31
-set CBSRC=\PCBCBASE\CODEBASE\SOURCE
-set CBOBJ=\TMP\CBOBJ
-set CBOUT=\PCBCBASE\CODEBASE\BOR31
-set BCC=%BC31PATH%\BIN\BCC.EXE
-set TLIB=%BC31PATH%\BIN\TLIB.EXE
+c:
+set bc31path=\bc31
+set cbsrc=\pcbcbase\codebase\source
+set cbobj=\tmp\cbobj
+set cbout=\pcbcbase\codebase\bor31
+set bcc=%bc31path%\bin\bcc.exe
+set tlib=%bc31path%\bin\tlib.exe
 
-rem Clean
-if exist %CBOBJ%\NUL del %CBOBJ%\*.OBJ > NUL 2>&1
-if not exist %CBOBJ%\NUL mkdir %CBOBJ%
+rem clean
+if exist %cbobj%\nul del %cbobj%\*.obj > nul 2>&1
+if not exist %cbobj%\nul mkdir %cbobj%
 
-rem Compile flags: large model, no warnings-as-errors, CodeBase source as include
-set CFLAGS=-ml -c -w -I%BC31PATH%\INCLUDE -I%CBSRC% -n%CBOBJ%
+rem compile flags: large model, no warnings-as-errors, codebase source as include
+set cflags=-ml -c -w -i%bc31path%\include -i%cbsrc% -n%cbobj%
 
-echo Compiling CodeBase source (99 files)...
+echo compiling codebase source (99 files)...
 
-%BCC% %CFLAGS% %CBSRC%\B4BLOCK.C
-%BCC% %CFLAGS% %CBSRC%\C4.C
-%BCC% %CFLAGS% %CBSRC%\C4BCD.C
-%BCC% %CFLAGS% %CBSRC%\C4CODE.C
-%BCC% %CFLAGS% %CBSRC%\C4CONST.C
-%BCC% %CFLAGS% %CBSRC%\D4APPEND.C
-%BCC% %CFLAGS% %CBSRC%\D4CLOSE.C
-%BCC% %CFLAGS% %CBSRC%\D4CREATE.C
-%BCC% %CFLAGS% %CBSRC%\D4DATA.C
-%BCC% %CFLAGS% %CBSRC%\D4DATE.C
-%BCC% %CFLAGS% %CBSRC%\D4FIELD.C
-%BCC% %CFLAGS% %CBSRC%\D4FLUSH.C
-%BCC% %CFLAGS% %CBSRC%\D4FRESH.C
-%BCC% %CFLAGS% %CBSRC%\D4GO.C
-%BCC% %CFLAGS% %CBSRC%\D4INDEX.C
-%BCC% %CFLAGS% %CBSRC%\D4LOCK.C
-%BCC% %CFLAGS% %CBSRC%\D4OPEN.C
-%BCC% %CFLAGS% %CBSRC%\D4OPT.C
-%BCC% %CFLAGS% %CBSRC%\D4PACK.C
-%BCC% %CFLAGS% %CBSRC%\D4POSITI.C
-%BCC% %CFLAGS% %CBSRC%\D4SEEK.C
-%BCC% %CFLAGS% %CBSRC%\D4SKIP.C
-%BCC% %CFLAGS% %CBSRC%\D4TAG.C
-%BCC% %CFLAGS% %CBSRC%\D4UNLOCK.C
-%BCC% %CFLAGS% %CBSRC%\D4WRITE.C
-%BCC% %CFLAGS% %CBSRC%\D4ZAP.C
-%BCC% %CFLAGS% %CBSRC%\E4CALC.C
-%BCC% %CFLAGS% %CBSRC%\E4ERROR.C
-%BCC% %CFLAGS% %CBSRC%\E4EXPR.C
-%BCC% %CFLAGS% %CBSRC%\E4FUNCTI.C
-%BCC% %CFLAGS% %CBSRC%\E4NOT_S.C
-%BCC% %CFLAGS% %CBSRC%\E4PARSE.C
-%BCC% %CFLAGS% %CBSRC%\F4ASS_F.C
-%BCC% %CFLAGS% %CBSRC%\F4CHAR.C
-%BCC% %CFLAGS% %CBSRC%\F4CLOSE.C
-%BCC% %CFLAGS% %CBSRC%\F4CREATE.C
-%BCC% %CFLAGS% %CBSRC%\F4DOUBLE.C
-%BCC% %CFLAGS% %CBSRC%\F4FIELD.C
-%BCC% %CFLAGS% %CBSRC%\F4FILE.C
-%BCC% %CFLAGS% %CBSRC%\F4FILESE.C
-%BCC% %CFLAGS% %CBSRC%\F4FLAG.C
-%BCC% %CFLAGS% %CBSRC%\F4FLUSH.C
-%BCC% %CFLAGS% %CBSRC%\F4INFO.C
-%BCC% %CFLAGS% %CBSRC%\F4INT.C
-%BCC% %CFLAGS% %CBSRC%\F4LOCK.C
-%BCC% %CFLAGS% %CBSRC%\F4LONG.C
-%BCC% %CFLAGS% %CBSRC%\F4MEMO.C
-%BCC% %CFLAGS% %CBSRC%\F4OPEN.C
-%BCC% %CFLAGS% %CBSRC%\F4OPT.C
-%BCC% %CFLAGS% %CBSRC%\F4PTR.C
-%BCC% %CFLAGS% %CBSRC%\F4STR.C
-%BCC% %CFLAGS% %CBSRC%\F4TEMP.C
-%BCC% %CFLAGS% %CBSRC%\F4TRUE.C
-%BCC% %CFLAGS% %CBSRC%\F4WRITE.C
-%BCC% %CFLAGS% %CBSRC%\I4ADD.C
-%BCC% %CFLAGS% %CBSRC%\I4ADDTAG.C
-%BCC% %CFLAGS% %CBSRC%\I4CHECK.C
-%BCC% %CFLAGS% %CBSRC%\I4CREATE.C
-%BCC% %CFLAGS% %CBSRC%\I4DUMP.C
-%BCC% %CFLAGS% %CBSRC%\I4INDEX.C
-%BCC% %CFLAGS% %CBSRC%\I4INFO.C
-%BCC% %CFLAGS% %CBSRC%\I4INIT.C
-%BCC% %CFLAGS% %CBSRC%\I4KEY.C
-%BCC% %CFLAGS% %CBSRC%\I4LOCK.C
-%BCC% %CFLAGS% %CBSRC%\I4NTAG.C
-%BCC% %CFLAGS% %CBSRC%\I4POSITI.C
-%BCC% %CFLAGS% %CBSRC%\I4REMOVE.C
-%BCC% %CFLAGS% %CBSRC%\I4TAG.C
-%BCC% %CFLAGS% %CBSRC%\L4LINK.C
-%BCC% %CFLAGS% %CBSRC%\L4LOCK_C.C
-%BCC% %CFLAGS% %CBSRC%\M4CHECK.C
-%BCC% %CFLAGS% %CBSRC%\M4CREATE.C
-%BCC% %CFLAGS% %CBSRC%\M4FILE.C
-%BCC% %CFLAGS% %CBSRC%\M4MAP.C
-%BCC% %CFLAGS% %CBSRC%\M4MEMO.C
-%BCC% %CFLAGS% %CBSRC%\M4MEMORY.C
-%BCC% %CFLAGS% %CBSRC%\MEM.C
-%BCC% %CFLAGS% %CBSRC%\O4OPT.C
-%BCC% %CFLAGS% %CBSRC%\R4CODE.C
-%BCC% %CFLAGS% %CBSRC%\R4DRIVER.C
-%BCC% %CFLAGS% %CBSRC%\R4GROUP.C
-%BCC% %CFLAGS% %CBSRC%\R4LOG.C
-%BCC% %CFLAGS% %CBSRC%\R4OBJECT.C
-%BCC% %CFLAGS% %CBSRC%\R4REINDE.C
-%BCC% %CFLAGS% %CBSRC%\R4REINDX.C
-%BCC% %CFLAGS% %CBSRC%\R4RELATE.C
-%BCC% %CFLAGS% %CBSRC%\R4REPORT.C
-%BCC% %CFLAGS% %CBSRC%\R4SAVE.C
-%BCC% %CFLAGS% %CBSRC%\R4SAVE_M.C
-%BCC% %CFLAGS% %CBSRC%\R4STYLES.C
-%BCC% %CFLAGS% %CBSRC%\R4TEXT.C
-%BCC% %CFLAGS% %CBSRC%\R4TOTAL.C
-%BCC% %CFLAGS% %CBSRC%\S4INIT.C
-%BCC% %CFLAGS% %CBSRC%\S4INITFR.C
-%BCC% %CFLAGS% %CBSRC%\S4NEXT.C
-%BCC% %CFLAGS% %CBSRC%\S4QUICK.C
-%BCC% %CFLAGS% %CBSRC%\S4SORT.C
-%BCC% %CFLAGS% %CBSRC%\U4NAME.C
-%BCC% %CFLAGS% %CBSRC%\U4UTIL.C
-
-echo.
-echo Compile phase done. Counting OBJs...
-dir %CBOBJ%\*.OBJ > \TMP\C4OBJS.TXT
-
-rem Build the library with TLIB using one-at-a-time adds (DOS cmd line limit)
-if not exist %CBOUT%\NUL mkdir %CBOUT%
-if exist %CBOUT%\c4base.lib del %CBOUT%\c4base.lib
-if exist %CBOUT%\C4BASE.LIB del %CBOUT%\C4BASE.LIB
-if exist %CBOUT%\C4BASE.BAK del %CBOUT%\C4BASE.BAK
-
-echo Building c4base.lib (adding modules one at a time)...
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\B4BLOCK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\C4.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\C4BCD.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\C4CODE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\C4CONST.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4APPEND.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4CLOSE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4CREATE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4DATA.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4DATE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4FIELD.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4FLUSH.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4FRESH.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4GO.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4INDEX.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4LOCK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4OPEN.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4OPT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4PACK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4POSITI.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4SEEK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4SKIP.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4TAG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4UNLOCK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4WRITE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\D4ZAP.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\E4CALC.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\E4ERROR.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\E4EXPR.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\E4FUNCTI.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\E4NOT_S.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\E4PARSE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4ASS_F.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4CHAR.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4CLOSE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4CREATE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4DOUBLE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4FIELD.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4FILE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4FILESE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4FLAG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4FLUSH.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4INFO.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4INT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4LOCK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4LONG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4MEMO.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4OPEN.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4OPT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4PTR.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4STR.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4TEMP.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4TRUE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\F4WRITE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4ADD.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4ADDTAG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4CHECK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4CREATE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4DUMP.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4INDEX.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4INFO.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4INIT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4KEY.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4LOCK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4NTAG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4POSITI.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4REMOVE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\I4TAG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\L4LINK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\L4LOCK_C.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\M4CHECK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\M4CREATE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\M4FILE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\M4MAP.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\M4MEMO.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\M4MEMORY.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\MEM.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\O4OPT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4CODE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4DRIVER.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4GROUP.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4LOG.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4OBJECT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4REINDE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4REINDX.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4RELATE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4REPORT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4SAVE.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4SAVE_M.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4STYLES.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4TEXT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\R4TOTAL.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\S4INIT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\S4INITFR.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\S4NEXT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\S4QUICK.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\S4SORT.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\U4NAME.OBJ
-%TLIB% %CBOUT%\c4base.lib +%CBOBJ%\U4UTIL.OBJ
+%bcc% %cflags% %cbsrc%\b4block.c
+%bcc% %cflags% %cbsrc%\c4.c
+%bcc% %cflags% %cbsrc%\c4bcd.c
+%bcc% %cflags% %cbsrc%\c4code.c
+%bcc% %cflags% %cbsrc%\c4const.c
+%bcc% %cflags% %cbsrc%\d4append.c
+%bcc% %cflags% %cbsrc%\d4close.c
+%bcc% %cflags% %cbsrc%\d4create.c
+%bcc% %cflags% %cbsrc%\d4data.c
+%bcc% %cflags% %cbsrc%\d4date.c
+%bcc% %cflags% %cbsrc%\d4field.c
+%bcc% %cflags% %cbsrc%\d4flush.c
+%bcc% %cflags% %cbsrc%\d4fresh.c
+%bcc% %cflags% %cbsrc%\d4go.c
+%bcc% %cflags% %cbsrc%\d4index.c
+%bcc% %cflags% %cbsrc%\d4lock.c
+%bcc% %cflags% %cbsrc%\d4open.c
+%bcc% %cflags% %cbsrc%\d4opt.c
+%bcc% %cflags% %cbsrc%\d4pack.c
+%bcc% %cflags% %cbsrc%\d4positi.c
+%bcc% %cflags% %cbsrc%\d4seek.c
+%bcc% %cflags% %cbsrc%\d4skip.c
+%bcc% %cflags% %cbsrc%\d4tag.c
+%bcc% %cflags% %cbsrc%\d4unlock.c
+%bcc% %cflags% %cbsrc%\d4write.c
+%bcc% %cflags% %cbsrc%\d4zap.c
+%bcc% %cflags% %cbsrc%\e4calc.c
+%bcc% %cflags% %cbsrc%\e4error.c
+%bcc% %cflags% %cbsrc%\e4expr.c
+%bcc% %cflags% %cbsrc%\e4functi.c
+%bcc% %cflags% %cbsrc%\e4not_s.c
+%bcc% %cflags% %cbsrc%\e4parse.c
+%bcc% %cflags% %cbsrc%\f4ass_f.c
+%bcc% %cflags% %cbsrc%\f4char.c
+%bcc% %cflags% %cbsrc%\f4close.c
+%bcc% %cflags% %cbsrc%\f4create.c
+%bcc% %cflags% %cbsrc%\f4double.c
+%bcc% %cflags% %cbsrc%\f4field.c
+%bcc% %cflags% %cbsrc%\f4file.c
+%bcc% %cflags% %cbsrc%\f4filese.c
+%bcc% %cflags% %cbsrc%\f4flag.c
+%bcc% %cflags% %cbsrc%\f4flush.c
+%bcc% %cflags% %cbsrc%\f4info.c
+%bcc% %cflags% %cbsrc%\f4int.c
+%bcc% %cflags% %cbsrc%\f4lock.c
+%bcc% %cflags% %cbsrc%\f4long.c
+%bcc% %cflags% %cbsrc%\f4memo.c
+%bcc% %cflags% %cbsrc%\f4open.c
+%bcc% %cflags% %cbsrc%\f4opt.c
+%bcc% %cflags% %cbsrc%\f4ptr.c
+%bcc% %cflags% %cbsrc%\f4str.c
+%bcc% %cflags% %cbsrc%\f4temp.c
+%bcc% %cflags% %cbsrc%\f4true.c
+%bcc% %cflags% %cbsrc%\f4write.c
+%bcc% %cflags% %cbsrc%\i4add.c
+%bcc% %cflags% %cbsrc%\i4addtag.c
+%bcc% %cflags% %cbsrc%\i4check.c
+%bcc% %cflags% %cbsrc%\i4create.c
+%bcc% %cflags% %cbsrc%\i4dump.c
+%bcc% %cflags% %cbsrc%\i4index.c
+%bcc% %cflags% %cbsrc%\i4info.c
+%bcc% %cflags% %cbsrc%\i4init.c
+%bcc% %cflags% %cbsrc%\i4key.c
+%bcc% %cflags% %cbsrc%\i4lock.c
+%bcc% %cflags% %cbsrc%\i4ntag.c
+%bcc% %cflags% %cbsrc%\i4positi.c
+%bcc% %cflags% %cbsrc%\i4remove.c
+%bcc% %cflags% %cbsrc%\i4tag.c
+%bcc% %cflags% %cbsrc%\l4link.c
+%bcc% %cflags% %cbsrc%\l4lock_c.c
+%bcc% %cflags% %cbsrc%\m4check.c
+%bcc% %cflags% %cbsrc%\m4create.c
+%bcc% %cflags% %cbsrc%\m4file.c
+%bcc% %cflags% %cbsrc%\m4map.c
+%bcc% %cflags% %cbsrc%\m4memo.c
+%bcc% %cflags% %cbsrc%\m4memory.c
+%bcc% %cflags% %cbsrc%\mem.c
+%bcc% %cflags% %cbsrc%\o4opt.c
+%bcc% %cflags% %cbsrc%\r4code.c
+%bcc% %cflags% %cbsrc%\r4driver.c
+%bcc% %cflags% %cbsrc%\r4group.c
+%bcc% %cflags% %cbsrc%\r4log.c
+%bcc% %cflags% %cbsrc%\r4object.c
+%bcc% %cflags% %cbsrc%\r4reinde.c
+%bcc% %cflags% %cbsrc%\r4reindx.c
+%bcc% %cflags% %cbsrc%\r4relate.c
+%bcc% %cflags% %cbsrc%\r4report.c
+%bcc% %cflags% %cbsrc%\r4save.c
+%bcc% %cflags% %cbsrc%\r4save_m.c
+%bcc% %cflags% %cbsrc%\r4styles.c
+%bcc% %cflags% %cbsrc%\r4text.c
+%bcc% %cflags% %cbsrc%\r4total.c
+%bcc% %cflags% %cbsrc%\s4init.c
+%bcc% %cflags% %cbsrc%\s4initfr.c
+%bcc% %cflags% %cbsrc%\s4next.c
+%bcc% %cflags% %cbsrc%\s4quick.c
+%bcc% %cflags% %cbsrc%\s4sort.c
+%bcc% %cflags% %cbsrc%\u4name.c
+%bcc% %cflags% %cbsrc%\u4util.c
 
 echo.
-if exist %CBOUT%\C4BASE.LIB echo SUCCESS: c4base.lib built
-if exist %CBOUT%\C4BASE.LIB dir %CBOUT%\C4BASE.LIB
-if not exist %CBOUT%\C4BASE.LIB echo FAILED: c4base.lib not created
+echo compile phase done. counting objs...
+dir %cbobj%\*.obj > \tmp\c4objs.txt
 
-echo DONE > \TMP\C4DONE.TXT
+rem build the library with tlib using one-at-a-time adds (dos cmd line limit)
+if not exist %cbout%\nul mkdir %cbout%
+if exist %cbout%\c4base.lib del %cbout%\c4base.lib
+if exist %cbout%\c4base.lib del %cbout%\c4base.lib
+if exist %cbout%\c4base.bak del %cbout%\c4base.bak
+
+echo building c4base.lib (adding modules one at a time)...
+%tlib% %cbout%\c4base.lib +%cbobj%\b4block.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\c4.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\c4bcd.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\c4code.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\c4const.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4append.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4close.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4create.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4data.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4date.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4field.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4flush.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4fresh.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4go.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4index.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4lock.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4open.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4opt.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4pack.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4positi.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4seek.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4skip.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4tag.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4unlock.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4write.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\d4zap.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\e4calc.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\e4error.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\e4expr.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\e4functi.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\e4not_s.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\e4parse.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4ass_f.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4char.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4close.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4create.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4double.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4field.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4file.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4filese.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4flag.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4flush.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4info.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4int.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4lock.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4long.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4memo.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4open.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4opt.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4ptr.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4str.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4temp.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4true.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\f4write.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4add.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4addtag.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4check.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4create.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4dump.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4index.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4info.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4init.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4key.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4lock.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4ntag.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4positi.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4remove.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\i4tag.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\l4link.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\l4lock_c.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\m4check.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\m4create.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\m4file.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\m4map.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\m4memo.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\m4memory.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\mem.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\o4opt.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4code.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4driver.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4group.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4log.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4object.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4reinde.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4reindx.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4relate.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4report.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4save.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4save_m.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4styles.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4text.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\r4total.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\s4init.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\s4initfr.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\s4next.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\s4quick.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\s4sort.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\u4name.obj
+%tlib% %cbout%\c4base.lib +%cbobj%\u4util.obj
+
+echo.
+if exist %cbout%\c4base.lib echo success: c4base.lib built
+if exist %cbout%\c4base.lib dir %cbout%\c4base.lib
+if not exist %cbout%\c4base.lib echo failed: c4base.lib not created
+
+echo done > \tmp\c4done.txt

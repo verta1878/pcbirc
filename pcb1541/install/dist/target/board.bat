@@ -2,13 +2,13 @@
 :top
 %pcbdrive%
 cd %pcbdir%
-if exist remote.bat REN remote.bat remote.sys
-if exist door.bat   DEL door.bat
-if exist endpcb     DEL endpcb
+if exist remote.bat ren remote.bat remote.sys
+if exist door.bat   del door.bat
+if exist endpcb     del endpcb
 pcboardm /file:%pcbdat%
-if exist remote.bat CALL remote.bat
-if exist door.bat   CALL door.bat
-if exist event.bat  CALL event.bat
-if NOT exist endpcb GOTO top
+if exist remote.bat call remote.bat
+if exist door.bat   call door.bat
+if exist event.bat  call event.bat
+if not exist endpcb goto top
 :end
 

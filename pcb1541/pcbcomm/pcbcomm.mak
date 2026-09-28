@@ -1,32 +1,32 @@
 # ============================================================================
-# PCBCOMM.MAK — build pcbcomm v1 for DOS 16-bit target
+# pcbcomm.mak — build pcbcomm v1 for dos 16-bit target
 #
-# Compilers supported (selected via %CC% env variable):
-#   BC31   Borland C++ 3.1        make -f PCBCOMM.MAK CC=BC31
-#   MSC70  Microsoft C 7.0        make -f PCBCOMM.MAK CC=MSC70
-#   OWC    OpenWatcom 1.9         wmake -f PCBCOMM.MAK CC=OWC
+# compilers supported (selected via %cc% env variable):
+#   bc31   borland c++ 3.1        make -f pcbcomm.mak cc=bc31
+#   msc70  microsoft c 7.0        make -f pcbcomm.mak cc=msc70
+#   owc    openwatcom 1.9         wmake -f pcbcomm.mak cc=owc
 #
-# All builds produce two artifacts:
-#   PCBCOMM.EXE   TSR (load from AUTOEXEC.BAT)
-#   PCBCOMM.SYS   Device driver (load from CONFIG.SYS DEVICE=)
+# all builds produce two artifacts:
+#   pcbcomm.exe   tsr (load from autoexec.bat)
+#   pcbcomm.sys   device driver (load from config.sys device=)
 # ============================================================================
 
-# ---- Common ----
-INC    = -Iinc
-DEFS   = -DPCBCOMM_V1
-# TARGET selects which PCBoard line to build for:
-#   TARGET=15.4  (default) — WCSC-parity backends only (lean)
-#   TARGET=15.41           — adds Stallion/Chase/Equinox extended backends
-!if "$(TARGET)" == "15.41"
-DEFS = $(DEFS) -DPCB1541
-EXTRA_OBJS = obj\stallion_brumby_backend.obj \
+# ---- common ----
+inc    = -iinc
+defs   = -dpcbcomm_v1
+# target selects which pcboard line to build for:
+#   target=15.4  (default) — wcsc-parity backends only (lean)
+#   target=15.41           — adds stallion/chase/equinox extended backends
+!if "$(target)" == "15.41"
+defs = $(defs) -dpcb1541
+extra_objs = obj\stallion_brumby_backend.obj \
              obj\chase_iolan_backend.obj \
              obj\equinox_sst_backend.obj
 !else
-EXTRA_OBJS =
+extra_objs =
 !endif
 
-OBJS   = obj\pcbcomm.obj      \
+objs   = obj\pcbcomm.obj      \
          obj\uart.obj         \
          obj\uart_backend.obj \
          obj\boca_backend.obj \
@@ -47,67 +47,67 @@ OBJS   = obj\pcbcomm.obj      \
          obj\irq.obj          \
          obj\int14.obj
 
-# ---- Borland C++ 3.1 ----
-!if "$(CC)" == "BC31"
-BCC    = bcc
-MODEL  = -ml
-CFLAGS = $(MODEL) -c -O -w $(INC) $(DEFS)
-LFLAGS = $(MODEL)
+# ---- borland c++ 3.1 ----
+!if "$(cc)" == "bc31"
+bcc    = bcc
+model  = -ml
+cflags = $(model) -c -o -w $(inc) $(defs)
+lflags = $(model)
 
-all: PCBCOMM.EXE PCBCOMM.SYS
+all: pcbcomm.exe pcbcomm.sys
 
 {src}.c{obj}.obj:
-	$(BCC) $(CFLAGS) -oobj\$&.obj $<
+	$(bcc) $(cflags) -oobj\$&.obj $<
 
-PCBCOMM.EXE: $(OBJS)
-	$(BCC) $(LFLAGS) -ePCBCOMM.EXE $(OBJS) $(EXTRA_OBJS)
+pcbcomm.exe: $(objs)
+	$(bcc) $(lflags) -epcbcomm.exe $(objs) $(extra_objs)
 
-PCBCOMM.SYS: $(OBJS)
-	$(BCC) $(LFLAGS) -tD -ePCBCOMM.SYS $(OBJS) $(EXTRA_OBJS)
+pcbcomm.sys: $(objs)
+	$(bcc) $(lflags) -td -epcbcomm.sys $(objs) $(extra_objs)
 
 !endif
 
-# ---- Microsoft C 7.0 ----
-!if "$(CC)" == "MSC70"
-MSC    = cl
-MODEL  = /AL
-CFLAGS = /c /Ox /W3 $(INC) $(DEFS) $(MODEL)
-LFLAGS = $(MODEL)
+# ---- microsoft c 7.0 ----
+!if "$(cc)" == "msc70"
+msc    = cl
+model  = /al
+cflags = /c /ox /w3 $(inc) $(defs) $(model)
+lflags = $(model)
 
-all: PCBCOMM.EXE PCBCOMM.SYS
+all: pcbcomm.exe pcbcomm.sys
 
 {src}.c{obj}.obj:
-	$(MSC) $(CFLAGS) /Foobj\$&.obj $<
+	$(msc) $(cflags) /foobj\$&.obj $<
 
-PCBCOMM.EXE: $(OBJS)
-	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBCOMM.EXE;
+pcbcomm.exe: $(objs)
+	link $(lflags) $(objs) $(extra_objs), pcbcomm.exe;
 
-PCBCOMM.SYS: $(OBJS)
-	link $(LFLAGS) $(OBJS) $(EXTRA_OBJS), PCBCOMM.SYS,, /NOD;
+pcbcomm.sys: $(objs)
+	link $(lflags) $(objs) $(extra_objs), pcbcomm.sys,, /nod;
 
 !endif
 
-# ---- OpenWatcom 1.9 ----
-!if "$(CC)" == "OWC"
-WCC    = wcc
-MODEL  = -ml
-CFLAGS = -c -oxs -bt=dos $(MODEL) $(INC) $(DEFS)
-LFLAGS = system dos
+# ---- openwatcom 1.9 ----
+!if "$(cc)" == "owc"
+wcc    = wcc
+model  = -ml
+cflags = -c -oxs -bt=dos $(model) $(inc) $(defs)
+lflags = system dos
 
-all: PCBCOMM.EXE PCBCOMM.SYS
+all: pcbcomm.exe pcbcomm.sys
 
 {src}.c{obj}.obj:
-	$(WCC) $(CFLAGS) -fo=obj\$&.obj $<
+	$(wcc) $(cflags) -fo=obj\$&.obj $<
 
-PCBCOMM.EXE: $(OBJS)
-	wlink $(LFLAGS) file { $(OBJS) } name PCBCOMM.EXE
+pcbcomm.exe: $(objs)
+	wlink $(lflags) file { $(objs) } name pcbcomm.exe
 
-PCBCOMM.SYS: $(OBJS)
-	wlink $(LFLAGS) file { $(OBJS) } name PCBCOMM.SYS format dos device
+pcbcomm.sys: $(objs)
+	wlink $(lflags) file { $(objs) } name pcbcomm.sys format dos device
 
 !endif
 
 clean:
 	del obj\*.obj
-	del PCBCOMM.EXE
-	del PCBCOMM.SYS
+	del pcbcomm.exe
+	del pcbcomm.sys

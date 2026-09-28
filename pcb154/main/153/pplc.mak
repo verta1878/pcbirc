@@ -1,132 +1,132 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-.NOSILENT
-.AUTODEPEND
+.nosilent
+.autodepend
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
 
-# Process DEBUG
-#DEBUG = 1
-#TD = 1
-#DEBUGSCR = 1
-#DBGNEWDEL = 1
-DBASE = 1
-#___USE_VAR___ = 1
+# process debug
+#debug = 1
+#td = 1
+#debugscr = 1
+#dbgnewdel = 1
+dbase = 1
+#___use_var___ = 1
 
-#!if $d(___USE_VARS___)
-#___USE_VAR___ = 1
+#!if $d(___use_vars___)
+#___use_var___ = 1
 #!endif
 
-!if $d(DBASE)
-DBASE = 1
+!if $d(dbase)
+dbase = 1
 !endif
 
-!if $d(DEBUG) && !$d(TD)
-TD = 1
+!if $d(debug) && !$d(td)
+td = 1
 !endif
 
-!if $d(DEBUG) && !$d(DEBUGSCR)
-DEBUGSCR = 1
+!if $d(debug) && !$d(debugscr)
+debugscr = 1
 !endif
 
-!if $d(DEBUG) && !$d(DBGNEWDEL)
-DBGNEWDEL = 1
+!if $d(debug) && !$d(dbgnewdel)
+dbgnewdel = 1
 !endif
 
-!if $d(DEBUG) && !$d(ERRBRK)
-ERRBRK = 1
+!if $d(debug) && !$d(errbrk)
+errbrk = 1
 !endif
 
-SRCDEF  = ___COMP___
-OBJPTH  = obj\ppl
-DSTNAME = pplc
-MODEL   = l
+srcdef  = ___comp___
+objpth  = obj\ppl
+dstname = pplc
+model   = l
 
-OBJLST  = $(OBJPTH)\scomp.obj    \
-          $(OBJPTH)\newscr.obj   \
-          $(OBJPTH)\scrcomp.obj  \
-          $(OBJPTH)\scrmisc.obj  \
-          $(OBJPTH)\pcbmisc.obj  \
-          $(OBJPTH)\var.obj      \
-          $(OBJPTH)\label.obj    \
-          $(OBJPTH)\ceh.obj      \
-          $(OBJPTH)\h2name.obj
+objlst  = $(objpth)\scomp.obj    \
+          $(objpth)\newscr.obj   \
+          $(objpth)\scrcomp.obj  \
+          $(objpth)\scrmisc.obj  \
+          $(objpth)\pcbmisc.obj  \
+          $(objpth)\var.obj      \
+          $(objpth)\label.obj    \
+          $(objpth)\ceh.obj      \
+          $(objpth)\h2name.obj
 
-LIBLST  = country$(MODEL).386        \
-          dos_$(MODEL).386           \
-          misc_$(MODEL).386          \
-          system_$(MODEL).386        \
-          ..\pcbkit_$(MODEL).lib     \
-          math$(MODEL).lib           \
+liblst  = country$(model).386        \
+          dos_$(model).386           \
+          misc_$(model).386          \
+          system_$(model).386        \
+          ..\pcbkit_$(model).lib     \
+          math$(model).lib           \
           emu.lib                    \
-          c$(MODEL).lib
+          c$(model).lib
 
 ################################################################################
 
-.path.obj = $(OBJPTH)
+.path.obj = $(objpth)
 .path.c   = source\compiler
 
 ################################################################################
 
-CC = bcc
-CO = -c -m$(MODEL)
-CD = -DLIB;COMM;$(SRCDEF)
+cc = bcc
+co = -c -m$(model)
+cd = -dlib;comm;$(srcdef)
 
-AC = tasm.exe
-AO = /m3
+ac = tasm.exe
+ao = /m3
 
-LC = tlink
-LO = /yx+ /ye- /x
+lc = tlink
+lo = /yx+ /ye- /x
 
-!if $d(TD)
-CO = $(CO) -v
-LO = $(LO) /v
+!if $d(td)
+co = $(co) -v
+lo = $(lo) /v
 !endif
 
-!if $d(___USE_VAR___)
-CD = $(CD);___USE_VAR___
+!if $d(___use_var___)
+cd = $(cd);___use_var___
 !endif
 
-!if $d(DEBUG)
-CD = $(CD);DEBUG
+!if $d(debug)
+cd = $(cd);debug
 !endif
 
-!if $d(DEBUGSCR)
-CD = $(CD);DEBUGSCR
+!if $d(debugscr)
+cd = $(cd);debugscr
 !endif
 
-!if $d(DBGNEWDEL)
-CD = $(CD);DBGNEWDEL
+!if $d(dbgnewdel)
+cd = $(cd);dbgnewdel
 !endif
 
-!if $d(ERRBRK)
-CD = $(CD);ERRBRK
+!if $d(errbrk)
+cd = $(cd);errbrk
 !endif
 
-!if $d(PCB_DEMO)
-CD = $(CD);PCB_DEMO
+!if $d(pcb_demo)
+cd = $(cd);pcb_demo
 !endif
 
 !if $d(386)
-CO = $(CO) -3
+co = $(co) -3
 !endif
 
-!if $d(PCB152)
-CD = $(CD);PCB152
+!if $d(pcb152)
+cd = $(cd);pcb152
 !endif
 
 ################################################################################
@@ -135,37 +135,37 @@ CD = $(CD);PCB152
 
 
 
-LIBPTH = $(LIBPTH)..\..\b\c31\lib
-LIBPTH = $(LIBPTH);..\lib\bcdos\bc31
+libpth = $(libpth)..\..\b\c31\lib
+libpth = $(libpth);..\lib\bcdos\bc31
 
 ################################################################################
 
-# Implicit Rules
+# implicit rules
 
 .c.obj:
-        $(CC) +153\pplc.cfg -P $(CO) $(CD) {$< }
+        $(cc) +153\pplc.cfg -p $(co) $(cd) {$< }
 
 {source\compiler}.cpp.obj:
-        $(CC) +153\pplc.cfg $(CO) $(CD) {$< }
+        $(cc) +153\pplc.cfg $(co) $(cd) {$< }
 
 {source\ppl}.cpp.obj:
-        $(CC) +153\pplc.cfg $(CO) $(CD) {$< }
+        $(cc) +153\pplc.cfg $(co) $(cd) {$< }
 
 #{x:\sdrlib}.cpp.obj:
-#        $(CC) $(CO) $(CD) {$< }
+#        $(cc) $(co) $(cd) {$< }
 
 {source\compiler}.asm.obj:
-        $(AC) $(AO) $<,$(OBJPTH)\$&
+        $(ac) $(ao) $<,$(objpth)\$&
 
 ################################################################################
 
-# Explicit Rules
+# explicit rules
 
-$(OBJPTH)\pplc.exe: $(OBJLST)
-        $(LC) $(LO) /L$(LIBPTH) @&&|
-c0$(MODEL).obj $(**:turboc.cfg=)
-$(OBJPTH)\pplc.exe
-# No map file
-$(LIBLST)
+$(objpth)\pplc.exe: $(objlst)
+        $(lc) $(lo) /l$(libpth) @&&|
+c0$(model).obj $(**:turboc.cfg=)
+$(objpth)\pplc.exe
+# no map file
+$(liblst)
 |
 

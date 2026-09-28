@@ -1,152 +1,152 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#	USERNET2.MAK - Makefile for project $(ROOT)\PROJ\USERNET\usernet2.prj
-#		Created on 08/11/96 at 23:23
+#	usernet2.mak - makefile for project $(root)\proj\usernet\usernet2.prj
+#		created on 08/11/96 at 23:23
 #
 #=============================================================
 
-.AUTODEPEND
+.autodepend
 
-.PATH.obj = BCOS2
-
-#=============================================================
-#		Translator Definitions
-#=============================================================
-!ifndef ROOT
-ROOT     = \OUT
-!endif
-!ifndef BRANCH
-BRANCH   = PWA153
-!endif
-!ifndef CVER
-CVER     = $(BCCOMPILER)
-!endif
-!ifndef SRC
-SRC      = \PCB153
-!endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
-!endif
-!ifndef LIBSDIR
-LIBSDIR  = \PCBCBASE
-!endif
-OUTDIR   = $(ROOT)\$(BRANCH)
-SDK      = $(OUTDIR)\SDK\$(CVER)
-SDKLIB   = $(SDK)\LIB
-SDKOBJ   = $(SDK)\OBJ
-!ifndef BCROOT
-BCROOT   = \BCOS2
-!endif
-CC = bcc +USERNET2.CFG
-TASM = tasm.exe
-TLIB = tlib.exe
-TLINK = tlink
-RC = brcc.exe
-RB = rc.exe
-LIBPATH = $(BCROOT)\LIB
-INCLUDEPATH = $(BCROOT)\INCLUDE;$(TKIT)\H
-
+.path.obj = bcos2
 
 #=============================================================
-#		Implicit Rules
+#		translator definitions
+#=============================================================
+!ifndef root
+root     = \out
+!endif
+!ifndef branch
+branch   = pwa153
+!endif
+!ifndef cver
+cver     = $(bccompiler)
+!endif
+!ifndef src
+src      = \pcb153
+!endif
+!ifndef tkit
+tkit     = \toolkit\pwa153
+!endif
+!ifndef libsdir
+libsdir  = \pcbcbase
+!endif
+outdir   = $(root)\$(branch)
+sdk      = $(outdir)\sdk\$(cver)
+sdklib   = $(sdk)\lib
+sdkobj   = $(sdk)\obj
+!ifndef bcroot
+bcroot   = \bcos2
+!endif
+cc = bcc +usernet2.cfg
+tasm = tasm.exe
+tlib = tlib.exe
+tlink = tlink
+rc = brcc.exe
+rb = rc.exe
+libpath = $(bcroot)\lib
+includepath = $(bcroot)\include;$(tkit)\h
+
+
+#=============================================================
+#		implicit rules
 #=============================================================
 .c.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 .cpp.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 .asm.obj:
-  $(TASM) -Mx $*.asm,$*.obj
+  $(tasm) -mx $*.asm,$*.obj
 
 .rc.res:
-  $(RC) -r $*.rc
+  $(rc) -r $*.rc
 
 #=============================================================
-#		List Macros
+#		list macros
 #=============================================================
 
 
-EXE_DEPENDENCIES =  \
- $(OUTDIR)\SDK\BCOS2\LIB\system.lib \
- $(OUTDIR)\SDK\BCOS2\LIB\screen.lib \
- $(OUTDIR)\SDK\BCOS2\LIB\misc.lib \
- $(OUTDIR)\SDK\BCOS2\LIB\dos.lib \
+exe_dependencies =  \
+ $(outdir)\sdk\bcos2\lib\system.lib \
+ $(outdir)\sdk\bcos2\lib\screen.lib \
+ $(outdir)\sdk\bcos2\lib\misc.lib \
+ $(outdir)\sdk\bcos2\lib\dos.lib \
  usernet.obj
 
 #=============================================================
-#		Explicit Rules
+#		explicit rules
 #=============================================================
-bcos2\usernet2.exe: usernet2.cfg $(EXE_DEPENDENCIES)
-  $(TLINK) /B:0x10000 /x /Toe /ap /L$(LIBPATH) @&&|
-$(BCROOT)\LIB\C02.OBJ+
+bcos2\usernet2.exe: usernet2.cfg $(exe_dependencies)
+  $(tlink) /b:0x10000 /x /toe /ap /l$(libpath) @&&|
+$(bcroot)\lib\c02.obj+
 bcos2\usernet.obj
 bcos2\usernet2
 		# no map file
-$(OUTDIR)\SDK\BCOS2\LIB\system.lib+
-$(OUTDIR)\SDK\BCOS2\LIB\screen.lib+
-$(OUTDIR)\SDK\BCOS2\LIB\misc.lib+
-$(OUTDIR)\SDK\BCOS2\LIB\dos.lib+
-$(BCROOT)\LIB\C2.LIB+
-$(BCROOT)\LIB\OS2.LIB
+$(outdir)\sdk\bcos2\lib\system.lib+
+$(outdir)\sdk\bcos2\lib\screen.lib+
+$(outdir)\sdk\bcos2\lib\misc.lib+
+$(outdir)\sdk\bcos2\lib\dos.lib+
+$(bcroot)\lib\c2.lib+
+$(bcroot)\lib\os2.lib
 
 |
 
 
 #=============================================================
-#		Individual File Dependencies
+#		individual file dependencies
 #=============================================================
 usernet.obj: usernet2.cfg usernet.c 
 
 #=============================================================
-#		Compiler Configuration File
+#		compiler configuration file
 #=============================================================
 usernet2.cfg: usernet2.mak
   copy &&|
--RT-
+-rt-
 -xd-
 -x-
--R
--Oz
--Ob
--Oe
--Oc
--L$(LIBPATH)
--I$(INCLUDEPATH)
+-r
+-oz
+-ob
+-oe
+-oc
+-l$(libpath)
+-i$(includepath)
 -nbcos2
--P
+-p
 -vi
 -d
 -k-
--O
+-o
 -v
 -w
--C
--K
+-c
+-k
 -a
 | usernet2.cfg
 
 
 #=============================================================
-#       CLEAN - remove everything this makefile produces
+#       clean - remove everything this makefile produces
 #=============================================================
 
-CLEAN:
-  -if exist BCOS2\*.obj del BCOS2\*.obj
-  -if exist BCOS2\*.map del BCOS2\*.map
-  -if exist BCOS2\*.res del BCOS2\*.res
-  -if exist BCOS2\USERNET2.EXE del BCOS2\USERNET2.EXE
+clean:
+  -if exist bcos2\*.obj del bcos2\*.obj
+  -if exist bcos2\*.map del bcos2\*.map
+  -if exist bcos2\*.res del bcos2\*.res
+  -if exist bcos2\usernet2.exe del bcos2\usernet2.exe

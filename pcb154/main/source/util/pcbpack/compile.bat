@@ -1,33 +1,33 @@
 @echo off
 call \proj\bcdos.bat
 
-    set TD=-DTD
-rem set DEBUG=-DDEBUG
+    set td=-dtd
+rem set debug=-ddebug
 
-set PROGNAME=PCBPACK
+set progname=pcbpack
 
-rem  As you move from one compiler to another, the .CFG file needs to
+rem  as you move from one compiler to another, the .cfg file needs to
 rem  be rebuilt because it contains some compiler-specific information within
-rem  it.  To facilitate this, a file called "USED####" will be created in
-rem  the current directory which will look like "USEDBC31" or "USEDTC30" to
-rem  indicate which compiler was last used.  If you are now compiling with
-rem  a different compiler, it will delete the USED* file and create a new
-rem  one and, in the process, it will delete the .CFG file and let the
-rem  .MAK file create a new one.
+rem  it.  to facilitate this, a file called "used####" will be created in
+rem  the current directory which will look like "usedbc31" or "usedtc30" to
+rem  indicate which compiler was last used.  if you are now compiling with
+rem  a different compiler, it will delete the used* file and create a new
+rem  one and, in the process, it will delete the .cfg file and let the
+rem  .mak file create a new one.
 
 if exist 153\used%bccompiler% goto continue
 del 153\used*
-del 153\%PROGNAME%.cfg
-echo Now using %bccompiler%. > 153\used%bccompiler%
+del 153\%progname%.cfg
+echo now using %bccompiler%. > 153\used%bccompiler%
 
 :continue
 
 
-compdate #define COMPILE_DATE > source\compdate.h
-%MAKE% %DEBUG% %TD% -f153\pcbpack.mak > errors
+compdate #define compile_date > source\compdate.h
+%make% %debug% %td% -f153\pcbpack.mak > errors
 list errors
 
-set PROGNAME=
-set DEBUG=
-set TD=
+set progname=
+set debug=
+set td=
 

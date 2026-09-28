@@ -1,21 +1,21 @@
 @echo off
 call c:\pcbsrc.bat
-del BUILD.LOG >nul 2>nul
+del build.log >nul 2>nul
 del &1 >nul 2>nul
-echo Building MKPCBTXT.EXE (RE from 15.4b) >BUILD.LOG
-echo. >>BUILD.LOG
-%bc31path%\bin\bcc.exe -ml -c -I. -I%bc31path%\include MKPCB.C >BCC.OUT
-type BCC.OUT >>BUILD.LOG
-echo. >>BUILD.LOG
-if not exist MKPCB.OBJ echo COMPILE FAIL >>BUILD.LOG
-if exist MKPCB.OBJ echo Compile OK >>BUILD.LOG
-if not exist MKPCB.OBJ goto end
-echo. >>BUILD.LOG
-echo Link step: >>BUILD.LOG
-%bc31path%\bin\tlink.exe /L%bc31path%\lib %bc31path%\lib\c0l MKPCB.OBJ, MKPCBTXT.EXE, MKPCBTXT.MAP, cl.lib >LNK.OUT
-type LNK.OUT >>BUILD.LOG
-if exist MKPCBTXT.EXE echo Link OK - MKPCBTXT.EXE built >>BUILD.LOG
-if not exist MKPCBTXT.EXE echo LINK FAIL >>BUILD.LOG
+echo building mkpcbtxt.exe (re from 15.4b) >build.log
+echo. >>build.log
+%bc31path%\bin\bcc.exe -ml -c -i. -i%bc31path%\include mkpcb.c >bcc.out
+type bcc.out >>build.log
+echo. >>build.log
+if not exist mkpcb.obj echo compile fail >>build.log
+if exist mkpcb.obj echo compile ok >>build.log
+if not exist mkpcb.obj goto end
+echo. >>build.log
+echo link step: >>build.log
+%bc31path%\bin\tlink.exe /l%bc31path%\lib %bc31path%\lib\c0l mkpcb.obj, mkpcbtxt.exe, mkpcbtxt.map, cl.lib >lnk.out
+type lnk.out >>build.log
+if exist mkpcbtxt.exe echo link ok - mkpcbtxt.exe built >>build.log
+if not exist mkpcbtxt.exe echo link fail >>build.log
 :end
-del BCC.OUT >nul 2>nul
-del LNK.OUT >nul 2>nul
+del bcc.out >nul 2>nul
+del lnk.out >nul 2>nul

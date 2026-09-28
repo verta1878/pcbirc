@@ -1,213 +1,213 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       UUXFER.MAK - Makefile for UUXFER Program
+#       uuxfer.mak - makefile for uuxfer program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = UUXFER
+progname = uuxfer
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = $(BCCOMPILER)
+!ifndef cver
+cver     = $(bccompiler)
 !endif
-!ifndef SRC
-SRC      = \PCB153
+!ifndef src
+src      = \pcb153
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
-!ifndef LIBSDIR
-LIBSDIR  = \PCBCBASE
+!ifndef libsdir
+libsdir  = \pcbcbase
 !endif
-OUTDIR   = $(ROOT)\$(BRANCH)
-SDK      = $(OUTDIR)\SDK\$(CVER)
-SDKLIB   = $(SDK)\LIB
-SDKOBJ   = $(SDK)\OBJ
-SOURCE   = .
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(TKIT)
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(SDKLIB)
+outdir   = $(root)\$(branch)
+sdk      = $(outdir)\sdk\$(cver)
+sdklib   = $(sdk)\lib
+sdkobj   = $(sdk)\obj
+source   = .
+objdir   = $(bccompiler)
+libroot  = $(tkit)
+libh     = $(libroot)\h
+liblib   = $(sdklib)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(SRC)\SOURCE\H
+includepath = $(include);$(libh);.;..\common;..\uuin;$(src)\source\h
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c -m$(MDL) -n$(OBJDIR)
+copt = -c -m$(mdl) -n$(objdir)
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
+.path.cpp = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 {..\common\}.c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 {..\common\}.cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(OBJDIR)\uuxfer.obj        \
-  $(OBJDIR)\uucp.obj          \
-  $(OBJDIR)\gprot.obj         \
-  $(OBJDIR)\commbuf.obj       \
-  $(OBJDIR)\uushwerr.obj      \
-  $(OBJDIR)\dresword.obj      \
-  $(SDKOBJ)\toolkit\large\fossil.obj   \
-  $(SDKOBJ)\toolkit\large\nolog.obj    \
-  $(SDKOBJ)\toolkit\large\nostatus.obj \
-  $(SDKOBJ)\toolkit\large\nodisp.obj   \
-  $(SDKOBJ)\toolkit\large\noansi.obj   \
-  $(SDKOBJ)\toolkit\large\notxt.obj    \
-  $(SDKOBJ)\toolkit\large\nochat.obj   \
-  $(SDKOBJ)\toolkit\large\nolang.obj   \
-  $(SDKOBJ)\toolkit\large\nopcbsys.obj \
-  $(SDKOBJ)\toolkit\large\noscreen.obj \
-  $(SDKOBJ)\toolkit\large\noshell.obj  \
-  $(SDKOBJ)\toolkit\large\nosys.obj    \
-  $(LIBLIB)\pcbkit_$(MDL).lib \
-  $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\doscls_$(MDL).lib \
-  $(LIBLIB)\pcb_$(MDL).lib    \
-  $(LIBLIB)\misc_$(MDL).lib   \
-  $(LIBLIB)\screen_$(MDL).lib \
-  $(LIBLIB)\system_$(MDL).lib \
-  $(LIBLIB)\country$(MDL).lib
+exe_dependencies = \
+  $(objdir)\uuxfer.obj        \
+  $(objdir)\uucp.obj          \
+  $(objdir)\gprot.obj         \
+  $(objdir)\commbuf.obj       \
+  $(objdir)\uushwerr.obj      \
+  $(objdir)\dresword.obj      \
+  $(sdkobj)\toolkit\large\fossil.obj   \
+  $(sdkobj)\toolkit\large\nolog.obj    \
+  $(sdkobj)\toolkit\large\nostatus.obj \
+  $(sdkobj)\toolkit\large\nodisp.obj   \
+  $(sdkobj)\toolkit\large\noansi.obj   \
+  $(sdkobj)\toolkit\large\notxt.obj    \
+  $(sdkobj)\toolkit\large\nochat.obj   \
+  $(sdkobj)\toolkit\large\nolang.obj   \
+  $(sdkobj)\toolkit\large\nopcbsys.obj \
+  $(sdkobj)\toolkit\large\noscreen.obj \
+  $(sdkobj)\toolkit\large\noshell.obj  \
+  $(sdkobj)\toolkit\large\nosys.obj    \
+  $(liblib)\pcbkit_$(mdl).lib \
+  $(liblib)\dos_$(mdl).lib    \
+  $(liblib)\doscls_$(mdl).lib \
+  $(liblib)\pcb_$(mdl).lib    \
+  $(liblib)\misc_$(mdl).lib   \
+  $(liblib)\screen_$(mdl).lib \
+  $(liblib)\system_$(mdl).lib \
+  $(liblib)\country$(mdl).lib
 
 #=============================================================
 
-!if $d(BC31)
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuxfer.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\gprot.obj+
-$(OBJDIR)\commbuf.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\dresword.obj+
+!if $d(bc31)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\uuxfer.obj+
+$(objdir)\uucp.obj+
+$(objdir)\gprot.obj+
+$(objdir)\commbuf.obj+
+$(objdir)\uushwerr.obj+
+$(objdir)\dresword.obj+
 ..\bc31\stbdsgtn.obj+
 ..\bc31\stbdsptn.obj+
 ..\bc31\stbsgetn.obj+
 ..\bc31\stbsputn.obj+
-$(SDKOBJ)\toolkit\large\fossil.obj+
-$(SDKOBJ)\toolkit\large\nolog.obj+
-$(SDKOBJ)\toolkit\large\nostatus.obj+
-$(SDKOBJ)\toolkit\large\nodisp.obj+
-$(SDKOBJ)\toolkit\large\noansi.obj+
-$(SDKOBJ)\toolkit\large\notxt.obj+
-$(SDKOBJ)\toolkit\large\nochat.obj+
-$(SDKOBJ)\toolkit\large\nolang.obj+
-$(SDKOBJ)\toolkit\large\nopcbsys.obj+
-$(SDKOBJ)\toolkit\large\noscreen.obj+
-$(SDKOBJ)\toolkit\large\noshell.obj+
-$(SDKOBJ)\toolkit\large\nosys.obj
-$(OBJDIR)\$(PROGNAME)
+$(sdkobj)\toolkit\large\fossil.obj+
+$(sdkobj)\toolkit\large\nolog.obj+
+$(sdkobj)\toolkit\large\nostatus.obj+
+$(sdkobj)\toolkit\large\nodisp.obj+
+$(sdkobj)\toolkit\large\noansi.obj+
+$(sdkobj)\toolkit\large\notxt.obj+
+$(sdkobj)\toolkit\large\nochat.obj+
+$(sdkobj)\toolkit\large\nolang.obj+
+$(sdkobj)\toolkit\large\nopcbsys.obj+
+$(sdkobj)\toolkit\large\noscreen.obj+
+$(sdkobj)\toolkit\large\noshell.obj+
+$(sdkobj)\toolkit\large\nosys.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\pcbkit_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib
+c$(mdl).lib
 |
 !else
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuxfer.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\gprot.obj+
-$(OBJDIR)\commbuf.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\dresword.obj+
-$(SDKOBJ)\toolkit\large\fossil.obj+
-$(SDKOBJ)\toolkit\large\nolog.obj+
-$(SDKOBJ)\toolkit\large\nostatus.obj+
-$(SDKOBJ)\toolkit\large\nodisp.obj+
-$(SDKOBJ)\toolkit\large\noansi.obj+
-$(SDKOBJ)\toolkit\large\notxt.obj+
-$(SDKOBJ)\toolkit\large\nochat.obj+
-$(SDKOBJ)\toolkit\large\nolang.obj+
-$(SDKOBJ)\toolkit\large\nopcbsys.obj+
-$(SDKOBJ)\toolkit\large\noscreen.obj+
-$(SDKOBJ)\toolkit\large\noshell.obj+
-$(SDKOBJ)\toolkit\large\nosys.obj
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\uuxfer.obj+
+$(objdir)\uucp.obj+
+$(objdir)\gprot.obj+
+$(objdir)\commbuf.obj+
+$(objdir)\uushwerr.obj+
+$(objdir)\dresword.obj+
+$(sdkobj)\toolkit\large\fossil.obj+
+$(sdkobj)\toolkit\large\nolog.obj+
+$(sdkobj)\toolkit\large\nostatus.obj+
+$(sdkobj)\toolkit\large\nodisp.obj+
+$(sdkobj)\toolkit\large\noansi.obj+
+$(sdkobj)\toolkit\large\notxt.obj+
+$(sdkobj)\toolkit\large\nochat.obj+
+$(sdkobj)\toolkit\large\nolang.obj+
+$(sdkobj)\toolkit\large\nopcbsys.obj+
+$(sdkobj)\toolkit\large\noscreen.obj+
+$(sdkobj)\toolkit\large\noshell.obj+
+$(sdkobj)\toolkit\large\nosys.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\pcbkit_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib
+c$(mdl).lib
 |
 !endif
 
@@ -217,7 +217,7 @@ c$(MDL).lib
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -273,39 +273,39 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Z
+-c
+-k
+-g
+-o
+-p
+-z
 -k-
 -d
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DLIB
--D___USE_CI_CACHE___
--D___USE_USERS___
--D___USE_CNAMES___
--DBOUNCE
--UDEBUG
--DNOMEMCHECK
--DUNIX
--D___UUIN___
--DEXCLUDE_DEBUG
-| $(CFG)
+-i$(includepath)
+-l$(libpath)
+-dlib
+-d___use_ci_cache___
+-d___use_users___
+-d___use_cnames___
+-dbounce
+-udebug
+-dnomemcheck
+-dunix
+-d___uuin___
+-dexclude_debug
+| $(cfg)
 
 #=============================================================
 
 
 
 #=============================================================
-#       CLEAN - remove everything this makefile produces
+#       clean - remove everything this makefile produces
 #=============================================================
 
-CLEAN:
-  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
-  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
-  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
-  -if exist $(CFG) del $(CFG)
+clean:
+  -if exist $(objdir)\*.obj del $(objdir)\*.obj
+  -if exist $(objdir)\*.map del $(objdir)\*.map
+  -if exist $(objdir)\*.res del $(objdir)\*.res
+  -if exist $(objdir)\$(progname).exe del $(objdir)\$(progname).exe
+  -if exist $(cfg) del $(cfg)

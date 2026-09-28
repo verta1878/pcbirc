@@ -1,177 +1,177 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBCP.MAK - Makefile for project D:\bcos2\examples\test\PCBCP.PRJ
-#               Created on 05/25/95 at 10:50
+#       pcbcp.mak - makefile for project d:\bcos2\examples\test\pcbcp.prj
+#               created on 05/25/95 at 10:50
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
 #=============================================================
-#               Translator Definitions
+#               translator definitions
 #=============================================================
 
-VERSION = 1522
-ROOT    = \PROJ
-PROJ    = $(ROOT)\PCBCP
-LIBROOT = $(ROOT)\LIB
-LIBDIR  = $(LIBROOT)\BCOS2
-SOURCE  = SOURCE
-HELP    = $(PROJ)\HELP
-OBJ     = $(PROJ)\OBJ
-CFG     = $(VERSION)\PCBCP.CFG
-MAK     = $(VERSION)\PCBCP.MAK
+version = 1522
+root    = \proj
+proj    = $(root)\pcbcp
+libroot = $(root)\lib
+libdir  = $(libroot)\bcos2
+source  = source
+help    = $(proj)\help
+obj     = $(proj)\obj
+cfg     = $(version)\pcbcp.cfg
+mak     = $(version)\pcbcp.mak
 
-!if $d(DEBUG)
-  DEBUG = -v
+!if $d(debug)
+  debug = -v
 !else
-  DEBUG =
+  debug =
 !endif
 
-!if $d(VALIDATOR)
-  CC = $(COMPILER) +$(CFG) -DVALIDATOR
+!if $d(validator)
+  cc = $(compiler) +$(cfg) -dvalidator
 !else
-  CC = $(COMPILER) +$(CFG)
+  cc = $(compiler) +$(cfg)
 !endif
 
-INCLUDEPATH = $(INCLUDE);$(SOURCE);$(LIBROOT)\H
+includepath = $(include);$(source);$(libroot)\h
 
 
-.PATH.c   = $(SOURCE)
-.PATH.obj = $(OBJ)
+.path.c   = $(source)
+.path.obj = $(obj)
 
 #=============================================================
-#               Implicit Rules
+#               implicit rules
 #=============================================================
 .c.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 
 #=============================================================
-#               List Macros
+#               list macros
 #=============================================================
-LINK_EXCLUDE =  \
- $(OBJ)\main.res
+link_exclude =  \
+ $(obj)\main.res
 
-LINK_INCLUDE =  \
- $(LIBDIR)\system.lib \
- $(LIBDIR)\misc.lib \
- $(LIBDIR)\screen.lib \
- $(LIBDIR)\dos.lib \
- $(SOURCE)\pcbcp.def \
- $(OBJ)\user.obj \
- $(OBJ)\thrd.obj \
- $(OBJ)\pnt.obj \
- $(OBJ)\main.obj \
- $(OBJ)\help.obj \
- $(OBJ)\init.obj \
- $(OBJ)\file.obj \
- $(OBJ)\dlg.obj
+link_include =  \
+ $(libdir)\system.lib \
+ $(libdir)\misc.lib \
+ $(libdir)\screen.lib \
+ $(libdir)\dos.lib \
+ $(source)\pcbcp.def \
+ $(obj)\user.obj \
+ $(obj)\thrd.obj \
+ $(obj)\pnt.obj \
+ $(obj)\main.obj \
+ $(obj)\help.obj \
+ $(obj)\init.obj \
+ $(obj)\file.obj \
+ $(obj)\dlg.obj
 
 #=============================================================
-#               Explicit Rules
+#               explicit rules
 #=============================================================
 
-$(OBJ)\done: $(OBJ)\pcbcp.exe $(OBJ)\pcbcp.hlp
-      echo all done > $(OBJ)\done
+$(obj)\done: $(obj)\pcbcp.exe $(obj)\pcbcp.hlp
+      echo all done > $(obj)\done
 
-$(OBJ)\pcbcp.exe: $(CFG) $(LINK_INCLUDE) $(LINK_EXCLUDE)
-  $(LINKER) $(DEBUG) /B:0x10000 /x /Toe /aa /L$(LIBPATH) @&&|
-$(LIBPATH)\C02.OBJ+
-$(OBJ)\user.obj+
-$(OBJ)\thrd.obj+
-$(OBJ)\pnt.obj+
-$(OBJ)\main.obj+
-$(OBJ)\help.obj+
-$(OBJ)\init.obj+
-$(OBJ)\file.obj+
-$(OBJ)\dlg.obj
-$(OBJ)\pcbcp.exe
-$(OBJ)\pcbcp.map
-$(LIBDIR)\system.lib+
-$(LIBDIR)\misc.lib+
-$(LIBDIR)\screen.lib+
-$(LIBDIR)\dos.lib+
-!if $d(VALIDATOR)
+$(obj)\pcbcp.exe: $(cfg) $(link_include) $(link_exclude)
+  $(linker) $(debug) /b:0x10000 /x /toe /aa /l$(libpath) @&&|
+$(libpath)\c02.obj+
+$(obj)\user.obj+
+$(obj)\thrd.obj+
+$(obj)\pnt.obj+
+$(obj)\main.obj+
+$(obj)\help.obj+
+$(obj)\init.obj+
+$(obj)\file.obj+
+$(obj)\dlg.obj
+$(obj)\pcbcp.exe
+$(obj)\pcbcp.map
+$(libdir)\system.lib+
+$(libdir)\misc.lib+
+$(libdir)\screen.lib+
+$(libdir)\dos.lib+
+!if $d(validator)
   d:\toolkt21\os2lib\validatr.lib+
 !endif
-$(LIBPATH)\C2MT.LIB+
-$(LIBPATH)\OS2.LIB
-$(SOURCE)\pcbcp.def
+$(libpath)\c2mt.lib+
+$(libpath)\os2.lib
+$(source)\pcbcp.def
 |
-  rc.exe $(OBJ)\main.res $(OBJ)\pcbcp.exe
+  rc.exe $(obj)\main.res $(obj)\pcbcp.exe
 
 #=============================================================
-#               Individual File Dependencies
+#               individual file dependencies
 #=============================================================
-$(OBJ)\pcbcp.hlp: $(HELP)\pcbcp.ipf $(HELP)\dlg.ipf $(HELP)\edit.ipf $(HELP)\file.ipf $(HELP)\help.ipf $(HELP)\menu.ipf $(HELP)\action.ipf $(HELP)\option.ipf
+$(obj)\pcbcp.hlp: $(help)\pcbcp.ipf $(help)\dlg.ipf $(help)\edit.ipf $(help)\file.ipf $(help)\help.ipf $(help)\menu.ipf $(help)\action.ipf $(help)\option.ipf
          cd help
-         $(IPFCOMP) pcbcp.ipf
+         $(ipfcomp) pcbcp.ipf
          cd ..
 
-$(OBJ)\main.res: $(SOURCE)\main.rc $(SOURCE)\help.rc
-         $(BRCC) -R -I$(INCLUDEPATH) -FO $(OBJ)\main.res $(SOURCE)\main.rc
+$(obj)\main.res: $(source)\main.rc $(source)\help.rc
+         $(brcc) -r -i$(includepath) -fo $(obj)\main.res $(source)\main.rc
 
-USER.obj: USER.C
+user.obj: user.c
 
-THRD.obj: THRD.C
+thrd.obj: thrd.c
 
-PNT.obj:  PNT.C
+pnt.obj:  pnt.c
 
-MAIN.obj: MAIN.C
+main.obj: main.c
 
-HELP.obj: HELP.C
+help.obj: help.c
 
-INIT.obj: INIT.C
+init.obj: init.c
 
-FILE.obj: FILE.C
+file.obj: file.c
 
-DLG.obj: DLG.C
+dlg.obj: dlg.c
 
 #=============================================================
-#               Compiler Configuration File
+#               compiler configuration file
 #=============================================================
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
--RT-
+-rt-
 -xd-
 -x-
--Oz
--Ob
--Oe
--Oc
--DBACKGROUND_THREAD
--L$(LIBPATH)
--I$(INCLUDEPATH)
--n$(OBJ)
--P
+-oz
+-ob
+-oe
+-oc
+-dbackground_thread
+-l$(libpath)
+-i$(includepath)
+-n$(obj)
+-p
 -vi
 -sm
 -d
 -k-
--O
--Ot
+-o
+-ot
 -w
--C
--K
+-c
+-k
 -a4
 -5
-$(DEBUG)
-| $(CFG)
+$(debug)
+| $(cfg)
 
 

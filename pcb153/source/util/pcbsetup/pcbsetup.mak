@@ -1,278 +1,278 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBSETUP.MAK - Makefile for PCBSETUP Program
+#       pcbsetup.mak - makefile for pcbsetup program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = PCBSETUP
+progname = pcbsetup
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = $(BCCOMPILER)
+!ifndef cver
+cver     = $(bccompiler)
 !endif
-!ifndef SRC
-SRC      = \PCB153
+!ifndef src
+src      = \pcb153
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
-!ifndef LIBSDIR
-LIBSDIR  = \PCBCBASE
+!ifndef libsdir
+libsdir  = \pcbcbase
 !endif
-OUTDIR   = $(ROOT)\$(BRANCH)
-SDK      = $(OUTDIR)\SDK\$(CVER)
-SDKLIB   = $(SDK)\LIB
-SDKOBJ   = $(SDK)\OBJ
-SOURCE   = SOURCE
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(TKIT)
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(SDKLIB)
+outdir   = $(root)\$(branch)
+sdk      = $(outdir)\sdk\$(cver)
+sdklib   = $(sdk)\lib
+sdkobj   = $(sdk)\obj
+source   = source
+objdir   = $(bccompiler)
+libroot  = $(tkit)
+libh     = $(libroot)\h
+liblib   = $(sdklib)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(SRC)\SOURCE\H;$(SRC)\SOURCE\UUCP\COMMON
+includepath = $(include);$(libh);source;$(src)\source\h;$(src)\source\uucp\common
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c
+copt = -c
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv -x-
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv -x-
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
+.path.cpp = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(SDKOBJ)\misc\large\swap.obj \
-  $(OBJDIR)\pcbsetup.obj        \
-  $(OBJDIR)\account.obj         \
-  $(OBJDIR)\chkfile.obj         \
-  $(OBJDIR)\ci_build.obj        \
-  $(OBJDIR)\edit.obj            \
-  $(OBJDIR)\editblt.obj         \
-  $(OBJDIR)\editcmd.obj         \
-  $(OBJDIR)\editconf.obj        \
-  $(OBJDIR)\editdays.obj        \
-  $(OBJDIR)\editdirs.obj        \
-  $(OBJDIR)\editdoor.obj        \
-  $(OBJDIR)\editevnt.obj        \
-  $(OBJDIR)\editfido.obj        \
-  $(OBJDIR)\editfsec.obj        \
-  $(OBJDIR)\editftcn.obj        \
-  $(OBJDIR)\editlang.obj        \
-  $(OBJDIR)\editmod.obj         \
-  $(OBJDIR)\editpath.obj        \
-  $(OBJDIR)\editprot.obj        \
-  $(OBJDIR)\editpwrd.obj        \
-  $(OBJDIR)\editscpt.obj        \
-  $(OBJDIR)\edittcan.obj        \
-  $(OBJDIR)\editverb.obj        \
-  $(OBJDIR)\event.obj           \
-  $(OBJDIR)\fidoaka.obj         \
-  $(OBJDIR)\fidoarc.obj         \
-  $(OBJDIR)\fidocfg.obj         \
-  $(OBJDIR)\fconfig.obj         \
-  $(OBJDIR)\fidoemsi.obj        \
-  $(OBJDIR)\fidofreq.obj        \
-  $(OBJDIR)\fidoinfo.obj        \
-  $(OBJDIR)\fidolist.obj        \
-  $(OBJDIR)\fidoloc.obj         \
-  $(OBJDIR)\fidomgic.obj        \
-  $(OBJDIR)\fidonode.obj        \
-  $(OBJDIR)\fidonofr.obj        \
-  $(OBJDIR)\fidoorg.obj         \
-  $(OBJDIR)\fidopath.obj        \
-  $(OBJDIR)\fidotoss.obj        \
-  $(OBJDIR)\fidothis.obj        \
-  $(OBJDIR)\filesys.obj         \
-  $(OBJDIR)\fileconf.obj        \
-  $(OBJDIR)\filedisp.obj        \
-  $(OBJDIR)\fidoph.obj          \
-  $(OBJDIR)\fileques.obj        \
-  $(OBJDIR)\getcntxt.obj        \
-  $(OBJDIR)\init.obj            \
-  $(OBJDIR)\levels.obj          \
-  $(OBJDIR)\list.obj            \
-  $(OBJDIR)\misc.obj            \
-  $(OBJDIR)\modem.obj           \
-  $(OBJDIR)\modemacc.obj        \
-  $(OBJDIR)\modemswi.obj        \
-  $(OBJDIR)\node.obj            \
-  $(OBJDIR)\optcolor.obj        \
-  $(OBJDIR)\optctrl.obj         \
-  $(OBJDIR)\optfunc.obj         \
-  $(OBJDIR)\optlim.obj          \
-  $(OBJDIR)\optlog.obj          \
-  $(OBJDIR)\optmsg.obj          \
-  $(OBJDIR)\optos2.obj          \
-  $(OBJDIR)\optsys.obj          \
-  $(OBJDIR)\optxfer.obj         \
-  $(OBJDIR)\search.obj          \
-  $(OBJDIR)\shell.obj           \
-  $(OBJDIR)\subscrip.obj        \
-  $(OBJDIR)\sysop.obj           \
-  $(OBJDIR)\sysopcom.obj        \
-  $(OBJDIR)\sysopfun.obj        \
-  $(OBJDIR)\unique.obj          \
-  $(OBJDIR)\uucp.obj            \
-  $(OBJDIR)\data.obj            \
-  $(LIBLIB)\dos_$(MDL).lib      \
-  $(LIBLIB)\pcb_$(MDL).lib      \
-  $(LIBLIB)\misc_$(MDL).lib     \
-  $(LIBLIB)\screen_$(MDL).lib   \
-  $(LIBLIB)\scrnio_$(MDL).lib   \
-  $(LIBLIB)\system_$(MDL).lib   \
-  $(LIBLIB)\doscls_$(MDL).lib   \
-  $(LIBLIB)\country$(MDL).lib   \
-  $(SDKLIB)\VMDATA_L.LIB
+exe_dependencies = \
+  $(sdkobj)\misc\large\swap.obj \
+  $(objdir)\pcbsetup.obj        \
+  $(objdir)\account.obj         \
+  $(objdir)\chkfile.obj         \
+  $(objdir)\ci_build.obj        \
+  $(objdir)\edit.obj            \
+  $(objdir)\editblt.obj         \
+  $(objdir)\editcmd.obj         \
+  $(objdir)\editconf.obj        \
+  $(objdir)\editdays.obj        \
+  $(objdir)\editdirs.obj        \
+  $(objdir)\editdoor.obj        \
+  $(objdir)\editevnt.obj        \
+  $(objdir)\editfido.obj        \
+  $(objdir)\editfsec.obj        \
+  $(objdir)\editftcn.obj        \
+  $(objdir)\editlang.obj        \
+  $(objdir)\editmod.obj         \
+  $(objdir)\editpath.obj        \
+  $(objdir)\editprot.obj        \
+  $(objdir)\editpwrd.obj        \
+  $(objdir)\editscpt.obj        \
+  $(objdir)\edittcan.obj        \
+  $(objdir)\editverb.obj        \
+  $(objdir)\event.obj           \
+  $(objdir)\fidoaka.obj         \
+  $(objdir)\fidoarc.obj         \
+  $(objdir)\fidocfg.obj         \
+  $(objdir)\fconfig.obj         \
+  $(objdir)\fidoemsi.obj        \
+  $(objdir)\fidofreq.obj        \
+  $(objdir)\fidoinfo.obj        \
+  $(objdir)\fidolist.obj        \
+  $(objdir)\fidoloc.obj         \
+  $(objdir)\fidomgic.obj        \
+  $(objdir)\fidonode.obj        \
+  $(objdir)\fidonofr.obj        \
+  $(objdir)\fidoorg.obj         \
+  $(objdir)\fidopath.obj        \
+  $(objdir)\fidotoss.obj        \
+  $(objdir)\fidothis.obj        \
+  $(objdir)\filesys.obj         \
+  $(objdir)\fileconf.obj        \
+  $(objdir)\filedisp.obj        \
+  $(objdir)\fidoph.obj          \
+  $(objdir)\fileques.obj        \
+  $(objdir)\getcntxt.obj        \
+  $(objdir)\init.obj            \
+  $(objdir)\levels.obj          \
+  $(objdir)\list.obj            \
+  $(objdir)\misc.obj            \
+  $(objdir)\modem.obj           \
+  $(objdir)\modemacc.obj        \
+  $(objdir)\modemswi.obj        \
+  $(objdir)\node.obj            \
+  $(objdir)\optcolor.obj        \
+  $(objdir)\optctrl.obj         \
+  $(objdir)\optfunc.obj         \
+  $(objdir)\optlim.obj          \
+  $(objdir)\optlog.obj          \
+  $(objdir)\optmsg.obj          \
+  $(objdir)\optos2.obj          \
+  $(objdir)\optsys.obj          \
+  $(objdir)\optxfer.obj         \
+  $(objdir)\search.obj          \
+  $(objdir)\shell.obj           \
+  $(objdir)\subscrip.obj        \
+  $(objdir)\sysop.obj           \
+  $(objdir)\sysopcom.obj        \
+  $(objdir)\sysopfun.obj        \
+  $(objdir)\unique.obj          \
+  $(objdir)\uucp.obj            \
+  $(objdir)\data.obj            \
+  $(liblib)\dos_$(mdl).lib      \
+  $(liblib)\pcb_$(mdl).lib      \
+  $(liblib)\misc_$(mdl).lib     \
+  $(liblib)\screen_$(mdl).lib   \
+  $(liblib)\scrnio_$(mdl).lib   \
+  $(liblib)\system_$(mdl).lib   \
+  $(liblib)\doscls_$(mdl).lib   \
+  $(liblib)\country$(mdl).lib   \
+  $(sdklib)\vmdata_l.lib
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-/o- c0$(MDL).obj+
-/o- $(SDKOBJ)\misc\large\swap.obj+
-/o+ $(OBJDIR)\pcbsetup.obj+
-/o+ $(OBJDIR)\account.obj+
-/o+ $(OBJDIR)\chkfile.obj+
-/o+ $(OBJDIR)\ci_build.obj+
-/o+ $(OBJDIR)\edit.obj+
-/o+ $(OBJDIR)\editblt.obj+
-/o+ $(OBJDIR)\editcmd.obj+
-/o+ $(OBJDIR)\editconf.obj+
-/o+ $(OBJDIR)\editdays.obj+
-/o+ $(OBJDIR)\editdirs.obj+
-/o+ $(OBJDIR)\editdoor.obj+
-/o+ $(OBJDIR)\editevnt.obj+
-/o+ $(OBJDIR)\editfido.obj+
-/o+ $(OBJDIR)\editfsec.obj+
-/o+ $(OBJDIR)\editftcn.obj+
-/o+ $(OBJDIR)\editlang.obj+
-/o+ $(OBJDIR)\editmod.obj+
-/o+ $(OBJDIR)\editpath.obj+
-/o+ $(OBJDIR)\editprot.obj+
-/o+ $(OBJDIR)\editpwrd.obj+
-/o+ $(OBJDIR)\editscpt.obj+
-/o+ $(OBJDIR)\edittcan.obj+
-/o+ $(OBJDIR)\editverb.obj+
-/o+ $(OBJDIR)\event.obj+
-/o+ $(OBJDIR)\fidoaka.obj+
-/o+ $(OBJDIR)\fidoarc.obj+
-/o+ $(OBJDIR)\fidocfg.obj+
-/o+ $(OBJDIR)\fconfig.obj+
-/o+ $(OBJDIR)\fidoemsi.obj+
-/o+ $(OBJDIR)\fidofreq.obj+
-/o+ $(OBJDIR)\fidoinfo.obj+
-/o+ $(OBJDIR)\fidolist.obj+
-/o+ $(OBJDIR)\fidoloc.obj+
-/o+ $(OBJDIR)\fidomgic.obj+
-/o+ $(OBJDIR)\fidonode.obj+
-/o+ $(OBJDIR)\fidonofr.obj+
-/o+ $(OBJDIR)\fidoorg.obj+
-/o+ $(OBJDIR)\fidopath.obj+
-/o+ $(OBJDIR)\fidotoss.obj+
-/o+ $(OBJDIR)\fidothis.obj+
-/o+ $(OBJDIR)\filesys.obj+
-/o+ $(OBJDIR)\fileconf.obj+
-/o+ $(OBJDIR)\filedisp.obj+
-/o+ $(OBJDIR)\fidoph.obj+
-/o+ $(OBJDIR)\fileques.obj+
-/o+ $(OBJDIR)\getcntxt.obj+
-/o+ $(OBJDIR)\init.obj+
-/o+ $(OBJDIR)\levels.obj+
-/o+ $(OBJDIR)\list.obj+
-/o+ $(OBJDIR)\misc.obj+
-/o+ $(OBJDIR)\modem.obj+
-/o+ $(OBJDIR)\modemacc.obj+
-/o+ $(OBJDIR)\modemswi.obj+
-/o+ $(OBJDIR)\node.obj+
-/o+ $(OBJDIR)\optcolor.obj+
-/o+ $(OBJDIR)\optctrl.obj+
-/o+ $(OBJDIR)\optfunc.obj+
-/o+ $(OBJDIR)\optlim.obj+
-/o+ $(OBJDIR)\optlog.obj+
-/o+ $(OBJDIR)\optmsg.obj+
-/o+ $(OBJDIR)\optos2.obj+
-/o+ $(OBJDIR)\optsys.obj+
-/o+ $(OBJDIR)\optxfer.obj+
-/o+ $(OBJDIR)\search.obj+
-/o+ $(OBJDIR)\shell.obj+
-/o+ $(OBJDIR)\subscrip.obj+
-/o+ $(OBJDIR)\sysop.obj+
-/o+ $(OBJDIR)\sysopcom.obj+
-/o+ $(OBJDIR)\sysopfun.obj+
-/o+ $(OBJDIR)\unique.obj+
-/o+ $(OBJDIR)\uucp.obj+
-/o+ $(OBJDIR)\data.obj
-$(OBJDIR)\$(PROGNAME)
-$(OBJDIR)\$(PROGNAME)
-/o- $(LIBLIB)\dos_$(MDL).lib+
-/o- $(LIBLIB)\pcb_$(MDL).lib+
-/o- $(LIBLIB)\misc_$(MDL).lib+
-/o- $(LIBLIB)\screen_$(MDL).lib+
-/o- $(LIBLIB)\scrnio_$(MDL).lib+
-/o- $(LIBLIB)\system_$(MDL).lib+
-/o- $(LIBLIB)\doscls_$(MDL).lib+
-/o- $(LIBLIB)\country$(MDL).lib+
-/o- $(SDKLIB)\VMDATA_L.LIB+
-/o- math$(MDL).lib+
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+/o- c0$(mdl).obj+
+/o- $(sdkobj)\misc\large\swap.obj+
+/o+ $(objdir)\pcbsetup.obj+
+/o+ $(objdir)\account.obj+
+/o+ $(objdir)\chkfile.obj+
+/o+ $(objdir)\ci_build.obj+
+/o+ $(objdir)\edit.obj+
+/o+ $(objdir)\editblt.obj+
+/o+ $(objdir)\editcmd.obj+
+/o+ $(objdir)\editconf.obj+
+/o+ $(objdir)\editdays.obj+
+/o+ $(objdir)\editdirs.obj+
+/o+ $(objdir)\editdoor.obj+
+/o+ $(objdir)\editevnt.obj+
+/o+ $(objdir)\editfido.obj+
+/o+ $(objdir)\editfsec.obj+
+/o+ $(objdir)\editftcn.obj+
+/o+ $(objdir)\editlang.obj+
+/o+ $(objdir)\editmod.obj+
+/o+ $(objdir)\editpath.obj+
+/o+ $(objdir)\editprot.obj+
+/o+ $(objdir)\editpwrd.obj+
+/o+ $(objdir)\editscpt.obj+
+/o+ $(objdir)\edittcan.obj+
+/o+ $(objdir)\editverb.obj+
+/o+ $(objdir)\event.obj+
+/o+ $(objdir)\fidoaka.obj+
+/o+ $(objdir)\fidoarc.obj+
+/o+ $(objdir)\fidocfg.obj+
+/o+ $(objdir)\fconfig.obj+
+/o+ $(objdir)\fidoemsi.obj+
+/o+ $(objdir)\fidofreq.obj+
+/o+ $(objdir)\fidoinfo.obj+
+/o+ $(objdir)\fidolist.obj+
+/o+ $(objdir)\fidoloc.obj+
+/o+ $(objdir)\fidomgic.obj+
+/o+ $(objdir)\fidonode.obj+
+/o+ $(objdir)\fidonofr.obj+
+/o+ $(objdir)\fidoorg.obj+
+/o+ $(objdir)\fidopath.obj+
+/o+ $(objdir)\fidotoss.obj+
+/o+ $(objdir)\fidothis.obj+
+/o+ $(objdir)\filesys.obj+
+/o+ $(objdir)\fileconf.obj+
+/o+ $(objdir)\filedisp.obj+
+/o+ $(objdir)\fidoph.obj+
+/o+ $(objdir)\fileques.obj+
+/o+ $(objdir)\getcntxt.obj+
+/o+ $(objdir)\init.obj+
+/o+ $(objdir)\levels.obj+
+/o+ $(objdir)\list.obj+
+/o+ $(objdir)\misc.obj+
+/o+ $(objdir)\modem.obj+
+/o+ $(objdir)\modemacc.obj+
+/o+ $(objdir)\modemswi.obj+
+/o+ $(objdir)\node.obj+
+/o+ $(objdir)\optcolor.obj+
+/o+ $(objdir)\optctrl.obj+
+/o+ $(objdir)\optfunc.obj+
+/o+ $(objdir)\optlim.obj+
+/o+ $(objdir)\optlog.obj+
+/o+ $(objdir)\optmsg.obj+
+/o+ $(objdir)\optos2.obj+
+/o+ $(objdir)\optsys.obj+
+/o+ $(objdir)\optxfer.obj+
+/o+ $(objdir)\search.obj+
+/o+ $(objdir)\shell.obj+
+/o+ $(objdir)\subscrip.obj+
+/o+ $(objdir)\sysop.obj+
+/o+ $(objdir)\sysopcom.obj+
+/o+ $(objdir)\sysopfun.obj+
+/o+ $(objdir)\unique.obj+
+/o+ $(objdir)\uucp.obj+
+/o+ $(objdir)\data.obj
+$(objdir)\$(progname)
+$(objdir)\$(progname)
+/o- $(liblib)\dos_$(mdl).lib+
+/o- $(liblib)\pcb_$(mdl).lib+
+/o- $(liblib)\misc_$(mdl).lib+
+/o- $(liblib)\screen_$(mdl).lib+
+/o- $(liblib)\scrnio_$(mdl).lib+
+/o- $(liblib)\system_$(mdl).lib+
+/o- $(liblib)\doscls_$(mdl).lib+
+/o- $(liblib)\country$(mdl).lib+
+/o- $(sdklib)\vmdata_l.lib+
+/o- math$(mdl).lib+
 /o- emu.lib+
-/o- c$(MDL).lib+
+/o- c$(mdl).lib+
 /o- overlay.lib
 |
 
@@ -280,15 +280,15 @@ $(OBJDIR)\$(PROGNAME)
 
 # rules for individual files where necessary
 
-$(OBJDIR)\fconfig.obj: $(SRC)\SOURCE\FIDO\fconfig.c
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\fconfig.c
+$(objdir)\fconfig.obj: $(src)\source\fido\fconfig.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(src)\source\fido\fconfig.c
 
-$(OBJDIR)\data.obj: $(SRC)\SOURCE\FIDO\data.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\data.cpp
+$(objdir)\data.obj: $(src)\source\fido\data.cpp
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(src)\source\fido\data.cpp
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -344,35 +344,35 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Vmd
--Vmp
--Y
--Z
+-c
+-k
+-g
+-o
+-p
+-vmd
+-vmp
+-y
+-z
 -k-
 -d
--m$(MDL)
--n$(OBJDIR)
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DFIDO;TRAVIS;PCBSETUP;USEFLOAT;USEDATE;VMDATA;NDEBUG;QUIET_BUILD
-| $(CFG)
+-m$(mdl)
+-n$(objdir)
+-i$(includepath)
+-l$(libpath)
+-dfido;travis;pcbsetup;usefloat;usedate;vmdata;ndebug;quiet_build
+| $(cfg)
 
 #=============================================================
 
 
 
 #=============================================================
-#       CLEAN - remove everything this makefile produces
+#       clean - remove everything this makefile produces
 #=============================================================
 
-CLEAN:
-  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
-  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
-  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
-  -if exist $(CFG) del $(CFG)
+clean:
+  -if exist $(objdir)\*.obj del $(objdir)\*.obj
+  -if exist $(objdir)\*.map del $(objdir)\*.map
+  -if exist $(objdir)\*.res del $(objdir)\*.res
+  -if exist $(objdir)\$(progname).exe del $(objdir)\$(progname).exe
+  -if exist $(cfg) del $(cfg)

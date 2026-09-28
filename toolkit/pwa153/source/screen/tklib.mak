@@ -1,183 +1,183 @@
 #=============================================================
 #
-#       MAKEFILE - SCREEN category library for the PCBoard toolkit
+#       makefile - screen category library for the pcboard toolkit
 #
-#       Builds  $(LIBFILE)  from the sources in this folder.
-#       Objects go to $(OBJDIR) and are kept, so a second MAKE only
-#       recompiles what changed.  MAKE CLEAN removes both.
+#       builds  $(libfile)  from the sources in this folder.
+#       objects go to $(objdir) and are kept, so a second make only
+#       recompiles what changed.  make clean removes both.
 #
-#       The repo folder is mounted as the drive root, so \OUT,
-#       \TOOLKIT, \PCB153 and \BC31 are inside the repo no matter
-#       what the repo folder is called.  Every macro is guarded, so
+#       the repo folder is mounted as the drive root, so \out,
+#       \toolkit, \pcb153 and \bc31 are inside the repo no matter
+#       what the repo folder is called.  every macro is guarded, so
 #       it can be overridden on the command line:
 #
-#           make -DCVER=BC50
-#           make -DROOT=\OUT -DBRANCH=PWA154
+#           make -dcver=bc50
+#           make -droot=\out -dbranch=pwa154
 #
-#       Memory model:
-#           Large (default):  make
-#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#       memory model:
+#           large (default):  make
+#           small:            make -dmdl=s -dmodel=small -dcfgname=tks
 #
-#       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
+#       targets:  all (default) | dirs | objs | libf | clean
 #
-#       The module list is Clark's: it matches the module names read
-#       out of the shipped SCREEN_L.386, recorded in
-#       attic\prebuilt-libs\BC31\README.md.
+#       the module list is clark's: it matches the module names read
+#       out of the shipped screen_l.386, recorded in
+#       attic\prebuilt-libs\bc31\readme.md.
 #
-#       Compiler switches live in $(CFG) -- Clark's PCBOARD.CFG and
-#       ALL.RES merged into one file, so the BCC command line stays
-#       under the DOS 127-character limit.  There is no -DLIB there:
-#       that switch empties _FARDATA_ and gives the door-SDK flavour
-#       of these modules, which is not what PCBOARD, PCBSETUP and
-#       FIDOUTIL link against.
+#       compiler switches live in $(cfg) -- clark's pcboard.cfg and
+#       all.res merged into one file, so the bcc command line stays
+#       under the dos 127-character limit.  there is no -dlib there:
+#       that switch empties _fardata_ and gives the door-sdk flavour
+#       of these modules, which is not what pcboard, pcbsetup and
+#       fidoutil link against.
 #
-#       SCROLLUP is compiled with -B:
-#       -B routes this one file through TASM.  Its inline asm jumps to a local
-#       label called "exit", which BCC's built-in assembler resolves to the
+#       scrollup is compiled with -b:
+#       -b routes this one file through tasm.  its inline asm jumps to a local
+#       label called "exit", which bcc's built-in assembler resolves to the
 #       library function exit() and then rejects.
 #
 #=============================================================
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = BC31
+!ifndef cver
+cver     = bc31
 !endif
-!ifndef MODEL
-MODEL    = LARGE
+!ifndef model
+model    = large
 !endif
-!ifndef MDL
-MDL      = l
+!ifndef mdl
+mdl      = l
 !endif
-!ifndef CFGNAME
-CFGNAME  = TK
+!ifndef cfgname
+cfgname  = tk
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
 
-SUBDIR   = SCREEN
-LIBNAME  = SCREEN_$(MDL)
-CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\$(CFGNAME).CFG
-SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
-LIBDIR   = $(SDK)\LIB
-OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)
-LIBFILE  = $(LIBDIR)\$(LIBNAME).LIB
+subdir   = screen
+libname  = screen_$(mdl)
+cfgdir   = $(tkit)\cfg\$(cver)
+cfg      = $(cfgdir)\$(cfgname).cfg
+sdk      = $(root)\$(branch)\sdk\$(cver)
+libdir   = $(sdk)\lib
+objdir   = $(sdk)\obj\$(subdir)\$(model)
+libfile  = $(libdir)\$(libname).lib
 
 .c.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .cpp.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .asm.obj:
-	tasm /mx /d__$(MDL)__ $<, $(OBJDIR)\$&.obj
+	tasm /mx /d__$(mdl)__ $<, $(objdir)\$&.obj
 
-all: DIRS OBJS LIBF
+all: dirs objs libf
 
-SCROLLUP.obj: SCROLLUP.C
-	bcc +$(CFG) -B -n$(OBJDIR) SCROLLUP.C
+scrollup.obj: scrollup.c
+	bcc +$(cfg) -b -n$(objdir) scrollup.c
 
-DIRS:
-	-if not exist $(ROOT)\NUL md $(ROOT)
-	-if not exist $(ROOT)\$(BRANCH)\NUL md $(ROOT)\$(BRANCH)
-	-if not exist $(ROOT)\$(BRANCH)\SDK\NUL md $(ROOT)\$(BRANCH)\SDK
-	-if not exist $(SDK)\NUL md $(SDK)
-	-if not exist $(LIBDIR)\NUL md $(LIBDIR)
-	-if not exist $(SDK)\OBJ\NUL md $(SDK)\OBJ
-	-if not exist $(SDK)\OBJ\$(SUBDIR)\NUL md $(SDK)\OBJ\$(SUBDIR)
-	-if not exist $(OBJDIR)\NUL md $(OBJDIR)
+dirs:
+	-if not exist $(root)\nul md $(root)
+	-if not exist $(root)\$(branch)\nul md $(root)\$(branch)
+	-if not exist $(root)\$(branch)\sdk\nul md $(root)\$(branch)\sdk
+	-if not exist $(sdk)\nul md $(sdk)
+	-if not exist $(libdir)\nul md $(libdir)
+	-if not exist $(sdk)\obj\nul md $(sdk)\obj
+	-if not exist $(sdk)\obj\$(subdir)\nul md $(sdk)\obj\$(subdir)
+	-if not exist $(objdir)\nul md $(objdir)
 
-OBJS: ANSI.obj \
-	BOX.obj \
-	BOXCLS.obj \
-	CLS.obj \
-	CLSBOX.obj \
-	CLSCOLOR.obj \
-	CURSOR.obj \
-	DATESTR.obj \
-	DELAY.obj \
-	DELETE.obj \
-	FASTPUTC.obj \
-	GETMODE.obj \
-	GETSEC.obj \
-	GIVEUP.obj \
-	GOTOXY.obj \
-	GROWBOX.obj \
-	INSERT.obj \
-	PRINT.obj \
-	PRINTV.obj \
-	PRNTCNTR.obj \
-	PRNTMOVE.obj \
-	READSCR2.obj \
-	READSCRN.obj \
-	SAVEREST.obj \
-	SAVERST2.obj \
-	SCROLLDN.obj \
-	SCROLLUP.obj \
-	SETATT.obj \
-	SETFONT.obj \
-	SETROWS.obj \
-	SOUND.obj \
-	TIME1.obj \
-	TIME2.obj \
-	TIMECHNG.obj \
-	TWODIG.obj \
-	TWODIG0.obj \
-	WHEREX.obj \
-	WHEREY.obj \
-	WINDOW.obj
+objs: ansi.obj \
+	box.obj \
+	boxcls.obj \
+	cls.obj \
+	clsbox.obj \
+	clscolor.obj \
+	cursor.obj \
+	datestr.obj \
+	delay.obj \
+	delete.obj \
+	fastputc.obj \
+	getmode.obj \
+	getsec.obj \
+	giveup.obj \
+	gotoxy.obj \
+	growbox.obj \
+	insert.obj \
+	print.obj \
+	printv.obj \
+	prntcntr.obj \
+	prntmove.obj \
+	readscr2.obj \
+	readscrn.obj \
+	saverest.obj \
+	saverst2.obj \
+	scrolldn.obj \
+	scrollup.obj \
+	setatt.obj \
+	setfont.obj \
+	setrows.obj \
+	sound.obj \
+	time1.obj \
+	time2.obj \
+	timechng.obj \
+	twodig.obj \
+	twodig0.obj \
+	wherex.obj \
+	wherey.obj \
+	window.obj
 
-LIBF:
-	-if exist $(LIBFILE) del $(LIBFILE)
-	tlib $(LIBFILE) +$(OBJDIR)\ANSI
-	tlib $(LIBFILE) +$(OBJDIR)\BOX
-	tlib $(LIBFILE) +$(OBJDIR)\BOXCLS
-	tlib $(LIBFILE) +$(OBJDIR)\CLS
-	tlib $(LIBFILE) +$(OBJDIR)\CLSBOX
-	tlib $(LIBFILE) +$(OBJDIR)\CLSCOLOR
-	tlib $(LIBFILE) +$(OBJDIR)\CURSOR
-	tlib $(LIBFILE) +$(OBJDIR)\DATESTR
-	tlib $(LIBFILE) +$(OBJDIR)\DELAY
-	tlib $(LIBFILE) +$(OBJDIR)\DELETE
-	tlib $(LIBFILE) +$(OBJDIR)\FASTPUTC
-	tlib $(LIBFILE) +$(OBJDIR)\GETMODE
-	tlib $(LIBFILE) +$(OBJDIR)\GETSEC
-	tlib $(LIBFILE) +$(OBJDIR)\GIVEUP
-	tlib $(LIBFILE) +$(OBJDIR)\GOTOXY
-	tlib $(LIBFILE) +$(OBJDIR)\GROWBOX
-	tlib $(LIBFILE) +$(OBJDIR)\INSERT
-	tlib $(LIBFILE) +$(OBJDIR)\PRINT
-	tlib $(LIBFILE) +$(OBJDIR)\PRINTV
-	tlib $(LIBFILE) +$(OBJDIR)\PRNTCNTR
-	tlib $(LIBFILE) +$(OBJDIR)\PRNTMOVE
-	tlib $(LIBFILE) +$(OBJDIR)\READSCR2
-	tlib $(LIBFILE) +$(OBJDIR)\READSCRN
-	tlib $(LIBFILE) +$(OBJDIR)\SAVEREST
-	tlib $(LIBFILE) +$(OBJDIR)\SAVERST2
-	tlib $(LIBFILE) +$(OBJDIR)\SCROLLDN
-	tlib $(LIBFILE) +$(OBJDIR)\SCROLLUP
-	tlib $(LIBFILE) +$(OBJDIR)\SETATT
-	tlib $(LIBFILE) +$(OBJDIR)\SETFONT
-	tlib $(LIBFILE) +$(OBJDIR)\SETROWS
-	tlib $(LIBFILE) +$(OBJDIR)\SOUND
-	tlib $(LIBFILE) +$(OBJDIR)\TIME1
-	tlib $(LIBFILE) +$(OBJDIR)\TIME2
-	tlib $(LIBFILE) +$(OBJDIR)\TIMECHNG
-	tlib $(LIBFILE) +$(OBJDIR)\TWODIG
-	tlib $(LIBFILE) +$(OBJDIR)\TWODIG0
-	tlib $(LIBFILE) +$(OBJDIR)\WHEREX
-	tlib $(LIBFILE) +$(OBJDIR)\WHEREY
-	tlib $(LIBFILE) +$(OBJDIR)\WINDOW
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+libf:
+	-if exist $(libfile) del $(libfile)
+	tlib $(libfile) +$(objdir)\ansi
+	tlib $(libfile) +$(objdir)\box
+	tlib $(libfile) +$(objdir)\boxcls
+	tlib $(libfile) +$(objdir)\cls
+	tlib $(libfile) +$(objdir)\clsbox
+	tlib $(libfile) +$(objdir)\clscolor
+	tlib $(libfile) +$(objdir)\cursor
+	tlib $(libfile) +$(objdir)\datestr
+	tlib $(libfile) +$(objdir)\delay
+	tlib $(libfile) +$(objdir)\delete
+	tlib $(libfile) +$(objdir)\fastputc
+	tlib $(libfile) +$(objdir)\getmode
+	tlib $(libfile) +$(objdir)\getsec
+	tlib $(libfile) +$(objdir)\giveup
+	tlib $(libfile) +$(objdir)\gotoxy
+	tlib $(libfile) +$(objdir)\growbox
+	tlib $(libfile) +$(objdir)\insert
+	tlib $(libfile) +$(objdir)\print
+	tlib $(libfile) +$(objdir)\printv
+	tlib $(libfile) +$(objdir)\prntcntr
+	tlib $(libfile) +$(objdir)\prntmove
+	tlib $(libfile) +$(objdir)\readscr2
+	tlib $(libfile) +$(objdir)\readscrn
+	tlib $(libfile) +$(objdir)\saverest
+	tlib $(libfile) +$(objdir)\saverst2
+	tlib $(libfile) +$(objdir)\scrolldn
+	tlib $(libfile) +$(objdir)\scrollup
+	tlib $(libfile) +$(objdir)\setatt
+	tlib $(libfile) +$(objdir)\setfont
+	tlib $(libfile) +$(objdir)\setrows
+	tlib $(libfile) +$(objdir)\sound
+	tlib $(libfile) +$(objdir)\time1
+	tlib $(libfile) +$(objdir)\time2
+	tlib $(libfile) +$(objdir)\timechng
+	tlib $(libfile) +$(objdir)\twodig
+	tlib $(libfile) +$(objdir)\twodig0
+	tlib $(libfile) +$(objdir)\wherex
+	tlib $(libfile) +$(objdir)\wherey
+	tlib $(libfile) +$(objdir)\window
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak
 
-CLEAN:
-	-if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-	-if exist $(OBJDIR)\*.asm del $(OBJDIR)\*.asm
-	-if exist $(LIBFILE) del $(LIBFILE)
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+clean:
+	-if exist $(objdir)\*.obj del $(objdir)\*.obj
+	-if exist $(objdir)\*.asm del $(objdir)\*.asm
+	-if exist $(libfile) del $(libfile)
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak

@@ -1,115 +1,115 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* PACKFIDO.MAK - Makefile for the PACKFIDO Program                          */
-#* pcbirc crew, 2026-09-23.  GPLv3.                                          */
+#* packfido.mak - makefile for the packfido program                          */
+#* pcbirc crew, 2026-09-23.  gplv3.                                          */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 #=============================================================
 #
-#       PACKFIDO.MAK - Makefile for PACKFIDO Program
+#       packfido.mak - makefile for packfido program
 #
-#       Packs AREAS.DAT, the 15.22-and-later FIDO area file.
-#       This is the 15.4 upgrade Clark never shipped; the
-#       PACKFIDO.EXE in the install set is a 15.21 tool.
-#       See PACKFIDO.DOC.
+#       packs areas.dat, the 15.22-and-later fido area file.
+#       this is the 15.4 upgrade clark never shipped; the
+#       packfido.exe in the install set is a 15.21 tool.
+#       see packfido.doc.
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = PACKFIDO
+progname = packfido
 
-ROOT     = \OUT
-SOURCE   = .
-OBJDIR   = $(BCCOMPILER)
+root     = \out
+source   = .
+objdir   = $(bccompiler)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = s
+mdl      = s
 
-INCLUDEPATH = $(INCLUDE)
+includepath = $(include)
 
 #=============================================================
 #
-#  NO LIBRARIES.  Every other utility in this tree links the
+#  no libraries.  every other utility in this tree links the
 #  category libraries; this one links none, and that is
 #  deliberate rather than an omission.
 #
-#  It opens AREAS.DAT, CNAMES.@@@ and CNAMES.ADD with plain
+#  it opens areas.dat, cnames.@@@ and cnames.add with plain
 #  open/read/lseek and takes its three parameters on the
 #  command line, so it has no dependency on the toolkit at
-#  all.  That means it builds and runs today, on any of the
+#  all.  that means it builds and runs today, on any of the
 #  three compilers, without waiting on the small-model
 #  category libraries that are still outstanding - and it can
-#  be pointed at a COPY of a live AREAS.DAT, which is the only
+#  be pointed at a copy of a live areas.dat, which is the only
 #  way to test a program that has no shipped binary to be
 #  compared against.
 #
-#  Clark's own PACKFIDO took no arguments: it read PCBOARD.DAT
+#  clark's own packfido took no arguments: it read pcboard.dat
 #  from the current directory and found everything from there.
-#  Matching that is a later step and needs the kit - see
-#  pcb153\SOURCE\MISC\PACKFIDO\PACKFIDO.MAK, which does link it.
+#  matching that is a later step and needs the kit - see
+#  pcb153\source\misc\packfido\packfido.mak, which does link it.
 #
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c -m$(MDL) -n$(OBJDIR)
+copt = -c -m$(mdl) -n$(objdir)
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.c   = $(SOURCE)
+.path.obj = $(objdir)
+.path.c   = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(OBJDIR)\packfido.obj
+exe_dependencies = \
+  $(objdir)\packfido.obj
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\packfido.OBJ
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\packfido.obj
+$(objdir)\$(progname)
                 # no map file
 
-c$(MDL).lib
+c$(mdl).lib
 |
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -f-
 -ff-
--C
--K
--G
--O
--Z
+-c
+-k
+-g
+-o
+-z
 -k-
 -d
--I$(INCLUDEPATH)
--L$(LIBPATH)
-| $(CFG)
+-i$(includepath)
+-l$(libpath)
+| $(cfg)
 
 #=============================================================

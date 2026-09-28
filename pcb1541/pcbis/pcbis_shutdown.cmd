@@ -1,23 +1,23 @@
-/* pcbis_shutdown.cmd — Stop PCBoard BBS (OS/2) */
-/* Part of pcbrevival (GPL v3.0) */
+/* pcbis_shutdown.cmd — stop pcboard bbs (os/2) */
+/* part of pcbrevival (gpl v3.0) */
 
-call RxFuncAdd 'SysLoadFuncs', 'RexxUtil', 'SysLoadFuncs'
-call SysLoadFuncs
+call rxfuncadd 'sysloadfuncs', 'rexxutil', 'sysloadfuncs'
+call sysloadfuncs
 
-say 'pcbis_shutdown: stopping PCBoard...'
+say 'pcbis_shutdown: stopping pcboard...'
 
-/* Find and kill PCBOARD.EXE */
-/* OS/2 doesn't have taskkill — use PSTAT or KILL */
+/* find and kill pcboard.exe */
+/* os/2 doesn't have taskkill — use pstat or kill */
 '@pstat /c | rxqueue'
 do while queued() > 0
     parse pull line
-    if pos('PCBOARD', translate(line)) > 0 then do
+    if pos('pcboard', translate(line)) > 0 then do
         parse var line pid .
-        if datatype(pid,'W') then do
-            say 'Killing PID' pid
+        if datatype(pid,'w') then do
+            say 'killing pid' pid
             '@kill' pid
         end
     end
 end
 
-say 'PCBoard stopped.'
+say 'pcboard stopped.'

@@ -1,179 +1,179 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBFILER.MAK - Makefile for PCBFILER Program
+#       pcbfiler.mak - makefile for pcbfiler program
 #
 #=============================================================
 
-.NOSILENT
-.AUTODEPEND
+.nosilent
+.autodepend
 
-PROGNAME = PCBFILER
+progname = pcbfiler
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-SOURCE   = SOURCE
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+source   = source
+objdir   = $(bccompiler)
+libroot  = $(root)\lib
+libh     = $(libroot)\h
+liblib   = $(libroot)\bcdos\$(bccompiler)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;\LIBS\VMDATA
+includepath = $(include);$(libh);source;\libs\vmdata
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c
+copt = -c
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
+.path.cpp = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(LIBLIB)\misc\large\swap.obj \
-  $(OBJDIR)\action.obj        \
-  $(OBJDIR)\automove.obj      \
-  $(OBJDIR)\batch.obj         \
-  $(OBJDIR)\confmenu.obj      \
-  $(OBJDIR)\ctod2.obj         \
-  $(OBJDIR)\defaults.obj      \
-  $(OBJDIR)\dircolor.obj      \
-  $(OBJDIR)\dirfiles.obj      \
-  $(OBJDIR)\dupes.obj         \
-  $(OBJDIR)\edit.obj          \
-  $(OBJDIR)\editdirs.obj      \
-  $(OBJDIR)\editor.obj        \
-  $(OBJDIR)\editmove.obj      \
-  $(OBJDIR)\editrule.obj      \
-  $(OBJDIR)\findpath.obj      \
-  $(OBJDIR)\findtext.obj      \
-  $(OBJDIR)\getdiz.obj        \
-  $(OBJDIR)\idx.obj           \
-  $(OBJDIR)\idxname.obj       \
-  $(OBJDIR)\init.obj          \
-  $(OBJDIR)\pcbfiler.obj      \
-  $(OBJDIR)\preedit.obj       \
-  $(OBJDIR)\process.obj       \
-  $(OBJDIR)\readdir.obj       \
-  $(OBJDIR)\savedir.obj       \
-  $(OBJDIR)\scandupe.obj      \
-  $(OBJDIR)\shell.obj         \
-  $(OBJDIR)\showfree.obj      \
-  $(OBJDIR)\sort.obj          \
-  $(OBJDIR)\unique.obj        \
-  $(OBJDIR)\verify.obj        \
-  $(OBJDIR)\zipv.obj          \
-  $(OBJDIR)\arcv.obj          \
-  $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\pcb_$(MDL).lib    \
-  $(LIBLIB)\misc_$(MDL).lib   \
-  $(LIBLIB)\screen_$(MDL).lib \
-  $(LIBLIB)\scrnio_$(MDL).lib \
-  $(LIBLIB)\system_$(MDL).lib \
-  $(LIBLIB)\country$(MDL).lib \
-  \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+exe_dependencies = \
+  $(liblib)\misc\large\swap.obj \
+  $(objdir)\action.obj        \
+  $(objdir)\automove.obj      \
+  $(objdir)\batch.obj         \
+  $(objdir)\confmenu.obj      \
+  $(objdir)\ctod2.obj         \
+  $(objdir)\defaults.obj      \
+  $(objdir)\dircolor.obj      \
+  $(objdir)\dirfiles.obj      \
+  $(objdir)\dupes.obj         \
+  $(objdir)\edit.obj          \
+  $(objdir)\editdirs.obj      \
+  $(objdir)\editor.obj        \
+  $(objdir)\editmove.obj      \
+  $(objdir)\editrule.obj      \
+  $(objdir)\findpath.obj      \
+  $(objdir)\findtext.obj      \
+  $(objdir)\getdiz.obj        \
+  $(objdir)\idx.obj           \
+  $(objdir)\idxname.obj       \
+  $(objdir)\init.obj          \
+  $(objdir)\pcbfiler.obj      \
+  $(objdir)\preedit.obj       \
+  $(objdir)\process.obj       \
+  $(objdir)\readdir.obj       \
+  $(objdir)\savedir.obj       \
+  $(objdir)\scandupe.obj      \
+  $(objdir)\shell.obj         \
+  $(objdir)\showfree.obj      \
+  $(objdir)\sort.obj          \
+  $(objdir)\unique.obj        \
+  $(objdir)\verify.obj        \
+  $(objdir)\zipv.obj          \
+  $(objdir)\arcv.obj          \
+  $(liblib)\dos_$(mdl).lib    \
+  $(liblib)\pcb_$(mdl).lib    \
+  $(liblib)\misc_$(mdl).lib   \
+  $(liblib)\screen_$(mdl).lib \
+  $(liblib)\scrnio_$(mdl).lib \
+  $(liblib)\system_$(mdl).lib \
+  $(liblib)\country$(mdl).lib \
+  \libs\vmdata\bc31_dos\vmdata.lib
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-/o- c0$(MDL).obj+
-/o- $(LIBLIB)\misc\large\swap.obj+
-/o+ $(OBJDIR)\action.obj+
-/o- $(OBJDIR)\automove.obj+
-/o+ $(OBJDIR)\batch.obj+
-/o+ $(OBJDIR)\confmenu.obj+
-/o- $(OBJDIR)\ctod2.obj+
-/o+ $(OBJDIR)\defaults.obj+
-/o+ $(OBJDIR)\dircolor.obj+
-/o+ $(OBJDIR)\dirfiles.obj+
-/o+ $(OBJDIR)\dupes.obj+
-/o- $(OBJDIR)\edit.obj+
-/o+ $(OBJDIR)\editdirs.obj+
-/o+ $(OBJDIR)\editor.obj+
-/o+ $(OBJDIR)\editmove.obj+
-/o+ $(OBJDIR)\editrule.obj+
-/o+ $(OBJDIR)\findpath.obj+
-/o+ $(OBJDIR)\findtext.obj+
-/o- $(OBJDIR)\getdiz.obj+
-/o+ $(OBJDIR)\idx.obj+
-/o- $(OBJDIR)\idxname.obj+
-/o+ $(OBJDIR)\init.obj+
-/o+ $(OBJDIR)\pcbfiler.obj+
-/o+ $(OBJDIR)\preedit.obj+
-/o+ $(OBJDIR)\process.obj+
-/o+ $(OBJDIR)\readdir.obj+
-/o+ $(OBJDIR)\savedir.obj+
-/o+ $(OBJDIR)\scandupe.obj+
-/o+ $(OBJDIR)\shell.obj+
-/o+ $(OBJDIR)\showfree.obj+
-/o+ $(OBJDIR)\sort.obj+
-/o- $(OBJDIR)\unique.obj+
-/o+ $(OBJDIR)\verify.obj+
-/o+ $(OBJDIR)\zipv.obj+
-/o+ $(OBJDIR)\arcv.obj
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+/o- c0$(mdl).obj+
+/o- $(liblib)\misc\large\swap.obj+
+/o+ $(objdir)\action.obj+
+/o- $(objdir)\automove.obj+
+/o+ $(objdir)\batch.obj+
+/o+ $(objdir)\confmenu.obj+
+/o- $(objdir)\ctod2.obj+
+/o+ $(objdir)\defaults.obj+
+/o+ $(objdir)\dircolor.obj+
+/o+ $(objdir)\dirfiles.obj+
+/o+ $(objdir)\dupes.obj+
+/o- $(objdir)\edit.obj+
+/o+ $(objdir)\editdirs.obj+
+/o+ $(objdir)\editor.obj+
+/o+ $(objdir)\editmove.obj+
+/o+ $(objdir)\editrule.obj+
+/o+ $(objdir)\findpath.obj+
+/o+ $(objdir)\findtext.obj+
+/o- $(objdir)\getdiz.obj+
+/o+ $(objdir)\idx.obj+
+/o- $(objdir)\idxname.obj+
+/o+ $(objdir)\init.obj+
+/o+ $(objdir)\pcbfiler.obj+
+/o+ $(objdir)\preedit.obj+
+/o+ $(objdir)\process.obj+
+/o+ $(objdir)\readdir.obj+
+/o+ $(objdir)\savedir.obj+
+/o+ $(objdir)\scandupe.obj+
+/o+ $(objdir)\shell.obj+
+/o+ $(objdir)\showfree.obj+
+/o+ $(objdir)\sort.obj+
+/o- $(objdir)\unique.obj+
+/o+ $(objdir)\verify.obj+
+/o+ $(objdir)\zipv.obj+
+/o+ $(objdir)\arcv.obj
+$(objdir)\$(progname)
                 # no map file
-/o- $(LIBLIB)\dos_$(MDL).lib+
-/o- $(LIBLIB)\pcb_$(MDL).lib+
-/o- $(LIBLIB)\misc_$(MDL).lib+
-/o- $(LIBLIB)\screen_$(MDL).lib+
-/o- $(LIBLIB)\scrnio_$(MDL).lib+
-/o- $(LIBLIB)\system_$(MDL).lib+
-/o- $(LIBLIB)\country$(MDL).lib+
-/o- \LIBS\VMDATA\BC31_DOS\VMDATA.LIB+
-/o- math$(MDL).lib+
+/o- $(liblib)\dos_$(mdl).lib+
+/o- $(liblib)\pcb_$(mdl).lib+
+/o- $(liblib)\misc_$(mdl).lib+
+/o- $(liblib)\screen_$(mdl).lib+
+/o- $(liblib)\scrnio_$(mdl).lib+
+/o- $(liblib)\system_$(mdl).lib+
+/o- $(liblib)\country$(mdl).lib+
+/o- \libs\vmdata\bc31_dos\vmdata.lib+
+/o- math$(mdl).lib+
 /o- emu.lib+
-/o- c$(MDL).lib+
+/o- c$(mdl).lib+
 /o- overlay.lib
 |
 
@@ -183,7 +183,7 @@ $(OBJDIR)\$(PROGNAME)
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -239,22 +239,22 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Vmd
--Y
--Z
+-c
+-k
+-g
+-o
+-p
+-vmd
+-y
+-z
 -k-
 -d
--m$(MDL)
--n$(OBJDIR)
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DVMDATA
--D_FARDATA_=far
-| $(CFG)
+-m$(mdl)
+-n$(objdir)
+-i$(includepath)
+-l$(libpath)
+-dvmdata
+-d_fardata_=far
+| $(cfg)
 
 #=============================================================

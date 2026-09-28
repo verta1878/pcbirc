@@ -1,14 +1,14 @@
 @echo off
-rem PCBTEST.BAT — PCBoard upload file test script
-rem Called by PCBoard after each file upload
+rem pcbtest.bat — pcboard upload file test script
+rem called by pcboard after each file upload
 rem
 rem %1 = full path to uploaded file
-rem %2 = UPLOAD, ATTACH, or TEST
+rem %2 = upload, attach, or test
 rem %3 = upload description file path
 rem %4 = original filename
 rem
-rem Exit: creates PCBFAIL.TXT if file fails
-rem       creates PCBPASS.TXT if file passes
+rem exit: creates pcbfail.txt if file fails
+rem       creates pcbpass.txt if file passes
 
 pcbpscan %1 %2 %3 %4
-if errorlevel 1 echo File failed testing > PCBFAIL.TXT
+if errorlevel 1 echo file failed testing > pcbfail.txt

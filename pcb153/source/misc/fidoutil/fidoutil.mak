@@ -1,103 +1,103 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       FIDOUTIL.MAK - Makefile for FIDOUTIL Program
+#       fidoutil.mak - makefile for fidoutil program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = FIDOUTIL
+progname = fidoutil
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = $(BCCOMPILER)
+!ifndef cver
+cver     = $(bccompiler)
 !endif
-!ifndef SRC
-SRC      = \PCB153
+!ifndef src
+src      = \pcb153
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
-!ifndef LIBSDIR
-LIBSDIR  = \PCBCBASE
+!ifndef libsdir
+libsdir  = \pcbcbase
 !endif
-OUTDIR   = $(ROOT)\$(BRANCH)
-SDK      = $(OUTDIR)\SDK\$(CVER)
-SDKLIB   = $(SDK)\LIB
-SDKOBJ   = $(SDK)\OBJ
-SOURCE   = SOURCE
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(TKIT)
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(SDKLIB)
+outdir   = $(root)\$(branch)
+sdk      = $(outdir)\sdk\$(cver)
+sdklib   = $(sdk)\lib
+sdkobj   = $(sdk)\obj
+source   = source
+objdir   = $(bccompiler)
+libroot  = $(tkit)
+libh     = $(libroot)\h
+liblib   = $(sdklib)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(SRC)\SOURCE\H;$(SRC)\SOURCE\UUCP\COMMON
+includepath = $(include);$(libh);source;$(src)\source\h;$(src)\source\uucp\common
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c
+copt = -c
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
+.path.cpp = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
+exe_dependencies = \
   analize.obj   \
   ci_build.obj  \
   convert.obj   \
@@ -108,69 +108,69 @@ EXE_DEPENDENCIES = \
   pcbfu.obj     \
   ptsetup.obj   \
   report.obj    \
-  $(SDKOBJ)\dos\large\showerr2.obj \
-  $(LIBLIB)\dos_$(MDL).lib          \
-  $(LIBLIB)\doscls_$(MDL).lib       \
-  $(LIBLIB)\pcb_$(MDL).lib          \
-  $(LIBLIB)\misc_$(MDL).lib         \
-  $(LIBLIB)\screen_$(MDL).lib       \
-  $(LIBLIB)\scrnio_$(MDL).lib       \
-  $(LIBLIB)\system_$(MDL).lib       \
-  $(LIBLIB)\country$(MDL).lib       \
-  $(SDKLIB)\VMDATA_L.LIB
+  $(sdkobj)\dos\large\showerr2.obj \
+  $(liblib)\dos_$(mdl).lib          \
+  $(liblib)\doscls_$(mdl).lib       \
+  $(liblib)\pcb_$(mdl).lib          \
+  $(liblib)\misc_$(mdl).lib         \
+  $(liblib)\screen_$(mdl).lib       \
+  $(liblib)\scrnio_$(mdl).lib       \
+  $(liblib)\system_$(mdl).lib       \
+  $(liblib)\country$(mdl).lib       \
+  $(sdklib)\vmdata_l.lib
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\analize.obj+
-$(OBJDIR)\ci_build.obj+
-$(OBJDIR)\convert.obj+
-$(OBJDIR)\data.obj+
-$(OBJDIR)\fidonet.obj+
-$(OBJDIR)\maint.obj+
-#$(OBJDIR)\packfido.obj+
-$(OBJDIR)\passthru.obj+
-$(OBJDIR)\pcbfu.obj+
-$(OBJDIR)\ptsetup.obj+
-$(OBJDIR)\report.obj+
-$(SDKOBJ)\dos\large\showerr2.obj
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\analize.obj+
+$(objdir)\ci_build.obj+
+$(objdir)\convert.obj+
+$(objdir)\data.obj+
+$(objdir)\fidonet.obj+
+$(objdir)\maint.obj+
+#$(objdir)\packfido.obj+
+$(objdir)\passthru.obj+
+$(objdir)\pcbfu.obj+
+$(objdir)\ptsetup.obj+
+$(objdir)\report.obj+
+$(sdkobj)\dos\large\showerr2.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\scrnio_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-$(SDKLIB)\VMDATA_L.LIB+
-math$(MDL).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\scrnio_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+$(sdklib)\vmdata_l.lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib+
+c$(mdl).lib+
 |
 
 #=============================================================
 
 # rules for individual files where necessary
 
-ci_build.obj: $(SRC)\SOURCE\UTIL\PCBSETUP\SOURCE\CI_BUILD.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\UTIL\PCBSETUP\SOURCE\CI_BUILD.C
+ci_build.obj: $(src)\source\util\pcbsetup\source\ci_build.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(src)\source\util\pcbsetup\source\ci_build.c
 
-data.obj: $(SRC)\SOURCE\FIDO\data.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\data.cpp
+data.obj: $(src)\source\fido\data.cpp
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(src)\source\fido\data.cpp
 
-#packfido.obj: $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
-#  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
+#packfido.obj: $(src)\source\misc\packfido\packfido.c
+#  $(compiler) +$(cfg) $(copt) $(codeopt) $(src)\source\misc\packfido\packfido.c
 
-passthru.obj: $(SRC)\SOURCE\FIDO\passthru.cpp
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(SRC)\SOURCE\FIDO\passthru.cpp
+passthru.obj: $(src)\source\fido\passthru.cpp
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(src)\source\fido\passthru.cpp
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -226,59 +226,59 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Vmd
--Y
--Z
+-c
+-k
+-g
+-o
+-p
+-vmd
+-y
+-z
 -k-
 -d
--m$(MDL)
--n$(OBJDIR)
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DPCBSETUP;QUIET_BUILD;FIDO;PCBFU;
--DFIDOUTIL
-| $(CFG)
+-m$(mdl)
+-n$(objdir)
+-i$(includepath)
+-l$(libpath)
+-dpcbsetup;quiet_build;fido;pcbfu;
+-dfidoutil
+| $(cfg)
 
 #=============================================================
 
 
 
 #=============================================================
-#       CLEAN - remove everything this makefile produces
+#       clean - remove everything this makefile produces
 #=============================================================
 
-CLEAN:
-  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
-  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
-  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
-  -if exist $(CFG) del $(CFG)
+clean:
+  -if exist $(objdir)\*.obj del $(objdir)\*.obj
+  -if exist $(objdir)\*.map del $(objdir)\*.map
+  -if exist $(objdir)\*.res del $(objdir)\*.res
+  -if exist $(objdir)\$(progname).exe del $(objdir)\$(progname).exe
+  -if exist $(cfg) del $(cfg)
 
 
 #=============================================================
-# PACKFIDO AND FIDOUTIL - why the three packfido lines above are
+# packfido and fidoutil - why the three packfido lines above are
 # commented out, 2026-09-23.
 #
-# They had been re-enabled and repointed at
-#     $(SRC)\SOURCE\MISC\PACKFIDO\PACKFIDO.C
-# which is a reconstruction of Clark's standalone PACKFIDO.EXE.  That
-# cannot be linked into FIDOUTIL.EXE:
+# they had been re-enabled and repointed at
+#     $(src)\source\misc\packfido\packfido.c
+# which is a reconstruction of clark's standalone packfido.exe.  that
+# cannot be linked into fidoutil.exe:
 #
-#   - it is a PROGRAM.  It has main().  FIDOUTIL has its own, and two
+#   - it is a program.  it has main().  fidoutil has its own, and two
 #     in one image is a link error.
-#   - FIDOUTIL does not want a program.  packfido.obj supplied exactly
-#     one symbol, do_pack(), declared at CONVERT.CPP:54 - and the only
-#     call to it, at CONVERT.CPP:125, is itself commented out.
-#   - the model does not match either.  The reconstruction is small
-#     model and compiled as C++ for the kit; this makefile is $(MDL).
+#   - fidoutil does not want a program.  packfido.obj supplied exactly
+#     one symbol, do_pack(), declared at convert.cpp:54 - and the only
+#     call to it, at convert.cpp:125, is itself commented out.
+#   - the model does not match either.  the reconstruction is small
+#     model and compiled as c++ for the kit; this makefile is $(mdl).
 #
-# FIDOUTIL.EXE builds without it, and always did.  Re-enabling it means
-# writing a do_pack() MODULE, not compiling the program.  The
+# fidoutil.exe builds without it, and always did.  re-enabling it means
+# writing a do_pack() module, not compiling the program.  the
 # reconstructions and what is known about them are in
-#     pcb153\SOURCE\MISC\PACKFIDO\README.md
+#     pcb153\source\misc\packfido\readme.md
 #=============================================================

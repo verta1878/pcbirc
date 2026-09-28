@@ -1,74 +1,74 @@
 #!/bin/bash
 # ============================================================================
-#  PCBoard 15.4 OS/2 Build -- OpenWatcom Cross-Compile
-#  Builds PCBOARD2.EXE from Linux/Windows WITHOUT an OS/2 VM
+#  pcboard 15.4 os/2 build -- openwatcom cross-compile
+#  builds pcboard2.exe from linux/windows without an os/2 vm
 #
-#  Prerequisites:
-#    - OpenWatcom 2.0 (https://github.com/open-watcom/open-watcom-v2)
-#    - OS/2 Toolkit headers (os2tk45 or included with OpenWatcom)
-#    - PCBoard 15.4 source tree
-#    - WATCOMPAT.H in LIB/H/
+#  prerequisites:
+#    - openwatcom 2.0 (https://github.com/open-watcom/open-watcom-v2)
+#    - os/2 toolkit headers (os2tk45 or included with openwatcom)
+#    - pcboard 15.4 source tree
+#    - watcompat.h in lib/h/
 #
-#  Source compatibility analysis:
-#    - 0 inline asm blocks (pure C/C++)
-#    - 315 __OS2__ conditional blocks (well-separated)
-#    - 8 #pragma option (Borland) -- wrapped in #ifdef __BORLANDC__
-#    - 8 Borland headers (alloc.h, dir.h, mem.h) -- Watcom equivalents exist
-#    - 413 LIBENTRY/pascal calls -- LIBENTRY=empty in OS/2 mode
-#    - WATCOMPAT.H bridges all Borland→Watcom differences
+#  source compatibility analysis:
+#    - 0 inline asm blocks (pure c/c++)
+#    - 315 __os2__ conditional blocks (well-separated)
+#    - 8 #pragma option (borland) -- wrapped in #ifdef __borlandc__
+#    - 8 borland headers (alloc.h, dir.h, mem.h) -- watcom equivalents exist
+#    - 413 libentry/pascal calls -- libentry=empty in os/2 mode
+#    - watcompat.h bridges all borland→watcom differences
 #
-#  Key Watcom flags for OS/2 32-bit flat model:
-#    -bt=os2v2     OS/2 2.x target
-#    -mf           flat memory model (same as BCOS2 -sm)
-#    -5            Pentium optimization (same as BCOS2 -5)
+#  key watcom flags for os/2 32-bit flat model:
+#    -bt=os2v2     os/2 2.x target
+#    -mf           flat memory model (same as bcos2 -sm)
+#    -5            pentium optimization (same as bcos2 -5)
 #    -ox           full optimization
-#    -zp1          pack structs on 1-byte boundary (same as BCOS2 -a)
+#    -zp1          pack structs on 1-byte boundary (same as bcos2 -a)
 #    -ei           force enums to int
-#    -ecw          use cdecl calling convention (Borland default)
+#    -ecw          use cdecl calling convention (borland default)
 #
-#  Usage: ./BUILD_OS2_OW.SH
-#  Output: OUT/OS2/PCBOARD2.EXE
+#  usage: ./build_os2_ow.sh
+#  output: out/os2/pcboard2.exe
 # ============================================================================
 
 set -e
 
-WATCOM=${WATCOM:-/opt/watcom}
-export WATCOM
-export PATH=$WATCOM/binl64:$PATH
-export INCLUDE="$WATCOM/h:$WATCOM/h/os2"
+watcom=${watcom:-/opt/watcom}
+export watcom
+export path=$watcom/binl64:$path
+export include="$watcom/h:$watcom/h/os2"
 
-SRCDIR="pcb154/pcb153/SOURCE"
-LIBH="pcb154/toolkit-src/H"
-SRCH="$SRCDIR/H"
-OUTDIR="OUT/OS2"
-OBJDIR="OBJ/OS2"
+srcdir="pcb154/pcb153/source"
+libh="pcb154/toolkit-src/h"
+srch="$srcdir/h"
+outdir="out/os2"
+objdir="obj/os2"
 
-mkdir -p "$OUTDIR" "$OBJDIR"
+mkdir -p "$outdir" "$objdir"
 
-CC="wcc386"
-CFLAGS="-bt=os2v2 -mf -5 -ox -zp1 -ei -ecw -d__OS2__ -dPCB152 -dPCB153"
-CFLAGS="$CFLAGS -d___USE_VAR___ -d___EXEC___ -dDBASE -dCOMM -dMULTIPORT"
-CFLAGS="$CFLAGS -dOSDRIVER -dPCBSTATS -dPCBCOMM -dFIDO -dMG -dTOSSCLASS"
-CFLAGS="$CFLAGS -dBIGNDX -dKBD3 -dNDEBUG"
-CFLAGS="$CFLAGS -I$WATCOM/h -I$WATCOM/h/os2 -I$LIBH -I$SRCH"
-CFLAGS="$CFLAGS -fo=$OBJDIR/"
+cc="wcc386"
+cflags="-bt=os2v2 -mf -5 -ox -zp1 -ei -ecw -d__os2__ -dpcb152 -dpcb153"
+cflags="$cflags -d___use_var___ -d___exec___ -ddbase -dcomm -dmultiport"
+cflags="$cflags -dosdriver -dpcbstats -dpcbcomm -dfido -dmg -dtossclass"
+cflags="$cflags -dbigndx -dkbd3 -dndebug"
+cflags="$cflags -i$watcom/h -i$watcom/h/os2 -i$libh -i$srch"
+cflags="$cflags -fo=$objdir/"
 
 echo "============================================================================"
-echo " PCBoard 15.4 OS/2 Build (OpenWatcom Cross-Compile)"
+echo " pcboard 15.4 os/2 build (openwatcom cross-compile)"
 echo "============================================================================"
 echo ""
-echo "NOTE: This is a PORTING effort. The source was written for BCOS2."
-echo "      WATCOMPAT.H handles most differences but manual fixes may be needed."
-echo "      See PCB154_BUILD_GUIDE.md for details on Borland→Watcom differences."
+echo "note: this is a porting effort. the source was written for bcos2."
+echo "      watcompat.h handles most differences but manual fixes may be needed."
+echo "      see pcb154_build_guide.md for details on borland→watcom differences."
 echo ""
-echo "Compiler: $CC"
-echo "Flags: $CFLAGS"
+echo "compiler: $cc"
+echo "flags: $cflags"
 echo ""
 
-# Compile would go here — each source file needs individual attention
-# for Borland→Watcom compatibility fixes.
-echo "TODO: Compile 100+ source files with Watcom compatibility"
-echo "      Start with: wcc386 $CFLAGS pcb154/pcb153/SOURCE/pcb153/PCBOARD.C"
+# compile would go here — each source file needs individual attention
+# for borland→watcom compatibility fixes.
+echo "todo: compile 100+ source files with watcom compatibility"
+echo "      start with: wcc386 $cflags pcb154/pcb153/source/pcb153/pcboard.c"
 echo ""
-echo "The OpenWatcom path is VIABLE but requires file-by-file porting."
-echo "See WATCOMPAT.H for the bridge macros."
+echo "the openwatcom path is viable but requires file-by-file porting."
+echo "see watcompat.h for the bridge macros."

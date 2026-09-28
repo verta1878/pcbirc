@@ -1,117 +1,117 @@
 @echo off
 rem ---------------------------------------------------------------
-rem BLDTKOS2.CMD - build the PCBoard toolkit category libraries
-rem                for OS/2 (OpenWatcom 2.0, flat model)
+rem bldtkos2.cmd - build the pcboard toolkit category libraries
+rem                for os/2 (openwatcom 2.0, flat model)
 rem
-rem   BLDTKOS2              build all ten libraries
-rem   BLDTKOS2 CLEAN        delete the objects and the libraries
-rem   BLDTKOS2 <CATEGORY>   one of COUNTRY DOS DOSCLS MISC PCB
-rem                         SCREEN SCRNIO SYSTEM TOOLKIT VMDATA
+rem   bldtkos2              build all ten libraries
+rem   bldtkos2 clean        delete the objects and the libraries
+rem   bldtkos2 <category>   one of country dos doscls misc pcb
+rem                         screen scrnio system toolkit vmdata
 rem
-rem Each category is built with MAKE -fTKLIBOS2.MAK in its own folder.
-rem If TKLIBOS2.MAK does not exist yet, the script stops with a message.
+rem each category is built with make -ftklibos2.mak in its own folder.
+rem if tklibos2.mak does not exist yet, the script stops with a message.
 rem
-rem Output:  \OUT\DELTA154\SDK\OW2\LIB\*.LIB
-rem Objects: \OUT\DELTA154\SDK\OW2\OBJ\<category>
+rem output:  \out\delta154\sdk\ow2\lib\*.lib
+rem objects: \out\delta154\sdk\ow2\obj\<category>
 rem
-rem Run it from the repo root.  The repo folder is mounted as the
-rem drive root, so \OUT, \TOOLKIT and \OW2 are all inside the repo.
+rem run it from the repo root.  the repo folder is mounted as the
+rem drive root, so \out, \toolkit and \ow2 are all inside the repo.
 rem
-rem Compiler: OpenWatcom 2.0.  %WATCOM% if set, else \WATCOM.
-rem Log it with:  BLDTKOS2 > \OUT\TKOS2.LOG
+rem compiler: openwatcom 2.0.  %watcom% if set, else \watcom.
+rem log it with:  bldtkos2 > \out\tkos2.log
 rem
-rem No CALL :label anywhere - this has to run under COMMAND.COM.
+rem no call :label anywhere - this has to run under command.com.
 rem ---------------------------------------------------------------
 
-if not exist \APPLY.txt goto NOROOT
+if not exist \apply.txt goto noroot
 
-set TKWC=%WATCOM%
-if not "%TKWC%"=="" goto GOTWC
-if exist \WATCOM\BINW\WCC386.EXE set TKWC=\WATCOM
-if "%TKWC%"=="" goto NOWCC
-:GOTWC
-set PATH=%TKWC%\BINW;%PATH%
-set INCLUDE=%TKWC%\H;%TKWC%\H\OS2
+set tkwc=%watcom%
+if not "%tkwc%"=="" goto gotwc
+if exist \watcom\binw\wcc386.exe set tkwc=\watcom
+if "%tkwc%"=="" goto nowcc
+:gotwc
+set path=%tkwc%\binw;%path%
+set include=%tkwc%\h;%tkwc%\h\os2
 
 rem --- create output directories if missing
-if not exist \OUT\NUL mkdir \OUT
-if not exist \OUT\DELTA154\NUL mkdir \OUT\DELTA154
-if not exist \OUT\DELTA154\SDK\NUL mkdir \OUT\DELTA154\SDK
-if not exist \OUT\DELTA154\SDK\OW2\NUL mkdir \OUT\DELTA154\SDK\OW2
-if not exist \OUT\DELTA154\SDK\OW2\LIB\NUL mkdir \OUT\DELTA154\SDK\OW2\LIB
-if not exist \OUT\DELTA154\SDK\OW2\OBJ\NUL mkdir \OUT\DELTA154\SDK\OW2\OBJ
+if not exist \out\nul mkdir \out
+if not exist \out\delta154\nul mkdir \out\delta154
+if not exist \out\delta154\sdk\nul mkdir \out\delta154\sdk
+if not exist \out\delta154\sdk\ow2\nul mkdir \out\delta154\sdk\ow2
+if not exist \out\delta154\sdk\ow2\lib\nul mkdir \out\delta154\sdk\ow2\lib
+if not exist \out\delta154\sdk\ow2\obj\nul mkdir \out\delta154\sdk\ow2\obj
 
-set TKACT=all
-if "%1"=="CLEAN" set TKACT=CLEAN
-if "%1"=="clean" set TKACT=CLEAN
+set tkact=all
+if "%1"=="clean" set tkact=clean
+if "%1"=="clean" set tkact=clean
 
-if "%1"=="" goto ALL
-if "%TKACT%"=="CLEAN" goto ALL
-set TKONE=%1
-goto ONE
+if "%1"=="" goto all
+if "%tkact%"=="clean" goto all
+set tkone=%1
+goto one
 
-:ONE
-if not exist \TOOLKIT\DELTA154\SOURCE\%TKONE%\TKLIBOS2.MAK goto NOMAK
-cd \TOOLKIT\DELTA154\SOURCE\%TKONE%
-echo === %TKONE% (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
+:one
+if not exist \toolkit\delta154\source\%tkone%\tklibos2.mak goto nomak
+cd \toolkit\delta154\source\%tkone%
+echo === %tkone% (os/2) ===
+make -ftklibos2.mak %tkact%
 cd \
-goto DONE
+goto done
 
-:ALL
-cd \TOOLKIT\DELTA154\SOURCE\COUNTRY
-echo === COUNTRY (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\DOS
-echo === DOS (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\DOSCLS
-echo === DOSCLS (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\MISC
-echo === MISC (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\PCB
-echo === PCB (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\SCREEN
-echo === SCREEN (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\SCRNIO
-echo === SCRNIO (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\SYSTEM
-echo === SYSTEM (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\TOOLKIT
-echo === TOOLKIT (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
-cd \TOOLKIT\DELTA154\SOURCE\VMDATA
-echo === VMDATA (OS/2) ===
-MAKE -fTKLIBOS2.MAK %TKACT%
+:all
+cd \toolkit\delta154\source\country
+echo === country (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\dos
+echo === dos (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\doscls
+echo === doscls (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\misc
+echo === misc (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\pcb
+echo === pcb (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\screen
+echo === screen (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\scrnio
+echo === scrnio (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\system
+echo === system (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\toolkit
+echo === toolkit (os/2) ===
+make -ftklibos2.mak %tkact%
+cd \toolkit\delta154\source\vmdata
+echo === vmdata (os/2) ===
+make -ftklibos2.mak %tkact%
 cd \
-goto DONE
+goto done
 
-:NOMAK
-echo ERROR: TKLIBOS2.MAK not found in \TOOLKIT\DELTA154\SOURCE\%TKONE%
-echo        Each category needs a TKLIBOS2.MAK for the OS/2 build.
-echo        Copy TKLIB.MAK and change the compiler flags to OW2 flat model.
-goto END
+:nomak
+echo error: tklibos2.mak not found in \toolkit\delta154\source\%tkone%
+echo        each category needs a tklibos2.mak for the os/2 build.
+echo        copy tklib.mak and change the compiler flags to ow2 flat model.
+goto end
 
-:NOWCC
-echo ERROR: OpenWatcom 2.0 not found.
-echo        Looked for %%WATCOM%%, then \WATCOM\BINW\WCC386.EXE.
-goto END
+:nowcc
+echo error: openwatcom 2.0 not found.
+echo        looked for %%watcom%%, then \watcom\binw\wcc386.exe.
+goto end
 
-:NOROOT
-echo ERROR: run BLDTKOS2 from the repo root (\APPLY.txt was not found there).
-goto END
+:noroot
+echo error: run bldtkos2 from the repo root (\apply.txt was not found there).
+goto end
 
-:DONE
+:done
 echo.
-echo Libraries are in \OUT\DELTA154\SDK\OW2\LIB
+echo libraries are in \out\delta154\sdk\ow2\lib
 
-:END
-set TKWC=
-set TKACT=
-set TKONE=
+:end
+set tkwc=
+set tkact=
+set tkone=

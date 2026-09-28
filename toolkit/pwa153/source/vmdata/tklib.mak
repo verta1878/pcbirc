@@ -1,98 +1,98 @@
 #=============================================================
 #
-#       MAKEFILE - VMDATA library for the PCBoard toolkit
+#       makefile - vmdata library for the pcboard toolkit
 #
-#       Builds  $(LIBFILE)  from the sources in this folder.
-#       Objects go to $(OBJDIR) and are kept, so a second MAKE only
-#       recompiles what changed.  MAKE CLEAN removes both.
+#       builds  $(libfile)  from the sources in this folder.
+#       objects go to $(objdir) and are kept, so a second make only
+#       recompiles what changed.  make clean removes both.
 #
-#       WHY THIS FILE EXISTS
+#       why this file exists
 #       --------------------
-#       It did not, until 2026-09-23.  VMAVL.C and VMFUNCS.C sat
-#       loose at SOURCE\ root, in no category folder, and
-#       VMDATA_L.LIB was built BY HAND with bcc and tlib on
-#       2026-09-22.  The library was in CHECKSUMS.sha256, linked by
-#       PCBSM and MAKEIDX, verified -- and unreproducible.  BLDTK
+#       it did not, until 2026-09-23.  vmavl.c and vmfuncs.c sat
+#       loose at source\ root, in no category folder, and
+#       vmdata_l.lib was built by hand with bcc and tlib on
+#       2026-09-22.  the library was in checksums.sha256, linked by
+#       pcbsm and makeidx, verified -- and unreproducible.  bldtk
 #       built nine libraries; the tree needs ten.
 #
-#       NOT CLARK'S CODE.  Clark's virtual-memory library shipped as
-#       \LIBS\VMDATA\BC31_DOS\VMDATA.LIB, which this repo has never
-#       had.  VMFUNCS.C is a crew reimplementation ("Written by:
-#       hexadecimal") and VMAVL.C is the AVL tree beside it.  See
-#       MAIN\build\VMDATA-RECONSTRUCTION.md for the one-based index
+#       not clark's code.  clark's virtual-memory library shipped as
+#       \libs\vmdata\bc31_dos\vmdata.lib, which this repo has never
+#       had.  vmfuncs.c is a crew reimplementation ("written by:
+#       hexadecimal") and vmavl.c is the avl tree beside it.  see
+#       main\build\vmdata-reconstruction.md for the one-based index
 #       contract and the seven no-ops that go live only when a
 #       paging store exists.
 #
-#       Every macro is guarded, so it can be overridden:
-#           make -DCVER=TC201 -DMODEL=SMALL
+#       every macro is guarded, so it can be overridden:
+#           make -dcver=tc201 -dmodel=small
 #
-#       Memory model:
-#           Large (default):  make
-#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#       memory model:
+#           large (default):  make
+#           small:            make -dmdl=s -dmodel=small -dcfgname=tks
 #
-#       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
+#       targets:  all (default) | dirs | objs | libf | clean
 #
 #=============================================================
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = BC31
+!ifndef cver
+cver     = bc31
 !endif
-!ifndef MODEL
-MODEL    = LARGE
+!ifndef model
+model    = large
 !endif
-!ifndef MDL
-MDL      = l
+!ifndef mdl
+mdl      = l
 !endif
-!ifndef CFGNAME
-CFGNAME  = TK
+!ifndef cfgname
+cfgname  = tk
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
 
-SUBDIR   = VMDATA
-LIBNAME  = VMDATA_$(MDL)
-CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\$(CFGNAME).CFG
-SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
-LIBDIR   = $(SDK)\LIB
-OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)
-LIBFILE  = $(LIBDIR)\$(LIBNAME).LIB
+subdir   = vmdata
+libname  = vmdata_$(mdl)
+cfgdir   = $(tkit)\cfg\$(cver)
+cfg      = $(cfgdir)\$(cfgname).cfg
+sdk      = $(root)\$(branch)\sdk\$(cver)
+libdir   = $(sdk)\lib
+objdir   = $(sdk)\obj\$(subdir)\$(model)
+libfile  = $(libdir)\$(libname).lib
 
 .c.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .cpp.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
-all: DIRS OBJS LIBF
+all: dirs objs libf
 
-DIRS:
-	-if not exist $(ROOT)\NUL md $(ROOT)
-	-if not exist $(ROOT)\$(BRANCH)\NUL md $(ROOT)\$(BRANCH)
-	-if not exist $(ROOT)\$(BRANCH)\SDK\NUL md $(ROOT)\$(BRANCH)\SDK
-	-if not exist $(SDK)\NUL md $(SDK)
-	-if not exist $(LIBDIR)\NUL md $(LIBDIR)
-	-if not exist $(SDK)\OBJ\NUL md $(SDK)\OBJ
-	-if not exist $(SDK)\OBJ\$(SUBDIR)\NUL md $(SDK)\OBJ\$(SUBDIR)
-	-if not exist $(OBJDIR)\NUL md $(OBJDIR)
+dirs:
+	-if not exist $(root)\nul md $(root)
+	-if not exist $(root)\$(branch)\nul md $(root)\$(branch)
+	-if not exist $(root)\$(branch)\sdk\nul md $(root)\$(branch)\sdk
+	-if not exist $(sdk)\nul md $(sdk)
+	-if not exist $(libdir)\nul md $(libdir)
+	-if not exist $(sdk)\obj\nul md $(sdk)\obj
+	-if not exist $(sdk)\obj\$(subdir)\nul md $(sdk)\obj\$(subdir)
+	-if not exist $(objdir)\nul md $(objdir)
 
-OBJS: VMAVL.obj \
-	VMFUNCS.obj
+objs: vmavl.obj \
+	vmfuncs.obj
 
-LIBF:
-	-if exist $(LIBFILE) del $(LIBFILE)
-	tlib $(LIBFILE) +$(OBJDIR)\VMAVL
-	tlib $(LIBFILE) +$(OBJDIR)\VMFUNCS
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+libf:
+	-if exist $(libfile) del $(libfile)
+	tlib $(libfile) +$(objdir)\vmavl
+	tlib $(libfile) +$(objdir)\vmfuncs
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak
 
-CLEAN:
-	-if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-	-if exist $(LIBFILE) del $(LIBFILE)
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+clean:
+	-if exist $(objdir)\*.obj del $(objdir)\*.obj
+	-if exist $(libfile) del $(libfile)
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak

@@ -1,26 +1,26 @@
 @echo off
 call \proj\bcdos.bat
 
-set PROGNAME=PCBSETUP
+set progname=pcbsetup
 
-rem  As you move from one compiler to another, the .CFG file needs to
+rem  as you move from one compiler to another, the .cfg file needs to
 rem  be rebuilt because it contains some compiler-specific information within
-rem  it.  To facilitate this, a file called "USED####" will be created in
-rem  the current directory which will look like "USEDBC31" or "USEDTC30" to
-rem  indicate which compiler was last used.  If you are now compiling with
-rem  a different compiler, it will delete the USED* file and create a new
-rem  one and, in the process, it will delete the .CFG file and let the
-rem  .MAK file create a new one.
+rem  it.  to facilitate this, a file called "used####" will be created in
+rem  the current directory which will look like "usedbc31" or "usedtc30" to
+rem  indicate which compiler was last used.  if you are now compiling with
+rem  a different compiler, it will delete the used* file and create a new
+rem  one and, in the process, it will delete the .cfg file and let the
+rem  .mak file create a new one.
 
 if exist used%bccompiler% goto continue
 del used*
-del %PROGNAME%.cfg
-echo Now using %bccompiler%. > used%bccompiler%
+del %progname%.cfg
+echo now using %bccompiler%. > used%bccompiler%
 
 :continue
 
-%MAKE% -f%PROGNAME%.mak > errors
+%make% -f%progname%.mak > errors
 list errors
 
-set PROGNAME=
+set progname=
 

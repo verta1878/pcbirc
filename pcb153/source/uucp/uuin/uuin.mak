@@ -1,300 +1,300 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       UUIN.MAK - Makefile for UUIN Program
+#       uuin.mak - makefile for uuin program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = UUIN
+progname = uuin
 
-#uncomment this line if you want to use TLINK instead of RTLINK
-#USETLINK = 1
+#uncomment this line if you want to use tlink instead of rtlink
+#usetlink = 1
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = $(BCCOMPILER)
+!ifndef cver
+cver     = $(bccompiler)
 !endif
-!ifndef SRC
-SRC      = \PCB153
+!ifndef src
+src      = \pcb153
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
-!ifndef LIBSDIR
-LIBSDIR  = \PCBCBASE
+!ifndef libsdir
+libsdir  = \pcbcbase
 !endif
-OUTDIR   = $(ROOT)\$(BRANCH)
-SDK      = $(OUTDIR)\SDK\$(CVER)
-SDKLIB   = $(SDK)\LIB
-SDKOBJ   = $(SDK)\OBJ
-SOURCE   = .
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(TKIT)
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(SDKLIB)
+outdir   = $(root)\$(branch)
+sdk      = $(outdir)\sdk\$(cver)
+sdklib   = $(sdk)\lib
+sdkobj   = $(sdk)\obj
+source   = .
+objdir   = $(bccompiler)
+libroot  = $(tkit)
+libh     = $(libroot)\h
+liblib   = $(sdklib)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);..\COMMON;$(SRC)\SOURCE\H
+includepath = $(include);$(libh);..\common;$(src)\source\h
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c -m$(MDL) -n$(OBJDIR)
+copt = -c -m$(mdl) -n$(objdir)
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
+.path.cpp = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 {..\common\}.c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 {..\common\}.cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(OBJDIR)\uuin.obj          \
-  $(OBJDIR)\pcbmsg.obj        \
-  $(OBJDIR)\msgbase.obj       \
-  $(OBJDIR)\umwf.obj          \
-  $(OBJDIR)\uucp.obj          \
-  $(OBJDIR)\exprtmsg.obj      \
-  $(OBJDIR)\uudecode.obj      \
-  $(OBJDIR)\uushwerr.obj      \
-  $(OBJDIR)\vmdata.obj        \
-  $(OBJDIR)\decode64.obj      \
-  $(OBJDIR)\decodeq.obj       \
-  $(OBJDIR)\decodem.obj       \
-  $(OBJDIR)\rejects.obj       \
-  $(OBJDIR)\vmdclass.obj      \
-  $(OBJDIR)\dresword.obj      \
-  $(OBJDIR)\ci_other.obj      \
-  $(SDKOBJ)\toolkit\large\nolog.obj    \
-  $(SDKOBJ)\toolkit\large\smalldly.obj \
-  $(LIBLIB)\pcbkit_$(MDL).lib \
-  $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\doscls_$(MDL).lib \
-  $(LIBLIB)\pcb_$(MDL).lib    \
-  $(LIBLIB)\misc_$(MDL).lib   \
-  $(LIBLIB)\screen_$(MDL).lib \
-  $(LIBLIB)\system_$(MDL).lib \
-  $(LIBLIB)\country$(MDL).lib \
-  $(SDKLIB)\VMDATA_L.LIB
+exe_dependencies = \
+  $(objdir)\uuin.obj          \
+  $(objdir)\pcbmsg.obj        \
+  $(objdir)\msgbase.obj       \
+  $(objdir)\umwf.obj          \
+  $(objdir)\uucp.obj          \
+  $(objdir)\exprtmsg.obj      \
+  $(objdir)\uudecode.obj      \
+  $(objdir)\uushwerr.obj      \
+  $(objdir)\vmdata.obj        \
+  $(objdir)\decode64.obj      \
+  $(objdir)\decodeq.obj       \
+  $(objdir)\decodem.obj       \
+  $(objdir)\rejects.obj       \
+  $(objdir)\vmdclass.obj      \
+  $(objdir)\dresword.obj      \
+  $(objdir)\ci_other.obj      \
+  $(sdkobj)\toolkit\large\nolog.obj    \
+  $(sdkobj)\toolkit\large\smalldly.obj \
+  $(liblib)\pcbkit_$(mdl).lib \
+  $(liblib)\dos_$(mdl).lib    \
+  $(liblib)\doscls_$(mdl).lib \
+  $(liblib)\pcb_$(mdl).lib    \
+  $(liblib)\misc_$(mdl).lib   \
+  $(liblib)\screen_$(mdl).lib \
+  $(liblib)\system_$(mdl).lib \
+  $(liblib)\country$(mdl).lib \
+  $(sdklib)\vmdata_l.lib
 
 #=============================================================
 
-!if $d(USETLINK)
-!if $d(BC31)
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuin.obj+
-$(OBJDIR)\pcbmsg.obj+
-$(OBJDIR)\msgbase.obj+
-$(OBJDIR)\umwf.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\exprtmsg.obj+
-$(OBJDIR)\uudecode.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\vmdata.obj+
-$(OBJDIR)\decode64.obj+
-$(OBJDIR)\decodeq.obj+
-$(OBJDIR)\decodem.obj+
-$(OBJDIR)\vmdclass.obj+
-$(OBJDIR)\dresword.obj+
-$(OBJDIR)\ci_other.obj+
+!if $d(usetlink)
+!if $d(bc31)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\uuin.obj+
+$(objdir)\pcbmsg.obj+
+$(objdir)\msgbase.obj+
+$(objdir)\umwf.obj+
+$(objdir)\uucp.obj+
+$(objdir)\exprtmsg.obj+
+$(objdir)\uudecode.obj+
+$(objdir)\uushwerr.obj+
+$(objdir)\vmdata.obj+
+$(objdir)\decode64.obj+
+$(objdir)\decodeq.obj+
+$(objdir)\decodem.obj+
+$(objdir)\vmdclass.obj+
+$(objdir)\dresword.obj+
+$(objdir)\ci_other.obj+
 ..\bc31\stbdsgtn.obj+
 ..\bc31\stbdsptn.obj+
 ..\bc31\stbsgetn.obj+
 ..\bc31\stbsputn.obj+
-$(SDKOBJ)\toolkit\large\nolog.obj+
-$(SDKOBJ)\toolkit\large\smalldly.obj
-$(OBJDIR)\$(PROGNAME)
+$(sdkobj)\toolkit\large\nolog.obj+
+$(sdkobj)\toolkit\large\smalldly.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\pcbkit_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib+
-$(SDKLIB)\VMDATA_L.LIB
+c$(mdl).lib+
+$(sdklib)\vmdata_l.lib
 |
 !else
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuin.obj+
-$(OBJDIR)\pcbmsg.obj+
-$(OBJDIR)\msgbase.obj+
-$(OBJDIR)\umwf.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\exprtmsg.obj+
-$(OBJDIR)\uudecode.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\vmdata.obj+
-$(OBJDIR)\decode64.obj+
-$(OBJDIR)\decodeq.obj+
-$(OBJDIR)\decodem.obj+
-$(OBJDIR)\vmdclass.obj+
-$(OBJDIR)\dresword.obj+
-$(OBJDIR)\ci_other.obj+
-$(SDKOBJ)\toolkit\large\nolog.obj+
-$(SDKOBJ)\toolkit\large\smalldly.obj
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\uuin.obj+
+$(objdir)\pcbmsg.obj+
+$(objdir)\msgbase.obj+
+$(objdir)\umwf.obj+
+$(objdir)\uucp.obj+
+$(objdir)\exprtmsg.obj+
+$(objdir)\uudecode.obj+
+$(objdir)\uushwerr.obj+
+$(objdir)\vmdata.obj+
+$(objdir)\decode64.obj+
+$(objdir)\decodeq.obj+
+$(objdir)\decodem.obj+
+$(objdir)\vmdclass.obj+
+$(objdir)\dresword.obj+
+$(objdir)\ci_other.obj+
+$(sdkobj)\toolkit\large\nolog.obj+
+$(sdkobj)\toolkit\large\smalldly.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\pcbkit_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib+
-$(SDKLIB)\VMDATA_L.LIB
+c$(mdl).lib+
+$(sdklib)\vmdata_l.lib
 |
 !endif
 !else
-!if $d(BC31)
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  RTLINK @&&|
-#TURBODEBUGGER
-SHELLOUT
-OUTPUT $(OBJDIR)\uuin
-#MAP S,N,A,L,V,X
-FILE $(LIBPATH)\c0$(MDL).obj
-FILE $(OBJDIR)\uuin.obj
-FILE $(OBJDIR)\pcbmsg.obj
-FILE $(OBJDIR)\msgbase.obj
-FILE $(OBJDIR)\umwf.obj
-FILE $(OBJDIR)\uucp.obj
-FILE $(OBJDIR)\exprtmsg.obj
-FILE $(OBJDIR)\uudecode.obj
-FILE $(OBJDIR)\uushwerr.obj
-FILE $(OBJDIR)\vmdata.obj
-FILE $(OBJDIR)\decode64.obj
-FILE $(OBJDIR)\decodeq.obj
-FILE $(OBJDIR)\decodem.obj
-FILE $(OBJDIR)\vmdclass.obj
-FILE $(OBJDIR)\dresword.obj
-FILE $(OBJDIR)\ci_other.obj
-FILE ..\bc31\stbdsgtn.obj
-FILE ..\bc31\stbdsptn.obj
-FILE ..\bc31\stbsgetn.obj
-FILE ..\bc31\stbsputn.obj
-FILE $(SDKOBJ)\toolkit\large\nolog.obj
-FILE $(SDKOBJ)\toolkit\large\smalldly.obj
-LIBRARY $(LIBLIB)\system_$(MDL).lib
-LIBRARY $(LIBLIB)\pcbkit_$(MDL).lib
-LIBRARY $(LIBLIB)\dos_$(MDL).lib
-LIBRARY $(LIBLIB)\doscls_$(MDL).lib
-LIBRARY $(LIBLIB)\pcb_$(MDL).lib
-LIBRARY $(LIBLIB)\misc_$(MDL).lib
-LIBRARY $(LIBLIB)\screen_$(MDL).lib
-LIBRARY $(LIBLIB)\country$(MDL).lib
-LIBRARY $(LIBPATH)\math$(MDL).lib
-LIBRARY $(LIBPATH)\emu.lib
-LIBRARY $(LIBPATH)\c$(MDL).lib
-LIBRARY $(SDKLIB)\VMDATA_L.LIB
+!if $d(bc31)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  rtlink @&&|
+#turbodebugger
+shellout
+output $(objdir)\uuin
+#map s,n,a,l,v,x
+file $(libpath)\c0$(mdl).obj
+file $(objdir)\uuin.obj
+file $(objdir)\pcbmsg.obj
+file $(objdir)\msgbase.obj
+file $(objdir)\umwf.obj
+file $(objdir)\uucp.obj
+file $(objdir)\exprtmsg.obj
+file $(objdir)\uudecode.obj
+file $(objdir)\uushwerr.obj
+file $(objdir)\vmdata.obj
+file $(objdir)\decode64.obj
+file $(objdir)\decodeq.obj
+file $(objdir)\decodem.obj
+file $(objdir)\vmdclass.obj
+file $(objdir)\dresword.obj
+file $(objdir)\ci_other.obj
+file ..\bc31\stbdsgtn.obj
+file ..\bc31\stbdsptn.obj
+file ..\bc31\stbsgetn.obj
+file ..\bc31\stbsputn.obj
+file $(sdkobj)\toolkit\large\nolog.obj
+file $(sdkobj)\toolkit\large\smalldly.obj
+library $(liblib)\system_$(mdl).lib
+library $(liblib)\pcbkit_$(mdl).lib
+library $(liblib)\dos_$(mdl).lib
+library $(liblib)\doscls_$(mdl).lib
+library $(liblib)\pcb_$(mdl).lib
+library $(liblib)\misc_$(mdl).lib
+library $(liblib)\screen_$(mdl).lib
+library $(liblib)\country$(mdl).lib
+library $(libpath)\math$(mdl).lib
+library $(libpath)\emu.lib
+library $(libpath)\c$(mdl).lib
+library $(sdklib)\vmdata_l.lib
 |
 !else
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  RTLINK @&&|
-#TURBODEBUGGER
-SHELLOUT
-OUTPUT $(OBJDIR)\uuin
-#MAP S,N,A,L,V,X
-FILE $(LIBPATH)\c0$(MDL).obj
-FILE $(OBJDIR)\uuin.obj
-FILE $(OBJDIR)\pcbmsg.obj
-FILE $(OBJDIR)\msgbase.obj
-FILE $(OBJDIR)\umwf.obj
-FILE $(OBJDIR)\uucp.obj
-FILE $(OBJDIR)\exprtmsg.obj
-FILE $(OBJDIR)\uudecode.obj
-FILE $(OBJDIR)\uushwerr.obj
-FILE $(OBJDIR)\vmdata.obj
-FILE $(OBJDIR)\decode64.obj
-FILE $(OBJDIR)\decodeq.obj
-FILE $(OBJDIR)\decodem.obj
-FILE $(OBJDIR)\vmdclass.obj
-FILE $(OBJDIR)\dresword.obj
-FILE $(OBJDIR)\ci_other.obj
-FILE $(SDKOBJ)\toolkit\large\nolog.obj
-FILE $(SDKOBJ)\toolkit\large\smalldly.obj
-LIBRARY $(LIBLIB)\system_$(MDL).lib
-LIBRARY $(LIBLIB)\pcbkit_$(MDL).lib
-LIBRARY $(LIBLIB)\dos_$(MDL).lib
-LIBRARY $(LIBLIB)\doscls_$(MDL).lib
-LIBRARY $(LIBLIB)\pcb_$(MDL).lib
-LIBRARY $(LIBLIB)\misc_$(MDL).lib
-LIBRARY $(LIBLIB)\screen_$(MDL).lib
-LIBRARY $(LIBLIB)\country$(MDL).lib
-LIBRARY $(LIBPATH)\math$(MDL).lib
-LIBRARY $(LIBPATH)\emu.lib
-LIBRARY $(LIBPATH)\c$(MDL).lib
-LIBRARY $(SDKLIB)\VMDATA_L.LIB
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  rtlink @&&|
+#turbodebugger
+shellout
+output $(objdir)\uuin
+#map s,n,a,l,v,x
+file $(libpath)\c0$(mdl).obj
+file $(objdir)\uuin.obj
+file $(objdir)\pcbmsg.obj
+file $(objdir)\msgbase.obj
+file $(objdir)\umwf.obj
+file $(objdir)\uucp.obj
+file $(objdir)\exprtmsg.obj
+file $(objdir)\uudecode.obj
+file $(objdir)\uushwerr.obj
+file $(objdir)\vmdata.obj
+file $(objdir)\decode64.obj
+file $(objdir)\decodeq.obj
+file $(objdir)\decodem.obj
+file $(objdir)\vmdclass.obj
+file $(objdir)\dresword.obj
+file $(objdir)\ci_other.obj
+file $(sdkobj)\toolkit\large\nolog.obj
+file $(sdkobj)\toolkit\large\smalldly.obj
+library $(liblib)\system_$(mdl).lib
+library $(liblib)\pcbkit_$(mdl).lib
+library $(liblib)\dos_$(mdl).lib
+library $(liblib)\doscls_$(mdl).lib
+library $(liblib)\pcb_$(mdl).lib
+library $(liblib)\misc_$(mdl).lib
+library $(liblib)\screen_$(mdl).lib
+library $(liblib)\country$(mdl).lib
+library $(libpath)\math$(mdl).lib
+library $(libpath)\emu.lib
+library $(libpath)\c$(mdl).lib
+library $(sdklib)\vmdata_l.lib
 |
 !endif
 !endif
@@ -305,7 +305,7 @@ LIBRARY $(SDKLIB)\VMDATA_L.LIB
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -361,38 +361,38 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Z
+-c
+-k
+-g
+-o
+-p
+-z
 -k-
 -d
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DLIB
--D___USE_CI_CACHE___
--D___USE_USERS___
--D___USE_CNAMES___
--DBOUNCE
--UDEBUG
--DUNIX
--D___UUIN___
--DEXCLUDE_DEBUG
-| $(CFG)
+-i$(includepath)
+-l$(libpath)
+-dlib
+-d___use_ci_cache___
+-d___use_users___
+-d___use_cnames___
+-dbounce
+-udebug
+-dunix
+-d___uuin___
+-dexclude_debug
+| $(cfg)
 
 #=============================================================
 
 
 
 #=============================================================
-#       CLEAN - remove everything this makefile produces
+#       clean - remove everything this makefile produces
 #=============================================================
 
-CLEAN:
-  -if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-  -if exist $(OBJDIR)\*.map del $(OBJDIR)\*.map
-  -if exist $(OBJDIR)\*.res del $(OBJDIR)\*.res
-  -if exist $(OBJDIR)\$(PROGNAME).EXE del $(OBJDIR)\$(PROGNAME).EXE
-  -if exist $(CFG) del $(CFG)
+clean:
+  -if exist $(objdir)\*.obj del $(objdir)\*.obj
+  -if exist $(objdir)\*.map del $(objdir)\*.map
+  -if exist $(objdir)\*.res del $(objdir)\*.res
+  -if exist $(objdir)\$(progname).exe del $(objdir)\$(progname).exe
+  -if exist $(cfg) del $(cfg)

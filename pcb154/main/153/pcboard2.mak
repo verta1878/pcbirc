@@ -1,87 +1,87 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBOARD2.MAK - Makefile for PCBoard-for-OS/2
+#       pcboard2.mak - makefile for pcboard-for-os/2
 #
 #=============================================================
 #
-#  NOTE:  To use this makefile, you must first execute
-#         \PROJ\BCOS2.CMD which sets up several environment
+#  note:  to use this makefile, you must first execute
+#         \proj\bcos2.cmd which sets up several environment
 #         variables which are used to locate things such as
 #         the compiler, the header files and the output
 #         location.
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
-.CACHEAUTODEPEND
+.silent
+.autodepend
+.cacheautodepend
 
-VERSION = 153
-!ifndef ROOT
-ROOT     = \OUT
+version = 153
+!ifndef root
+root     = \out
 !endif
-!ifndef BCROOT
-BCROOT   = \BCOS2
+!ifndef bcroot
+bcroot   = \bcos2
 !endif
-PROJ    = $(ROOT)\PCB
-LIBROOT = $(ROOT)\LIB
-LIBDIR  = $(LIBROOT)\BCOS2
-SOURCE  = $(PROJ)\SOURCE
-OBJ     = $(PROJ)\OBJ\BCOS2
+proj    = $(root)\pcb
+libroot = $(root)\lib
+libdir  = $(libroot)\bcos2
+source  = $(proj)\source
+obj     = $(proj)\obj\bcos2
 
-CFG     = $(PROJ)\$(VERSION)\PCBOARD2.CFG
-MAK     = $(PROJ)\$(VERSION)\PCBOARD2.MAK
+cfg     = $(proj)\$(version)\pcboard2.cfg
+mak     = $(proj)\$(version)\pcboard2.mak
 
-.PATH.obj = $(OBJ)
+.path.obj = $(obj)
 
-OPT = -D$(NUMNODES)
-!if $d(BETA)
-  OPT = $(OPT) -DBETA
-!endif
-
-!if $d(DEBUG)
-# OPT = $(OPT) -DDEBUG -DDEBUG2
-# OPT = $(OPT) -DDEBUG
-  OPT = $(OPT) -DDEBUG -DEBUGSCR
+opt = -d$(numnodes)
+!if $d(beta)
+  opt = $(opt) -dbeta
 !endif
 
-!if $d(TD)
-# OPT = $(OPT) -N
-  DBG = /v
+!if $d(debug)
+# opt = $(opt) -ddebug -ddebug2
+# opt = $(opt) -ddebug
+  opt = $(opt) -ddebug -debugscr
 !endif
 
-CC = $(COMPILER) +$(CFG) $(OPT) $(DBG) -DKEY=KEY_$(NODES)
-INCLUDEPATH = $(INCLUDE);$(SOURCE)\H;$(LIBROOT)\H;$(LIBSDIR)\CODEBASE\SOURCE
+!if $d(td)
+# opt = $(opt) -n
+  dbg = /v
+!endif
+
+cc = $(compiler) +$(cfg) $(opt) $(dbg) -dkey=key_$(nodes)
+includepath = $(include);$(source)\h;$(libroot)\h;$(libsdir)\codebase\source
 
 
 #=============================================================
-#               List Macros
+#               list macros
 #=============================================================
 
 
-EXE_DEPENDENCIES =  \
- $(LIBSDIR)\codebase\os2bor1\b4.lib \
- $(LIBDIR)\pcb.lib \
- $(LIBDIR)\country.lib \
- $(LIBDIR)\misc.lib \
- $(LIBDIR)\dos.lib \
- $(LIBDIR)\doscls.lib \
- $(LIBDIR)\screen.lib \
- $(LIBDIR)\system.lib \
+exe_dependencies =  \
+ $(libsdir)\codebase\os2bor1\b4.lib \
+ $(libdir)\pcb.lib \
+ $(libdir)\country.lib \
+ $(libdir)\misc.lib \
+ $(libdir)\dos.lib \
+ $(libdir)\doscls.lib \
+ $(libdir)\screen.lib \
+ $(libdir)\system.lib \
  umwf.obj \
  seenby.obj \
  pcbtoss.obj \
@@ -186,143 +186,143 @@ EXE_DEPENDENCIES =  \
  blt.obj \
  ansi.obj \
  account.obj \
- $(ROOT)\md5\os2\md5.obj
+ $(root)\md5\os2\md5.obj
 
 #=============================================================
-#               Explicit Rules
+#               explicit rules
 #=============================================================
 #
-#  NOTE:  A stack size of 40960 causes an error to occur when saving a
+#  note:  a stack size of 40960 causes an error to occur when saving a
 #         message with a file attachment, but 36864 does not, nor does
 #         it occur when using a setting of 45056.
 #
-#  On 8/30/95, changed from 45056 to 49152.
+#  on 8/30/95, changed from 45056 to 49152.
 
-$(OBJ)\pcboard2.exe: $(CFG) $(EXE_DEPENDENCIES) $(OBJ)\linker.res
-   $(LINKER) $(DBG) /B:0x10000 /S:49152 /x /Toe /ap /Oc /L$(LIBPATH) @&&|
-$(BCROOT)\LIB\C02.OBJ+
-$(OBJ)\pcboard.obj+
-$(OBJ)\init.obj+
-VERSION\BCOS2.obj+
-$(OBJ)\callwait.obj+
-$(OBJ)\inkey.obj+
-$(OBJ)\devioctl.obj+
-$(OBJ)\modemos2.obj+
-$(OBJ)\modem.obj+
-$(OBJ)\input.obj+
-$(OBJ)\memory.obj+
-$(OBJ)\ansi.obj+
-$(OBJ)\display.obj+
-$(OBJ)\xlate.obj+
-$(OBJ)\pcbmacro.obj+
-$(OBJ)\pcbtext.obj+
-$(OBJ)\files.obj+
-$(OBJ)\log.obj+
-$(OBJ)\dostime.obj+
-$(OBJ)\doswrite.obj+
-$(OBJ)\dosread.obj+
-$(OBJ)\dosopen.obj+
-$(OBJ)\dosclose.obj+
-$(OBJ)\usernet.obj+
-$(OBJ)\msgbase.obj+
-$(OBJ)\messages.obj+
-$(OBJ)\msgscan.obj+
-$(OBJ)\msgread.obj+
-$(OBJ)\msgenter.obj+
-$(OBJ)\umwf.obj+
-$(OBJ)\seenby.obj+
-$(OBJ)\pcbtoss.obj+
-$(OBJ)\passthru.obj+
-$(OBJ)\fidoque.obj+
-$(OBJ)\fidomsg.obj+
-$(OBJ)\fidomisc.obj+
-$(OBJ)\data.obj+
-$(OBJ)\dupechec.obj+
-$(OBJ)\hex.obj+
-$(OBJ)\xmitemsi.obj+
-$(OBJ)\tossmisc.obj+
-$(OBJ)\recwazoo.obj+
-$(OBJ)\recemsi.obj+
-$(OBJ)\fidomenu.obj+
-$(OBJ)\fidofunc.obj+
-$(OBJ)\fconfig.obj+
-$(OBJ)\crc-16f.obj+
-$(OBJ)\newscr.obj+
-$(OBJ)\var.obj+
-$(OBJ)\scrmisc.obj+
-$(OBJ)\evalp.obj+
-$(OBJ)\screxec.obj+
-$(OBJ)\pcbmisc.obj+
-$(OBJ)\execdb.obj+
-$(OBJ)\dbase.obj+
-$(OBJ)\pcbmsgs.obj+
-$(OBJ)\msgstub.obj+
-$(OBJ)\menu.obj+
-$(OBJ)\lrand.obj+
-$(OBJ)\label.obj+
-$(OBJ)\filestub.obj+
-$(OBJ)\xmodem.obj+
-$(OBJ)\wild.obj+
-$(OBJ)\usrmaint.obj+
-$(OBJ)\usersys.obj+
-$(OBJ)\userstat.obj+
-$(OBJ)\userscan.obj+
-$(OBJ)\users.obj+
-$(OBJ)\index.obj+
-$(OBJ)\token.obj+
-$(OBJ)\ticdelay.obj+
-$(OBJ)\sys.obj+
-$(OBJ)\status.obj+
-$(OBJ)\stats.obj+
-$(OBJ)\showerr.obj+
-$(OBJ)\settings.obj+
-$(OBJ)\scrlback.obj+
-$(OBJ)\script.obj+
-$(OBJ)\screen.obj+
-$(OBJ)\recycle.obj+
-$(OBJ)\ratio.obj+
-$(OBJ)\node.obj+
-$(OBJ)\newchat.obj+
-$(OBJ)\misc.obj+
-$(OBJ)\logview.obj+
-$(OBJ)\login.obj+
-$(OBJ)\language.obj+
-$(OBJ)\help.obj+
-$(OBJ)\event.obj+
-$(OBJ)\shell.obj+
-$(OBJ)\doors.obj+
-$(OBJ)\transfer.obj+
-$(OBJ)\dlpath.obj+
-$(OBJ)\filelist.obj+
-$(OBJ)\copyfile.obj+
-$(OBJ)\dir.obj+
-$(OBJ)\diz.obj+
-$(OBJ)\crc32.obj+
-$(OBJ)\confrnce.obj+
-$(OBJ)\command.obj+
-$(OBJ)\cmds.obj+
-$(OBJ)\chat.obj+
-$(OBJ)\capture.obj+
-$(OBJ)\blt.obj+
-$(OBJ)\account.obj+
-$(ROOT)\md5\os2\md5.obj
-$(OBJ)\pcboard2
+$(obj)\pcboard2.exe: $(cfg) $(exe_dependencies) $(obj)\linker.res
+   $(linker) $(dbg) /b:0x10000 /s:49152 /x /toe /ap /oc /l$(libpath) @&&|
+$(bcroot)\lib\c02.obj+
+$(obj)\pcboard.obj+
+$(obj)\init.obj+
+version\bcos2.obj+
+$(obj)\callwait.obj+
+$(obj)\inkey.obj+
+$(obj)\devioctl.obj+
+$(obj)\modemos2.obj+
+$(obj)\modem.obj+
+$(obj)\input.obj+
+$(obj)\memory.obj+
+$(obj)\ansi.obj+
+$(obj)\display.obj+
+$(obj)\xlate.obj+
+$(obj)\pcbmacro.obj+
+$(obj)\pcbtext.obj+
+$(obj)\files.obj+
+$(obj)\log.obj+
+$(obj)\dostime.obj+
+$(obj)\doswrite.obj+
+$(obj)\dosread.obj+
+$(obj)\dosopen.obj+
+$(obj)\dosclose.obj+
+$(obj)\usernet.obj+
+$(obj)\msgbase.obj+
+$(obj)\messages.obj+
+$(obj)\msgscan.obj+
+$(obj)\msgread.obj+
+$(obj)\msgenter.obj+
+$(obj)\umwf.obj+
+$(obj)\seenby.obj+
+$(obj)\pcbtoss.obj+
+$(obj)\passthru.obj+
+$(obj)\fidoque.obj+
+$(obj)\fidomsg.obj+
+$(obj)\fidomisc.obj+
+$(obj)\data.obj+
+$(obj)\dupechec.obj+
+$(obj)\hex.obj+
+$(obj)\xmitemsi.obj+
+$(obj)\tossmisc.obj+
+$(obj)\recwazoo.obj+
+$(obj)\recemsi.obj+
+$(obj)\fidomenu.obj+
+$(obj)\fidofunc.obj+
+$(obj)\fconfig.obj+
+$(obj)\crc-16f.obj+
+$(obj)\newscr.obj+
+$(obj)\var.obj+
+$(obj)\scrmisc.obj+
+$(obj)\evalp.obj+
+$(obj)\screxec.obj+
+$(obj)\pcbmisc.obj+
+$(obj)\execdb.obj+
+$(obj)\dbase.obj+
+$(obj)\pcbmsgs.obj+
+$(obj)\msgstub.obj+
+$(obj)\menu.obj+
+$(obj)\lrand.obj+
+$(obj)\label.obj+
+$(obj)\filestub.obj+
+$(obj)\xmodem.obj+
+$(obj)\wild.obj+
+$(obj)\usrmaint.obj+
+$(obj)\usersys.obj+
+$(obj)\userstat.obj+
+$(obj)\userscan.obj+
+$(obj)\users.obj+
+$(obj)\index.obj+
+$(obj)\token.obj+
+$(obj)\ticdelay.obj+
+$(obj)\sys.obj+
+$(obj)\status.obj+
+$(obj)\stats.obj+
+$(obj)\showerr.obj+
+$(obj)\settings.obj+
+$(obj)\scrlback.obj+
+$(obj)\script.obj+
+$(obj)\screen.obj+
+$(obj)\recycle.obj+
+$(obj)\ratio.obj+
+$(obj)\node.obj+
+$(obj)\newchat.obj+
+$(obj)\misc.obj+
+$(obj)\logview.obj+
+$(obj)\login.obj+
+$(obj)\language.obj+
+$(obj)\help.obj+
+$(obj)\event.obj+
+$(obj)\shell.obj+
+$(obj)\doors.obj+
+$(obj)\transfer.obj+
+$(obj)\dlpath.obj+
+$(obj)\filelist.obj+
+$(obj)\copyfile.obj+
+$(obj)\dir.obj+
+$(obj)\diz.obj+
+$(obj)\crc32.obj+
+$(obj)\confrnce.obj+
+$(obj)\command.obj+
+$(obj)\cmds.obj+
+$(obj)\chat.obj+
+$(obj)\capture.obj+
+$(obj)\blt.obj+
+$(obj)\account.obj+
+$(root)\md5\os2\md5.obj
+$(obj)\pcboard2
                 # no map file
-$(LIBSDIR)\codebase\os2bor1\b4.lib+
-$(LIBDIR)\pcb.lib+
-$(LIBDIR)\country.lib+
-$(LIBDIR)\misc.lib+
-$(LIBDIR)\dos.lib+
-$(LIBDIR)\screen.lib+
-$(LIBDIR)\system.lib+
-$(LIBDIR)\doscls.lib+
-$(LIBPATH)\C2MT.LIB+
-$(LIBPATH)\OS2.LIB
-$(PROJ)\$(VERSION)\pcboard2.def
+$(libsdir)\codebase\os2bor1\b4.lib+
+$(libdir)\pcb.lib+
+$(libdir)\country.lib+
+$(libdir)\misc.lib+
+$(libdir)\dos.lib+
+$(libdir)\screen.lib+
+$(libdir)\system.lib+
+$(libdir)\doscls.lib+
+$(libpath)\c2mt.lib+
+$(libpath)\os2.lib
+$(proj)\$(version)\pcboard2.def
 |
 
-  $(ROOT)\PCB\153\LXBFIX $(OBJ)\pcboard2.exe
-  if exist $(OBJ)\linker.res del $(OBJ)\linker.res
+  $(root)\pcb\153\lxbfix $(obj)\pcboard2.exe
+  if exist $(obj)\linker.res del $(obj)\linker.res
 
 
 #==============================================================================
@@ -331,360 +331,360 @@ $(PROJ)\$(VERSION)\pcboard2.def
 # instead of launching the compiler once per module
 #==============================================================================
 
-$(OBJ)\linker.res: $(OBJ)\compiler.res
-  if exist $(OBJ)\compiler.res $(CC) -c @$(OBJ)\compiler.res
-  if exist $(OBJ)\compiler.res del $(OBJ)\compiler.res
-  echo need to link > $(OBJ)\linker.res
+$(obj)\linker.res: $(obj)\compiler.res
+  if exist $(obj)\compiler.res $(cc) -c @$(obj)\compiler.res
+  if exist $(obj)\compiler.res del $(obj)\compiler.res
+  echo need to link > $(obj)\linker.res
 
 
 #=============================================================
-#               Individual File Dependencies
+#               individual file dependencies
 #=============================================================
-UMWF.obj: $(SOURCE)\FIDO\UMWF.CPP
-        echo  $(SOURCE)\FIDO\UMWF.CPP >> $(OBJ)\compiler.res
+umwf.obj: $(source)\fido\umwf.cpp
+        echo  $(source)\fido\umwf.cpp >> $(obj)\compiler.res
 
-SEENBY.obj: $(SOURCE)\FIDO\SEENBY.CPP
-        echo  $(SOURCE)\FIDO\SEENBY.CPP >> $(OBJ)\compiler.res
+seenby.obj: $(source)\fido\seenby.cpp
+        echo  $(source)\fido\seenby.cpp >> $(obj)\compiler.res
 
-PCBTOSS.obj: $(SOURCE)\FIDO\PCBTOSS.CPP
-        echo  $(SOURCE)\FIDO\PCBTOSS.CPP >> $(OBJ)\compiler.res
+pcbtoss.obj: $(source)\fido\pcbtoss.cpp
+        echo  $(source)\fido\pcbtoss.cpp >> $(obj)\compiler.res
 
-PASSTHRU.obj: $(SOURCE)\FIDO\PASSTHRU.CPP
-        echo  $(SOURCE)\FIDO\PASSTHRU.CPP >> $(OBJ)\compiler.res
+passthru.obj: $(source)\fido\passthru.cpp
+        echo  $(source)\fido\passthru.cpp >> $(obj)\compiler.res
 
-FIDOQUE.obj: $(SOURCE)\FIDO\FIDOQUE.CPP
-        echo  $(SOURCE)\FIDO\FIDOQUE.CPP >> $(OBJ)\compiler.res
+fidoque.obj: $(source)\fido\fidoque.cpp
+        echo  $(source)\fido\fidoque.cpp >> $(obj)\compiler.res
 
-FIDOMSG.obj: $(SOURCE)\FIDO\FIDOMSG.CPP
-        echo  $(SOURCE)\FIDO\FIDOMSG.CPP >> $(OBJ)\compiler.res
+fidomsg.obj: $(source)\fido\fidomsg.cpp
+        echo  $(source)\fido\fidomsg.cpp >> $(obj)\compiler.res
 
-FIDOMISC.obj: $(SOURCE)\FIDO\FIDOMISC.CPP
-        echo  $(SOURCE)\FIDO\FIDOMISC.CPP >> $(OBJ)\compiler.res
+fidomisc.obj: $(source)\fido\fidomisc.cpp
+        echo  $(source)\fido\fidomisc.cpp >> $(obj)\compiler.res
 
-DATA.obj: $(SOURCE)\FIDO\DATA.CPP
-        echo  $(SOURCE)\FIDO\DATA.CPP >> $(OBJ)\compiler.res
+data.obj: $(source)\fido\data.cpp
+        echo  $(source)\fido\data.cpp >> $(obj)\compiler.res
 
-DUPECHEC.obj: $(SOURCE)\FIDO\DUPECHEC.CPP
-        echo  $(SOURCE)\FIDO\DUPECHEC.CPP >> $(OBJ)\compiler.res
+dupechec.obj: $(source)\fido\dupechec.cpp
+        echo  $(source)\fido\dupechec.cpp >> $(obj)\compiler.res
 
-HEX.obj: $(SOURCE)\FIDO\HEX.C
-        echo  $(SOURCE)\FIDO\HEX.C >> $(OBJ)\compiler.res
+hex.obj: $(source)\fido\hex.c
+        echo  $(source)\fido\hex.c >> $(obj)\compiler.res
 
-XMITEMSI.obj: $(SOURCE)\FIDO\XMITEMSI.C
-        echo  $(SOURCE)\FIDO\XMITEMSI.C >> $(OBJ)\compiler.res
+xmitemsi.obj: $(source)\fido\xmitemsi.c
+        echo  $(source)\fido\xmitemsi.c >> $(obj)\compiler.res
 
-TOSSMISC.obj: $(SOURCE)\FIDO\TOSSMISC.C
-        echo  $(SOURCE)\FIDO\TOSSMISC.C >> $(OBJ)\compiler.res
+tossmisc.obj: $(source)\fido\tossmisc.c
+        echo  $(source)\fido\tossmisc.c >> $(obj)\compiler.res
 
-RECWAZOO.obj: $(SOURCE)\FIDO\RECWAZOO.C
-        echo  $(SOURCE)\FIDO\RECWAZOO.C >> $(OBJ)\compiler.res
+recwazoo.obj: $(source)\fido\recwazoo.c
+        echo  $(source)\fido\recwazoo.c >> $(obj)\compiler.res
 
-RECEMSI.obj: $(SOURCE)\FIDO\RECEMSI.C
-        echo  $(SOURCE)\FIDO\RECEMSI.C >> $(OBJ)\compiler.res
+recemsi.obj: $(source)\fido\recemsi.c
+        echo  $(source)\fido\recemsi.c >> $(obj)\compiler.res
 
-FIDOMENU.obj: $(SOURCE)\FIDO\FIDOMENU.C
-        echo  $(SOURCE)\FIDO\FIDOMENU.C >> $(OBJ)\compiler.res
+fidomenu.obj: $(source)\fido\fidomenu.c
+        echo  $(source)\fido\fidomenu.c >> $(obj)\compiler.res
 
-FIDOFUNC.obj: $(SOURCE)\FIDO\FIDOFUNC.C
-        echo  $(SOURCE)\FIDO\FIDOFUNC.C >> $(OBJ)\compiler.res
+fidofunc.obj: $(source)\fido\fidofunc.c
+        echo  $(source)\fido\fidofunc.c >> $(obj)\compiler.res
 
-FCONFIG.obj: $(SOURCE)\FIDO\FCONFIG.C
-        echo  $(SOURCE)\FIDO\FCONFIG.C >> $(OBJ)\compiler.res
+fconfig.obj: $(source)\fido\fconfig.c
+        echo  $(source)\fido\fconfig.c >> $(obj)\compiler.res
 
-CRC-16F.obj: $(SOURCE)\FIDO\CRC-16F.C
-        echo  $(SOURCE)\FIDO\CRC-16F.C >> $(OBJ)\compiler.res
+crc-16f.obj: $(source)\fido\crc-16f.c
+        echo  $(source)\fido\crc-16f.c >> $(obj)\compiler.res
 
-var.obj: $(SOURCE)\PPL\var.cpp
-        echo  $(SOURCE)\PPL\var.cpp >> $(OBJ)\compiler.res
+var.obj: $(source)\ppl\var.cpp
+        echo  $(source)\ppl\var.cpp >> $(obj)\compiler.res
 
-scrmisc.obj: $(SOURCE)\PPL\scrmisc.cpp
-        echo  $(SOURCE)\PPL\scrmisc.cpp >> $(OBJ)\compiler.res
+scrmisc.obj: $(source)\ppl\scrmisc.cpp
+        echo  $(source)\ppl\scrmisc.cpp >> $(obj)\compiler.res
 
-MSGSTUB.obj: $(SOURCE)\PPL\MSGSTUB.CPP
-        echo  $(SOURCE)\PPL\MSGSTUB.CPP >> $(OBJ)\compiler.res
+msgstub.obj: $(source)\ppl\msgstub.cpp
+        echo  $(source)\ppl\msgstub.cpp >> $(obj)\compiler.res
 
-menu.obj: $(SOURCE)\PPL\menu.cpp
-        echo  $(SOURCE)\PPL\menu.cpp >> $(OBJ)\compiler.res
+menu.obj: $(source)\ppl\menu.cpp
+        echo  $(source)\ppl\menu.cpp >> $(obj)\compiler.res
 
-LRAND.obj: $(SOURCE)\PPL\LRAND.CPP
-        echo  $(SOURCE)\PPL\LRAND.CPP >> $(OBJ)\compiler.res
+lrand.obj: $(source)\ppl\lrand.cpp
+        echo  $(source)\ppl\lrand.cpp >> $(obj)\compiler.res
 
-LABEL.obj: $(SOURCE)\PPL\LABEL.CPP
-        echo  $(SOURCE)\PPL\LABEL.CPP >> $(OBJ)\compiler.res
+label.obj: $(source)\ppl\label.cpp
+        echo  $(source)\ppl\label.cpp >> $(obj)\compiler.res
 
-FILESTUB.obj: $(SOURCE)\PPL\FILESTUB.CPP
-        echo  $(SOURCE)\PPL\FILESTUB.CPP >> $(OBJ)\compiler.res
+filestub.obj: $(source)\ppl\filestub.cpp
+        echo  $(source)\ppl\filestub.cpp >> $(obj)\compiler.res
 
-execdb.obj: $(SOURCE)\PPL\execdb.cpp
-        echo  $(SOURCE)\PPL\execdb.cpp >> $(OBJ)\compiler.res
+execdb.obj: $(source)\ppl\execdb.cpp
+        echo  $(source)\ppl\execdb.cpp >> $(obj)\compiler.res
 
-evalp.obj: $(SOURCE)\PPL\evalp.cpp $(PROJ)\nodes.chk
-        echo  $(SOURCE)\PPL\evalp.cpp >> $(OBJ)\compiler.res
+evalp.obj: $(source)\ppl\evalp.cpp $(proj)\nodes.chk
+        echo  $(source)\ppl\evalp.cpp >> $(obj)\compiler.res
 
-dbase.obj: $(SOURCE)\PPL\dbase.cpp
-        echo  $(SOURCE)\PPL\dbase.cpp >> $(OBJ)\compiler.res
+dbase.obj: $(source)\ppl\dbase.cpp
+        echo  $(source)\ppl\dbase.cpp >> $(obj)\compiler.res
 
-screxec.obj: $(SOURCE)\PPL\screxec.cpp
-        echo  $(SOURCE)\PPL\screxec.cpp >> $(OBJ)\compiler.res
+screxec.obj: $(source)\ppl\screxec.cpp
+        echo  $(source)\ppl\screxec.cpp >> $(obj)\compiler.res
 
-pcbmisc.obj: $(SOURCE)\PPL\pcbmisc.cpp
-        echo  $(SOURCE)\PPL\pcbmisc.cpp >> $(OBJ)\compiler.res
+pcbmisc.obj: $(source)\ppl\pcbmisc.cpp
+        echo  $(source)\ppl\pcbmisc.cpp >> $(obj)\compiler.res
 
-pcbmsgs.obj: $(SOURCE)\PPL\pcbmsgs.cpp
-        echo  $(SOURCE)\PPL\pcbmsgs.cpp >> $(OBJ)\compiler.res
+pcbmsgs.obj: $(source)\ppl\pcbmsgs.cpp
+        echo  $(source)\ppl\pcbmsgs.cpp >> $(obj)\compiler.res
 
-newscr.obj: $(SOURCE)\PPL\newscr.cpp
-        echo  $(SOURCE)\PPL\newscr.cpp >> $(OBJ)\compiler.res
+newscr.obj: $(source)\ppl\newscr.cpp
+        echo  $(source)\ppl\newscr.cpp >> $(obj)\compiler.res
 
-XMODEM.obj: $(SOURCE)\SUPPORT\XMODEM.C
-        echo  $(SOURCE)\SUPPORT\XMODEM.C >> $(OBJ)\compiler.res
+xmodem.obj: $(source)\support\xmodem.c
+        echo  $(source)\support\xmodem.c >> $(obj)\compiler.res
 
-XLATE.obj: $(SOURCE)\DISPLAY\XLATE.C
-        echo  $(SOURCE)\DISPLAY\XLATE.C >> $(OBJ)\compiler.res
+xlate.obj: $(source)\display\xlate.c
+        echo  $(source)\display\xlate.c >> $(obj)\compiler.res
 
-WILD.obj: $(SOURCE)\SUPPORT\WILD.C
-        echo  $(SOURCE)\SUPPORT\WILD.C >> $(OBJ)\compiler.res
+wild.obj: $(source)\support\wild.c
+        echo  $(source)\support\wild.c >> $(obj)\compiler.res
 
-# version.obj: $(SOURCE)\SUPPORT\version.c $(PROJ)\nodes.chk
-#         echo  $(SOURCE)\SUPPORT\version.c >> $(OBJ)\compiler.res
+# version.obj: $(source)\support\version.c $(proj)\nodes.chk
+#         echo  $(source)\support\version.c >> $(obj)\compiler.res
 
-usrmaint.obj: $(SOURCE)\USERS\usrmaint.c
-        echo  $(SOURCE)\USERS\usrmaint.c >> $(OBJ)\compiler.res
+usrmaint.obj: $(source)\users\usrmaint.c
+        echo  $(source)\users\usrmaint.c >> $(obj)\compiler.res
 
-usersys.obj: $(SOURCE)\USERS\usersys.c
-        echo  $(SOURCE)\USERS\usersys.c >> $(OBJ)\compiler.res
+usersys.obj: $(source)\users\usersys.c
+        echo  $(source)\users\usersys.c >> $(obj)\compiler.res
 
-USERSTAT.obj: $(SOURCE)\USERS\USERSTAT.C
-        echo  $(SOURCE)\USERS\USERSTAT.C >> $(OBJ)\compiler.res
+userstat.obj: $(source)\users\userstat.c
+        echo  $(source)\users\userstat.c >> $(obj)\compiler.res
 
-userscan.obj: $(SOURCE)\USERS\userscan.c
-        echo  $(SOURCE)\USERS\userscan.c >> $(OBJ)\compiler.res
+userscan.obj: $(source)\users\userscan.c
+        echo  $(source)\users\userscan.c >> $(obj)\compiler.res
 
-USERS.obj: $(SOURCE)\USERS\USERS.C
-        echo  $(SOURCE)\USERS\USERS.C >> $(OBJ)\compiler.res
+users.obj: $(source)\users\users.c
+        echo  $(source)\users\users.c >> $(obj)\compiler.res
 
-USERNET.obj: $(SOURCE)\NODE\USERNET.C $(PROJ)\nodes.chk
-        echo  $(SOURCE)\NODE\USERNET.C >> $(OBJ)\compiler.res
+usernet.obj: $(source)\node\usernet.c $(proj)\nodes.chk
+        echo  $(source)\node\usernet.c >> $(obj)\compiler.res
 
-TRANSFER.obj: $(SOURCE)\MAIN\TRANSFER.C
-        echo  $(SOURCE)\MAIN\TRANSFER.C >> $(OBJ)\compiler.res
+transfer.obj: $(source)\main\transfer.c
+        echo  $(source)\main\transfer.c >> $(obj)\compiler.res
 
-token.obj: $(SOURCE)\SUPPORT\token.c
-        echo  $(SOURCE)\SUPPORT\token.c >> $(OBJ)\compiler.res
+token.obj: $(source)\support\token.c
+        echo  $(source)\support\token.c >> $(obj)\compiler.res
 
-TICDELAY.obj: $(SOURCE)\MODEM\TICDELAY.C
-        echo  $(SOURCE)\MODEM\TICDELAY.C >> $(OBJ)\compiler.res
+ticdelay.obj: $(source)\modem\ticdelay.c
+        echo  $(source)\modem\ticdelay.c >> $(obj)\compiler.res
 
-SYS.obj: $(SOURCE)\MAIN\SYS.C
-        echo  $(SOURCE)\MAIN\SYS.C >> $(OBJ)\compiler.res
+sys.obj: $(source)\main\sys.c
+        echo  $(source)\main\sys.c >> $(obj)\compiler.res
 
-STATUS.obj: $(SOURCE)\DISPLAY\STATUS.C
-        echo  $(SOURCE)\DISPLAY\STATUS.C >> $(OBJ)\compiler.res
+status.obj: $(source)\display\status.c
+        echo  $(source)\display\status.c >> $(obj)\compiler.res
 
-stats.obj: $(SOURCE)\NODE\stats.c $(PROJ)\nodes.chk
-        echo  $(SOURCE)\NODE\stats.c >> $(OBJ)\compiler.res
+stats.obj: $(source)\node\stats.c $(proj)\nodes.chk
+        echo  $(source)\node\stats.c >> $(obj)\compiler.res
 
-SHOWERR.obj: $(SOURCE)\SUPPORT\SHOWERR.C
-        echo  $(SOURCE)\SUPPORT\SHOWERR.C >> $(OBJ)\compiler.res
+showerr.obj: $(source)\support\showerr.c
+        echo  $(source)\support\showerr.c >> $(obj)\compiler.res
 
-SHELL.obj: $(SOURCE)\MAIN\SHELL.C
-        echo  $(SOURCE)\MAIN\SHELL.C >> $(OBJ)\compiler.res
+shell.obj: $(source)\main\shell.c
+        echo  $(source)\main\shell.c >> $(obj)\compiler.res
 
-settings.obj: $(SOURCE)\USERS\settings.c
-        echo  $(SOURCE)\USERS\settings.c >> $(OBJ)\compiler.res
+settings.obj: $(source)\users\settings.c
+        echo  $(source)\users\settings.c >> $(obj)\compiler.res
 
-SCRLBACK.obj: $(SOURCE)\DISPLAY\SCRLBACK.C
-        echo  $(SOURCE)\DISPLAY\SCRLBACK.C >> $(OBJ)\compiler.res
+scrlback.obj: $(source)\display\scrlback.c
+        echo  $(source)\display\scrlback.c >> $(obj)\compiler.res
 
-SCRIPT.obj: $(SOURCE)\MAIN\SCRIPT.C
-        echo  $(SOURCE)\MAIN\SCRIPT.C >> $(OBJ)\compiler.res
+script.obj: $(source)\main\script.c
+        echo  $(source)\main\script.c >> $(obj)\compiler.res
 
-screen.obj: $(SOURCE)\DISPLAY\screen.c
-        echo  $(SOURCE)\DISPLAY\screen.c >> $(OBJ)\compiler.res
+screen.obj: $(source)\display\screen.c
+        echo  $(source)\display\screen.c >> $(obj)\compiler.res
 
-RECYCLE.obj: $(SOURCE)\MAIN\RECYCLE.C
-        echo  $(SOURCE)\MAIN\RECYCLE.C >> $(OBJ)\compiler.res
+recycle.obj: $(source)\main\recycle.c
+        echo  $(source)\main\recycle.c >> $(obj)\compiler.res
 
-ratio.obj: $(SOURCE)\PPL\ratio.cpp
-        echo  $(SOURCE)\PPL\ratio.cpp >> $(OBJ)\compiler.res
+ratio.obj: $(source)\ppl\ratio.cpp
+        echo  $(source)\ppl\ratio.cpp >> $(obj)\compiler.res
 
-pcbtext.obj: $(SOURCE)\DISPLAY\pcbtext.c
-        echo  $(SOURCE)\DISPLAY\pcbtext.c >> $(OBJ)\compiler.res
+pcbtext.obj: $(source)\display\pcbtext.c
+        echo  $(source)\display\pcbtext.c >> $(obj)\compiler.res
 
-PCBOARD.obj: $(SOURCE)\MAIN\PCBOARD.C
-        echo  $(SOURCE)\MAIN\PCBOARD.C >> $(OBJ)\compiler.res
+pcboard.obj: $(source)\main\pcboard.c
+        echo  $(source)\main\pcboard.c >> $(obj)\compiler.res
 
-PCBMACRO.obj: $(SOURCE)\DISPLAY\PCBMACRO.C
-        echo  $(SOURCE)\DISPLAY\PCBMACRO.C >> $(OBJ)\compiler.res
+pcbmacro.obj: $(source)\display\pcbmacro.c
+        echo  $(source)\display\pcbmacro.c >> $(obj)\compiler.res
 
-node.obj: $(SOURCE)\NODE\node.c $(PROJ)\nodes.chk
-        echo  $(SOURCE)\NODE\node.c >> $(OBJ)\compiler.res
+node.obj: $(source)\node\node.c $(proj)\nodes.chk
+        echo  $(source)\node\node.c >> $(obj)\compiler.res
 
-NEWCHAT.obj: $(SOURCE)\NODE\NEWCHAT.C $(PROJ)\nodes.chk
-        echo  $(SOURCE)\NODE\NEWCHAT.C >> $(OBJ)\compiler.res
+newchat.obj: $(source)\node\newchat.c $(proj)\nodes.chk
+        echo  $(source)\node\newchat.c >> $(obj)\compiler.res
 
-msgscan.obj: $(SOURCE)\MSG\msgscan.c
-        echo  $(SOURCE)\MSG\msgscan.c >> $(OBJ)\compiler.res
+msgscan.obj: $(source)\msg\msgscan.c
+        echo  $(source)\msg\msgscan.c >> $(obj)\compiler.res
 
-MSGREAD.obj: $(SOURCE)\MSG\MSGREAD.C
-        echo  $(SOURCE)\MSG\MSGREAD.C >> $(OBJ)\compiler.res
+msgread.obj: $(source)\msg\msgread.c
+        echo  $(source)\msg\msgread.c >> $(obj)\compiler.res
 
-MSGENTER.obj: $(SOURCE)\MSG\MSGENTER.C
-        echo  $(SOURCE)\MSG\MSGENTER.C >> $(OBJ)\compiler.res
+msgenter.obj: $(source)\msg\msgenter.c
+        echo  $(source)\msg\msgenter.c >> $(obj)\compiler.res
 
-msgbase.obj: $(SOURCE)\MSG\msgbase.c
-        echo  $(SOURCE)\MSG\msgbase.c >> $(OBJ)\compiler.res
+msgbase.obj: $(source)\msg\msgbase.c
+        echo  $(source)\msg\msgbase.c >> $(obj)\compiler.res
 
-modemos2.obj: $(SOURCE)\MODEM\modemos2.c
-        echo  $(SOURCE)\MODEM\modemos2.c >> $(OBJ)\compiler.res
+modemos2.obj: $(source)\modem\modemos2.c
+        echo  $(source)\modem\modemos2.c >> $(obj)\compiler.res
 
-modem.obj: $(SOURCE)\MODEM\modem.c
-        echo  $(SOURCE)\MODEM\modem.c >> $(OBJ)\compiler.res
+modem.obj: $(source)\modem\modem.c
+        echo  $(source)\modem\modem.c >> $(obj)\compiler.res
 
-MISC.obj: $(SOURCE)\MAIN\MISC.C
-        echo  $(SOURCE)\MAIN\MISC.C >> $(OBJ)\compiler.res
+misc.obj: $(source)\main\misc.c
+        echo  $(source)\main\misc.c >> $(obj)\compiler.res
 
-MESSAGES.obj: $(SOURCE)\MSG\MESSAGES.C
-        echo  $(SOURCE)\MSG\MESSAGES.C >> $(OBJ)\compiler.res
+messages.obj: $(source)\msg\messages.c
+        echo  $(source)\msg\messages.c >> $(obj)\compiler.res
 
-memory.obj: $(SOURCE)\SUPPORT\memory.c
-        echo  $(SOURCE)\SUPPORT\memory.c >> $(OBJ)\compiler.res
+memory.obj: $(source)\support\memory.c
+        echo  $(source)\support\memory.c >> $(obj)\compiler.res
 
-LOGVIEW.obj: $(SOURCE)\NODE\LOGVIEW.C $(PROJ)\nodes.chk
-        echo  $(SOURCE)\NODE\LOGVIEW.C >> $(OBJ)\compiler.res
+logview.obj: $(source)\node\logview.c $(proj)\nodes.chk
+        echo  $(source)\node\logview.c >> $(obj)\compiler.res
 
-LOGIN.obj: $(SOURCE)\NODE\LOGIN.C
-        echo  $(SOURCE)\NODE\LOGIN.C >> $(OBJ)\compiler.res
+login.obj: $(source)\node\login.c
+        echo  $(source)\node\login.c >> $(obj)\compiler.res
 
-log.obj: $(SOURCE)\NODE\log.c $(PROJ)\nodes.chk
-        echo  $(SOURCE)\NODE\log.c >> $(OBJ)\compiler.res
+log.obj: $(source)\node\log.c $(proj)\nodes.chk
+        echo  $(source)\node\log.c >> $(obj)\compiler.res
 
-LANGUAGE.obj: $(SOURCE)\MAIN\LANGUAGE.C
-        echo  $(SOURCE)\MAIN\LANGUAGE.C >> $(OBJ)\compiler.res
+language.obj: $(source)\main\language.c
+        echo  $(source)\main\language.c >> $(obj)\compiler.res
 
-INPUT.obj: $(SOURCE)\MAIN\INPUT.C
-        echo  $(SOURCE)\MAIN\INPUT.C >> $(OBJ)\compiler.res
+input.obj: $(source)\main\input.c
+        echo  $(source)\main\input.c >> $(obj)\compiler.res
 
-INKEY.obj: $(SOURCE)\MAIN\INKEY.C
-        echo  $(SOURCE)\MAIN\INKEY.C >> $(OBJ)\compiler.res
+inkey.obj: $(source)\main\inkey.c
+        echo  $(source)\main\inkey.c >> $(obj)\compiler.res
 
-INIT.obj: $(SOURCE)\MAIN\INIT.C $(PROJ)\nodes.chk
-        echo  $(SOURCE)\MAIN\INIT.C >> $(OBJ)\compiler.res
+init.obj: $(source)\main\init.c $(proj)\nodes.chk
+        echo  $(source)\main\init.c >> $(obj)\compiler.res
 
-INDEX.obj: $(SOURCE)\MAIN\INDEX.C
-        echo  $(SOURCE)\MAIN\INDEX.C >> $(OBJ)\compiler.res
+index.obj: $(source)\main\index.c
+        echo  $(source)\main\index.c >> $(obj)\compiler.res
 
-help.obj: $(SOURCE)\DISPLAY\help.c
-        echo  $(SOURCE)\DISPLAY\help.c >> $(OBJ)\compiler.res
+help.obj: $(source)\display\help.c
+        echo  $(source)\display\help.c >> $(obj)\compiler.res
 
-FILES.obj: $(SOURCE)\DISPLAY\FILES.C
-        echo  $(SOURCE)\DISPLAY\FILES.C >> $(OBJ)\compiler.res
+files.obj: $(source)\display\files.c
+        echo  $(source)\display\files.c >> $(obj)\compiler.res
 
-filelist.obj: $(SOURCE)\MAIN\filelist.c
-        echo  $(SOURCE)\MAIN\filelist.c >> $(OBJ)\compiler.res
+filelist.obj: $(source)\main\filelist.c
+        echo  $(source)\main\filelist.c >> $(obj)\compiler.res
 
-EVENT.obj: $(SOURCE)\MAIN\EVENT.C $(PROJ)\nodes.chk
-        echo  $(SOURCE)\MAIN\EVENT.C >> $(OBJ)\compiler.res
+event.obj: $(source)\main\event.c $(proj)\nodes.chk
+        echo  $(source)\main\event.c >> $(obj)\compiler.res
 
-ENVFIX.obj: $(SOURCE)\SUPPORT\ENVFIX.C
-        echo  $(SOURCE)\SUPPORT\ENVFIX.C >> $(OBJ)\compiler.res
+envfix.obj: $(source)\support\envfix.c
+        echo  $(source)\support\envfix.c >> $(obj)\compiler.res
 
-DOSTIME.obj: $(SOURCE)\DOS\DOSTIME.C
-        echo  $(SOURCE)\DOS\DOSTIME.C >> $(OBJ)\compiler.res
+dostime.obj: $(source)\dos\dostime.c
+        echo  $(source)\dos\dostime.c >> $(obj)\compiler.res
 
-doswrite.obj: $(SOURCE)\DOS\doswrite.c
-        echo  $(SOURCE)\DOS\doswrite.c >> $(OBJ)\compiler.res
+doswrite.obj: $(source)\dos\doswrite.c
+        echo  $(source)\dos\doswrite.c >> $(obj)\compiler.res
 
-dosread.obj: $(SOURCE)\DOS\dosread.c
-        echo  $(SOURCE)\DOS\dosread.c >> $(OBJ)\compiler.res
+dosread.obj: $(source)\dos\dosread.c
+        echo  $(source)\dos\dosread.c >> $(obj)\compiler.res
 
-dosopen.obj: $(SOURCE)\DOS\dosopen.c
-        echo  $(SOURCE)\DOS\dosopen.c >> $(OBJ)\compiler.res
+dosopen.obj: $(source)\dos\dosopen.c
+        echo  $(source)\dos\dosopen.c >> $(obj)\compiler.res
 
-dosclose.obj: $(SOURCE)\DOS\dosclose.c
-        echo  $(SOURCE)\DOS\dosclose.c >> $(OBJ)\compiler.res
+dosclose.obj: $(source)\dos\dosclose.c
+        echo  $(source)\dos\dosclose.c >> $(obj)\compiler.res
 
-DOORS.obj: $(SOURCE)\MAIN\DOORS.C
-        echo  $(SOURCE)\MAIN\DOORS.C >> $(OBJ)\compiler.res
+doors.obj: $(source)\main\doors.c
+        echo  $(source)\main\doors.c >> $(obj)\compiler.res
 
-DLPATH.obj: $(SOURCE)\MAIN\DLPATH.C
-        echo  $(SOURCE)\MAIN\DLPATH.C >> $(OBJ)\compiler.res
+dlpath.obj: $(source)\main\dlpath.c
+        echo  $(source)\main\dlpath.c >> $(obj)\compiler.res
 
-diz.obj: $(SOURCE)\SUPPORT\diz.c
-        echo  $(SOURCE)\SUPPORT\diz.c >> $(OBJ)\compiler.res
+diz.obj: $(source)\support\diz.c
+        echo  $(source)\support\diz.c >> $(obj)\compiler.res
 
-DISPLAY.obj: $(SOURCE)\DISPLAY\DISPLAY.C
-        echo  $(SOURCE)\DISPLAY\DISPLAY.C >> $(OBJ)\compiler.res
+display.obj: $(source)\display\display.c
+        echo  $(source)\display\display.c >> $(obj)\compiler.res
 
-DIR.obj: $(SOURCE)\DISPLAY\DIR.C
-        echo  $(SOURCE)\DISPLAY\DIR.C >> $(OBJ)\compiler.res
+dir.obj: $(source)\display\dir.c
+        echo  $(source)\display\dir.c >> $(obj)\compiler.res
 
-devioctl.obj: $(SOURCE)\MODEM\devioctl.c
-        echo  $(SOURCE)\MODEM\devioctl.c >> $(OBJ)\compiler.res
+devioctl.obj: $(source)\modem\devioctl.c
+        echo  $(source)\modem\devioctl.c >> $(obj)\compiler.res
 
-crc32.obj: $(SOURCE)\SUPPORT\crc32.c
-        echo  $(SOURCE)\SUPPORT\crc32.c >> $(OBJ)\compiler.res
+crc32.obj: $(source)\support\crc32.c
+        echo  $(source)\support\crc32.c >> $(obj)\compiler.res
 
-COPYFILE.obj: $(SOURCE)\SUPPORT\COPYFILE.C
-        echo  $(SOURCE)\SUPPORT\COPYFILE.C >> $(OBJ)\compiler.res
+copyfile.obj: $(source)\support\copyfile.c
+        echo  $(source)\support\copyfile.c >> $(obj)\compiler.res
 
-CONFRNCE.obj: $(SOURCE)\MAIN\CONFRNCE.C
-        echo  $(SOURCE)\MAIN\CONFRNCE.C >> $(OBJ)\compiler.res
+confrnce.obj: $(source)\main\confrnce.c
+        echo  $(source)\main\confrnce.c >> $(obj)\compiler.res
 
-COMMAND.obj: $(SOURCE)\MAIN\COMMAND.C
-        echo  $(SOURCE)\MAIN\COMMAND.C >> $(OBJ)\compiler.res
+command.obj: $(source)\main\command.c
+        echo  $(source)\main\command.c >> $(obj)\compiler.res
 
-CMDS.obj: $(SOURCE)\MAIN\CMDS.C
-        echo  $(SOURCE)\MAIN\CMDS.C >> $(OBJ)\compiler.res
+cmds.obj: $(source)\main\cmds.c
+        echo  $(source)\main\cmds.c >> $(obj)\compiler.res
 
-CHAT.obj: $(SOURCE)\MAIN\CHAT.C
-        echo  $(SOURCE)\MAIN\CHAT.C >> $(OBJ)\compiler.res
+chat.obj: $(source)\main\chat.c
+        echo  $(source)\main\chat.c >> $(obj)\compiler.res
 
-capture.obj: $(SOURCE)\SUPPORT\capture.c
-        echo  $(SOURCE)\SUPPORT\capture.c >> $(OBJ)\compiler.res
+capture.obj: $(source)\support\capture.c
+        echo  $(source)\support\capture.c >> $(obj)\compiler.res
 
-CALLWAIT.obj: $(SOURCE)\MAIN\CALLWAIT.C
-        echo  $(SOURCE)\MAIN\CALLWAIT.C >> $(OBJ)\compiler.res
+callwait.obj: $(source)\main\callwait.c
+        echo  $(source)\main\callwait.c >> $(obj)\compiler.res
 
-blt.obj: $(SOURCE)\DISPLAY\blt.c
-        echo  $(SOURCE)\DISPLAY\blt.c >> $(OBJ)\compiler.res
+blt.obj: $(source)\display\blt.c
+        echo  $(source)\display\blt.c >> $(obj)\compiler.res
 
-ANSI.obj: $(SOURCE)\DISPLAY\ANSI.C
-        echo  $(SOURCE)\DISPLAY\ANSI.C >> $(OBJ)\compiler.res
+ansi.obj: $(source)\display\ansi.c
+        echo  $(source)\display\ansi.c >> $(obj)\compiler.res
 
-account.obj: $(SOURCE)\SUPPORT\account.cpp
-        echo  $(SOURCE)\SUPPORT\account.cpp >> $(OBJ)\compiler.res
+account.obj: $(source)\support\account.cpp
+        echo  $(source)\support\account.cpp >> $(obj)\compiler.res
 
 #=============================================================
-#               Compiler Configuration File
+#               compiler configuration file
 #=============================================================
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
--RT-
+-rt-
 -xd-
 -x-
--R
--G
--Oz
--Ob
--Oe
--Oc
--DPCB152;PCB153;___USE_VAR___;___EXEC___;DBASE;COMM;MULTIPORT;OSDRIVER;PCBSTATS;PCBCOMM;FIDO;MG;TOSSCLASS;BIGNDX;KBD3
--L$(LIBPATH)
--I$(INCLUDEPATH)
--n$(OBJ)
--P
+-r
+-g
+-oz
+-ob
+-oe
+-oc
+-dpcb152;pcb153;___use_var___;___exec___;dbase;comm;multiport;osdriver;pcbstats;pcbcomm;fido;mg;tossclass;bigndx;kbd3
+-l$(libpath)
+-i$(includepath)
+-n$(obj)
+-p
 -vi
 -sm
 -d
 -k-
--O
--Ot
--C
--K
+-o
+-ot
+-c
+-k
 -a
 -5
--DNDEBUG
-$(DBG)
-| $(CFG)
+-dndebug
+$(dbg)
+| $(cfg)
 

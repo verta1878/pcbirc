@@ -17,11 +17,11 @@ OPEN BLOCKERS (carried from entries 1-41):
     Must compile from pcbcbase/CODEBASE/SOURCE/.
     Without them: PCBOARD.EXE has no dBASE, PCBOARD2.EXE cannot link.
     Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
-  - pcbkit_l.lib TC 2.01 build: never committed (167,768 B vs
-    Borland's 241,144 B — TC builds 9 of 10 categories, no C++).
-    PPLC maybe blocked on it.
-  - TKLIB: 10 category libs built for BC31 LARGE only.  TC201 and
-    MSC70 legs not done.  CVER steers paths not the compiler;
+  - pcbkit_l.lib TC 2.01 build: DONE — 4 monolithic libs committed
+    (entry 48).  PPLC linkage not yet tested.
+  - TKLIB: 10 category libs built for BC31 LARGE only.  TC201 leg
+    partially done (monolithic PCBKIT libs, not split categories).
+    MSC70 leg not done.  CVER steers paths not the compiler;
     -ml baked into TK.CFG.  BLDTK.BAT drives all 10.
     BLDTKOS2.CMD = OW2 / OS/2 / delta154 (one compiler, flat model).
   - SDK paths: PCBKIT/PCBKBC/PCBKMS MAK/CFG need ROOT=\OUT\BRANCH\
@@ -244,5 +244,44 @@ Retired to attic:
   STBSTUB-REBUILD.md               rebuild notes (superseded by STBSTUB-README.md)
 
 STBSTUB blocker is RESOLVED.
+
+Nothing deleted.
+
+v0.3.2+ (48): PCBKit TC 2.01 — 4 monolithic toolkit libraries
+================================================================
+Date: 2026-09-28
+By: hexadecimal
+
+Complete PWA 15.3 toolkit compiled with Turbo C 2.01 (TCC.EXE),
+all four memory models.  119 modules per model, 476 OBJs total.
+Built under DOSBox-X headless using BLDKIT.BAT + MKLIB.BAT.
+
+  OUT\PWA153\SDK\TC201\PCBKITS.LIB   151,552 bytes   small model
+  OUT\PWA153\SDK\TC201\PCBKITM.LIB   156,672 bytes   medium model
+  OUT\PWA153\SDK\TC201\PCBKITC.LIB   163,840 bytes   compact model
+  OUT\PWA153\SDK\TC201\PCBKITL.LIB   168,960 bytes   large model
+  OUT\PWA153\SDK\TC201\readme.md     build documentation
+
+Build scripts (in BUILDROOT, inside dosboxx.zip):
+
+  BUILD\SCRIPTS\BLDKIT.BAT   1059 lines, compiles 119 modules × 4 models
+  BUILD\SCRIPTS\MKLIB.BAT    assembles OBJs into 4 libs using TLIB (BC31)
+  BUILD\SCRIPTS\tc*.rsp      16 response files (2 chunks × 4 models × 2 sets)
+
+Source directories (87 modules across 6 categories):
+
+  PCB153\SOURCE\MAIN\         22 modules
+  PCB153\SOURCE\DISPLAY\      12 modules
+  TOOLKIT\PWA153\SOURCE\COUNTRY\   13 modules
+  TOOLKIT\PWA153\SOURCE\TOOLKIT\   40 modules
+  TOOLKIT\PWA153\SOURCE\COMM\       7 modules
+  TOOLKIT\PWA153\SOURCE\MISC\      25 modules
+
+SUBST workaround required — TCC 2.01 does not read turboc.cfg
+under DOSBox-X.  Include paths passed on the command line using
+SUBST drive letters (D:, E:, F:) to stay under DOS 127-char limit.
+Fix investigation in progress.
+
+dosboxx.zip updated with build output (OBJs + libs).
 
 Nothing deleted.

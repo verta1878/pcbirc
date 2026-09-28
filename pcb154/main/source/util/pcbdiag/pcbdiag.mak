@@ -1,138 +1,138 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBDIAG.MAK - Makefile for PCBDIAG Program
+#       pcbdiag.mak - makefile for pcbdiag program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = PCBDIAG
+progname = pcbdiag
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-SOURCE   = .
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+source   = .
+objdir   = $(bccompiler)
+libroot  = $(root)\lib
+libh     = $(libroot)\h
+liblib   = $(libroot)\bcdos\$(bccompiler)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);$(ROOT)\PCB\SOURCE\H;$(ROOT)\PCBSM\SOURCE
+includepath = $(include);$(libh);$(root)\pcb\source\h;$(root)\pcbsm\source
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c -m$(MDL) -n$(OBJDIR)
+copt = -c -m$(mdl) -n$(objdir)
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(OBJDIR)\ANALYZE.OBJ       \
-  $(OBJDIR)\INDEX.OBJ         \
-  $(OBJDIR)\INIT.OBJ          \
-  $(OBJDIR)\PCBDIAG.OBJ       \
-  $(OBJDIR)\PRINT.OBJ         \
-  $(OBJDIR)\SCANUSER.OBJ      \
-  $(OBJDIR)\SHARE.OBJ         \
-  $(OBJDIR)\USERINFO.OBJ      \
-  $(OBJDIR)\USERS.OBJ         \
-  $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\pcb_$(MDL).lib    \
-  $(LIBLIB)\misc_$(MDL).lib   \
-  $(LIBLIB)\screen_$(MDL).lib \
-  $(LIBLIB)\scrnio_$(MDL).lib \
-  $(LIBLIB)\system_$(MDL).lib \
-  $(LIBLIB)\country$(MDL).lib
+exe_dependencies = \
+  $(objdir)\analyze.obj       \
+  $(objdir)\index.obj         \
+  $(objdir)\init.obj          \
+  $(objdir)\pcbdiag.obj       \
+  $(objdir)\print.obj         \
+  $(objdir)\scanuser.obj      \
+  $(objdir)\share.obj         \
+  $(objdir)\userinfo.obj      \
+  $(objdir)\users.obj         \
+  $(liblib)\dos_$(mdl).lib    \
+  $(liblib)\pcb_$(mdl).lib    \
+  $(liblib)\misc_$(mdl).lib   \
+  $(liblib)\screen_$(mdl).lib \
+  $(liblib)\scrnio_$(mdl).lib \
+  $(liblib)\system_$(mdl).lib \
+  $(liblib)\country$(mdl).lib
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\ANALYZE.OBJ  +
-$(OBJDIR)\INDEX.OBJ    +
-$(OBJDIR)\INIT.OBJ     +
-$(OBJDIR)\PCBDIAG.OBJ  +
-$(OBJDIR)\PRINT.OBJ    +
-$(OBJDIR)\SCANUSER.OBJ +
-$(OBJDIR)\SHARE.OBJ    +
-$(OBJDIR)\USERINFO.OBJ +
-$(OBJDIR)\USERS.OBJ
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\analyze.obj  +
+$(objdir)\index.obj    +
+$(objdir)\init.obj     +
+$(objdir)\pcbdiag.obj  +
+$(objdir)\print.obj    +
+$(objdir)\scanuser.obj +
+$(objdir)\share.obj    +
+$(objdir)\userinfo.obj +
+$(objdir)\users.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\scrnio_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\scrnio_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib
+c$(mdl).lib
 |
 
 #=============================================================
 
 # rules for individual files where necessary
 
-$(OBJDIR)\USERS.OBJ: $(ROOT)\PCBSM\SOURCE\USERS.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCBSM\SOURCE\USERS.C
+$(objdir)\users.obj: $(root)\pcbsm\source\users.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(root)\pcbsm\source\users.c
 
-$(OBJDIR)\USERINFO.OBJ: $(ROOT)\PCBSM\SOURCE\USERINFO.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCBSM\SOURCE\USERINFO.C
+$(objdir)\userinfo.obj: $(root)\pcbsm\source\userinfo.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(root)\pcbsm\source\userinfo.c
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -188,19 +188,19 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Z
+-c
+-k
+-g
+-o
+-p
+-z
 -k-
 -d
--I$(INCLUDEPATH)
--L$(LIBPATH)
--D_FARDATA_=far
--DPCB152
--DPCB153
-| $(CFG)
+-i$(includepath)
+-l$(libpath)
+-d_fardata_=far
+-dpcb152
+-dpcb153
+| $(cfg)
 
 #=============================================================

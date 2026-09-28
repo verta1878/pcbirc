@@ -1,2 +1,2 @@
-@rem do nothing, avoid calling C:\PCB\REFRESH.BAT!
+@rem do nothing, avoid calling c:\pcb\refresh.bat!
 

@@ -1,20 +1,20 @@
 @echo off
 
-rem NOTE:  If you change P1 or P2, then do a TOUCH PCBCP.MAK command
+rem note:  if you change p1 or p2, then do a touch pcbcp.mak command
 
-rem set P1=-DDEBUG
-rem set P2=-DVALIDATOR
+rem set p1=-ddebug
+rem set p2=-dvalidator
 
-set BCROOT=D:\BCOS2
-set COMPILER=%BCROOT%\BIN\BCC.EXE
-set LINKER=%BCROOT%\BIN\TLINK.EXE
-set INCLUDE=%BCROOT%\INCLUDE
-set LIBPATH=%BCROOT%\LIB
-set BRCC=%BCROOT%\BIN\BRCC.EXE
-set IPFCOMP=%BCROOT%\BIN\IPFC.EXE
+set bcroot=d:\bcos2
+set compiler=%bcroot%\bin\bcc.exe
+set linker=%bcroot%\bin\tlink.exe
+set include=%bcroot%\include
+set libpath=%bcroot%\lib
+set brcc=%bcroot%\bin\brcc.exe
+set ipfcomp=%bcroot%\bin\ipfc.exe
 
-make -f 1522\pcbcp.mak %P1% %P2%
+make -f 1522\pcbcp.mak %p1% %p2%
 
-set P1=
-set P2=
+set p1=
+set p2=
 

@@ -25,10 +25,10 @@ goto end
 
 :error
 echo. > pcbview.txt
-echo @X0CSorry, @FIRST@, this file is not viewable. >>pcbview.txt
+echo @x0csorry, @first@, this file is not viewable. >>pcbview.txt
 goto end
 
 :end
 echo. >> pcbview.txt
-echo @WAIT@ >> pcbview.txt
+echo @wait@ >> pcbview.txt
 

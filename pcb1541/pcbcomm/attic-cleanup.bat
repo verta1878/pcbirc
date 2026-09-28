@@ -1,45 +1,45 @@
 @echo off
-REM ============================================================================
-REM  ATTIC-CLEANUP.BAT  --  move superseded pcbcomm drafts to the attic
-REM
-REM  Run from the repo ROOT (the folder that contains pcb1541\ and attic\).
-REM  Follows the existing attic convention: attic\superseded-pcbcomm\ mirrors
-REM  the live source path, so a file's origin stays obvious.
-REM
-REM  What it moves and why:
-REM    src\int14-r1.c  -->  attic\...\src\int14-r1.c
-REM      Superseded 211-line earlier revision of the INT 14h handler. Its
-REM      header still says "int14.c" (misfiled name). The live handler is the
-REM      701-line src\int14.c, which is what PCBCOMM.MAK builds (obj\int14.obj).
-REM      Nothing references int14-r1.c -- no makefile, no source, no doc.
-REM
-REM  Safe: this only MOVES files into attic\. Nothing is deleted. If a move
-REM  target already exists the copy is skipped and the source left in place,
-REM  so re-running is harmless.
-REM ============================================================================
+rem ============================================================================
+rem  attic-cleanup.bat  --  move superseded pcbcomm drafts to the attic
+rem
+rem  run from the repo root (the folder that contains pcb1541\ and attic\).
+rem  follows the existing attic convention: attic\superseded-pcbcomm\ mirrors
+rem  the live source path, so a file's origin stays obvious.
+rem
+rem  what it moves and why:
+rem    src\int14-r1.c  -->  attic\...\src\int14-r1.c
+rem      superseded 211-line earlier revision of the int 14h handler. its
+rem      header still says "int14.c" (misfiled name). the live handler is the
+rem      701-line src\int14.c, which is what pcbcomm.mak builds (obj\int14.obj).
+rem      nothing references int14-r1.c -- no makefile, no source, no doc.
+rem
+rem  safe: this only moves files into attic\. nothing is deleted. if a move
+rem  target already exists the copy is skipped and the source left in place,
+rem  so re-running is harmless.
+rem ============================================================================
 
 setlocal
-set SRC=pcb1541\pcbcomm
-set DST=attic\superseded-pcbcomm\pcb1541\pcbcomm
+set src=pcb1541\pcbcomm
+set dst=attic\superseded-pcbcomm\pcb1541\pcbcomm
 
-if not exist "%SRC%\src\int14-r1.c" goto nofile
-if not exist "%DST%\src\" mkdir "%DST%\src\"
+if not exist "%src%\src\int14-r1.c" goto nofile
+if not exist "%dst%\src\" mkdir "%dst%\src\"
 
-echo Moving superseded int14-r1.c to attic...
-move "%SRC%\src\int14-r1.c" "%DST%\src\int14-r1.c"
+echo moving superseded int14-r1.c to attic...
+move "%src%\src\int14-r1.c" "%dst%\src\int14-r1.c"
 if errorlevel 1 goto failed
 
-echo Done. src\int14-r1.c is now in %DST%\src\
-echo The live handler src\int14.c is untouched.
+echo done. src\int14-r1.c is now in %dst%\src\
+echo the live handler src\int14.c is untouched.
 goto end
 
 :nofile
-echo Nothing to do: pcb1541\pcbcomm\src\int14-r1.c not found.
-echo (Already atticked, or you are not in the repo root.)
+echo nothing to do: pcb1541\pcbcomm\src\int14-r1.c not found.
+echo (already atticked, or you are not in the repo root.)
 goto end
 
 :failed
-echo ERROR: move failed. Check that %DST%\src\int14-r1.c does not already exist.
+echo error: move failed. check that %dst%\src\int14-r1.c does not already exist.
 
 :end
 endlocal

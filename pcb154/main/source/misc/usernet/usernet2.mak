@@ -1,69 +1,69 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#	USERNET2.MAK - Makefile for project D:\PROJ\USERNET\usernet2.prj
-#		Created on 08/11/96 at 23:23
+#	usernet2.mak - makefile for project d:\proj\usernet\usernet2.prj
+#		created on 08/11/96 at 23:23
 #
 #=============================================================
 
-.AUTODEPEND
+.autodepend
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BCROOT
-BCROOT   = \BCOS2
+!ifndef bcroot
+bcroot   = \bcos2
 !endif
 
-.PATH.obj = BCOS2
+.path.obj = bcos2
 
 #=============================================================
-#		Translator Definitions
+#		translator definitions
 #=============================================================
-CC = bcc +USERNET2.CFG
-TASM = tasm.exe
-TLIB = tlib.exe
-TLINK = tlink
-RC = brcc.exe
-RB = rc.exe
-LIBPATH = $(BCROOT)\LIB
-INCLUDEPATH = $(BCROOT)\INCLUDE;$(ROOT)\lib\h
+cc = bcc +usernet2.cfg
+tasm = tasm.exe
+tlib = tlib.exe
+tlink = tlink
+rc = brcc.exe
+rb = rc.exe
+libpath = $(bcroot)\lib
+includepath = $(bcroot)\include;$(root)\lib\h
 
 
 #=============================================================
-#		Implicit Rules
+#		implicit rules
 #=============================================================
 .c.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 .cpp.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 .asm.obj:
-  $(TASM) -Mx $*.asm,$*.obj
+  $(tasm) -mx $*.asm,$*.obj
 
 .rc.res:
-  $(RC) -r $*.rc
+  $(rc) -r $*.rc
 
 #=============================================================
-#		List Macros
+#		list macros
 #=============================================================
 
 
-EXE_DEPENDENCIES =  \
+exe_dependencies =  \
  ..\lib\bcos2\system.lib \
  ..\lib\bcos2\screen.lib \
  ..\lib\bcos2\misc.lib \
@@ -71,11 +71,11 @@ EXE_DEPENDENCIES =  \
  usernet.obj
 
 #=============================================================
-#		Explicit Rules
+#		explicit rules
 #=============================================================
-bcos2\usernet2.exe: usernet2.cfg $(EXE_DEPENDENCIES)
-  $(TLINK) /B:0x10000 /x /Toe /ap /L$(LIBPATH) @&&|
-$(BCROOT)\LIB\C02.OBJ+
+bcos2\usernet2.exe: usernet2.cfg $(exe_dependencies)
+  $(tlink) /b:0x10000 /x /toe /ap /l$(libpath) @&&|
+$(bcroot)\lib\c02.obj+
 bcos2\usernet.obj
 bcos2\usernet2
 		# no map file
@@ -83,42 +83,42 @@ bcos2\usernet2
 ..\lib\bcos2\screen.lib+
 ..\lib\bcos2\misc.lib+
 ..\lib\bcos2\dos.lib+
-$(BCROOT)\LIB\C2.LIB+
-$(BCROOT)\LIB\OS2.LIB
+$(bcroot)\lib\c2.lib+
+$(bcroot)\lib\os2.lib
 
 |
 
 
 #=============================================================
-#		Individual File Dependencies
+#		individual file dependencies
 #=============================================================
 usernet.obj: usernet2.cfg usernet.c 
 
 #=============================================================
-#		Compiler Configuration File
+#		compiler configuration file
 #=============================================================
 usernet2.cfg: usernet2.mak
   copy &&|
--RT-
+-rt-
 -xd-
 -x-
--R
--Oz
--Ob
--Oe
--Oc
--L$(LIBPATH)
--I$(INCLUDEPATH)
+-r
+-oz
+-ob
+-oe
+-oc
+-l$(libpath)
+-i$(includepath)
 -nbcos2
--P
+-p
 -vi
 -d
 -k-
--O
+-o
 -v
 -w
--C
--K
+-c
+-k
 -a
 | usernet2.cfg
 

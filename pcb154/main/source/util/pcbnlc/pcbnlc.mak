@@ -1,148 +1,148 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBNLC.MAK - Makefile for PCBNLC Program
+#       pcbnlc.mak - makefile for pcbnlc program
 #
 #=============================================================
 
-.NOSILENT
-.AUTODEPEND
+.nosilent
+.autodepend
 
-PROGNAME = PCBNLC
+progname = pcbnlc
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-SOURCE   = .
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+source   = .
+objdir   = $(bccompiler)
+libroot  = $(root)\lib
+libh     = $(libroot)\h
+liblib   = $(libroot)\bcdos\$(bccompiler)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = .;$(INCLUDE);$(LIBH);$(ROOT)\PCB\SOURCE\H;\LIBS\VMDATA;$(LIBSDIR)\CODEBASE\SOURCE
+includepath = .;$(include);$(libh);$(root)\pcb\source\h;\libs\vmdata;$(libsdir)\codebase\source
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c -m$(MDL) -n$(OBJDIR)
+copt = -c -m$(mdl) -n$(objdir)
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT){$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt){$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES =  \
-  $(OBJDIR)\pcbnlc.obj        \
-  $(OBJDIR)\diff.obj          \
-  $(OBJDIR)\dbase.obj         \
-  $(OBJDIR)\data.obj          \
-  $(OBJDIR)\fconfig.obj       \
-  $(OBJDIR)\fidomisc.obj      \
-  $(OBJDIR)\timer.obj         \
-  $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\doscls_$(MDL).lib \
-  $(LIBLIB)\misc_$(MDL).lib   \
-  $(LIBLIB)\pcb_$(MDL).lib    \
-  $(LIBLIB)\screen_$(MDL).lib \
-  $(LIBLIB)\scrnio_$(MDL).lib \
-  $(LIBLIB)\system_$(MDL).lib \
-  \LIBS\CODEBASE\BOR31\C4BASE.LIB \
-  \LIBS\VMDATA\BC31_DOS\VMDATA.LIB
+exe_dependencies =  \
+  $(objdir)\pcbnlc.obj        \
+  $(objdir)\diff.obj          \
+  $(objdir)\dbase.obj         \
+  $(objdir)\data.obj          \
+  $(objdir)\fconfig.obj       \
+  $(objdir)\fidomisc.obj      \
+  $(objdir)\timer.obj         \
+  $(liblib)\dos_$(mdl).lib    \
+  $(liblib)\doscls_$(mdl).lib \
+  $(liblib)\misc_$(mdl).lib   \
+  $(liblib)\pcb_$(mdl).lib    \
+  $(liblib)\screen_$(mdl).lib \
+  $(liblib)\scrnio_$(mdl).lib \
+  $(liblib)\system_$(mdl).lib \
+  \libs\codebase\bor31\c4base.lib \
+  \libs\vmdata\bc31_dos\vmdata.lib
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\pcbnlc.obj+
-$(OBJDIR)\diff.obj+
-$(OBJDIR)\dbase.obj+
-$(OBJDIR)\data.obj+
-$(OBJDIR)\fconfig.obj+
-$(OBJDIR)\fidomisc.obj+
-$(OBJDIR)\timer.obj
-$(OBJDIR)\PCBNLC
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\pcbnlc.obj+
+$(objdir)\diff.obj+
+$(objdir)\dbase.obj+
+$(objdir)\data.obj+
+$(objdir)\fconfig.obj+
+$(objdir)\fidomisc.obj+
+$(objdir)\timer.obj
+$(objdir)\pcbnlc
                 # no map file
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\scrnio_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-\LIBS\CODEBASE\BOR31\C4BASE.LIB+
-\LIBS\VMDATA\BC31_DOS\VMDATA.LIB+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\scrnio_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+\libs\codebase\bor31\c4base.lib+
+\libs\vmdata\bc31_dos\vmdata.lib+
 emu.lib+
-math$(MDL).lib+
-c$(MDL).lib
+math$(mdl).lib+
+c$(mdl).lib
 |
 
 #=============================================================
 
 # rules for individual files where necessary
 
-$(OBJDIR)\DBASE.OBJ: $(ROOT)\PCB\SOURCE\PPL\DBASE.CPP
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCB\SOURCE\PPL\DBASE.CPP
+$(objdir)\dbase.obj: $(root)\pcb\source\ppl\dbase.cpp
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(root)\pcb\source\ppl\dbase.cpp
 
-$(OBJDIR)\DATA.OBJ: $(ROOT)\PCB\SOURCE\FIDO\DATA.CPP
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCB\SOURCE\FIDO\DATA.CPP
+$(objdir)\data.obj: $(root)\pcb\source\fido\data.cpp
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(root)\pcb\source\fido\data.cpp
 
-$(OBJDIR)\FCONFIG.OBJ: $(ROOT)\PCB\SOURCE\FIDO\FCONFIG.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCB\SOURCE\FIDO\FCONFIG.C
+$(objdir)\fconfig.obj: $(root)\pcb\source\fido\fconfig.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(root)\pcb\source\fido\fconfig.c
 
-$(OBJDIR)\FIDOMISC.OBJ: $(ROOT)\PCB\SOURCE\FIDO\FIDOMISC.CPP
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) $(ROOT)\PCB\SOURCE\FIDO\FIDOMISC.CPP
+$(objdir)\fidomisc.obj: $(root)\pcb\source\fido\fidomisc.cpp
+  $(compiler) +$(cfg) $(copt) $(codeopt) $(root)\pcb\source\fido\fidomisc.cpp
 
-$(OBJDIR)\timer.obj:    $(ROOT)\PCB\SOURCE\ASM\timer.asm
-  $(TASM) $(ASMOPT) $(ROOT)\PCB\SOURCE\ASM\timer.asm, $(OBJDIR)\timer.obj
+$(objdir)\timer.obj:    $(root)\pcb\source\asm\timer.asm
+  $(tasm) $(asmopt) $(root)\pcb\source\asm\timer.asm, $(objdir)\timer.obj
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -198,18 +198,18 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Z
+-c
+-k
+-g
+-o
+-p
+-z
 -k-
 -d
--I$(INCLUDEPATH)
--DFIDO;PCBSETUP;PCBNLC
--D_FARDATA_=far
-| $(CFG)
+-i$(includepath)
+-dfido;pcbsetup;pcbnlc
+-d_fardata_=far
+| $(cfg)
 
 #=============================================================
 

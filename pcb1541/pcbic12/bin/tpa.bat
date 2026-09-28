@@ -1,3 +1,3 @@
 @echo off
-PCBSM.EXE /ADDTPA;PCBIC;2;50;0;PCBIC
+pcbsm.exe /addtpa;pcbic;2;50;0;pcbic
 

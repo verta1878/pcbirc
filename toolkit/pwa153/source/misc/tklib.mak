@@ -1,282 +1,282 @@
 #=============================================================
 #
-#       MAKEFILE - MISC category library for the PCBoard toolkit
+#       makefile - misc category library for the pcboard toolkit
 #
-#       Builds  $(LIBFILE)  from the sources in this folder.
-#       Objects go to $(OBJDIR) and are kept, so a second MAKE only
-#       recompiles what changed.  MAKE CLEAN removes both.
+#       builds  $(libfile)  from the sources in this folder.
+#       objects go to $(objdir) and are kept, so a second make only
+#       recompiles what changed.  make clean removes both.
 #
-#       The repo folder is mounted as the drive root, so \OUT,
-#       \TOOLKIT, \PCB153 and \BC31 are inside the repo no matter
-#       what the repo folder is called.  Every macro is guarded, so
+#       the repo folder is mounted as the drive root, so \out,
+#       \toolkit, \pcb153 and \bc31 are inside the repo no matter
+#       what the repo folder is called.  every macro is guarded, so
 #       it can be overridden on the command line:
 #
-#           make -DCVER=BC50
-#           make -DROOT=\OUT -DBRANCH=PWA154
+#           make -dcver=bc50
+#           make -droot=\out -dbranch=pwa154
 #
-#       Memory model:
-#           Large (default):  make
-#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#       memory model:
+#           large (default):  make
+#           small:            make -dmdl=s -dmodel=small -dcfgname=tks
 #
-#       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
+#       targets:  all (default) | dirs | objs | libf | clean
 #
-#       The module list is Clark's: it matches the module names read
-#       out of the shipped MISC_L.386, recorded in
-#       attic\prebuilt-libs\BC31\README.md.
+#       the module list is clark's: it matches the module names read
+#       out of the shipped misc_l.386, recorded in
+#       attic\prebuilt-libs\bc31\readme.md.
 #
-#       These are compiled but deliberately NOT put in the
+#       these are compiled but deliberately not put in the
 #       library -- the programs that need them link them by path from
-#       $(SDKOBJ)\<cat>\<model>:
-#           SWAP
+#       $(sdkobj)\<cat>\<model>:
+#           swap
 #
-#       Compiler switches live in $(CFG) -- Clark's PCBOARD.CFG and
-#       ALL.RES merged into one file, so the BCC command line stays
-#       under the DOS 127-character limit.  There is no -DLIB there:
-#       that switch empties _FARDATA_ and gives the door-SDK flavour
-#       of these modules, which is not what PCBOARD, PCBSETUP and
-#       FIDOUTIL link against.
+#       compiler switches live in $(cfg) -- clark's pcboard.cfg and
+#       all.res merged into one file, so the bcc command line stays
+#       under the dos 127-character limit.  there is no -dlib there:
+#       that switch empties _fardata_ and gives the door-sdk flavour
+#       of these modules, which is not what pcboard, pcbsetup and
+#       fidoutil link against.
 #
-#       VIRTUAL is compiled with -DVIRTUAL_HUGE:
-#       VIRTUAL.C holds both implementations since the VIRTUAL1 merge.  Clark's
-#       MISC_L.386 carries the huge-pointer one (PCBFILER needs it), which
-#       is the VIRTUAL_HUGE branch; without the define you get the old
-#       VIRTUAL1.  See SOURCE\MISC\VIRTUAL-MERGE.md.
+#       virtual is compiled with -dvirtual_huge:
+#       virtual.c holds both implementations since the virtual1 merge.  clark's
+#       misc_l.386 carries the huge-pointer one (pcbfiler needs it), which
+#       is the virtual_huge branch; without the define you get the old
+#       virtual1.  see source\misc\virtual-merge.md.
 #
 #=============================================================
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = BC31
+!ifndef cver
+cver     = bc31
 !endif
-!ifndef MODEL
-MODEL    = LARGE
+!ifndef model
+model    = large
 !endif
-!ifndef MDL
-MDL      = l
+!ifndef mdl
+mdl      = l
 !endif
-!ifndef CFGNAME
-CFGNAME  = TK
+!ifndef cfgname
+cfgname  = tk
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
 
-SUBDIR   = MISC
-LIBNAME  = MISC_$(MDL)
-CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\$(CFGNAME).CFG
-SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
-LIBDIR   = $(SDK)\LIB
-OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)
-LIBFILE  = $(LIBDIR)\$(LIBNAME).LIB
+subdir   = misc
+libname  = misc_$(mdl)
+cfgdir   = $(tkit)\cfg\$(cver)
+cfg      = $(cfgdir)\$(cfgname).cfg
+sdk      = $(root)\$(branch)\sdk\$(cver)
+libdir   = $(sdk)\lib
+objdir   = $(sdk)\obj\$(subdir)\$(model)
+libfile  = $(libdir)\$(libname).lib
 
 .c.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .cpp.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .asm.obj:
-	tasm /mx /d__$(MDL)__ $<, $(OBJDIR)\$&.obj
+	tasm /mx /d__$(mdl)__ $<, $(objdir)\$&.obj
 
-all: DIRS OBJS LIBF
+all: dirs objs libf
 
-VIRTUAL.obj: VIRTUAL.C
-	bcc +$(CFG) -DVIRTUAL_HUGE -n$(OBJDIR) VIRTUAL.C
+virtual.obj: virtual.c
+	bcc +$(cfg) -dvirtual_huge -n$(objdir) virtual.c
 
-DIRS:
-	-if not exist $(ROOT)\NUL md $(ROOT)
-	-if not exist $(ROOT)\$(BRANCH)\NUL md $(ROOT)\$(BRANCH)
-	-if not exist $(ROOT)\$(BRANCH)\SDK\NUL md $(ROOT)\$(BRANCH)\SDK
-	-if not exist $(SDK)\NUL md $(SDK)
-	-if not exist $(LIBDIR)\NUL md $(LIBDIR)
-	-if not exist $(SDK)\OBJ\NUL md $(SDK)\OBJ
-	-if not exist $(SDK)\OBJ\$(SUBDIR)\NUL md $(SDK)\OBJ\$(SUBDIR)
-	-if not exist $(OBJDIR)\NUL md $(OBJDIR)
+dirs:
+	-if not exist $(root)\nul md $(root)
+	-if not exist $(root)\$(branch)\nul md $(root)\$(branch)
+	-if not exist $(root)\$(branch)\sdk\nul md $(root)\$(branch)\sdk
+	-if not exist $(sdk)\nul md $(sdk)
+	-if not exist $(libdir)\nul md $(libdir)
+	-if not exist $(sdk)\obj\nul md $(sdk)\obj
+	-if not exist $(sdk)\obj\$(subdir)\nul md $(sdk)\obj\$(subdir)
+	-if not exist $(objdir)\nul md $(objdir)
 
-OBJS: ABORT.obj \
-	ADDCHAR.obj \
-	ALLDIGIT.obj \
-	APPEND.obj \
-	ASCII.obj \
-	BD_DBLE.obj \
-	BD_LONG.obj \
-	BINARY.obj \
-	BMSEARCH.obj \
-	BS_DBLE.obj \
-	BS_LONG.obj \
-	BUILDSTR.obj \
-	CHANGE.obj \
-	CHKMOVE.obj \
-	COMMA.obj \
-	COPYFILE.obj \
-	COPYFP.obj \
-	CRYPT.obj \
-	CTOD.obj \
-	DAYOWEEK.obj \
-	DBLE_BD.obj \
-	DBLE_BS.obj \
-	DBLE_PR.obj \
-	DBL_LONG.obj \
-	DCOMMA.obj \
-	DELFILES.obj \
-	DIRECTRY.obj \
-	DISKFREE.obj \
-	DRIVEOK.obj \
-	DTOC.obj \
-	EDITOR.obj \
-	ENDSTR.obj \
-	EVALUATE.obj \
-	EXIST.obj \
-	EXITFUNC.obj \
-	FINDFOUR.obj \
-	FINDNAME.obj \
-	FMEMCPY.obj \
-	FMEMSET.obj \
-	FULLNAME.obj \
-	HEXTOI.obj \
-	INDEX.obj \
-	ISSET.obj \
-	JULIAN.obj \
-	LASTCHAR.obj \
-	LEFTSTR.obj \
-	LONG_BD.obj \
-	LONG_BS.obj \
-	LONG_DBL.obj \
-	LONG_PR.obj \
-	MIDSTR.obj \
-	MKUNIQUE.obj \
-	MOVEFILE.obj \
-	MSTRCPY.obj \
-	PADSTR.obj \
-	PRNREADY.obj \
-	PROPER.obj \
-	PR_DBLE.obj \
-	PR_LONG.obj \
-	PSEARCH.obj \
-	RIGHTSTR.obj \
-	RLE.obj \
-	SETBIT.obj \
-	SHARE.obj \
-	SOUNDEX.obj \
-	STRIPA.obj \
-	STRIPB.obj \
-	STRIPL.obj \
-	STRIPR.obj \
-	SUBST.obj \
-	SWAPENV.obj \
-	TIME.obj \
-	TIMESTEN.obj \
-	TTOC.obj \
-	UNSETBIT.obj \
-	VALIDATE.obj \
-	VALIDSEM.obj \
-	VIRTUAL.obj \
-	WILDCARD.obj \
-	ZSEARCH.obj \
-	ZSORT.obj \
-	ZSWAPINT.obj \
-	ZSWAPLNG.obj \
-	ZSWAPSTR.obj \
-	ZSWAPVIR.obj \
-	SWAP.obj
+objs: abort.obj \
+	addchar.obj \
+	alldigit.obj \
+	append.obj \
+	ascii.obj \
+	bd_dble.obj \
+	bd_long.obj \
+	binary.obj \
+	bmsearch.obj \
+	bs_dble.obj \
+	bs_long.obj \
+	buildstr.obj \
+	change.obj \
+	chkmove.obj \
+	comma.obj \
+	copyfile.obj \
+	copyfp.obj \
+	crypt.obj \
+	ctod.obj \
+	dayoweek.obj \
+	dble_bd.obj \
+	dble_bs.obj \
+	dble_pr.obj \
+	dbl_long.obj \
+	dcomma.obj \
+	delfiles.obj \
+	directry.obj \
+	diskfree.obj \
+	driveok.obj \
+	dtoc.obj \
+	editor.obj \
+	endstr.obj \
+	evaluate.obj \
+	exist.obj \
+	exitfunc.obj \
+	findfour.obj \
+	findname.obj \
+	fmemcpy.obj \
+	fmemset.obj \
+	fullname.obj \
+	hextoi.obj \
+	index.obj \
+	isset.obj \
+	julian.obj \
+	lastchar.obj \
+	leftstr.obj \
+	long_bd.obj \
+	long_bs.obj \
+	long_dbl.obj \
+	long_pr.obj \
+	midstr.obj \
+	mkunique.obj \
+	movefile.obj \
+	mstrcpy.obj \
+	padstr.obj \
+	prnready.obj \
+	proper.obj \
+	pr_dble.obj \
+	pr_long.obj \
+	psearch.obj \
+	rightstr.obj \
+	rle.obj \
+	setbit.obj \
+	share.obj \
+	soundex.obj \
+	stripa.obj \
+	stripb.obj \
+	stripl.obj \
+	stripr.obj \
+	subst.obj \
+	swapenv.obj \
+	time.obj \
+	timesten.obj \
+	ttoc.obj \
+	unsetbit.obj \
+	validate.obj \
+	validsem.obj \
+	virtual.obj \
+	wildcard.obj \
+	zsearch.obj \
+	zsort.obj \
+	zswapint.obj \
+	zswaplng.obj \
+	zswapstr.obj \
+	zswapvir.obj \
+	swap.obj
 
-LIBF:
-	-if exist $(LIBFILE) del $(LIBFILE)
-	tlib $(LIBFILE) +$(OBJDIR)\ABORT
-	tlib $(LIBFILE) +$(OBJDIR)\ADDCHAR
-	tlib $(LIBFILE) +$(OBJDIR)\ALLDIGIT
-	tlib $(LIBFILE) +$(OBJDIR)\APPEND
-	tlib $(LIBFILE) +$(OBJDIR)\ASCII
-	tlib $(LIBFILE) +$(OBJDIR)\BD_DBLE
-	tlib $(LIBFILE) +$(OBJDIR)\BD_LONG
-	tlib $(LIBFILE) +$(OBJDIR)\BINARY
-	tlib $(LIBFILE) +$(OBJDIR)\BMSEARCH
-	tlib $(LIBFILE) +$(OBJDIR)\BS_DBLE
-	tlib $(LIBFILE) +$(OBJDIR)\BS_LONG
-	tlib $(LIBFILE) +$(OBJDIR)\BUILDSTR
-	tlib $(LIBFILE) +$(OBJDIR)\CHANGE
-	tlib $(LIBFILE) +$(OBJDIR)\CHKMOVE
-	tlib $(LIBFILE) +$(OBJDIR)\COMMA
-	tlib $(LIBFILE) +$(OBJDIR)\COPYFILE
-	tlib $(LIBFILE) +$(OBJDIR)\COPYFP
-	tlib $(LIBFILE) +$(OBJDIR)\CRYPT
-	tlib $(LIBFILE) +$(OBJDIR)\CTOD
-	tlib $(LIBFILE) +$(OBJDIR)\DAYOWEEK
-	tlib $(LIBFILE) +$(OBJDIR)\DBLE_BD
-	tlib $(LIBFILE) +$(OBJDIR)\DBLE_BS
-	tlib $(LIBFILE) +$(OBJDIR)\DBLE_PR
-	tlib $(LIBFILE) +$(OBJDIR)\DBL_LONG
-	tlib $(LIBFILE) +$(OBJDIR)\DCOMMA
-	tlib $(LIBFILE) +$(OBJDIR)\DELFILES
-	tlib $(LIBFILE) +$(OBJDIR)\DIRECTRY
-	tlib $(LIBFILE) +$(OBJDIR)\DISKFREE
-	tlib $(LIBFILE) +$(OBJDIR)\DRIVEOK
-	tlib $(LIBFILE) +$(OBJDIR)\DTOC
-	tlib $(LIBFILE) +$(OBJDIR)\EDITOR
-	tlib $(LIBFILE) +$(OBJDIR)\ENDSTR
-	tlib $(LIBFILE) +$(OBJDIR)\EVALUATE
-	tlib $(LIBFILE) +$(OBJDIR)\EXIST
-	tlib $(LIBFILE) +$(OBJDIR)\EXITFUNC
-	tlib $(LIBFILE) +$(OBJDIR)\FINDFOUR
-	tlib $(LIBFILE) +$(OBJDIR)\FINDNAME
-	tlib $(LIBFILE) +$(OBJDIR)\FMEMCPY
-	tlib $(LIBFILE) +$(OBJDIR)\FMEMSET
-	tlib $(LIBFILE) +$(OBJDIR)\FULLNAME
-	tlib $(LIBFILE) +$(OBJDIR)\HEXTOI
-	tlib $(LIBFILE) +$(OBJDIR)\INDEX
-	tlib $(LIBFILE) +$(OBJDIR)\ISSET
-	tlib $(LIBFILE) +$(OBJDIR)\JULIAN
-	tlib $(LIBFILE) +$(OBJDIR)\LASTCHAR
-	tlib $(LIBFILE) +$(OBJDIR)\LEFTSTR
-	tlib $(LIBFILE) +$(OBJDIR)\LONG_BD
-	tlib $(LIBFILE) +$(OBJDIR)\LONG_BS
-	tlib $(LIBFILE) +$(OBJDIR)\LONG_DBL
-	tlib $(LIBFILE) +$(OBJDIR)\LONG_PR
-	tlib $(LIBFILE) +$(OBJDIR)\MIDSTR
-	tlib $(LIBFILE) +$(OBJDIR)\MKUNIQUE
-	tlib $(LIBFILE) +$(OBJDIR)\MOVEFILE
-	tlib $(LIBFILE) +$(OBJDIR)\MSTRCPY
-	tlib $(LIBFILE) +$(OBJDIR)\PADSTR
-	tlib $(LIBFILE) +$(OBJDIR)\PRNREADY
-	tlib $(LIBFILE) +$(OBJDIR)\PROPER
-	tlib $(LIBFILE) +$(OBJDIR)\PR_DBLE
-	tlib $(LIBFILE) +$(OBJDIR)\PR_LONG
-	tlib $(LIBFILE) +$(OBJDIR)\PSEARCH
-	tlib $(LIBFILE) +$(OBJDIR)\RIGHTSTR
-	tlib $(LIBFILE) +$(OBJDIR)\RLE
-	tlib $(LIBFILE) +$(OBJDIR)\SETBIT
-	tlib $(LIBFILE) +$(OBJDIR)\SHARE
-	tlib $(LIBFILE) +$(OBJDIR)\SOUNDEX
-	tlib $(LIBFILE) +$(OBJDIR)\STRIPA
-	tlib $(LIBFILE) +$(OBJDIR)\STRIPB
-	tlib $(LIBFILE) +$(OBJDIR)\STRIPL
-	tlib $(LIBFILE) +$(OBJDIR)\STRIPR
-	tlib $(LIBFILE) +$(OBJDIR)\SUBST
-	tlib $(LIBFILE) +$(OBJDIR)\SWAPENV
-	tlib $(LIBFILE) +$(OBJDIR)\TIME
-	tlib $(LIBFILE) +$(OBJDIR)\TIMESTEN
-	tlib $(LIBFILE) +$(OBJDIR)\TTOC
-	tlib $(LIBFILE) +$(OBJDIR)\UNSETBIT
-	tlib $(LIBFILE) +$(OBJDIR)\VALIDATE
-	tlib $(LIBFILE) +$(OBJDIR)\VALIDSEM
-	tlib $(LIBFILE) +$(OBJDIR)\VIRTUAL
-	tlib $(LIBFILE) +$(OBJDIR)\WILDCARD
-	tlib $(LIBFILE) +$(OBJDIR)\ZSEARCH
-	tlib $(LIBFILE) +$(OBJDIR)\ZSORT
-	tlib $(LIBFILE) +$(OBJDIR)\ZSWAPINT
-	tlib $(LIBFILE) +$(OBJDIR)\ZSWAPLNG
-	tlib $(LIBFILE) +$(OBJDIR)\ZSWAPSTR
-	tlib $(LIBFILE) +$(OBJDIR)\ZSWAPVIR
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+libf:
+	-if exist $(libfile) del $(libfile)
+	tlib $(libfile) +$(objdir)\abort
+	tlib $(libfile) +$(objdir)\addchar
+	tlib $(libfile) +$(objdir)\alldigit
+	tlib $(libfile) +$(objdir)\append
+	tlib $(libfile) +$(objdir)\ascii
+	tlib $(libfile) +$(objdir)\bd_dble
+	tlib $(libfile) +$(objdir)\bd_long
+	tlib $(libfile) +$(objdir)\binary
+	tlib $(libfile) +$(objdir)\bmsearch
+	tlib $(libfile) +$(objdir)\bs_dble
+	tlib $(libfile) +$(objdir)\bs_long
+	tlib $(libfile) +$(objdir)\buildstr
+	tlib $(libfile) +$(objdir)\change
+	tlib $(libfile) +$(objdir)\chkmove
+	tlib $(libfile) +$(objdir)\comma
+	tlib $(libfile) +$(objdir)\copyfile
+	tlib $(libfile) +$(objdir)\copyfp
+	tlib $(libfile) +$(objdir)\crypt
+	tlib $(libfile) +$(objdir)\ctod
+	tlib $(libfile) +$(objdir)\dayoweek
+	tlib $(libfile) +$(objdir)\dble_bd
+	tlib $(libfile) +$(objdir)\dble_bs
+	tlib $(libfile) +$(objdir)\dble_pr
+	tlib $(libfile) +$(objdir)\dbl_long
+	tlib $(libfile) +$(objdir)\dcomma
+	tlib $(libfile) +$(objdir)\delfiles
+	tlib $(libfile) +$(objdir)\directry
+	tlib $(libfile) +$(objdir)\diskfree
+	tlib $(libfile) +$(objdir)\driveok
+	tlib $(libfile) +$(objdir)\dtoc
+	tlib $(libfile) +$(objdir)\editor
+	tlib $(libfile) +$(objdir)\endstr
+	tlib $(libfile) +$(objdir)\evaluate
+	tlib $(libfile) +$(objdir)\exist
+	tlib $(libfile) +$(objdir)\exitfunc
+	tlib $(libfile) +$(objdir)\findfour
+	tlib $(libfile) +$(objdir)\findname
+	tlib $(libfile) +$(objdir)\fmemcpy
+	tlib $(libfile) +$(objdir)\fmemset
+	tlib $(libfile) +$(objdir)\fullname
+	tlib $(libfile) +$(objdir)\hextoi
+	tlib $(libfile) +$(objdir)\index
+	tlib $(libfile) +$(objdir)\isset
+	tlib $(libfile) +$(objdir)\julian
+	tlib $(libfile) +$(objdir)\lastchar
+	tlib $(libfile) +$(objdir)\leftstr
+	tlib $(libfile) +$(objdir)\long_bd
+	tlib $(libfile) +$(objdir)\long_bs
+	tlib $(libfile) +$(objdir)\long_dbl
+	tlib $(libfile) +$(objdir)\long_pr
+	tlib $(libfile) +$(objdir)\midstr
+	tlib $(libfile) +$(objdir)\mkunique
+	tlib $(libfile) +$(objdir)\movefile
+	tlib $(libfile) +$(objdir)\mstrcpy
+	tlib $(libfile) +$(objdir)\padstr
+	tlib $(libfile) +$(objdir)\prnready
+	tlib $(libfile) +$(objdir)\proper
+	tlib $(libfile) +$(objdir)\pr_dble
+	tlib $(libfile) +$(objdir)\pr_long
+	tlib $(libfile) +$(objdir)\psearch
+	tlib $(libfile) +$(objdir)\rightstr
+	tlib $(libfile) +$(objdir)\rle
+	tlib $(libfile) +$(objdir)\setbit
+	tlib $(libfile) +$(objdir)\share
+	tlib $(libfile) +$(objdir)\soundex
+	tlib $(libfile) +$(objdir)\stripa
+	tlib $(libfile) +$(objdir)\stripb
+	tlib $(libfile) +$(objdir)\stripl
+	tlib $(libfile) +$(objdir)\stripr
+	tlib $(libfile) +$(objdir)\subst
+	tlib $(libfile) +$(objdir)\swapenv
+	tlib $(libfile) +$(objdir)\time
+	tlib $(libfile) +$(objdir)\timesten
+	tlib $(libfile) +$(objdir)\ttoc
+	tlib $(libfile) +$(objdir)\unsetbit
+	tlib $(libfile) +$(objdir)\validate
+	tlib $(libfile) +$(objdir)\validsem
+	tlib $(libfile) +$(objdir)\virtual
+	tlib $(libfile) +$(objdir)\wildcard
+	tlib $(libfile) +$(objdir)\zsearch
+	tlib $(libfile) +$(objdir)\zsort
+	tlib $(libfile) +$(objdir)\zswapint
+	tlib $(libfile) +$(objdir)\zswaplng
+	tlib $(libfile) +$(objdir)\zswapstr
+	tlib $(libfile) +$(objdir)\zswapvir
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak
 
-CLEAN:
-	-if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-	-if exist $(OBJDIR)\*.asm del $(OBJDIR)\*.asm
-	-if exist $(LIBFILE) del $(LIBFILE)
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+clean:
+	-if exist $(objdir)\*.obj del $(objdir)\*.obj
+	-if exist $(objdir)\*.asm del $(objdir)\*.asm
+	-if exist $(libfile) del $(libfile)
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak

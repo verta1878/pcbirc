@@ -1,196 +1,196 @@
 #=============================================================
 #
-#       MAKEFILE - DOS category library for the PCBoard toolkit
+#       makefile - dos category library for the pcboard toolkit
 #
-#       Builds  $(LIBFILE)  from the sources in this folder.
-#       Objects go to $(OBJDIR) and are kept, so a second MAKE only
-#       recompiles what changed.  MAKE CLEAN removes both.
+#       builds  $(libfile)  from the sources in this folder.
+#       objects go to $(objdir) and are kept, so a second make only
+#       recompiles what changed.  make clean removes both.
 #
-#       The repo folder is mounted as the drive root, so \OUT,
-#       \TOOLKIT, \PCB153 and \BC31 are inside the repo no matter
-#       what the repo folder is called.  Every macro is guarded, so
+#       the repo folder is mounted as the drive root, so \out,
+#       \toolkit, \pcb153 and \bc31 are inside the repo no matter
+#       what the repo folder is called.  every macro is guarded, so
 #       it can be overridden on the command line:
 #
-#           make -DCVER=BC50
-#           make -DROOT=\OUT -DBRANCH=PWA154
+#           make -dcver=bc50
+#           make -droot=\out -dbranch=pwa154
 #
-#       Memory model:
-#           Large (default):  make
-#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#       memory model:
+#           large (default):  make
+#           small:            make -dmdl=s -dmodel=small -dcfgname=tks
 #
-#       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
+#       targets:  all (default) | dirs | objs | libf | clean
 #
-#       The module list is Clark's: it matches the module names read
-#       out of the shipped DOS_L.386, recorded in
-#       attic\prebuilt-libs\BC31\README.md.
+#       the module list is clark's: it matches the module names read
+#       out of the shipped dos_l.386, recorded in
+#       attic\prebuilt-libs\bc31\readme.md.
 #
-#       One addition: INT24HND.  It is in Clark's own MAKEFILE but missing
+#       one addition: int24hnd.  it is in clark's own makefile but missing
 #       from the .386 we were handed, so the shipped copy was short of it.
 #
-#       These are compiled but deliberately NOT put in the
+#       these are compiled but deliberately not put in the
 #       library -- the programs that need them link them by path from
-#       $(SDKOBJ)\<cat>\<model>:
-#           SHOWERR2
+#       $(sdkobj)\<cat>\<model>:
+#           showerr2
 #
-#       Compiler switches live in $(CFG) -- Clark's PCBOARD.CFG and
-#       ALL.RES merged into one file, so the BCC command line stays
-#       under the DOS 127-character limit.  There is no -DLIB there:
-#       that switch empties _FARDATA_ and gives the door-SDK flavour
-#       of these modules, which is not what PCBOARD, PCBSETUP and
-#       FIDOUTIL link against.
+#       compiler switches live in $(cfg) -- clark's pcboard.cfg and
+#       all.res merged into one file, so the bcc command line stays
+#       under the dos 127-character limit.  there is no -dlib there:
+#       that switch empties _fardata_ and gives the door-sdk flavour
+#       of these modules, which is not what pcboard, pcbsetup and
+#       fidoutil link against.
 #
 #=============================================================
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = BC31
+!ifndef cver
+cver     = bc31
 !endif
-!ifndef MODEL
-MODEL    = LARGE
+!ifndef model
+model    = large
 !endif
-!ifndef MDL
-MDL      = l
+!ifndef mdl
+mdl      = l
 !endif
-!ifndef CFGNAME
-CFGNAME  = TK
+!ifndef cfgname
+cfgname  = tk
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
 
-SUBDIR   = DOS
-LIBNAME  = DOS_$(MDL)
-CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\$(CFGNAME).CFG
-SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
-LIBDIR   = $(SDK)\LIB
-OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)
-LIBFILE  = $(LIBDIR)\$(LIBNAME).LIB
+subdir   = dos
+libname  = dos_$(mdl)
+cfgdir   = $(tkit)\cfg\$(cver)
+cfg      = $(cfgdir)\$(cfgname).cfg
+sdk      = $(root)\$(branch)\sdk\$(cver)
+libdir   = $(sdk)\lib
+objdir   = $(sdk)\obj\$(subdir)\$(model)
+libfile  = $(libdir)\$(libname).lib
 
 .c.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .cpp.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .asm.obj:
-	tasm /mx /d__$(MDL)__ $<, $(OBJDIR)\$&.obj
+	tasm /mx /d__$(mdl)__ $<, $(objdir)\$&.obj
 
-all: DIRS OBJS LIBF
+all: dirs objs libf
 
-DIRS:
-	-if not exist $(ROOT)\NUL md $(ROOT)
-	-if not exist $(ROOT)\$(BRANCH)\NUL md $(ROOT)\$(BRANCH)
-	-if not exist $(ROOT)\$(BRANCH)\SDK\NUL md $(ROOT)\$(BRANCH)\SDK
-	-if not exist $(SDK)\NUL md $(SDK)
-	-if not exist $(LIBDIR)\NUL md $(LIBDIR)
-	-if not exist $(SDK)\OBJ\NUL md $(SDK)\OBJ
-	-if not exist $(SDK)\OBJ\$(SUBDIR)\NUL md $(SDK)\OBJ\$(SUBDIR)
-	-if not exist $(OBJDIR)\NUL md $(OBJDIR)
+dirs:
+	-if not exist $(root)\nul md $(root)
+	-if not exist $(root)\$(branch)\nul md $(root)\$(branch)
+	-if not exist $(root)\$(branch)\sdk\nul md $(root)\$(branch)\sdk
+	-if not exist $(sdk)\nul md $(sdk)
+	-if not exist $(libdir)\nul md $(libdir)
+	-if not exist $(sdk)\obj\nul md $(sdk)\obj
+	-if not exist $(sdk)\obj\$(subdir)\nul md $(sdk)\obj\$(subdir)
+	-if not exist $(objdir)\nul md $(objdir)
 
-OBJS: CHKAPPEN.obj \
-	CHKCREAT.obj \
-	CHKDOSFO.obj \
-	CHKFOPEN.obj \
-	CHKFPRNT.obj \
-	CHKLOCK.obj \
-	CHKOPEN.obj \
-	CHKREAD.obj \
-	CHKUNLNK.obj \
-	CHKWRITE.obj \
-	DOSAPPEN.obj \
-	DOSCLOSE.obj \
-	DOSCOMIT.obj \
-	DOSCREAT.obj \
-	DOSDUP.obj \
-	DOSERROR.obj \
-	DOSFCLOS.obj \
-	DOSFGETS.obj \
-	DOSFIND.obj \
-	DOSFLUSH.obj \
-	DOSFNGTS.obj \
-	DOSFOPEN.obj \
-	DOSFPUTS.obj \
-	DOSFREAD.obj \
-	DOSFSEEK.obj \
-	DOSFTRUN.obj \
-	DOSFUGTS.obj \
-	DOSFWRIT.obj \
-	DOSLSEEK.obj \
-	DOSOPEN.obj \
-	DOSREAD.obj \
-	DOSREWIN.obj \
-	DOSSTBUF.obj \
-	DOSTRUNC.obj \
-	DOSWRITE.obj \
-	EXTENDED.obj \
-	GETDRIVE.obj \
-	GETPATH.obj \
-	HANDLERS.obj \
-	ISOPEN.obj \
-	SAY.obj \
-	SETDRIVE.obj \
-	STRNCHR.obj \
-	SHOWERR.obj \
-	INT24HND.obj \
-	SHOWERR2.obj
+objs: chkappen.obj \
+	chkcreat.obj \
+	chkdosfo.obj \
+	chkfopen.obj \
+	chkfprnt.obj \
+	chklock.obj \
+	chkopen.obj \
+	chkread.obj \
+	chkunlnk.obj \
+	chkwrite.obj \
+	dosappen.obj \
+	dosclose.obj \
+	doscomit.obj \
+	doscreat.obj \
+	dosdup.obj \
+	doserror.obj \
+	dosfclos.obj \
+	dosfgets.obj \
+	dosfind.obj \
+	dosflush.obj \
+	dosfngts.obj \
+	dosfopen.obj \
+	dosfputs.obj \
+	dosfread.obj \
+	dosfseek.obj \
+	dosftrun.obj \
+	dosfugts.obj \
+	dosfwrit.obj \
+	doslseek.obj \
+	dosopen.obj \
+	dosread.obj \
+	dosrewin.obj \
+	dosstbuf.obj \
+	dostrunc.obj \
+	doswrite.obj \
+	extended.obj \
+	getdrive.obj \
+	getpath.obj \
+	handlers.obj \
+	isopen.obj \
+	say.obj \
+	setdrive.obj \
+	strnchr.obj \
+	showerr.obj \
+	int24hnd.obj \
+	showerr2.obj
 
-LIBF:
-	-if exist $(LIBFILE) del $(LIBFILE)
-	tlib $(LIBFILE) +$(OBJDIR)\CHKAPPEN
-	tlib $(LIBFILE) +$(OBJDIR)\CHKCREAT
-	tlib $(LIBFILE) +$(OBJDIR)\CHKDOSFO
-	tlib $(LIBFILE) +$(OBJDIR)\CHKFOPEN
-	tlib $(LIBFILE) +$(OBJDIR)\CHKFPRNT
-	tlib $(LIBFILE) +$(OBJDIR)\CHKLOCK
-	tlib $(LIBFILE) +$(OBJDIR)\CHKOPEN
-	tlib $(LIBFILE) +$(OBJDIR)\CHKREAD
-	tlib $(LIBFILE) +$(OBJDIR)\CHKUNLNK
-	tlib $(LIBFILE) +$(OBJDIR)\CHKWRITE
-	tlib $(LIBFILE) +$(OBJDIR)\DOSAPPEN
-	tlib $(LIBFILE) +$(OBJDIR)\DOSCLOSE
-	tlib $(LIBFILE) +$(OBJDIR)\DOSCOMIT
-	tlib $(LIBFILE) +$(OBJDIR)\DOSCREAT
-	tlib $(LIBFILE) +$(OBJDIR)\DOSDUP
-	tlib $(LIBFILE) +$(OBJDIR)\DOSERROR
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFCLOS
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFGETS
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFIND
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFLUSH
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFNGTS
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFOPEN
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFPUTS
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFREAD
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFSEEK
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFTRUN
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFUGTS
-	tlib $(LIBFILE) +$(OBJDIR)\DOSFWRIT
-	tlib $(LIBFILE) +$(OBJDIR)\DOSLSEEK
-	tlib $(LIBFILE) +$(OBJDIR)\DOSOPEN
-	tlib $(LIBFILE) +$(OBJDIR)\DOSREAD
-	tlib $(LIBFILE) +$(OBJDIR)\DOSREWIN
-	tlib $(LIBFILE) +$(OBJDIR)\DOSSTBUF
-	tlib $(LIBFILE) +$(OBJDIR)\DOSTRUNC
-	tlib $(LIBFILE) +$(OBJDIR)\DOSWRITE
-	tlib $(LIBFILE) +$(OBJDIR)\EXTENDED
-	tlib $(LIBFILE) +$(OBJDIR)\GETDRIVE
-	tlib $(LIBFILE) +$(OBJDIR)\GETPATH
-	tlib $(LIBFILE) +$(OBJDIR)\HANDLERS
-	tlib $(LIBFILE) +$(OBJDIR)\ISOPEN
-	tlib $(LIBFILE) +$(OBJDIR)\SAY
-	tlib $(LIBFILE) +$(OBJDIR)\SETDRIVE
-	tlib $(LIBFILE) +$(OBJDIR)\STRNCHR
-	tlib $(LIBFILE) +$(OBJDIR)\SHOWERR
-	tlib $(LIBFILE) +$(OBJDIR)\INT24HND
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+libf:
+	-if exist $(libfile) del $(libfile)
+	tlib $(libfile) +$(objdir)\chkappen
+	tlib $(libfile) +$(objdir)\chkcreat
+	tlib $(libfile) +$(objdir)\chkdosfo
+	tlib $(libfile) +$(objdir)\chkfopen
+	tlib $(libfile) +$(objdir)\chkfprnt
+	tlib $(libfile) +$(objdir)\chklock
+	tlib $(libfile) +$(objdir)\chkopen
+	tlib $(libfile) +$(objdir)\chkread
+	tlib $(libfile) +$(objdir)\chkunlnk
+	tlib $(libfile) +$(objdir)\chkwrite
+	tlib $(libfile) +$(objdir)\dosappen
+	tlib $(libfile) +$(objdir)\dosclose
+	tlib $(libfile) +$(objdir)\doscomit
+	tlib $(libfile) +$(objdir)\doscreat
+	tlib $(libfile) +$(objdir)\dosdup
+	tlib $(libfile) +$(objdir)\doserror
+	tlib $(libfile) +$(objdir)\dosfclos
+	tlib $(libfile) +$(objdir)\dosfgets
+	tlib $(libfile) +$(objdir)\dosfind
+	tlib $(libfile) +$(objdir)\dosflush
+	tlib $(libfile) +$(objdir)\dosfngts
+	tlib $(libfile) +$(objdir)\dosfopen
+	tlib $(libfile) +$(objdir)\dosfputs
+	tlib $(libfile) +$(objdir)\dosfread
+	tlib $(libfile) +$(objdir)\dosfseek
+	tlib $(libfile) +$(objdir)\dosftrun
+	tlib $(libfile) +$(objdir)\dosfugts
+	tlib $(libfile) +$(objdir)\dosfwrit
+	tlib $(libfile) +$(objdir)\doslseek
+	tlib $(libfile) +$(objdir)\dosopen
+	tlib $(libfile) +$(objdir)\dosread
+	tlib $(libfile) +$(objdir)\dosrewin
+	tlib $(libfile) +$(objdir)\dosstbuf
+	tlib $(libfile) +$(objdir)\dostrunc
+	tlib $(libfile) +$(objdir)\doswrite
+	tlib $(libfile) +$(objdir)\extended
+	tlib $(libfile) +$(objdir)\getdrive
+	tlib $(libfile) +$(objdir)\getpath
+	tlib $(libfile) +$(objdir)\handlers
+	tlib $(libfile) +$(objdir)\isopen
+	tlib $(libfile) +$(objdir)\say
+	tlib $(libfile) +$(objdir)\setdrive
+	tlib $(libfile) +$(objdir)\strnchr
+	tlib $(libfile) +$(objdir)\showerr
+	tlib $(libfile) +$(objdir)\int24hnd
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak
 
-CLEAN:
-	-if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-	-if exist $(OBJDIR)\*.asm del $(OBJDIR)\*.asm
-	-if exist $(LIBFILE) del $(LIBFILE)
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+clean:
+	-if exist $(objdir)\*.obj del $(objdir)\*.obj
+	-if exist $(objdir)\*.asm del $(objdir)\*.asm
+	-if exist $(libfile) del $(libfile)
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak

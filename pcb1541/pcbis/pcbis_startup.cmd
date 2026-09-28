@@ -1,28 +1,28 @@
-/* pcbis_startup.cmd — Start PCBoard BBS (OS/2) */
-/* Part of pcbrevival (GPL v3.0) */
-/* REXX script for OS/2 Warp */
+/* pcbis_startup.cmd — start pcboard bbs (os/2) */
+/* part of pcbrevival (gpl v3.0) */
+/* rexx script for os/2 warp */
 
-call RxFuncAdd 'SysLoadFuncs', 'RexxUtil', 'SysLoadFuncs'
-call SysLoadFuncs
+call rxfuncadd 'sysloadfuncs', 'rexxutil', 'sysloadfuncs'
+call sysloadfuncs
 
-pcbroot = value('PCBIS_ROOT',,'OS2ENVIRONMENT')
-if pcbroot = '' then pcbroot = 'C:\PCBOARD'
+pcbroot = value('pcbis_root',,'os2environment')
+if pcbroot = '' then pcbroot = 'c:\pcboard'
 
 say 'pcbis_startup: beginning'
-say 'PCBoard root: ' pcbroot
+say 'pcboard root: ' pcbroot
 
-/* Check prerequisites */
-if stream(pcbroot'\PCBOARD.EXE','C','QUERY EXISTS') = '' then do
-    say 'ERROR: PCBOARD.EXE not found in' pcbroot
-    say '       Run pcbis_initv.cmd first.'
+/* check prerequisites */
+if stream(pcbroot'\pcboard.exe','c','query exists') = '' then do
+    say 'error: pcboard.exe not found in' pcbroot
+    say '       run pcbis_initv.cmd first.'
     exit 1
 end
 
-/* Start PCBoard */
-say 'Starting PCBoard...'
-'@start /min /n' pcbroot'\PCBOARD.EXE /N:1'
+/* start pcboard */
+say 'starting pcboard...'
+'@start /min /n' pcbroot'\pcboard.exe /n:1'
 
 say 'pcbis_startup: complete'
 say ''
-say 'PCBoard is running.'
-say '  Stop: pcbis_shutdown.cmd'
+say 'pcboard is running.'
+say '  stop: pcbis_shutdown.cmd'

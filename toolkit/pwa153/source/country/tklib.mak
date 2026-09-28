@@ -1,103 +1,103 @@
 #=============================================================
 #
-#       MAKEFILE - COUNTRY category library for the PCBoard toolkit
+#       makefile - country category library for the pcboard toolkit
 #
-#       Builds  $(LIBFILE)  from the sources in this folder.
-#       Objects go to $(OBJDIR) and are kept, so a second MAKE only
-#       recompiles what changed.  MAKE CLEAN removes both.
+#       builds  $(libfile)  from the sources in this folder.
+#       objects go to $(objdir) and are kept, so a second make only
+#       recompiles what changed.  make clean removes both.
 #
-#       The repo folder is mounted as the drive root, so \OUT,
-#       \TOOLKIT, \PCB153 and \BC31 are inside the repo no matter
-#       what the repo folder is called.  Every macro is guarded, so
+#       the repo folder is mounted as the drive root, so \out,
+#       \toolkit, \pcb153 and \bc31 are inside the repo no matter
+#       what the repo folder is called.  every macro is guarded, so
 #       it can be overridden on the command line:
 #
-#           make -DCVER=BC50
-#           make -DROOT=\OUT -DBRANCH=PWA154
+#           make -dcver=bc50
+#           make -droot=\out -dbranch=pwa154
 #
-#       Memory model:
-#           Large (default):  make
-#           Small:            make -DMDL=s -DMODEL=SMALL -DCFGNAME=TKS
+#       memory model:
+#           large (default):  make
+#           small:            make -dmdl=s -dmodel=small -dcfgname=tks
 #
-#       Targets:  all (default) | DIRS | OBJS | LIBF | CLEAN
+#       targets:  all (default) | dirs | objs | libf | clean
 #
-#       The module list is Clark's: it matches the module names read
-#       out of the shipped COUNTRYL.386, recorded in
-#       attic\prebuilt-libs\BC31\README.md.
+#       the module list is clark's: it matches the module names read
+#       out of the shipped countryl.386, recorded in
+#       attic\prebuilt-libs\bc31\readme.md.
 #
-#       Compiler switches live in $(CFG) -- Clark's PCBOARD.CFG and
-#       ALL.RES merged into one file, so the BCC command line stays
-#       under the DOS 127-character limit.  There is no -DLIB there:
-#       that switch empties _FARDATA_ and gives the door-SDK flavour
-#       of these modules, which is not what PCBOARD, PCBSETUP and
-#       FIDOUTIL link against.
+#       compiler switches live in $(cfg) -- clark's pcboard.cfg and
+#       all.res merged into one file, so the bcc command line stays
+#       under the dos 127-character limit.  there is no -dlib there:
+#       that switch empties _fardata_ and gives the door-sdk flavour
+#       of these modules, which is not what pcboard, pcbsetup and
+#       fidoutil link against.
 #
 #=============================================================
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BRANCH
-BRANCH   = PWA153
+!ifndef branch
+branch   = pwa153
 !endif
-!ifndef CVER
-CVER     = BC31
+!ifndef cver
+cver     = bc31
 !endif
-!ifndef MODEL
-MODEL    = LARGE
+!ifndef model
+model    = large
 !endif
-!ifndef MDL
-MDL      = l
+!ifndef mdl
+mdl      = l
 !endif
-!ifndef CFGNAME
-CFGNAME  = TK
+!ifndef cfgname
+cfgname  = tk
 !endif
-!ifndef TKIT
-TKIT     = \TOOLKIT\PWA153
+!ifndef tkit
+tkit     = \toolkit\pwa153
 !endif
 
-SUBDIR   = COUNTRY
-LIBNAME  = COUNTRY$(MDL)
-CFGDIR   = $(TKIT)\CFG\$(CVER)
-CFG      = $(CFGDIR)\$(CFGNAME).CFG
-SDK      = $(ROOT)\$(BRANCH)\SDK\$(CVER)
-LIBDIR   = $(SDK)\LIB
-OBJDIR   = $(SDK)\OBJ\$(SUBDIR)\$(MODEL)
-LIBFILE  = $(LIBDIR)\$(LIBNAME).LIB
+subdir   = country
+libname  = country$(mdl)
+cfgdir   = $(tkit)\cfg\$(cver)
+cfg      = $(cfgdir)\$(cfgname).cfg
+sdk      = $(root)\$(branch)\sdk\$(cver)
+libdir   = $(sdk)\lib
+objdir   = $(sdk)\obj\$(subdir)\$(model)
+libfile  = $(libdir)\$(libname).lib
 
 .c.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .cpp.obj:
-	bcc +$(CFG) -n$(OBJDIR) $<
+	bcc +$(cfg) -n$(objdir) $<
 
 .asm.obj:
-	tasm /mx /d__$(MDL)__ $<, $(OBJDIR)\$&.obj
+	tasm /mx /d__$(mdl)__ $<, $(objdir)\$&.obj
 
-all: DIRS OBJS LIBF
+all: dirs objs libf
 
-DIRS:
-	-if not exist $(ROOT)\NUL md $(ROOT)
-	-if not exist $(ROOT)\$(BRANCH)\NUL md $(ROOT)\$(BRANCH)
-	-if not exist $(ROOT)\$(BRANCH)\SDK\NUL md $(ROOT)\$(BRANCH)\SDK
-	-if not exist $(SDK)\NUL md $(SDK)
-	-if not exist $(LIBDIR)\NUL md $(LIBDIR)
-	-if not exist $(SDK)\OBJ\NUL md $(SDK)\OBJ
-	-if not exist $(SDK)\OBJ\$(SUBDIR)\NUL md $(SDK)\OBJ\$(SUBDIR)
-	-if not exist $(OBJDIR)\NUL md $(OBJDIR)
+dirs:
+	-if not exist $(root)\nul md $(root)
+	-if not exist $(root)\$(branch)\nul md $(root)\$(branch)
+	-if not exist $(root)\$(branch)\sdk\nul md $(root)\$(branch)\sdk
+	-if not exist $(sdk)\nul md $(sdk)
+	-if not exist $(libdir)\nul md $(libdir)
+	-if not exist $(sdk)\obj\nul md $(sdk)\obj
+	-if not exist $(sdk)\obj\$(subdir)\nul md $(sdk)\obj\$(subdir)
+	-if not exist $(objdir)\nul md $(objdir)
 
-OBJS: COUNTRY.obj \
-	DCOMMA.obj \
-	DATE.obj
+objs: country.obj \
+	dcomma.obj \
+	date.obj
 
-LIBF:
-	-if exist $(LIBFILE) del $(LIBFILE)
-	tlib $(LIBFILE) +$(OBJDIR)\COUNTRY
-	tlib $(LIBFILE) +$(OBJDIR)\DCOMMA
-	tlib $(LIBFILE) +$(OBJDIR)\DATE
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+libf:
+	-if exist $(libfile) del $(libfile)
+	tlib $(libfile) +$(objdir)\country
+	tlib $(libfile) +$(objdir)\dcomma
+	tlib $(libfile) +$(objdir)\date
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak
 
-CLEAN:
-	-if exist $(OBJDIR)\*.obj del $(OBJDIR)\*.obj
-	-if exist $(OBJDIR)\*.asm del $(OBJDIR)\*.asm
-	-if exist $(LIBFILE) del $(LIBFILE)
-	-if exist $(LIBDIR)\$(LIBNAME).BAK del $(LIBDIR)\$(LIBNAME).BAK
+clean:
+	-if exist $(objdir)\*.obj del $(objdir)\*.obj
+	-if exist $(objdir)\*.asm del $(objdir)\*.asm
+	-if exist $(libfile) del $(libfile)
+	-if exist $(libdir)\$(libname).bak del $(libdir)\$(libname).bak

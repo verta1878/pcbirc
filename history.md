@@ -84,12 +84,26 @@ from BC 3.1 iostream.h).  All compiled and 3 UUCP targets relinked with
 Relinked: UUIN 274,437 · UUOUT 196,499 · UUXFER 247,755.
 STBSTUB blocker **RESOLVED**.
 
+### v0.3.2+ (48) — 2026-09-28: PCBKit TC 2.01 — 4 monolithic toolkit libraries (hexadecimal)
+
+119 modules × 4 memory models compiled with TCC 2.01 under DOSBox-X
+headless. BLDKIT.BAT + MKLIB.BAT. SUBST workaround for turboc.cfg.
+
+| Library | Size | Model |
+|---------|------|-------|
+| PCBKITS.LIB | 151,552 | small |
+| PCBKITM.LIB | 156,672 | medium |
+| PCBKITC.LIB | 163,840 | compact |
+| PCBKITL.LIB | 168,960 | large |
+
+dosboxx.zip updated with build output.
+
 ---
 
 ## Open blockers
 
 - **CodeBase**: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
   Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
-- **pcbkit_l.lib TC 2.01**: never committed (167,768 B vs 241,144 B)
-- **TKLIB**: TC201 and MSC70 legs not done
+- **TKLIB**: TC201 monolithic done, TC201 split categories + MSC70 legs not done
 - **SDK paths**: MAK/CFG need ROOT=\OUT\BRANCH\ across 4 branches × 3 compilers
+- **turboc.cfg**: TCC 2.01 does not read config file under DOSBox-X — investigating

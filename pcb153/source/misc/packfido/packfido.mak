@@ -1,80 +1,80 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* PACKFIDO.MAK - build PACKFIDO.EXE, aiming at Clark's shipped binary.      */
-#* pcbirc crew, 2026-09-23.  GPLv3.                                          */
+#* packfido.mak - build packfido.exe, aiming at clark's shipped binary.      */
+#* pcbirc crew, 2026-09-23.  gplv3.                                          */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 #
-# Modelled on Clark's own utility makefile, reference\pcball\pcboard\
-# pcb-util\PCBTEXT\MKPCBTXT.MAK - same switches, same link shape, same
-# small model.  The target is
+# modelled on clark's own utility makefile, reference\pcball\pcboard\
+# pcb-util\pcbtext\mkpcbtxt.mak - same switches, same link shape, same
+# small model.  the target is
 #
-#     pcb1541\install\dist\target\PACKFIDO.EXE   23,214 bytes
+#     pcb1541\install\dist\target\packfido.exe   23,214 bytes
 #     sha256 ef584fc957a28d051a7c40937ed5eed916dfd043bc9ae7ca3f2996fc6a8f63a8
 #
-# byte for byte.  Anything else is not done.
+# byte for byte.  anything else is not done.
 #
-# MDL = s because the shipped binary has 8 relocations and a 512-byte
-# header - small model.  MKPCBTXT.EXE, which Clark built with MDL=s, has 10.
+# mdl = s because the shipped binary has 8 relocations and a 512-byte
+# header - small model.  mkpcbtxt.exe, which clark built with mdl=s, has 10.
 #
-# -P compiles as C++.  It is not optional: the kit libraries are C++
-# objects, and a C compile leaves every kit symbol undefined.
+# -p compiles as c++.  it is not optional: the kit libraries are c++
+# objects, and a c compile leaves every kit symbol undefined.
 #
-# STILL MISSING: the small-model category libraries.  This links against
-# PCBKBC$(MDL).LIB, which in turn needs MISC_$(MDL) and DOS_$(MDL) for
-# retrycount(), findstartofname(), _int23hnd and _int24hnd.  Only the
-# LARGE-model category libraries are built today.
+# still missing: the small-model category libraries.  this links against
+# pcbkbc$(mdl).lib, which in turn needs misc_$(mdl) and dos_$(mdl) for
+# retrycount(), findstartofname(), _int23hnd and _int24hnd.  only the
+# large-model category libraries are built today.
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = PACKFIDO
-MDL      = s
+progname = packfido
+mdl      = s
 
-!if !$d(ROOT)
-ROOT     = \
+!if !$d(root)
+root     = \
 !endif
 
-LIBH     = $(ROOT)toolkit\pwa153\H
-LIBLIB   = $(ROOT)toolkit\pwa153\bc31\lib
+libh     = $(root)toolkit\pwa153\h
+liblib   = $(root)toolkit\pwa153\bc31\lib
 
-!if !$d(BC31PATH)
-BC31PATH = \BC31
+!if !$d(bc31path)
+bc31path = \bc31
 !endif
 
-COMPILER = $(BC31PATH)\BIN\BCC.EXE
-LINKER   = $(BC31PATH)\BIN\TLINK.EXE
+compiler = $(bc31path)\bin\bcc.exe
+linker   = $(bc31path)\bin\tlink.exe
 
-INCLUDEPATH = $(BC31PATH)\INCLUDE;$(LIBH)
-LIBPATH     = $(BC31PATH)\LIB
+includepath = $(bc31path)\include;$(libh)
+libpath     = $(bc31path)\lib
 
-# Clark's switches, verbatim from MKPCBTXT.MAK / MKPCBTXT.CFG.
-COPT = -c -m$(MDL) -P -Oebglmptv -f- -ff- -C -K -G -O -Z -k- -d
+# clark's switches, verbatim from mkpcbtxt.mak / mkpcbtxt.cfg.
+copt = -c -m$(mdl) -p -oebglmptv -f- -ff- -c -k -g -o -z -k- -d
 
 #=============================================================
 
-all: $(PROGNAME).exe
+all: $(progname).exe
 
-$(PROGNAME).obj: $(PROGNAME).C
-  $(COMPILER) $(COPT) -I$(INCLUDEPATH) $(PROGNAME).C
+$(progname).obj: $(progname).c
+  $(compiler) $(copt) -i$(includepath) $(progname).c
 
-$(PROGNAME).exe: $(PROGNAME).obj
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-$(LIBPATH)\c0$(MDL).obj+
-$(PROGNAME).obj
-$(PROGNAME).exe
+$(progname).exe: $(progname).obj
+  $(linker) /x/c/l$(libpath) @&&|
+$(libpath)\c0$(mdl).obj+
+$(progname).obj
+$(progname).exe
                 # no map file
-$(LIBLIB)\PCBKBC$(MDL).LIB+
-$(LIBLIB)\MISC_$(MDL).LIB+
-$(LIBLIB)\DOS_$(MDL).LIB+
-$(LIBPATH)\c$(MDL).lib
+$(liblib)\pcbkbc$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(libpath)\c$(mdl).lib
 |
 
 clean:
-  if exist $(PROGNAME).obj del $(PROGNAME).obj
-  if exist $(PROGNAME).exe del $(PROGNAME).exe
+  if exist $(progname).obj del $(progname).obj
+  if exist $(progname).exe del $(progname).exe
 
 #=============================================================
-# Verify, once it links:
+# verify, once it links:
 #
-#   the only test is the sha256 against Clark's binary.  There is no
+#   the only test is the sha256 against clark's binary.  there is no
 #   behavioural harness here and there should not be one - if the bytes
 #   match, behaviour matches by construction.

@@ -1,2 +1,2 @@
-echo Y | del obj\bcos2\*.* > nul
+echo y | del obj\bcos2\*.* > nul
 

@@ -1,74 +1,74 @@
 /* ------------------------------------------------------------------------ */
-/*                OS/2 2.0 SLIP Driver for IBM TCP/IP v1.2.1                */
-/*                               Version 1.0                                */
+/*                os/2 2.0 slip driver for ibm tcp/ip v1.2.1                */
+/*                               version 1.0                                */
 /* ------------------------------------------------------------------------ */
 
 parse arg interface , dialcmd first last password
 
 /* ------------------------------------------------------------------------ */
-/*                   Initialization and Main Script Code                    */
+/*                   initialization and main script code                    */
 /* ------------------------------------------------------------------------ */
 
-/* Set some definitions for easier COM strings */
-call RxFuncAdd 'SysLoadFuncs', 'RexxUtil', 'SysLoadFuncs'
-call SysLoadFuncs
+/* set some definitions for easier com strings */
+call rxfuncadd 'sysloadfuncs', 'rexxutil', 'sysloadfuncs'
+call sysloadfuncs
 
 langnum = '6'
 cr='0d'x
 crlf='0d0a'x
 
 say ''
-say 'PCBoard - SLIP Example Connection Script ',
+say 'pcboard - slip example connection script ',
     '(interface' interface')'
 
-/* Prompt for missing information */
+/* prompt for missing information */
 if dialcmd = '' then do
-   call charout , 'Dial Command: '
+   call charout , 'dial command: '
    parse pull dialcmd
 end
 if first = '' | first = '*' then do
-   call charout , 'First Name: '
+   call charout , 'first name: '
    parse pull first
 end
 else do
-   say 'First Name:' first
+   say 'first name:' first
 end
 if last = '' | last = '*' then do
-   call charout , 'Last Name: '
+   call charout , 'last name: '
    parse pull last
 end
 else do
-   say 'Last Name:' last
+   say 'last name:' last
 end
 if password = '' | password = '*' then do
-   call charout , 'Password: '
+   call charout , 'password: '
    password = readpass()
 end
 
-/* Flush any stuff left over from previous COM activity */
+/* flush any stuff left over from previous com activity */
 call flush_receive
 
-/* Reset the modem here */
-/* You may need to customize this for your modem make and model */
-call lineout , 'Reset modem...'
-call send 'AT' || cr
-call waitfor 'OK', 5;   call flush_receive 'echo'
-if RC = 1 then do
-  call lineout , 'Modem not resetting...Trying again'
+/* reset the modem here */
+/* you may need to customize this for your modem make and model */
+call lineout , 'reset modem...'
+call send 'at' || cr
+call waitfor 'ok', 5;   call flush_receive 'echo'
+if rc = 1 then do
+  call lineout , 'modem not resetting...trying again'
   call send '+++'
-  call waitfor 'OK', 5
-  call send 'ATHZ' || cr
-  call waitfor 'OK', 3
+  call waitfor 'ok', 5
+  call send 'athz' || cr
+  call waitfor 'ok', 3
 end
 
-/* Dial the remote server */
-call charout, 'Now Dialing...'
+/* dial the remote server */
+call charout, 'now dialing...'
 
-/* Wait for connection */
+/* wait for connection */
 call send dialcmd || cr
-call waitfor 'CONNECT'  ; call waitfor crlf
+call waitfor 'connect'  ; call waitfor crlf
 
-/* Handle login.  We wait for standard strings, and then flush anything */
+/* handle login.  we wait for standard strings, and then flush anything */
 /* else to take care of trailing spaces, etc..                          */
 /* call send cr */
 
@@ -80,9 +80,9 @@ call waitfor 'name?', 5;  call flush_receive 'echo'
 call send first || cr
 call waitfor 'name?', 5;  call flush_receive 'echo'
 call send last || cr
-call waitfor 'Password', 5;  call flush_receive 'echo'
+call waitfor 'password', 5;  call flush_receive 'echo'
 call send password || cr
-call waitfor 'IP address'
+call waitfor 'ip address'
 parse var waitfor_buffer . ') address is:' a '.' b '.' c '.' d '0d0a'x .
 annex_address = a||'.'||b||'.'||c||'.'||d
 call waitfor crlf
@@ -94,13 +94,13 @@ call flush_receive 'echo'
 'ifconfig sl0' os2_address 'netmask 255.255.255.0'
 'route -f add default' annex_address '1'
 
-say crlf || 'SLIP Connection Established'
-say 'Configuring local address =' os2_address ', Annex =' annex_address
+say crlf || 'slip connection established'
+say 'configuring local address =' os2_address ', annex =' annex_address
 
 'ifconfig sl0' os2_address annex_address 'netmask 255.255.255.0'
 'route add default' annex_address '1'
 
-/* All done */
+/* all done */
 exit 0
 
 
@@ -108,7 +108,7 @@ exit 0
 /*                            send ( sendstring)                            */
 /*..........................................................................*/
 /*                                                                          */
-/* Routine to send a character string off to the modem.                     */
+/* routine to send a character string off to the modem.                     */
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
@@ -123,7 +123,7 @@ send:
 /*                          waitfor ( waitstring )                          */
 /*..........................................................................*/
 /*                                                                          */
-/* Waits for the supplied string to show up in the COM input.  All input    */
+/* waits for the supplied string to show up in the com input.  all input    */
 /* from the time this function is called until the string shows up in the   */
 /* input is accumulated in the "waitfor_buffer" variable.                   */
 /*                                                                          */
@@ -135,7 +135,7 @@ waitfor:
 
    waitfor_buffer = '' ; done = 0 ; curpos = 1
 
-   if (remain_buffer = 'REMAIN_BUFFER') then do
+   if (remain_buffer = 'remain_buffer') then do
       remain_buffer = ''
    end
 
@@ -165,7 +165,7 @@ waitfor:
 /*                               readpass ()                                */
 /*..........................................................................*/
 /*                                                                          */
-/* Routine used to read a password from the user without echoing the        */
+/* routine used to read a password from the user without echoing the        */
 /* password to the screen.                                                  */
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
@@ -187,11 +187,11 @@ readpass:
 /*                             flush_receive ()                             */
 /*..........................................................................*/
 /*                                                                          */
-/* Routine to flush any pending characters to be read from the COM port.    */
-/* Reads everything it can until nothing new shows up for 100ms, at which   */
+/* routine to flush any pending characters to be read from the com port.    */
+/* reads everything it can until nothing new shows up for 100ms, at which   */
 /* point it returns.                                                        */
 /*                                                                          */
-/* The optional echo argument, if 1, says to echo flushed information.      */
+/* the optional echo argument, if 1, says to echo flushed information.      */
 /*                                                                          */
 /* ------------------------------------------------------------------------ */
 
@@ -199,14 +199,14 @@ flush_receive:
 
    parse arg echo
 
-   /* If echoing the flush - take care of waitfor remaining buffer */
+   /* if echoing the flush - take care of waitfor remaining buffer */
    if (echo \= '') & (length(remain_buffer) > 0) then do
       call charout , remain_buffer
       remain_buffer = ''
    end
 
-   /* Eat anything left in the modem or COM buffers */
-   /* Stop when nothing new appears for 100ms.      */
+   /* eat anything left in the modem or com buffers */
+   /* stop when nothing new appears for 100ms.      */
 
    do until line = ''
      line = slip_com_input(interface,,100)
@@ -221,7 +221,7 @@ flush_receive:
 /*    waitfor3 ( waitstring1 , waitstring2 , waitstring3)                   */
 /*..........................................................................*/
 /*                                                                          */
-/* Waits for the supplied strings to show up in the COM input.  All input   */
+/* waits for the supplied strings to show up in the com input.  all input   */
 /* from the time this function is called until the string shows up in the   */
 /* input is accumulated in the "waitfor_buffer" variable.                   */
 /*                                                                          */
@@ -236,7 +236,7 @@ waitfor3:
 
    waitfor_buffer = '' ; done = 0 ; curpos = 1
 
-   if (remain_buffer = 'REMAIN_BUFFER') then do
+   if (remain_buffer = 'remain_buffer') then do
       remain_buffer = ''
    end
 
@@ -285,7 +285,7 @@ waitfor3:
 /*    waitfor2 ( waitstring1 , waitstring2 )                                */
 /*..........................................................................*/
 /*                                                                          */
-/* Waits for the supplied strings to show up in the COM input.  All input   */
+/* waits for the supplied strings to show up in the com input.  all input   */
 /* from the time this function is called until the string shows up in the   */
 /* input is accumulated in the "waitfor_buffer" variable.                   */
 /*                                                                          */
@@ -300,7 +300,7 @@ waitfor2:
 
    waitfor_buffer = '' ; done = 0 ; curpos = 1
 
-   if (remain_buffer = 'REMAIN_BUFFER') then do
+   if (remain_buffer = 'remain_buffer') then do
       remain_buffer = ''
    end
 

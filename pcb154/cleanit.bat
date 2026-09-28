@@ -1,6 +1,6 @@
 @echo off
-if not "%DJGPP%" == "" goto run
-echo need DJGPP environment
+if not "%djgpp%" == "" goto run
+echo need djgpp environment
 goto exit
 :run
 rm -f main/bcc.res

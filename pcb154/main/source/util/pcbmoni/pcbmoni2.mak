@@ -1,69 +1,69 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBMONI2.MAK - Makefile for project D:\PROJ\PCBMONI\pcbmoni2.prj
-#               Created on 08/11/96 at 23:20
+#       pcbmoni2.mak - makefile for project d:\proj\pcbmoni\pcbmoni2.prj
+#               created on 08/11/96 at 23:20
 #
 #=============================================================
 
-.AUTODEPEND
+.autodepend
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-!ifndef BCROOT
-BCROOT   = \BCOS2
+!ifndef bcroot
+bcroot   = \bcos2
 !endif
 
-.PATH.obj = $(ROOT)\PCBMONI\OS2
+.path.obj = $(root)\pcbmoni\os2
 
 #=============================================================
-#               Translator Definitions
+#               translator definitions
 #=============================================================
-CC = bcc +PCBMONI2.CFG
-TASM = tasm.exe
-TLIB = tlib.exe
-TLINK = tlink
-RC = brcc.exe
-RB = rc.exe
-LIBPATH = $(BCROOT)\LIB
-INCLUDEPATH = $(BCROOT)\INCLUDE;$(ROOT)\lib\h
+cc = bcc +pcbmoni2.cfg
+tasm = tasm.exe
+tlib = tlib.exe
+tlink = tlink
+rc = brcc.exe
+rb = rc.exe
+libpath = $(bcroot)\lib
+includepath = $(bcroot)\include;$(root)\lib\h
 
 
 #=============================================================
-#               Implicit Rules
+#               implicit rules
 #=============================================================
 .c.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 .cpp.obj:
-  $(CC) -c {$< }
+  $(cc) -c {$< }
 
 .asm.obj:
-  $(TASM) -Mx $*.asm,$*.obj
+  $(tasm) -mx $*.asm,$*.obj
 
 .rc.res:
-  $(RC) -r $*.rc
+  $(rc) -r $*.rc
 
 #=============================================================
-#               List Macros
+#               list macros
 #=============================================================
 
 
-EXE_DEPENDENCIES =  \
+exe_dependencies =  \
  ..\lib\bcos2\country.lib \
  ..\lib\bcos2\misc.lib \
  ..\lib\bcos2\scrnio.lib \
@@ -74,63 +74,63 @@ EXE_DEPENDENCIES =  \
  pcbmoni.obj
 
 #=============================================================
-#               Explicit Rules
+#               explicit rules
 #=============================================================
-$(ROOT)\pcbmoni\os2\pcbmoni2.exe: pcbmoni2.cfg $(EXE_DEPENDENCIES)
-  $(TLINK) /B:0x10000 /Toe /ap /L$(LIBPATH) @&&|
-$(BCROOT)\LIB\C02.OBJ+
-$(ROOT)\pcbmoni\os2\scrninpt.obj+
-$(ROOT)\pcbmoni\os2\pcbmoni.obj
-$(ROOT)\pcbmoni\os2\pcbmoni2,$(ROOT)\pcbmoni\os2\pcbmoni2
+$(root)\pcbmoni\os2\pcbmoni2.exe: pcbmoni2.cfg $(exe_dependencies)
+  $(tlink) /b:0x10000 /toe /ap /l$(libpath) @&&|
+$(bcroot)\lib\c02.obj+
+$(root)\pcbmoni\os2\scrninpt.obj+
+$(root)\pcbmoni\os2\pcbmoni.obj
+$(root)\pcbmoni\os2\pcbmoni2,$(root)\pcbmoni\os2\pcbmoni2
 ..\lib\bcos2\country.lib+
 ..\lib\bcos2\misc.lib+
 ..\lib\bcos2\scrnio.lib+
 ..\lib\bcos2\screen.lib+
 ..\lib\bcos2\dos.lib+
 ..\lib\bcos2\system.lib+
-$(BCROOT)\LIB\C2MT.LIB+
-$(BCROOT)\LIB\OS2.LIB
+$(bcroot)\lib\c2mt.lib+
+$(bcroot)\lib\os2.lib
 
 |
 
 
 #=============================================================
-#               Individual File Dependencies
+#               individual file dependencies
 #=============================================================
 scrninpt.obj: pcbmoni2.cfg ..\lib\source\scrnio\scrninpt.c
-        $(CC) -c ..\lib\source\scrnio\scrninpt.c
+        $(cc) -c ..\lib\source\scrnio\scrninpt.c
 
 pcbmoni.obj: pcbmoni2.cfg pcbmoni.c
 
 #=============================================================
-#               Compiler Configuration File
+#               compiler configuration file
 #=============================================================
 pcbmoni2.cfg: pcbmoni2.mak
   copy &&|
--RT-
+-rt-
 -xd-
 -x-
--R
--Oz
--Ob
--Oe
--Oc
--L$(LIBPATH)
--I$(INCLUDEPATH)
+-r
+-oz
+-ob
+-oe
+-oc
+-l$(libpath)
+-i$(includepath)
 -n\proj\pcbmoni\os2
--P
+-p
 -vi
 -sm
 -d
 -k-
--O
--Ot
+-o
+-ot
 -v
 -w
--C
--K
+-c
+-k
 -a
--D_FARDATA_
+-d_fardata_
 | pcbmoni2.cfg
 
 

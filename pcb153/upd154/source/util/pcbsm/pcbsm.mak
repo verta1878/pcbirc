@@ -1,217 +1,217 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       PCBSM.MAK - Makefile for PCBSM Program
+#       pcbsm.mak - makefile for pcbsm program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = PCBSM
+progname = pcbsm
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-SOURCE   = SOURCE
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+source   = source
+objdir   = $(bccompiler)
+libroot  = $(root)\lib
+libh     = $(libroot)\h
+liblib   = $(libroot)\bcdos\$(bccompiler)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);SOURCE;$(ROOT)\MAIN\SOURCE\H
+includepath = $(include);$(libh);source;$(root)\main\source\h
 
 #=============================================================
 
-!if $d(DEBUG)
-CODEOPT=-DDEBUG
+!if $d(debug)
+codeopt=-ddebug
 !endif
 
-!if $d(TD)
-CODEOPT = $(CODEOPT) -v
-ASMOPT  = $(ASMOPT) /v
-LINKOPT = $(LINKOPT) /v
+!if $d(td)
+codeopt = $(codeopt) -v
+asmopt  = $(asmopt) /v
+linkopt = $(linkopt) /v
 !endif
 
-COPT = -c
+copt = -c
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
-LINKOPT = /x /c
+linkopt = /x /c
 
-!if $d(TD)
-COPT    = $(COPT) -v
-ASMOPT  = $(ASMOPT) /v
-LINKOPT = $(LINKOPT) /v
+!if $d(td)
+copt    = $(copt) -v
+asmopt  = $(asmopt) /v
+linkopt = $(linkopt) /v
 !endif
 
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE);EXTRAOBJ
-.PATH.cpp = $(SOURCE);EXTRAOBJ
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source);extraobj
+.path.cpp = $(source);extraobj
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(OBJDIR)\acct.obj          \
-  $(OBJDIR)\adjust.obj        \
-  $(OBJDIR)\batch.obj         \
-  $(OBJDIR)\colors.obj        \
-  $(OBJDIR)\conf.obj          \
-  $(OBJDIR)\confmove.obj      \
-  $(OBJDIR)\defedit.obj       \
-  $(OBJDIR)\demo.obj          \
-  $(OBJDIR)\edit.obj          \
-  $(OBJDIR)\expdate.obj       \
-  $(OBJDIR)\index.obj         \
-  $(OBJDIR)\init.obj          \
-  $(OBJDIR)\pack.obj          \
-  $(OBJDIR)\packinpt.obj      \
-  $(OBJDIR)\packon.obj        \
-  $(OBJDIR)\pcbsm.obj         \
-  $(OBJDIR)\personal.obj      \
-  $(OBJDIR)\phone.obj         \
-  $(OBJDIR)\print.obj         \
-  $(OBJDIR)\process.obj       \
-  $(OBJDIR)\sort.obj          \
-  $(OBJDIR)\undo.obj          \
-  $(OBJDIR)\userinfo.obj      \
-  $(OBJDIR)\usernet.obj       \
-  $(OBJDIR)\users.obj         \
-  $(OBJDIR)\abort.obj      \
-  $(OBJDIR)\box.obj      \
-  $(OBJDIR)\cnames.obj      \
-  $(OBJDIR)\config.obj      \
-  $(OBJDIR)\copyfile.obj      \
-  $(OBJDIR)\datafil2.obj      \
-  $(OBJDIR)\delete.obj      \
-  $(OBJDIR)\diskfree.obj      \
-  $(OBJDIR)\dmath.obj      \
-  $(OBJDIR)\dosfread.obj      \
-  $(OBJDIR)\endstr.obj      \
-  $(OBJDIR)\findfour.obj      \
-  $(OBJDIR)\getmode.obj      \
-  $(OBJDIR)\insert.obj      \
-  $(OBJDIR)\readscrn.obj      \
-  $(OBJDIR)\savetext.obj      \
-  $(OBJDIR)\scrollup.obj      \
-  $(OBJDIR)\showerr2.obj      \
-  $(OBJDIR)\smallsub.obj      \
-  $(OBJDIR)\stripb.obj      \
-  $(OBJDIR)\timechng.obj      \
-  $(OBJDIR)\wherex.obj      \
-  $(LIBLIB)\dos_$(MDL).386    \
-  $(LIBLIB)\pcb_$(MDL).386    \
-  $(LIBLIB)\misc_$(MDL).386   \
-  $(LIBLIB)\screen_$(MDL).386 \
-  $(LIBLIB)\scrnio_$(MDL).386 \
-  $(LIBLIB)\system_$(MDL).386 \
-  $(LIBLIB)\country$(MDL).386 \
+exe_dependencies = \
+  $(objdir)\acct.obj          \
+  $(objdir)\adjust.obj        \
+  $(objdir)\batch.obj         \
+  $(objdir)\colors.obj        \
+  $(objdir)\conf.obj          \
+  $(objdir)\confmove.obj      \
+  $(objdir)\defedit.obj       \
+  $(objdir)\demo.obj          \
+  $(objdir)\edit.obj          \
+  $(objdir)\expdate.obj       \
+  $(objdir)\index.obj         \
+  $(objdir)\init.obj          \
+  $(objdir)\pack.obj          \
+  $(objdir)\packinpt.obj      \
+  $(objdir)\packon.obj        \
+  $(objdir)\pcbsm.obj         \
+  $(objdir)\personal.obj      \
+  $(objdir)\phone.obj         \
+  $(objdir)\print.obj         \
+  $(objdir)\process.obj       \
+  $(objdir)\sort.obj          \
+  $(objdir)\undo.obj          \
+  $(objdir)\userinfo.obj      \
+  $(objdir)\usernet.obj       \
+  $(objdir)\users.obj         \
+  $(objdir)\abort.obj      \
+  $(objdir)\box.obj      \
+  $(objdir)\cnames.obj      \
+  $(objdir)\config.obj      \
+  $(objdir)\copyfile.obj      \
+  $(objdir)\datafil2.obj      \
+  $(objdir)\delete.obj      \
+  $(objdir)\diskfree.obj      \
+  $(objdir)\dmath.obj      \
+  $(objdir)\dosfread.obj      \
+  $(objdir)\endstr.obj      \
+  $(objdir)\findfour.obj      \
+  $(objdir)\getmode.obj      \
+  $(objdir)\insert.obj      \
+  $(objdir)\readscrn.obj      \
+  $(objdir)\savetext.obj      \
+  $(objdir)\scrollup.obj      \
+  $(objdir)\showerr2.obj      \
+  $(objdir)\smallsub.obj      \
+  $(objdir)\stripb.obj      \
+  $(objdir)\timechng.obj      \
+  $(objdir)\wherex.obj      \
+  $(liblib)\dos_$(mdl).386    \
+  $(liblib)\pcb_$(mdl).386    \
+  $(liblib)\misc_$(mdl).386   \
+  $(liblib)\screen_$(mdl).386 \
+  $(liblib)\scrnio_$(mdl).386 \
+  $(liblib)\system_$(mdl).386 \
+  $(liblib)\country$(mdl).386 \
 
 #=============================================================
 
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) $(LINKOPT) /L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\acct.obj+
-$(OBJDIR)\adjust.obj+
-$(OBJDIR)\batch.obj+
-$(OBJDIR)\colors.obj+
-$(OBJDIR)\conf.obj+
-$(OBJDIR)\confmove.obj+
-$(OBJDIR)\defedit.obj+
-$(OBJDIR)\demo.obj+
-$(OBJDIR)\edit.obj+
-$(OBJDIR)\expdate.obj+
-$(OBJDIR)\index.obj+
-$(OBJDIR)\init.obj+
-$(OBJDIR)\pack.obj+
-$(OBJDIR)\packinpt.obj+
-$(OBJDIR)\packon.obj+
-$(OBJDIR)\pcbsm.obj+
-$(OBJDIR)\personal.obj+
-$(OBJDIR)\phone.obj+
-$(OBJDIR)\print.obj+
-$(OBJDIR)\process.obj+
-$(OBJDIR)\sort.obj+
-$(OBJDIR)\undo.obj+
-$(OBJDIR)\userinfo.obj+
-$(OBJDIR)\usernet.obj+
-$(OBJDIR)\users.obj+
-$(OBJDIR)\abort.obj+
-$(OBJDIR)\box.obj+
-$(OBJDIR)\cnames.obj+
-$(OBJDIR)\config.obj+
-$(OBJDIR)\copyfile.obj+
-$(OBJDIR)\ctod.obj+
-$(OBJDIR)\kbdstat.obj+
-$(OBJDIR)\datafil2.obj+
-$(OBJDIR)\delete.obj+
-$(OBJDIR)\diskfree.obj+
-$(OBJDIR)\dmath.obj+
-$(OBJDIR)\dosfread.obj+
-$(OBJDIR)\endstr.obj+
-$(OBJDIR)\findfour.obj+
-$(OBJDIR)\getmode.obj+
-$(OBJDIR)\insert.obj+
-$(OBJDIR)\readscrn.obj+
-$(OBJDIR)\savetext.obj+
-$(OBJDIR)\scrollup.obj+
-$(OBJDIR)\showerr2.obj+
-$(OBJDIR)\smallsub.obj+
-$(OBJDIR)\stripb.obj+
-$(OBJDIR)\timechng.obj+
-$(OBJDIR)\wherex.obj
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) $(linkopt) /l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\acct.obj+
+$(objdir)\adjust.obj+
+$(objdir)\batch.obj+
+$(objdir)\colors.obj+
+$(objdir)\conf.obj+
+$(objdir)\confmove.obj+
+$(objdir)\defedit.obj+
+$(objdir)\demo.obj+
+$(objdir)\edit.obj+
+$(objdir)\expdate.obj+
+$(objdir)\index.obj+
+$(objdir)\init.obj+
+$(objdir)\pack.obj+
+$(objdir)\packinpt.obj+
+$(objdir)\packon.obj+
+$(objdir)\pcbsm.obj+
+$(objdir)\personal.obj+
+$(objdir)\phone.obj+
+$(objdir)\print.obj+
+$(objdir)\process.obj+
+$(objdir)\sort.obj+
+$(objdir)\undo.obj+
+$(objdir)\userinfo.obj+
+$(objdir)\usernet.obj+
+$(objdir)\users.obj+
+$(objdir)\abort.obj+
+$(objdir)\box.obj+
+$(objdir)\cnames.obj+
+$(objdir)\config.obj+
+$(objdir)\copyfile.obj+
+$(objdir)\ctod.obj+
+$(objdir)\kbdstat.obj+
+$(objdir)\datafil2.obj+
+$(objdir)\delete.obj+
+$(objdir)\diskfree.obj+
+$(objdir)\dmath.obj+
+$(objdir)\dosfread.obj+
+$(objdir)\endstr.obj+
+$(objdir)\findfour.obj+
+$(objdir)\getmode.obj+
+$(objdir)\insert.obj+
+$(objdir)\readscrn.obj+
+$(objdir)\savetext.obj+
+$(objdir)\scrollup.obj+
+$(objdir)\showerr2.obj+
+$(objdir)\smallsub.obj+
+$(objdir)\stripb.obj+
+$(objdir)\timechng.obj+
+$(objdir)\wherex.obj
+$(objdir)\$(progname)
 
-$(LIBLIB)\dos_$(MDL).386+
-$(LIBLIB)\pcb_$(MDL).386+
-$(LIBLIB)\misc_$(MDL).386+
-$(LIBLIB)\screen_$(MDL).386+
-$(LIBLIB)\scrnio_$(MDL).386+
-$(LIBLIB)\system_$(MDL).386+
-$(LIBLIB)\country$(MDL).386+
+$(liblib)\dos_$(mdl).386+
+$(liblib)\pcb_$(mdl).386+
+$(liblib)\misc_$(mdl).386+
+$(liblib)\screen_$(mdl).386+
+$(liblib)\scrnio_$(mdl).386+
+$(liblib)\system_$(mdl).386+
+$(liblib)\country$(mdl).386+
 mathl.lib+
 emu.lib+
 cl.lib+
@@ -224,7 +224,7 @@ overlay.lib
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -280,96 +280,96 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Vmd
--Y
--Z
+-c
+-k
+-g
+-o
+-p
+-vmd
+-y
+-z
 -k-
 -d
--m$(MDL)
--n$(OBJDIR)
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DPCBSM;USEDATE;BIGNDX;USEFLOAT
--D_FARDATA_=far
-| $(CFG)
+-m$(mdl)
+-n$(objdir)
+-i$(includepath)
+-l$(libpath)
+-dpcbsm;usedate;bigndx;usefloat
+-d_fardata_=far
+| $(cfg)
 
 #=============================================================
-$(OBJDIR)\abort.obj: EXTRAOBJ\ABORT.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\abort.obj -c EXTRAOBJ\ABORT.C
+$(objdir)\abort.obj: extraobj\abort.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\abort.obj -c extraobj\abort.c
 
-$(OBJDIR)\box.obj: EXTRAOBJ\BOX.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\box.obj -c EXTRAOBJ\BOX.C
+$(objdir)\box.obj: extraobj\box.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\box.obj -c extraobj\box.c
 
-$(OBJDIR)\cnames.obj: EXTRAOBJ\CNAMES.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\cnames.obj -c EXTRAOBJ\CNAMES.C
+$(objdir)\cnames.obj: extraobj\cnames.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\cnames.obj -c extraobj\cnames.c
 
-$(OBJDIR)\config.obj: EXTRAOBJ\CONFIG.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\config.obj -c EXTRAOBJ\CONFIG.C
+$(objdir)\config.obj: extraobj\config.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\config.obj -c extraobj\config.c
 
-$(OBJDIR)\copyfile.obj: EXTRAOBJ\COPYFILE.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\copyfile.obj -c EXTRAOBJ\COPYFILE.C
+$(objdir)\copyfile.obj: extraobj\copyfile.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\copyfile.obj -c extraobj\copyfile.c
 
-$(OBJDIR)\datafil2.obj: EXTRAOBJ\DATAFIL2.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\datafil2.obj -c EXTRAOBJ\DATAFIL2.C
-
-
-$(OBJDIR)\delete.obj: EXTRAOBJ\DELETE.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\delete.obj -c EXTRAOBJ\DELETE.C
-
-$(OBJDIR)\diskfree.obj: EXTRAOBJ\DISKFREE.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\diskfree.obj -c EXTRAOBJ\DISKFREE.C
-
-$(OBJDIR)\dmath.obj: EXTRAOBJ\DMATH.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\dmath.obj -c EXTRAOBJ\DMATH.C
-
-$(OBJDIR)\dosfread.obj: EXTRAOBJ\DOSFREAD.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\dosfread.obj -c EXTRAOBJ\DOSFREAD.C
-
-$(OBJDIR)\endstr.obj: EXTRAOBJ\ENDSTR.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\endstr.obj -c EXTRAOBJ\ENDSTR.C
-
-$(OBJDIR)\findfour.obj: EXTRAOBJ\FINDFOUR.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\findfour.obj -c EXTRAOBJ\FINDFOUR.C
-
-$(OBJDIR)\getmode.obj: EXTRAOBJ\GETMODE.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\getmode.obj -c EXTRAOBJ\GETMODE.C
-
-$(OBJDIR)\insert.obj: EXTRAOBJ\INSERT.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\insert.obj -c EXTRAOBJ\INSERT.C
-
-$(OBJDIR)\readscrn.obj: EXTRAOBJ\READSCRN.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\readscrn.obj -c EXTRAOBJ\READSCRN.C
-
-$(OBJDIR)\savetext.obj: EXTRAOBJ\SAVETEXT.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\savetext.obj -c EXTRAOBJ\SAVETEXT.C
-
-$(OBJDIR)\scrollup.obj: EXTRAOBJ\SCROLLUP.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\scrollup.obj -c EXTRAOBJ\SCROLLUP.C
-
-$(OBJDIR)\showerr2.obj: EXTRAOBJ\SHOWERR2.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\showerr2.obj -c EXTRAOBJ\SHOWERR2.C
-
-$(OBJDIR)\smallsub.obj: EXTRAOBJ\SMALLSUB.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\smallsub.obj -c EXTRAOBJ\SMALLSUB.C
-
-$(OBJDIR)\stripb.obj: EXTRAOBJ\STRIPB.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\stripb.obj -c EXTRAOBJ\STRIPB.C
-
-$(OBJDIR)\timechng.obj: EXTRAOBJ\TIMECHNG.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\timechng.obj -c EXTRAOBJ\TIMECHNG.C
-
-$(OBJDIR)\wherex.obj: EXTRAOBJ\WHEREX.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\wherex.obj -c EXTRAOBJ\WHEREX.C
+$(objdir)\datafil2.obj: extraobj\datafil2.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\datafil2.obj -c extraobj\datafil2.c
 
 
+$(objdir)\delete.obj: extraobj\delete.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\delete.obj -c extraobj\delete.c
 
-$(OBJDIR)\ctod.obj: EXTRAOBJ\CTOD.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\ctod.obj -c EXTRAOBJ\CTOD.C
+$(objdir)\diskfree.obj: extraobj\diskfree.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\diskfree.obj -c extraobj\diskfree.c
 
-$(OBJDIR)\kbdstat.obj: EXTRAOBJ\KBDSTAT.C
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) -o$(OBJDIR)\kbdstat.obj -c EXTRAOBJ\KBDSTAT.C
+$(objdir)\dmath.obj: extraobj\dmath.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\dmath.obj -c extraobj\dmath.c
+
+$(objdir)\dosfread.obj: extraobj\dosfread.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\dosfread.obj -c extraobj\dosfread.c
+
+$(objdir)\endstr.obj: extraobj\endstr.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\endstr.obj -c extraobj\endstr.c
+
+$(objdir)\findfour.obj: extraobj\findfour.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\findfour.obj -c extraobj\findfour.c
+
+$(objdir)\getmode.obj: extraobj\getmode.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\getmode.obj -c extraobj\getmode.c
+
+$(objdir)\insert.obj: extraobj\insert.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\insert.obj -c extraobj\insert.c
+
+$(objdir)\readscrn.obj: extraobj\readscrn.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\readscrn.obj -c extraobj\readscrn.c
+
+$(objdir)\savetext.obj: extraobj\savetext.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\savetext.obj -c extraobj\savetext.c
+
+$(objdir)\scrollup.obj: extraobj\scrollup.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\scrollup.obj -c extraobj\scrollup.c
+
+$(objdir)\showerr2.obj: extraobj\showerr2.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\showerr2.obj -c extraobj\showerr2.c
+
+$(objdir)\smallsub.obj: extraobj\smallsub.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\smallsub.obj -c extraobj\smallsub.c
+
+$(objdir)\stripb.obj: extraobj\stripb.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\stripb.obj -c extraobj\stripb.c
+
+$(objdir)\timechng.obj: extraobj\timechng.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\timechng.obj -c extraobj\timechng.c
+
+$(objdir)\wherex.obj: extraobj\wherex.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\wherex.obj -c extraobj\wherex.c
+
+
+
+$(objdir)\ctod.obj: extraobj\ctod.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\ctod.obj -c extraobj\ctod.c
+
+$(objdir)\kbdstat.obj: extraobj\kbdstat.c
+  $(compiler) +$(cfg) $(copt) $(codeopt) -o$(objdir)\kbdstat.obj -c extraobj\kbdstat.c

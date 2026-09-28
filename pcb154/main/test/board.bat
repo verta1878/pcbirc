@@ -11,9 +11,9 @@ if exist door.bat   del door.bat
 if exist event.bat  del event.bat
 if exist endpcb     del endpcb
 \proj\pcb\obj\%bccompiler%\pcboard.exe
-if exist remote.bat CALL remote
-if exist door.bat   CALL door
-if exist event.bat  CALL event
-if NOT exist endpcb GOTO top
+if exist remote.bat call remote
+if exist door.bat   call door
+if exist event.bat  call event
+if not exist endpcb goto top
 :end
 

@@ -1,6 +1,6 @@
 @echo off
 call \proj\bcdos.bat
 
-%MAKE% -fpcbmoni.mak > errors
+%make% -fpcbmoni.mak > errors
 list errors
 

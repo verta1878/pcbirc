@@ -1,5 +1,5 @@
 @echo off
 call \proj\bcdos.bat
 
-%compiler% -I%include%;\PROJ\LIB\H -L%bcroot%\lib -n%bccompiler% -P makehelp.c
+%compiler% -i%include%;\proj\lib\h -l%bcroot%\lib -n%bccompiler% -p makehelp.c
 

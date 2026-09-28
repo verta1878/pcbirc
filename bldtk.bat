@@ -1,109 +1,109 @@
-@ECHO OFF
-REM ---------------------------------------------------------------
-REM BLDTK.BAT - build the PCBoard toolkit category libraries
-REM
-REM   BLDTK              build all ten libraries
-REM   BLDTK CLEAN        delete the objects and the libraries
-REM   BLDTK <CATEGORY>   one of COUNTRY DOS DOSCLS MISC PCB
-REM                      SCREEN SCRNIO SYSTEM TOOLKIT VMDATA
-REM
-REM Each category is built with MAKE -fTKLIB.MAK in its own folder.
-REM Clark's original MAKEFILE is left in place, untouched and unused.
-REM
-REM Output:  \OUT\PWA153\SDK\BC31\LIB\*.LIB
-REM Objects: \OUT\PWA153\SDK\BC31\OBJ\<category>
-REM
-REM Run it from the repo root.  The repo folder is mounted as the
-REM drive root, so \OUT, \TOOLKIT and \BC31 are all inside the repo
-REM whatever the repo folder happens to be called.
-REM
-REM Compiler: %BC31PATH% if set, else \BC31, else \B\C31.
-REM Log it with:  BLDTK > \OUT\TOOLKIT.LOG
-REM
-REM No CALL :label anywhere - this has to run under COMMAND.COM.
-REM ---------------------------------------------------------------
+@echo off
+rem ---------------------------------------------------------------
+rem bldtk.bat - build the pcboard toolkit category libraries
+rem
+rem   bldtk              build all ten libraries
+rem   bldtk clean        delete the objects and the libraries
+rem   bldtk <category>   one of country dos doscls misc pcb
+rem                      screen scrnio system toolkit vmdata
+rem
+rem each category is built with make -ftklib.mak in its own folder.
+rem clark's original makefile is left in place, untouched and unused.
+rem
+rem output:  \out\pwa153\sdk\bc31\lib\*.lib
+rem objects: \out\pwa153\sdk\bc31\obj\<category>
+rem
+rem run it from the repo root.  the repo folder is mounted as the
+rem drive root, so \out, \toolkit and \bc31 are all inside the repo
+rem whatever the repo folder happens to be called.
+rem
+rem compiler: %bc31path% if set, else \bc31, else \b\c31.
+rem log it with:  bldtk > \out\toolkit.log
+rem
+rem no call :label anywhere - this has to run under command.com.
+rem ---------------------------------------------------------------
 
-IF NOT EXIST \APPLY.txt GOTO NOROOT
+if not exist \apply.txt goto noroot
 
-SET TKBC=%BC31PATH%
-IF NOT "%TKBC%"=="" GOTO GOTBC
-IF EXIST \BC31\BIN\BCC.EXE SET TKBC=\BC31
-IF NOT "%TKBC%"=="" GOTO GOTBC
-IF EXIST \B\C31\BIN\BCC.EXE SET TKBC=\B\C31
-IF "%TKBC%"=="" GOTO NOBCC
-:GOTBC
-SET PATH=%TKBC%\BIN;%PATH%
+set tkbc=%bc31path%
+if not "%tkbc%"=="" goto gotbc
+if exist \bc31\bin\bcc.exe set tkbc=\bc31
+if not "%tkbc%"=="" goto gotbc
+if exist \b\c31\bin\bcc.exe set tkbc=\b\c31
+if "%tkbc%"=="" goto nobcc
+:gotbc
+set path=%tkbc%\bin;%path%
 
-SET TKACT=all
-IF "%1"=="CLEAN" SET TKACT=CLEAN
-IF "%1"=="clean" SET TKACT=CLEAN
+set tkact=all
+if "%1"=="clean" set tkact=clean
+if "%1"=="clean" set tkact=clean
 
-IF "%1"=="" GOTO ALL
-IF "%TKACT%"=="CLEAN" GOTO ALL
-SET TKONE=%1
-GOTO ONE
+if "%1"=="" goto all
+if "%tkact%"=="clean" goto all
+set tkone=%1
+goto one
 
-:ONE
-IF NOT EXIST \TOOLKIT\PWA153\SOURCE\%TKONE%\TKLIB.MAK GOTO BADCAT
-CD \TOOLKIT\PWA153\SOURCE\%TKONE%
-ECHO === %TKONE% ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \
-GOTO DONE
+:one
+if not exist \toolkit\pwa153\source\%tkone%\tklib.mak goto badcat
+cd \toolkit\pwa153\source\%tkone%
+echo === %tkone% ===
+make -ftklib.mak %tkact%
+cd \
+goto done
 
-:ALL
-CD \TOOLKIT\PWA153\SOURCE\COUNTRY
-ECHO === COUNTRY ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\DOS
-ECHO === DOS ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\DOSCLS
-ECHO === DOSCLS ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\MISC
-ECHO === MISC ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\PCB
-ECHO === PCB ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\SCREEN
-ECHO === SCREEN ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\SCRNIO
-ECHO === SCRNIO ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\SYSTEM
-ECHO === SYSTEM ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\TOOLKIT
-ECHO === TOOLKIT ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \TOOLKIT\PWA153\SOURCE\VMDATA
-ECHO === VMDATA ===
-MAKE -fTKLIB.MAK %TKACT%
-CD \
-GOTO DONE
+:all
+cd \toolkit\pwa153\source\country
+echo === country ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\dos
+echo === dos ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\doscls
+echo === doscls ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\misc
+echo === misc ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\pcb
+echo === pcb ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\screen
+echo === screen ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\scrnio
+echo === scrnio ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\system
+echo === system ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\toolkit
+echo === toolkit ===
+make -ftklib.mak %tkact%
+cd \toolkit\pwa153\source\vmdata
+echo === vmdata ===
+make -ftklib.mak %tkact%
+cd \
+goto done
 
-:BADCAT
-ECHO ERROR: no such category "%TKONE%".
-ECHO        COUNTRY DOS DOSCLS MISC PCB SCREEN SCRNIO SYSTEM TOOLKIT VMDATA
-GOTO END
+:badcat
+echo error: no such category "%tkone%".
+echo        country dos doscls misc pcb screen scrnio system toolkit vmdata
+goto end
 
-:NOBCC
-ECHO ERROR: Borland C++ 3.1 not found.
-ECHO        Looked for %%BC31PATH%%, then \BC31\BIN\BCC.EXE, then \B\C31\BIN\BCC.EXE.
-GOTO END
+:nobcc
+echo error: borland c++ 3.1 not found.
+echo        looked for %%bc31path%%, then \bc31\bin\bcc.exe, then \b\c31\bin\bcc.exe.
+goto end
 
-:NOROOT
-ECHO ERROR: run BLDTK from the repo root (\APPLY.txt was not found there).
-GOTO END
+:noroot
+echo error: run bldtk from the repo root (\apply.txt was not found there).
+goto end
 
-:DONE
-ECHO.
-ECHO Libraries are in \OUT\PWA153\SDK\BC31\LIB
+:done
+echo.
+echo libraries are in \out\pwa153\sdk\bc31\lib
 
-:END
-SET TKBC=
-SET TKACT=
-SET TKONE=
+:end
+set tkbc=
+set tkact=
+set tkone=

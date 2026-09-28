@@ -1,194 +1,194 @@
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-#* The information in this module is proprietary software belonging to       */
-#* Clark Development Company and is part of the PCBoard source code library. */
-#* You are granted the right to use this information for the building of any */
-#* of the PCBoard products you have licensed.  Any other usage is forbidden  */
-#* without prior written consent from Clark Development Company, Inc.        */
+#* the information in this module is proprietary software belonging to       */
+#* clark development company and is part of the pcboard source code library. */
+#* you are granted the right to use this information for the building of any */
+#* of the pcboard products you have licensed.  any other usage is forbidden  */
+#* without prior written consent from clark development company, inc.        */
 #*                                                                           */
-#* Be sure to read the source code license agreement before utilizing any    */
+#* be sure to read the source code license agreement before utilizing any    */
 #* of the source code found herein.                                          */
 #*                                                                           */
-#* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+#* copyright (c) 1996  clark development company, inc.  all rights reserved. */
 #*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
 #=============================================================
 #
-#       UUXFER.MAK - Makefile for UUXFER Program
+#       uuxfer.mak - makefile for uuxfer program
 #
 #=============================================================
 
-.SILENT
-.AUTODEPEND
+.silent
+.autodepend
 
-PROGNAME = UUXFER
+progname = uuxfer
 
-!ifndef ROOT
-ROOT     = \OUT
+!ifndef root
+root     = \out
 !endif
-SOURCE   = .
-OBJDIR   = $(BCCOMPILER)
-LIBROOT  = $(ROOT)\LIB
-LIBH     = $(LIBROOT)\H
-LIBLIB   = $(LIBROOT)\BCDOS\$(BCCOMPILER)
+source   = .
+objdir   = $(bccompiler)
+libroot  = $(root)\lib
+libh     = $(libroot)\h
+liblib   = $(libroot)\bcdos\$(bccompiler)
 
-CFG      = $(PROGNAME).CFG
-MAK      = $(PROGNAME).MAK
+cfg      = $(progname).cfg
+mak      = $(progname).mak
 
-MDL      = l
+mdl      = l
 
-INCLUDEPATH = $(INCLUDE);$(LIBH);.;..\COMMON;..\UUIN;$(ROOT)\PCB\SOURCE\H
+includepath = $(include);$(libh);.;..\common;..\uuin;$(root)\pcb\source\h
 
 #=============================================================
 
-!if $(DEBUG)
-CODEOPT=-DDEBUG
+!if $(debug)
+codeopt=-ddebug
 !endif
 
-COPT = -c -m$(MDL) -n$(OBJDIR)
+copt = -c -m$(mdl) -n$(objdir)
 
-!if $d(BC50)
-#leave out -Oe due to a bug in Borland C 4.0 thru 5.0
-COPT = $(COPT) -Obglmptv
-!elif $d(TC30)
-#leave out all of the extra -Oxxx switches for TC 3.0 because they aren't valid
-!elif $d(BC31)
-COPT = $(COPT) -Oebglmptv
+!if $d(bc50)
+#leave out -oe due to a bug in borland c 4.0 thru 5.0
+copt = $(copt) -obglmptv
+!elif $d(tc30)
+#leave out all of the extra -oxxx switches for tc 3.0 because they aren't valid
+!elif $d(bc31)
+copt = $(copt) -oebglmptv
 !endif
 
-ASMOPT = /m /mx /t /D__$(MDL)__                 # Assembler options
+asmopt = /m /mx /t /d__$(mdl)__                 # assembler options
 
 #=============================================================
 
-.PATH.obj = $(OBJDIR)
-.PATH.asm = $(SOURCE)
-.PATH.c   = $(SOURCE)
-.PATH.cpp = $(SOURCE)
+.path.obj = $(objdir)
+.path.asm = $(source)
+.path.c   = $(source)
+.path.cpp = $(source)
 
 #=============================================================
 
 .c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 {..\common\}.c.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 {..\common\}.cpp.obj:
-  $(COMPILER) +$(CFG) $(COPT) $(CODEOPT) {$< }
+  $(compiler) +$(cfg) $(copt) $(codeopt) {$< }
 
 .asm.obj:
-  tasm $(ASMOPT) $(.PATH.asm)\$.,$(.PATH.obj)\$&
+  tasm $(asmopt) $(.path.asm)\$.,$(.path.obj)\$&
 
 #=============================================================
 
-EXE_DEPENDENCIES = \
-  $(OBJDIR)\uuxfer.obj        \
-  $(OBJDIR)\uucp.obj          \
-  $(OBJDIR)\gprot.obj         \
-  $(OBJDIR)\commbuf.obj       \
-  $(OBJDIR)\uushwerr.obj      \
-  $(OBJDIR)\dresword.obj      \
-  $(LIBLIB)\toolkit\large\fossil.obj   \
-  $(LIBLIB)\toolkit\large\nolog.obj    \
-  $(LIBLIB)\toolkit\large\nostatus.obj \
-  $(LIBLIB)\toolkit\large\nodisp.obj   \
-  $(LIBLIB)\toolkit\large\noansi.obj   \
-  $(LIBLIB)\toolkit\large\notxt.obj    \
-  $(LIBLIB)\toolkit\large\nochat.obj   \
-  $(LIBLIB)\toolkit\large\nolang.obj   \
-  $(LIBLIB)\toolkit\large\nopcbsys.obj \
-  $(LIBLIB)\toolkit\large\noscreen.obj \
-  $(LIBLIB)\toolkit\large\noshell.obj  \
-  $(LIBLIB)\toolkit\large\nosys.obj    \
-  $(LIBLIB)\pcbkit_$(MDL).lib \
-  $(LIBLIB)\dos_$(MDL).lib    \
-  $(LIBLIB)\doscls_$(MDL).lib \
-  $(LIBLIB)\pcb_$(MDL).lib    \
-  $(LIBLIB)\misc_$(MDL).lib   \
-  $(LIBLIB)\screen_$(MDL).lib \
-  $(LIBLIB)\system_$(MDL).lib \
-  $(LIBLIB)\country$(MDL).lib
+exe_dependencies = \
+  $(objdir)\uuxfer.obj        \
+  $(objdir)\uucp.obj          \
+  $(objdir)\gprot.obj         \
+  $(objdir)\commbuf.obj       \
+  $(objdir)\uushwerr.obj      \
+  $(objdir)\dresword.obj      \
+  $(liblib)\toolkit\large\fossil.obj   \
+  $(liblib)\toolkit\large\nolog.obj    \
+  $(liblib)\toolkit\large\nostatus.obj \
+  $(liblib)\toolkit\large\nodisp.obj   \
+  $(liblib)\toolkit\large\noansi.obj   \
+  $(liblib)\toolkit\large\notxt.obj    \
+  $(liblib)\toolkit\large\nochat.obj   \
+  $(liblib)\toolkit\large\nolang.obj   \
+  $(liblib)\toolkit\large\nopcbsys.obj \
+  $(liblib)\toolkit\large\noscreen.obj \
+  $(liblib)\toolkit\large\noshell.obj  \
+  $(liblib)\toolkit\large\nosys.obj    \
+  $(liblib)\pcbkit_$(mdl).lib \
+  $(liblib)\dos_$(mdl).lib    \
+  $(liblib)\doscls_$(mdl).lib \
+  $(liblib)\pcb_$(mdl).lib    \
+  $(liblib)\misc_$(mdl).lib   \
+  $(liblib)\screen_$(mdl).lib \
+  $(liblib)\system_$(mdl).lib \
+  $(liblib)\country$(mdl).lib
 
 #=============================================================
 
-!if $d(BC31)
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuxfer.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\gprot.obj+
-$(OBJDIR)\commbuf.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\dresword.obj+
+!if $d(bc31)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\uuxfer.obj+
+$(objdir)\uucp.obj+
+$(objdir)\gprot.obj+
+$(objdir)\commbuf.obj+
+$(objdir)\uushwerr.obj+
+$(objdir)\dresword.obj+
 ..\bc31\stbdsgtn.obj+
 ..\bc31\stbdsptn.obj+
 ..\bc31\stbsgetn.obj+
 ..\bc31\stbsputn.obj+
-$(LIBLIB)\toolkit\large\fossil.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\nostatus.obj+
-$(LIBLIB)\toolkit\large\nodisp.obj+
-$(LIBLIB)\toolkit\large\noansi.obj+
-$(LIBLIB)\toolkit\large\notxt.obj+
-$(LIBLIB)\toolkit\large\nochat.obj+
-$(LIBLIB)\toolkit\large\nolang.obj+
-$(LIBLIB)\toolkit\large\nopcbsys.obj+
-$(LIBLIB)\toolkit\large\noscreen.obj+
-$(LIBLIB)\toolkit\large\noshell.obj+
-$(LIBLIB)\toolkit\large\nosys.obj
-$(OBJDIR)\$(PROGNAME)
+$(liblib)\toolkit\large\fossil.obj+
+$(liblib)\toolkit\large\nolog.obj+
+$(liblib)\toolkit\large\nostatus.obj+
+$(liblib)\toolkit\large\nodisp.obj+
+$(liblib)\toolkit\large\noansi.obj+
+$(liblib)\toolkit\large\notxt.obj+
+$(liblib)\toolkit\large\nochat.obj+
+$(liblib)\toolkit\large\nolang.obj+
+$(liblib)\toolkit\large\nopcbsys.obj+
+$(liblib)\toolkit\large\noscreen.obj+
+$(liblib)\toolkit\large\noshell.obj+
+$(liblib)\toolkit\large\nosys.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\pcbkit_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib
+c$(mdl).lib
 |
 !else
-$(OBJDIR)\$(PROGNAME).exe: $(CFG) $(EXE_DEPENDENCIES)
-  $(LINKER) /x/c/L$(LIBPATH) @&&|
-c0$(MDL).obj+
-$(OBJDIR)\uuxfer.obj+
-$(OBJDIR)\uucp.obj+
-$(OBJDIR)\gprot.obj+
-$(OBJDIR)\commbuf.obj+
-$(OBJDIR)\uushwerr.obj+
-$(OBJDIR)\dresword.obj+
-$(LIBLIB)\toolkit\large\fossil.obj+
-$(LIBLIB)\toolkit\large\nolog.obj+
-$(LIBLIB)\toolkit\large\nostatus.obj+
-$(LIBLIB)\toolkit\large\nodisp.obj+
-$(LIBLIB)\toolkit\large\noansi.obj+
-$(LIBLIB)\toolkit\large\notxt.obj+
-$(LIBLIB)\toolkit\large\nochat.obj+
-$(LIBLIB)\toolkit\large\nolang.obj+
-$(LIBLIB)\toolkit\large\nopcbsys.obj+
-$(LIBLIB)\toolkit\large\noscreen.obj+
-$(LIBLIB)\toolkit\large\noshell.obj+
-$(LIBLIB)\toolkit\large\nosys.obj
-$(OBJDIR)\$(PROGNAME)
+$(objdir)\$(progname).exe: $(cfg) $(exe_dependencies)
+  $(linker) /x/c/l$(libpath) @&&|
+c0$(mdl).obj+
+$(objdir)\uuxfer.obj+
+$(objdir)\uucp.obj+
+$(objdir)\gprot.obj+
+$(objdir)\commbuf.obj+
+$(objdir)\uushwerr.obj+
+$(objdir)\dresword.obj+
+$(liblib)\toolkit\large\fossil.obj+
+$(liblib)\toolkit\large\nolog.obj+
+$(liblib)\toolkit\large\nostatus.obj+
+$(liblib)\toolkit\large\nodisp.obj+
+$(liblib)\toolkit\large\noansi.obj+
+$(liblib)\toolkit\large\notxt.obj+
+$(liblib)\toolkit\large\nochat.obj+
+$(liblib)\toolkit\large\nolang.obj+
+$(liblib)\toolkit\large\nopcbsys.obj+
+$(liblib)\toolkit\large\noscreen.obj+
+$(liblib)\toolkit\large\noshell.obj+
+$(liblib)\toolkit\large\nosys.obj
+$(objdir)\$(progname)
                 # no map file
-$(LIBLIB)\pcbkit_$(MDL).lib+
-$(LIBLIB)\dos_$(MDL).lib+
-$(LIBLIB)\doscls_$(MDL).lib+
-$(LIBLIB)\pcb_$(MDL).lib+
-$(LIBLIB)\misc_$(MDL).lib+
-$(LIBLIB)\screen_$(MDL).lib+
-$(LIBLIB)\system_$(MDL).lib+
-$(LIBLIB)\country$(MDL).lib+
-math$(MDL).lib+
+$(liblib)\pcbkit_$(mdl).lib+
+$(liblib)\dos_$(mdl).lib+
+$(liblib)\doscls_$(mdl).lib+
+$(liblib)\pcb_$(mdl).lib+
+$(liblib)\misc_$(mdl).lib+
+$(liblib)\screen_$(mdl).lib+
+$(liblib)\system_$(mdl).lib+
+$(liblib)\country$(mdl).lib+
+math$(mdl).lib+
 emu.lib+
-c$(MDL).lib
+c$(mdl).lib
 |
 !endif
 
@@ -198,7 +198,7 @@ c$(MDL).lib
 
 #=============================================================
 
-$(CFG): $(MAK)
+$(cfg): $(mak)
   copy &&|
 -wbbf
 -wbig
@@ -254,27 +254,27 @@ $(CFG): $(MAK)
 -wpre
 -f-
 -ff-
--C
--K
--G
--O
--P
--Z
+-c
+-k
+-g
+-o
+-p
+-z
 -k-
 -d
--I$(INCLUDEPATH)
--L$(LIBPATH)
--DLIB
--D___USE_CI_CACHE___
--D___USE_USERS___
--D___USE_CNAMES___
--DBOUNCE
--UDEBUG
--DNOMEMCHECK
--DUNIX
--D___UUIN___
--DEXCLUDE_DEBUG
-| $(CFG)
+-i$(includepath)
+-l$(libpath)
+-dlib
+-d___use_ci_cache___
+-d___use_users___
+-d___use_cnames___
+-dbounce
+-udebug
+-dnomemcheck
+-dunix
+-d___uuin___
+-dexclude_debug
+| $(cfg)
 
 #=============================================================
 

@@ -1,33 +1,33 @@
 @echo off
-REM pcbis_initv.bat — PCBoard first-time setup (Windows)
-REM Part of pcbrevival (GPL v3.0)
+rem pcbis_initv.bat — pcboard first-time setup (windows)
+rem part of pcbrevival (gpl v3.0)
 
-if "%PCBIS_ROOT%"=="" set PCBIS_ROOT=%USERPROFILE%\pcboard
-if "%PCBIS_PORT%"=="" set PCBIS_PORT=23
+if "%pcbis_root%"=="" set pcbis_root=%userprofile%\pcboard
+if "%pcbis_port%"=="" set pcbis_port=23
 
 echo ╔══════════════════════════════════════════════════╗
-echo ║  PCBoard 15.4 Installation System (pcbis)       ║
-echo ║  Part of pcbrevival                              ║
+echo ║  pcboard 15.4 installation system (pcbis)       ║
+echo ║  part of pcbrevival                              ║
 echo ╚══════════════════════════════════════════════════╝
 echo.
-echo Installing to: %PCBIS_ROOT%
-echo Telnet port:   %PCBIS_PORT%
+echo installing to: %pcbis_root%
+echo telnet port:   %pcbis_port%
 echo.
 
-REM Create directory structure
-mkdir "%PCBIS_ROOT%" 2>nul
-mkdir "%PCBIS_ROOT%\bin" 2>nul
-mkdir "%PCBIS_ROOT%\data" 2>nul
-mkdir "%PCBIS_ROOT%\fossil" 2>nul
-mkdir "%PCBIS_ROOT%\work" 2>nul
-mkdir "%PCBIS_ROOT%\logs" 2>nul
-mkdir "%PCBIS_ROOT%\nodes" 2>nul
-mkdir "%PCBIS_ROOT%\nodes\node1" 2>nul
-mkdir "%PCBIS_ROOT%\netmodem" 2>nul
+rem create directory structure
+mkdir "%pcbis_root%" 2>nul
+mkdir "%pcbis_root%\bin" 2>nul
+mkdir "%pcbis_root%\data" 2>nul
+mkdir "%pcbis_root%\fossil" 2>nul
+mkdir "%pcbis_root%\work" 2>nul
+mkdir "%pcbis_root%\logs" 2>nul
+mkdir "%pcbis_root%\nodes" 2>nul
+mkdir "%pcbis_root%\nodes\node1" 2>nul
+mkdir "%pcbis_root%\netmodem" 2>nul
 
-echo [1/4] Directory structure created
+echo [1/4] directory structure created
 
-REM Create DOSBox config
+rem create dosbox config
 (
 echo [sdl]
 echo output=surface
@@ -41,45 +41,45 @@ echo serial1=nullmodem server:localhost port:123
 echo.
 echo [autoexec]
 echo @echo off
-echo mount C "%PCBIS_ROOT%"
-echo C:
+echo mount c "%pcbis_root%"
+echo c:
 echo cd bin
-echo PCBOARD.EXE /N:1
+echo pcboard.exe /n:1
 echo exit
-) > "%PCBIS_ROOT%\dosbox.conf"
-echo [2/4] DOSBox config generated
+) > "%pcbis_root%\dosbox.conf"
+echo [2/4] dosbox config generated
 
-REM Create pcbis.cfg
+rem create pcbis.cfg
 (
-echo # pcbis.cfg — PCBoard Installation System configuration
-echo listen_port=%PCBIS_PORT%
+echo # pcbis.cfg — pcboard installation system configuration
+echo listen_port=%pcbis_port%
 echo forward_port=123
 echo fossil_mode=true
 echo baud_rate=115200
 echo nodes=1
-echo log_file=%PCBIS_ROOT%\logs\pcbis-netmodem.log
-) > "%PCBIS_ROOT%\pcbis.cfg"
-echo [3/4] Configuration created
+echo log_file=%pcbis_root%\logs\pcbis-netmodem.log
+) > "%pcbis_root%\pcbis.cfg"
+echo [3/4] configuration created
 
-REM Create minimal WELCOME
+rem create minimal welcome
 (
-echo @CLS@@POFF@
-echo @X0FPCBOARD 15.4 BBS@X07
-echo @X0Bpowered by pcbrevival@X07
+echo @cls@@poff@
+echo @x0fpcboard 15.4 bbs@x07
+echo @x0bpowered by pcbrevival@x07
 echo.
-echo Welcome to PCBoard!
-echo Type your name at the login prompt, or NEW if you're a new user.
+echo welcome to pcboard!
+echo type your name at the login prompt, or new if you're a new user.
 echo.
-echo @PON@
-) > "%PCBIS_ROOT%\data\WELCOME"
-echo [4/4] WELCOME screen created
+echo @pon@
+) > "%pcbis_root%\data\welcome"
+echo [4/4] welcome screen created
 
 echo.
-echo Installation complete!
+echo installation complete!
 echo.
-echo Next steps:
-echo   1. Copy PCBoard binaries to %PCBIS_ROOT%\bin\
-echo   2. Copy your PCBOARD.DAT to %PCBIS_ROOT%\data\
-echo   3. Install netmodem2irc to %PCBIS_ROOT%\netmodem\
-echo   4. Run: pcbis_ui.exe    (to configure)
-echo   5. Run: pcbis_startup.bat (to start the BBS)
+echo next steps:
+echo   1. copy pcboard binaries to %pcbis_root%\bin\
+echo   2. copy your pcboard.dat to %pcbis_root%\data\
+echo   3. install netmodem2irc to %pcbis_root%\netmodem\
+echo   4. run: pcbis_ui.exe    (to configure)
+echo   5. run: pcbis_startup.bat (to start the bbs)

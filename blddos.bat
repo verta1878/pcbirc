@@ -1,223 +1,223 @@
 @echo off
 rem ============================================================================
-rem  BLDDOS.BAT -- PCBoard 15.3 PWA, Borland C++ 3.1, DOS
-rem  Rewritten 2026-09-22 for the repointed makefiles.
+rem  blddos.bat -- pcboard 15.3 pwa, borland c++ 3.1, dos
+rem  rewritten 2026-09-22 for the repointed makefiles.
 rem
-rem  THE BUILD DRIVE IS THE REPO.  Mount the repo folder as a drive root:
-rem        mount C C:\path\to\pcbircrevival        (see DOSBOX.CFG)
-rem  Then \OUT, \PCB153, \TOOLKIT and \PCBCBASE are all inside the repo and
-rem  the repo folder can be called anything.  This script stops if \APPLY.txt
+rem  the build drive is the repo.  mount the repo folder as a drive root:
+rem        mount c c:\path\to\pcbircrevival        (see dosbox.cfg)
+rem  then \out, \pcb153, \toolkit and \pcbcbase are all inside the repo and
+rem  the repo folder can be called anything.  this script stops if \apply.txt
 rem  is missing, because that means the wrong folder is mounted.
 rem
-rem  It drives Clark's makefiles; it does not compile anything itself.
-rem  Each program is built with  MAKE -f<PROG>.MAK  in its own folder and the
-rem  .EXE is copied to \OUT\PWA153.
+rem  it drives clark's makefiles; it does not compile anything itself.
+rem  each program is built with  make -f<prog>.mak  in its own folder and the
+rem  .exe is copied to \out\pwa153.
 rem
-rem  Usage:  BLDDOS [target]
-rem     ALL (default) | CLEAN | PCBOARD | PPLC | PCBSETUP | PCBSM | MKPCBTXT
-rem     MAKEIDX | USERNET | FIDOUTIL | UUIN | UUOUT | UUUTIL | UUXFER
-rem     COMMDRV
+rem  usage:  blddos [target]
+rem     all (default) | clean | pcboard | pplc | pcbsetup | pcbsm | mkpcbtxt
+rem     makeidx | usernet | fidoutil | uuin | uuout | uuutil | uuxfer
+rem     commdrv
 rem
-rem  Compiler: set BC31PATH first, or leave it and \BC31 then \B\C31 are tried.
-rem  DOSBox shows no scrollback worth reading, so keep a log:
-rem        BLDDOS ALL > \OUT\BUILD.LOG
-rem  Written without CALL :label so it runs under COMMAND.COM as well as cmd.
-rem  Named 8.3 on purpose: DOS cannot call a file named BUILD_DOS.BAT (9 chars).
+rem  compiler: set bc31path first, or leave it and \bc31 then \b\c31 are tried.
+rem  dosbox shows no scrollback worth reading, so keep a log:
+rem        blddos all > \out\build.log
+rem  written without call :label so it runs under command.com as well as cmd.
+rem  named 8.3 on purpose: dos cannot call a file named build_dos.bat (9 chars).
 rem ============================================================================
 
-if not exist \APPLY.txt goto NOROOT
+if not exist \apply.txt goto noroot
 
 rem --- compiler -------------------------------------------------------------
-if not "%BC31PATH%"=="" goto GOTBC
-if exist \BC31\BIN\BCC.EXE set BC31PATH=\BC31
-if exist \B\C31\BIN\BCC.EXE set BC31PATH=\B\C31
-:GOTBC
-if "%BC31PATH%"=="" goto NOBC
-if not exist %BC31PATH%\BIN\BCC.EXE goto NOBC
+if not "%bc31path%"=="" goto gotbc
+if exist \bc31\bin\bcc.exe set bc31path=\bc31
+if exist \b\c31\bin\bcc.exe set bc31path=\b\c31
+:gotbc
+if "%bc31path%"=="" goto nobc
+if not exist %bc31path%\bin\bcc.exe goto nobc
 
-set BCROOT=%BC31PATH%
-set BCPGM=%BC31PATH%\BIN
-set INCLUDE=%BC31PATH%\INCLUDE
-set LIBPATH=%BC31PATH%\LIB
-set COMPILER=%BCPGM%\BCC.EXE
-set LINKER=%BCPGM%\TLINK.EXE
-set TLIB=%BCPGM%\TLIB.EXE
-set MAKE=%BCPGM%\MAKE.EXE
-set TASM=%BCPGM%\TASM.EXE
-set ASMROOT=%BCPGM%
-set BCCOMPILER=bc31
-set BC31=yes
-set TC30=
-set BC50=
-set DEBUG=
-set TD=
-set LIBSDIR=\PCBCBASE
-set PATH=%BC31PATH%\BIN;%PATH%
-if not exist \OUT\NUL mkdir \OUT
-if not exist \OUT\PWA153\NUL mkdir \OUT\PWA153
+set bcroot=%bc31path%
+set bcpgm=%bc31path%\bin
+set include=%bc31path%\include
+set libpath=%bc31path%\lib
+set compiler=%bcpgm%\bcc.exe
+set linker=%bcpgm%\tlink.exe
+set tlib=%bcpgm%\tlib.exe
+set make=%bcpgm%\make.exe
+set tasm=%bcpgm%\tasm.exe
+set asmroot=%bcpgm%
+set bccompiler=bc31
+set bc31=yes
+set tc30=
+set bc50=
+set debug=
+set td=
+set libsdir=\pcbcbase
+set path=%bc31path%\bin;%path%
+if not exist \out\nul mkdir \out
+if not exist \out\pwa153\nul mkdir \out\pwa153
 
-if "%1"=="" goto ALL
-if "%1"=="ALL" goto ALL
-if "%1"=="all" goto ALL
-if "%1"=="CLEAN" goto CLEANALL
-if "%1"=="clean" goto CLEANALL
-goto ONE
+if "%1"=="" goto all
+if "%1"=="all" goto all
+if "%1"=="all" goto all
+if "%1"=="clean" goto cleanall
+if "%1"=="clean" goto cleanall
+goto one
 
 rem --- run every target, by calling this file once per target ---------------
-:ALL
+:all
 echo.
-echo  PCBoard 15.3 PWA build -- BC 3.1 at %BC31PATH%, output \OUT\PWA153
+echo  pcboard 15.3 pwa build -- bc 3.1 at %bc31path%, output \out\pwa153
 echo.
-call \BLDDOS.BAT COMMDRV
-call \BLDDOS.BAT PCBOARD
-call \BLDDOS.BAT PPLC
-call \BLDDOS.BAT PCBSETUP
-call \BLDDOS.BAT PCBSM
-call \BLDDOS.BAT MKPCBTXT
-call \BLDDOS.BAT MAKEIDX
-call \BLDDOS.BAT USERNET
-call \BLDDOS.BAT FIDOUTIL
-call \BLDDOS.BAT UUIN
-call \BLDDOS.BAT UUOUT
-call \BLDDOS.BAT UUUTIL
-call \BLDDOS.BAT UUXFER
+call \blddos.bat commdrv
+call \blddos.bat pcboard
+call \blddos.bat pplc
+call \blddos.bat pcbsetup
+call \blddos.bat pcbsm
+call \blddos.bat mkpcbtxt
+call \blddos.bat makeidx
+call \blddos.bat usernet
+call \blddos.bat fidoutil
+call \blddos.bat uuin
+call \blddos.bat uuout
+call \blddos.bat uuutil
+call \blddos.bat uuxfer
 echo.
-echo  Build run finished.  Binaries in \OUT\PWA153:
-dir \OUT\PWA153\*.EXE
-goto END
+echo  build run finished.  binaries in \out\pwa153:
+dir \out\pwa153\*.exe
+goto end
 
-:CLEANALL
-set BCLEAN=1
-call \BLDDOS.BAT COMMDRV
-call \BLDDOS.BAT PCBOARD
-call \BLDDOS.BAT PPLC
-call \BLDDOS.BAT PCBSETUP
-call \BLDDOS.BAT PCBSM
-call \BLDDOS.BAT MKPCBTXT
-call \BLDDOS.BAT MAKEIDX
-call \BLDDOS.BAT USERNET
-call \BLDDOS.BAT FIDOUTIL
-call \BLDDOS.BAT UUIN
-call \BLDDOS.BAT UUOUT
-call \BLDDOS.BAT UUUTIL
-call \BLDDOS.BAT UUXFER
-set BCLEAN=
+:cleanall
+set bclean=1
+call \blddos.bat commdrv
+call \blddos.bat pcboard
+call \blddos.bat pplc
+call \blddos.bat pcbsetup
+call \blddos.bat pcbsm
+call \blddos.bat mkpcbtxt
+call \blddos.bat makeidx
+call \blddos.bat usernet
+call \blddos.bat fidoutil
+call \blddos.bat uuin
+call \blddos.bat uuout
+call \blddos.bat uuutil
+call \blddos.bat uuxfer
+set bclean=
 echo.
-echo  CLEAN done.  \OUT\PWA153 was not touched.
-goto END
+echo  clean done.  \out\pwa153 was not touched.
+goto end
 
 rem --- one target -----------------------------------------------------------
-rem  BDIR  = subdirectory under \PCB153 that the MAK lives in
-rem  BCDTO = directory to cd into before running MAKE
-rem  BMAKP = path to the MAK file relative to BCDTO
+rem  bdir  = subdirectory under \pcb153 that the mak lives in
+rem  bcdto = directory to cd into before running make
+rem  bmakp = path to the mak file relative to bcdto
 rem
-rem  For most targets BCDTO = \PCB153\BDIR and BMAKP = the MAK filename.
-rem  For PCBOARD/PPLC/COMMDRV whose MAK lives in 153\ but whose SOURCE\
-rem  paths are relative to \PCB153, BCDTO = \PCB153 and BMAKP = 153\MAK.
-rem  This matches Clark's original COMPILE.BAT which ran MAKE -f153\pcboard.mak
-rem  from \PCB153, NOT from \PCB153\153.
-:ONE
-set BDIR=
-set BMAK=
-set BOBJ=
-set BCDTO=
-set BMAKP=
-if "%1"=="PCBOARD"  set BDIR=153
-if "%1"=="PCBOARD"  set BMAK=PCBOARD.MAK
-if "%1"=="PCBOARD"  set BOBJ=OBJ\BC31
-if "%1"=="PCBOARD"  set BCDTO=\PCB153
-if "%1"=="PCBOARD"  set BMAKP=153\PCBOARD.MAK
-if "%1"=="PPLC"     set BDIR=153
-if "%1"=="PPLC"     set BMAK=PPLC.MAK
-if "%1"=="PPLC"     set BOBJ=OBJ\PPL
-if "%1"=="PPLC"     set BCDTO=\PCB153
-if "%1"=="PPLC"     set BMAKP=153\PPLC.MAK
-if "%1"=="PCBSETUP" set BDIR=SOURCE\UTIL\PCBSETUP
-if "%1"=="PCBSETUP" set BMAK=PCBSETUP.MAK
-if "%1"=="PCBSM"    set BDIR=SOURCE\UTIL\PCBSM
-if "%1"=="PCBSM"    set BMAK=PCBSM.MAK
-if "%1"=="MKPCBTXT" set BDIR=SOURCE\UTIL\PCBTEXT
-if "%1"=="MKPCBTXT" set BMAK=MKPCBTXT.MAK
-if "%1"=="MAKEIDX"  set BDIR=SOURCE\MISC\IDX
-if "%1"=="MAKEIDX"  set BMAK=MAKEIDX.MAK
-if "%1"=="USERNET"  set BDIR=SOURCE\MISC\USERNET
-if "%1"=="USERNET"  set BMAK=USERNET.MAK
-if "%1"=="FIDOUTIL" set BDIR=SOURCE\MISC\FIDOUTIL
-if "%1"=="FIDOUTIL" set BMAK=FIDOUTIL.MAK
-if "%1"=="UUIN"     set BDIR=SOURCE\UUCP\UUIN
-if "%1"=="UUIN"     set BMAK=UUIN.MAK
-if "%1"=="UUOUT"    set BDIR=SOURCE\UUCP\UUOUT
-if "%1"=="UUOUT"    set BMAK=UUOUT.MAK
-if "%1"=="UUUTIL"   set BDIR=SOURCE\UUCP\UUUTIL
-if "%1"=="UUUTIL"   set BMAK=UUUTIL.MAK
-if "%1"=="UUXFER"   set BDIR=SOURCE\UUCP\UUXFER
-if "%1"=="UUXFER"   set BMAK=UUXFER.MAK
-if "%1"=="COMMDRV"  set BDIR=153
-if "%1"=="COMMDRV"  set BMAK=COMMDRV.MAK
-if "%1"=="COMMDRV"  set BCDTO=\
-if "%1"=="COMMDRV"  set BMAKP=PCB153\153\COMMDRV.MAK
-if "%1"=="PCBOARD"  set BMAKEOPT=-DCOMMDRV -DCOMM -DSTATS -DMP -D386 -DDBASE -DFIDO -DNUMNODES=PCB_MAXNODES=25
-if "%BDIR%"=="" goto BADTGT
-if "%BOBJ%"=="" set BOBJ=BC31
-rem Default: cd into the BDIR and run BMAK from there (works for co-located MAKs)
-if "%BCDTO%"=="" set BCDTO=\PCB153\%BDIR%
-if "%BMAKP%"=="" set BMAKP=%BMAK%
+rem  for most targets bcdto = \pcb153\bdir and bmakp = the mak filename.
+rem  for pcboard/pplc/commdrv whose mak lives in 153\ but whose source\
+rem  paths are relative to \pcb153, bcdto = \pcb153 and bmakp = 153\mak.
+rem  this matches clark's original compile.bat which ran make -f153\pcboard.mak
+rem  from \pcb153, not from \pcb153\153.
+:one
+set bdir=
+set bmak=
+set bobj=
+set bcdto=
+set bmakp=
+if "%1"=="pcboard"  set bdir=153
+if "%1"=="pcboard"  set bmak=pcboard.mak
+if "%1"=="pcboard"  set bobj=obj\bc31
+if "%1"=="pcboard"  set bcdto=\pcb153
+if "%1"=="pcboard"  set bmakp=153\pcboard.mak
+if "%1"=="pplc"     set bdir=153
+if "%1"=="pplc"     set bmak=pplc.mak
+if "%1"=="pplc"     set bobj=obj\ppl
+if "%1"=="pplc"     set bcdto=\pcb153
+if "%1"=="pplc"     set bmakp=153\pplc.mak
+if "%1"=="pcbsetup" set bdir=source\util\pcbsetup
+if "%1"=="pcbsetup" set bmak=pcbsetup.mak
+if "%1"=="pcbsm"    set bdir=source\util\pcbsm
+if "%1"=="pcbsm"    set bmak=pcbsm.mak
+if "%1"=="mkpcbtxt" set bdir=source\util\pcbtext
+if "%1"=="mkpcbtxt" set bmak=mkpcbtxt.mak
+if "%1"=="makeidx"  set bdir=source\misc\idx
+if "%1"=="makeidx"  set bmak=makeidx.mak
+if "%1"=="usernet"  set bdir=source\misc\usernet
+if "%1"=="usernet"  set bmak=usernet.mak
+if "%1"=="fidoutil" set bdir=source\misc\fidoutil
+if "%1"=="fidoutil" set bmak=fidoutil.mak
+if "%1"=="uuin"     set bdir=source\uucp\uuin
+if "%1"=="uuin"     set bmak=uuin.mak
+if "%1"=="uuout"    set bdir=source\uucp\uuout
+if "%1"=="uuout"    set bmak=uuout.mak
+if "%1"=="uuutil"   set bdir=source\uucp\uuutil
+if "%1"=="uuutil"   set bmak=uuutil.mak
+if "%1"=="uuxfer"   set bdir=source\uucp\uuxfer
+if "%1"=="uuxfer"   set bmak=uuxfer.mak
+if "%1"=="commdrv"  set bdir=153
+if "%1"=="commdrv"  set bmak=commdrv.mak
+if "%1"=="commdrv"  set bcdto=\
+if "%1"=="commdrv"  set bmakp=pcb153\153\commdrv.mak
+if "%1"=="pcboard"  set bmakeopt=-dcommdrv -dcomm -dstats -dmp -d386 -ddbase -dfido -dnumnodes=pcb_maxnodes=25
+if "%bdir%"=="" goto badtgt
+if "%bobj%"=="" set bobj=bc31
+rem default: cd into the bdir and run bmak from there (works for co-located maks)
+if "%bcdto%"=="" set bcdto=\pcb153\%bdir%
+if "%bmakp%"=="" set bmakp=%bmak%
 
-cd %BCDTO%
-if not exist %BMAKP% goto NOMAK
-if "%BCLEAN%"=="1" goto DOCLEAN
+cd %bcdto%
+if not exist %bmakp% goto nomak
+if "%bclean%"=="1" goto doclean
 
 echo --- %1
 if exist bcc.res del bcc.res
-rem Force CFG regeneration with our paths (Clark's COMPILE.BAT did this too)
-if "%1"=="PCBOARD" if exist 153\PCBOARD.CFG del 153\PCBOARD.CFG
-if "%1"=="PPLC" if exist 153\PPLC.CFG del 153\PPLC.CFG
-if "%BOBJ%"=="OBJ\BC31" if not exist OBJ\NUL mkdir OBJ
-if "%BOBJ%"=="OBJ\PPL" if not exist OBJ\NUL mkdir OBJ
-if not exist %BOBJ%\NUL mkdir %BOBJ%
-set PROGNAME=%1
-%MAKE% -f%BMAKP% %BMAKEOPT%
-set PROGNAME=
-set BMAKEOPT=
-if exist %BOBJ%\%1.EXE copy %BOBJ%\%1.EXE \OUT\PWA153\%1.EXE > NUL
-if exist %BOBJ%\%1.EXE echo     built  \OUT\PWA153\%1.EXE
-if not exist %BOBJ%\%1.EXE echo     NOT BUILT  %1.EXE -- see the make output
-if exist %BOBJ%\PCBOARDM.EXE copy %BOBJ%\PCBOARDM.EXE \OUT\PWA153\PCBOARDM.EXE > NUL
-if exist %BOBJ%\PCBOARDM.EXE echo     built  \OUT\PWA153\PCBOARDM.EXE
-if exist %BOBJ%\PCBOARDM.EXE copy %BOBJ%\PCBOARDM.EXE \OUT\PWA153\PCBOARD.EXE > NUL
-if exist %BOBJ%\PCBOARDM.EXE echo     built  \OUT\PWA153\PCBOARD.EXE
+rem force cfg regeneration with our paths (clark's compile.bat did this too)
+if "%1"=="pcboard" if exist 153\pcboard.cfg del 153\pcboard.cfg
+if "%1"=="pplc" if exist 153\pplc.cfg del 153\pplc.cfg
+if "%bobj%"=="obj\bc31" if not exist obj\nul mkdir obj
+if "%bobj%"=="obj\ppl" if not exist obj\nul mkdir obj
+if not exist %bobj%\nul mkdir %bobj%
+set progname=%1
+%make% -f%bmakp% %bmakeopt%
+set progname=
+set bmakeopt=
+if exist %bobj%\%1.exe copy %bobj%\%1.exe \out\pwa153\%1.exe > nul
+if exist %bobj%\%1.exe echo     built  \out\pwa153\%1.exe
+if not exist %bobj%\%1.exe echo     not built  %1.exe -- see the make output
+if exist %bobj%\pcboardm.exe copy %bobj%\pcboardm.exe \out\pwa153\pcboardm.exe > nul
+if exist %bobj%\pcboardm.exe echo     built  \out\pwa153\pcboardm.exe
+if exist %bobj%\pcboardm.exe copy %bobj%\pcboardm.exe \out\pwa153\pcboard.exe > nul
+if exist %bobj%\pcboardm.exe echo     built  \out\pwa153\pcboard.exe
 cd \
-goto END
+goto end
 
-:DOCLEAN
-echo --- CLEAN %1
-set PROGNAME=%1
-%MAKE% -f%BMAKP% CLEAN
-set PROGNAME=
+:doclean
+echo --- clean %1
+set progname=%1
+%make% -f%bmakp% clean
+set progname=
 cd \
-goto END
+goto end
 
-:NOMAK
-echo     skipped %1 -- %BMAKP% not found (cd was %BCDTO%)
+:nomak
+echo     skipped %1 -- %bmakp% not found (cd was %bcdto%)
 cd \
-goto END
+goto end
 
-:BADTGT
-echo Unknown target "%1".
-echo Targets: ALL CLEAN PCBOARD PPLC PCBSETUP PCBSM MKPCBTXT MAKEIDX USERNET
-echo          FIDOUTIL UUIN UUOUT UUUTIL UUXFER COMMDRV
-goto END
+:badtgt
+echo unknown target "%1".
+echo targets: all clean pcboard pplc pcbsetup pcbsm mkpcbtxt makeidx usernet
+echo          fidoutil uuin uuout uuutil uuxfer commdrv
+goto end
 
-:NOROOT
-echo ERROR: \APPLY.txt not found.
-echo        The repo root must be the root of the build drive, e.g.
-echo            mount C C:\path\to\pcbircrevival
-echo        so \OUT, \PCB153 and \TOOLKIT are inside the repo.
-goto END
+:noroot
+echo error: \apply.txt not found.
+echo        the repo root must be the root of the build drive, e.g.
+echo            mount c c:\path\to\pcbircrevival
+echo        so \out, \pcb153 and \toolkit are inside the repo.
+goto end
 
-:NOBC
-echo ERROR: Borland C++ 3.1 not found (BIN\BCC.EXE under \BC31 or \B\C31).
-echo        Set it first:   set BC31PATH=\BC31
-goto END
+:nobc
+echo error: borland c++ 3.1 not found (bin\bcc.exe under \bc31 or \b\c31).
+echo        set it first:   set bc31path=\bc31
+goto end
 
-:END
+:end
