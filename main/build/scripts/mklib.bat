@@ -4,12 +4,12 @@ REM   e.g. MKLIB PCBKBC BC bc31
 REM        MKLIB PCBKIT TC tc201
 REM        MKLIB PCBKMS MS msc70
 REM Builds each model lib from 8.3-named response files (2 chunks each),
-REM then copies to OUT\LIB\PWA153\<COMPDIR>\ (Clark convention: LIB at compiler root).
+REM then copies to out\LIB\PWA153\<COMPDIR>\ (Clark convention: LIB at compiler root).
 set LIBNAME=%1
 set CC=%2
 set COMPDIR=%3
 set PATH=C:\BC31\BIN;%PATH%
-set OUTDIR=C:\OUT\LIB\PWA153\%COMPDIR%
+set OUTDIR=C:\out\LIB\PWA153\%COMPDIR%
 if not exist %OUTDIR% md %OUTDIR%
 echo   Building %LIBNAME%S.LIB ...
 if exist C:\TMPLIB.LIB del C:\TMPLIB.LIB

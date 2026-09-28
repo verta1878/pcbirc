@@ -204,6 +204,35 @@ codebase-dbf/
 !OUT/*/SDK/**/*.EXE
 !OUT/*/SDK/**/*.exe
 
+# Same rules, lowercase paths — the 2026-09-25 lowercase-repo pass
+# renamed OUT/ to out/ on disk. Git is case-sensitive on paths even
+# when the OS is not, so both spellings must be excepted. Added
+# 2026-09-28 after TC201 libs were committed but not tracked.
+!out/*/sdk/**/*.LIB
+!out/*/sdk/**/*.lib
+!out/*/sdk/**/*.386
+!out/*/sdk/**/*.LST
+!out/*/sdk/**/*.lst
+!out/*/sdk/**/*.EXE
+!out/*/sdk/**/*.exe
+!out/*/*.EXE
+!out/*/*.exe
+
+# Lowercase equivalents for clark-original, pwa153, delta154, upd154, bins.
+# Same case-sensitivity fix as the SDK rules above.
+!out/clark-original/**/*.EXE
+!out/clark-original/**/*.exe
+!out/pwa153/*.EXE
+!out/pwa153/*.exe
+!out/pwa153/upd154/*.EXE
+!out/pwa153/upd154/*.exe
+!out/delta154/*.EXE
+!out/delta154/*.exe
+!out/*/bins/**/*.EXE
+!out/*/bins/**/*.exe
+!out/upd154/**/*.EXE
+!out/upd154/**/*.exe
+
 # PCBIC v1.2 binaries, at the path they are actually in: OUT/upd154/PWA153/.
 # The older rule says OUT/pwa153/upd154/, which is not where they live, so
 # they were invisible to git.

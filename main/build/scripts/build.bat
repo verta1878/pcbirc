@@ -60,12 +60,12 @@ echo  Per-version (all compilers):
 echo    pwa1522    [STUB] source not found  (see toolkit/PWA1522-FUTURE.md)
 echo    pwa153     clean + borland + turbo + msc
 echo    pwa154     [STUB] build-fix pending (STATS OBJ, headers)
-echo    delta154   [STUB] toolkit update pending; output: OUT/delta154/
+echo    delta154   [STUB] toolkit update pending; output: out/delta154/
 echo    irc1541    [STUB] openwatcom2irc path (see verta1878/ow2irc)
 echo.
 echo  Meta:
 echo    all        clean, then pwa153
-echo    clean      delete OBJs under OUT\LIB\*\OBJ\  (keep .LIBs)
+echo    clean      delete OBJs under out\LIB\*\OBJ\  (keep .LIBs)
 echo    mrproper   delete OBJs and .LIBs (keep dir tree)
 echo    status     list .LIB files present
 echo    help       this list
@@ -115,13 +115,13 @@ endlocal & exit /b 2
 :PWA154
 echo === STUB: pwa154 build-fix pending ===
 echo Needs STATS OBJ + a few header resolutions before it will build.
-echo Framework in place: toolkit\pwa154\ + pcb153\upd154\ + OUT\pwa153\upd154\
+echo Framework in place: toolkit\pwa154\ + pcb153\upd154\ + out\pwa153\upd154\
 endlocal & exit /b 2
 
 :DELTA154
 echo === STUB: delta154 toolkit update pending ===
 echo delta154 toolkit needs updating before compile is possible.
-echo When ready, output goes to OUT\delta154\ (its own tree).
+echo When ready, output goes to out\delta154\ (its own tree).
 endlocal & exit /b 2
 
 :IRC1541
@@ -138,27 +138,27 @@ goto DONE
 
 :CLEAN
 echo === CLEAN: removing OBJs (keeping .LIBs) ===
-if exist C:\OUT\LIB\PWA153\bc31\OBJ\small\*.OBJ    del /Q C:\OUT\LIB\PWA153\bc31\OBJ\small\*.OBJ
-if exist C:\OUT\LIB\PWA153\bc31\OBJ\medium\*.OBJ   del /Q C:\OUT\LIB\PWA153\bc31\OBJ\medium\*.OBJ
-if exist C:\OUT\LIB\PWA153\bc31\OBJ\compact\*.OBJ  del /Q C:\OUT\LIB\PWA153\bc31\OBJ\compact\*.OBJ
-if exist C:\OUT\LIB\PWA153\bc31\OBJ\large\*.OBJ    del /Q C:\OUT\LIB\PWA153\bc31\OBJ\large\*.OBJ
-if exist C:\OUT\LIB\PWA153\tc201\OBJ\small\*.OBJ    del /Q C:\OUT\LIB\PWA153\tc201\OBJ\small\*.OBJ
-if exist C:\OUT\LIB\PWA153\tc201\OBJ\medium\*.OBJ   del /Q C:\OUT\LIB\PWA153\tc201\OBJ\medium\*.OBJ
-if exist C:\OUT\LIB\PWA153\tc201\OBJ\compact\*.OBJ  del /Q C:\OUT\LIB\PWA153\tc201\OBJ\compact\*.OBJ
-if exist C:\OUT\LIB\PWA153\tc201\OBJ\large\*.OBJ    del /Q C:\OUT\LIB\PWA153\tc201\OBJ\large\*.OBJ
-if exist C:\OUT\LIB\PWA153\msc70\OBJ\small\*.OBJ    del /Q C:\OUT\LIB\PWA153\msc70\OBJ\small\*.OBJ
-if exist C:\OUT\LIB\PWA153\msc70\OBJ\medium\*.OBJ   del /Q C:\OUT\LIB\PWA153\msc70\OBJ\medium\*.OBJ
-if exist C:\OUT\LIB\PWA153\msc70\OBJ\compact\*.OBJ  del /Q C:\OUT\LIB\PWA153\msc70\OBJ\compact\*.OBJ
-if exist C:\OUT\LIB\PWA153\msc70\OBJ\large\*.OBJ    del /Q C:\OUT\LIB\PWA153\msc70\OBJ\large\*.OBJ
+if exist C:\out\LIB\PWA153\bc31\OBJ\small\*.OBJ    del /Q C:\out\LIB\PWA153\bc31\OBJ\small\*.OBJ
+if exist C:\out\LIB\PWA153\bc31\OBJ\medium\*.OBJ   del /Q C:\out\LIB\PWA153\bc31\OBJ\medium\*.OBJ
+if exist C:\out\LIB\PWA153\bc31\OBJ\compact\*.OBJ  del /Q C:\out\LIB\PWA153\bc31\OBJ\compact\*.OBJ
+if exist C:\out\LIB\PWA153\bc31\OBJ\large\*.OBJ    del /Q C:\out\LIB\PWA153\bc31\OBJ\large\*.OBJ
+if exist C:\out\LIB\PWA153\tc201\OBJ\small\*.OBJ    del /Q C:\out\LIB\PWA153\tc201\OBJ\small\*.OBJ
+if exist C:\out\LIB\PWA153\tc201\OBJ\medium\*.OBJ   del /Q C:\out\LIB\PWA153\tc201\OBJ\medium\*.OBJ
+if exist C:\out\LIB\PWA153\tc201\OBJ\compact\*.OBJ  del /Q C:\out\LIB\PWA153\tc201\OBJ\compact\*.OBJ
+if exist C:\out\LIB\PWA153\tc201\OBJ\large\*.OBJ    del /Q C:\out\LIB\PWA153\tc201\OBJ\large\*.OBJ
+if exist C:\out\LIB\PWA153\msc70\OBJ\small\*.OBJ    del /Q C:\out\LIB\PWA153\msc70\OBJ\small\*.OBJ
+if exist C:\out\LIB\PWA153\msc70\OBJ\medium\*.OBJ   del /Q C:\out\LIB\PWA153\msc70\OBJ\medium\*.OBJ
+if exist C:\out\LIB\PWA153\msc70\OBJ\compact\*.OBJ  del /Q C:\out\LIB\PWA153\msc70\OBJ\compact\*.OBJ
+if exist C:\out\LIB\PWA153\msc70\OBJ\large\*.OBJ    del /Q C:\out\LIB\PWA153\msc70\OBJ\large\*.OBJ
 echo Clean done.
 goto DONE
 
 :MRPROPER
 echo === MRPROPER: removing OBJs AND .LIBs ===
 call C:\BUILD\SCRIPTS\BUILD.BAT clean
-if exist C:\OUT\LIB\PWA153\bc31\*.LIB     del /Q C:\OUT\LIB\PWA153\bc31\*.LIB
-if exist C:\OUT\LIB\PWA153\tc201\*.LIB     del /Q C:\OUT\LIB\PWA153\tc201\*.LIB
-if exist C:\OUT\LIB\PWA153\msc70\*.LIB     del /Q C:\OUT\LIB\PWA153\msc70\*.LIB
+if exist C:\out\LIB\PWA153\bc31\*.LIB     del /Q C:\out\LIB\PWA153\bc31\*.LIB
+if exist C:\out\LIB\PWA153\tc201\*.LIB     del /Q C:\out\LIB\PWA153\tc201\*.LIB
+if exist C:\out\LIB\PWA153\msc70\*.LIB     del /Q C:\out\LIB\PWA153\msc70\*.LIB
 echo Mrproper done.
 goto DONE
 
@@ -166,9 +166,9 @@ goto DONE
 echo === STATUS: .LIB files present ===
 echo.
 echo --- pwa153 ---
-if exist C:\OUT\LIB\PWA153\bc31\*.LIB dir /B C:\OUT\LIB\PWA153\bc31\*.LIB
-if exist C:\OUT\LIB\PWA153\tc201\*.LIB dir /B C:\OUT\LIB\PWA153\tc201\*.LIB
-if exist C:\OUT\LIB\PWA153\msc70\*.LIB dir /B C:\OUT\LIB\PWA153\msc70\*.LIB
+if exist C:\out\LIB\PWA153\bc31\*.LIB dir /B C:\out\LIB\PWA153\bc31\*.LIB
+if exist C:\out\LIB\PWA153\tc201\*.LIB dir /B C:\out\LIB\PWA153\tc201\*.LIB
+if exist C:\out\LIB\PWA153\msc70\*.LIB dir /B C:\out\LIB\PWA153\msc70\*.LIB
 echo.
 echo (pwa1522 pwa154 delta154 irc1541 not yet buildable - see BUILD help)
 goto DONE

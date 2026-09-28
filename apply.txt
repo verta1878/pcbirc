@@ -256,11 +256,11 @@ Complete PWA 15.3 toolkit compiled with Turbo C 2.01 (TCC.EXE),
 all four memory models.  119 modules per model, 476 OBJs total.
 Built under DOSBox-X headless using BLDKIT.BAT + MKLIB.BAT.
 
-  OUT\PWA153\SDK\TC201\PCBKITS.LIB   151,552 bytes   small model
-  OUT\PWA153\SDK\TC201\PCBKITM.LIB   156,672 bytes   medium model
-  OUT\PWA153\SDK\TC201\PCBKITC.LIB   163,840 bytes   compact model
-  OUT\PWA153\SDK\TC201\PCBKITL.LIB   168,960 bytes   large model
-  OUT\PWA153\SDK\TC201\readme.md     build documentation
+  out\pwa153\sdk\tc201\PCBKITS.LIB   151,552 bytes   small model
+  out\pwa153\sdk\tc201\PCBKITM.LIB   156,672 bytes   medium model
+  out\pwa153\sdk\tc201\PCBKITC.LIB   163,840 bytes   compact model
+  out\pwa153\sdk\tc201\PCBKITL.LIB   168,960 bytes   large model
+  out\pwa153\sdk\tc201\readme.md     build documentation
 
 Build scripts (in BUILDROOT, inside dosboxx.zip):
 
