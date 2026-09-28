@@ -1,0 +1,9 @@
+# VSIO.SYS — OpenWatcom linker response file
+# 32-bit OS/2 Virtual Device Driver
+system os2v2 dll
+option quiet
+option map=out/vsio.map
+name out/VSIO.SYS
+file out/vsio.obj
+export VDDInit
+library watcom/lib386/os2/clib3r.lib

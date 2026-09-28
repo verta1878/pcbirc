@@ -1,0 +1,16 @@
+; ====================================================================
+; VSIO2K.DEF — Module definition for VSIO2K.SYS (OS/2 VDD)
+; ====================================================================
+
+LIBRARY VSIO2K
+
+DESCRIPTION 'VSIO2K2K — Virtual Serial I/O Driver for OS/2 VDMs'
+
+PROTMODE
+
+SEGMENTS
+    _TEXT   CLASS 'CODE'
+    _DATA   CLASS 'DATA'
+
+EXPORTS
+    VDDInit

@@ -1,112 +1,112 @@
 @echo off
-REM lowercase-repo.bat — rename all tracked files and directories to lowercase
-REM Run from the root of the pcbirc repo (where .git is)
-REM Logs all operations to lowercase-repo.log
-REM Windows NTFS is case-insensitive so we do a two-step rename: FILE.C -> FILE.C.tmp -> file.c
+REM lowercase-repo.bat v2 — rename all files and directories to lowercase
+REM Run from the repo root on Windows (NTFS).
+REM Uses "for /d /r" to walk dirs, "dir /l /b" + "ren" to rename.
+REM Skips .git tree. Logs to lowercase-repo.log.
+REM
+REM v1 — file renames worked, dir renames buggy (listed children not self)
+REM v2 — fixed dir rename: pipe parent listing through findstr to match
+REM
+REM hexadecimal — PCBoard, Cyclades lane — the crew 4free
 
 setlocal enabledelayedexpansion
 
-set LOGFILE=lowercase-repo.log
-echo === lowercase-repo.bat started %DATE% %TIME% === > %LOGFILE%
+set "VER=v2"
+set "ROOT=%CD%"
+set "LOGFILE=%ROOT%\lowercase-repo.log"
+echo === lowercase-repo.bat %VER% started %DATE% %TIME% === > "%LOGFILE%"
+echo ROOT=%ROOT% >> "%LOGFILE%"
 
-if not exist .git (
-    echo ERROR: Not in a git repo root. Run from pcbirc\ directory.
-    echo ERROR: Not in a git repo root. >> %LOGFILE%
-    goto :eof
+REM === STEP 1: Rename FILES directory by directory (skip .git) ===
+echo === Step 1: Renaming files ===
+echo === Step 1: Renaming files === >> "%LOGFILE%"
+set FCOUNT=0
+set FSKIP=0
+
+REM First do the root directory
+echo DEBUG: processing root >> "%LOGFILE%"
+for /f "tokens=*" %%f in ('dir /l /b /a-d 2^>nul') do (
+    for /f "tokens=*" %%g in ('dir /b /a-d "%%f" 2^>nul') do (
+        if not "%%g"=="%%f" (
+            echo DEBUG: ren file "%%g" -^> "%%f" >> "%LOGFILE%"
+            ren "%%g" "%%f" >nul 2>nul
+            if not errorlevel 1 (
+                echo OK   file %%g -^> %%f >> "%LOGFILE%"
+                set /a FCOUNT+=1
+            ) else (
+                echo FAIL file %%g -^> %%f >> "%LOGFILE%"
+            )
+        ) else (
+            set /a FSKIP+=1
+        )
+    )
 )
 
-echo === Step 1: Renaming files to lowercase === | tee -a %LOGFILE% 2>nul
-echo === Step 1: Renaming files === >> %LOGFILE%
+REM Now walk each subdirectory
+for /d /r "%ROOT%" %%D in (*) do (
+    echo %%D | find /i ".git" >nul
+    if errorlevel 1 (
+        echo DEBUG: dir %%D >> "%LOGFILE%"
+        for /f "tokens=*" %%f in ('dir /l /b /a-d "%%D\" 2^>nul') do (
+            for /f "tokens=*" %%g in ('dir /b /a-d "%%D\%%f" 2^>nul') do (
+                if not "%%g"=="%%f" (
+                    echo DEBUG: ren file "%%g" -^> "%%f" in %%D >> "%LOGFILE%"
+                    ren "%%D\%%g" "%%f" >nul 2>nul
+                    if not errorlevel 1 (
+                        echo OK   file %%g -^> %%f >> "%LOGFILE%"
+                        set /a FCOUNT+=1
+                    ) else (
+                        echo FAIL file %%g -^> %%f >> "%LOGFILE%"
+                    )
+                ) else (
+                    set /a FSKIP+=1
+                )
+            )
+        )
+    )
+)
 
-set FCOUNT=0
-set FERR=0
+echo Files: %FCOUNT% renamed, %FSKIP% already lowercase
+echo Files: %FCOUNT% renamed, %FSKIP% already lowercase >> "%LOGFILE%"
 
-REM Use PowerShell to process tracked files — batch can't lowercase strings easily
-powershell -ExecutionPolicy Bypass -Command ^
-  "$log = 'lowercase-repo.log'; " ^
-  "$fc = 0; $fe = 0; " ^
-  "$files = git ls-files | Sort-Object -Descending; " ^
-  "foreach ($f in $files) { " ^
-  "  $dir = Split-Path $f -Parent; " ^
-  "  $base = Split-Path $f -Leaf; " ^
-  "  $lower = $base.ToLowerInvariant(); " ^
-  "  if ($base -cne $lower) { " ^
-  "    $tmp = $f + '.lctmp'; " ^
-  "    $dest = if ($dir) { \"$dir/$lower\" } else { $lower }; " ^
-  "    $r1 = git mv $f $tmp 2>&1; " ^
-  "    if ($LASTEXITCODE -eq 0) { " ^
-  "      $r2 = git mv $tmp $dest 2>&1; " ^
-  "      if ($LASTEXITCODE -eq 0) { " ^
-  "        Add-Content $log \"OK   file: $f -> $dest\"; " ^
-  "        $fc++; " ^
-  "      } else { " ^
-  "        Add-Content $log \"FAIL file step2: $tmp -> $dest : $r2\"; " ^
-  "        $fe++; " ^
-  "      } " ^
-  "    } else { " ^
-  "      Add-Content $log \"FAIL file step1: $f -> $tmp : $r1\"; " ^
-  "      $fe++; " ^
-  "    } " ^
-  "  } " ^
-  "} " ^
-  "Write-Host \"Files renamed: $fc  Errors: $fe\"; " ^
-  "Add-Content $log \"Files renamed: $fc  Errors: $fe\"; "
-
-echo === Step 2: Renaming directories to lowercase === >> %LOGFILE%
+REM === STEP 2: Rename DIRECTORIES deepest first (skip .git) ===
+REM FIX v2: list the PARENT dir and pipe through findstr to match
+REM the specific directory name. v1 bug: dir /ad "parent\name"
+REM listed children INSIDE name, not name itself.
 echo === Step 2: Renaming directories ===
+echo === Step 2: Renaming directories === >> "%LOGFILE%"
+set DCOUNT=0
+set DSKIP=0
 
-REM Directories — deepest first, two-step rename
-powershell -ExecutionPolicy Bypass -Command ^
-  "$log = 'lowercase-repo.log'; " ^
-  "$dc = 0; $de = 0; " ^
-  "$dirs = Get-ChildItem -Recurse -Directory | Where-Object { $_.FullName -notmatch '[\\/]\.git([\\/]|$)' } | Sort-Object { $_.FullName.Length } -Descending; " ^
-  "foreach ($d in $dirs) { " ^
-  "  $rel = Resolve-Path -Relative $d.FullName; " ^
-  "  $rel = $rel -replace '^\.[\\/]',''; " ^
-  "  $rel = $rel -replace '\\','/'; " ^
-  "  $parent = Split-Path $rel -Parent; " ^
-  "  $parent = $parent -replace '\\','/'; " ^
-  "  $base = Split-Path $rel -Leaf; " ^
-  "  $lower = $base.ToLowerInvariant(); " ^
-  "  if ($base -cne $lower) { " ^
-  "    $tmp = $rel + '.lctmp'; " ^
-  "    $dest = if ($parent) { \"$parent/$lower\" } else { $lower }; " ^
-  "    $r1 = git mv $rel $tmp 2>&1; " ^
-  "    if ($LASTEXITCODE -eq 0) { " ^
-  "      $r2 = git mv $tmp $dest 2>&1; " ^
-  "      if ($LASTEXITCODE -eq 0) { " ^
-  "        Add-Content $log \"OK   dir:  $rel -> $dest\"; " ^
-  "        $dc++; " ^
-  "      } else { " ^
-  "        Add-Content $log \"FAIL dir step2: $tmp -> $dest : $r2\"; " ^
-  "        $de++; " ^
-  "      } " ^
-  "    } else { " ^
-  "      Add-Content $log \"FAIL dir step1: $rel -> $tmp : $r1\"; " ^
-  "      $de++; " ^
-  "    } " ^
-  "  } " ^
-  "} " ^
-  "Write-Host \"Dirs renamed: $dc  Errors: $de\"; " ^
-  "Add-Content $log \"Dirs renamed: $dc  Errors: $de\"; "
+REM 5 passes to catch nested dirs after parent renames
+for /L %%P in (1,1,5) do (
+    echo DEBUG: dir pass %%P >> "%LOGFILE%"
+    for /d /r "%ROOT%" %%D in (*) do (
+        echo %%D | find /i ".git" >nul
+        if errorlevel 1 (
+            set "ORIGNAME=%%~nxD"
+            set "PARENT=%%~dpD"
+            for /f "tokens=*" %%L in ('dir /l /b /ad "!PARENT!" 2^>nul ^| findstr /i /x "!ORIGNAME!"') do (
+                if not "!ORIGNAME!"=="%%L" (
+                    echo DEBUG: ren dir "!ORIGNAME!" -^> "%%L" >> "%LOGFILE%"
+                    ren "%%D" "%%L" >nul 2>nul
+                    if not errorlevel 1 (
+                        echo OK   dir  !ORIGNAME! -^> %%L >> "%LOGFILE%"
+                        set /a DCOUNT+=1
+                    ) else (
+                        echo FAIL dir  !ORIGNAME! -^> %%L >> "%LOGFILE%"
+                    )
+                ) else (
+                    set /a DSKIP+=1
+                )
+            )
+        )
+    )
+)
 
-echo === Step 3: Checking for remaining uppercase === >> %LOGFILE%
-echo === Checking for remaining uppercase ===
-
-powershell -ExecutionPolicy Bypass -Command ^
-  "$remaining = git ls-files | Where-Object { $_ -cmatch '[A-Z]' }; " ^
-  "if ($remaining.Count -eq 0) { " ^
-  "  Write-Host 'All lowercase. No uppercase remaining.'; " ^
-  "  Add-Content 'lowercase-repo.log' 'All lowercase.'; " ^
-  "} else { " ^
-  "  Write-Host \"WARNING: $($remaining.Count) paths still have uppercase\"; " ^
-  "  $remaining | ForEach-Object { Add-Content 'lowercase-repo.log' \"REMAINING: $_\" }; " ^
-  "} "
-
+echo Dirs: %DCOUNT% renamed, %DSKIP% already lowercase
+echo Dirs: %DCOUNT% renamed, %DSKIP% already lowercase >> "%LOGFILE%"
+echo === lowercase-repo.bat %VER% done %DATE% %TIME% === >> "%LOGFILE%"
 echo.
-echo === Summary ===
-echo Review with: git status
-echo Commit with: git commit -m "Lowercase all filenames and directories repo-wide"
-echo Push with: git push
-echo Log saved to: %LOGFILE%
-echo === Done %DATE% %TIME% === >> %LOGFILE%
+echo Done (%VER%). Check %LOGFILE% for details.
+pause

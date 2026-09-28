@@ -1,0 +1,133 @@
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/* The source code in this module is proprietary software belonging to       */
+/* Clark Development Company and is part of the PCBoard source code library. */
+/* You are granted the right to use this source code for the building of any */
+/* of the PCBoard products you have licensed.  Any other usage is forbidden  */
+/* without prior written consent from Clark Development Company, Inc.        */
+/*                                                                           */
+/* Be sure to read the source code license agreement before utilizing any    */
+/* of the source code found herein.                                          */
+/*                                                                           */
+/* Copyright (C) 1996  Clark Development Company, Inc.  All Rights Reserved. */
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+
+
+#define MAINMENU          1  /*  8 MAIN MENU */
+#define USERMENU          9  /* 14 USERS FILE MAINTENANCE */
+#define SECMENU          23  /* 12 ADJUST SECURITY LEVELS */
+#define UEDIT            35  /* 80 EDIT USERS FILE */
+#define COLORMENU       115  /*  4 COLOR CUSTOMIZATION MENU */
+#define COLORSELECT     119  /*  1 COLOR CUSTOMIZATION */
+#define SORTMENU1       120  /*  2 SORT OPTIONS MENU */
+#define SORTMENU2       122  /*  8 SINGLE KEY SORT OPTIONS */
+#define SORTMENU3       130  /*  8 MULTIPLE KEY SORT OPTIONS */
+#define INFMENU         138  /*  7 USER INFO FILE MAINTENANCE */
+#define PSAMENU         145  /*  8 PCBOARD SUPPORTED ALLOCATIONS */
+#define ADJSEC          153  /*  1 SECURITY LEVEL CHANGES BY RANGE */
+#define ADJTABLE        154  /*  1 ADJUST SECURITY LEVELS */
+#define INITCOUNTERS    155  /*  3 INITIALIZE UPLOAD/DOWNLOAD COUNTERS */
+#define ANALYSIS        158  /*  1 ANALYSIS PRINTOUT */
+#define ADJCONF         159  /*  8 ADJUST CONFERENCE REGISTRATIONS */
+#define ADJMOVE         167  /*  4 MOVE USERS BETWEEN CONFERENCES */
+#define CHGEXPDATE      171  /*  4 CHANGE EXPIRATION DATE */
+#define CHGACTBAL       175  /*  6 CHANGE ACCOUNT BALANCE */
+#define PACKUSER        181  /*  7 PACK USERS FILE */
+#define PRNTUSER        188  /*  1 PRINT USERS */
+#define SECCHNGE        189  /*  1 PRINT USERS */
+#define UFDELETE        190  /*  1 DELETE USER RECORD */
+#define FINDNAME        191  /*  1 FIND USER NAME */
+#define FINDSTR         192  /*  1 FIND ASCII STRING */
+#define RESTORE         193  /*  1 RESTORE USERS FILE */
+#define PRINTER         194  /*  1 PRINTER DEVICE */
+#define EDITORS         195  /*  1 DEFINE EXTERNAL EDITORS */
+#define GENERAL         196  /*  3 GENERAL HELP */
+#define SETUPMENU       199  /* 14 PCBSETUP MAIN MENU */
+#define CNAMESMENU      213  /*  1 CONFERENCES MENU */
+#define ERREXTENSION    214  /*  1 INVALID FILENAME */
+#define ERRLENGTH6      215  /*  1 INVALID FILENAME */
+#define ERRLENGTH7      216  /*  1 INVALID FILENAME */
+#define ERRLENGTH8      217  /*  1 INVALID FILENAME */
+#define ERREXTLEN       218  /*  1 INVALID FILENAME */
+#define ERRPORT         219  /*  1 ERROR! */
+#define ERRSPEED        220  /*  1 ERROR! */
+#define ERR300STRT      221  /*  1 ERROR! */
+#define ERR300STOP      222  /*  1 ERROR! */
+#define ERREVENT        223  /*  1 ERROR! */
+#define ERRBUFSIZE      224  /*  1 ERROR! */
+#define ERRDEFCLR       225  /*  1 ERROR! */
+#define ERRNETTIME      226  /*  1 ERROR! */
+#define ERRCHATDLY      227  /*  1 ERROR! */
+#define ERRMSGBLCK      228  /*  1 ERROR! */
+#define ERRNUMCONF      229  /*  1 ERROR! */
+#define ERRSECLEVEL     230  /*  1 ERROR! */
+#define WARNCNAMES      231  /*  1 CNAMES WARNING */
+#define DREDIT          232  /* 11 EDIT DOORS.LST FILE */
+#define FSECEDIT        243  /*  6 EDIT SECURITY FILE */
+#define PROTOCOL        249  /*  7 EDIT PROTOCOL FILE */
+#define PWRDFILE        256  /* 17 EDIT PASSWORDS/SECURITY FILE */
+#define LANGFILE        273  /*  6 EDIT LANGUAGE TABLE */
+#define TCANFILE        279  /*  1 EDIT TCAN FILE */
+#define CMDSFILE        280  /*  5 EDIT CMD.LST FILE */
+#define BLTFILE         285  /*  1 EDIT BLT.LST FILE */
+#define SCRIPTFILE      286  /*  2 EDIT SCRIPT.LST FILE */
+#define DIRFILE         288  /*  4 EDIT DIR.LST FILE */
+#define DLPATHFILE      292  /*  2 EDIT DLPATH.LST FILE */
+#define SYSOPHELP       294  /*  5 SYSOP INFORMATION */
+#define SYSFILEMENU     299  /*  4 FILE LOCATIONS */
+#define SYSFILEHELP     303  /* 16 SYSTEM FILES */
+#define CNFFILEHELP     319  /* 13 CONFIGURATION FILES */
+#define DSPFILEHELP     332  /*  9 DISPLAY FILES */
+#define QSTFILEHELP     341  /*  6 QUESTIONNAIRE FILES */
+#define MODEMMENU       347  /*  3 MODEM INFORMATION */
+#define MODEMSETUP      350  /* 14 MODEM SETUP */
+#define MODEMSWITCHES   364  /* 19 MODEM SWITCHES */
+#define MODEMSPEEDS     383  /*  6 MODEM ACCESS SPEEDS */
+#define NODEINFO        389  /* 11 NODE INFORMATION */
+#define EVENTINFO       400  /*  6 EVENT INFORMATION */
+#define EVENTSETUP      406  /*  9 EVENT SETUP */
+#define FIDOATTRIB      415  /* 13 FIDO ATTRIBUTES */
+#define SUBSCPTHELP     428  /*  4 SUBSCRIPTION INFORMATION */
+#define OPTIONSMENU     432  /*  9 CONFIGURATION OPTIONS */
+#define MSGOPTIONS      441  /* 19 MESSAGE OPTIONS */
+#define FILEOPTIONS     460  /* 11 FILE TRANSFER OPTIONS */
+#define SYSCONTROL      471  /* 18 SYSTEM CONTROL */
+#define SWITCHES        489  /* 19 CONFIGURATION SWITCHES */
+#define LOGOPTIONS      508  /*  3 LOGGING OPTIONS */
+#define LIMITSHELP      511  /*  9 LIMITS */
+#define ONLINECOLORS    520  /*  4 ONLINE COLORS */
+#define FUNCTIONKEYS    524  /*  2 FUNCTION KEYS */
+#define OS2SETTINGS     526  /* 11 OS/2 SETTINGS */
+#define LEVELSMENU      537  /*  3 SECURITY LEVELS */
+#define SYSOPFLEVELS    540  /* 15 SYSOP FUNCTION LEVELS */
+#define SYSOPCLEVELS    555  /* 15 SYSOP COMMAND LEVELS */
+#define USERLEVELS      570  /* 34 USER LEVELS (RANGE 0 TO 255) */
+#define ACTCFGHELP      604  /* 13 ACCOUNTING CONFIGURATION */
+#define HOLIDAYHELP     617  /*  1 HOLIDAY EDITOR */
+#define ACTRATEHELP     618  /* 15 ACCOUNTING RATES */
+#define CNAMESHELP      633  /* 56 CONFERENCE CONFIGURATION */
+#define FILERMENU       689  /* 13 PCBFILER MAIN MENU */
+#define EDITMENU        702  /*  4 EDIT DIR FILES MENU */
+#define PREEDIT         706  /*  1 EDIT DIR FILES */
+#define FEDIT           707  /*  6 DIR FILE EDITOR */
+#define FILEMOVEMENT    713  /*  7 FILE MOVEMENT */
+#define DEFAULTS        720  /* 25 DEFAULTS */
+#define UUCPCONFIG      745  /* 18 UUCP CONFIGURATION */
+#define FIDOCONFIG      763  /* 13 FIDO PROCESSING CONFIGURATION */
+#define FIDOTOSS        776  /* 14 FIDO TOSSER CONFIGURATION */
+#define NODEARCCFG      790  /*  3 FIDONET NODE ARCHIVER CONFIGURATION */
+#define ADDRESSCFG      793  /*  5 FIDONET ADDRESS CONFIGURATION */
+#define EMSICFG         798  /*  6 FIDO EMSI PROFILE CONFIGURATION */
+#define FIDODIRCFG      804  /*  9 FIDO DIRECTORY CONFIGURATION */
+#define FIDOARCCFG      813  /* 16 FIDO ARCHIVER CONFIGURATION */
+#define PHONETABLE      829  /*  2 FIDONET PHONE NUMBER TRANSLATION TABLE */
+#define NODELISTCFG     831  /*  2 FIDONET NODELIST CONFIGURATION */
+#define FREQCONFIG      833  /*  1 FREQ PATH CONFIGURATION */
+#define FREQRESTRICT    834  /*  6 FIDO FREQ RESTRICTIONS */
+#define MAGICEDITOR     840  /*  3 FIDONET MAGIC NAMES EDITOR */
+#define DENYCONFIG      843  /*  1 FREQ DENY NODELIST CONFIGURATION */
+#define FIDOCFGMENU     844  /* 14 FIDO CONFIGURATION */
+#define FIDOAREACFG     858  /*  5 FIDONET AREA CONFIGURATION */
+#define FIDOORIGIN      863  /*  2 FIDONET ORIGIN CONFIGURATION */
+#define SRCHREPLACE     865  /* 10 SEARCH AND REPLACE */
+#define PCBMODEMHLP     875  /* 12 PCBMODEM */
+#define VERIFYSTR   0xc4, 0x14, 0xf1, 0x1c, 0x0, 0x0, 0xc4, 0x14, 0x8d, 0x1d
