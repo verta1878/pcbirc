@@ -1,14 +1,17 @@
 # MD5 checksums for PCBoard 15.3 PWA v0.3.2+ built binaries
 # Generated: 2026-09-28
-51f23d4835a4620805e299915956b798  out/pwa153/PCBOARD.EXE
-51f23d4835a4620805e299915956b798  out/pwa153/PCBOARDM.EXE
-795632c27d8859c620c67ca8b41b4d29  out/pwa153/PPLC.EXE
-c2b904c7d46860a9ab4f6c45bc723a97  out/pwa153/USERNET.EXE
-f93b889ae1c5af0c019cf7b46273e781  out/pwa153/UUUTIL.EXE
-5edd026f2976e786e58bbf77f4f403f4  out/pwa153/UUOUT.EXE
-fa047f9bb731de9525d3ed33b18429aa  out/pwa153/UUIN.EXE
-fbe8ac05cbe3449b38ba0cf2b6d78138  out/pwa153/UUXFER.EXE
-86c224ab75f57fd8ed46080617e489b2  out/pwa153/sdk/tc201/PCBKITS.LIB
-cb7cdaf9a811fb32e5b10b8bd1c4ce4a  out/pwa153/sdk/tc201/PCBKITM.LIB
-d2986c50527b79636af98d5ace69e649  out/pwa153/sdk/tc201/PCBKITC.LIB
-76a52ff1634e4fca00214fac812d0b2d  out/pwa153/sdk/tc201/PCBKITL.LIB
+51f23d4835a4620805e299915956b798  out/pwa153/pcboard.exe
+51f23d4835a4620805e299915956b798  out/pwa153/pcboardm.exe
+795632c27d8859c620c67ca8b41b4d29  out/pwa153/pplc.exe
+c2b904c7d46860a9ab4f6c45bc723a97  out/pwa153/usernet.exe
+f93b889ae1c5af0c019cf7b46273e781  out/pwa153/uuutil.exe
+5edd026f2976e786e58bbf77f4f403f4  out/pwa153/uuout.exe
+fa047f9bb731de9525d3ed33b18429aa  out/pwa153/uuin.exe
+fbe8ac05cbe3449b38ba0cf2b6d78138  out/pwa153/uuxfer.exe
+86c224ab75f57fd8ed46080617e489b2  out/pwa153/sdk/tc201/pcbkits.lib
+cb7cdaf9a811fb32e5b10b8bd1c4ce4a  out/pwa153/sdk/tc201/pcbkitm.lib
+d2986c50527b79636af98d5ace69e649  out/pwa153/sdk/tc201/pcbkitc.lib
+76a52ff1634e4fca00214fac812d0b2d  out/pwa153/sdk/tc201/pcbkitl.lib
+# dosboxx split archive
+d9eb76a53e210274c88f634fa417cbd4  dosboxx.z01
+aa04a4a68ff93a7ed4ca1b00cee06740  dosboxx.zip

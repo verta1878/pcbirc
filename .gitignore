@@ -189,6 +189,8 @@ codebase-dbf/
 # build output, so *.OBJ must not hide it.
 !pcb153/SOURCE/MISC/MD5/OS2/*.OBJ
 !pcb153/SOURCE/MISC/MD5/OS2/*.obj
+!pcb153/source/misc/md5/os2/*.OBJ
+!pcb153/source/misc/md5/os2/*.obj
 
 # SDK build output: OUT/<branch>/SDK/<compiler>/ -- the libraries we build
 # (VMDATA_L.LIB, the category libraries and the PCBKBC/PCBKIT/PCBKMS door

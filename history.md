@@ -98,6 +98,14 @@ headless. BLDKIT.BAT + MKLIB.BAT. SUBST workaround for turboc.cfg.
 
 dosboxx.zip updated with build output.
 
+### v0.3.2+ (49) — 2026-09-28: case fix — lowercase entire dosboxx zip + build scripts (hexadecimal)
+
+Lowercased all 3,383 files and 186 directories in dosboxx BUILDROOT.
+Updated all path references inside build scripts to match across 14
+directory roots + all subdirectory components. 16 dosboxx text files
+and 38 repo build scripts updated. 4 PCBKIT*.LIB files and !PENTIUM.NFO
+lowercased on share repo (binary content unchanged). dosboxx.zip rebuilt.
+
 ---
 
 ## Open blockers

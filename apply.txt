@@ -285,3 +285,43 @@ Fix investigation in progress.
 dosboxx.zip updated with build output (OBJs + libs).
 
 Nothing deleted.
+
+v0.3.2+ (49): case fix — lowercase entire dosboxx zip + build scripts
+================================================================
+Date: 2026-09-28
+By: hexadecimal
+
+Lowercased all 3,383 files and 186 directories in the dosboxx
+BUILDROOT tree.  Updated all path references inside build scripts
+to match (C:\TC201\ → C:\tc201\, C:\BC31\ → C:\bc31\, etc. across
+10 directory roots + all subdirectory components).
+
+Directories lowercased:
+
+  TC201\   → tc201\       BC31\     → bc31\       MSC70\  → msc70\
+  TOOLKIT\ → toolkit\     PCB153\   → pcb153\     BUILD\  → build\
+  SCRIPTS\ → scripts\     FDOS\     → fdos\       HX\     → hx\
+  TMP\     → tmp\         OUT\      → out\        WATCOM\ → watcom\
+  OW2IRC\  → ow2irc\      PCBDCOM\  → pcbdcom\
+
+Build script path references updated in 16 dosboxx text files +
+38 repo build scripts (MAIN/build/scripts/*.BAT, *.RSP, *.CFG).
+All subdirectory components also lowercased (\BIN\, \INCLUDE\,
+\SOURCE\, \OBJ\, \PWA153\, \SDK\, etc.).
+
+Share repo fixes:
+
+  out/pwa153/sdk/tc201/PCBKITC.LIB → pcbkitc.lib
+  out/pwa153/sdk/tc201/PCBKITL.LIB → pcbkitl.lib
+  out/pwa153/sdk/tc201/PCBKITM.LIB → pcbkitm.lib
+  out/pwa153/sdk/tc201/PCBKITS.LIB → pcbkits.lib
+  docs/sysop15/!PENTIUM.NFO        → !pentium.nfo
+
+LIB binary content unchanged — SHA-256 checksums identical.
+
+dosboxx.zip rebuilt as split archive (dosboxx.z01 + dosboxx.zip).
+
+  dosboxx.z01  SHA-256: be0f9ea42b4d110be361a57963dfc4e26fb4e079aae1c5aede9de18d61aa67d6
+  dosboxx.zip  SHA-256: 052b33ea3ae31fb0e635eb30d7c6d92d447530ae49cae9463dbd0308762927a5
+
+Nothing deleted.
