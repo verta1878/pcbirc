@@ -16,7 +16,11 @@
 
 #ifndef __OS2__
 
-/*#pragma inline */
+#ifdef _MSC_VER
+  #include <borland.h>
+#else
+  /*#pragma inline */
+#endif
 #include <model.h>
 #include "misc.h"
 #ifdef DEBUG
@@ -150,7 +154,11 @@ done:;
 #ifdef LDATA
   asm pop  ds
 #endif
+#ifdef _MSC_VER
+  { int retval; _asm { mov retval, ax } return(retval); }
+#else
   return(_AX);
+#endif
 }
 
 
@@ -288,4 +296,4 @@ void main(void) {
   printf("Quotient = %ld\n",ddiv(&A,51200000));
 }
 #endif
-#endif  /* ifndef __OS2__ */
+#endif  /* ifndef __OS2__ */

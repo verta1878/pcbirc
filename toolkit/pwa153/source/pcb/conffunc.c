@@ -12,7 +12,11 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-/*#pragma inline */
+#ifdef _MSC_VER
+  #include <borland.h>
+#else
+  /*#pragma inline */
+#endif
 
 #include <stdio.h>
 #ifdef DEBUG
@@ -31,20 +35,19 @@
  Notes:          modifies Ax,Bx,Dx .. Cx is preserved
  ===========================================================================
 
-  asm     Push  Cx
-  asm     Dec Bx            /* calculate (ConfNum-1)/8 and store the */
-  asm     Mov Cl,Bl
-  asm     And Cl,7          /* Cl = remainder of (ConfNum-1)/8 */
-  asm     Shr Bx,1
-  asm     Shr Bx,1
-  asm     Shr Bx,1          /* Bx = quotient of (ConfNum-1)/8 */
-
-  asm     Mov   Al,[Di+Bx]  /* Adjust Di by quotient and get char value */
-
-  asm     Mov   Dl,1        /* Make Dx into a bit mask with one bit set */
-  asm     Shl   Dl,Cl       /* Dx = (1 shl remainder) = 2^remainder */
-  asm     Pop   Cx
-*/
+/*  asm     Push  Cx                                                    */
+/*  asm     Dec Bx            -- calculate (ConfNum-1)/8 and store the  */
+/*  asm     Mov Cl,Bl                                                   */
+/*  asm     And Cl,7          -- Cl = remainder of (ConfNum-1)/8        */
+/*  asm     Shr Bx,1                                                    */
+/*  asm     Shr Bx,1                                                    */
+/*  asm     Shr Bx,1          -- Bx = quotient of (ConfNum-1)/8        */
+/*                                                                      */
+/*  asm     Mov   Al,[Di+Bx]  -- Adjust Di by quotient and get char    */
+/*                                                                      */
+/*  asm     Mov   Dl,1        -- Make Dx into a bit mask, one bit set  */
+/*  asm     Shl   Dl,Cl       -- Dx = (1 shl remainder) = 2^remainder  */
+/*  asm     Pop   Cx                                                    */
 
 
 /*============================================================================

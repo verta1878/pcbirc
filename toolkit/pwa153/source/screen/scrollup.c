@@ -83,9 +83,17 @@ void LIBENTRY scrollup(int X1, int Y1, int X2, int Y2, char Color) {
     gotoxy(X1,Y1);
     for (p = Str; *p; p+=2) {
       ansi_color(*(p+1));
+#ifdef _MSC_VER
+      { char _dl_val = *p;
+        asm Mov Dl,_dl_val
+        asm Mov Ah,2
+        asm Int 21h
+      }
+#else
       _DL = *p;
       asm Mov Ah,2
       asm Int 21h
+#endif
     }
   }
 

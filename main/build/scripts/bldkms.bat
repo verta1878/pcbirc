@@ -18,7 +18,7 @@ echo.
 REM --- host compiler driver ---
 REM  DOS route (needs 386MAX DPMI):  set CC=C:\MSC70\BIN\CL.EXE
 REM  OS/2 route (no DPMI):           set CC=C:\MSC70\OS2\BINP\CL.EXE
-set CC=C:\MSC70\BIN\CL.EXE
+set CC=C:\MSC70\BIN\CL.EXE /DLIB
 set INCLUDE=C:\MSC70\INCLUDE
 set LIB=C:\MSC70\LIB
 set TKINC=C:\TOOLKIT\PWA153\H

@@ -192,14 +192,14 @@ Compiler families:
   (see `todo/dosboxx-dpmi-failures.md` Failure #5).
 - PCBKIT (Turbo C 2.01) — NOT BUILT. Real-mode, no DPMI
   needed.
-- PCBKMS (Microsoft C 7.0) — Route A **VERIFIED 2026-08-29**: MSC7
-  CL under DOSBox-X + HDPMI32 produces valid OMF (proof:
-  `PCBKMS-ROUTE-A-PROOF-TINY.OBJ`). First real toolkit module
-  (ADDBACKS.C) reached CL cleanly, blocked on toolkit header
-  modernization (types.hpp line 49 `sizeof(char)` inside `#if`
-  without `_MSC_VER` guard). Full 476-step BLDKMS.BAT build queued
-  once header fixups land. No 386MAX needed — the whole "PCBKMS
-  needs a low-level emu" premise is bypassed.
+- PCBKMS (Microsoft C 7.0) — **SMALL MODEL BUILD DONE 2026-10-02**:
+  100/119 modules compile clean under MSC 7.0 CL (DOSBox-X + HDPMI16).
+  19 failures are all PCBoard application modules (need project.h /
+  pcboard.h — not SDK code). 9 source files received `_MSC_VER`
+  guards for Borland pseudo-variables (`_AX`, `_DL`, `_SI`, `_BH`)
+  and `geninterrupt()`. `/DLIB` added globally to BLDKMS.BAT.
+  Remaining: medium/compact/large model builds, then MKLIB → 
+  PCBKMS{S,M,C,L}.LIB.
 
 ### pwa154 — pending
 ### delta154 — pending (needs 22 Watcom fixes ported from irc1541 first)
@@ -355,6 +355,58 @@ every module including types.hpp exported nullHandle and clashed. CDCCONST
 Turbo C 2.01 added to DOSBOXX.ZIP alongside BC31.
 
 SDK matrix: 8 of 12 (PCBKBC 4/4, PCBKIT 4/4). Next: PCBKMS (MSC 7.0).
+
+## Step 3 — PCBKMS (Microsoft C 7.0): small model DONE ✅ (2026-10-02)
+
+**100 of 119 modules compile clean** under MSC 7.0 CL.EXE, small model,
+DOSBox-X headless + HDPMI16. The 19 failures are all PCBoard application
+modules that require `project.h` / `pcboard.h` — they are not SDK toolkit
+code and are expected to fail in a `-DLIB` SDK build.
+
+### Source fixes (9 files, all `_MSC_VER` guards)
+
+Clark's source uses Borland-specific pseudo-variables (`_AX`, `_AL`,
+`_BH`, `_SI`, `_DL`) and `geninterrupt()` for inline assembly. MSC 7.0
+has no equivalent — these must use `_asm { mov var, reg }` blocks.
+Each fix wraps the Borland code in `#ifdef _MSC_VER` / `#else` so both
+compilers build from the same source.
+
+| File | Fix |
+|---|---|
+| `screen/ansi.c` | `#include <borland.h>` guard |
+| `pcb/conffunc.c` | `#include <borland.h>` guard |
+| `misc/zswapvir.c` | `#include <borland.h>` guard |
+| `misc/exist.c` | `_MSC_VER` added to DTA struct ffblk guard |
+| `misc/julian.c` | borland.h include + DTA extern guard |
+| `pcb/datafil2.c` | borland.h include + DTA extern guard |
+| `misc/dmath.c` | borland.h guard + `_AX` pseudo-var → `_asm { mov retval, ax }` |
+| `screen/scrollup.c` | `_DL` pseudo-var → `_asm { mov dl, _dl_val }` |
+| `screen/giveup.c` | 3 fixes: `_AX`/`geninterrupt` in Windows(), `_AX`/`_AL`/`_BH`/`geninterrupt` in CheckWin, `_SI` in function pointer assignment |
+
+### Build flag fix
+
+`/DLIB` added globally to `BLDKMS.BAT` (in the `%CC%` variable).
+Without it, `pcb.h` selects the wrong prototypes for `getconfrecord` /
+`putconfrecord` (void vs int return type), causing C2371/C2373 errors
+in `cnames.c`. This matches the `-DLIB` flag used by the BC31 SDK build.
+
+### 19 known PCBoard app module failures
+
+These modules include `project.h` and/or `pcboard.h` (PCBoard's own
+application headers, not part of the SDK toolkit). They fail identically
+in all three compilers' SDK builds and are not library modules:
+
+CALLDOOR, CONVMAIN, DOSENT, FAXDRV, FIDO, GETPCB, MDMIO, MODEM,
+PCBINT, PCBOARD, PCBPROT, PCEXIT, PCMAIN, PCSIO, PROTOCOL, RECYCLE,
+REMOTE, USERSYS, VIRTUAL
+
+### Next steps for PCBKMS
+
+1. Build medium, compact, large models (flag swap in BLDKMS.BAT)
+2. Run MKLIB.BAT with MS??.RSP → assemble PCBKMS{S,M,C,L}.LIB
+3. Verify key door functions are present (same check as PCBKBC/PCBKIT)
+
+SDK matrix: 8 of 12 complete (PCBKBC 4/4 ✅, PCBKIT 4/4 ✅, PCBKMS 1/4).
 
 ## Build scripts + distribution (2026-08-25)
 

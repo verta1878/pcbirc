@@ -13,6 +13,9 @@
 
 
 #if defined(_MSC_VER) || defined(__WATCOMC__)
+  #ifdef _MSC_VER
+    #include <borland.h>
+  #endif
   #include <direct.h>
   #include <dos.h>
 #else
@@ -32,7 +35,7 @@
 #define DAY   1
 #define YEAR  2
 
-#if defined(__BORLANDC__) || defined(__TURBOC__)
+#if defined(__BORLANDC__) || defined(__TURBOC__) || defined(_MSC_VER)
   extern struct ffblk DTA;   /* really declared as "char DTA[45]" in exist.c */
 #elif defined(__WATCOMC__)
   extern struct find_t DTA;

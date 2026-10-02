@@ -44,7 +44,7 @@
 *            attribute of the "found" file.
 */
 
-#if defined(__BORLANDC__) || defined(__TURBOC__)
+#if defined(__BORLANDC__) || defined(__TURBOC__) || defined(_MSC_VER)
   struct ffblk DTA;
 #elif defined(__WATCOMC__)
   struct find_t DTA;

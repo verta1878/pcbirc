@@ -12,7 +12,11 @@
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 
 
-/*#pragma inline */
+#ifdef _MSC_VER
+  #include <borland.h>
+#else
+  /*#pragma inline */
+#endif
 
 #include "zsort.h"
 

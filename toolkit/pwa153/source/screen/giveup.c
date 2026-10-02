@@ -86,8 +86,13 @@ static void pascal near Windows(void) {
         gettext (1, 1, 1, 1, &tux);     /* dummy screen output to prevent */
         puttext (1, 1, 1, 1, &tux);     /* Windows 3x from suspending task */
     }
+#ifdef _MSC_VER
+    _asm { mov ax, 1680h }
+    _asm { int 2fh }
+#else
     _AX = 0x1680;
     geninterrupt (0x2f);
+#endif
 }
 
 static void pascal near Os2(void) {
@@ -254,6 +259,22 @@ asm             Mov   word ptr [MosVect+2],Es
 asm             Jmp   Exit
 
 CheckWin:
+#ifdef _MSC_VER
+    { unsigned char al_val; unsigned char bh_val;
+      _asm { mov ax, 1680h }
+      _asm { int 2fh }
+      _asm { mov al_val, al }
+      if (al_val)
+          goto Exit;
+      Tasker = WIN;
+      _asm { mov ax, 160ah }
+      _asm { int 2fh }
+      _asm { mov al_val, al }
+      _asm { mov bh_val, bh }
+      if (!al_val && bh_val == 3)
+          win3x = 1;
+    }
+#else
     _AX = 0x1680;
     geninterrupt (0x2f);
     if (_AL)
@@ -263,6 +284,7 @@ CheckWin:
     geninterrupt (0x2f);                /* in BX, works for Windows 3x/9x */
     if (!_AL && _BH == 3)               /* but not supported on Windows NT */
         win3x = 1;
+#endif
 
 
 Exit:;
@@ -289,7 +311,11 @@ Exit:;
                 break;
   }
 
+#ifdef _MSC_VER
+  { unsigned si_val; _asm { mov si_val, si } pgiveup = (void (pascal near *)(void)) si_val; }
+#else
   pgiveup =  (void (pascal near *)(void)) _SI;
+#endif
 
 #endif /* ifdef __OS2__ */
 }

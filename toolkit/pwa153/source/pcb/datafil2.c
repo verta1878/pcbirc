@@ -15,6 +15,9 @@
 #if defined(__BORLANDC__) || defined(__TURBOC__)
   #include <dir.h>
 #else
+  #ifdef _MSC_VER
+    #include <borland.h>
+  #endif
   #include <direct.h>
 #endif
 
@@ -38,7 +41,7 @@
 
 static DOSFILE pcbfile;
 
-#if defined(__BORLANDC__) || defined(__TURBOC__)
+#if defined(__BORLANDC__) || defined(__TURBOC__) || defined(_MSC_VER)
   extern struct ffblk DTA;
 #elif defined(__WATCOMC__)
   extern struct find_t DTA;
