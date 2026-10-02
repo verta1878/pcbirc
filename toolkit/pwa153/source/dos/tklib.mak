@@ -11,12 +11,12 @@
 #       what the repo folder is called.  every macro is guarded, so
 #       it can be overridden on the command line:
 #
-#           make -dcver=bc50
-#           make -droot=\out -dbranch=pwa154
+#           make -Dcver=bc50
+#           make -Droot=\out -Dbranch=pwa154
 #
 #       memory model:
 #           large (default):  make
-#           small:            make -dmdl=s -dmodel=small -dcfgname=tks
+#           small:            make -Dmdl=s -Dmodel=small -Dcfgname=tks
 #
 #       targets:  all (default) | dirs | objs | libf | clean
 #
@@ -62,6 +62,16 @@ cfgname  = tk
 !ifndef tkit
 tkit     = \toolkit\pwa153
 !endif
+# tkcc: compiler command — bcc (bc31 default) or tcc (tc201)
+!ifndef tkcc
+tkcc     = bcc
+!endif
+# cfgflag: config-file switch — +$(cfg) for bcc, empty for tcc (reads turboc.cfg)
+!if $(tkcc) == tcc
+cfgflag  =
+!else
+cfgflag  = +$(cfg)
+!endif
 
 subdir   = dos
 libname  = dos_$(mdl)
@@ -73,10 +83,10 @@ objdir   = $(sdk)\obj\$(subdir)\$(model)
 libfile  = $(libdir)\$(libname).lib
 
 .c.obj:
-	bcc +$(cfg) -n$(objdir) $<
+	$(tkcc) $(cfgflag) -m$(mdl) -n$(objdir) $<
 
 .cpp.obj:
-	bcc +$(cfg) -n$(objdir) $<
+	$(tkcc) $(cfgflag) -m$(mdl) -n$(objdir) $<
 
 .asm.obj:
 	tasm /mx /d__$(mdl)__ $<, $(objdir)\$&.obj

@@ -12,6 +12,11 @@ echo.
 set PATH=C:\TC201\BIN;%PATH%
 echo.
 echo === Memory model: SMALL ===
+if not exist C:\out md C:\out
+if not exist C:\out\LIB md C:\out\LIB
+if not exist C:\out\LIB\PWA153 md C:\out\LIB\PWA153
+if not exist C:\out\LIB\PWA153\tc201 md C:\out\LIB\PWA153\tc201
+if not exist C:\out\LIB\PWA153\tc201\OBJ md C:\out\LIB\PWA153\tc201\OBJ
 if not exist C:\out\LIB\PWA153\tc201\OBJ\small md C:\out\LIB\PWA153\tc201\OBJ\small
 cd \TOOLKIT\PWA153\SOURCE\PCB
 echo   [  1/119] ADDBACKS
@@ -273,6 +278,7 @@ echo   small model done.
 echo.
 echo === Memory model: MEDIUM ===
 if not exist C:\out\LIB\PWA153\tc201\OBJ\medium md C:\out\LIB\PWA153\tc201\OBJ\medium
+REM (parent dirs already created by SMALL model above)
 cd \TOOLKIT\PWA153\SOURCE\PCB
 echo   [  1/119] ADDBACKS
 TCC.EXE -mm -nC:\out\LIB\PWA153\tc201\OBJ\medium ADDBACKS.C
@@ -533,6 +539,7 @@ echo   medium model done.
 echo.
 echo === Memory model: COMPACT ===
 if not exist C:\out\LIB\PWA153\tc201\OBJ\compact md C:\out\LIB\PWA153\tc201\OBJ\compact
+REM (parent dirs already created by SMALL model above)
 cd \TOOLKIT\PWA153\SOURCE\PCB
 echo   [  1/119] ADDBACKS
 TCC.EXE -mc -nC:\out\LIB\PWA153\tc201\OBJ\compact ADDBACKS.C
@@ -793,6 +800,7 @@ echo   compact model done.
 echo.
 echo === Memory model: LARGE ===
 if not exist C:\out\LIB\PWA153\tc201\OBJ\large md C:\out\LIB\PWA153\tc201\OBJ\large
+REM (parent dirs already created by SMALL model above)
 cd \TOOLKIT\PWA153\SOURCE\PCB
 echo   [  1/119] ADDBACKS
 TCC.EXE -ml -nC:\out\LIB\PWA153\tc201\OBJ\large ADDBACKS.C

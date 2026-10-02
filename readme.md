@@ -2,7 +2,7 @@
 
 **PCBoard 15.4 source code recovery, OpenWatcom 2.0 port, and modernization.**
 
-pcbirc crew — September 2026
+pcbirc crew — October 2026
 
 ## What Is This
 
@@ -35,7 +35,7 @@ patches/       15.4-pwa.patch = the 15.3->15.4 PWA delta over pcb153
 --- toolkit + SDK ---
 toolkit/       toolkit source per branch (pwa153, pwa154, delta154, irc1541)
 OUT/           build outputs per version (pwa153, delta154, irc1541)
-  lib/pwa153/  the SDK library matrix (PCBKBC built; PCBKIT + PCBKMS pending)
+  lib/pwa153/  the SDK library matrix (PCBKBC built; PCBKIT built; PCBKMS pending)
   support/     shared PCBoard runtime files (non-version-specific)
 MAIN/          project model + build system
   DELTA-MODEL.md   the 4-version model
@@ -67,7 +67,7 @@ normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 | Family | Compiler | Status |
 |---|---|---|
 | PCBKBC | Borland C++ 3.1 | BUILT — 4 models (S/C/M/L), 152 modules each. `toolkit/pwa153/bc31/lib/` |
-| PCBKIT | Turbo C 2.01 | NOT BUILT — TC201 needs its own TK.CFG (no C++, limited switches) |
+| PCBKIT | Turbo C 2.01 | BUILT — 4 monolithic libs (S/C/M/L, 119 modules each) + 10 split category libs. `out/pwa153/sdk/tc201/lib/` |
 | PCBKMS | Microsoft C 7.0 | NOT BUILT — compiler in hand (DOS + OS/2); cl syntax rewrite needed |
 
 The SDK matrix lives in toolkit/pwa153/ (compiler-first layout:

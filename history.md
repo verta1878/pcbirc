@@ -106,12 +106,66 @@ directory roots + all subdirectory components. 16 dosboxx text files
 and 38 repo build scripts updated. 4 PCBKIT*.LIB files and !PENTIUM.NFO
 lowercased on share repo (binary content unchanged). dosboxx.zip rebuilt.
 
+### v0.3.2+ (50) — 2026-10-01: TC201 split categories — 10/10 passing (hexadecimal)
+
+All 10 toolkit category libraries now compile under Turbo C 2.01:
+
+| Category | OBJs | Library |
+|----------|------|---------|
+| COUNTRY | 3 | countryl.lib |
+| DOS | 29 | dos_l.lib |
+| DOSCLS | 1 | doscls_l.lib |
+| MISC | 27 | misc_l.lib |
+| PCB | 22 | pcb_l.lib |
+| SCREEN | 39 | screen_l.lib |
+| SCRNIO | 3 | scrnio_l.lib |
+| SYSTEM | 11 | system_l.lib |
+| TOOLKIT | 14 | toolkitl.lib |
+| VMDATA | 2 | vmdata_l.lib |
+
+Build: `bldtk tc201` (BLDTK.BAT with -Dtkcc=tcc -Dcver=tc201).
+Output: `\out\pwa153\sdk\tc201\lib\`.
+
+Bugs fixed along the way:
+- Bug #8: TCC/TASM 50-char path buffer overflow — 3 category folder
+  names shortened via conditional in TKLIB.MAK (country→cntry,
+  screen→scren, toolkit→tkit; BC31 paths unchanged)
+- Bug #9: TCC stricter type matching — 6 stub source files fixed
+  (nodisp, noscreen, noshell, nomemory, notxt, scrollup -b conditional)
+- Bug #10: 5 Clark source fixes for TCC C89 strictness (dosfind.c,
+  crypt.c, dble_bs.c, kbdstat.c, delfiles.c)
+- conffunc.c: TCC first-pass `asm` scanner bug — block-commented asm
+  lines wrapped in per-line `/* */` (compatible with both TCC and BCC)
+- dosclass.c: C port of dosclass.cpp (~600 lines) for TCC C-only
+  compilation; dosclass.h CRLF + _MAX_PATH compat defines added
+
+TKLIB.MAK changes (all 10 categories):
+- `tkcc` macro replaces hard-coded `bcc` in inference rules
+- `cfgflag` auto-derives: `+$(cfg)` for BCC, empty for TCC
+- tc201/bin/turboc.cfg = TCC auto-read config (includes + defines)
+
+### v0.3.2+ (51) — 2026-10-02: dosboxx.zip cleanup + cruft removal (hexadecimal)
+
+Cleaned 5 stale root files + ~130 tmp/ files from dosboxx work dir.
+Rebuilt dosboxx.zip as 3-part split (20MB z01 + 20MB z02 + 876KB zip).
+6,199 files, 41MB total.
+
+### v0.3.2+ (52) — 2026-10-02: fix -d → -D in Borland MAKE macro defines (hexadecimal)
+
+Borland MAKE 3.6 uses uppercase `-D` to define macros on the command
+line. Lowercase `-d` is a different flag (debug/date). Comment examples
+in 10 TKLIB.MAK files and 4 live make commands in bldtks.bat were using
+lowercase, which silently fell through to defaults.
+
+- bldtks.bat: 4 live make commands fixed (lines 8, 13, 18, 23)
+- 10 tklib.mak: comment examples fixed (lines 14, 15, 19; vmdata 27, 31)
+- bldtks.bat added to repo root (was only inside dosboxx.zip)
+
 ---
 
 ## Open blockers
 
 - **CodeBase**: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
   Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
-- **TKLIB**: TC201 monolithic done, TC201 split categories + MSC70 legs not done
+- **PCBKMS**: MSC 7.0 SDK leg — toolchain ready, 119 modules need per-file Borland→MSC7 adaptations
 - **SDK paths**: MAK/CFG need ROOT=\OUT\BRANCH\ across 4 branches × 3 compilers
-- **turboc.cfg**: TCC 2.01 does not read config file under DOSBox-X — investigating
