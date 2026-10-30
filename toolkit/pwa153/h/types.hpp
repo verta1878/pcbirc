@@ -44,32 +44,24 @@
 
 /* Defined Macros */
 
-/* Confirm valid char size and bits in a char */
-#if !defined(__WATCOMC__) && !defined(__TURBOC__)
-#if ((sizeof(char) != 1) || (CHAR_BIT != 8))
-#error The sizeof char is invalid!
-#endif
+/* Confirm valid bits in a char */
+#if (CHAR_BIT != 8)
+#error CHAR_BIT is not 8 - unsupported platform!
 #endif
 
 /* Define cdcSHORT and cdcLONG to the most natural size modifiers for */
 /* the system while ensuring cdcSHORT is 2 bytes and cdcLONG is 4 bytes */
+/* 16-bit DOS: int=2 bytes, long=4 bytes                               */
 #if defined(__TURBOC__)
-  /* Turbo C 2.0: 16-bit DOS, int=2 long=4 */
+  /* Turbo C / Borland C++ */
   #define cdcSHORT
   #define cdcLONG     long
-#elif !defined(__WATCOMC__)
-#if   (sizeof(int) == 2) && (sizeof(long)  == 4)
+#elif defined(_MSC_VER)
+  /* Microsoft C 7.0 */
   #define cdcSHORT
   #define cdcLONG     long
-#elif (sizeof(int) == 4) && (sizeof(short) == 2)
-  #define cdcSHORT    short
-  #define cdcLONG
 #else
-  #error Unable to determine sizeof short/int/long types!
-#endif
-#else
-  #define cdcSHORT    short
-  #define cdcLONG     long
+  #error Unknown compiler - define cdcSHORT and cdcLONG manually!
 #endif
 
 /* Macro to determine the bits in a given type */

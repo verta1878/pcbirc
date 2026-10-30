@@ -19,6 +19,7 @@
 #else
   #ifdef _MSC_VER
     #include <borland.h>
+    #include <asmrules.h>
     #include <direct.h>
   #else
 /*  #pragma inline */

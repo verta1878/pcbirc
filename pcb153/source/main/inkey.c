@@ -14,6 +14,7 @@
 
 #include "project.h"
 #pragma hdrstop
+#include "exec.hpp"
 #include "serial.h"
 #include "system.h"
 #include <ctype.h>
@@ -51,7 +52,7 @@
                  Added on 9/01/94
 */
 
-#ifdef LIB
+#ifdef lib
   #include "usersys.h"
 #endif
 
@@ -81,7 +82,7 @@ enum { F1=1,F2,F3,F4,F5,F6,F7,F8,F9,F10,SF1,SF2,SF3,SF4,SF5,SF6,SF7,SF8,SF9,SF10
        ALTA, ALTB, ALTD, ALTE, ALTF, ALTH, ALTI, ALTM, ALTN, ALTO, ALTP, ALTR, ALTS, ALTT, ALTU, ALTX, ALTY,
        AF1, AF2, AF9, AF10 };
 
-#ifndef LIB
+#ifndef lib
 #define LOWNUM       1018
 #define HIGHNUM      1113
 #define TABLESIZE      96
@@ -264,7 +265,7 @@ char    static PPLHeadPtr = 0;
 char    static PPLTailPtr = 0;
 char    static PPLBufCount;
 
-#ifndef LIB
+#ifndef lib
 bool    static AutoStuff = FALSE;
 bool    static RemoveStuffer = FALSE;
 DOSFILE static StuffFile;
@@ -549,7 +550,7 @@ static int _NEAR_ LIBENTRY checkkbdtime(void) {
     Display.AbortPrintout = FALSE;
     freshline();
     displaypcbtext(TXT_KBDTIMEEXPIRED,NEWLINE|LFBEFORE|BELL | (Status.UserRecNo != 0 ? LOGIT : DEFAULTS));
-    #ifndef LIB
+    #ifndef lib
       if (Status.EnteringMessage) {
         /* entering a message or a file description when kbd timer ran out */
         /* drop DTR to hangup, then return -1 to signify carrier was lost  */
@@ -625,7 +626,7 @@ void LIBENTRY clearkbdbuffer(void) {
 }
 
 
-#ifndef LIB
+#ifndef lib
 bool LIBENTRY filestuffinuse(void) {
   return(AutoStuff);
 }
@@ -775,7 +776,7 @@ void LIBENTRY getlocalinput(char *Str, int TextNum, int FieldLen, char *Mask) {
 *             for automatic keyboard stuffing
 */
 
-#ifndef LIB
+#ifndef lib
 static void _NEAR_ LIBENTRY importfile(void) {
   char Str[80];
 
@@ -812,7 +813,7 @@ static void _NEAR_ LIBENTRY exportfile(void) {
 #endif
 
 
-#ifndef LIB
+#ifndef lib
 static void _NEAR_ LIBENTRY disconnectcaller(void) {
   char Str[2];
 
@@ -831,7 +832,7 @@ static void _NEAR_ LIBENTRY disconnectcaller(void) {
 
 
 #ifdef COMM
-#ifndef LIB
+#ifndef lib
 static void _NEAR_ LIBENTRY lockcallerout(void) {
   char Str[2];
 
@@ -856,7 +857,7 @@ static void _NEAR_ LIBENTRY lockcallerout(void) {
 #endif
 
 
-#ifndef LIB
+#ifndef lib
 static void _NEAR_ LIBENTRY sysopprivileges(void) {
   char Str[2];
 
@@ -975,7 +976,7 @@ int LIBENTRY callwaitinkey(char *ComBuffer) {
 */
 
 void LIBENTRY stuffbuffer(int Key) {
-#ifndef LIB
+#ifndef lib
   int  Special;
   char *p;
   char Temp[sizeof(PcbData.FuncKeys[0])];
@@ -1022,7 +1023,7 @@ void LIBENTRY stuffbuffer(int Key) {
 }
 
 
-#ifndef LIB
+#ifndef lib
 char LIBENTRY bytesleftinkbdbuffer(void) {
   return(KbdBufCount);
 }
@@ -1069,7 +1070,7 @@ void LIBENTRY stuffpplbuffer(char *Str) {
 #endif
 
 
-#ifndef LIB
+#ifndef lib
 static bool _NEAR_ LIBENTRY localpasswordfailed(void) {
   char Str[13];
 
@@ -1101,7 +1102,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
   #endif
   int Special;
 
-  #ifndef LIB
+  #ifndef lib
     if (Status.FileXfer)
       Special = translatetable2[KeyNum-LOWNUM];
     else if (LocalOn)
@@ -1116,7 +1117,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
     case 0      : /* ignore keys that the translate table zeroed out */
                   break;
     #ifndef PCB_DEMO
-    #ifndef LIB
+    #ifndef lib
     case ALTA   : if (SpellR) {
                     SpellR = FALSE;
                     SpellA = TRUE;
@@ -1127,7 +1128,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
     #endif
     case ALTB   : bell();
                   break;
-    #ifndef LIB
+    #ifndef lib
     case ALTD   : if (localpasswordfailed())
                     break;
                   runfiler();
@@ -1167,7 +1168,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                   #endif
                   break;
     #endif
-    #ifndef LIB
+    #ifndef lib
     case ALTI   : if (! SpellP) importfile();
                   #ifndef PCB_DEMO
                     if (SpellP) {
@@ -1190,7 +1191,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                     updatelinesnow();
                   #endif
                   break;
-    #ifndef LIB
+    #ifndef lib
     case ALTP   : toggleprinter();
                   #ifndef PCB_DEMO
                     if (Asy.Online == LOCAL) {
@@ -1255,7 +1256,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                     updatelinesnow();
                   #endif
                   break;
-    #ifndef LIB
+    #ifndef lib
     case F1     : sysopprivileges();
                   break;
     case F2     :
@@ -1264,7 +1265,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                   #endif
                   return(0);
     #endif
-    #ifndef LIB
+    #ifndef lib
     case F3     : if (PcbData.ParallelPortNum > 0) {
                     Status.PrintLog = (bool) (! Status.PrintLog);
                     redisplaystatusline();
@@ -1290,7 +1291,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                     #endif
                   }
                   return(0);
-    #ifndef LIB
+    #ifndef lib
     case F6     :
                   #ifdef COMM
                     if (! Status.OnlineUpdate && Status.LoggingIn == NOTNOW && Asy.Online == REMOTE) {
@@ -1331,7 +1332,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                   break;
     #ifdef COMM
     case F10    :
-                  #ifndef LIB
+                  #ifndef lib
                   /* NOTE:  Checking for REMOTE also has the effect of */
                   /* ensuring that you don't hit F10 at the "local password" */
                   /* prompt at the call waiting screen.  Things look really */
@@ -1371,7 +1372,7 @@ static int _NEAR_ LIBENTRY processkeys(int KeyNum) {
                   #endif
                   return(0);
     #endif
-    #ifndef LIB
+    #ifndef lib
     case SF1    :
     case SF2    :
     case SF3    :
@@ -1445,7 +1446,7 @@ int LIBENTRY kbdhit(kbdhittype Action) {
 }
 
 
-#ifndef LIB
+#ifndef lib
 bool LIBENTRY typeahead(void) {
   return((bool) (KbdBufCount));
 }
@@ -1471,7 +1472,7 @@ void LIBENTRY gettypeaheadstr(char *Str, int MaxLen) {
 #endif
 
 #ifdef COMM
-#ifndef LIB
+#ifndef lib
 static char RingDetectBuffer[64];
 
 static void _NEAR_ LIBENTRY checkringdetect(void) {
@@ -1540,7 +1541,7 @@ static int _NEAR_ LIBENTRY watchescapecodes(void) {
   #if defined(PCBCOMM) || defined(LIB)
     char      LastChar;
   #endif
-  #ifdef LIB
+  #ifdef lib
     bool static QueryEnable;
   #else
     char        Temp[40];
@@ -1560,7 +1561,7 @@ static int _NEAR_ LIBENTRY watchescapecodes(void) {
 
   #if defined(PCBCOMM) || defined(LIB)
     LastChar = 0;
-    #ifndef LIB
+    #ifndef lib
       Accumulator = 0;
     #endif
   #endif
@@ -1578,13 +1579,13 @@ retry:
     case 'H': /* return(CTRL_W);  */  return(K_HOME);
     case 'K': /* return(CTRL_P);  */  return(K_END);
     case 'R': UseAnsi = TRUE;
-              #ifndef LIB
+              #ifndef lib
                 redisplaystatusline();
               #endif
               return(0);
     /* These are commands for PCBComm's use */
     #if defined(PCBCOMM) || defined(LIB)
-    #ifndef LIB
+    #ifndef lib
     case 't': switch (LastChar) {
                 case '0': Status.TerseMode = TRUE;
                           printcom("PCB152");
@@ -1659,7 +1660,7 @@ retry:
     case '8':
     case '9':
     case ';': LastChar = Key.W;
-              #ifndef LIB
+              #ifndef lib
                 if (Key.W <= '9') {
                   Accumulator *= 10;
                   Accumulator += Key.W - '0';
@@ -1832,7 +1833,7 @@ static int _NEAR_ LIBENTRY checkforEMSI(void) {
 */
 
 int LIBENTRY commportinkey(void) {
-  #ifndef LIB
+  #ifndef lib
     static int LastKey;
   #endif
   bkeytype Key;
@@ -1849,7 +1850,7 @@ int LIBENTRY commportinkey(void) {
   /* the sysop gives his local password at the call waiting screen.     */
 
   if (Asy.Online != REMOTE) {
-    #ifndef LIB
+    #ifndef lib
       if (Status.RingAlert && InBytes != 0)
         checkringdetect();
     #endif
@@ -1875,7 +1876,7 @@ int LIBENTRY commportinkey(void) {
   if (InBytes == 0)
     return(0);
 
-  #ifndef LIB
+  #ifndef lib
     if (Status.FileXfer)    /* we're transferring a file so don't do any */
       return(comminkey());  /* special processing on the incoming data   */
   #endif
@@ -1885,7 +1886,7 @@ int LIBENTRY commportinkey(void) {
   Key.W = (short) comminkey();
   switch(Key.W) {
     case 0:
-               #ifndef LIB
+               #ifndef lib
                  if (Asy.Telnet && LastKey == 13) { /* is TELNET in use?  if so was the last key a Carriage Return?    */
                    LastKey = 0;                     /* if so, chances are this is a CR/NULL pair so do NOT hang around */
                    return(0);                       /* waiting for a NULL/Scan Code pair, just return the 0.           */
@@ -1904,7 +1905,7 @@ int LIBENTRY commportinkey(void) {
     case 27:   return(watchescapecodes());
   }
 
-  #ifndef LIB
+  #ifndef lib
     LastKey = Key.W;
   #endif
 
@@ -2017,7 +2018,7 @@ static int _NEAR_ LIBENTRY systemoverhead(int Key, bool Stuffed) {
   }
 
   #ifndef __OS2__
-    #ifndef LIB
+    #ifndef lib
       if (timerexpired(2)) {
         showstatusline();
         return(0);
@@ -2033,7 +2034,7 @@ static int _NEAR_ LIBENTRY systemoverhead(int Key, bool Stuffed) {
       return(-1);
   #endif
 
-  #ifndef LIB
+  #ifndef lib
     if (! Status.FileXfer) {
       if (getkbdstatus() & SCROLL) {
         viewscrollback();
@@ -2119,7 +2120,7 @@ checkbuf:
     return(systemoverhead(KbdBuffer[KbdTailPtr++],TRUE));
   }
 
-  #ifndef LIB
+  #ifndef lib
     if (AutoStuff) {   /* are we supposed to be stuffing the buffer? */
       stuffit();       /* yes, go do it */
       goto checkbuf;   /* now go process any keys we may have stuffed */
@@ -2157,7 +2158,7 @@ int LIBENTRY cinkey(void) {
     /* Don't check for comm port input unless */
     /* the PPL and KBD buffers are empty      */
 
-    #ifdef LIB
+    #ifdef lib
       if (KbdBufCount == 0 && (Key = commportinkey()) != 0)
         return(Key);
     #else
@@ -2231,7 +2232,7 @@ static void THREADFUNC heartbeatthread(void * Ignore) {
       }
     }
 
-    #ifndef LIB
+    #ifndef lib
 /* if we're not currently viewing the scrollback buffer and timer #2 has */
 /* expired then refresh the status line now */
       if ((! Status.InScrollBack) && timerexpired(2))
@@ -2270,7 +2271,7 @@ void LIBENTRY destroyheartbeatthread(void) {
 int LIBENTRY waitforkey(void) {
   if (KbdBufCount == 0 &&
       PPLBufCount == 0 &&
-      #ifndef LIB
+      #ifndef lib
         (! AutoStuff)  &&
       #endif
       #ifdef COMM
@@ -2299,7 +2300,7 @@ int LIBENTRY waitforkey(void) {
     /* Don't check for comm port input unless */
     /* the PPL and KBD buffers are empty      */
 
-    #ifdef LIB
+    #ifdef lib
       if (KbdBufCount == 0 && (Key = commportinkey()) != 0)
         return(Key);
     #else
@@ -2439,7 +2440,7 @@ process:
                }
                break;
     case   19:
-               #ifndef LIB
+               #ifndef lib
                  fastputc(3838,0x53);
                #endif
                #ifdef COMM
@@ -2475,7 +2476,7 @@ process:
                    }
                  #endif
                  if (Key != 0) {
-                   #ifndef LIB
+                   #ifndef lib
                      fastputc(3838,0x20);
                    #endif
                    break;

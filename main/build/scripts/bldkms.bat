@@ -1,1296 +1,1296 @@
 @echo off
-REM ============================================================
-REM  BLDKMS.BAT - build PCBKMS (Microsoft C 7.0)
-REM  pwa153 toolkit: 119 modules x 4 memory models
-REM  Sources: toolkit\pwa153 (95) + pcb153 (24, incl 5 ASM)
-REM  Objects -> out\LIB\PWA153\msc70\OBJ\<model>\  (Clark convention)
-REM  Generated from MAIN/build/manifests/pwa153-COMPLETE-118.json
-REM
-REM  HOST: MSC 7.0 CL "3216" DOS passes need a 32-bit DPMI host
-REM  (386MAX 8.03, devtools/386MAX-803.7z). OR run the OS/2 "1616"
-REM  compiler under OS/2 (no DPMI). Set CC below. ASM uses TASM.
-REM  See MSC70/README.md and MAIN/build/SDK-BUILD-STATUS.md.
-REM ============================================================
+rem ============================================================
+rem  bldkms.bat - build pcbkms (microsoft c 7.0)
+rem  pwa153 toolkit: 119 modules x 4 memory models
+rem  sources: toolkit\pwa153 (95) + pcb153 (24, incl 5 asm)
+rem  objects -> out\lib\pwa153\msc70\obj\<model>\  (clark convention)
+rem  generated from main/build/manifests/pwa153-complete-118.json
+rem
+rem  host: msc 7.0 cl "3216" dos passes need a 32-bit dpmi host
+rem  (386max 8.03, devtools/386max-803.7z). or run the os/2 "1616"
+rem  compiler under os/2 (no dpmi). set cc below. asm uses tasm.
+rem  see msc70/readme.md and main/build/sdk-build-status.md.
+rem ============================================================
 echo.
-echo Building PCBKMS (Microsoft C 7.0)
+echo building pcbkms (microsoft c 7.0)
 echo pwa153 toolkit - 119 modules x 4 models (small/medium/compact/large)
 echo.
-REM --- host compiler driver ---
-REM  DOS route (needs 386MAX DPMI):  set CC=C:\MSC70\BIN\CL.EXE
-REM  OS/2 route (no DPMI):           set CC=C:\MSC70\OS2\BINP\CL.EXE
-set CC=C:\MSC70\BIN\CL.EXE /DLIB
-set INCLUDE=C:\MSC70\INCLUDE
-set LIB=C:\MSC70\LIB
-set TKINC=C:\TOOLKIT\PWA153\H
+rem --- host compiler driver ---
+rem  dos route (needs 386max dpmi):  set cc=c:\msc70\bin\cl.exe -Dlib
+rem  os/2 route (no dpmi):           set cc=c:\msc70\os2\binp\cl.exe
+set cc=c:\msc70\bin\cl.exe -Dlib
+set include=c:\msc70\include
+set lib=c:\msc70\lib
+set tkinc=c:\toolkit\pwa153\h
 echo.
-echo === Memory model: SMALL ===
-if not exist C:\out\LIB\PWA153\msc70\OBJ\small md C:\out\LIB\PWA153\msc70\OBJ\small
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [  1/119] ADDBACKS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\ADDBACKS.OBJ ADDBACKS.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  2/119] ADDCHAR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\ADDCHAR.OBJ ADDCHAR.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [  3/119] ANSI
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\ANSI.OBJ ANSI.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  4/119] ASCII
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\ASCII.OBJ ASCII.C
-cd \PCB153\SOURCE\ASM
-echo   [  5/119] ASYNC (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__s__ ASYNC.ASM,C:\out\LIB\PWA153\msc70\OBJ\small\ASYNC.OBJ
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [  6/119] ATCLOSE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\ATCLOSE.OBJ ATCLOSE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  7/119] BD_LONG
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\BD_LONG.OBJ BD_LONG.C
-cd \PCB153\SOURCE\ASM
-echo   [  8/119] BGKEY (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__s__ BGKEY.ASM,C:\out\LIB\PWA153\msc70\OBJ\small\BGKEY.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  9/119] BS_LONG
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\BS_LONG.OBJ BS_LONG.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 10/119] CHKAPPEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHKAPPEN.OBJ CHKAPPEN.C
-echo   [ 11/119] CHKCREAT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHKCREAT.OBJ CHKCREAT.C
-echo   [ 12/119] CHKLOCK
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHKLOCK.OBJ CHKLOCK.C
-echo   [ 13/119] CHKOPEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHKOPEN.OBJ CHKOPEN.C
-echo   [ 14/119] CHKREAD
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHKREAD.OBJ CHKREAD.C
-echo   [ 15/119] CHKWRITE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHKWRITE.OBJ CHKWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 16/119] CLS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CLS.OBJ CLS.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 17/119] CNAMES
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CNAMES.OBJ CNAMES.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 18/119] COMMA
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\COMMA.OBJ COMMA.C
-echo   [ 19/119] COUNTRY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\COUNTRY.OBJ COUNTRY.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 20/119] CTOD
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CTOD.OBJ CTOD.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 21/119] CURSOR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CURSOR.OBJ CURSOR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 22/119] CUSTHELP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CUSTHELP.OBJ CUSTHELP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 23/119] CUTIL (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__s__ CUTIL.ASM,C:\out\LIB\PWA153\msc70\OBJ\small\CUTIL.OBJ
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 24/119] DATAFIL2
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DATAFIL2.OBJ DATAFIL2.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 25/119] DATE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DATE.OBJ DATE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 26/119] DATESTR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DATESTR.OBJ DATESTR.C
-echo   [ 27/119] DELAY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DELAY.OBJ DELAY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 28/119] DOSAPPEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSAPPEN.OBJ DOSAPPEN.C
-echo   [ 29/119] DOSCLOSE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSCLOSE.OBJ DOSCLOSE.C
-echo   [ 30/119] DOSCOMIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSCOMIT.OBJ DOSCOMIT.C
-echo   [ 31/119] DOSCREAT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSCREAT.OBJ DOSCREAT.C
-echo   [ 32/119] DOSERROR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSERROR.OBJ DOSERROR.C
-echo   [ 33/119] DOSFCLOS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFCLOS.OBJ DOSFCLOS.C
-echo   [ 34/119] DOSFGETS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFGETS.OBJ DOSFGETS.C
-echo   [ 35/119] DOSFLUSH
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFLUSH.OBJ DOSFLUSH.C
-echo   [ 36/119] DOSFOPEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFOPEN.OBJ DOSFOPEN.C
-echo   [ 37/119] DOSFPUTS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFPUTS.OBJ DOSFPUTS.C
-echo   [ 38/119] DOSFREAD
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFREAD.OBJ DOSFREAD.C
-echo   [ 39/119] DOSFSEEK
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFSEEK.OBJ DOSFSEEK.C
-echo   [ 40/119] DOSFWRIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSFWRIT.OBJ DOSFWRIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 41/119] DOSINIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSINIT.OBJ DOSINIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 42/119] DOSLSEEK
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSLSEEK.OBJ DOSLSEEK.C
-echo   [ 43/119] DOSOPEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSOPEN.OBJ DOSOPEN.C
-echo   [ 44/119] DOSREAD
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSREAD.OBJ DOSREAD.C
-echo   [ 45/119] DOSREWIN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSREWIN.OBJ DOSREWIN.C
-echo   [ 46/119] DOSSTBUF
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSSTBUF.OBJ DOSSTBUF.C
-echo   [ 47/119] DOSWRITE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DOSWRITE.OBJ DOSWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 48/119] EXIST
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\EXIST.OBJ EXIST.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 49/119] EXITDOS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\EXITDOS.OBJ EXITDOS.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 50/119] EXTENDED
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\EXTENDED.OBJ EXTENDED.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 51/119] FMEMCPY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\FMEMCPY.OBJ FMEMCPY.C
-echo   [ 52/119] FMEMSET
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\FMEMSET.OBJ FMEMSET.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 53/119] GETMODE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\GETMODE.OBJ GETMODE.C
-echo   [ 54/119] GIVEUP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\GIVEUP.OBJ GIVEUP.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 55/119] GOODBYE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\GOODBYE.OBJ GOODBYE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 56/119] GOTOXY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\GOTOXY.OBJ GOTOXY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 57/119] HANDLERS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\HANDLERS.OBJ HANDLERS.C
-cd \TOOLKIT\PWA153\SOURCE\SCRNIO
-echo   [ 58/119] HELP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\HELP.OBJ HELP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 59/119] HEXTOI
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\HEXTOI.OBJ HEXTOI.C
-echo   [ 60/119] INDEX
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\INDEX.OBJ INDEX.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 61/119] INIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\INIT.OBJ INIT.C
-echo   [ 62/119] INPUTREQ
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\INPUTREQ.OBJ INPUTREQ.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 63/119] INT24HND (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__s__ INT24HND.ASM,C:\out\LIB\PWA153\msc70\OBJ\small\INT24HND.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 64/119] ISSET
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\ISSET.OBJ ISSET.C
-echo   [ 65/119] JULIAN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\JULIAN.OBJ JULIAN.C
-echo   [ 66/119] LASTCHAR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\LASTCHAR.OBJ LASTCHAR.C
-echo   [ 67/119] LONG_BD
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\LONG_BD.OBJ LONG_BD.C
-echo   [ 68/119] LONG_BS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\LONG_BS.OBJ LONG_BS.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 69/119] MEMFCMP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MEMFCMP.OBJ MEMFCMP.C
-echo   [ 70/119] MEMICMP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MEMICMP.OBJ MEMICMP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 71/119] MEMMOVE (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__s__ MEMMOVE.ASM,C:\out\LIB\PWA153\msc70\OBJ\small\MEMMOVE.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 72/119] MSTRCPY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MSTRCPY.OBJ MSTRCPY.C
-echo   [ 73/119] PADSTR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PADSTR.OBJ PADSTR.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 74/119] PARSEPTH
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PARSEPTH.OBJ PARSEPTH.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 75/119] PCBINIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PCBINIT.OBJ PCBINIT.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 76/119] PRINT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PRINT.OBJ PRINT.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 77/119] PRNREADY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PRNREADY.OBJ PRNREADY.C
-echo   [ 78/119] PROPER
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PROPER.OBJ PROPER.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 79/119] RECYCLE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\RECYCLE.OBJ RECYCLE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 80/119] SAVEREST
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SAVEREST.OBJ SAVEREST.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 81/119] SETBIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SETBIT.OBJ SETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 82/119] SHOWERR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SHOWERR.OBJ SHOWERR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 83/119] SLOWMODM
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SLOWMODM.OBJ SLOWMODM.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 84/119] SOUND
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SOUND.OBJ SOUND.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 85/119] SRCHPATH
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SRCHPATH.OBJ SRCHPATH.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 86/119] STRICMP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRICMP.OBJ STRICMP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 87/119] STRIPL
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRIPL.OBJ STRIPL.C
-echo   [ 88/119] STRIPR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRIPR.OBJ STRIPR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 89/119] STRLWR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRLWR.OBJ STRLWR.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 90/119] STRNCHR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRNCHR.OBJ STRNCHR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 91/119] STRNICMP
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRNICMP.OBJ STRNICMP.C
-echo   [ 92/119] STRUPR
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STRUPR.OBJ STRUPR.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 93/119] SUBST
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SUBST.OBJ SUBST.C
-echo   [ 94/119] TIME
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\TIME.OBJ TIME.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 95/119] TIME1
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\TIME1.OBJ TIME1.C
-echo   [ 96/119] TIME2
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\TIME2.OBJ TIME2.C
-cd \PCB153\SOURCE\ASM
-echo   [ 97/119] TIMER (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__s__ TIMER.ASM,C:\out\LIB\PWA153\msc70\OBJ\small\TIMER.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 98/119] UNSETBIT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\UNSETBIT.OBJ UNSETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 99/119] USERSYS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\USERSYS.OBJ USERSYS.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [100/119] WHEREY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\WHEREY.OBJ WHEREY.C
-cd \PCB153\SOURCE\MAIN
-echo   [101/119] CHAT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\CHAT.OBJ CHAT.C
-cd \PCB153\SOURCE\MODEM
-echo   [102/119] DEVIOCTL
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DEVIOCTL.OBJ DEVIOCTL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [103/119] DISPLAY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\DISPLAY.OBJ DISPLAY.C
-echo   [104/119] FILES
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\FILES.OBJ FILES.C
-cd \PCB153\SOURCE\MAIN
-echo   [105/119] INKEY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\INKEY.OBJ INKEY.C
-echo   [106/119] INPUT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\INPUT.OBJ INPUT.C
-echo   [107/119] LANGUAGE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\LANGUAGE.OBJ LANGUAGE.C
-cd \PCB153\SOURCE\NODE
-echo   [108/119] LOG
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\LOG.OBJ LOG.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [109/119] MEMORY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MEMORY.OBJ MEMORY.C
-cd \PCB153\SOURCE\MAIN
-echo   [110/119] MISC
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MISC.OBJ MISC.C
-cd \PCB153\SOURCE\MODEM
-echo   [111/119] MODEM
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MODEM.OBJ MODEM.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [112/119] PCBTEXT
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\PCBTEXT.OBJ PCBTEXT.C
-echo   [113/119] SCREEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SCREEN.OBJ SCREEN.C
-cd \PCB153\SOURCE\MAIN
-echo   [114/119] SHELL
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SHELL.OBJ SHELL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [115/119] STATUS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\STATUS.OBJ STATUS.C
-cd \PCB153\SOURCE\MAIN
-echo   [116/119] SYS
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\SYS.OBJ SYS.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [117/119] TOKEN
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\TOKEN.OBJ TOKEN.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [118/119] XLATE
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\XLATE.OBJ XLATE.C
-cd \PCB153\SOURCE\MODEM
-echo   [119/119] MODEMASY
-%CC% /c /AS /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\small\MODEMASY.OBJ MODEMASY.C
+echo === memory model: small ===
+if not exist c:\out\lib\pwa153\msc70\obj\small md c:\out\lib\pwa153\msc70\obj\small
+cd \toolkit\pwa153\source\pcb
+echo   [  1/119] addbacks
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\addbacks.obj addbacks.c
+cd \toolkit\pwa153\source\misc
+echo   [  2/119] addchar
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\addchar.obj addchar.c
+cd \toolkit\pwa153\source\screen
+echo   [  3/119] ansi
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\ansi.obj ansi.c
+cd \toolkit\pwa153\source\misc
+echo   [  4/119] ascii
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\ascii.obj ascii.c
+cd \pcb153\source\asm
+echo   [  5/119] async (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__s__ async.asm,c:\out\lib\pwa153\msc70\obj\small\async.obj
+cd \toolkit\pwa153\source\toolkit
+echo   [  6/119] atclose
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\atclose.obj atclose.c
+cd \toolkit\pwa153\source\misc
+echo   [  7/119] bd_long
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\bd_long.obj bd_long.c
+cd \pcb153\source\asm
+echo   [  8/119] bgkey (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__s__ bgkey.asm,c:\out\lib\pwa153\msc70\obj\small\bgkey.obj
+cd \toolkit\pwa153\source\misc
+echo   [  9/119] bs_long
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\bs_long.obj bs_long.c
+cd \toolkit\pwa153\source\dos
+echo   [ 10/119] chkappen
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chkappen.obj chkappen.c
+echo   [ 11/119] chkcreat
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chkcreat.obj chkcreat.c
+echo   [ 12/119] chklock
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chklock.obj chklock.c
+echo   [ 13/119] chkopen
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chkopen.obj chkopen.c
+echo   [ 14/119] chkread
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chkread.obj chkread.c
+echo   [ 15/119] chkwrite
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chkwrite.obj chkwrite.c
+cd \toolkit\pwa153\source\screen
+echo   [ 16/119] cls
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\cls.obj cls.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 17/119] cnames
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\cnames.obj cnames.c
+cd \toolkit\pwa153\source\country
+echo   [ 18/119] comma
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\comma.obj comma.c
+echo   [ 19/119] country
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\country.obj country.c
+cd \toolkit\pwa153\source\misc
+echo   [ 20/119] ctod
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\ctod.obj ctod.c
+cd \toolkit\pwa153\source\screen
+echo   [ 21/119] cursor
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\cursor.obj cursor.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 22/119] custhelp
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\custhelp.obj custhelp.c
+cd \pcb153\source\asm
+echo   [ 23/119] cutil (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__s__ cutil.asm,c:\out\lib\pwa153\msc70\obj\small\cutil.obj
+cd \toolkit\pwa153\source\pcb
+echo   [ 24/119] datafil2
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\datafil2.obj datafil2.c
+cd \toolkit\pwa153\source\country
+echo   [ 25/119] date
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\date.obj date.c
+cd \toolkit\pwa153\source\screen
+echo   [ 26/119] datestr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\datestr.obj datestr.c
+echo   [ 27/119] delay
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\delay.obj delay.c
+cd \toolkit\pwa153\source\dos
+echo   [ 28/119] dosappen
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosappen.obj dosappen.c
+echo   [ 29/119] dosclose
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosclose.obj dosclose.c
+echo   [ 30/119] doscomit
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\doscomit.obj doscomit.c
+echo   [ 31/119] doscreat
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\doscreat.obj doscreat.c
+echo   [ 32/119] doserror
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\doserror.obj doserror.c
+echo   [ 33/119] dosfclos
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfclos.obj dosfclos.c
+echo   [ 34/119] dosfgets
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfgets.obj dosfgets.c
+echo   [ 35/119] dosflush
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosflush.obj dosflush.c
+echo   [ 36/119] dosfopen
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfopen.obj dosfopen.c
+echo   [ 37/119] dosfputs
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfputs.obj dosfputs.c
+echo   [ 38/119] dosfread
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfread.obj dosfread.c
+echo   [ 39/119] dosfseek
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfseek.obj dosfseek.c
+echo   [ 40/119] dosfwrit
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosfwrit.obj dosfwrit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 41/119] dosinit
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosinit.obj dosinit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 42/119] doslseek
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\doslseek.obj doslseek.c
+echo   [ 43/119] dosopen
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosopen.obj dosopen.c
+echo   [ 44/119] dosread
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosread.obj dosread.c
+echo   [ 45/119] dosrewin
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosrewin.obj dosrewin.c
+echo   [ 46/119] dosstbuf
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\dosstbuf.obj dosstbuf.c
+echo   [ 47/119] doswrite
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\doswrite.obj doswrite.c
+cd \toolkit\pwa153\source\misc
+echo   [ 48/119] exist
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\exist.obj exist.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 49/119] exitdos
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\exitdos.obj exitdos.c
+cd \toolkit\pwa153\source\dos
+echo   [ 50/119] extended
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\extended.obj extended.c
+cd \toolkit\pwa153\source\misc
+echo   [ 51/119] fmemcpy
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\fmemcpy.obj fmemcpy.c
+echo   [ 52/119] fmemset
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\fmemset.obj fmemset.c
+cd \toolkit\pwa153\source\screen
+echo   [ 53/119] getmode
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\getmode.obj getmode.c
+echo   [ 54/119] giveup
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\giveup.obj giveup.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 55/119] goodbye
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\goodbye.obj goodbye.c
+cd \toolkit\pwa153\source\screen
+echo   [ 56/119] gotoxy
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\gotoxy.obj gotoxy.c
+cd \toolkit\pwa153\source\dos
+echo   [ 57/119] handlers
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\handlers.obj handlers.c
+cd \toolkit\pwa153\source\scrnio
+echo   [ 58/119] help
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\help.obj help.c
+cd \toolkit\pwa153\source\misc
+echo   [ 59/119] hextoi
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\hextoi.obj hextoi.c
+echo   [ 60/119] index
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\index.obj index.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 61/119] init
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\init.obj init.c
+echo   [ 62/119] inputreq
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\inputreq.obj inputreq.c
+cd \toolkit\pwa153\source\dos
+echo   [ 63/119] int24hnd (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__s__ int24hnd.asm,c:\out\lib\pwa153\msc70\obj\small\int24hnd.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 64/119] isset
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\isset.obj isset.c
+echo   [ 65/119] julian
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\julian.obj julian.c
+echo   [ 66/119] lastchar
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\lastchar.obj lastchar.c
+echo   [ 67/119] long_bd
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\long_bd.obj long_bd.c
+echo   [ 68/119] long_bs
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\long_bs.obj long_bs.c
+cd \toolkit\pwa153\source\country
+echo   [ 69/119] memfcmp
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\memfcmp.obj memfcmp.c
+echo   [ 70/119] memicmp
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\memicmp.obj memicmp.c
+cd \pcb153\source\asm
+echo   [ 71/119] memmove (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__s__ memmove.asm,c:\out\lib\pwa153\msc70\obj\small\memmove.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 72/119] mstrcpy
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\mstrcpy.obj mstrcpy.c
+echo   [ 73/119] padstr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\padstr.obj padstr.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 74/119] parsepth
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\parsepth.obj parsepth.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 75/119] pcbinit
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\pcbinit.obj pcbinit.c
+cd \toolkit\pwa153\source\screen
+echo   [ 76/119] print
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\print.obj print.c
+cd \toolkit\pwa153\source\misc
+echo   [ 77/119] prnready
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\prnready.obj prnready.c
+echo   [ 78/119] proper
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\proper.obj proper.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 79/119] recycle
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\recycle.obj recycle.c
+cd \toolkit\pwa153\source\screen
+echo   [ 80/119] saverest
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\saverest.obj saverest.c
+cd \toolkit\pwa153\source\misc
+echo   [ 81/119] setbit
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\setbit.obj setbit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 82/119] showerr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\showerr.obj showerr.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 83/119] slowmodm
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\slowmodm.obj slowmodm.c
+cd \toolkit\pwa153\source\screen
+echo   [ 84/119] sound
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\sound.obj sound.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 85/119] srchpath
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\srchpath.obj srchpath.c
+cd \toolkit\pwa153\source\country
+echo   [ 86/119] stricmp
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\stricmp.obj stricmp.c
+cd \toolkit\pwa153\source\misc
+echo   [ 87/119] stripl
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\stripl.obj stripl.c
+echo   [ 88/119] stripr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\stripr.obj stripr.c
+cd \toolkit\pwa153\source\country
+echo   [ 89/119] strlwr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\strlwr.obj strlwr.c
+cd \toolkit\pwa153\source\dos
+echo   [ 90/119] strnchr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\strnchr.obj strnchr.c
+cd \toolkit\pwa153\source\country
+echo   [ 91/119] strnicmp
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\strnicmp.obj strnicmp.c
+echo   [ 92/119] strupr
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\strupr.obj strupr.c
+cd \toolkit\pwa153\source\misc
+echo   [ 93/119] subst
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\subst.obj subst.c
+echo   [ 94/119] time
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\time.obj time.c
+cd \toolkit\pwa153\source\screen
+echo   [ 95/119] time1
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\time1.obj time1.c
+echo   [ 96/119] time2
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\time2.obj time2.c
+cd \pcb153\source\asm
+echo   [ 97/119] timer (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__s__ timer.asm,c:\out\lib\pwa153\msc70\obj\small\timer.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 98/119] unsetbit
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\unsetbit.obj unsetbit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 99/119] usersys
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\usersys.obj usersys.c
+cd \toolkit\pwa153\source\screen
+echo   [100/119] wherey
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\wherey.obj wherey.c
+cd \pcb153\source\main
+echo   [101/119] chat
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\chat.obj chat.c
+cd \pcb153\source\modem
+echo   [102/119] devioctl
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\devioctl.obj devioctl.c
+cd \pcb153\source\display
+echo   [103/119] display
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\display.obj display.c
+echo   [104/119] files
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\files.obj files.c
+cd \pcb153\source\main
+echo   [105/119] inkey
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\inkey.obj inkey.c
+echo   [106/119] input
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\input.obj input.c
+echo   [107/119] language
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\language.obj language.c
+cd \pcb153\source\node
+echo   [108/119] log
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\log.obj log.c
+cd \pcb153\source\support
+echo   [109/119] memory
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\memory.obj memory.c
+cd \pcb153\source\main
+echo   [110/119] misc
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\misc.obj misc.c
+cd \pcb153\source\modem
+echo   [111/119] modem
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\modem.obj modem.c
+cd \pcb153\source\display
+echo   [112/119] pcbtext
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\pcbtext.obj pcbtext.c
+echo   [113/119] screen
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\screen.obj screen.c
+cd \pcb153\source\main
+echo   [114/119] shell
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\shell.obj shell.c
+cd \pcb153\source\display
+echo   [115/119] status
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\status.obj status.c
+cd \pcb153\source\main
+echo   [116/119] sys
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\sys.obj sys.c
+cd \pcb153\source\support
+echo   [117/119] token
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\token.obj token.c
+cd \pcb153\source\display
+echo   [118/119] xlate
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\xlate.obj xlate.c
+cd \pcb153\source\modem
+echo   [119/119] modemasy
+%cc% -c -AS -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\small\modemasy.obj modemasy.c
 echo.
-echo === Memory model: MEDIUM ===
-if not exist C:\out\LIB\PWA153\msc70\OBJ\medium md C:\out\LIB\PWA153\msc70\OBJ\medium
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [  1/119] ADDBACKS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\ADDBACKS.OBJ ADDBACKS.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  2/119] ADDCHAR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\ADDCHAR.OBJ ADDCHAR.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [  3/119] ANSI
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\ANSI.OBJ ANSI.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  4/119] ASCII
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\ASCII.OBJ ASCII.C
-cd \PCB153\SOURCE\ASM
-echo   [  5/119] ASYNC (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__m__ ASYNC.ASM,C:\out\LIB\PWA153\msc70\OBJ\medium\ASYNC.OBJ
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [  6/119] ATCLOSE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\ATCLOSE.OBJ ATCLOSE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  7/119] BD_LONG
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\BD_LONG.OBJ BD_LONG.C
-cd \PCB153\SOURCE\ASM
-echo   [  8/119] BGKEY (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__m__ BGKEY.ASM,C:\out\LIB\PWA153\msc70\OBJ\medium\BGKEY.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  9/119] BS_LONG
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\BS_LONG.OBJ BS_LONG.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 10/119] CHKAPPEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHKAPPEN.OBJ CHKAPPEN.C
-echo   [ 11/119] CHKCREAT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHKCREAT.OBJ CHKCREAT.C
-echo   [ 12/119] CHKLOCK
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHKLOCK.OBJ CHKLOCK.C
-echo   [ 13/119] CHKOPEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHKOPEN.OBJ CHKOPEN.C
-echo   [ 14/119] CHKREAD
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHKREAD.OBJ CHKREAD.C
-echo   [ 15/119] CHKWRITE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHKWRITE.OBJ CHKWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 16/119] CLS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CLS.OBJ CLS.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 17/119] CNAMES
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CNAMES.OBJ CNAMES.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 18/119] COMMA
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\COMMA.OBJ COMMA.C
-echo   [ 19/119] COUNTRY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\COUNTRY.OBJ COUNTRY.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 20/119] CTOD
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CTOD.OBJ CTOD.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 21/119] CURSOR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CURSOR.OBJ CURSOR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 22/119] CUSTHELP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CUSTHELP.OBJ CUSTHELP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 23/119] CUTIL (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__m__ CUTIL.ASM,C:\out\LIB\PWA153\msc70\OBJ\medium\CUTIL.OBJ
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 24/119] DATAFIL2
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DATAFIL2.OBJ DATAFIL2.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 25/119] DATE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DATE.OBJ DATE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 26/119] DATESTR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DATESTR.OBJ DATESTR.C
-echo   [ 27/119] DELAY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DELAY.OBJ DELAY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 28/119] DOSAPPEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSAPPEN.OBJ DOSAPPEN.C
-echo   [ 29/119] DOSCLOSE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSCLOSE.OBJ DOSCLOSE.C
-echo   [ 30/119] DOSCOMIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSCOMIT.OBJ DOSCOMIT.C
-echo   [ 31/119] DOSCREAT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSCREAT.OBJ DOSCREAT.C
-echo   [ 32/119] DOSERROR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSERROR.OBJ DOSERROR.C
-echo   [ 33/119] DOSFCLOS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFCLOS.OBJ DOSFCLOS.C
-echo   [ 34/119] DOSFGETS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFGETS.OBJ DOSFGETS.C
-echo   [ 35/119] DOSFLUSH
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFLUSH.OBJ DOSFLUSH.C
-echo   [ 36/119] DOSFOPEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFOPEN.OBJ DOSFOPEN.C
-echo   [ 37/119] DOSFPUTS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFPUTS.OBJ DOSFPUTS.C
-echo   [ 38/119] DOSFREAD
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFREAD.OBJ DOSFREAD.C
-echo   [ 39/119] DOSFSEEK
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFSEEK.OBJ DOSFSEEK.C
-echo   [ 40/119] DOSFWRIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSFWRIT.OBJ DOSFWRIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 41/119] DOSINIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSINIT.OBJ DOSINIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 42/119] DOSLSEEK
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSLSEEK.OBJ DOSLSEEK.C
-echo   [ 43/119] DOSOPEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSOPEN.OBJ DOSOPEN.C
-echo   [ 44/119] DOSREAD
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSREAD.OBJ DOSREAD.C
-echo   [ 45/119] DOSREWIN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSREWIN.OBJ DOSREWIN.C
-echo   [ 46/119] DOSSTBUF
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSSTBUF.OBJ DOSSTBUF.C
-echo   [ 47/119] DOSWRITE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DOSWRITE.OBJ DOSWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 48/119] EXIST
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\EXIST.OBJ EXIST.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 49/119] EXITDOS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\EXITDOS.OBJ EXITDOS.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 50/119] EXTENDED
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\EXTENDED.OBJ EXTENDED.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 51/119] FMEMCPY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\FMEMCPY.OBJ FMEMCPY.C
-echo   [ 52/119] FMEMSET
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\FMEMSET.OBJ FMEMSET.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 53/119] GETMODE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\GETMODE.OBJ GETMODE.C
-echo   [ 54/119] GIVEUP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\GIVEUP.OBJ GIVEUP.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 55/119] GOODBYE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\GOODBYE.OBJ GOODBYE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 56/119] GOTOXY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\GOTOXY.OBJ GOTOXY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 57/119] HANDLERS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\HANDLERS.OBJ HANDLERS.C
-cd \TOOLKIT\PWA153\SOURCE\SCRNIO
-echo   [ 58/119] HELP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\HELP.OBJ HELP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 59/119] HEXTOI
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\HEXTOI.OBJ HEXTOI.C
-echo   [ 60/119] INDEX
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\INDEX.OBJ INDEX.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 61/119] INIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\INIT.OBJ INIT.C
-echo   [ 62/119] INPUTREQ
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\INPUTREQ.OBJ INPUTREQ.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 63/119] INT24HND (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__m__ INT24HND.ASM,C:\out\LIB\PWA153\msc70\OBJ\medium\INT24HND.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 64/119] ISSET
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\ISSET.OBJ ISSET.C
-echo   [ 65/119] JULIAN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\JULIAN.OBJ JULIAN.C
-echo   [ 66/119] LASTCHAR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\LASTCHAR.OBJ LASTCHAR.C
-echo   [ 67/119] LONG_BD
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\LONG_BD.OBJ LONG_BD.C
-echo   [ 68/119] LONG_BS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\LONG_BS.OBJ LONG_BS.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 69/119] MEMFCMP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MEMFCMP.OBJ MEMFCMP.C
-echo   [ 70/119] MEMICMP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MEMICMP.OBJ MEMICMP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 71/119] MEMMOVE (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__m__ MEMMOVE.ASM,C:\out\LIB\PWA153\msc70\OBJ\medium\MEMMOVE.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 72/119] MSTRCPY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MSTRCPY.OBJ MSTRCPY.C
-echo   [ 73/119] PADSTR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PADSTR.OBJ PADSTR.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 74/119] PARSEPTH
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PARSEPTH.OBJ PARSEPTH.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 75/119] PCBINIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PCBINIT.OBJ PCBINIT.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 76/119] PRINT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PRINT.OBJ PRINT.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 77/119] PRNREADY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PRNREADY.OBJ PRNREADY.C
-echo   [ 78/119] PROPER
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PROPER.OBJ PROPER.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 79/119] RECYCLE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\RECYCLE.OBJ RECYCLE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 80/119] SAVEREST
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SAVEREST.OBJ SAVEREST.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 81/119] SETBIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SETBIT.OBJ SETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 82/119] SHOWERR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SHOWERR.OBJ SHOWERR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 83/119] SLOWMODM
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SLOWMODM.OBJ SLOWMODM.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 84/119] SOUND
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SOUND.OBJ SOUND.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 85/119] SRCHPATH
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SRCHPATH.OBJ SRCHPATH.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 86/119] STRICMP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRICMP.OBJ STRICMP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 87/119] STRIPL
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRIPL.OBJ STRIPL.C
-echo   [ 88/119] STRIPR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRIPR.OBJ STRIPR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 89/119] STRLWR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRLWR.OBJ STRLWR.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 90/119] STRNCHR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRNCHR.OBJ STRNCHR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 91/119] STRNICMP
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRNICMP.OBJ STRNICMP.C
-echo   [ 92/119] STRUPR
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STRUPR.OBJ STRUPR.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 93/119] SUBST
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SUBST.OBJ SUBST.C
-echo   [ 94/119] TIME
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\TIME.OBJ TIME.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 95/119] TIME1
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\TIME1.OBJ TIME1.C
-echo   [ 96/119] TIME2
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\TIME2.OBJ TIME2.C
-cd \PCB153\SOURCE\ASM
-echo   [ 97/119] TIMER (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__m__ TIMER.ASM,C:\out\LIB\PWA153\msc70\OBJ\medium\TIMER.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 98/119] UNSETBIT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\UNSETBIT.OBJ UNSETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 99/119] USERSYS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\USERSYS.OBJ USERSYS.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [100/119] WHEREY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\WHEREY.OBJ WHEREY.C
-cd \PCB153\SOURCE\MAIN
-echo   [101/119] CHAT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\CHAT.OBJ CHAT.C
-cd \PCB153\SOURCE\MODEM
-echo   [102/119] DEVIOCTL
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DEVIOCTL.OBJ DEVIOCTL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [103/119] DISPLAY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\DISPLAY.OBJ DISPLAY.C
-echo   [104/119] FILES
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\FILES.OBJ FILES.C
-cd \PCB153\SOURCE\MAIN
-echo   [105/119] INKEY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\INKEY.OBJ INKEY.C
-echo   [106/119] INPUT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\INPUT.OBJ INPUT.C
-echo   [107/119] LANGUAGE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\LANGUAGE.OBJ LANGUAGE.C
-cd \PCB153\SOURCE\NODE
-echo   [108/119] LOG
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\LOG.OBJ LOG.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [109/119] MEMORY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MEMORY.OBJ MEMORY.C
-cd \PCB153\SOURCE\MAIN
-echo   [110/119] MISC
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MISC.OBJ MISC.C
-cd \PCB153\SOURCE\MODEM
-echo   [111/119] MODEM
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MODEM.OBJ MODEM.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [112/119] PCBTEXT
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\PCBTEXT.OBJ PCBTEXT.C
-echo   [113/119] SCREEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SCREEN.OBJ SCREEN.C
-cd \PCB153\SOURCE\MAIN
-echo   [114/119] SHELL
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SHELL.OBJ SHELL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [115/119] STATUS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\STATUS.OBJ STATUS.C
-cd \PCB153\SOURCE\MAIN
-echo   [116/119] SYS
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\SYS.OBJ SYS.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [117/119] TOKEN
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\TOKEN.OBJ TOKEN.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [118/119] XLATE
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\XLATE.OBJ XLATE.C
-cd \PCB153\SOURCE\MODEM
-echo   [119/119] MODEMASY
-%CC% /c /AM /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\medium\MODEMASY.OBJ MODEMASY.C
+echo === memory model: medium ===
+if not exist c:\out\lib\pwa153\msc70\obj\medium md c:\out\lib\pwa153\msc70\obj\medium
+cd \toolkit\pwa153\source\pcb
+echo   [  1/119] addbacks
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\addbacks.obj addbacks.c
+cd \toolkit\pwa153\source\misc
+echo   [  2/119] addchar
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\addchar.obj addchar.c
+cd \toolkit\pwa153\source\screen
+echo   [  3/119] ansi
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\ansi.obj ansi.c
+cd \toolkit\pwa153\source\misc
+echo   [  4/119] ascii
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\ascii.obj ascii.c
+cd \pcb153\source\asm
+echo   [  5/119] async (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__m__ async.asm,c:\out\lib\pwa153\msc70\obj\medium\async.obj
+cd \toolkit\pwa153\source\toolkit
+echo   [  6/119] atclose
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\atclose.obj atclose.c
+cd \toolkit\pwa153\source\misc
+echo   [  7/119] bd_long
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\bd_long.obj bd_long.c
+cd \pcb153\source\asm
+echo   [  8/119] bgkey (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__m__ bgkey.asm,c:\out\lib\pwa153\msc70\obj\medium\bgkey.obj
+cd \toolkit\pwa153\source\misc
+echo   [  9/119] bs_long
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\bs_long.obj bs_long.c
+cd \toolkit\pwa153\source\dos
+echo   [ 10/119] chkappen
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chkappen.obj chkappen.c
+echo   [ 11/119] chkcreat
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chkcreat.obj chkcreat.c
+echo   [ 12/119] chklock
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chklock.obj chklock.c
+echo   [ 13/119] chkopen
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chkopen.obj chkopen.c
+echo   [ 14/119] chkread
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chkread.obj chkread.c
+echo   [ 15/119] chkwrite
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chkwrite.obj chkwrite.c
+cd \toolkit\pwa153\source\screen
+echo   [ 16/119] cls
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\cls.obj cls.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 17/119] cnames
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\cnames.obj cnames.c
+cd \toolkit\pwa153\source\country
+echo   [ 18/119] comma
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\comma.obj comma.c
+echo   [ 19/119] country
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\country.obj country.c
+cd \toolkit\pwa153\source\misc
+echo   [ 20/119] ctod
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\ctod.obj ctod.c
+cd \toolkit\pwa153\source\screen
+echo   [ 21/119] cursor
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\cursor.obj cursor.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 22/119] custhelp
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\custhelp.obj custhelp.c
+cd \pcb153\source\asm
+echo   [ 23/119] cutil (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__m__ cutil.asm,c:\out\lib\pwa153\msc70\obj\medium\cutil.obj
+cd \toolkit\pwa153\source\pcb
+echo   [ 24/119] datafil2
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\datafil2.obj datafil2.c
+cd \toolkit\pwa153\source\country
+echo   [ 25/119] date
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\date.obj date.c
+cd \toolkit\pwa153\source\screen
+echo   [ 26/119] datestr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\datestr.obj datestr.c
+echo   [ 27/119] delay
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\delay.obj delay.c
+cd \toolkit\pwa153\source\dos
+echo   [ 28/119] dosappen
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosappen.obj dosappen.c
+echo   [ 29/119] dosclose
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosclose.obj dosclose.c
+echo   [ 30/119] doscomit
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\doscomit.obj doscomit.c
+echo   [ 31/119] doscreat
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\doscreat.obj doscreat.c
+echo   [ 32/119] doserror
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\doserror.obj doserror.c
+echo   [ 33/119] dosfclos
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfclos.obj dosfclos.c
+echo   [ 34/119] dosfgets
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfgets.obj dosfgets.c
+echo   [ 35/119] dosflush
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosflush.obj dosflush.c
+echo   [ 36/119] dosfopen
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfopen.obj dosfopen.c
+echo   [ 37/119] dosfputs
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfputs.obj dosfputs.c
+echo   [ 38/119] dosfread
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfread.obj dosfread.c
+echo   [ 39/119] dosfseek
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfseek.obj dosfseek.c
+echo   [ 40/119] dosfwrit
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosfwrit.obj dosfwrit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 41/119] dosinit
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosinit.obj dosinit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 42/119] doslseek
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\doslseek.obj doslseek.c
+echo   [ 43/119] dosopen
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosopen.obj dosopen.c
+echo   [ 44/119] dosread
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosread.obj dosread.c
+echo   [ 45/119] dosrewin
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosrewin.obj dosrewin.c
+echo   [ 46/119] dosstbuf
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\dosstbuf.obj dosstbuf.c
+echo   [ 47/119] doswrite
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\doswrite.obj doswrite.c
+cd \toolkit\pwa153\source\misc
+echo   [ 48/119] exist
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\exist.obj exist.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 49/119] exitdos
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\exitdos.obj exitdos.c
+cd \toolkit\pwa153\source\dos
+echo   [ 50/119] extended
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\extended.obj extended.c
+cd \toolkit\pwa153\source\misc
+echo   [ 51/119] fmemcpy
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\fmemcpy.obj fmemcpy.c
+echo   [ 52/119] fmemset
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\fmemset.obj fmemset.c
+cd \toolkit\pwa153\source\screen
+echo   [ 53/119] getmode
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\getmode.obj getmode.c
+echo   [ 54/119] giveup
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\giveup.obj giveup.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 55/119] goodbye
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\goodbye.obj goodbye.c
+cd \toolkit\pwa153\source\screen
+echo   [ 56/119] gotoxy
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\gotoxy.obj gotoxy.c
+cd \toolkit\pwa153\source\dos
+echo   [ 57/119] handlers
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\handlers.obj handlers.c
+cd \toolkit\pwa153\source\scrnio
+echo   [ 58/119] help
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\help.obj help.c
+cd \toolkit\pwa153\source\misc
+echo   [ 59/119] hextoi
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\hextoi.obj hextoi.c
+echo   [ 60/119] index
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\index.obj index.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 61/119] init
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\init.obj init.c
+echo   [ 62/119] inputreq
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\inputreq.obj inputreq.c
+cd \toolkit\pwa153\source\dos
+echo   [ 63/119] int24hnd (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__m__ int24hnd.asm,c:\out\lib\pwa153\msc70\obj\medium\int24hnd.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 64/119] isset
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\isset.obj isset.c
+echo   [ 65/119] julian
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\julian.obj julian.c
+echo   [ 66/119] lastchar
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\lastchar.obj lastchar.c
+echo   [ 67/119] long_bd
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\long_bd.obj long_bd.c
+echo   [ 68/119] long_bs
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\long_bs.obj long_bs.c
+cd \toolkit\pwa153\source\country
+echo   [ 69/119] memfcmp
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\memfcmp.obj memfcmp.c
+echo   [ 70/119] memicmp
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\memicmp.obj memicmp.c
+cd \pcb153\source\asm
+echo   [ 71/119] memmove (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__m__ memmove.asm,c:\out\lib\pwa153\msc70\obj\medium\memmove.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 72/119] mstrcpy
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\mstrcpy.obj mstrcpy.c
+echo   [ 73/119] padstr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\padstr.obj padstr.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 74/119] parsepth
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\parsepth.obj parsepth.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 75/119] pcbinit
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\pcbinit.obj pcbinit.c
+cd \toolkit\pwa153\source\screen
+echo   [ 76/119] print
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\print.obj print.c
+cd \toolkit\pwa153\source\misc
+echo   [ 77/119] prnready
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\prnready.obj prnready.c
+echo   [ 78/119] proper
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\proper.obj proper.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 79/119] recycle
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\recycle.obj recycle.c
+cd \toolkit\pwa153\source\screen
+echo   [ 80/119] saverest
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\saverest.obj saverest.c
+cd \toolkit\pwa153\source\misc
+echo   [ 81/119] setbit
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\setbit.obj setbit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 82/119] showerr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\showerr.obj showerr.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 83/119] slowmodm
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\slowmodm.obj slowmodm.c
+cd \toolkit\pwa153\source\screen
+echo   [ 84/119] sound
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\sound.obj sound.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 85/119] srchpath
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\srchpath.obj srchpath.c
+cd \toolkit\pwa153\source\country
+echo   [ 86/119] stricmp
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\stricmp.obj stricmp.c
+cd \toolkit\pwa153\source\misc
+echo   [ 87/119] stripl
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\stripl.obj stripl.c
+echo   [ 88/119] stripr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\stripr.obj stripr.c
+cd \toolkit\pwa153\source\country
+echo   [ 89/119] strlwr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\strlwr.obj strlwr.c
+cd \toolkit\pwa153\source\dos
+echo   [ 90/119] strnchr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\strnchr.obj strnchr.c
+cd \toolkit\pwa153\source\country
+echo   [ 91/119] strnicmp
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\strnicmp.obj strnicmp.c
+echo   [ 92/119] strupr
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\strupr.obj strupr.c
+cd \toolkit\pwa153\source\misc
+echo   [ 93/119] subst
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\subst.obj subst.c
+echo   [ 94/119] time
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\time.obj time.c
+cd \toolkit\pwa153\source\screen
+echo   [ 95/119] time1
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\time1.obj time1.c
+echo   [ 96/119] time2
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\time2.obj time2.c
+cd \pcb153\source\asm
+echo   [ 97/119] timer (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__m__ timer.asm,c:\out\lib\pwa153\msc70\obj\medium\timer.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 98/119] unsetbit
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\unsetbit.obj unsetbit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 99/119] usersys
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\usersys.obj usersys.c
+cd \toolkit\pwa153\source\screen
+echo   [100/119] wherey
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\wherey.obj wherey.c
+cd \pcb153\source\main
+echo   [101/119] chat
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\chat.obj chat.c
+cd \pcb153\source\modem
+echo   [102/119] devioctl
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\devioctl.obj devioctl.c
+cd \pcb153\source\display
+echo   [103/119] display
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\display.obj display.c
+echo   [104/119] files
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\files.obj files.c
+cd \pcb153\source\main
+echo   [105/119] inkey
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\inkey.obj inkey.c
+echo   [106/119] input
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\input.obj input.c
+echo   [107/119] language
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\language.obj language.c
+cd \pcb153\source\node
+echo   [108/119] log
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\log.obj log.c
+cd \pcb153\source\support
+echo   [109/119] memory
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\memory.obj memory.c
+cd \pcb153\source\main
+echo   [110/119] misc
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\misc.obj misc.c
+cd \pcb153\source\modem
+echo   [111/119] modem
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\modem.obj modem.c
+cd \pcb153\source\display
+echo   [112/119] pcbtext
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\pcbtext.obj pcbtext.c
+echo   [113/119] screen
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\screen.obj screen.c
+cd \pcb153\source\main
+echo   [114/119] shell
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\shell.obj shell.c
+cd \pcb153\source\display
+echo   [115/119] status
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\status.obj status.c
+cd \pcb153\source\main
+echo   [116/119] sys
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\sys.obj sys.c
+cd \pcb153\source\support
+echo   [117/119] token
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\token.obj token.c
+cd \pcb153\source\display
+echo   [118/119] xlate
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\xlate.obj xlate.c
+cd \pcb153\source\modem
+echo   [119/119] modemasy
+%cc% -c -AM -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\medium\modemasy.obj modemasy.c
 echo.
-echo === Memory model: COMPACT ===
-if not exist C:\out\LIB\PWA153\msc70\OBJ\compact md C:\out\LIB\PWA153\msc70\OBJ\compact
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [  1/119] ADDBACKS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\ADDBACKS.OBJ ADDBACKS.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  2/119] ADDCHAR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\ADDCHAR.OBJ ADDCHAR.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [  3/119] ANSI
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\ANSI.OBJ ANSI.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  4/119] ASCII
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\ASCII.OBJ ASCII.C
-cd \PCB153\SOURCE\ASM
-echo   [  5/119] ASYNC (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__c__ ASYNC.ASM,C:\out\LIB\PWA153\msc70\OBJ\compact\ASYNC.OBJ
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [  6/119] ATCLOSE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\ATCLOSE.OBJ ATCLOSE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  7/119] BD_LONG
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\BD_LONG.OBJ BD_LONG.C
-cd \PCB153\SOURCE\ASM
-echo   [  8/119] BGKEY (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__c__ BGKEY.ASM,C:\out\LIB\PWA153\msc70\OBJ\compact\BGKEY.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  9/119] BS_LONG
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\BS_LONG.OBJ BS_LONG.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 10/119] CHKAPPEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHKAPPEN.OBJ CHKAPPEN.C
-echo   [ 11/119] CHKCREAT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHKCREAT.OBJ CHKCREAT.C
-echo   [ 12/119] CHKLOCK
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHKLOCK.OBJ CHKLOCK.C
-echo   [ 13/119] CHKOPEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHKOPEN.OBJ CHKOPEN.C
-echo   [ 14/119] CHKREAD
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHKREAD.OBJ CHKREAD.C
-echo   [ 15/119] CHKWRITE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHKWRITE.OBJ CHKWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 16/119] CLS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CLS.OBJ CLS.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 17/119] CNAMES
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CNAMES.OBJ CNAMES.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 18/119] COMMA
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\COMMA.OBJ COMMA.C
-echo   [ 19/119] COUNTRY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\COUNTRY.OBJ COUNTRY.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 20/119] CTOD
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CTOD.OBJ CTOD.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 21/119] CURSOR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CURSOR.OBJ CURSOR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 22/119] CUSTHELP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CUSTHELP.OBJ CUSTHELP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 23/119] CUTIL (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__c__ CUTIL.ASM,C:\out\LIB\PWA153\msc70\OBJ\compact\CUTIL.OBJ
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 24/119] DATAFIL2
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DATAFIL2.OBJ DATAFIL2.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 25/119] DATE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DATE.OBJ DATE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 26/119] DATESTR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DATESTR.OBJ DATESTR.C
-echo   [ 27/119] DELAY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DELAY.OBJ DELAY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 28/119] DOSAPPEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSAPPEN.OBJ DOSAPPEN.C
-echo   [ 29/119] DOSCLOSE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSCLOSE.OBJ DOSCLOSE.C
-echo   [ 30/119] DOSCOMIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSCOMIT.OBJ DOSCOMIT.C
-echo   [ 31/119] DOSCREAT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSCREAT.OBJ DOSCREAT.C
-echo   [ 32/119] DOSERROR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSERROR.OBJ DOSERROR.C
-echo   [ 33/119] DOSFCLOS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFCLOS.OBJ DOSFCLOS.C
-echo   [ 34/119] DOSFGETS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFGETS.OBJ DOSFGETS.C
-echo   [ 35/119] DOSFLUSH
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFLUSH.OBJ DOSFLUSH.C
-echo   [ 36/119] DOSFOPEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFOPEN.OBJ DOSFOPEN.C
-echo   [ 37/119] DOSFPUTS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFPUTS.OBJ DOSFPUTS.C
-echo   [ 38/119] DOSFREAD
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFREAD.OBJ DOSFREAD.C
-echo   [ 39/119] DOSFSEEK
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFSEEK.OBJ DOSFSEEK.C
-echo   [ 40/119] DOSFWRIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSFWRIT.OBJ DOSFWRIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 41/119] DOSINIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSINIT.OBJ DOSINIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 42/119] DOSLSEEK
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSLSEEK.OBJ DOSLSEEK.C
-echo   [ 43/119] DOSOPEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSOPEN.OBJ DOSOPEN.C
-echo   [ 44/119] DOSREAD
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSREAD.OBJ DOSREAD.C
-echo   [ 45/119] DOSREWIN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSREWIN.OBJ DOSREWIN.C
-echo   [ 46/119] DOSSTBUF
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSSTBUF.OBJ DOSSTBUF.C
-echo   [ 47/119] DOSWRITE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DOSWRITE.OBJ DOSWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 48/119] EXIST
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\EXIST.OBJ EXIST.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 49/119] EXITDOS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\EXITDOS.OBJ EXITDOS.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 50/119] EXTENDED
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\EXTENDED.OBJ EXTENDED.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 51/119] FMEMCPY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\FMEMCPY.OBJ FMEMCPY.C
-echo   [ 52/119] FMEMSET
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\FMEMSET.OBJ FMEMSET.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 53/119] GETMODE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\GETMODE.OBJ GETMODE.C
-echo   [ 54/119] GIVEUP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\GIVEUP.OBJ GIVEUP.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 55/119] GOODBYE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\GOODBYE.OBJ GOODBYE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 56/119] GOTOXY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\GOTOXY.OBJ GOTOXY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 57/119] HANDLERS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\HANDLERS.OBJ HANDLERS.C
-cd \TOOLKIT\PWA153\SOURCE\SCRNIO
-echo   [ 58/119] HELP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\HELP.OBJ HELP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 59/119] HEXTOI
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\HEXTOI.OBJ HEXTOI.C
-echo   [ 60/119] INDEX
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\INDEX.OBJ INDEX.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 61/119] INIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\INIT.OBJ INIT.C
-echo   [ 62/119] INPUTREQ
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\INPUTREQ.OBJ INPUTREQ.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 63/119] INT24HND (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__c__ INT24HND.ASM,C:\out\LIB\PWA153\msc70\OBJ\compact\INT24HND.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 64/119] ISSET
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\ISSET.OBJ ISSET.C
-echo   [ 65/119] JULIAN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\JULIAN.OBJ JULIAN.C
-echo   [ 66/119] LASTCHAR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\LASTCHAR.OBJ LASTCHAR.C
-echo   [ 67/119] LONG_BD
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\LONG_BD.OBJ LONG_BD.C
-echo   [ 68/119] LONG_BS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\LONG_BS.OBJ LONG_BS.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 69/119] MEMFCMP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MEMFCMP.OBJ MEMFCMP.C
-echo   [ 70/119] MEMICMP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MEMICMP.OBJ MEMICMP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 71/119] MEMMOVE (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__c__ MEMMOVE.ASM,C:\out\LIB\PWA153\msc70\OBJ\compact\MEMMOVE.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 72/119] MSTRCPY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MSTRCPY.OBJ MSTRCPY.C
-echo   [ 73/119] PADSTR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PADSTR.OBJ PADSTR.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 74/119] PARSEPTH
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PARSEPTH.OBJ PARSEPTH.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 75/119] PCBINIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PCBINIT.OBJ PCBINIT.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 76/119] PRINT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PRINT.OBJ PRINT.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 77/119] PRNREADY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PRNREADY.OBJ PRNREADY.C
-echo   [ 78/119] PROPER
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PROPER.OBJ PROPER.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 79/119] RECYCLE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\RECYCLE.OBJ RECYCLE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 80/119] SAVEREST
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SAVEREST.OBJ SAVEREST.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 81/119] SETBIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SETBIT.OBJ SETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 82/119] SHOWERR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SHOWERR.OBJ SHOWERR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 83/119] SLOWMODM
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SLOWMODM.OBJ SLOWMODM.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 84/119] SOUND
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SOUND.OBJ SOUND.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 85/119] SRCHPATH
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SRCHPATH.OBJ SRCHPATH.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 86/119] STRICMP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRICMP.OBJ STRICMP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 87/119] STRIPL
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRIPL.OBJ STRIPL.C
-echo   [ 88/119] STRIPR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRIPR.OBJ STRIPR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 89/119] STRLWR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRLWR.OBJ STRLWR.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 90/119] STRNCHR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRNCHR.OBJ STRNCHR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 91/119] STRNICMP
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRNICMP.OBJ STRNICMP.C
-echo   [ 92/119] STRUPR
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STRUPR.OBJ STRUPR.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 93/119] SUBST
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SUBST.OBJ SUBST.C
-echo   [ 94/119] TIME
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\TIME.OBJ TIME.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 95/119] TIME1
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\TIME1.OBJ TIME1.C
-echo   [ 96/119] TIME2
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\TIME2.OBJ TIME2.C
-cd \PCB153\SOURCE\ASM
-echo   [ 97/119] TIMER (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__c__ TIMER.ASM,C:\out\LIB\PWA153\msc70\OBJ\compact\TIMER.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 98/119] UNSETBIT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\UNSETBIT.OBJ UNSETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 99/119] USERSYS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\USERSYS.OBJ USERSYS.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [100/119] WHEREY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\WHEREY.OBJ WHEREY.C
-cd \PCB153\SOURCE\MAIN
-echo   [101/119] CHAT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\CHAT.OBJ CHAT.C
-cd \PCB153\SOURCE\MODEM
-echo   [102/119] DEVIOCTL
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DEVIOCTL.OBJ DEVIOCTL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [103/119] DISPLAY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\DISPLAY.OBJ DISPLAY.C
-echo   [104/119] FILES
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\FILES.OBJ FILES.C
-cd \PCB153\SOURCE\MAIN
-echo   [105/119] INKEY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\INKEY.OBJ INKEY.C
-echo   [106/119] INPUT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\INPUT.OBJ INPUT.C
-echo   [107/119] LANGUAGE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\LANGUAGE.OBJ LANGUAGE.C
-cd \PCB153\SOURCE\NODE
-echo   [108/119] LOG
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\LOG.OBJ LOG.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [109/119] MEMORY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MEMORY.OBJ MEMORY.C
-cd \PCB153\SOURCE\MAIN
-echo   [110/119] MISC
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MISC.OBJ MISC.C
-cd \PCB153\SOURCE\MODEM
-echo   [111/119] MODEM
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MODEM.OBJ MODEM.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [112/119] PCBTEXT
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\PCBTEXT.OBJ PCBTEXT.C
-echo   [113/119] SCREEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SCREEN.OBJ SCREEN.C
-cd \PCB153\SOURCE\MAIN
-echo   [114/119] SHELL
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SHELL.OBJ SHELL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [115/119] STATUS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\STATUS.OBJ STATUS.C
-cd \PCB153\SOURCE\MAIN
-echo   [116/119] SYS
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\SYS.OBJ SYS.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [117/119] TOKEN
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\TOKEN.OBJ TOKEN.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [118/119] XLATE
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\XLATE.OBJ XLATE.C
-cd \PCB153\SOURCE\MODEM
-echo   [119/119] MODEMASY
-%CC% /c /AC /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\compact\MODEMASY.OBJ MODEMASY.C
+echo === memory model: compact ===
+if not exist c:\out\lib\pwa153\msc70\obj\compact md c:\out\lib\pwa153\msc70\obj\compact
+cd \toolkit\pwa153\source\pcb
+echo   [  1/119] addbacks
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\addbacks.obj addbacks.c
+cd \toolkit\pwa153\source\misc
+echo   [  2/119] addchar
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\addchar.obj addchar.c
+cd \toolkit\pwa153\source\screen
+echo   [  3/119] ansi
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\ansi.obj ansi.c
+cd \toolkit\pwa153\source\misc
+echo   [  4/119] ascii
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\ascii.obj ascii.c
+cd \pcb153\source\asm
+echo   [  5/119] async (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__c__ async.asm,c:\out\lib\pwa153\msc70\obj\compact\async.obj
+cd \toolkit\pwa153\source\toolkit
+echo   [  6/119] atclose
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\atclose.obj atclose.c
+cd \toolkit\pwa153\source\misc
+echo   [  7/119] bd_long
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\bd_long.obj bd_long.c
+cd \pcb153\source\asm
+echo   [  8/119] bgkey (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__c__ bgkey.asm,c:\out\lib\pwa153\msc70\obj\compact\bgkey.obj
+cd \toolkit\pwa153\source\misc
+echo   [  9/119] bs_long
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\bs_long.obj bs_long.c
+cd \toolkit\pwa153\source\dos
+echo   [ 10/119] chkappen
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chkappen.obj chkappen.c
+echo   [ 11/119] chkcreat
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chkcreat.obj chkcreat.c
+echo   [ 12/119] chklock
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chklock.obj chklock.c
+echo   [ 13/119] chkopen
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chkopen.obj chkopen.c
+echo   [ 14/119] chkread
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chkread.obj chkread.c
+echo   [ 15/119] chkwrite
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chkwrite.obj chkwrite.c
+cd \toolkit\pwa153\source\screen
+echo   [ 16/119] cls
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\cls.obj cls.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 17/119] cnames
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\cnames.obj cnames.c
+cd \toolkit\pwa153\source\country
+echo   [ 18/119] comma
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\comma.obj comma.c
+echo   [ 19/119] country
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\country.obj country.c
+cd \toolkit\pwa153\source\misc
+echo   [ 20/119] ctod
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\ctod.obj ctod.c
+cd \toolkit\pwa153\source\screen
+echo   [ 21/119] cursor
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\cursor.obj cursor.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 22/119] custhelp
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\custhelp.obj custhelp.c
+cd \pcb153\source\asm
+echo   [ 23/119] cutil (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__c__ cutil.asm,c:\out\lib\pwa153\msc70\obj\compact\cutil.obj
+cd \toolkit\pwa153\source\pcb
+echo   [ 24/119] datafil2
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\datafil2.obj datafil2.c
+cd \toolkit\pwa153\source\country
+echo   [ 25/119] date
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\date.obj date.c
+cd \toolkit\pwa153\source\screen
+echo   [ 26/119] datestr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\datestr.obj datestr.c
+echo   [ 27/119] delay
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\delay.obj delay.c
+cd \toolkit\pwa153\source\dos
+echo   [ 28/119] dosappen
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosappen.obj dosappen.c
+echo   [ 29/119] dosclose
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosclose.obj dosclose.c
+echo   [ 30/119] doscomit
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\doscomit.obj doscomit.c
+echo   [ 31/119] doscreat
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\doscreat.obj doscreat.c
+echo   [ 32/119] doserror
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\doserror.obj doserror.c
+echo   [ 33/119] dosfclos
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfclos.obj dosfclos.c
+echo   [ 34/119] dosfgets
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfgets.obj dosfgets.c
+echo   [ 35/119] dosflush
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosflush.obj dosflush.c
+echo   [ 36/119] dosfopen
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfopen.obj dosfopen.c
+echo   [ 37/119] dosfputs
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfputs.obj dosfputs.c
+echo   [ 38/119] dosfread
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfread.obj dosfread.c
+echo   [ 39/119] dosfseek
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfseek.obj dosfseek.c
+echo   [ 40/119] dosfwrit
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosfwrit.obj dosfwrit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 41/119] dosinit
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosinit.obj dosinit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 42/119] doslseek
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\doslseek.obj doslseek.c
+echo   [ 43/119] dosopen
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosopen.obj dosopen.c
+echo   [ 44/119] dosread
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosread.obj dosread.c
+echo   [ 45/119] dosrewin
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosrewin.obj dosrewin.c
+echo   [ 46/119] dosstbuf
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\dosstbuf.obj dosstbuf.c
+echo   [ 47/119] doswrite
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\doswrite.obj doswrite.c
+cd \toolkit\pwa153\source\misc
+echo   [ 48/119] exist
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\exist.obj exist.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 49/119] exitdos
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\exitdos.obj exitdos.c
+cd \toolkit\pwa153\source\dos
+echo   [ 50/119] extended
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\extended.obj extended.c
+cd \toolkit\pwa153\source\misc
+echo   [ 51/119] fmemcpy
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\fmemcpy.obj fmemcpy.c
+echo   [ 52/119] fmemset
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\fmemset.obj fmemset.c
+cd \toolkit\pwa153\source\screen
+echo   [ 53/119] getmode
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\getmode.obj getmode.c
+echo   [ 54/119] giveup
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\giveup.obj giveup.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 55/119] goodbye
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\goodbye.obj goodbye.c
+cd \toolkit\pwa153\source\screen
+echo   [ 56/119] gotoxy
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\gotoxy.obj gotoxy.c
+cd \toolkit\pwa153\source\dos
+echo   [ 57/119] handlers
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\handlers.obj handlers.c
+cd \toolkit\pwa153\source\scrnio
+echo   [ 58/119] help
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\help.obj help.c
+cd \toolkit\pwa153\source\misc
+echo   [ 59/119] hextoi
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\hextoi.obj hextoi.c
+echo   [ 60/119] index
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\index.obj index.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 61/119] init
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\init.obj init.c
+echo   [ 62/119] inputreq
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\inputreq.obj inputreq.c
+cd \toolkit\pwa153\source\dos
+echo   [ 63/119] int24hnd (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__c__ int24hnd.asm,c:\out\lib\pwa153\msc70\obj\compact\int24hnd.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 64/119] isset
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\isset.obj isset.c
+echo   [ 65/119] julian
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\julian.obj julian.c
+echo   [ 66/119] lastchar
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\lastchar.obj lastchar.c
+echo   [ 67/119] long_bd
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\long_bd.obj long_bd.c
+echo   [ 68/119] long_bs
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\long_bs.obj long_bs.c
+cd \toolkit\pwa153\source\country
+echo   [ 69/119] memfcmp
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\memfcmp.obj memfcmp.c
+echo   [ 70/119] memicmp
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\memicmp.obj memicmp.c
+cd \pcb153\source\asm
+echo   [ 71/119] memmove (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__c__ memmove.asm,c:\out\lib\pwa153\msc70\obj\compact\memmove.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 72/119] mstrcpy
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\mstrcpy.obj mstrcpy.c
+echo   [ 73/119] padstr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\padstr.obj padstr.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 74/119] parsepth
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\parsepth.obj parsepth.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 75/119] pcbinit
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\pcbinit.obj pcbinit.c
+cd \toolkit\pwa153\source\screen
+echo   [ 76/119] print
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\print.obj print.c
+cd \toolkit\pwa153\source\misc
+echo   [ 77/119] prnready
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\prnready.obj prnready.c
+echo   [ 78/119] proper
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\proper.obj proper.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 79/119] recycle
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\recycle.obj recycle.c
+cd \toolkit\pwa153\source\screen
+echo   [ 80/119] saverest
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\saverest.obj saverest.c
+cd \toolkit\pwa153\source\misc
+echo   [ 81/119] setbit
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\setbit.obj setbit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 82/119] showerr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\showerr.obj showerr.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 83/119] slowmodm
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\slowmodm.obj slowmodm.c
+cd \toolkit\pwa153\source\screen
+echo   [ 84/119] sound
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\sound.obj sound.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 85/119] srchpath
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\srchpath.obj srchpath.c
+cd \toolkit\pwa153\source\country
+echo   [ 86/119] stricmp
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\stricmp.obj stricmp.c
+cd \toolkit\pwa153\source\misc
+echo   [ 87/119] stripl
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\stripl.obj stripl.c
+echo   [ 88/119] stripr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\stripr.obj stripr.c
+cd \toolkit\pwa153\source\country
+echo   [ 89/119] strlwr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\strlwr.obj strlwr.c
+cd \toolkit\pwa153\source\dos
+echo   [ 90/119] strnchr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\strnchr.obj strnchr.c
+cd \toolkit\pwa153\source\country
+echo   [ 91/119] strnicmp
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\strnicmp.obj strnicmp.c
+echo   [ 92/119] strupr
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\strupr.obj strupr.c
+cd \toolkit\pwa153\source\misc
+echo   [ 93/119] subst
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\subst.obj subst.c
+echo   [ 94/119] time
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\time.obj time.c
+cd \toolkit\pwa153\source\screen
+echo   [ 95/119] time1
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\time1.obj time1.c
+echo   [ 96/119] time2
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\time2.obj time2.c
+cd \pcb153\source\asm
+echo   [ 97/119] timer (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__c__ timer.asm,c:\out\lib\pwa153\msc70\obj\compact\timer.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 98/119] unsetbit
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\unsetbit.obj unsetbit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 99/119] usersys
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\usersys.obj usersys.c
+cd \toolkit\pwa153\source\screen
+echo   [100/119] wherey
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\wherey.obj wherey.c
+cd \pcb153\source\main
+echo   [101/119] chat
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\chat.obj chat.c
+cd \pcb153\source\modem
+echo   [102/119] devioctl
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\devioctl.obj devioctl.c
+cd \pcb153\source\display
+echo   [103/119] display
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\display.obj display.c
+echo   [104/119] files
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\files.obj files.c
+cd \pcb153\source\main
+echo   [105/119] inkey
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\inkey.obj inkey.c
+echo   [106/119] input
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\input.obj input.c
+echo   [107/119] language
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\language.obj language.c
+cd \pcb153\source\node
+echo   [108/119] log
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\log.obj log.c
+cd \pcb153\source\support
+echo   [109/119] memory
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\memory.obj memory.c
+cd \pcb153\source\main
+echo   [110/119] misc
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\misc.obj misc.c
+cd \pcb153\source\modem
+echo   [111/119] modem
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\modem.obj modem.c
+cd \pcb153\source\display
+echo   [112/119] pcbtext
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\pcbtext.obj pcbtext.c
+echo   [113/119] screen
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\screen.obj screen.c
+cd \pcb153\source\main
+echo   [114/119] shell
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\shell.obj shell.c
+cd \pcb153\source\display
+echo   [115/119] status
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\status.obj status.c
+cd \pcb153\source\main
+echo   [116/119] sys
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\sys.obj sys.c
+cd \pcb153\source\support
+echo   [117/119] token
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\token.obj token.c
+cd \pcb153\source\display
+echo   [118/119] xlate
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\xlate.obj xlate.c
+cd \pcb153\source\modem
+echo   [119/119] modemasy
+%cc% -c -AC -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\compact\modemasy.obj modemasy.c
 echo.
-echo === Memory model: LARGE ===
-if not exist C:\out\LIB\PWA153\msc70\OBJ\large md C:\out\LIB\PWA153\msc70\OBJ\large
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [  1/119] ADDBACKS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\ADDBACKS.OBJ ADDBACKS.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  2/119] ADDCHAR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\ADDCHAR.OBJ ADDCHAR.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [  3/119] ANSI
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\ANSI.OBJ ANSI.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  4/119] ASCII
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\ASCII.OBJ ASCII.C
-cd \PCB153\SOURCE\ASM
-echo   [  5/119] ASYNC (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__l__ ASYNC.ASM,C:\out\LIB\PWA153\msc70\OBJ\large\ASYNC.OBJ
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [  6/119] ATCLOSE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\ATCLOSE.OBJ ATCLOSE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  7/119] BD_LONG
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\BD_LONG.OBJ BD_LONG.C
-cd \PCB153\SOURCE\ASM
-echo   [  8/119] BGKEY (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__l__ BGKEY.ASM,C:\out\LIB\PWA153\msc70\OBJ\large\BGKEY.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [  9/119] BS_LONG
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\BS_LONG.OBJ BS_LONG.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 10/119] CHKAPPEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHKAPPEN.OBJ CHKAPPEN.C
-echo   [ 11/119] CHKCREAT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHKCREAT.OBJ CHKCREAT.C
-echo   [ 12/119] CHKLOCK
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHKLOCK.OBJ CHKLOCK.C
-echo   [ 13/119] CHKOPEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHKOPEN.OBJ CHKOPEN.C
-echo   [ 14/119] CHKREAD
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHKREAD.OBJ CHKREAD.C
-echo   [ 15/119] CHKWRITE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHKWRITE.OBJ CHKWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 16/119] CLS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CLS.OBJ CLS.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 17/119] CNAMES
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CNAMES.OBJ CNAMES.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 18/119] COMMA
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\COMMA.OBJ COMMA.C
-echo   [ 19/119] COUNTRY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\COUNTRY.OBJ COUNTRY.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 20/119] CTOD
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CTOD.OBJ CTOD.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 21/119] CURSOR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CURSOR.OBJ CURSOR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 22/119] CUSTHELP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CUSTHELP.OBJ CUSTHELP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 23/119] CUTIL (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__l__ CUTIL.ASM,C:\out\LIB\PWA153\msc70\OBJ\large\CUTIL.OBJ
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 24/119] DATAFIL2
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DATAFIL2.OBJ DATAFIL2.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 25/119] DATE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DATE.OBJ DATE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 26/119] DATESTR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DATESTR.OBJ DATESTR.C
-echo   [ 27/119] DELAY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DELAY.OBJ DELAY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 28/119] DOSAPPEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSAPPEN.OBJ DOSAPPEN.C
-echo   [ 29/119] DOSCLOSE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSCLOSE.OBJ DOSCLOSE.C
-echo   [ 30/119] DOSCOMIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSCOMIT.OBJ DOSCOMIT.C
-echo   [ 31/119] DOSCREAT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSCREAT.OBJ DOSCREAT.C
-echo   [ 32/119] DOSERROR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSERROR.OBJ DOSERROR.C
-echo   [ 33/119] DOSFCLOS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFCLOS.OBJ DOSFCLOS.C
-echo   [ 34/119] DOSFGETS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFGETS.OBJ DOSFGETS.C
-echo   [ 35/119] DOSFLUSH
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFLUSH.OBJ DOSFLUSH.C
-echo   [ 36/119] DOSFOPEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFOPEN.OBJ DOSFOPEN.C
-echo   [ 37/119] DOSFPUTS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFPUTS.OBJ DOSFPUTS.C
-echo   [ 38/119] DOSFREAD
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFREAD.OBJ DOSFREAD.C
-echo   [ 39/119] DOSFSEEK
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFSEEK.OBJ DOSFSEEK.C
-echo   [ 40/119] DOSFWRIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSFWRIT.OBJ DOSFWRIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 41/119] DOSINIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSINIT.OBJ DOSINIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 42/119] DOSLSEEK
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSLSEEK.OBJ DOSLSEEK.C
-echo   [ 43/119] DOSOPEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSOPEN.OBJ DOSOPEN.C
-echo   [ 44/119] DOSREAD
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSREAD.OBJ DOSREAD.C
-echo   [ 45/119] DOSREWIN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSREWIN.OBJ DOSREWIN.C
-echo   [ 46/119] DOSSTBUF
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSSTBUF.OBJ DOSSTBUF.C
-echo   [ 47/119] DOSWRITE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DOSWRITE.OBJ DOSWRITE.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 48/119] EXIST
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\EXIST.OBJ EXIST.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 49/119] EXITDOS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\EXITDOS.OBJ EXITDOS.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 50/119] EXTENDED
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\EXTENDED.OBJ EXTENDED.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 51/119] FMEMCPY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\FMEMCPY.OBJ FMEMCPY.C
-echo   [ 52/119] FMEMSET
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\FMEMSET.OBJ FMEMSET.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 53/119] GETMODE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\GETMODE.OBJ GETMODE.C
-echo   [ 54/119] GIVEUP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\GIVEUP.OBJ GIVEUP.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 55/119] GOODBYE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\GOODBYE.OBJ GOODBYE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 56/119] GOTOXY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\GOTOXY.OBJ GOTOXY.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 57/119] HANDLERS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\HANDLERS.OBJ HANDLERS.C
-cd \TOOLKIT\PWA153\SOURCE\SCRNIO
-echo   [ 58/119] HELP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\HELP.OBJ HELP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 59/119] HEXTOI
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\HEXTOI.OBJ HEXTOI.C
-echo   [ 60/119] INDEX
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\INDEX.OBJ INDEX.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 61/119] INIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\INIT.OBJ INIT.C
-echo   [ 62/119] INPUTREQ
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\INPUTREQ.OBJ INPUTREQ.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 63/119] INT24HND (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__l__ INT24HND.ASM,C:\out\LIB\PWA153\msc70\OBJ\large\INT24HND.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 64/119] ISSET
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\ISSET.OBJ ISSET.C
-echo   [ 65/119] JULIAN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\JULIAN.OBJ JULIAN.C
-echo   [ 66/119] LASTCHAR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\LASTCHAR.OBJ LASTCHAR.C
-echo   [ 67/119] LONG_BD
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\LONG_BD.OBJ LONG_BD.C
-echo   [ 68/119] LONG_BS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\LONG_BS.OBJ LONG_BS.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 69/119] MEMFCMP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MEMFCMP.OBJ MEMFCMP.C
-echo   [ 70/119] MEMICMP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MEMICMP.OBJ MEMICMP.C
-cd \PCB153\SOURCE\ASM
-echo   [ 71/119] MEMMOVE (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__l__ MEMMOVE.ASM,C:\out\LIB\PWA153\msc70\OBJ\large\MEMMOVE.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 72/119] MSTRCPY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MSTRCPY.OBJ MSTRCPY.C
-echo   [ 73/119] PADSTR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PADSTR.OBJ PADSTR.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 74/119] PARSEPTH
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PARSEPTH.OBJ PARSEPTH.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 75/119] PCBINIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PCBINIT.OBJ PCBINIT.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 76/119] PRINT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PRINT.OBJ PRINT.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 77/119] PRNREADY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PRNREADY.OBJ PRNREADY.C
-echo   [ 78/119] PROPER
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PROPER.OBJ PROPER.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 79/119] RECYCLE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\RECYCLE.OBJ RECYCLE.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 80/119] SAVEREST
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SAVEREST.OBJ SAVEREST.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 81/119] SETBIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SETBIT.OBJ SETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 82/119] SHOWERR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SHOWERR.OBJ SHOWERR.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 83/119] SLOWMODM
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SLOWMODM.OBJ SLOWMODM.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 84/119] SOUND
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SOUND.OBJ SOUND.C
-cd \TOOLKIT\PWA153\SOURCE\PCB
-echo   [ 85/119] SRCHPATH
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SRCHPATH.OBJ SRCHPATH.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 86/119] STRICMP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRICMP.OBJ STRICMP.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 87/119] STRIPL
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRIPL.OBJ STRIPL.C
-echo   [ 88/119] STRIPR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRIPR.OBJ STRIPR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 89/119] STRLWR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRLWR.OBJ STRLWR.C
-cd \TOOLKIT\PWA153\SOURCE\DOS
-echo   [ 90/119] STRNCHR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRNCHR.OBJ STRNCHR.C
-cd \TOOLKIT\PWA153\SOURCE\COUNTRY
-echo   [ 91/119] STRNICMP
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRNICMP.OBJ STRNICMP.C
-echo   [ 92/119] STRUPR
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STRUPR.OBJ STRUPR.C
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 93/119] SUBST
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SUBST.OBJ SUBST.C
-echo   [ 94/119] TIME
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\TIME.OBJ TIME.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [ 95/119] TIME1
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\TIME1.OBJ TIME1.C
-echo   [ 96/119] TIME2
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\TIME2.OBJ TIME2.C
-cd \PCB153\SOURCE\ASM
-echo   [ 97/119] TIMER (asm)
-TASM.EXE /mx /iC:\TOOLKIT\PWA153\H /d__l__ TIMER.ASM,C:\out\LIB\PWA153\msc70\OBJ\large\TIMER.OBJ
-cd \TOOLKIT\PWA153\SOURCE\MISC
-echo   [ 98/119] UNSETBIT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\UNSETBIT.OBJ UNSETBIT.C
-cd \TOOLKIT\PWA153\SOURCE\TOOLKIT
-echo   [ 99/119] USERSYS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\USERSYS.OBJ USERSYS.C
-cd \TOOLKIT\PWA153\SOURCE\SCREEN
-echo   [100/119] WHEREY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\WHEREY.OBJ WHEREY.C
-cd \PCB153\SOURCE\MAIN
-echo   [101/119] CHAT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\CHAT.OBJ CHAT.C
-cd \PCB153\SOURCE\MODEM
-echo   [102/119] DEVIOCTL
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DEVIOCTL.OBJ DEVIOCTL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [103/119] DISPLAY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\DISPLAY.OBJ DISPLAY.C
-echo   [104/119] FILES
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\FILES.OBJ FILES.C
-cd \PCB153\SOURCE\MAIN
-echo   [105/119] INKEY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\INKEY.OBJ INKEY.C
-echo   [106/119] INPUT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\INPUT.OBJ INPUT.C
-echo   [107/119] LANGUAGE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\LANGUAGE.OBJ LANGUAGE.C
-cd \PCB153\SOURCE\NODE
-echo   [108/119] LOG
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\LOG.OBJ LOG.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [109/119] MEMORY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MEMORY.OBJ MEMORY.C
-cd \PCB153\SOURCE\MAIN
-echo   [110/119] MISC
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MISC.OBJ MISC.C
-cd \PCB153\SOURCE\MODEM
-echo   [111/119] MODEM
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MODEM.OBJ MODEM.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [112/119] PCBTEXT
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\PCBTEXT.OBJ PCBTEXT.C
-echo   [113/119] SCREEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SCREEN.OBJ SCREEN.C
-cd \PCB153\SOURCE\MAIN
-echo   [114/119] SHELL
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SHELL.OBJ SHELL.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [115/119] STATUS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\STATUS.OBJ STATUS.C
-cd \PCB153\SOURCE\MAIN
-echo   [116/119] SYS
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\SYS.OBJ SYS.C
-cd \PCB153\SOURCE\SUPPORT
-echo   [117/119] TOKEN
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\TOKEN.OBJ TOKEN.C
-cd \PCB153\SOURCE\DISPLAY
-echo   [118/119] XLATE
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\XLATE.OBJ XLATE.C
-cd \PCB153\SOURCE\MODEM
-echo   [119/119] MODEMASY
-%CC% /c /AL /I%TKINC% /FoC:\out\LIB\PWA153\msc70\OBJ\large\MODEMASY.OBJ MODEMASY.C
+echo === memory model: large ===
+if not exist c:\out\lib\pwa153\msc70\obj\large md c:\out\lib\pwa153\msc70\obj\large
+cd \toolkit\pwa153\source\pcb
+echo   [  1/119] addbacks
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\addbacks.obj addbacks.c
+cd \toolkit\pwa153\source\misc
+echo   [  2/119] addchar
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\addchar.obj addchar.c
+cd \toolkit\pwa153\source\screen
+echo   [  3/119] ansi
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\ansi.obj ansi.c
+cd \toolkit\pwa153\source\misc
+echo   [  4/119] ascii
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\ascii.obj ascii.c
+cd \pcb153\source\asm
+echo   [  5/119] async (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__l__ async.asm,c:\out\lib\pwa153\msc70\obj\large\async.obj
+cd \toolkit\pwa153\source\toolkit
+echo   [  6/119] atclose
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\atclose.obj atclose.c
+cd \toolkit\pwa153\source\misc
+echo   [  7/119] bd_long
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\bd_long.obj bd_long.c
+cd \pcb153\source\asm
+echo   [  8/119] bgkey (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__l__ bgkey.asm,c:\out\lib\pwa153\msc70\obj\large\bgkey.obj
+cd \toolkit\pwa153\source\misc
+echo   [  9/119] bs_long
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\bs_long.obj bs_long.c
+cd \toolkit\pwa153\source\dos
+echo   [ 10/119] chkappen
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chkappen.obj chkappen.c
+echo   [ 11/119] chkcreat
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chkcreat.obj chkcreat.c
+echo   [ 12/119] chklock
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chklock.obj chklock.c
+echo   [ 13/119] chkopen
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chkopen.obj chkopen.c
+echo   [ 14/119] chkread
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chkread.obj chkread.c
+echo   [ 15/119] chkwrite
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chkwrite.obj chkwrite.c
+cd \toolkit\pwa153\source\screen
+echo   [ 16/119] cls
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\cls.obj cls.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 17/119] cnames
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\cnames.obj cnames.c
+cd \toolkit\pwa153\source\country
+echo   [ 18/119] comma
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\comma.obj comma.c
+echo   [ 19/119] country
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\country.obj country.c
+cd \toolkit\pwa153\source\misc
+echo   [ 20/119] ctod
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\ctod.obj ctod.c
+cd \toolkit\pwa153\source\screen
+echo   [ 21/119] cursor
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\cursor.obj cursor.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 22/119] custhelp
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\custhelp.obj custhelp.c
+cd \pcb153\source\asm
+echo   [ 23/119] cutil (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__l__ cutil.asm,c:\out\lib\pwa153\msc70\obj\large\cutil.obj
+cd \toolkit\pwa153\source\pcb
+echo   [ 24/119] datafil2
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\datafil2.obj datafil2.c
+cd \toolkit\pwa153\source\country
+echo   [ 25/119] date
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\date.obj date.c
+cd \toolkit\pwa153\source\screen
+echo   [ 26/119] datestr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\datestr.obj datestr.c
+echo   [ 27/119] delay
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\delay.obj delay.c
+cd \toolkit\pwa153\source\dos
+echo   [ 28/119] dosappen
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosappen.obj dosappen.c
+echo   [ 29/119] dosclose
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosclose.obj dosclose.c
+echo   [ 30/119] doscomit
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\doscomit.obj doscomit.c
+echo   [ 31/119] doscreat
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\doscreat.obj doscreat.c
+echo   [ 32/119] doserror
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\doserror.obj doserror.c
+echo   [ 33/119] dosfclos
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfclos.obj dosfclos.c
+echo   [ 34/119] dosfgets
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfgets.obj dosfgets.c
+echo   [ 35/119] dosflush
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosflush.obj dosflush.c
+echo   [ 36/119] dosfopen
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfopen.obj dosfopen.c
+echo   [ 37/119] dosfputs
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfputs.obj dosfputs.c
+echo   [ 38/119] dosfread
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfread.obj dosfread.c
+echo   [ 39/119] dosfseek
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfseek.obj dosfseek.c
+echo   [ 40/119] dosfwrit
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosfwrit.obj dosfwrit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 41/119] dosinit
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosinit.obj dosinit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 42/119] doslseek
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\doslseek.obj doslseek.c
+echo   [ 43/119] dosopen
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosopen.obj dosopen.c
+echo   [ 44/119] dosread
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosread.obj dosread.c
+echo   [ 45/119] dosrewin
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosrewin.obj dosrewin.c
+echo   [ 46/119] dosstbuf
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\dosstbuf.obj dosstbuf.c
+echo   [ 47/119] doswrite
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\doswrite.obj doswrite.c
+cd \toolkit\pwa153\source\misc
+echo   [ 48/119] exist
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\exist.obj exist.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 49/119] exitdos
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\exitdos.obj exitdos.c
+cd \toolkit\pwa153\source\dos
+echo   [ 50/119] extended
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\extended.obj extended.c
+cd \toolkit\pwa153\source\misc
+echo   [ 51/119] fmemcpy
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\fmemcpy.obj fmemcpy.c
+echo   [ 52/119] fmemset
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\fmemset.obj fmemset.c
+cd \toolkit\pwa153\source\screen
+echo   [ 53/119] getmode
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\getmode.obj getmode.c
+echo   [ 54/119] giveup
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\giveup.obj giveup.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 55/119] goodbye
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\goodbye.obj goodbye.c
+cd \toolkit\pwa153\source\screen
+echo   [ 56/119] gotoxy
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\gotoxy.obj gotoxy.c
+cd \toolkit\pwa153\source\dos
+echo   [ 57/119] handlers
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\handlers.obj handlers.c
+cd \toolkit\pwa153\source\scrnio
+echo   [ 58/119] help
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\help.obj help.c
+cd \toolkit\pwa153\source\misc
+echo   [ 59/119] hextoi
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\hextoi.obj hextoi.c
+echo   [ 60/119] index
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\index.obj index.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 61/119] init
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\init.obj init.c
+echo   [ 62/119] inputreq
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\inputreq.obj inputreq.c
+cd \toolkit\pwa153\source\dos
+echo   [ 63/119] int24hnd (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__l__ int24hnd.asm,c:\out\lib\pwa153\msc70\obj\large\int24hnd.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 64/119] isset
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\isset.obj isset.c
+echo   [ 65/119] julian
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\julian.obj julian.c
+echo   [ 66/119] lastchar
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\lastchar.obj lastchar.c
+echo   [ 67/119] long_bd
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\long_bd.obj long_bd.c
+echo   [ 68/119] long_bs
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\long_bs.obj long_bs.c
+cd \toolkit\pwa153\source\country
+echo   [ 69/119] memfcmp
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\memfcmp.obj memfcmp.c
+echo   [ 70/119] memicmp
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\memicmp.obj memicmp.c
+cd \pcb153\source\asm
+echo   [ 71/119] memmove (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__l__ memmove.asm,c:\out\lib\pwa153\msc70\obj\large\memmove.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 72/119] mstrcpy
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\mstrcpy.obj mstrcpy.c
+echo   [ 73/119] padstr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\padstr.obj padstr.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 74/119] parsepth
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\parsepth.obj parsepth.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 75/119] pcbinit
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\pcbinit.obj pcbinit.c
+cd \toolkit\pwa153\source\screen
+echo   [ 76/119] print
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\print.obj print.c
+cd \toolkit\pwa153\source\misc
+echo   [ 77/119] prnready
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\prnready.obj prnready.c
+echo   [ 78/119] proper
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\proper.obj proper.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 79/119] recycle
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\recycle.obj recycle.c
+cd \toolkit\pwa153\source\screen
+echo   [ 80/119] saverest
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\saverest.obj saverest.c
+cd \toolkit\pwa153\source\misc
+echo   [ 81/119] setbit
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\setbit.obj setbit.c
+cd \toolkit\pwa153\source\dos
+echo   [ 82/119] showerr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\showerr.obj showerr.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 83/119] slowmodm
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\slowmodm.obj slowmodm.c
+cd \toolkit\pwa153\source\screen
+echo   [ 84/119] sound
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\sound.obj sound.c
+cd \toolkit\pwa153\source\pcb
+echo   [ 85/119] srchpath
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\srchpath.obj srchpath.c
+cd \toolkit\pwa153\source\country
+echo   [ 86/119] stricmp
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\stricmp.obj stricmp.c
+cd \toolkit\pwa153\source\misc
+echo   [ 87/119] stripl
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\stripl.obj stripl.c
+echo   [ 88/119] stripr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\stripr.obj stripr.c
+cd \toolkit\pwa153\source\country
+echo   [ 89/119] strlwr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\strlwr.obj strlwr.c
+cd \toolkit\pwa153\source\dos
+echo   [ 90/119] strnchr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\strnchr.obj strnchr.c
+cd \toolkit\pwa153\source\country
+echo   [ 91/119] strnicmp
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\strnicmp.obj strnicmp.c
+echo   [ 92/119] strupr
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\strupr.obj strupr.c
+cd \toolkit\pwa153\source\misc
+echo   [ 93/119] subst
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\subst.obj subst.c
+echo   [ 94/119] time
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\time.obj time.c
+cd \toolkit\pwa153\source\screen
+echo   [ 95/119] time1
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\time1.obj time1.c
+echo   [ 96/119] time2
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\time2.obj time2.c
+cd \pcb153\source\asm
+echo   [ 97/119] timer (asm)
+tasm.exe -mx -ic:\toolkit\pwa153\h -d__l__ timer.asm,c:\out\lib\pwa153\msc70\obj\large\timer.obj
+cd \toolkit\pwa153\source\misc
+echo   [ 98/119] unsetbit
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\unsetbit.obj unsetbit.c
+cd \toolkit\pwa153\source\toolkit
+echo   [ 99/119] usersys
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\usersys.obj usersys.c
+cd \toolkit\pwa153\source\screen
+echo   [100/119] wherey
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\wherey.obj wherey.c
+cd \pcb153\source\main
+echo   [101/119] chat
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\chat.obj chat.c
+cd \pcb153\source\modem
+echo   [102/119] devioctl
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\devioctl.obj devioctl.c
+cd \pcb153\source\display
+echo   [103/119] display
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\display.obj display.c
+echo   [104/119] files
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\files.obj files.c
+cd \pcb153\source\main
+echo   [105/119] inkey
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\inkey.obj inkey.c
+echo   [106/119] input
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\input.obj input.c
+echo   [107/119] language
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\language.obj language.c
+cd \pcb153\source\node
+echo   [108/119] log
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\log.obj log.c
+cd \pcb153\source\support
+echo   [109/119] memory
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\memory.obj memory.c
+cd \pcb153\source\main
+echo   [110/119] misc
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\misc.obj misc.c
+cd \pcb153\source\modem
+echo   [111/119] modem
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\modem.obj modem.c
+cd \pcb153\source\display
+echo   [112/119] pcbtext
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\pcbtext.obj pcbtext.c
+echo   [113/119] screen
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\screen.obj screen.c
+cd \pcb153\source\main
+echo   [114/119] shell
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\shell.obj shell.c
+cd \pcb153\source\display
+echo   [115/119] status
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\status.obj status.c
+cd \pcb153\source\main
+echo   [116/119] sys
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\sys.obj sys.c
+cd \pcb153\source\support
+echo   [117/119] token
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\token.obj token.c
+cd \pcb153\source\display
+echo   [118/119] xlate
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\xlate.obj xlate.c
+cd \pcb153\source\modem
+echo   [119/119] modemasy
+%cc% -c -AL -I%tkinc% -Ic:\pcb153\source\h -Foc:\out\lib\pwa153\msc70\obj\large\modemasy.obj modemasy.c
 echo.
-echo All 119 modules compiled/assembled in 4 models.
-call MKLIB.BAT PCBKMS MS msc70
+echo all 119 modules compiled/assembled in 4 models.
+call mklib.bat pcbkms ms msc70
 echo.

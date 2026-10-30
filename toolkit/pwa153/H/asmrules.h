@@ -35,13 +35,13 @@
 #define  LPROG  (4 == sizeof (void (*) (void)))
 #define  LDATA  (4 == sizeof (void *))
 ****/
-#if defined(__LARGE__) || defined(__HUGE__) || defined(__COMPACT__)
+#if defined(__LARGE__) || defined(__HUGE__) || defined(__COMPACT__) || defined(_M_I86LM) || defined(_M_I86CM)
 #define LDATA 1
 #else
 #define LDATA 0
 #endif
 
-#if defined(__LARGE__) || defined(__HUGE__) || defined(__MEDIUM__)
+#if defined(__LARGE__) || defined(__HUGE__) || defined(__MEDIUM__) || defined(_M_I86LM) || defined(_M_I86MM)
 #define LPROG 1
 #else
 #define LPROG 0
