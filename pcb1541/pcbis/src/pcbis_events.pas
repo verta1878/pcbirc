@@ -65,6 +65,14 @@ type
     { Status for WFC display }
     function  GetSlotDesc(SlotNum : integer) : string;
     function  GetSlotNextRun(SlotNum : integer) : string;
+    function  GetSlotEnabled(SlotNum : integer) : boolean;
+    function  GetSlotTime(SlotNum : integer) : string;
+    function  NextEventDesc : string;
+    function  BuiltinCount : integer;
+    function  GetBuiltinDesc(Index : integer) : string;
+    function  GetBuiltinInterval(Index : integer) : string;
+    function  GetBuiltinEnabled(Index : integer) : boolean;
+    function  GetSlotRunning(SlotNum : integer) : boolean;
   end;
 
 implementation
@@ -164,17 +172,36 @@ end;
 procedure TPcbisEvents.LoadSlotsFromConfig;
 var
   I       : integer;
-  Prefix  : string;
   TimeStr : string;
   P       : integer;
 begin
-  { TODO: read from pcbis.cfg [events] section
-    For now, parse from config object if extended.
-    Format: event1_time=02:00, event1_batch=..., event1_days=MTWTFSS }
-
-  { Placeholder — events loaded from config when config parser is extended }
   for I := 1 to MAX_EVENT_SLOTS do
-    FSlots[I].Enabled := False;
+  begin
+    if not FCfg.EventSlots[I].Enabled then
+    begin
+      FSlots[I].Enabled := False;
+      Continue;
+    end;
+
+    FSlots[I].Enabled := True;
+    FSlots[I].BatchFile := FCfg.EventSlots[I].Batch;
+    FSlots[I].Description := FCfg.EventSlots[I].Desc;
+    FSlots[I].Days := ParseDayMask(FCfg.EventSlots[I].Days);
+
+    { Parse "HH:MM" }
+    TimeStr := FCfg.EventSlots[I].Time;
+    P := Pos(':', TimeStr);
+    if P > 0 then
+    begin
+      FSlots[I].Hour := StrToIntDef(Copy(TimeStr, 1, P - 1), 0);
+      FSlots[I].Minute := StrToIntDef(Copy(TimeStr, P + 1, 2), 0);
+    end
+    else
+    begin
+      FSlots[I].Hour := 0;
+      FSlots[I].Minute := 0;
+    end;
+  end;
 end;
 
 function TPcbisEvents.DayMatch(const Days : TDayMask) : boolean;
@@ -321,6 +348,103 @@ begin
   end
   else
     Result := '-';
+end;
+
+function TPcbisEvents.GetSlotEnabled(SlotNum : integer) : boolean;
+begin
+  Result := (SlotNum >= 1) and (SlotNum <= MAX_EVENT_SLOTS) and
+            FSlots[SlotNum].Enabled;
+end;
+
+function TPcbisEvents.GetSlotTime(SlotNum : integer) : string;
+begin
+  if (SlotNum >= 1) and (SlotNum <= MAX_EVENT_SLOTS) and
+     FSlots[SlotNum].Enabled then
+    Result := Format('%2.2d:%2.2d', [FSlots[SlotNum].Hour,
+                                      FSlots[SlotNum].Minute])
+  else
+    Result := '--:--';
+end;
+
+{ NextEventDesc — find the soonest scheduled slot for the System panel }
+function TPcbisEvents.NextEventDesc : string;
+var
+  I        : integer;
+  BestSlot : integer;
+  BestMin  : integer;
+  NowH, NowM, NowS, NowMS : Word;
+  SlotMin  : integer;
+  Delta    : integer;
+begin
+  DecodeTime(Time, NowH, NowM, NowS, NowMS);
+  BestSlot := -1;
+  BestMin := MaxInt;
+
+  for I := 1 to MAX_EVENT_SLOTS do
+  begin
+    if not FSlots[I].Enabled then Continue;
+    if not DayMatch(FSlots[I].Days) then Continue;
+
+    SlotMin := FSlots[I].Hour * 60 + FSlots[I].Minute;
+    Delta := SlotMin - (NowH * 60 + NowM);
+    if Delta < 0 then
+      Delta := Delta + 1440;  { wrap to tomorrow }
+
+    if Delta < BestMin then
+    begin
+      BestMin := Delta;
+      BestSlot := I;
+    end;
+  end;
+
+  if BestSlot > 0 then
+    Result := Format('%s %s', [FSlots[BestSlot].Description,
+              GetSlotTime(BestSlot)])
+  else
+    Result := '(none)';
+end;
+
+function TPcbisEvents.BuiltinCount : integer;
+begin
+  Result := Length(FBuiltins);
+end;
+
+function TPcbisEvents.GetBuiltinDesc(Index : integer) : string;
+begin
+  if (Index >= 0) and (Index <= High(FBuiltins)) then
+    Result := FBuiltins[Index].Description
+  else
+    Result := '';
+end;
+
+function TPcbisEvents.GetBuiltinInterval(Index : integer) : string;
+var
+  Secs : integer;
+begin
+  if (Index >= 0) and (Index <= High(FBuiltins)) then
+  begin
+    Secs := FBuiltins[Index].IntervalSec;
+    if Secs >= 3600 then
+      Result := Format('%dh', [Secs div 3600])
+    else if Secs >= 60 then
+      Result := Format('%dm', [Secs div 60])
+    else
+      Result := Format('%ds', [Secs]);
+  end
+  else
+    Result := '';
+end;
+
+function TPcbisEvents.GetBuiltinEnabled(Index : integer) : boolean;
+begin
+  Result := (Index >= 0) and (Index <= High(FBuiltins)) and
+            FBuiltins[Index].Enabled;
+end;
+
+function TPcbisEvents.GetSlotRunning(SlotNum : integer) : boolean;
+begin
+  Result := (SlotNum >= 1) and (SlotNum <= MAX_EVENT_SLOTS) and
+            FSlots[SlotNum].Running;
 end;
 
 end.

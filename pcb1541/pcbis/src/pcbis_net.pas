@@ -67,10 +67,17 @@ type
     procedure Poll(TimeoutMs : integer);
 
     function ConnectionCount : integer;
+    function GetConnection(Index : integer) : TPcbisConnection;
     function TelnetCount : integer;
     function BinkpCount : integer;
     function FtpCount : integer;
     function HttpCount : integer;
+    function SmtpCount : integer;
+
+    { Node lookup — returns nil if not found }
+    function FindNode(NodeNum : integer) : TPcbisConnection;
+
+    property Connections[Index : integer] : TPcbisConnection read GetConnection;
   end;
 
 implementation
@@ -306,20 +313,20 @@ end;
 
 procedure TPcbisServer.StartFtp;
 begin
-  FFtpSock := CreateListener('0.0.0.0', 21);  { TODO: from config }
+  FFtpSock := CreateListener(FCfg.FtpListen, FCfg.FtpPort);
   if FFtpSock < 0 then
     LogError('Failed to start FTP listener')
   else
-    LogInfo('FTP listening on port 21');
+    LogInfo('FTP listening on ' + FCfg.FtpListen + ':' + IntToStr(FCfg.FtpPort));
 end;
 
 procedure TPcbisServer.StartHttp;
 begin
-  FHttpSock := CreateListener('0.0.0.0', 8080);  { TODO: from config }
+  FHttpSock := CreateListener(FCfg.HttpListen, FCfg.HttpPort);
   if FHttpSock < 0 then
     LogError('Failed to start HTTP listener')
   else
-    LogInfo('HTTP listening on port 8080');
+    LogInfo('HTTP listening on ' + FCfg.HttpListen + ':' + IntToStr(FCfg.HttpPort));
 end;
 
 procedure TPcbisServer.StartSmtp;
@@ -460,6 +467,36 @@ begin
   Result := 0;
   for I := 0 to FConnections.Count - 1 do
     if TPcbisConnection(FConnections[I]).Protocol = ptHttp then Inc(Result);
+end;
+
+function TPcbisServer.SmtpCount : integer;
+var
+  I : integer;
+begin
+  Result := 0;
+  for I := 0 to FConnections.Count - 1 do
+    if TPcbisConnection(FConnections[I]).Protocol = ptSmtpQueue then Inc(Result);
+end;
+
+function TPcbisServer.GetConnection(Index : integer) : TPcbisConnection;
+begin
+  if (Index >= 0) and (Index < FConnections.Count) then
+    Result := TPcbisConnection(FConnections[Index])
+  else
+    Result := nil;
+end;
+
+function TPcbisServer.FindNode(NodeNum : integer) : TPcbisConnection;
+var
+  I : integer;
+begin
+  Result := nil;
+  for I := 0 to FConnections.Count - 1 do
+    if TPcbisConnection(FConnections[I]).NodeNumber = NodeNum then
+    begin
+      Result := TPcbisConnection(FConnections[I]);
+      Exit;
+    end;
 end;
 
 end.

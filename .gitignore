@@ -80,6 +80,9 @@
 *.i
 *.lst
 
+# Crew rolling repo-memory zips (one per crew member per project)
+*-pcbircrepo-memory.zip
+
 # Temp/backup
 *~
 *.bak

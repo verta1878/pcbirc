@@ -1,0 +1,213 @@
+<title>PCBIS WFC Screen</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root {
+    --bg: #000000;
+    --fg: #AAAAAA;
+    --blue: #0000AA;
+    --cyan: #00AAAA;
+    --lcyan: #55FFFF;
+    --white: #FFFFFF;
+    --yellow: #FFFF55;
+    --gray: #AAAAAA;
+    --dgray: #555555;
+    color-scheme: dark;
+  }
+  body {
+    background: #111;
+    color: var(--fg);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-block: 1rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    min-height: 100%;
+  }
+  .t {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: clamp(7px, 1.5vw, 14px);
+    line-height: 1.25;
+    white-space: pre;
+    background: var(--bg);
+    padding: 4px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    box-shadow: 0 0 30px rgba(0,170,170,0.08);
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .wb { color: var(--white); background: var(--blue); }
+  .yb { color: var(--yellow); background: var(--blue); }
+  .c  { color: var(--cyan); }
+  .lc { color: var(--lcyan); }
+  .w  { color: var(--white); }
+  .y  { color: var(--yellow); }
+  .g  { color: var(--gray); }
+  .d  { color: var(--dgray); }
+  .bc { color: #000; background: var(--cyan); }
+  .lg { color: #55FF55; }
+  .lm { color: #FF55FF; }
+  .lr { color: #FF5555; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap">
+<div class="t" id="s"></div>
+<script>
+// Fixed-width colored text builder
+// c(cls, text) wraps text in a span
+function c(cls, txt) { return '<span class="'+cls+'">'+txt+'</span>'; }
+
+// p(str, width) pads or truncates plain string to exact width
+function p(s, w) { return (s + '                                                                                ').substring(0, w); }
+
+// row(): given array of [class, text] pairs and a total width,
+// produces HTML where the visible text is exactly `width` chars
+function row(segs, width) {
+  let used = 0, html = '';
+  for (const [cls, txt] of segs) {
+    const remain = width - used;
+    if (remain <= 0) break;
+    const t = txt.length > remain ? txt.substring(0, remain) : txt;
+    html += c(cls, t);
+    used += t.length;
+  }
+  if (used < width) html += ' '.repeat(width - used);
+  return html;
+}
+
+const B = { // box chars
+  h:'═', v:'║', tl:'╔', tr:'╗', bl:'╚', br:'╝',
+  lt:'╠', rt:'╣', tt:'╦', bt:'╩'
+};
+
+const now = new Date();
+const D = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ds = D[now.getDay()]+' '+String(now.getDate()).padStart(2,'0')+' '+M[now.getMonth()]+' '+now.getFullYear();
+const ts = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+
+// Screen is 80 cols: col 1 and 80 are the border ║
+// Inner width = 78 chars (cols 2-79)
+// Split panel: left = 40 chars (cols 2-41), divider at col 42, right = 37 chars (cols 43-79)
+const IW = 78; // inner width
+const LW = 40; // left panel
+const RW = 37; // right panel
+
+const L = []; // lines
+
+// Row 1: top border
+L.push(c('c', B.tl + B.h.repeat(IW) + B.tr));
+
+// Row 2: title bar — 78 visible chars between the two ║
+{
+  // Build the title as one 78-char string, then color it
+  const act = '2', mx = '65535'; // active/max — dynamic, max = configured nodes
+  const lft = ' PCBIS v0.1.0:  The PCBoard BBS';
+  const rgt = ds + ' ' + ts + ' ' + act + '/' + mx + ' nodes ';
+  // total available = 78, need spaces between sections
+  // Left-justify lft, right-justify rgt
+  const gap = IW - lft.length - rgt.length;
+  const titleFull = lft + ' '.repeat(Math.max(1, gap)) + rgt;
+  // Now render: left part white-on-blue, mid yellow-on-blue, right white-on-blue
+  // We know exact positions
+  const full78 = p(titleFull, IW);
+  L.push(c('c', B.v) + c('wb', full78) + c('c', B.v));
+}
+
+// Row 3: tab row — left 40 has tabs, col 42 is ╦, right 37 is blank
+{
+  const tabNames = ['Telnet','BinkP','FTP','HTTP','SMTP','Events'];
+  const activeIdx = 0;
+  let parts = [];
+  let visLen = 1; // leading space
+  parts.push(['g', '']);
+  for (let i = 0; i < tabNames.length; i++) {
+    const label = ' ' + tabNames[i] + ' ';
+    parts.push([i === activeIdx ? 'wb' : 'g', label]);
+    visLen += label.length;
+  }
+  // pad left side to LW
+  if (visLen < LW) { parts.push(['g', ' '.repeat(LW - visLen)]); }
+
+  let html = c('c', B.v);
+  for (const [cls, txt] of parts) html += c(cls, txt);
+  html += c('c', B.tt) + ' '.repeat(RW) + c('c', B.v);
+  L.push(html);
+}
+
+// Rows 4-11: split panel (8 rows)
+// Left: Connections, Right: System
+// Node Detail view (shown when a node is selected)
+const leftRows = [
+  [['y','Node 1 Detail']],
+  [['lc','     User: '],['w','SYSOP']],
+  [['lc','      Via: '],['lg','Telnet']],
+  [['lc','  Time On: '],['w','0:14:23  '],['lc','Idle: '],['w','0:00:02']],
+  [['lc','    Speed: '],['w','Telnet   '],['lc','Sec: '],['w','110']],
+  [['lc','       IP: '],['w','192.168.1.10']],
+  [['lc','   Action: '],['y','Reading Messages']],
+  [['lc','     City: '],['w','Tampa, FL']],
+  [['lc','Calls Tdy: '],['w','12']],
+];
+const rightRows = [
+  [['y','System']],
+  [['lc','  Uptime: '],['w','0d 3h 42m']],
+  [['lc','   Calls: '],['w','47']],
+  [['lc','   Users: '],['y','2']],
+  [['lc','  Telnet: '],['g','23']],
+  [['lc','   BinkP: '],['g','24554']],
+  [['lc','     FTP: '],['g','21']],
+  [['lc','   Event: '],['g','Pack mail 23:00']],
+  [],
+  [],
+  [],
+];
+
+const panelRows = Math.max(leftRows.length, rightRows.length);
+for (let i = 0; i < panelRows; i++) {
+  L.push(c('c', B.v) + row(leftRows[i] || [], LW) + c('c', B.v) + row(rightRows[i] || [], RW) + c('c', B.v));
+}
+
+// Divider row: ╠══...══╩══...══╣ (40 + 1 + 37 = 78)
+L.push(c('c', B.lt + B.h.repeat(LW) + B.bt + B.h.repeat(RW) + B.rt));
+
+// Rows 13-16: Last Callers (4 rows, full width)
+const callerRows = [
+  [['y','Last Callers']],
+  [['lc', 'User                      Node      On         Off       Via']],
+  [['g', 'SYSOP                       1     14:23:01   --:--:--   Telnet']],
+  [['g', 'GUEST                       2     14:20:15   --:--:--   Telnet']],
+];
+for (const cr of callerRows) {
+  L.push(c('c', B.v) + row(cr, IW) + c('c', B.v));
+}
+
+// Divider
+L.push(c('c', B.lt + B.h.repeat(IW) + B.rt));
+
+// Rows 18-24: Log (1 label + 6 entries = 7 rows)
+// Log entries: timestamp=light cyan, service=color coded, rest=gray
+const logRows = [
+  [['lg','14:23:01 '],['g','Node 1: SYSOP logged in via Telnet']],
+  [['lg','14:20:15 '],['g','Node 2: GUEST logged in via Telnet']],
+  [['lm','14:15:00 '],['g','BinkP session with 1:2/3.0 completed']],
+  [['w','14:10:22 '],['g','FTP: Anonymous login from 192.168.1.50']],
+  [['c','14:05:11 '],['g','HTTP: GET /files/newfiles.dat 200']],
+  [['lr','13:58:44 '],['g','SMTP: Queued 3 messages for delivery']],
+];
+L.push(c('c', B.v) + row([['y','Log']], IW) + c('c', B.v));
+for (const lr of logRows) {
+  L.push(c('c', B.v) + row(lr, IW) + c('c', B.v));
+}
+
+// Divider
+L.push(c('c', B.lt + B.h.repeat(IW) + B.rt));
+
+// Status bar
+L.push(c('c', B.v) + c('bc', p(' TAB Switch  ↑↓ Select  ENTER Detail  SPACE Local  Q Quit', IW)) + c('c', B.v));
+
+// Bottom border
+L.push(c('c', B.bl + B.h.repeat(IW) + B.br));
+
+document.getElementById('s').innerHTML = L.join('\n');
+</script>
