@@ -1,48 +1,260 @@
-# attic â working artifact snapshots
+# pcbrevival — PCBoard 15.4 BBS Revival
 
-Reference snapshots that let us recover if the live tree gets corrupted.
-Not built by CI; refreshed by hand when the live design changes.
+**PCBoard 15.4 source code recovery, OpenWatcom 2.0 port, and modernization.**
 
-| File | Provenance | Kept because |
-|------|-----------|--------------|
-| `PCBBLDBT.IMG` | 96 MB FAT16 HDD image built from `dosbox-x/pcbirc/BUILDROOT/` on 2026-08-29. Geometry: 195 cyl Ã 16 heads Ã 63 spt = 100,638,720 bytes. Contains full pcbirc build root: BC31 / MSC70 / TC201 compilers; HX / CWSDPMI / D32A DPMI extenders; 386MAX_S / PCB153 / TOOLKIT source trees; BUILD scripts; AUTOEXEC.BAT route dispatcher; six-route CONFIG.SYS menu; FDOS/ FreeDOS runtime. **`KERNEL.SYS` is first in root directory** (MS-DOS boot convention), followed by `COMMAND.COM`. | **Bootable HDD snapshot.** FreeDOS 1.3 FAT16 boot record installed via `ms-sys --fat16free`, drive number byte set to 0x80 for HDD. Boot in any emulator (86Box, PCem, QEMU, VMware, VirtualBox) or on real hardware by attaching as C: and setting BIOS to boot from HDD â lands at build environment with six-route CONFIG.SYS menu. Also mountable directly as C:: `imgmount 2 attic/PCBBLDBT.IMG -t hdd -fs fat -size 512,63,16,195`. ms-sys sourced from https://github.com/pbatard/ms-sys (GPL, by Henrik Carlqvist). |
-| `FDBOOT.IMG` | 1.44 MB FreeDOS 1.3 floppy backup, snapshotted 2026-08-29 13:24 right before the `SYS C:` experiment that we learned from. Same FreeDOS 1.3 boot sector as `fdboot-stock.img` below; customized `FDAUTO.BAT` (122 bytes) chains to `C:\AUTOEXEC.BAT` if C: exists, else lands at `A:\>` prompt. | **Rescue floppy for boot-sector repair.** Both `PCBBLDBT.IMG` and `fdboot-stock.img` are bootable in their own right; this one is the recovery tool if either gets damaged. Ships with `BOOTFIX.COM` at `A:\BOOTFIX.COM` â from a live boot on real emulator or hardware, run `A:\> BOOTFIX C:` to reinstall a FreeDOS boot sector on C: without touching data, or `A:\> SYS A: C:` to reinstall boot sector + KERNEL.SYS + COMMAND.COM. Also preserves the pre-damage FDCONFIG.SYS + FDAUTO.BAT for reference. BOOTFIX.COM sourced from https://www.ibiblio.org/pub/micro/pc-stuff/freedos/files/repositories/1.3/util/bootfix.zip (GPLv2, by Arkady, v1.4a 2022-02-17). |
+pcbirc crew — October 2026
 
+## What Is This
 
-## What else is kept here
+PCBoard was the dominant BBS software of the dial-up era, written by
+Clark Development Company. When Clark was closed by the bank in the
+late 1990s, the source code nearly disappeared. There is almost no
+information about PCBoard 15.4 on the web — no documentation, no
+downloads, no history.
 
-| Folder | Holds | Added |
-|--------|-------|-------|
-| `prebuilt-libs/BC31/` | 9 prebuilt PCBoard category libraries (`.386`, large model) found in `pcbcbase/PREBUILT/`, where they did not belong. Origin unknown, not rebuildable yet. Its README records every library's module list and sha256, which is the recipe for checking a future rebuild. | 2026-09-22 |
-| `retired-build-files/` | 19 hand-made compiler/linker side files no build in this repo uses — BC 5.0 / TC 3.0 link lists, `INITBUILD.RSP`, the `…154.CFG` copies, and pcb153's `T.BAT` / `T.CMD`. Kept byte-for-byte with Clark's `\PROJ` paths, under their original folder paths. | 2026-09-22 |
-| `virtual1/` | The near virtual-memory variant (`VIRTUAL1.C` / `VIRTUAL1.H`) for delta154, irc1541 and pwa153, deleted by commit 37bf4e4 and recovered from `37bf4e4^`. Nothing builds it; the branches that lost it use the huge `virtual.h` or the merged file. `pcb154/LIB/` still holds Clark's complete pair. | 2026-09-22 |
-| `lib/pwa153/` | Earlier library-build staging and status notes. | before 2026-09 |
+Corey Blake purchased what may be the only source license ever sold.
+PWA (Pirates with Attitude) preserved that 15.3 source archive —
+without them, this project would not exist.
 
-Nothing in `attic/` is built, read or linked by any makefile. Files come
-here instead of being deleted, and each folder's README says what the
-files are and what would be needed to bring them back.
+This repo takes that 15.3 source, applies every feature and change
+from Clark's unreleased 15.4b beta, and ports the entire codebase
+to OpenWatcom 2.0 for cross-compilation on modern Linux.
 
-## Refresh procedure for PCBBLDBT.IMG
+## Directory Map
 
-When live `dosbox-x/pcbirc/BUILDROOT/` changes materially and the attic
-snapshot needs updating, the full procedure is documented in
-`MAIN/build/scripts/make-bootable-img.md` under "How the shipped image
-was made". Summary:
+```
+--- source trees (one per version; each owns its source) ---
+pcb153/        15.3 PWA source (Borland C++ 3.1) - the pure base
+pcb153/upd154/     15.4 PWA - Clark's 15.4 reconstructed from binaries (source only)
+pcb154/        15.4 Delta - the crew's active work (OpenWatcom)
+pcb1541/       15.41 IRC - our new work (ports to openwatcom2irc)
+               network front-ends: syncterm, binkd, pcbcomm,
+               dropbear (SSH secure remote access), ...
+patches/       15.4-pwa.patch = the 15.3->15.4 PWA delta over pcb153
 
-```bash
-# Requires: mtools, ms-sys (github.com/pbatard/ms-sys)
-IMG=attic/PCBBLDBT.IMG
-BLD=dosbox-x/pcbirc/BUILDROOT
+--- toolkit + SDK ---
+toolkit/       toolkit source per branch (pwa153, pwa154, delta154, irc1541)
+OUT/           build outputs per version (pwa153, delta154, irc1541)
+  lib/pwa153/  the SDK library matrix (PCBKBC built; PCBKIT built; PCBKMS pending)
+  support/     shared PCBoard runtime files (non-version-specific)
+MAIN/          project model + build system
+  DELTA-MODEL.md   the 4-version model
+  build/           scripts, manifests, backups, SDK build status
+                   (moved here from the repo root)
 
-mformat -C -T 196560 -h 16 -s 63 -H 0 -i $IMG ::
-mcopy -i $IMG $BLD/KERNEL.SYS ::/          # first
-mcopy -i $IMG $BLD/COMMAND.COM ::/         # second
-# ... then the rest of BUILDROOT (see make-bootable-img.md)
-ms-sys -f -p -H 16 --fat16free $IMG
-python3 -c "open('$IMG','r+b').write(bytes([0x80]))"  # patch BPB byte 36
+--- compilers (build tools) ---
+devtools/MSC70BT.ZIP    Microsoft C 7.0 (retail) + OS/2 add-on - extract to
+                        C:\MSC70 to build PCBKMS (not shipped unpacked)
+devtools/PCB153BT.ZIP   Borland C++ 3.1 standalone build tools (for PCBKBC)
+devtools/TC201BT.ZIP    Turbo C 2.01 standalone build tools (for PCBKIT)
+DOSBOXX.ZIP             all-in-one: compilers + dosbox-x + BUILD scripts
+devtools/               raw compiler distributions + COMPILERS.md catalog
+
+--- other ---
+OS2TK/         OS/2 toolkit
+drivers/       SIO serial + netfosdl FOSSIL (GPLv3)
+docs/          shared DOCDEV manuals (MSGS.TXT, HEADERS.TXT, etc)
+pcbcbase/      third-party CODEBASE (LGPL)
+reference/     archives (excluded from release)
+todo/          docs to review and merge
+normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 ```
 
-The ordering matters: `KERNEL.SYS` must be the first file in root for
-MS-DOS boot loader compatibility. See `MAIN/build/scripts/make-bootable-img.md`
-for the complete recipe with all subdirectories, verification steps,
-and three repair paths if the boot sector ever gets damaged.
+## Build Status
+
+### SDK library matrix (Clark's toolkit: 3 compilers x 4 memory models = 12 libs)
+
+| Family | Compiler | Status |
+|---|---|---|
+| PCBKBC | Borland C++ 3.1 | BUILT — 4 models (S/C/M/L), 152 modules each. `toolkit/pwa153/bc31/lib/` |
+| PCBKIT | Turbo C 2.01 | BUILT — 4 monolithic libs (S/C/M/L, 119 modules each) + 10 split category libs. `out/pwa153/sdk/tc201/lib/` |
+| PCBKMS | Microsoft C 7.0 | NOT BUILT — compiler in hand (DOS + OS/2); cl syntax rewrite needed |
+
+The SDK matrix lives in toolkit/pwa153/ (compiler-first layout:
+`bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its
+root, an `OBJ/` tree per memory model, `bin/` for compiled utilities,
+and `loose-obj/`). Details in MAIN/build/SDK-BUILD-STATUS.md and
+devtools/COMPILERS.md. Build scripts: MAIN/build/scripts (entry
+point: `BUILD.BAT`; run `BUILD help` for targets).
+
+The golden build image `PCBBLDBT.IMG` (bootable FreeDOS 1.3 with
+CWSDPMI + all three compilers + sources + build scripts) is the
+working environment for completing the 12-lib matrix and future
+15.22 / ow2irc integrations. See `MAIN/build/PCBBLDBT-ROADMAP.md`
+for milestone plan.
+
+
+| Metric | Count |
+|---|---|
+| Programs | 36 (28 Clark + 8 new tools) |
+| Clark binaries (Watcom DOS4G) | 28 (16 main + 12 Phase 0 utilities) |
+| New tools | 8 (pcbbinkp, pcbdraw, pcbpscan, pcbfido, pcbis, QFront, pcbfoss, pcbiso) |
+| PPE collection | 5,703 archives (incl. Roy/SAC donation) |
+
+### OS/2 Build (OpenWatcom 2.0, pwa153)
+
+| Output | Location | Status |
+|---|---|---|
+| Category libraries (10) | `toolkit/pwa153/ow2/lib/` | BUILT — 254/277 modules compile; 12 libraries archived |
+| FIDOUTIL2.EXE | `OUT/pwa153/os2/` | BUILT — 170,039 B, LX OS/2 2.x, zero undefined references |
+| VMDATA_L.LIB | `toolkit/pwa153/bc31/lib/` | BUILT — 10th category library, makefile-driven |
+
+### 15.4 Delta Binaries — Main (OpenWatcom 2.0)
+
+> These `_W`-suffixed EXEs are the crew's **15.4 Delta** rebuild,
+> compiled with **OpenWatcom** (pcb154/). They are NOT Clark's binaries.
+>
+> Clark built 15.4 with **Borland C++ 3.1**. His original 1996 binaries
+> (Copyright 1996 Clark Development, report v15.4) are preserved as the
+> reference at `OUT/pwa153/upd154/clark-original/`. The 15.4 PWA source
+> rebuild (also Borland) targets `OUT/pwa153/upd154/`.
+
+| Binary | Size | Description |
+|---|---|---|
+| PCBOARD_W.EXE | 1.3MB | Main BBS engine |
+| LOCAL_W.EXE | 1.3MB | Local login mode |
+| PPLC_W.EXE | 1.3MB | PPL 3.40 compiler |
+| PCBSETUP_W.EXE | 424KB | Setup utility |
+| PCBSM_W.EXE | 221KB | System Manager |
+| UUIN/UUOUT/UUUTIL/UUXFER_W | 1.4MB each | UUCP suite |
+| MKPCBTXT_W.EXE | 86KB | Text file builder |
+| PCBTEXT_W.EXE | 39KB | Text file editor |
+| MAKEIDX_W.EXE | 37KB | Index builder |
+| USERNET_W.EXE | 28KB | User network flags |
+| MAKEHELP_W.EXE | 25KB | Help file builder |
+| PCBCP_W.EXE | 77KB | OS/2 PM control panel |
+| PCBIS_W.EXE | 48KB | Config TUI |
+
+### Clark Utilities — Phase 0 (hexadecimal + sysop/0)
+
+All 12 Clark utilities that shipped with PCBoard, ported to Watcom DOS4G:
+
+| Binary | Size | Description |
+|---|---|---|
+| PCBSTATS_W.EXE | 31K | Statistics generator |
+| PCBPACK_W.EXE | 84K | Message base packer |
+| MSETUP_W.EXE | 108K | Modem database editor |
+| PCBMODEM_W.EXE | 528K | Modem config utility |
+| PCBEDIT_W.EXE | 133K | Text/config editor |
+| PCBMONI_W.EXE | 54K | Node monitor |
+| PCBDIAG_W.EXE | 552K | Diagnostics |
+| PCBFILER_W.EXE | 215K | File management |
+| PCBNLC_W.EXE | 77K | FidoNet nodelist compiler |
+| OFFLINE_W.EXE | 26K | Offline flags |
+| WAITBU_W.EXE | 25K | Wait for backup |
+| PCBTITLE_W.EXE | 15K | OS/2 console title |
+
+### New Tools (GPLv3)
+
+| Tool | Lines | Description |
+|---|---|---|
+| pcbbinkp | 2,008 | BinkP/1.1 FidoNet mailer |
+| pcbdraw | 1,826 | ANSI art viewer/editor |
+| pcbpscan | 770 | Upload file scanner |
+| pcbfido | 778 | FidoNet console (15.41) |
+| pcbiso | 969 | ISO/CD-ROM file area indexer (15.4+) |
+| PACKFIDO | 243 | Fido config compactor — reconstructed from Clark's binary |
+| FOSSIL.C | 767 | Toolkit FOSSIL driver — reconstructed, 79/79 exports match Clark |
+| pcbis.exe | 5,710 | Internet services daemon (18 Pascal units) |
+
+## pcbis — PCBoard Internet Services
+
+Disk 4 of the distribution. Multi-protocol daemon bridging PCBoard
+to the internet:
+
+- **Telnet** (2323) — FOSSIL bridge, writes PCBOARD.SYS/CALLERS
+- **BinkP** (24554) — FidoNet mailer, QFront integration
+- **FTP** (21) — PCBoard file areas with security levels
+- **HTTP** (8080) — status page, callers, who's online
+- **SMTP** — outbound validation emails
+- **NNTP** — news↔PCBoard conference gateway
+- **QWK** — offline mail networking
+- **Events** — timed batch execution
+
+Built with fpc264irc (FPC 2.6.4 fork). Source: `pcbis/src/`
+
+## Drivers
+
+| Driver | Lead | Description |
+|---|---|---|
+| SIO v1/2K | evga | OS/2 serial I/O, 26 bugs fixed, clean-room |
+| FOSSIL | sysop/0 + kiddo | Cross-platform FOSSIL socket layer |
+
+## Libraries Written for Phase 0
+
+| Library | Author | Lines | Purpose |
+|---|---|---|---|
+| VMAVL | sysop/0 | 324 | AVL tree for VMDataSet (clean room, studied libavl) |
+| VMData | hexadecimal | 204 | Virtual memory dataset (v0.036) |
+| d4all.h | sysop/0 | 121 | CodeBase type shim for PCBNLC |
+| conio_compat | sysop/0 | 108 | Borland conio via BIOS INT 10h |
+
+## Documentation
+
+| Document | Description |
+|---|---|
+| docs/PHASE0_MISSING_UTILS.md | Phase 0 status — all 12 utilities |
+| docs/FEATURE_MATRIX.md | Full feature comparison 15.3→15.4→15.41 |
+| docs/PCB1541_DRAFT.md | 15.41 specification (23 sections) |
+| docs/FIDONET.md | FidoNet sysop guide |
+| docs/WHATSNEW.md | Changelog |
+| docs/REFERENCE_CATALOG.md | Reference materials catalog |
+| docs/hexadecimal-phase-update.md | Phase 1 roadmap from sysop/0 |
+
+## The Crew
+
+| Handle | Role |
+|---|---|
+| hexadecimal | PCBoard 15.4 port, Phase 0 utilities, WATCOMPAT.H |
+| verta1878 | Project lead, netmodem2irc, OpenOLMS |
+| wrench | FOSSIL driver, netmodem2irc engine, pcbmailer |
+| sysop/0 | fpc264irc, openwatcomirc, pcbis, VMAVL, tools |
+| kiddo | Protocols, serial IRQ, RIP OOP engine |
+| evga | SIO driver, Mystic monitor, RIPView engine |
+| byte | Program discovery |
+| dotmatrix | Documentation sourcing |
+| bob | Compiler engineer (wcc64 backend, Glide builds) |
+
+## Acknowledgments
+
+- **Corey Blake** — Source license purchase
+- **PWA** — 15.3 source archive preservation
+- **Roy/SAC (Carsten)** — Physical PCBoard package donation, 4,548 PPE archives,
+  box photos. License transferred via POB (German distributor), upgraded 15.21→15.22.
+- **mpoli.fi** — BBS software archive hosting
+- **CodeBase-for-DBF** — Sequiter Software, LGPL v3.0
+  (github.com/MPSystemsServices/CodeBase-for-DBF)
+- **libavl** — Buselli/Dankers, LGPL (algorithmic reference for VMAVL)
+
+## License
+
+Our additions: GPLv3
+Clark Development source: proprietary (licensed)
+CodeBase library: LGPL v3.0
+SIO OS/2 driver: GPLv3 (evga, clean-room)
+
+## Links
+
+- GitHub: https://github.com/verta1878/pcbrevival
+- FPC 2.6.4irc: https://github.com/verta1878/fpc264irc
+- Mystic BBS fork: https://github.com/verta1878/mystic-bbs-irc
+
+## Project history
+
+Full chronological work log lives in [`HISTORY.md`](HISTORY.md):
+project milestones v0.1 through v1.0 baseline (Jul–Aug 2026), followed
+by the installer arc (install v1.5 → install v1.7.2, Sep 2026).
+
+Subsystem-specific work logs live inside their trees — see
+`pcb1541/install/dist/target/README.md` for the `.RED` archive /
+installer arc in full detail.
+
+The version numbering across the repo isn't uniform: project milestones,
+install-subsystem milestones, and pcbdcom-subsystem milestones each use
+their own v-numbers. `HISTORY.md` opens with a legend making this
+explicit.
+
+**Pattern**: consolidated work log in the tree (survives releases),
+per-release notes only describe the current zip's delta, tree work
+log updated in the same commit as the code change.
+

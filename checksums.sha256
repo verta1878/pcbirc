@@ -1,5 +1,5 @@
 # SHA-256 checksums for PCBoard 15.3 PWA v0.3.2+ built binaries
-# Generated: 2026-09-28
+# Generated: 2026-09-28, dosboxx updated 2026-11-02
 037bf10f50498b9f466f3b5000df8293e69b0a287094a2b171a837b71112c843  out/pwa153/pcboard.exe
 037bf10f50498b9f466f3b5000df8293e69b0a287094a2b171a837b71112c843  out/pwa153/pcboardm.exe
 24017d9ad52f6f0ab81d0efcb37ee14bd8b342f6d90fc4f514329dc19db271f8  out/pwa153/pplc.exe
@@ -12,6 +12,6 @@ fc41ae6959ab62c1b792d7b62115071870c9aa8fb62b6abb145ca4508b4fa4e2  out/pwa153/uux
 9ec9ce163b9827de3a10e29604f697604375663275303df802d2ad13353bec2f  out/pwa153/sdk/tc201/pcbkitm.lib
 fea42fd312389728b5dc9fa0c9aac52381fbb2c5a9e1317650d4f7775a3e4f29  out/pwa153/sdk/tc201/pcbkitc.lib
 dd80a26ad4a4e3d8480d83be4c883a951b0cd2c3545f75ad58edfc7a3604435f  out/pwa153/sdk/tc201/pcbkitl.lib
-# dosboxx split archive
-be0f9ea42b4d110be361a57963dfc4e26fb4e079aae1c5aede9de18d61aa67d6  dosboxx.z01
-052b33ea3ae31fb0e635eb30d7c6d92d447530ae49cae9463dbd0308762927a5  dosboxx.zip
+# dosboxx split archive (rebuilt 2026-10-30, 2-part: z01 29MB + zip 20MB)
+8c6a5cecd767a54553bf96583a2ceddc8461bbd453d289f5edfb14e2aa28107d  dosboxx.z01
+cf75c08b86bf26500cfd7eafc75eeaf5fe353b4c9cc996e28d62415a9b1103d8  dosboxx.zip

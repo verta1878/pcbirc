@@ -12,7 +12,7 @@ ROOT = \OUT means <repo-root>\OUT.  The repo root directory can be
 named anything.  Output goes to OUT\<branch>\ (e.g. OUT\pwa153\,
 OUT\pwa153\os2\).
 
-OPEN BLOCKERS (carried from entries 1-41):
+OPEN BLOCKERS (carried from entries 1-41, updated 2026-11-02):
   - CodeBase: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
     Must compile from pcbcbase/CODEBASE/SOURCE/.
     Without them: PCBOARD.EXE has no dBASE, PCBOARD2.EXE cannot link.
@@ -20,8 +20,10 @@ OPEN BLOCKERS (carried from entries 1-41):
   - pcbkit_l.lib TC 2.01 build: DONE — 4 monolithic libs committed
     (entry 48).  PPLC linkage not yet tested.
   - TKLIB: 10 category libs built for BC31 LARGE only.  TC201 leg
-    partially done (monolithic PCBKIT libs, not split categories).
-    MSC70 leg not done.  CVER steers paths not the compiler;
+    DONE — monolithic PCBKIT libs + 10 split categories (entry 50).
+    MSC70 leg: compilation DONE — 476/476 OBJs (119 × 4 models,
+    entry 54).  MKLIB assembly into PCBKMS{S,M,C,L}.LIB pending.
+    CVER steers paths not the compiler;
     -ml baked into TK.CFG.  BLDTK.BAT drives all 10.
     BLDTKOS2.CMD = OW2 / OS/2 / delta154 (one compiler, flat model).
   - SDK paths: PCBKIT/PCBKBC/PCBKMS MAK/CFG need ROOT=\OUT\BRANCH\

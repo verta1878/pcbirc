@@ -1,7 +1,7 @@
 # HISTORY.md — PCBoard 15.4x / pcbirc release history
 
 Version: v0.3.2+  
-Build system: DOSBox-X headless, BC 3.1, TC 2.01, TASM  
+Build system: DOSBox-X headless, BC 3.1, TC 2.01, MSC 7.0, TASM  
 Repo: https://github.com/verta1878/pcbirc
 
 ---
@@ -161,11 +161,106 @@ lowercase, which silently fell through to defaults.
 - 10 tklib.mak: comment examples fixed (lines 14, 15, 19; vmdata 27, 31)
 - bldtks.bat added to repo root (was only inside dosboxx.zip)
 
+### v0.3.2+ (53) — 2026-10-02: PCBKMS MSC 7.0 — small model first pass (hexadecimal)
+
+Microsoft C 7.0 compilation of the 119-module PCBoard toolkit, 12th and
+final leg of the SDK compiler matrix (PCBKIT=TC201, PCBKBC=BC31,
+PCBKMS=MSC70).  CL.EXE hosted under DOSBox-X via HDPMI32 (Route A,
+verified 2026-08-29).
+
+Small model first pass: 100/119 compile clean, 19 PCBoard app module
+failures (expected — app modules need MAIN headers not in SDK scope).
+
+Source adaptations (build-time only, Clark's originals unchanged):
+
+- types.hpp: removed illegal sizeof() in #if preprocessor; added
+  _MSC_VER branch defining cdcSHORT="" cdcLONG=long (16-bit DOS:
+  int=2, long=4); CDCCONST, EXTERN_C, bool/true/false guards
+- asmrules.h: added MSC _M_I86LM/_M_I86CM/_M_I86MM to LDATA/LPROG
+  checks (Borland __LARGE__/__COMPACT__/__MEDIUM__ absent in MSC7;
+  fixed 5 country/misc modules in compact+large)
+- exist.c: added #include <asmrules.h> + Watcom find_t DTA struct
+  for MSC builds (LDATA undefined without it; fixed compact+large)
+- inkey.c: added #include "exec.hpp" for PCB_MAXNODES (fixed all 4
+  models)
+- 9 source files received _MSC_VER guards for Borland pseudo-vars +
+  DTA structs + geninterrupt:
+
+| File | Fix |
+|------|-----|
+| ansi.c | borland.h include guard |
+| conffunc.c | borland.h include guard |
+| zswapvir.c | borland.h include guard |
+| exist.c | DTA struct guard (MSC uses find_t) |
+| julian.c | DTA struct guard |
+| datafil2.c | DTA struct guard |
+| dmath.c | _AX pseudo-register (Borland-only intrinsic) |
+| scrollup.c | _DL pseudo-register |
+| giveup.c | 3 fixes: _AX/geninterrupt, _AL/_BH/geninterrupt, _SI |
+
+Build fixes:
+- bldkms.bat written (72KB generated script, 119 modules × 4 memory
+  models = 452 compile lines + TASM assembly)
+- /DLIB added globally to %CC% — without it pcb.h selects wrong
+  prototypes (void vs int) for getconfrecord/putconfrecord
+- CL.EXE/TASM option prefixes converted / → - (DOSBox-X INT 21h
+  converts / to \ at the filesystem level)
+- -Ic:\pcb153\source\h added to all 452 compile lines
+
+All changes committed to repo: 9 source files + bldkms.bat +
+dosboxx.zip (rebuilt spanned) + sdk-build-status.md.
+
+### v0.3.2+ (54) — 2026-10-30: PCBKMS MSC 7.0 — 476/476 ALL 4 MODELS DONE (hexadecimal)
+
+**SDK compiler matrix: 12/12 legs COMPILATION COMPLETE.**
+
+All 119 toolkit modules × 4 memory models (small/medium/compact/large)
+compile clean under Microsoft C 7.0.  476 OBJs, zero errors.
+
+This is the culmination of the SDK build effort.  Clark's original
+12-library matrix — the complete toolkit compiled with BC++ 3.1, TC 2.01,
+and MSC 7.0, each across small/medium/compact/large memory models —
+required adapting Borland-native source to three different compilers' type
+systems, preprocessors, and calling conventions.  With PCBKMS finishing
+all four models at 119 modules each, the full 12-leg matrix compiles for
+the first time since Clark Development closed.
+
+| Model | Flag | OBJs |
+|-------|------|------|
+| small | -AS | 119 |
+| medium | -AM | 119 |
+| compact | -AC | 119 |
+| large | -AL | 119 |
+
+dosboxx.zip rebuilt as 2-part split (z01 29MB + zip 20MB).  z02 deleted.
+.gitignore updated: toolkit OBJ tracking rules + lowercase path
+equivalents.  hexadecimal-pcbircrepo-memory.zip updated.
+
+**Remaining**: MKLIB → PCBKMS{S,M,C,L}.LIB (assemble OBJs into
+libraries).
+
+### v0.3.2+ (55) — 2026-11-01: pcbfoss placement + repo cleanup (hexadecimal)
+
+pcbfoss Pascal FOSSIL driver source placed at pcb1541/pcbfoss/:
+
+  pcbfoss.pas (13,085B) — main driver, 22/27 FSC-0015 functions
+  pcbfoss_rings.pas (3,385B) — ring buffer implementation
+  PCBFOSS_AUDIT.md (1,037B) — 6/6 audit items FIXED
+
+Source extracted from cyclom-multiOS-source.zip (MEMORY/Claude outputs/).
+
+Stale file cleanup — 3 files copied to attic/:
+- lowercase-repo.log (1.5MB) — one-time case conversion log
+- pcbis-wfc-mockup.html (7.4KB) — stale session artifact
+- pcbfoss-1.0.zip (5.7KB) — was misplaced at repo root
+
 ---
 
 ## Open blockers
 
 - **CodeBase**: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
   Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
-- **PCBKMS**: MSC 7.0 SDK leg — toolchain ready, 119 modules need per-file Borland→MSC7 adaptations
+- **PCBKMS MKLIB**: All 476 OBJs compile clean (119 × 4 models).
+  Remaining: assemble into 4 PCBKMS{S,M,C,L}.LIB using MKLIB,
+  then RSP file conversion for 127-char command-line cleanup.
 - **SDK paths**: MAK/CFG need ROOT=\OUT\BRANCH\ across 4 branches × 3 compilers

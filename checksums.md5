@@ -1,5 +1,5 @@
 # MD5 checksums for PCBoard 15.3 PWA v0.3.2+ built binaries
-# Generated: 2026-09-28
+# Generated: 2026-09-28, dosboxx updated 2026-11-02
 51f23d4835a4620805e299915956b798  out/pwa153/pcboard.exe
 51f23d4835a4620805e299915956b798  out/pwa153/pcboardm.exe
 795632c27d8859c620c67ca8b41b4d29  out/pwa153/pplc.exe
@@ -12,6 +12,6 @@ fbe8ac05cbe3449b38ba0cf2b6d78138  out/pwa153/uuxfer.exe
 cb7cdaf9a811fb32e5b10b8bd1c4ce4a  out/pwa153/sdk/tc201/pcbkitm.lib
 d2986c50527b79636af98d5ace69e649  out/pwa153/sdk/tc201/pcbkitc.lib
 76a52ff1634e4fca00214fac812d0b2d  out/pwa153/sdk/tc201/pcbkitl.lib
-# dosboxx split archive
-d9eb76a53e210274c88f634fa417cbd4  dosboxx.z01
-aa04a4a68ff93a7ed4ca1b00cee06740  dosboxx.zip
+# dosboxx split archive (rebuilt 2026-10-30, 2-part: z01 29MB + zip 20MB)
+5612d13a228a84fc35e63fcff79e1213  dosboxx.z01
+ace5dda43591f09aa729ef45179c13d2  dosboxx.zip

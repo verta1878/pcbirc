@@ -1,0 +1,327 @@
+APPLY.txt — PCBoard 15.4x / pcbirc active changelog
+====================================================
+
+Entries 1-41 (v0.3.2+ through v0.3.3+(40), 2026-09-20 to 2026-09-24)
+migrated to HISTORY.md under "## v0.3.2+ — Build-root, recoveries,
+toolkit, OS/2 push".  Raw detail preserved in git history.
+
+Build order: pcb153 PWA → pwa154 → OS/2 SDK (DOS + OS/2).
+Delta154 waits until those are fully built.
+
+ROOT = \OUT means <repo-root>\OUT.  The repo root directory can be
+named anything.  Output goes to OUT\<branch>\ (e.g. OUT\pwa153\,
+OUT\pwa153\os2\).
+
+OPEN BLOCKERS (carried from entries 1-41):
+  - CodeBase: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
+    Must compile from pcbcbase/CODEBASE/SOURCE/.
+    Without them: PCBOARD.EXE has no dBASE, PCBOARD2.EXE cannot link.
+    Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
+  - pcbkit_l.lib TC 2.01 build: DONE — 4 monolithic libs committed
+    (entry 48).  PPLC linkage not yet tested.
+  - TKLIB: 10 category libs built for BC31 LARGE only.  TC201 leg
+    partially done (monolithic PCBKIT libs, not split categories).
+    MSC70 leg not done.  CVER steers paths not the compiler;
+    -ml baked into TK.CFG.  BLDTK.BAT drives all 10.
+    BLDTKOS2.CMD = OW2 / OS/2 / delta154 (one compiler, flat model).
+  - SDK paths: PCBKIT/PCBKBC/PCBKMS MAK/CFG need ROOT=\OUT\BRANCH\
+    SDK\COMPILER\BIN across 4 branches × 3 compilers.
+
+====================================================
+
+v0.3.2+ (42): wrench doc update — pcbcomm reassembly status
+================================================================
+Date: 2026-09-25
+
+wrench (2026-09-26 dated) delivered 5 documentation files for the
+pcbcomm (renamed from pcbdcom) reassembly project:
+
+  pcb1541/pcbdcom/BUILD-STATUS.md   — v1.2 verification, full piece inventory
+                                      (9 card families, 14+ backends, programs,
+                                      link-time objects, diverged file list)
+  pcb1541/pcbdcom/README.md         — project docs: rename pcbdcom→pcbcomm,
+                                      two-tree architecture, COMM-DRV shim with
+                                      4 open fixes, Delta/OW notes
+  pcb1541/pcbdcom/ATTIC-CLEANUP.BAT — moves superseded int14-r1.c to attic
+  todo/README.md                    — SDK overview, serial API docs, pcbcomm
+                                      doc map
+  todo/SOURCE-RECOVERY.md           — SDK source recovery plan, ground truth
+                                      inventory, naming settled, 13-item finish
+                                      road, COMM-DRV ABI recovered from
+                                      MODEMDRV.C
+
+4 overwrites (appends to existing docs), 1 new file (ATTIC-CLEANUP.BAT).
+Project docs and current status — no code/source files changed.
+
+Nothing deleted.
+
+v0.3.2+ (43): MAKE CLEAN — stale library purge
+================================================================
+Date: 2026-09-25
+
+Ran MAKE CLEAN across the build tree.  Verified no longer linking
+against stale or outdated .LIB files — fresh libs only from this
+point.
+
+Nothing deleted.
+
+v0.3.2+ (44): PCBIC v1.2 OS/2 source confirmed released
+================================================================
+Date: 2026-09-25
+
+PCBIC v1.2 OS/2 source IS in the repo.  Both binaries byte-exact:
+
+  pcb1541/pcbic12/src/os2/pcbic2_code.asm   1.15 MB, 1,090 functions
+  pcb1541/pcbic12/src/os2/pcbic2_data.asm   130 KB, data section
+  pcb1541/pcbic12/src/os2/pcbic2.lnk        wlink script, 110 OS/2 DLL imports
+  pcb1541/pcbic12/src/os2/testic2_code.asm  200 KB, 258 functions
+  pcb1541/pcbic12/src/os2/testic2_data.asm  data section
+  pcb1541/pcbic12/src/os2/testic2.lnk       wlink script
+  pcb1541/pcbic12/src/os2/pcbic2_catalog.txt  function catalog
+  pcb1541/pcbic12/src/os2/lx_structure.txt    LX binary structure
+
+Format: NASM raw db (not C yet).  Builds with NASM + OpenWatcom wlink
+on Linux — no OS/2 VM needed.
+
+Pcbic2.exe imports from 10 OS/2 DLLs: DOSCALLS, so32dll, tcp32dll,
+PMWIN, KBDCALLS, VIOCALLS, NLS, PMSHAPI, SESMGR, QUECALLS.
+
+BC++ 2.0 for OS/2 added to BUILDROOT/BCOS2/ (added 2026-09-24).
+OS/2 Toolkit headers at OS2TK/H/ (332 headers, IBM OS/2 2.1).
+
+Nothing deleted.
+
+v0.3.2+ (45): CodeBase libraries identified as blockers
+================================================================
+Date: 2026-09-25
+
+c4base.lib (DOS/BC31) and b4.lib (OS/2) are both missing from the
+repo.  Must be compiled from pcbcbase/CODEBASE/SOURCE/.
+
+Without them:
+  - DOS PCBOARD.EXE has no dBASE support
+  - OS/2 PCBOARD2.EXE cannot link
+
+Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
+(2.8 GB, URL link only — not cloned into repo).
+
+Nothing deleted.
+
+v0.3.2+ (46): UUCP 4/4 targets built — BLDDOS step 8b complete
+================================================================
+Date: 2026-09-27
+By: hexadecimal
+
+All 4 UUCP targets compiled and linked under DOSBox-X headless
+(BC 3.1, large model):
+
+  OUT\PWA153\UUUTIL.EXE    86,572 bytes   5 source OBJs + 12 NO* stubs
+  OUT\PWA153\UUOUT.EXE    131,486 bytes   9 source OBJs + stubs
+  OUT\PWA153\UUIN.EXE     206,648 bytes  16 source OBJs + stubs + VMDATA.LIB
+  OUT\PWA153\UUXFER.EXE   165,320 bytes   6 source OBJs + FOSSIL.OBJ + stubs
+
+Header fixes (3 files modified):
+
+  TOOLKIT\PWA153\H\VMDATA.H
+    - VMDebugOn signature: void → int flags
+    - Added VM_MURPHY(1), VM_SANITY_CHECK(2), VM_INFO(4) defines
+    - Guarded with #ifndef to avoid clash with vmavl.h
+
+  TOOLKIT\PWA153\H\pcbtools.h
+    - Added __PCBMSG_ENUMS_DEFINED__ guard around openmsgtype/exthdrtype
+      enum block (~line 1163) to prevent redeclaration when MESSAGES.H
+      is also included
+
+  PCB153\SOURCE\H\MESSAGES.H
+    - Added __PCBTOOLS_H skip-all guard: when pcbtools.h was already
+      included, MESSAGES.H body is entirely skipped (pcbtools.h is a
+      superset)
+    - Added __PCBMSG_ENUMS_DEFINED__ guard around its own enum block
+    - Both guards needed because include order varies across targets
+
+New build files (hexadecimal-created, BC31 subdirs):
+
+  PCB153\SOURCE\UUCP\UUUTIL\BC31\  UUT.CFG, UUT2.CFG, UUUTIL.CFG, UUUTIL.LNK
+  PCB153\SOURCE\UUCP\UUOUT\BC31\   UUOUT.CFG, UUOUT.LNK
+  PCB153\SOURCE\UUCP\UUIN\BC31\    UUIN.CFG, UUIN.LNK
+  PCB153\SOURCE\UUCP\UUXFER\BC31\  UUXFER.CFG, UUXFER.LNK
+
+  All CFG files carry -DNOCURSOR (skips screen.h gotoxy/wherex/wherey
+  declarations that conflict with conio.h).
+
+STBSTUB (temporary combined shim):
+
+  PCB153\SOURCE\UUCP\STBSTUB.CPP        hexadecimal's combined shim
+  PCB153\SOURCE\UUCP\BC31\STBSTUB.OBJ   659 bytes
+  STBSTUB-REBUILD.md                     rebuild notes for sysop0
+
+  Clark's MAK files reference 4 individual OBJs (stbdsgtn, stbdsptn,
+  stbsgetn, stbsputn) — source never shipped.  STBSTUB.OBJ provides
+  do_sputn + do_sgetn in one file as a workaround.  These cannot be
+  stubs — sysop0 needs to write the real BC 3.1 streambuf
+  implementations as 4 individual source files.
+
+FOSSIL.OBJ placed:
+
+  OUT\PWA153\SDK\BC31\OBJ\TOOLKIT\LARGE\FOSSIL.OBJ   9,157 bytes
+  (source already in repo: toolkit\pwa153\SOURCE\TOOLKIT\FOSSIL.C)
+
+Compiled OBJs (36 total, 4 target BC31 dirs):
+
+  UUUTIL\BC31\  5 OBJs (UUUTIL, FIDOCFG, CI_OTHER, CI_BUILD, UUCP)
+  UUOUT\BC31\   9 OBJs (UUOUT, UUCP, PCBMSGS, MSGBASE, UMWF,
+                         EXPRTMSG, UUENCODE, UUSHWERR, DRESWORD)
+  UUIN\BC31\   16 OBJs (UUIN, PCBMSG, MSGBASE, UMWF, UUCP, EXPRTMSG,
+                         UUDECODE, UUSHWERR, VMDATA, DECODE64, DECODEQ,
+                         DECODEM, REJECTS, VMDCLASS, DRESWORD, CI_OTHER)
+  UUXFER\BC31\  6 OBJs (UUXFER, UUCP, GPROT, COMMBUF, UUSHWERR,
+                         DRESWORD)
+
+Build batch files at BUILDROOT root:
+
+  BLDUUCP.BAT, BLDUUT1.BAT, BLDUUIN1.BAT
+  LNKUUT.BAT, LNKUUOUT.BAT, LNKUUIN.BAT, LNKUXFR.BAT
+
+BLDDOS step 8b status — all 12 DOS targets accounted for:
+
+  Built from source: PCBOARD, PPLC, USERNET, UUUTIL, UUOUT, UUIN, UUXFER
+  Pre-built in zip:  FIDOUTIL, MAKEIDX, MKPCBTXT, PCBSETUP, PCBSM, COMMDRV
+
+Nothing deleted.
+
+v0.3.2+ (47): STBSTUB replaced — 4 real streambuf implementations
+================================================================
+Date: 2026-09-27
+By: sysop0 (source), hexadecimal (compile + link)
+
+sysop0 delivered 4 individual streambuf source files reconstructed from
+BC 3.1 iostream.h — real out-of-line implementations, not stubs.
+Compiled all 4 under DOSBox-X headless (BC 3.1, large model).
+Relinked UUIN, UUOUT, UUXFER with 4 individual OBJs matching Clark's
+MAK layout.  UUUTIL unchanged (does not link stb files).
+
+Source files (sysop0, GPLv3 clean-room from BC 3.1 iostream.h):
+
+  PCB153\SOURCE\UUCP\stbdsgtn.cpp   do_sgetn virtual — sbumpc() loop
+  PCB153\SOURCE\UUCP\stbdsptn.cpp   do_sputn virtual — sputc() loop
+  PCB153\SOURCE\UUCP\stbsgetn.cpp   sgetn — memcpy fast-path + do_sgetn fallback
+  PCB153\SOURCE\UUCP\stbsputn.cpp   sputn — memcpy fast-path + do_sputn fallback
+  PCB153\SOURCE\UUCP\STBSTUB-README.md   full documentation
+
+Compiled OBJs:
+
+  PCB153\SOURCE\UUCP\BC31\STBDSGTN.OBJ   564 bytes
+  PCB153\SOURCE\UUCP\BC31\STBDSPTN.OBJ   566 bytes
+  PCB153\SOURCE\UUCP\BC31\STBSGETN.OBJ   610 bytes
+  PCB153\SOURCE\UUCP\BC31\STBSPUTN.OBJ   611 bytes
+
+Relinked EXEs (4 individual OBJs, matching Clark's MAK):
+
+  OUT\PWA153\UUIN.EXE     274,437 bytes  (was 206,648 with combined shim)
+  OUT\PWA153\UUOUT.EXE    196,499 bytes  (was 131,486)
+  OUT\PWA153\UUXFER.EXE   247,755 bytes  (was 165,320)
+  OUT\PWA153\UUUTIL.EXE    86,572 bytes  (unchanged — no stb linkage)
+
+Size increase expected: sgetn/sputn reference memcpy + buffer accessors
+that the old combined shim did not have.  Clark's original builds would
+have been the same size.
+
+LNK files updated (STBSTUB.OBJ → 4 individual OBJs):
+
+  PCB153\SOURCE\UUCP\UUIN\BC31\UUIN.LNK
+  PCB153\SOURCE\UUCP\UUOUT\BC31\UUOUT.LNK
+  PCB153\SOURCE\UUCP\UUXFER\BC31\UUXFER.LNK
+
+Build files:
+
+  PCB153\SOURCE\UUCP\STB.CFG    minimal CFG (-ml -K -P -3 -c)
+  BLDSTB.BAT                     compile batch for all 4
+
+Retired to attic:
+
+  PCB153\SOURCE\UUCP\STBSTUB.CPP   hexadecimal's combined shim (superseded)
+  PCB153\SOURCE\UUCP\BC31\STBSTUB.OBJ   659 bytes (superseded)
+  STBSTUB-REBUILD.md               rebuild notes (superseded by STBSTUB-README.md)
+
+STBSTUB blocker is RESOLVED.
+
+Nothing deleted.
+
+v0.3.2+ (48): PCBKit TC 2.01 — 4 monolithic toolkit libraries
+================================================================
+Date: 2026-09-28
+By: hexadecimal
+
+Complete PWA 15.3 toolkit compiled with Turbo C 2.01 (TCC.EXE),
+all four memory models.  119 modules per model, 476 OBJs total.
+Built under DOSBox-X headless using BLDKIT.BAT + MKLIB.BAT.
+
+  out\pwa153\sdk\tc201\PCBKITS.LIB   151,552 bytes   small model
+  out\pwa153\sdk\tc201\PCBKITM.LIB   156,672 bytes   medium model
+  out\pwa153\sdk\tc201\PCBKITC.LIB   163,840 bytes   compact model
+  out\pwa153\sdk\tc201\PCBKITL.LIB   168,960 bytes   large model
+  out\pwa153\sdk\tc201\readme.md     build documentation
+
+Build scripts (in BUILDROOT, inside dosboxx.zip):
+
+  BUILD\SCRIPTS\BLDKIT.BAT   1059 lines, compiles 119 modules × 4 models
+  BUILD\SCRIPTS\MKLIB.BAT    assembles OBJs into 4 libs using TLIB (BC31)
+  BUILD\SCRIPTS\tc*.rsp      16 response files (2 chunks × 4 models × 2 sets)
+
+Source directories (87 modules across 6 categories):
+
+  PCB153\SOURCE\MAIN\         22 modules
+  PCB153\SOURCE\DISPLAY\      12 modules
+  TOOLKIT\PWA153\SOURCE\COUNTRY\   13 modules
+  TOOLKIT\PWA153\SOURCE\TOOLKIT\   40 modules
+  TOOLKIT\PWA153\SOURCE\COMM\       7 modules
+  TOOLKIT\PWA153\SOURCE\MISC\      25 modules
+
+SUBST workaround required — TCC 2.01 does not read turboc.cfg
+under DOSBox-X.  Include paths passed on the command line using
+SUBST drive letters (D:, E:, F:) to stay under DOS 127-char limit.
+Fix investigation in progress.
+
+dosboxx.zip updated with build output (OBJs + libs).
+
+Nothing deleted.
+
+v0.3.2+ (49): case fix — lowercase entire dosboxx zip + build scripts
+================================================================
+Date: 2026-09-28
+By: hexadecimal
+
+Lowercased all 3,383 files and 186 directories in the dosboxx
+BUILDROOT tree.  Updated all path references inside build scripts
+to match (C:\TC201\ → C:\tc201\, C:\BC31\ → C:\bc31\, etc. across
+10 directory roots + all subdirectory components).
+
+Directories lowercased:
+
+  TC201\   → tc201\       BC31\     → bc31\       MSC70\  → msc70\
+  TOOLKIT\ → toolkit\     PCB153\   → pcb153\     BUILD\  → build\
+  SCRIPTS\ → scripts\     FDOS\     → fdos\       HX\     → hx\
+  TMP\     → tmp\         OUT\      → out\        WATCOM\ → watcom\
+  OW2IRC\  → ow2irc\      PCBDCOM\  → pcbdcom\
+
+Build script path references updated in 16 dosboxx text files +
+38 repo build scripts (MAIN/build/scripts/*.BAT, *.RSP, *.CFG).
+All subdirectory components also lowercased (\BIN\, \INCLUDE\,
+\SOURCE\, \OBJ\, \PWA153\, \SDK\, etc.).
+
+Share repo fixes:
+
+  out/pwa153/sdk/tc201/PCBKITC.LIB → pcbkitc.lib
+  out/pwa153/sdk/tc201/PCBKITL.LIB → pcbkitl.lib
+  out/pwa153/sdk/tc201/PCBKITM.LIB → pcbkitm.lib
+  out/pwa153/sdk/tc201/PCBKITS.LIB → pcbkits.lib
+  docs/sysop15/!PENTIUM.NFO        → !pentium.nfo
+
+LIB binary content unchanged — SHA-256 checksums identical.
+
+dosboxx.zip rebuilt as split archive (dosboxx.z01 + dosboxx.zip).
+
+  dosboxx.z01  SHA-256: be0f9ea42b4d110be361a57963dfc4e26fb4e079aae1c5aede9de18d61aa67d6
+  dosboxx.zip  SHA-256: 052b33ea3ae31fb0e635eb30d7c6d92d447530ae49cae9463dbd0308762927a5
+
+Nothing deleted.

@@ -35,7 +35,7 @@ patches/       15.4-pwa.patch = the 15.3->15.4 PWA delta over pcb153
 --- toolkit + SDK ---
 toolkit/       toolkit source per branch (pwa153, pwa154, delta154, irc1541)
 OUT/           build outputs per version (pwa153, delta154, irc1541)
-  lib/pwa153/  the SDK library matrix (PCBKBC built; PCBKIT built; PCBKMS pending)
+  lib/pwa153/  the SDK library matrix (PCBKBC built; PCBKIT built; PCBKMS built)
   support/     shared PCBoard runtime files (non-version-specific)
 MAIN/          project model + build system
   DELTA-MODEL.md   the 4-version model
@@ -68,7 +68,7 @@ normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 |---|---|---|
 | PCBKBC | Borland C++ 3.1 | BUILT — 4 models (S/C/M/L), 152 modules each. `toolkit/pwa153/bc31/lib/` |
 | PCBKIT | Turbo C 2.01 | BUILT — 4 monolithic libs (S/C/M/L, 119 modules each) + 10 split category libs. `out/pwa153/sdk/tc201/lib/` |
-| PCBKMS | Microsoft C 7.0 | NOT BUILT — compiler in hand (DOS + OS/2); cl syntax rewrite needed |
+| PCBKMS | Microsoft C 7.0 | BUILT — 4 models (S/C/M/L), 476/476 OBJs compiled (119 × 4). MKLIB assembly into .LIB files pending. `out/pwa153/sdk/msc70/` |
 
 The SDK matrix lives in toolkit/pwa153/ (compiler-first layout:
 `bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its
@@ -257,4 +257,3 @@ explicit.
 **Pattern**: consolidated work log in the tree (survives releases),
 per-release notes only describe the current zip's delta, tree work
 log updated in the same commit as the code change.
-
