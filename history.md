@@ -254,12 +254,41 @@ Stale file cleanup — 3 files copied to attic/:
 - pcbis-wfc-mockup.html (7.4KB) — stale session artifact
 - pcbfoss-1.0.zip (5.7KB) — was misplaced at repo root
 
+### v0.3.2+ (56) — 2026-11-04: CodeBase c4base.lib rebuilt with authentic BCC (hexadecimal)
+
+c4base.lib rebuilt using authentic BCC.EXE (BC 3.1) under DOSBox-X
+headless, replacing the previous OpenWatcom WCC cross-compile.  99
+CodeBase IV source files compiled and assembled with TLIB.
+
+  pcbcbase/codebase/bor31/C4BASE.LIB   330,240 bytes   BCC large model
+
+Build method: BCC.EXE (NE/BOSS format, DPMI16BI.OVL DPMI server)
+runs natively under DOSBox-X with VCPI mode switching.  Earlier INT 6
+crashes were caused by HDPMI32.EXE conflict, not BCC/BOSS
+incompatibility — removing HDPMI32 from autoexec resolved it.
+
+DOSBox-X config: machine=svga_s3, memsize=64, cycles=max,
+zero unused int 68h=true.  No HDPMI32 in autoexec.
+
+Build constraints discovered:
+- `set PATH=...` in batch files does not work under DOSBox-X — full
+  paths required (c:\bc31\bin\bcc)
+- Batch files >~15 lines silently fail — split into 10-file batches
+- TLIB one-OBJ-per-call (DOS 127-char command line limit)
+- printf corrupts backslashes — use heredocs for batch generation
+
+b4.lib (OS/2 target) kept as OpenWatcom build — BCC cannot compile
+with -DS4OS2 because d4all.h pulls os2.h headers that BC 3.1 does
+not have.
+
+  pcbcbase/codebase/bor31/b4.lib   359,424 bytes   OW large model
+
+**CodeBase blocker RESOLVED** — both libraries built and committed.
+
 ---
 
 ## Open blockers
 
-- **CodeBase**: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
-  Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
 - **PCBKMS MKLIB**: All 476 OBJs compile clean (119 × 4 models).
   Remaining: assemble into 4 PCBKMS{S,M,C,L}.LIB using MKLIB,
   then RSP file conversion for 127-char command-line cleanup.

@@ -190,16 +190,15 @@ Compiler families:
 - PCBKBC (Borland C++ 3.1) — **BUILT 2026-09-17**, all 4 models (see above).
   DOSBox-X** with `[dos] zero unused int 68h=true` + `HDPMI16 -r`
   (see `todo/dosboxx-dpmi-failures.md` Failure #5).
-- PCBKIT (Turbo C 2.01) — NOT BUILT. Real-mode, no DPMI
-  needed.
-- PCBKMS (Microsoft C 7.0) — **SMALL MODEL BUILD DONE 2026-10-02**:
-  100/119 modules compile clean under MSC 7.0 CL (DOSBox-X + HDPMI16).
-  19 failures are all PCBoard application modules (need project.h /
-  pcboard.h — not SDK code). 9 source files received `_MSC_VER`
-  guards for Borland pseudo-variables (`_AX`, `_DL`, `_SI`, `_BH`)
-  and `geninterrupt()`. `/DLIB` added globally to BLDKMS.BAT.
-  Remaining: medium/compact/large model builds, then MKLIB → 
-  PCBKMS{S,M,C,L}.LIB.
+- PCBKIT (Turbo C 2.01) — **BUILT 2026-09-20**, all 4 models.
+  Real-mode, no DPMI needed. 4 monolithic + 10 category libs.
+- PCBKMS (Microsoft C 7.0) — **ALL 4 MODELS COMPILED 2026-10-02**:
+  476/476 OBJs (119 modules × 4 models, entry 54). CL.EXE hosted via
+  HDPMI32 under DOSBox-X. 19 PCBoard app modules excluded (need
+  project.h / pcboard.h — not SDK code). 9 source files received
+  `_MSC_VER` guards for Borland pseudo-variables (`_AX`, `_DL`,
+  `_SI`, `_BH`) and `geninterrupt()`. `/DLIB` added globally to
+  BLDKMS.BAT. Remaining: MKLIB → PCBKMS{S,M,C,L}.LIB.
 
 ### pwa154 — pending
 ### delta154 — pending (needs 22 Watcom fixes ported from irc1541 first)
@@ -400,13 +399,49 @@ CALLDOOR, CONVMAIN, DOSENT, FAXDRV, FIDO, GETPCB, MDMIO, MODEM,
 PCBINT, PCBOARD, PCBPROT, PCEXIT, PCMAIN, PCSIO, PROTOCOL, RECYCLE,
 REMOTE, USERSYS, VIRTUAL
 
-### Next steps for PCBKMS
+### PCBKMS compilation status — ALL 4 MODELS DONE
 
-1. Build medium, compact, large models (flag swap in BLDKMS.BAT)
-2. Run MKLIB.BAT with MS??.RSP → assemble PCBKMS{S,M,C,L}.LIB
-3. Verify key door functions are present (same check as PCBKBC/PCBKIT)
+All 476 OBJs compiled (119 modules × 4 models). CL.EXE hosted via
+HDPMI32 under DOSBox-X (machine=svga_s3, memsize=64, cycles=max).
+Remaining: MKLIB → PCBKMS{S,M,C,L}.LIB assembly.
 
-SDK matrix: 8 of 12 complete (PCBKBC 4/4 ✅, PCBKIT 4/4 ✅, PCBKMS 1/4).
+SDK compilation matrix: **12 of 12 complete** (PCBKBC 4/4 ✅, PCBKIT 4/4 ✅, PCBKMS 4/4 ✅).
+MKLIB pending for PCBKMS only (PCBKBC and PCBKIT libs already assembled).
+
+## CodeBase Libraries — c4base.lib / b4.lib (2026-11-04)
+
+CodeBase IV database engine libraries, required by PCBOARD.EXE for dBASE
+file access. Two libraries, two compilers:
+
+| Library | Compiler | Model | Size | Modules | Target |
+|---|---|---|---:|---:|---|
+| C4BASE.LIB | BCC (BC 3.1) | large | 330,240 B | 99 | DOS |
+| b4.lib | Open Watcom | large | 359,424 B | — | OS/2 |
+
+**c4base.lib** was rebuilt with authentic BCC.EXE (NE/BOSS format) under
+DOSBox-X. The build required discovering that BCC's BOSS extender
+conflicts with HDPMI32 — removing HDPMI32 from the autoexec and letting
+DPMI16BI.OVL handle DPMI resolved the INT 6 crashes. Build script:
+`bldcb4.bat`. DOSBox-X config: machine=svga_s3, memsize=64, cycles=max,
+`[dos] zero unused int 68h=true`, NO HDPMI32 in autoexec.
+
+Build constraints discovered:
+- BCC cannot batch-compile more than ~10 .c files per command line
+  (DOS command-line length limit). Solved with bp1–bp10.bat (10 batches
+  of ~10 files each).
+- TLIB cannot add more than ~10 OBJs per invocation. Solved with
+  ta1–ta10.bat (10 batches), then consolidated to one-OBJ-per-call in
+  bldcb4.bat for reliability.
+- PATH must include `\BC31\BIN` — BCC.EXE locates DPMI16BI.OVL via PATH.
+
+**b4.lib** is kept as an Open Watcom build. BCC cannot compile it because
+the `-DS4OS2` codepath requires `<os2.h>` headers that BC 3.1 does not
+ship. The OW build is the correct approach for the OS/2 target.
+
+Output: `pcbcbase/codebase/bor31/` (both libraries).
+Build scripts: `bldcb4.bat` (monolithic), `bp1-bp10.bat` + `ta1-ta10.bat`
+(batch), `build_c4base.bat` (orchestrator).
+Source: `pcbcbase/codebase/source/` (99 .c files).
 
 ## Build scripts + distribution (2026-08-25)
 
@@ -417,7 +452,7 @@ inside DOSBox and watch each step:
     BLDMENU.BAT  - CHOICE-based menu (pick KBC/KIT/KMS/ALL)
     BLDKBC.BAT   - PCBKBC (Borland C++ 3.1), 119 mods x 4 models
     BLDKIT.BAT   - PCBKIT (Turbo C 2.01), 119 mods x 4 models
-    BLDKMS.BAT   - PCBKMS placeholder (until MSC 7.0 done)
+    BLDKMS.BAT   - PCBKMS (Microsoft C 7.0), 119 mods x 4 models
     MKLIB.BAT    - assembles OBJ -> LIB (BC31 TLIB)
     *.RSP        - TLIB response files (per model, per compiler)
     README.md

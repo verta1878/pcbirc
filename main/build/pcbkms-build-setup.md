@@ -1,8 +1,12 @@
 # PCBKMS Build Setup — MSC 7.0 + DPMI host
 
-Turnkey recipe to build PCBKMS{S,M,C,L}.LIB once you have a stable host.
-Everything on our side is validated and ready; this is just the host
-setup.
+> **Status (2026-11-04):** Compilation COMPLETE — all 476 OBJs built
+> (119 modules × 4 memory models) via Route A (DOSBox-X + HDPMI32).
+> 9 source files received `_MSC_VER` guards for Borland pseudo-variables.
+> Remaining: MKLIB → PCBKMS{S,M,C,L}.LIB assembly.
+
+Turnkey recipe to build PCBKMS{S,M,C,L}.LIB. Host setup and route
+selection below; compilation is done, MKLIB assembly remains.
 
 ## What you need on the host
 
@@ -70,10 +74,11 @@ the 32-bit compile passes (C13216.EXE et al) successfully.
    invoking CL
 
 The full `BLDKMS.BAT` build (476 steps × 4 memory models → 4 libs)
-is now reachable from within DOSBox-X. Expected remaining work is
-header fixups on the same order the earlier PCBKBC build required
-(2-3 guarded blocks, all on toolkit headers, changes are additive
-`!defined(_MSC_VER)` guards).
+ran to completion under DOSBox-X via Route A. 9 source files needed
+`_MSC_VER` guards for Borland pseudo-variables (`_AX`, `_DL`, `_SI`,
+`_BH`) and `geninterrupt()` — all applied. 19 PCBoard app modules
+excluded (need project.h / pcboard.h — not SDK code).
+**Compilation: DONE (476/476 OBJs). MKLIB assembly: PENDING.**
 
 ### Route B — real DOS + 386MAX (historical requirement)
 
@@ -206,8 +211,8 @@ or the 10-second timeout does the right thing on its own.
   `#pragma pack(1)` for MSC7 (correct struct packing); borland.h maps
   Borland intrinsics to MSC equivalents. ✓
 
-Expect at most minor first-build fixups; the structural readiness is
-confirmed.
+First-build fixups are done: 9 `_MSC_VER` guards added to source files
+for Borland pseudo-variables. All 476 OBJs compiled clean.
 
 ## Note (DOSBox-X in a headless sandbox)
 

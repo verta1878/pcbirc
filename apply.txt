@@ -12,11 +12,11 @@ ROOT = \OUT means <repo-root>\OUT.  The repo root directory can be
 named anything.  Output goes to OUT\<branch>\ (e.g. OUT\pwa153\,
 OUT\pwa153\os2\).
 
-OPEN BLOCKERS (carried from entries 1-41, updated 2026-11-02):
-  - CodeBase: c4base.lib (DOS/BC31) + b4.lib (OS/2) missing.
-    Must compile from pcbcbase/CODEBASE/SOURCE/.
-    Without them: PCBOARD.EXE has no dBASE, PCBOARD2.EXE cannot link.
-    Upstream: https://github.com/MPSystemsServices/CodeBase-for-DBF
+OPEN BLOCKERS (carried from entries 1-41, updated 2026-11-04):
+  - CodeBase: DONE — c4base.lib rebuilt with authentic BCC (330,240B,
+    entry 56). b4.lib kept as OW build (359,424B, -DS4OS2 needs OS/2
+    headers BC 3.1 lacks). Both committed to pcbcbase/codebase/bor31/.
+    Remaining: PCBOARD.EXE dBASE link test, PCBOARD2.EXE OS/2 link test.
   - pcbkit_l.lib TC 2.01 build: DONE — 4 monolithic libs committed
     (entry 48).  PPLC linkage not yet tested.
   - TKLIB: 10 category libs built for BC31 LARGE only.  TC201 leg

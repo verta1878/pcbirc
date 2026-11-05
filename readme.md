@@ -2,7 +2,7 @@
 
 **PCBoard 15.4 source code recovery, OpenWatcom 2.0 port, and modernization.**
 
-pcbirc crew — October 2026
+pcbirc crew — November 2026
 
 ## What Is This
 
@@ -69,6 +69,16 @@ normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 | PCBKBC | Borland C++ 3.1 | BUILT — 4 models (S/C/M/L), 152 modules each. `toolkit/pwa153/bc31/lib/` |
 | PCBKIT | Turbo C 2.01 | BUILT — 4 monolithic libs (S/C/M/L, 119 modules each) + 10 split category libs. `out/pwa153/sdk/tc201/lib/` |
 | PCBKMS | Microsoft C 7.0 | BUILT — 4 models (S/C/M/L), 476/476 OBJs compiled (119 × 4). MKLIB assembly into .LIB files pending. `out/pwa153/sdk/msc70/` |
+
+### CodeBase libraries (dBASE support for PCBOARD.EXE / PCBOARD2.EXE)
+
+| Library | Compiler | Size | Target |
+|---|---|---|---|
+| C4BASE.LIB | BC++ 3.1 (BCC.EXE) | 330,240 | DOS large model |
+| b4.lib | OpenWatcom (WCC) | 359,424 | OS/2 large model |
+
+99 CodeBase IV source modules compiled from `pcbcbase/codebase/source/`.
+Output: `pcbcbase/codebase/bor31/`.
 
 The SDK matrix lives in toolkit/pwa153/ (compiler-first layout:
 `bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its

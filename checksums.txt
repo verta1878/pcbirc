@@ -1,5 +1,5 @@
 PCBoard 15.3 PWA v0.3.2+ — EXE checksums
-Generated: 2026-09-27, dosboxx updated 2026-11-02
+Generated: 2026-09-27, dosboxx updated 2026-11-04, codebase updated 2026-11-04
 
 PCBOARD.EXE          982336 bytes
 PCBOARDM.EXE         982336 bytes
@@ -11,4 +11,7 @@ UUIN.EXE             274437 bytes
 UUXFER.EXE           247755 bytes
 
 dosboxx.z01        30408704 bytes
-dosboxx.zip        20336699 bytes
+dosboxx.zip        26889102 bytes
+
+C4BASE.LIB           330240 bytes
+b4.lib               359424 bytes
