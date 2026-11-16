@@ -80,6 +80,17 @@ normalize_case.sh   lowercase-copy helper for Linux/OpenWatcom builds
 99 CodeBase IV source modules compiled from `pcbcbase/codebase/source/`.
 Output: `pcbcbase/codebase/bor31/`.
 
+### pcbcomm serial library (COMMDRV replacement)
+
+| Library | Compiler | Size | Model | Location |
+|---|---|---|---|---|
+| PCBCOMM_WF.LIB | Open Watcom V2 | 59,904 | 32-bit flat | out/delta154/sdk/ow2flat/ |
+
+19 modules (10 backends + core + SDK layer + FOSSIL). Headers in
+toolkit/delta154/h/. Build scripts: main/build/scripts/bldpcbcomm.bat
+and bldpcbcomm.mak. Source: pcb1541/pcbcomm/src/. Details in
+pcb1541/pcbcomm/build-status.md and main/build/sdk-build-status.md.
+
 The SDK matrix lives in toolkit/pwa153/ (compiler-first layout:
 `bc31/`, `tc201/`, `msc70/` — each holds four `.LIB` files at its
 root, an `OBJ/` tree per memory model, `bin/` for compiled utilities,

@@ -287,6 +287,30 @@ not have.
 
 ---
 
+### v0.3.2+ (57) — 2026-11-15: pcbcomm OW2 flat SDK — PCBCOMM_WF.LIB (hexadecimal)
+
+pcbcomm serial library compiled with Open Watcom V2, 32-bit flat memory
+model (wcc386, -mf, -bt=dos). 19 modules — all 10 backends + core +
+SDK layer (commdrbl, libsbl) + FOSSIL driver.
+
+  out/delta154/sdk/ow2flat/PCBCOMM_WF.LIB   59,904 bytes   19 modules
+
+Three SDK-layer OBJs shipped alongside the library for individual
+linking: commdrbl.obj (2,728), libsbl.obj (1,936), fossil.obj (11,636).
+
+Headers updated in toolkit/delta154/h/:
+- watcompat.h (11,028) — updated with int86→int386 macros for OW2
+- COMM.H (6,720) — new, pcbcomm SDK linkable header for door developers
+- pcbcomm.h (2,307) — new, core pcbcomm types
+- borland.h (3,046) — unchanged
+
+Build scripts: main/build/scripts/bldpcbcomm.bat (DOS batch, numbered
+progress) + bldpcbcomm.mak (wmake). SDK readme:
+out/delta154/sdk/ow2flat/readme.md.
+
+This is the first 32-bit flat model build of pcbcomm. The v1.1/v1.2
+builds (entries 32–36) were 16-bit large model targeting PCBDTSR.EXE.
+
 ## Open blockers
 
 - **PCBKMS MKLIB**: All 476 OBJs compile clean (119 × 4 models).

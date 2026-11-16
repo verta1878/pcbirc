@@ -18,3 +18,13 @@ d2986c50527b79636af98d5ace69e649  out/pwa153/sdk/tc201/pcbkitc.lib
 # dosboxx split archive (rebuilt 2026-11-04, 2-part: z01 29MB + zip 26MB)
 df7ab910bca24ae28fe56b2dbeef5b77  dosboxx.z01
 36d10b67078e5cc69befdd7b61397c86  dosboxx.zip
+# pcbcomm OW2 flat SDK (built 2026-11-15)
+f2e22b075b178b088ef447adbdc5095a  out/delta154/sdk/ow2flat/PCBCOMM_WF.LIB
+9f52496d722bc0241aa5872801520456  out/delta154/sdk/ow2flat/commdrbl.obj
+1adce1c29917d263cbe31ce998c90da7  out/delta154/sdk/ow2flat/libsbl.obj
+d214fc1c88470952e8925e53e5a69cb9  out/delta154/sdk/ow2flat/fossil.obj
+# pcbcomm SDK headers (toolkit/delta154/h/)
+3249c8db0bd5ebcc6f4acee38bb205b1  toolkit/delta154/h/pcbcomm.h
+bd42087a496588cc894dff1f99b52c92  toolkit/delta154/h/COMM.H
+9bdfc80e058e06bfe73218136834d389  toolkit/delta154/h/watcompat.h
+56a087d49b99fcd4e8f14613fac43c49  toolkit/delta154/h/borland.h

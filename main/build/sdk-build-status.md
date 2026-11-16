@@ -688,3 +688,50 @@ bug and corrected it:
   assembler - TASM's OMF .OBJ links fine with MSC7 LIB).
 - MSC70 at C:\MSC70; 386MAX loaded (DOS route) or OS/2 host (OS/2 route).
 - Then: BLDKMS.BAT -> MKLIB/MS??.RSP -> PCBKMS{S,M,C,L}.LIB.
+
+---
+
+## pcbcomm — PCBCOMM_WF.LIB BUILT ✅ 2026-11-15
+
+**pcbcomm serial library, Open Watcom V2, 32-bit flat model.**
+
+This is a separate library from the 3-compiler toolkit matrix above.
+The toolkit matrix covers the 119-module PCBoard door toolkit (PCBKIT/
+PCBKBC/PCBKMS). pcbcomm is the serial communications library — the
+reassembled COMMDRV replacement — built as a standalone linkable for
+door developers.
+
+### Build
+
+| Item | Value |
+|---|---|
+| Compiler | Open Watcom V2 (wcc386), Linux cross-compile |
+| Model | flat 32-bit (`-mf`) |
+| Target | DOS (`-bt=dos`) |
+| Optimization | `-oxs` |
+| Defines | `-dPCBCOMM_V1 -dPCB1541` |
+| Modules | 19 (10 backends + core + SDK layer + FOSSIL) |
+| Source | pcb1541/pcbcomm/src/ |
+
+### Deliverables
+
+| File | Size | Location |
+|---|---|---|
+| PCBCOMM_WF.LIB | 59,904 | out/delta154/sdk/ow2flat/ |
+| commdrbl.obj | 2,728 | out/delta154/sdk/ow2flat/ |
+| libsbl.obj | 1,936 | out/delta154/sdk/ow2flat/ |
+| fossil.obj | 11,636 | out/delta154/sdk/ow2flat/ |
+
+Headers: COMM.H, pcbcomm.h, watcompat.h, borland.h — in toolkit/delta154/h/.
+
+### Build scripts
+
+- `main/build/scripts/bldpcbcomm.bat` — DOS batch with numbered progress
+- `main/build/scripts/bldpcbcomm.mak` — Open Watcom wmake
+
+### Naming
+
+`PCBCOMM_WF` = pcbcomm, Watcom, flat. This follows Clark's SDK naming
+pattern (compiler initial + memory model letter) but for a different
+library family. The toolkit matrix uses PCBK{BC,IT,MS}{S,M,C,L}; pcbcomm
+uses PCBCOMM_{compiler}{model}.
