@@ -189,3 +189,50 @@ pcbcomm.h: pwa154 ahead (6422B has struct defs for consumers).
 Only int14.c in SDK is genuinely STALE (211L vs 701L).
 
 ### Dead file: int14-r1.c — attic when ready (ATTIC-CLEANUP.BAT)
+
+---
+
+## OW2 flat 32-bit SDK build — 2026-11-15
+
+**PASS** — 19 modules compile clean under Open Watcom V2 (wcc386),
+flat 32-bit memory model. Library: PCBCOMM_WF.LIB (59,904 bytes).
+
+### Compiler
+
+Open Watcom V2 (wcc386), Linux cross-compile.
+Flags: `-oxs -bt=dos -mf -dPCBCOMM_V1 -dPCB1541`
+
+### Modules (19)
+
+pcbcomm, irq, uart, uart_backend, int14, fossil, commdrbl, libsbl,
+card_pool, boca_backend, cyclom_backend, digi_pcxe_backend,
+digi_accel_backend, digi_fep, rocket_backend, easyio_backend,
+arnet_backend, hub6_backend, gtek_backend.
+
+All 10 backends + core + SDK layer + FOSSIL driver.
+
+### Deliverables
+
+| File | Size | Location |
+|---|---|---|
+| PCBCOMM_WF.LIB | 59,904 | out/delta154/sdk/ow2flat/ |
+| commdrbl.obj | 2,728 | out/delta154/sdk/ow2flat/ |
+| libsbl.obj | 1,936 | out/delta154/sdk/ow2flat/ |
+| fossil.obj | 11,636 | out/delta154/sdk/ow2flat/ |
+
+Headers in toolkit/delta154/h/:
+COMM.H (6,720), pcbcomm.h (2,307), watcompat.h (11,028), borland.h (3,046).
+
+### Build scripts
+
+- `main/build/scripts/bldpcbcomm.bat` — DOS batch, numbered progress
+- `main/build/scripts/bldpcbcomm.mak` — Open Watcom wmake
+
+### Notes
+
+This is the first 32-bit flat model build of pcbcomm. The v1.1/v1.2
+builds above were 16-bit large model targeting PCBDTSR.EXE (TSR).
+The flat SDK targets door developers linking against PCBoard 15.4x
+under a DOS extender (dos4g). The library includes all backends
+and the SDK shim layer (commdrbl, libsbl) so door code only needs
+`#include "COMM.H"` and `wlink ... library PCBCOMM_WF.LIB`.

@@ -69,6 +69,16 @@ static struct SREGS _borland_sregs;
 #define geninterrupt(n) int386x(n, &_borland_regs, &_borland_regs, &_borland_sregs)
 
 /*------------------------------------------------------------------------*/
+/* 16-bit int86/int86x → 32-bit int386/int386x                           */
+/* In 32-bit flat model, OW2 only prototypes int386/int386x.              */
+/* The source uses int86/int86x (16-bit names) — redirect them.           */
+/*------------------------------------------------------------------------*/
+#ifdef __386__
+#define int86(n,i,o)      int386(n,i,o)
+#define int86x(n,i,o,s)   int386x(n,i,o,s)
+#endif
+
+/*------------------------------------------------------------------------*/
 /* Borland types                                                           */
 /*------------------------------------------------------------------------*/
 #ifndef __cplusplus

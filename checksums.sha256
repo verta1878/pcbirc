@@ -18,3 +18,13 @@ cf7cd690490b1603aac32b92aae263abb711fd7374884604825c5d7b4679cafb  pcbcbase/codeb
 # dosboxx split archive (rebuilt 2026-11-04, 2-part: z01 29MB + zip 26MB)
 4199226ea0e429549ed8168bfaa808988e7c84abffae40210f8b26d7a3e63d37  dosboxx.z01
 28bd6f071f838f7804eba6586eee47ae6527a5530301353a656f17e7888ac291  dosboxx.zip
+# pcbcomm OW2 flat SDK (built 2026-11-15)
+7b3114221802a2c1b507bfa491c5ac21068fae7f647d834897f56b685efe1879  out/delta154/sdk/ow2flat/PCBCOMM_WF.LIB
+9f897ec0edce1a7fabbbcdfbe8230ab9b5f453782d2c2a8338cf756b048c9b2a  out/delta154/sdk/ow2flat/commdrbl.obj
+8c30d39c922d46ef877b912f15aa1ac815320d1a7e2901e145f2a09d4f25c75a  out/delta154/sdk/ow2flat/libsbl.obj
+2682a2a03c447427f73242ab05dc463bbbb66d61c93a93467ea1592b0ab2cc35  out/delta154/sdk/ow2flat/fossil.obj
+# pcbcomm SDK headers (toolkit/delta154/h/)
+38c5e63e66322daf0870b5466dc52fd89c9959eb77f8a148746be69763d573be  toolkit/delta154/h/pcbcomm.h
+9a5e5556496aed22b44fad3f72cc06637fb619a6eb1413b222ada95b98f1432a  toolkit/delta154/h/COMM.H
+68bd71fc7d8b6a7790e34ff4e6a85bf1319704a31702384cefbd863be2ab7f30  toolkit/delta154/h/watcompat.h
+6323f7ff424b4397e824d933c209dfdb2d477f2a5f97c08d68117be3e160cf33  toolkit/delta154/h/borland.h

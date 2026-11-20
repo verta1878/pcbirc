@@ -37,14 +37,14 @@
 >   driver is developed: every backend `.c`, the `ref/linux/` study
 >   material, the gap analysis, the research backends. Development happens
 >   here.
-> * `toolkit/pwa154/pcbcomm/` is the **redistributable SDK** -- the tree
->   that ships the linkable `.OBJ`. Its reason to exist is the link matrix
->   (`PCBCOMM_BL.OBJ`, `_7L`, `_WL`, ... one built object per compiler x
->   memory model) plus the drop-in recipe, headers for consumers, and
->   examples. A sysop or door author never compiles this tree; they link
->   its prebuilt `.OBJ` into `PCBOARD.MAK` in place of Clark's
->   `COMMDRV.OBJ`. See `toolkit/pwa154/pcbcomm/docs/SDK.md` and
->   `LINKOUT.md`.
+> * `out/delta154/sdk/ow2flat/` is the **redistributable SDK** -- the
+>   prebuilt library and linkable objects. The first SDK build is
+>   PCBCOMM_WF.LIB (Open Watcom V2, 32-bit flat, 19 modules, 59,904
+>   bytes). Headers for consumers live in `toolkit/delta154/h/` (COMM.H,
+>   pcbcomm.h, watcompat.h, borland.h). A door author links
+>   PCBCOMM_WF.LIB and includes COMM.H — no source compilation needed.
+>   Build scripts: `main/build/scripts/bldpcbcomm.bat` and
+>   `bldpcbcomm.mak`.
 >
 > So the relationship is source -> built artifact, the same split Clark
 > himself shipped (`COMMDRV.OBJ` + `FOSSIL.OBJ` as link-time objects, see
